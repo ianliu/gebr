@@ -740,7 +740,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs connected <b>servers</b> to run processing flows.\n"),
+			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs at least one <i>connected server</i> "
+                                                                             "to run processing flows. You must either connect to a new "
+                                                                             "servers or connect all servers already registered below.\n"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
@@ -1121,21 +1123,33 @@ preferences_setup_ui(gboolean first_run,
 		ui_preferences->dialog = assistant;
 
 		GtkWidget *maestro_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "maestro_info_label"));
-		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<b>Maestro</b> is the responsible for receiving GêBR "
-								      "requests and for managing the available resources to perform it in the best way."));
+		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<i>Maestro</i> is in between the GêBR and the working servers. "
+                                                                      "It receives all requests for flow execution and dispatches them "
+                                                                      "to groups of servers.\n\n"
+                                                                      "Without interference, Maestro collects information about the "
+                                                                      "state of each working server and ranks them according to their "
+                                                                      "capabilities and available resources at time. Therefore, Maestro "
+                                                                      "can take smart decisions about which servers are best suited to "
+                                                                      "run a processing flow."));
 
 		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
-		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs a <b>connection</b> to a Maestro to send jobs "
-									    "and receive outputs. For security reasons an encrypted connection "
-									    "is made using SSH protocol.\n\n"
-									    "Your login password may be asked to stablish the connection."));
+		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs to establish a connection to the Maestro to send "
+                                                                  "jobs and receive outputs.\n\nAll data exchange between the Maestro and "
+                                                                  "GêBR flows through <i>encrypted channels</i>. Such channels "
+                                                                  "are established using SSH protocol, which is a standard way to "
+                                                                  "access remote machines with reasonable level of security.\n\n"
+                                                                  "To actually establish the connections, SSH may request your "
+                                                                  "login password.\n\n"
+                                                                  "<small><i>This connection process can be extremely simplified "
+                                                                  "using an alternative authetication method based on public keys. "
+                                                                  "The adoption of this method may be done at any time, through a "
+                                                                  "checkbox, whenever your password is requested.</i></small>"));
 
 		GtkWidget *mount_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "mount_info_label"));
-		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Remote browsing allows a user on a client computer to access "
-									"files over a network in a manner similar to how local storage "
-									"is accessed. GêBR uses the remote browsing to organize the files "
-									"created during the data processing.\n\n"
-									"Your login credentials may be asked to be able to browse the remote file system."));
+		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Every processing flow in GêBR runs on working servers, which may "
+                                                                    "be elsewhere. <i>Remote browsing</i> is a feature that allows "
+                                                                    "the user to see the files generated on the working servers.\n\n"
+                                                                    "To enable this feature your login password may be asked."));
 		/* Set Preferences Page */
 		set_preferences_page(builder, ui_preferences);
 

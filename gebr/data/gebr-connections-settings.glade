@@ -231,26 +231,28 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one connected &lt;b&gt;servers&lt;/b&gt; to run processing flows.</property>
+        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one &lt;i&gt;connected server&lt;/i&gt; to run processing flows. You must either connect to new servers or connect to all servers alredy registred below.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
-        <property name="width_chars">50</property>
       </object>
       <packing>
         <property name="expand">False</property>
-        <property name="padding">10</property>
+        <property name="padding">5</property>
         <property name="position">0</property>
       </packing>
     </child>
     <child>
       <object class="GtkLabel" id="label13">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">To establish each connection, your login credentials may be asked.</property>
+        <property name="label" translatable="yes">To establish each connection, your login credentials may be asked.
+
+&lt;small&gt;&lt;i&gt;This connection process can be extremely simplified  using an alternative authetication method based on public keys. The adoption of this method may be done at any time, through a checkbox, whenever your password is requested.&lt;/i&gt;&lt;/small&gt;</property>
+        <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
       <packing>
         <property name="expand">False</property>
-        <property name="fill">False</property>
+        <property name="padding">10</property>
         <property name="position">1</property>
       </packing>
     </child>
@@ -343,18 +345,6 @@ Your login password may be asked to stablish the connection.</property>
         <property name="position">4</property>
       </packing>
     </child>
-    <child>
-      <object class="GtkLabel" id="servers_label">
-        <property name="visible">True</property>
-        <property name="sensitive">False</property>
-        <property name="label" translatable="yes">At least one server needs to be connected.</property>
-        <property name="use_markup">True</property>
-      </object>
-      <packing>
-        <property name="padding">5</property>
-        <property name="position">5</property>
-      </packing>
-    </child>
   </object>
   <object class="GtkVBox" id="maestro_info">
     <property name="visible">True</property>
@@ -378,9 +368,9 @@ Your login password may be asked to stablish the connection.</property>
         <child>
           <object class="GtkLabel" id="maestro_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is in between then G&#xEA; BR and the working servers. It receives all requests for flow execution and dispatches them to a group of servers.
+            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is in between the G&#xEA;BR and the working servers. It receives all requests for flow execution and dispatches them to groups of servers.
 
-Without interference, Maestro collects information about the state of each working server and ranks them according to their capabilities and available resources at time. Therefore, Maestro can take smart decisions about which servers are best suited to run each processing flow.</property>
+Without interference, Maestro collects information about the state of each working server and ranks them according to their capabilities and available resources at time. Therefore, Maestro can take smart decisions about which servers are best suited to run a processing flow.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -600,7 +590,7 @@ Without interference, Maestro collects information about the state of each worki
             <property name="visible">True</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
-            <property name="label" translatable="yes">&lt;i&gt;Not connected&lt;/i&gt;</property>
+            <property name="label" translatable="yes">&lt;i&gt;Disabled&lt;/i&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -767,6 +757,7 @@ Your login credentials may be asked to be able to browse the remote file system.
         <child>
           <object class="GtkHBox" id="hbox2">
             <property name="visible">True</property>
+            <property name="homogeneous">True</property>
             <child>
               <object class="GtkButton" id="mount_button">
                 <property name="label" translatable="yes">Enable remote browse</property>
@@ -775,6 +766,7 @@ Your login credentials may be asked to be able to browse the remote file system.
                 <property name="receives_default">True</property>
               </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="position">0</property>
               </packing>
@@ -871,11 +863,9 @@ Your login credentials may be asked to be able to browse the remote file system.
       <object class="GtkLabel" id="server_info_second_label">
         <property name="visible">True</property>
         <property name="xpad">10</property>
-        <property name="label" translatable="yes">&lt;i&gt;"A maestro without servers is like a general
-without soldiers."&lt;/i&gt;
+        <property name="label" translatable="yes">&lt;i&gt;A Maestro without Servers is like a general without soldiers.&lt;/i&gt;
 
-
-&lt;b&gt;Servers&lt;/b&gt; are the machines where the processing flows are actually executed. They put their computational power at disposal of the Maestro, which coordinate them to cooperate to conclude processing jobs faster.</property>
+&lt;i&gt;Working servers&lt;/i&gt; are the machines that actually execute the processing flows. They put their computational power at disposal of the Maestro, which coordinates them to cooperate to conclude processing jobs faster.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
