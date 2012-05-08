@@ -202,7 +202,6 @@ static gboolean flow_import_single (const gchar *path)
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE, new_title, -1);
 	gebr_geoxml_document_set_title(flow, new_title);
 	document_save(flow, FALSE, FALSE);
-	gebr_geoxml_document_free(flow);
 	g_free(new_title);
 
 	return TRUE;
