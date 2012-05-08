@@ -1,3 +1,9 @@
+gebrproject (0.17.6) lucid; urgency=low
+
+  * Fix segfault when cancel dialog of File Chooser
+
+ -- Fabrício Matheus Gonçalves <fmatheus@bart>  Tue, 08 May 2012 01:18:49 -0300
+
 gebrproject (0.17.5) lucid; urgency=low
 
   * Cryptographic key generation to connect maestro and servers without typing a password.

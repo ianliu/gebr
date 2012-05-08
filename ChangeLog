@@ -1,3 +1,16 @@
+2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault when cancel dialog of File Chooser
+
+2012-05-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding translated title of project/line properties.
+
+2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.5 for changeset 06f7c44c3f74
+	* Updated ChangeLogs with 0.17.5 last minute fixes.
+
 2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Fixed compilation warning issues.
