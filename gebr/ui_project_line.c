@@ -1994,19 +1994,25 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 
 	line = GEBR_GEOXML_LINE (document);
 	if (gebr_geoxml_line_get_paths_number(line) > 0) {
-		GebrGeoXmlSequence *line_path;
-
 		// Comment for translators: HTML header for detailed report
 		g_string_append_printf (dump, "<p>%s</p>\n<ul>\n", _("Line paths:"));
 
-		gebr_geoxml_line_get_path(GEBR_GEOXML_LINE(document), &line_path, 0);
-		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
-                        if (strlen(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)))){
-                                g_string_append_printf(dump, "   <li>%s</li>\n",
-                                                       gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
-                        }
+		GString *buf = g_string_new(NULL);
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
+		for (gint i = 0; paths[i]; i++) {
+			if (!g_strcmp0(paths[i][1], "HOME")) {
+				g_string_append_printf(dump, "   <li>%s</li>\n", paths[i][0]);
+				continue;
+			}
+			gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);
+			g_string_append_printf(buf, "   <li>%s</li>\n", resolved);
+			g_free(resolved);
 		}
+		g_string_append(dump, buf->str);
 		g_string_append(dump, "</ul>\n");
+
+		g_string_free(buf, TRUE);
+		gebr_pairstrfreev(paths);
 	}
 
 
