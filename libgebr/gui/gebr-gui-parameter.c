@@ -1218,6 +1218,7 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 	gchar *word;
 	gint pos;
 	gboolean retval;
+	GebrGeoXmlParameterType parameter_type = GPOINTER_TO_INT(user_data);
 
 	entry = gtk_entry_completion_get_entry(completion);
 	text = gtk_entry_get_text(GTK_ENTRY(entry));
@@ -1249,9 +1250,16 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 			return FALSE;
 		else
 			return type == COMPLETION_TYPE_VARIABLE;
-	} else if (c_curr == '<' && pos == 0) {
-		return type == COMPLETION_TYPE_PATH;
+	} else if (c_curr == '<') {
+		if (pos == 0)
+			return type == COMPLETION_TYPE_PATH;
+		else
+			return FALSE;
 	}
+
+	if (parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE &&
+	    (g_str_has_prefix(text, "<") || g_str_has_prefix(text, "/")))
+		return FALSE;
 
 	word = gebr_str_word_before_pos(text, &pos);
 
@@ -1369,7 +1377,7 @@ setup_entry_completion(GtkEntry *entry,
 
 	comp = gtk_entry_completion_new();
 	gtk_entry_completion_set_model(comp, model);
-	gtk_entry_completion_set_match_func(comp, func, NULL, NULL);
+	gtk_entry_completion_set_match_func(comp, func, data, NULL);
 	g_signal_connect(comp, "match-selected", match_selected_cb, data);
 
 	cell = gtk_cell_renderer_pixbuf_new();
