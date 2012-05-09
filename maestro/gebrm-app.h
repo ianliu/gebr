@@ -113,7 +113,7 @@ GebrmApp *gebrm_app_new(void);
  *
  * Writes the port in @fd and starts the application main loop.
  */
-gboolean gebrm_app_run(GebrmApp *app, int fd);
+gboolean gebrm_app_run(GebrmApp *app, int fd, const gchar *version);
 
 const gchar *gebrm_app_get_lock_file(void);
 

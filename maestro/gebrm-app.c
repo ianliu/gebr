@@ -1801,7 +1801,7 @@ gebrm_app_new(void)
 }
 
 gboolean
-gebrm_app_run(GebrmApp *app, int fd)
+gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 {
 	GError *error_lock = NULL;
 	GError *error_version = NULL;
@@ -1825,10 +1825,8 @@ gebrm_app_run(GebrmApp *app, int fd)
 	g_file_set_contents(gebrm_app_get_lock_file(),
 			    portstr, -1, &error_lock);
 
-	gchar *version_str = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
 	g_file_set_contents(gebrm_app_get_version_file(),
-			    version_str, -1, &error_version);
-	g_free(version_str);
+			    version, -1, &error_version);
 
 	if (error_lock) {
 		g_critical("Could not create lock: %s", error_lock->message);

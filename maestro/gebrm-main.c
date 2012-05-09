@@ -144,6 +144,8 @@ main(int argc, char *argv[])
 	gchar *lock_contents;
 	GError *lock_error = NULL;
 
+	gchar *curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+
 	if (g_access(lock, R_OK | W_OK) == 0) { //check lock_file
 		GError *version_error = NULL;
 
@@ -169,8 +171,6 @@ main(int argc, char *argv[])
 			}
 			g_free(version_error);
 
-			gchar *curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
-
 			if (!gebr_comm_listen_socket_is_local_port_available(port)) {
 				if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
 					g_print("%s\n", lock_contents);
@@ -179,7 +179,6 @@ main(int argc, char *argv[])
 					gebr_kill_by_port(port);
 				}
 			}
-			g_free(curr_version);
 			g_free(version_contents);
 		} else {		//It does not have version file
 			gebr_kill_by_port(port);
@@ -213,9 +212,10 @@ main(int argc, char *argv[])
 
 	GebrmApp *app = gebrm_app_singleton_get();
 
-	if (!gebrm_app_run(app, output_fd))
+	if (!gebrm_app_run(app, output_fd, curr_version))
 		exit(EXIT_FAILURE);
 
+	g_free(curr_version);
 	g_object_unref(app);
 	gebr_geoxml_finalize();
 
