@@ -1234,12 +1234,15 @@ gebr_strv_indexof(const gchar **strv, const gchar *value)
 	return -1;
 }
 
+gchar *
+gebr_key_filename(gboolean public) {
+	return g_build_filename(g_get_home_dir(), ".ssh", public ? "gebr.key.pub" : "gebr.key", NULL);
+}
+
 gboolean
 gebr_generate_key()
 {
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key", NULL);
-
-	g_debug("PATH IS %s", path);
+	gchar *path = gebr_key_filename(FALSE);
 
 	if (g_file_test(path, G_FILE_TEST_EXISTS)) {
 		g_free(path);
@@ -1278,9 +1281,7 @@ gebr_generate_key()
 gboolean
 gebr_add_remove_ssh_key(gboolean remove)
 {
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key", NULL);
-
-	g_debug("PATH IS %s", path);
+	gchar *path = gebr_key_filename(FALSE);
 
 	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
 		g_free(path);

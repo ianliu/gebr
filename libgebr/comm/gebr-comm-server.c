@@ -164,7 +164,7 @@ static gchar *
 get_ssh_command_with_key(void)
 {
 	gchar *ssh_cmd = "ssh -o NoHostAuthenticationForLocalhost=yes";
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key", NULL);
+	gchar *path = gebr_key_filename(FALSE);
 
 
 	if (g_file_test(path, G_FILE_TEST_EXISTS)) {
@@ -1065,18 +1065,19 @@ gebr_comm_server_append_key(GebrCommServer *server,
                             void * finished_callback,
                             gpointer user_data)
 {
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key.pub", NULL);
+	gchar *path = gebr_key_filename(TRUE);
 	gchar *public_key;
-
-	g_debug("Append gebr.key on PATH %s", path);
 
 	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
 		g_free(path);
 		return FALSE;
 	}
 
+	g_debug("Append gebr.key on PATH %s", path);
+
 	// FIXME: please handle GError of the g_file_get_contents
 	g_file_get_contents(path, &public_key, NULL, NULL);
+	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
 
 	GebrCommTerminalProcess *process;
 	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
@@ -1090,8 +1091,8 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
-	                "'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo -n \"%s\" >> $HOME/.ssh/authorized_keys'",
-	                ssh_cmd, server->address->str, public_key);
+	                "'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s (%s)\" >> $HOME/.ssh/authorized_keys'",
+	                ssh_cmd, server->address->str, public_key, gebr_comm_server_is_maestro(server) ? "gebr" : "gebrm");
 
 	gebr_comm_terminal_process_start(process, cmd_line);
 

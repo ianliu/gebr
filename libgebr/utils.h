@@ -359,6 +359,8 @@ gboolean gebr_verify_address_without_username(const gchar *address);
 
 gboolean gebr_kill_by_port(gint port);
 
+gchar * gebr_key_filename(gboolean public);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
