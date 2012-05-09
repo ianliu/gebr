@@ -1083,6 +1083,15 @@ preferences_setup_ui(gboolean first_run,
 			gchar *intro_label_version_text = g_strdup_printf(_("It's the first time you use GêBR %s."), gebr_version());
 			gtk_label_set_markup(GTK_LABEL(intro_label_version), intro_label_version_text);
 			g_free(intro_label_version_text);
+			GtkWidget *intro_label2  = GTK_WIDGET(gtk_builder_get_object(builder, "intro_label2"));
+			gchar *intro_label2_text = g_strdup_printf(_("In this version, GêBR introduces new features that will speed up your "
+								"processing flows, like automatic selection of the fastest server available "
+								"and split of processing job among servers.\n\n"
+								"These is possible due to a new player, called Maestro.\n\n"
+								"To take advantage of those features, some set up must be done. This "
+								"assistant will guide you through this process.\n"));
+			gtk_label_set_markup(GTK_LABEL(intro_label2), intro_label2_text);
+			g_free(intro_label2_text);
 		}
 
 		// MAESTRO_INFO_PAGE

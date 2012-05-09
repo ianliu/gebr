@@ -347,7 +347,18 @@ on_assistant_prepare(GtkAssistant *assistant,
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
 
-	} else if (page == 3) {
+	} else if (page == 2) {
+		GObject *paths_label= gtk_builder_get_object(data->builder, "paths_label");
+		gchar *paths_label_text= g_markup_printf_escaped(_("To better manage all files read or created during the processing of a data, "
+								"GêBR defines a directory structure to store them.\n\n"
+								"This structure is defined by a top directory, known as BASE, and few other "
+								"nested standard directories.\n\n"
+								"Although it is not mandatory to adhere to this structure, it is highly "
+								"recommended to do so."));
+		gtk_label_set_markup(GTK_LABEL(paths_label), paths_label_text);
+		g_free(paths_label_text);
+	}
+	else if (page == 3) {
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
 		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
 		gchar *path = g_build_filename("<HOME>", "GeBR", line_key, NULL);
