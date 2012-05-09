@@ -371,18 +371,7 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
                                            gboolean sensitive,
                                            gboolean maestro_err)
 {
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-
-	if (!maestro) {
-		if (sensitive == TRUE) {
-			sensitive = FALSE;
-			maestro_err = TRUE;
-		}
-		else if (!maestro_err)
-			maestro_err = TRUE;
-	}
-
-	if (maestro && gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive == TRUE) {
+	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive == TRUE) {
 		sensitive = FALSE;
 		maestro_err = FALSE;
 	}
@@ -391,54 +380,29 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 	const gchar *tooltip_execute;
 
 	if (!gebr.line) {
-		if (!gebr.project) {
+		if (!gebr.project)
 			tooltip_disconn = _("Select a line to execute a flow");
-			maestro_err = FALSE;
-		} else {
+		else
 			tooltip_disconn = _("Select a line of this project to execute a flow");
-			maestro_err = FALSE;
-		}
-	} else if (maestro_err)
-		tooltip_disconn = _("Maestro of this line is disconnected.\nClick here to reconnect it\nor change the maestro associated to this line");
-	else
+	} else {
 		tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
+	}
 	tooltip_execute = _("Execute");
 
 	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
 	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
 
-	if (maestro_err) {
-		GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
-		const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
-		gtk_action_set_sensitive(action, TRUE);
+	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
+	const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
 
-		if (!sensitive)
-			gtk_action_set_stock_id(action, "execute-warn");
-		else
-			gtk_action_set_stock_id(action, "gtk-execute");
-		gtk_action_set_tooltip(action, tooltip);
+	gtk_action_set_stock_id(action, "gtk-execute");
+	gtk_action_set_sensitive(action, sensitive);
+	gtk_action_set_tooltip(action, tooltip);
 
-		action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
-		gtk_action_set_sensitive(action, TRUE);
-		if (!sensitive)
-			gtk_action_set_stock_id(action, "execute-warn");
-		else
-			gtk_action_set_stock_id(action, "gtk-execute");
-		gtk_action_set_tooltip(action, tooltip);
-	}
-	else {
-		GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
-		const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
-
-		gtk_action_set_stock_id(action, "gtk-execute");
-		gtk_action_set_sensitive(action, sensitive);
-		gtk_action_set_tooltip(action, tooltip);
-
-		action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
-		gtk_action_set_stock_id(action, "gtk-execute");
-		gtk_action_set_sensitive(action, sensitive);
-		gtk_action_set_tooltip(action, tooltip);
-	}
+	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
+	gtk_action_set_stock_id(action, "gtk-execute");
+	gtk_action_set_sensitive(action, sensitive);
+	gtk_action_set_tooltip(action, tooltip);
 }
 
 void flow_edition_load_components(void)
@@ -2000,10 +1964,14 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
+		gebr_project_line_show(gebr.ui_project_line);
+		flow_browse_reload_selected();
 		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, TRUE);
 		break;
 	case SERVER_STATE_LOGGED:
 		gebr_flow_edition_update_server(fe, maestro);
+		gebr_project_line_show(gebr.ui_project_line);
+		flow_browse_reload_selected();
 		break;
 	default:
 		break;
