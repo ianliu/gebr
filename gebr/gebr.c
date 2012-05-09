@@ -315,7 +315,7 @@ gebr_config_load(void)
 	return has_config;
 }
 
-static void
+void
 restore_project_line_flow_selection(void)
 {
 	GtkTreeIter iter;
@@ -380,7 +380,7 @@ gebr_post_config(gboolean has_config)
 		preferences_setup_ui(TRUE, TRUE, TRUE);
 	else {
 		project_list_populate();
-		restore_project_line_flow_selection();
+		gebr.restore_selection = FALSE;
 
 		if (gebr_has_maestro_config() && g_strcmp0(gebr.config.version->str, "None")) {
 			gebr_maestro_controller_connect(gebr.maestro_controller,

@@ -340,6 +340,11 @@ state_changed(GebrCommServer *comm_server,
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 		gebr_config_maestro_save();
+
+		if (!gebr.restore_selection) {
+			gebr.restore_selection = TRUE;
+			restore_project_line_flow_selection();
+		}
 	}
 
 	const gchar *error_type = maestro->priv->error_type;

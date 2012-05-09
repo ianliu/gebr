@@ -65,6 +65,8 @@ struct gebr {
 	GtkActionGroup *action_group_job_control;
 	GtkActionGroup *action_group_status;
 
+	gboolean restore_selection;
+
 	struct gebr_report {
 		GtkWidget *report_wind;
 		GtkActionGroup *report_group;
@@ -205,6 +207,8 @@ void gebr_remove_help_edit_window(GebrGeoXmlDocument * document);
 const gchar *gebr_get_session_id(void);
 
 gboolean gebr_has_maestro_config(void);
+
+void restore_project_line_flow_selection(void);
 
 G_END_DECLS
 
