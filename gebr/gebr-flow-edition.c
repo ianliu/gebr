@@ -855,6 +855,8 @@ flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar 
 	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
 		gebr_geoxml_flow_io_set_error(gebr.flow, tmp);
 
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
+
 	flow_edition_set_io();
 }
 
