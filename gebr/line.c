@@ -359,10 +359,10 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		gchar *text_maestro = g_markup_printf_escaped(_("<small>Remember that the processing takes "
                                                                 "place at the working servers. So, the "
-                                                                "structure which is being defined here will "
+                                                                "structure which is about to be defined here will "
                                                                 "be created there.\n\nTo be able to browse "
                                                                 "files in these directory, the <i>remote "
-                                                                "browse</i> feature must be enable in the "
+                                                                "browse</i> feature must be enabled in the "
                                                                 "Maestro %s.</small>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
@@ -375,8 +375,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		const gchar *base = gtk_entry_get_text(GTK_ENTRY(entry_base));
 
 		GObject *label;
-		gchar *text_maestro = g_markup_printf_escaped(_("GêBR will create some directories to organize the files\n"
-								"created during the data processing.\n\n"
+		gchar *text_maestro = g_markup_printf_escaped(_("Below is the hierarchy of directories GêBR is about to create.\n\n"
 								"These directories will be created on servers of Maestro <b>%s</b>."), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
