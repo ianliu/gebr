@@ -279,7 +279,7 @@ void
 gebr_job_set_server_list (GebrJob *job,
 		     const gchar *servers)
 {
-	if(!job->priv->server_list && servers)
+	if(!job->priv->server_list && servers && *servers)
 		job->priv->server_list = g_strdup(servers);
 }
 
