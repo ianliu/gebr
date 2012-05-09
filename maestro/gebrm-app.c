@@ -1570,10 +1570,6 @@ gebrm_config_save_server(GebrmDaemon *daemon)
 	gchar *tags = gebrm_daemon_get_tags(daemon);
 	const gchar *daemon_addr = gebrm_daemon_get_address(daemon);
 
-	if (g_strcmp0(daemon_addr, "127.0.0.1") == 0 || 
-	    g_strcmp0(daemon_addr,"localhost") == 0 )
-		daemon_addr = g_get_host_name(); 
-
 	g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
 	if (!g_key_file_has_group(servers, daemon_addr)){
 	    g_key_file_set_string(servers, gebrm_daemon_get_address(daemon),
@@ -1592,13 +1588,11 @@ gebrm_config_save_server(GebrmDaemon *daemon)
 }
 
 static void
-gebrm_config_delete_server(const gchar *serv)
+gebrm_config_delete_server(const gchar *server)
 {
-	gchar *server;
 	gchar *final_list_str;
 	GKeyFile *servers;
 
-	server = g_strcmp0(serv, "127.0.0.1") ? g_strdup(serv): g_strdup("localhost");
 	servers = g_key_file_new ();
 
 	const gchar *path = gebrm_app_get_servers_file();
@@ -1613,7 +1607,6 @@ gebrm_config_delete_server(const gchar *serv)
 
 	final_list_str = g_key_file_to_data(servers, NULL, NULL);
 	g_file_set_contents(path, final_list_str, -1, NULL);
-	g_free(server);
 	g_free(final_list_str);
 	g_key_file_free(servers);
 }
