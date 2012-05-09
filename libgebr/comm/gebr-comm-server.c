@@ -163,13 +163,15 @@ gebr_comm_server_class_init(GebrCommServerClass *klass)
 static gchar *
 get_ssh_command_with_key(void)
 {
+	gchar *ssh_cmd = "ssh -o NoHostAuthenticationForLocalhost=yes";
 	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key", NULL);
 
-	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-		g_free(path);
-		return g_strdup("ssh");
+
+	if (g_file_test(path, G_FILE_TEST_EXISTS)) {
+		ssh_cmd = g_strconcat(ssh_cmd, " -i ", path, NULL);
+	} else {
+		ssh_cmd = g_strdup(ssh_cmd);
 	}
-	gchar *ssh_cmd = g_strdup_printf("ssh -i %s", path);
 
 	g_free(path);
 
@@ -328,7 +330,7 @@ gebr_comm_server_set_logged(GebrCommServer *server)
 
 gboolean gebr_comm_server_is_local(GebrCommServer *server)
 {
-	return strcmp(server->address->str, "127.0.0.1") == 0 ? TRUE : FALSE;
+	return strcmp(server->address->str, "127.0.0.1") == 0 ? TRUE : strcmp(server->address->str, "localhost") == 0 ? TRUE : FALSE;
 }
 
 void gebr_comm_server_kill(GebrCommServer *server)
@@ -349,17 +351,21 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	else
 		bin = "gebrd";
 
-	gchar *ssh_cmd = get_ssh_command_with_key();
+	gchar *kill = g_strdup_printf("fuser -sk -15 $(cat $HOME/.gebr/%s/$HOSTNAME/lock)/tcp", bin);
 	GString *cmd_line = g_string_new(NULL);
 
-	if (gebr_comm_server_is_local(server) == FALSE)
-		g_string_printf(cmd_line, "%s -x %s 'fuser -sk -15 $(cat $HOME/.gebr/%s/$HOSTNAME/lock)/tcp'",
-		                ssh_cmd, server->address->str, bin);
+	if (gebr_comm_server_is_local(server))
+		g_string_printf(cmd_line, "bash -c '%s'", kill);
+	else {
+		gchar *ssh_cmd = get_ssh_command_with_key();
+		g_string_printf(cmd_line, "%s -x %s '%s'", ssh_cmd, server->address->str, kill);
+		g_free(ssh_cmd);
+	}
 
 	gebr_comm_terminal_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
-	g_free(ssh_cmd);
+	g_free(kill);
 }
 
 gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
