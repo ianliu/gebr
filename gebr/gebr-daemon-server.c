@@ -209,23 +209,6 @@ gebr_daemon_server_get_address(GebrDaemonServer *daemon)
 	return daemon->priv->address;
 }
 
-gchar *
-gebr_daemon_server_get_display_address(GebrDaemonServer *daemon)
-{
-	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
-
-	const gchar *addr = daemon->priv->address;
-
-	if (g_strcmp0(addr, "") == 0)
-		return g_strdup(_("Auto-choose"));
-
-	if (g_strcmp0(addr, "127.0.0.1") == 0 || g_strcmp0(addr, "localhost") == 0 )
-		//return g_strdup(_("Local Server"));
-		return g_strdup(daemon->priv->maestro_addr);
-
-	return g_strdup(addr);
-}
-
 void
 gebr_daemon_server_set_state(GebrDaemonServer *daemon,
 			     GebrCommServerState state)

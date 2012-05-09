@@ -62,17 +62,6 @@ GebrDaemonServer *gebr_daemon_server_new(GebrConnectable *connectable,
  */
 const gchar *gebr_daemon_server_get_address(GebrDaemonServer *server);
 
-/**
- * gebr_daemon_server_get_display_address:
- *
- * The display address is a function that translate "special" addresses like
- * 127.0.0.1 to "Local server" and the empty address to "Auto-choose". This
- * method should be used when the address is to be shown to the user.
- *
- * Returns: A newly allocated string, free with g_free().
- */
-gchar *gebr_daemon_server_get_display_address(GebrDaemonServer *server);
-
 void gebr_daemon_server_set_state(GebrDaemonServer *server,
 				  GebrCommServerState state);
 
