@@ -975,6 +975,8 @@ static void
 on_path_error(GebrMaestroServer *maestro,
 	      GebrCommProtocolStatusPath error_id)
 {
+	g_signal_handlers_disconnect_by_func(maestro, on_path_error, NULL);
+
 	if (error_id == GEBR_COMM_PROTOCOL_STATUS_PATH_OK)
 		return;
 
