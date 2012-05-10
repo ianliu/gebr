@@ -1,3 +1,63 @@
+2012-05-10  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* Add translation to Maestro wizard
+	* Add minor translator to the connections-settings wizard
+
+2012-05-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Moved gebr.key to .ssh directory for security.
+
+2012-05-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix number of processor of jobs when execute in queues
+
+2012-05-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Export project now depends on xz utils package.
+	* Removed special localhost treatment in servers.conf file, it is only
+	a user interface candy.
+	* Removed deprecated code.
+	* Use ssh NoHostAuthenticationForLocalhost to avoid trouble with
+	localhost in known_hosts, and fix segfault when stoping daemon at
+	localhost.
+
+2012-05-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove deprecated treatments on set_run_widgets_sensitiveness, and
+	update tab Flows/Flow Editor on maestro state change
+	* Improvement label when line are disconnected and fix order for
+	messages
+
+2012-05-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding star icon at Conection Assistant entry.
+
+2012-05-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fix eclipse install-data.
+	* Fixed mutiple warning about directory already existing after import.
+
+2012-05-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new translated messages in maestro and line wizards
+
+2012-05-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix version file on maestro
+	* Restore last selection of flow after maestro connected in open GeBR
+	* Improvement of paths list on Line's report
+	* Save flow after setting input/output/log file on XML
+	* FIx completition on file entry to offer paths only when necessary
+
+2012-05-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing message at maestro dialog when invalid maestro is connected.
+
+2012-05-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.7 for changeset 21ed2889fe49
+	* Release 0.17.7: More file chooser fixes.
+
 2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Fix method gebr_gtk_bookmarks_add_paths to avoid aditional bar only

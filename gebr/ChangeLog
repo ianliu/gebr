@@ -1,3 +1,49 @@
+2012-05-10  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* Add translation to Maestro wizard
+	* Add minor translator to the connections-settings wizard
+
+2012-05-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix number of processor of jobs when execute in queues
+
+2012-05-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Removed deprecated code.
+
+2012-05-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove deprecated treatments on set_run_widgets_sensitiveness, and
+	update tab Flows/Flow Editor on maestro state change
+	* Improvement label when line are disconnected and fix order for
+	messages
+
+2012-05-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding star icon at Conection Assistant entry.
+
+2012-05-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed mutiple warning about directory already existing after import.
+
+2012-05-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new translated messages in maestro and line wizards
+
+2012-05-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Restore last selection of flow after maestro connected in open GeBR
+	* Improvement of paths list on Line's report
+	* Save flow after setting input/output/log file on XML
+
+2012-05-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing message at maestro dialog when invalid maestro is connected.
+
+2012-05-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.7: More file chooser fixes.
+
 2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Return if job already have tasks on method gebr_job_set_servers (Fix

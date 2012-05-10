@@ -1,3 +1,10 @@
+gebrproject (0.17.8) lucid; urgency=low
+
+  * Updated translations
+  * Minor fixes
+
+ -- Fabrício Matheus Gonçalves <fmatheus@moe>  Thu, 10 May 2012 11:25:03 -0300
+
 gebrproject (0.17.7) lucid; urgency=low
 
   * More File Chooser fixes.
