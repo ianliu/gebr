@@ -1343,15 +1343,17 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 
 	gchar *uri = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(dialog));
 	if (uri) {
-		if (sftp_prefix && g_strstr_len(uri, -1, sftp_prefix)) {
+		gchar *unescape_uri = g_uri_unescape_string(uri, "");
+		if (sftp_prefix && g_strstr_len(unescape_uri, -1, sftp_prefix)) {
 			gint tam = strlen(sftp_prefix);
-			*new_text = g_strdup(uri + tam - 1);
-		} else if (g_strstr_len(uri, -1, "file://")) {
-			*new_text = g_strdup(uri + 7);
+			*new_text = g_strdup(unescape_uri + tam - 1);
+		} else if (g_strstr_len(unescape_uri, -1, "file://")) {
+			*new_text = g_strdup(unescape_uri + 7);
 		} else {
 			*new_text = g_strdup("");
 		}
 		g_free(uri);
+		g_free(unescape_uri);
 	} else {
 		*new_text = g_strdup("");
 	}
