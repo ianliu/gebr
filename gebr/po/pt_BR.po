@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-05-09 15:51-0300\n"
-"PO-Revision-Date: 2012-04-13 16:47-0300\n"
+"PO-Revision-Date: 2012-05-10 09:41-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -1595,7 +1595,7 @@ msgstr "Mudar o estado do Programa selecionado para configurado"
 
 #: ../interface.c:172
 msgid "Disabled"
-msgstr "Desabilitado"
+msgstr "Desativada"
 
 #: ../interface.c:173
 msgid "Change the selected Programs status to disabled"
@@ -2845,7 +2845,7 @@ msgstr "Email"
 
 #: ../data/gebr-connections-settings.glade.h:23
 msgid "Enable remote browse"
-msgstr "Habilitada navegação remota"
+msgstr "Ativar navegação remota"
 
 #: ../data/gebr-connections-settings.glade.h:24
 msgid "G&#xEA;BR is unable to proceed without this configuration."
