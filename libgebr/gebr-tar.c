@@ -56,11 +56,24 @@ gboolean gebr_tar_compact (GebrTar *self, const gchar *root_dir)
 	files = g_string_new ("");
 	for (GList *i = self->files; i; i = i->next) {
 		gchar *file = i->data;
-		g_string_append_printf (files, "\"%s\" ", file);
+		g_string_append_printf (files, "%s ", g_shell_quote(file));
 	}
 
-	command = g_strdup_printf ("/bin/sh -c 'tar cC \"%s\" %s | xz > \"%s\"'",
-				   root_dir, files->len ? files->str : ".", self->tar_path);
+	gchar *rootdir = g_shell_quote(root_dir);
+	gchar *tar_path = g_shell_quote(self->tar_path);
+	gchar *subcommand = g_strdup_printf("tar cC %s %s | xz > %s",
+	                                    rootdir,
+	                                    files->len ? files->str : ".",
+	                                    tar_path);
+
+	gchar *quoted_cmd = g_shell_quote(subcommand);
+	command = g_strdup_printf ("/bin/bash -c %s", quoted_cmd);
+
+	g_free(rootdir);
+	g_free(tar_path);
+	g_free(subcommand);
+	g_free(quoted_cmd);
+
 	g_string_free (files, TRUE);
 	g_spawn_command_line_sync(command, NULL, &stderr, &exit, &error);
 	g_free (command);
@@ -105,10 +118,21 @@ gboolean gebr_tar_extract (GebrTar *self)
 	tmp = gebr_temp_directory_create ();
 	self->extract_dir = g_string_free (tmp, FALSE);
 
-	command = g_strdup_printf ("/bin/sh -c '%s \"%s\" | tar xvC \"%s\"'",
-	                           gebr_tar_is_gzip(self) ? "zcat" : "xz -dc",
-				   self->tar_path,
-				   self->extract_dir);
+	gchar *tar_path = g_shell_quote(self->tar_path);
+	gchar *extract_dir = g_shell_quote(self->extract_dir);
+
+	gchar *subcommand = g_strdup_printf("%s %s | tar xvC %s",
+	                                    gebr_tar_is_gzip(self) ? "zcat" : "xz -dc",
+	                                    tar_path, extract_dir);
+
+	gchar *quoted_cmd = g_shell_quote(subcommand);
+	command = g_strdup_printf ("/bin/bash -c %s", quoted_cmd);
+
+	g_free(tar_path);
+	g_free(extract_dir);
+	g_free(quoted_cmd);
+	g_free(subcommand);
+
 	GError *error = NULL;
 	int exit = 0;
 
