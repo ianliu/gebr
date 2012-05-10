@@ -188,45 +188,46 @@ static void server_moab_read_credentials(GString *accounts, GString *queue_list)
 }
 
 static gboolean
-run_xauth_command(gchar **argv,
-		  gchar **out)
+run_xauth_command(const gchar *cmd,
+                  const gchar *display,
+                  const gchar *cookie)
 {
 	gchar *xauth_file = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", gebrd->hostname, "Xauthority", NULL);
-	gchar *xauthority = g_strconcat("XAUTHORITY=", xauth_file, NULL);
-	gchar *envp[] = {xauthority, NULL};
+
+	if (!display || !cookie)
+		return FALSE;
+
+	gchar *cmd_line;
+	cmd_line = g_strdup_printf("xauth -f %s add %s . %s", xauth_file, display, cookie);
 
 	GError *error = NULL;
 	gchar *err = NULL;
-	gint status;
-	gint exit_status;
 	gint tries = 0;
 	gboolean retval = FALSE;
+	gint status;
 
-	gebrd_message(GEBR_LOG_DEBUG, "RUN XAUTH COMMAND WITH ARGS: %s, %s, %s", argv[0], argv[1], argv[2]);
+	gebrd_message(GEBR_LOG_INFO, "COMMAND LINE FOR XAUTH: %s", cmd_line);
 
 	do {
-		g_spawn_sync(NULL, argv, envp,
-			     G_SPAWN_SEARCH_PATH, NULL, NULL,
-			     out, &err, &status, &error);
-		exit_status = WEXITSTATUS(status);
+		g_spawn_command_line_sync(cmd_line, NULL, &err, &status, &error);
 
 		if (error) {
 			gebrd_message(GEBR_LOG_ERROR, "Error running `xauth': %s", error->message);
 			g_error_free(error);
-			exit_status = 1;
-		} else if (exit_status != 0) {
+		} else if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
 			gebrd_message(GEBR_LOG_ERROR, "xauth command exited with %d: %s",
-				      exit_status, err);
+			              WEXITSTATUS(status), err);
 		} else {
 			gebrd_message(GEBR_LOG_INFO, "xauth command succeeded");
 			retval = TRUE;
+			break;
 		}
 		g_usleep(500000);
 		tries++;
-	} while (tries < 15 && exit_status);
+	} while (tries < 15 && !retval);
 
 	g_free(xauth_file);
-	g_free(xauthority);
+	g_free(cmd_line);
 	g_free(err);
 
 	return retval;
@@ -365,8 +366,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 				gebrd_message(GEBR_LOG_DEBUG, "Authorizing with system(xauth)");
 				gchar *tmp = g_strdup_printf(":%d", display);
-				gchar *argv[] = {"xauth", "add", tmp, ".", cookie->str, NULL};
-				if (!run_xauth_command(argv, NULL))
+				if (!run_xauth_command("add", tmp, cookie->str))
 					display = 0;
 				g_free(tmp);
 			}
@@ -377,48 +377,6 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      gebr_comm_protocol_defs.ret_def, 2,
 							      gid->str, display_str);
 			g_free(display_str);
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-		else if (message->hash == gebr_comm_protocol_defs.rmck_def.code_hash) {
-			GList *arguments;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-				goto err;
-
-			GString *gid = g_list_nth_data(arguments, 0);
-			GString *cookie = g_list_nth_data(arguments, 1);
-			guint16 display = GPOINTER_TO_UINT(g_hash_table_lookup(gebrd->display_ports, gid->str));
-
-			if (display) {
-				gchar *output = NULL;
-				gchar *args[] = {"xauth", "list", NULL};
-
-				if (run_xauth_command(args, &output)) {
-					gchar **lines = g_strsplit(output, "\n", 0);
-					guint len = g_strv_length(lines);
-					gchar **args = g_new0(gchar *, len + 3);
-					args[0] = "xauth";
-					args[1] = "remove";
-
-					for (int i = 0; lines[i]; i++) {
-						if (strstr(lines[i], cookie->str)) {
-							args[i + 2] = lines[i];
-							gchar *ptr = strchr(lines[i], ' ');
-							ptr[0] = '\0';
-							gebrd_message(GEBR_LOG_DEBUG, "Got display %s for cookie %s",
-								      args[i+2], cookie->str);
-						}
-					}
-
-					if (args[2])
-						run_xauth_command(args, NULL);
-
-					g_free(args);
-					g_strfreev(lines);
-				}
-			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}

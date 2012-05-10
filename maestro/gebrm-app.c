@@ -1671,12 +1671,6 @@ on_client_disconnect(GebrCommProtocolSocket *socket,
 			g_free(xauth);
 		}
 	}
-
-	for (GList *i = app->priv->daemons; i; i = i->next)
-		gebr_comm_protocol_socket_oldmsg_send(gebrm_daemon_get_server(i->data)->socket, FALSE,
-						      gebr_comm_protocol_defs.rmck_def, 2,
-						      gebrm_client_get_id(client),
-						      gebrm_client_get_magic_cookie(client));
 }
 
 static void
