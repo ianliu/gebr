@@ -1,3 +1,18 @@
+2012-05-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement on sequential connections of daemon to avoid errors and
+	timeouts
+	* Include getter/setter to timeout option on GebrmDaemon
+
+2012-05-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement method run_xauth_command and remove message rmck (remove
+	cookie from Xauthority file)
+
+2012-05-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.8: pt_BR translation.
+
 2012-05-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Removed special localhost treatment in servers.conf file, it is only

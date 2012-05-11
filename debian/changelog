@@ -1,3 +1,9 @@
+gebrproject (0.17.9) maverick; urgency=low
+
+  * Fixed connections and utf8 issues.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@dell4>  Fri, 11 May 2012 14:42:47 -0300
+
 gebrproject (0.17.8) lucid; urgency=low
 
   * Updated translations

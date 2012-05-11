@@ -1,3 +1,25 @@
+2012-05-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add method gebr_get_default_keys to use more than one key on ssh
+	command
+	* Include key id_rsa on ssh_command to avoid password when user
+	already have keys
+	* Improvement on sequential connections of daemon to avoid errors and
+	timeouts
+	* Include getter/setter to timeout option on GebrmDaemon
+
+2012-05-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement method run_xauth_command and remove message rmck (remove
+	cookie from Xauthority file)
+	* Unescape URI gets with file chooser to avoid invalid characters on
+	filenames
+
+2012-05-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.8 for changeset 38cfb7090cf8
+	* Release 0.17.8: pt_BR translation.
+
 2012-05-10  Júlia Koury Marques <juliakm@gebrproject.com>
 
 	* Add translation to Maestro wizard
