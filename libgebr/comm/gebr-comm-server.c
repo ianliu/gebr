@@ -163,17 +163,20 @@ gebr_comm_server_class_init(GebrCommServerClass *klass)
 static gchar *
 get_ssh_command_with_key(void)
 {
-	gchar *ssh_cmd = "ssh -o NoHostAuthenticationForLocalhost=yes";
+	gchar *default_key = g_build_filename(g_get_home_dir(), ".ssh", "id_rsa", NULL);
+	gchar *basic_cmd = g_strdup_printf("ssh -o NoHostAuthenticationForLocalhost=yes -i %s ", default_key);
+
 	gchar *path = gebr_key_filename(FALSE);
+	gchar *ssh_cmd;
 
-
-	if (g_file_test(path, G_FILE_TEST_EXISTS)) {
-		ssh_cmd = g_strconcat(ssh_cmd, " -i ", path, NULL);
-	} else {
-		ssh_cmd = g_strdup(ssh_cmd);
-	}
+	if (g_file_test(path, G_FILE_TEST_EXISTS))
+		ssh_cmd = g_strconcat(basic_cmd, " -i ", path, NULL);
+	else
+		ssh_cmd = g_strdup(basic_cmd);
 
 	g_free(path);
+	g_free(default_key);
+	g_free(basic_cmd);
 
 	return ssh_cmd;
 }
