@@ -161,10 +161,35 @@ gebr_comm_server_class_init(GebrCommServerClass *klass)
 }
 
 static gchar *
+gebr_get_dafault_keys(void)
+{
+	const gchar *default_keys[] = {"id_rsa", "id_dsa", "identity", NULL};
+	GString *keys = g_string_new(NULL);
+
+	for (gint i = 0; default_keys[i]; i++) {
+		gchar *default_key = g_build_filename(g_get_home_dir(), ".ssh", default_keys[i], NULL);
+
+		if (g_file_test(default_key, G_FILE_TEST_EXISTS)) {
+			gchar *cmd = g_strdup_printf(" -i %s", default_key);
+			keys = g_string_append(keys, cmd);
+			g_free(cmd);
+		}
+
+		g_free(default_key);
+	}
+
+	return g_string_free(keys, FALSE);
+}
+
+static gchar *
 get_ssh_command_with_key(void)
 {
-	gchar *default_key = g_build_filename(g_get_home_dir(), ".ssh", "id_rsa", NULL);
-	gchar *basic_cmd = g_strdup_printf("ssh -o NoHostAuthenticationForLocalhost=yes -i %s ", default_key);
+	const gchar *default_keys = gebr_get_dafault_keys();
+	gchar *basic_cmd;
+	if (default_keys)
+		basic_cmd = g_strdup_printf("ssh -o NoHostAuthenticationForLocalhost=yes %s", default_keys);
+	else
+		basic_cmd = g_strdup("ssh -o NoHostAuthenticationForLocalhost=yes");
 
 	gchar *path = gebr_key_filename(FALSE);
 	gchar *ssh_cmd;
@@ -175,7 +200,6 @@ get_ssh_command_with_key(void)
 		ssh_cmd = g_strdup(basic_cmd);
 
 	g_free(path);
-	g_free(default_key);
 	g_free(basic_cmd);
 
 	return ssh_cmd;
