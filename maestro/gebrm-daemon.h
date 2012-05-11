@@ -219,6 +219,11 @@ void gebrm_daemon_set_canceled(GebrmDaemon *daemon,
 
 gboolean gebrm_daemon_get_canceled(GebrmDaemon *daemon);
 
+void gebrm_daemon_set_timeout(GebrmDaemon *daemon,
+                              guint timeout);
+
+guint gebrm_daemon_get_timeout(GebrmDaemon *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */

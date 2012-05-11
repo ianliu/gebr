@@ -32,6 +32,8 @@ struct _GebrmDaemonPriv {
 	gboolean is_disconnecting;
 	gboolean is_canceled;
 
+	guint timeout;
+
 	GHashTable *tasks;
 
 	GTree *tags;
@@ -700,6 +702,7 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 	daemon->priv->is_initialized = FALSE;
 	daemon->priv->tasks = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	daemon->priv->mpi_flavors = NULL;
+	daemon->priv->timeout = -1;
 }
 
 GebrmDaemon *
@@ -1108,4 +1111,17 @@ gboolean
 gebrm_daemon_get_canceled(GebrmDaemon *daemon)
 {
 	return daemon->priv->is_canceled;
+}
+
+void
+gebrm_daemon_set_timeout(GebrmDaemon *daemon,
+                         guint timeout)
+{
+	daemon->priv->timeout = timeout;
+}
+
+guint
+gebrm_daemon_get_timeout(GebrmDaemon *daemon)
+{
+	return daemon->priv->timeout;
 }
