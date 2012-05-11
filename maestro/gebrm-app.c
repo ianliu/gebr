@@ -375,6 +375,19 @@ gebrm_app_continue_connections_of_daemons(GebrmApp *app,
 	}
 }
 
+static gboolean
+time_out_daemon(gpointer user_data)
+{
+	g_debug("Daemon TIMEOUT");
+
+	GebrmApp *app = user_data;
+
+	gebrm_app_continue_connections_of_daemons(app, FALSE);
+	verify_connect_all(app);
+
+	return FALSE;
+}
+
 static void
 gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				 GebrCommServerState state,
@@ -391,6 +404,17 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				g_free(xauth);
 			}
 		}
+
+		gboolean error = gebrm_daemon_get_error_type(daemon) != NULL;
+		if (error) {
+			guint timeout = gebrm_daemon_get_timeout(daemon);
+			if (timeout != -1) {
+				g_source_remove(timeout);
+				gebrm_daemon_set_timeout(daemon, -1);
+			}
+			gebrm_daemon_set_canceled(daemon, TRUE);
+		}
+
 		if (gebrm_daemon_get_canceled(daemon)) {
 			if (app->priv->connect_all) {
 				gebrm_app_continue_connections_of_daemons(app, FALSE);
@@ -398,7 +422,21 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 			}
 		}
 	}
+
+	else if (state == SERVER_STATE_OPEN_TUNNEL) {
+		if (app->priv->connect_all) {
+			gebrm_daemon_set_canceled(daemon, TRUE);
+			guint timeout = g_timeout_add(5000, time_out_daemon, app);
+			gebrm_daemon_set_timeout(daemon, timeout);
+		}
+	}
+
 	else if (state == SERVER_STATE_LOGGED) {
+		guint timeout = gebrm_daemon_get_timeout(daemon);
+		if (timeout != -1) {
+			g_source_remove(timeout);
+			gebrm_daemon_set_timeout(daemon, -1);
+		}
 		gebrm_daemon_set_canceled(daemon, FALSE);
 		if (app->priv->connect_all) {
 			gebrm_app_continue_connections_of_daemons(app, FALSE);
