@@ -11,12 +11,6 @@
 	<title>The 
 		<guilabel>Job Control</guilabel> Tab</title>
 	<para>GêBr presents an interface to the organization and visualization of the results.</para>
-	<mediaobject>
-		<caption>Opening of Job Control</caption>
-		<imageobject>
-			<imagedata fileref="../images/GeBR_jc_opening.png" />
-		</imageobject>
-	</mediaobject>
 	<para>As seen in 
 		<xref linkend="flows_browser_execute_flow" />, GêBR switches to the 
 		<guilabel>Job Control</guilabel> Tab whenever a Flow is executed.</para>
@@ -191,13 +185,8 @@
 	</section>
 	<section>
 		<title>Right panel</title>
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_jc_details.png" />
-			</imageobject>
-		</mediaobject>
-		<para>In the upper part, information of the selected flow is exhibited. More informations are
-			shown clicking over <emphasis>Details</emphasis>. Among the exhibited information there are:</para>
+		<para>In the upper part, information of the selected flow is exhibited. More information are
+			shown clicking over <emphasis>More Details</emphasis>. Among the exhibited information there are:</para>
 		<itemizedlist>
 			<listitem><para>moment of start/finish of the flow</para></listitem>
 			<listitem><para>input/output files</para></listitem>
@@ -218,7 +207,7 @@
 				<imagedata fileref="../images/GeBR_jc_more_details.png" />
 			</imageobject>
 		</mediaobject>
-		The provided informations are:
+		The provided information are:
 		<itemizedlist>
 			<listitem> <para>GêBR-maestro machine</para></listitem>
 			<listitem> <para>GêBR-client machine</para></listitem>

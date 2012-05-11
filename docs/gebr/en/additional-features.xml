@@ -10,6 +10,27 @@
 
   <title>Additional features</title>
 
+	<section xml:id="additional_features_infrastructure">
+		<title>
+		GêBR infrastructure
+		</title>
+    <para>GêBR can take benefit of the resources of multiple machines. To handle it, GêBR is
+      segmented in three layers:</para>
+    <itemizedlist>
+      <listitem>The host machine (GêBR-client), from where the user sends requests</listitem>
+      <listitem>An intermediate layer (GêBR-Maestro), where all the jobs are coordinated</listitem>
+      <listitem>Executors (GêBR-Server), where the jobs are executed</listitem>
+    </itemizedlist>
+    <mediaobject>
+      <caption>Layers of execution of GêBR</caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
+      </imageobject>
+    </mediaobject>
+    <para>GêBR can be connected to one maestro at once. Each maestro, in turn, can be connected
+      to many Servers. To ease the task of handling of files by the maestro, one requirement is that
+      all the Servers must be in the same Network File System (NFS).</para>
+	</section>
   <section xml:id="menu">
     <title>The 
       <guimenu>Action</guimenu> menu</title>
@@ -51,72 +72,34 @@
           </imageobject>
         </mediaobject>
       </figure>
-      <para>Advanced settings in Preferences menu expands the dialog box where you edit the
-        Maestro Server and HTML editor.</para>
-      <para>
-        <emphasis role="bold">Advanced Settings</emphasis>
-      </para>
-      <mediaobject>
-        <caption>Advanced Settings of Preferences menu</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_preferences_advanced.png" />
-        </imageobject>
-      </mediaobject>
-      <itemizedlist>
-        <listitem>
-          <para>Maestro Server: will be the default for Maestro Server when you start GêBR, the
-            localhost is the default for Maestro Server when you connect GêBR for the first
-            time.</para>
-        </listitem>
-        <listitem>
-          <para>HTML editor: the default text editor that GêBR will open when creating reports on
-            Projects, Lines and Flows.</para>
-        </listitem>
-      </itemizedlist>
     </section>
   </section>
 
-  <section xml:id="servers_configuration">
-    <title>Servers configuration</title>
-    <para>GêBR can take benefit of the resources of multiple machines. To handle it, GêBR is
-      segmented in three layers:</para>
-    <itemizedlist>
-      <listitem>The host machine (GêBR-client), from where the user sends requests</listitem>
-      <listitem>An intermediate layer (GêBR-Maestro), where all the jobs are coordinated</listitem>
-      <listitem>Executors (GêBR-Server), where the jobs are executed</listitem>
-    </itemizedlist>
-    <mediaobject>
-      <caption>Layers of execution of GêBR</caption>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
-      </imageobject>
-    </mediaobject>
-    <para>GêBR can be connected to one maestro at once. Each maestro, in turn, can be connected
-      to many Servers. To ease the task of handling of files by the maestro, one requirement is that
-      all the Servers must be in the same Network File System (NFS).</para>
-    <para>The Servers Interface has three parts: 
+  <section xml:id="additional_features_maestro_servers_configuration">
+		<title>Maestro/Servers configuration</title>
+		<para>The Maestro/Servers Interface has <emphasis>three</emphasis> parts: 
       <itemizedlist>
         <listitem>
-          <para>Maestro - central unit of coordination of multiple machines</para>
+          <para>Maestro - central unit of coordination of multiple machines (for more information, see <xref linkend="additional_features_infrastructure" />).</para>
         </listitem>
         <listitem>
-          <para>Servers - choose the servers associated to the current maestro</para>
+          <para>Servers - choose the servers associated to the current Maestro</para>
         </listitem>
         <listitem>
-          <para>Groups of Servers - configure the groups of Servers on the current maestro</para>
+          <para>Groups of Servers - configure the groups of Servers on the current Maestro</para>
         </listitem>
-    </itemizedlist></para>
-    <section>
       <title>Maestro</title>
       <mediaobject>
         <caption>Maestro entry</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_servers_maestro_entry.png" />
+          <imagedata fileref="../images/GeBR_maestro_servers_overview.png" />
         </imageobject>
       </mediaobject>
+    </itemizedlist></para>
+    <section>
       <para>In the upper part of the Servers Interface, there is an entry in which the user can put
-        the desired machine to use as maestro. A requirement is that the package GêBR-maestro must be
-        installed on that machine. The state of the connection between GêBR and the maestro is shown
+        the desired machine to use as Maestro. A requirement is that the package GêBR-Maestro must be
+        installed on that machine. The state of the connection between GêBR and the Maestro is shown
         by the right-side icon: 
         <itemizedlist>
           <listitem><para>connected (<inlinemediaobject>
@@ -138,32 +121,20 @@
     </section>
     <section>
       <title>Servers</title>
-      <mediaobject>
-        <caption>Servers interface</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_servers_daemons.png" />
-        </imageobject>
-      </mediaobject>
-      <para>Once selected a coordinator machine (maestro), the user can associate machines to that
-        maestro.</para>
-      <para>The lines represent the machines associated to the maestro. Each line has two columns:
+      <para>Once selected a coordinator machine (Maestro), the user can associate machines to that
+        Maestro.</para>
+      <para>The lines represent the machines associated to the Maestro. Each line has two columns:
         the first column shows if the option Auto-connect is activated or not; the second column
         shows the name (hostname) of the machine. The user can add a new machine by clicking over New
         and entering the name of address of the machine.</para>
     </section>
     <section>
       <title>Groups</title>
-      <para>The user can use just a couple of machines associated to the maestro. Using
+      <para>The user can use just a couple of machines associated to the Maestro. Using
         different subsets of machines can be managed through the creation of groups of
         machines.</para>
       <para>In the bottom part of the Servers interface, the user can create/edit Servers groups.
         The user must Drag and Drop the Server to create a group.</para>
-      <mediaobject>
-        <caption>Groups interface</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_servers_groups_new.png" />
-        </imageobject>
-      </mediaobject>
       <para>To create a group, the user needs to click over a server in the list and drag it to the
         + icon. A text box is going to be prompted for the name of the group. Groups with same names
         are not accepted.</para>
@@ -179,11 +150,11 @@
 
 		<itemizedlist>
 			<listitem>
-				between GêBR-client and GêBR-maestros 
+				between GêBR-client and GêBR-Maestros 
 			</listitem>
 
 			<listitem>
-				between GêBR-maestro and GêBR-servers. </listitem>
+				between GêBR-Maestro and GêBR-servers. </listitem>
 		</itemizedlist>
 
 		<para>
@@ -196,7 +167,7 @@
 		</para>
 
 		<para>
-		If you choose GêBR to user public-key authentication by checking <guimenuitem>"Use encryption key to automatically authenticate the next session"</guimenuitem>, then GêBR will create (if not existent) a private/public keys pair and will keep the private key and will copy the public key to the maestro. Once this operation is successfully done, your authentication on your maestro will be automatically done through public-key . In practical terms it means you will not need to write your password anymore to connect to that Maestro through GêBR. Analogous behaviour occurs in the connection between GêBR-Maestro and GêBR-Server.
+		If you choose GêBR to user public-key authentication by checking <guimenuitem>"Use encryption key to automatically authenticate the next session"</guimenuitem>, then GêBR will create (if not existent) a private/public keys pair and will keep the private key and will copy the public key to the Maestro. Once this operation is successfully done, your authentication on your Maestro will be automatically done through public-key . In practical terms it means you will not need to write your password anymore to connect to that Maestro through GêBR. Analogous behaviour occurs in the connection between GêBR-Maestro and GêBR-Server.
 		</para>
 
       <mediaobject>
@@ -601,6 +572,46 @@
         </listitem>
       </itemizedlist>
     </section>
+  </section>
+  <section xml:id="additional_features_mpi_support">
+		<title>
+			Support to MPI programs
+		</title>
+		
+		<para>
+		The Message Passing Interface Standard (MPI) is a vendor independent standard library of message passing. The MPI Forum, which includes vendors, researchers, software library developers, and users, apply efforts to establish the the standards. The goal is to establish a portable and flexible standard for message passing programming. The design of MPI tries to match portability, efficiency, and flexibility. Nowadays, it is a widely used standard for writing message passing programs on high performance computers.
+		</para>
+		<para>
+		There are many implementations (flavors) of MPI, but the most widely used are OpenMPI and MPICH2. OpenMPI is an open source implementation and has influence of three earlier approaches: FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is another widely used implementation and is based on the MPI-2.2 standard.
+		</para>
+		
+		<para>
+		GêBR supports both OpenMPI and MPICH2. However, MPI programs can only run on servers that support the execution of MPI. Thus, for GêBR support of MPI, the user must have acces to servers/clusters that also support it.
+	</para>
+		<para>
+		In the Server Interface, in the MPI column, an icon indicates that the server of that row supports MPI. Roll over the icon to check the flavors of MPI available on that machine. You will be able to run your program just on machines that support the same flavor as the one used on your program.
+		</para>
+      <mediaobject>
+				<caption>
+					The second column indicates the types (flavors) of MPI available in your servers.
+				</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_servers_mpi.png" />
+        </imageobject>
+      </mediaobject>
+			<para>
+			To run an MPI program, you must first create a menu in DêBR and choose appropriately the MPI implementation used on your program. Then import it in GêBR. In the Flow Editor tab, if you double-click over the MPI program, you will be able to set the number of processes to be used by that MPI call.
+			</para>
+
+      <mediaobject>
+        <caption>
+					Double clicking over an MPI program you can set the <emphasis>np</emphasis> parameter of MPI.
+				</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
+        </imageobject>
+      </mediaobject>
+			
   </section>
   <section xml:id="execution_log">
     <title>The execution log</title>

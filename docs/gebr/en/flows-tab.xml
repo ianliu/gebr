@@ -132,8 +132,8 @@
       </listitem>
     </itemizedlist>
     <para>To 
-      <emphasis role="bold">create a Flow</emphasis> you must 
-      <emphasis role="bold">select and order programs</emphasis> from the above categories. Let us
+      create a Flow you must 
+      select and order programs from the above categories. Let us
       see how this is done:</para>
     <procedure>
       <step>
@@ -263,9 +263,9 @@
         </inlinemediaobject>
     </guiicon> to do it.</para>
     <para>There is 
-      <emphasis role="bold">no limit</emphasis> on the number of Flows you can have in one Line.</para>
+      no limit on the number of Flows you can have in one Line.</para>
       <para>After you have created a Flow it will be 
-      <emphasis role="bold">visible on the left side of the main window</emphasis> when the 
+      visible on the left side of the main window when the 
       <guilabel>Flows</guilabel> tab is selected. The 
       <guilabel>Details</guilabel> box, found on the right side of the main window, shows
       information on the selected Flow .</para>
@@ -457,7 +457,7 @@
           (see this concept in Section 
           <xref linkend="overview" />). To import a Flow you must first 
           <emphasis role="bold">select a Line</emphasis> (or 
-          <xref linkend="projects_lines_create_projects_and_lines" />, if one does not exist).</para>
+          <xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
       </step>
       <step>
         <para>Select the tab 

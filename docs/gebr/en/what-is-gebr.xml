@@ -36,11 +36,26 @@
         <title>What's new</title>
     <itemizedlist>
       <listitem>
-        <emphasis>What's new in version 0.16.0 (January 30th 2012)</emphasis>
+        Version 0.18.0 <emphasis>(May 12th 2012: current)</emphasis>
+        <itemizedlist>
+					<listitem>
+						Usage of default folders of each Line (see definition in <xref linkend="projects_lines_line_paths"/>
+						and example of usage in <xref linkend="flow_editor_edit_input_output"/>).
+					</listitem>
+					<listitem>
+						Now it's possible to change the Maestro associated to a Line (see <xref linkend="projects_lines_change_the_maestro_of_a_line"/> ).
+					</listitem>
+					<listitem>
+						GêBR offers the option to browse the files remotely (see <xref linkend="flow_editor_remote_browsing"/>).
+					</listitem>
+        </itemizedlist>
+      </listitem>
+      <listitem>
+        Version 0.16.0<emphasis> (January 30th 2012)</emphasis>
         <itemizedlist>
           <listitem>The maestro concept is born allowing to execute GêBR jobs in multiples machines.
             (see 
-            <xref linkend="servers_configuration" /> and 
+            <xref linkend="additional_features_maestro_servers_configuration" /> and 
             <xref linkend="flow_editor_multiple_machines" />).</listitem>
           <listitem>Now it is possible to control the number of cores used by the jobs of GêBR and
             change the priority of execution of a job (see 
@@ -52,7 +67,7 @@
       <para>
       </para>
       <listitem>
-        <emphasis>What's new in version 0.14.0 (October 3rd 2011):</emphasis>
+        Version 0.14.0 <emphasis>(October 3rd 2011):</emphasis>
         <itemizedlist>
           <listitem>
             The variables dictionary and the program parameters accept arithmetic expressions (see section <xref linkend="dictionary_variables"/>).
@@ -68,7 +83,7 @@
   <section>
     <title>Technical Information</title>
     <para>This guide is for GêBR 
-      <emphasis>version 0.16.0</emphasis>. The images used in this guide where captured
+      <emphasis>version 0.18.0</emphasis>. The images used in this guide where captured
       in the system 
       <emphasis>Ubuntu 10.04</emphasis>. Therefore you may observe slight differences
       if you are using another operating system. For specific installation instructions for each

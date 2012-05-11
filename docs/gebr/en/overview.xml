@@ -10,7 +10,7 @@
   
   <title>Overview</title>
   <para>
-    In GêBR, the<emphasis role="bold">Seismic Processing Flows</emphasis> are
+    In GêBR, the <emphasis role="bold">Seismic Processing Flows</emphasis> are
     organized in greater unities, called <emphasis role="bold">Lines</emphasis>.
     Lines are organized in  
     <emphasis role="bold">Projects</emphasis>. Flows are 
@@ -33,7 +33,8 @@
   <para>
     So that, before creating and executing Flows, It's necessary
     <emphasis role="bold"> to create projects and lines</emphasis>. See in 
-    <xref linkend="projects_lines_create_projects_and_lines"/> how to create a project and a line and in 
+    <xref linkend="projects_lines_create_projects"/> how to create a project and 
+    <xref linkend="projects_lines_create_projects"/> to create a line and in 
     <xref linkend="flows_browser_create_flow"/> to see how to create a Flow.
   </para>
   <para>GêBR uses a resource available by the machines you have access. The jobs are coordinated and distributed for
@@ -85,8 +86,13 @@
             </listitem>
             <listitem>
               <guilabel>
-                Servers 
-              </guilabel>: Maestro's configurations, servers and group of servers; 
+								Connections settings
+              </guilabel>: Settings of the main connections performed by GêBR; 
+            </listitem>
+            <listitem>
+              <guilabel>
+								Maestro/Servers 
+              </guilabel>: Configuration of Maestro, Servers and Groups of servers; 
             </listitem>
             <listitem>
               <guilabel>
