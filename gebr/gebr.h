@@ -66,6 +66,7 @@ struct gebr {
 	GtkActionGroup *action_group_status;
 
 	gboolean restore_selection;
+	gboolean populate_list;
 
 	struct gebr_report {
 		GtkWidget *report_wind;

@@ -379,10 +379,12 @@ gebr_post_config(gboolean has_config)
 	if (!has_config)
 		preferences_setup_ui(TRUE, TRUE, TRUE);
 	else {
-		project_list_populate();
 		gebr.restore_selection = FALSE;
+		gebr.populate_list = FALSE;
 
 		if (gebr_has_maestro_config() && g_strcmp0(gebr.config.version->str, "None")) {
+			gebr.populate_list = TRUE;
+			project_list_populate();
 			gebr_maestro_controller_connect(gebr.maestro_controller,
 			                                gebr.config.maestro_address->str);
 			gebr_config_save(FALSE);
