@@ -311,6 +311,9 @@ GList *gebr_comm_protocol_split_new(GString * arguments, guint parts)
 		iarg = sep + arg_size;
 		if (i != parts-1) {
 			/* jump space between args */
+			if (!strlen(iarg))
+				goto err;
+
 			++iarg;
 
 			if (!strlen(iarg))
