@@ -1,3 +1,31 @@
+2012-05-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* SegFault fix when trying to connect GêBR to a maestro of previous
+	version (0.16)
+
+2012-05-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add treatment for invalid iter when reorder programs on Flow Editor
+	(Seg. fault when drag program with control pressed)
+	* Populate list of project and lines when maestro are logged (in case
+	of connections wizard) and always populate if do not need wizard
+	* Improvement tooltips on servers entry in connections wizard and fix
+	criticals when prepare Servers Page
+
+2012-05-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix empty itens in Report
+
+2012-05-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use message to connect daemons sequentially on ConnectAll button of
+	wizard
+
+2012-05-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.9 for changeset 7532d2039488
+	* Release 0.17.9: connection issues fixes.
+
 2012-05-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Add method gebr_get_default_keys to use more than one key on ssh

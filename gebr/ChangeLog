@@ -1,3 +1,25 @@
+2012-05-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add treatment for invalid iter when reorder programs on Flow Editor
+	(Seg. fault when drag program with control pressed)
+	* Populate list of project and lines when maestro are logged (in case
+	of connections wizard) and always populate if do not need wizard
+	* Improvement tooltips on servers entry in connections wizard and fix
+	criticals when prepare Servers Page
+
+2012-05-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix empty itens in Report
+
+2012-05-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use message to connect daemons sequentially on ConnectAll button of
+	wizard
+
+2012-05-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.9: connection issues fixes.
+
 2012-05-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.17.8: pt_BR translation.

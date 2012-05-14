@@ -1,3 +1,7 @@
+2012-05-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.9: connection issues fixes.
+
 2012-05-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Improvement method run_xauth_command and remove message rmck (remove
