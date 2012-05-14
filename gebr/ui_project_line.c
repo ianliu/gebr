@@ -2006,6 +2006,9 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 				g_string_append_printf(dump, "   <li>%s</li>\n", paths[i][0]);
 				continue;
 			}
+			if (!*paths[i][0]) {
+				continue;
+			}
 			gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);
 			g_string_append_printf(buf, "   <li>%s</li>\n", resolved);
 			g_free(resolved);
