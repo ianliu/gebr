@@ -285,18 +285,7 @@ on_connect_all_server_clicked(GtkButton *button,
                               struct ui_preferences *up)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	GtkTreeIter iter;
-	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
-	gboolean valid = gtk_tree_model_get_iter_first (model, &iter);
-
-	while (valid) {
-		GebrDaemonServer *daemon;
-		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-		if (gebr_daemon_server_get_state(daemon) != SERVER_STATE_LOGGED)
-			gebr_daemon_server_connect(daemon);
-		valid = gtk_tree_model_iter_next(model, &iter);
-	}
-
+	gebr_maestro_server_connect_on_daemons(maestro);
 }
 
 static void
