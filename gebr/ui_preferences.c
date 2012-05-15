@@ -79,7 +79,11 @@ static void on_assistant_destroy(GtkWidget *window,
 
 static void create_maestro_chooser_model(GtkListStore *model,
 					 GebrMaestroServer *maestro);
-static void validate_entry(GtkEntry *entry, gboolean error, const gchar *err_text);
+
+static void validate_entry(GtkEntry *entry,
+                           gboolean error,
+                           const gchar *err_text,
+                           const gchar *clean_text);
 
 static void
 save_preferences_configuration(struct ui_preferences *up)
@@ -495,7 +499,7 @@ on_changed_validate_email(GtkWidget     *widget,
 		error = !gebr_validate_check_is_email(email);
 	}
 
-	validate_entry(GTK_ENTRY(up->email), error, _("Invalid email"));
+	validate_entry(GTK_ENTRY(up->email), error, _("Invalid email"), _("Your email address"));
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, !error);
 }
 
@@ -891,12 +895,13 @@ on_combo_set_text(GtkCellLayout   *cell_layout,
 static void
 validate_entry(GtkEntry *entry,
 	       gboolean error,
-	       const gchar *err_text)
+	       const gchar *err_text,
+	       const gchar *clean_text)
 {
 	if (!error) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-		gtk_widget_set_tooltip_text(GTK_WIDGET(entry), DEFAULT_SERVERS_ENTRY_TEXT);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(entry), clean_text);
 	} else {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, err_text);
@@ -918,7 +923,9 @@ on_server_entry_changed(GtkWidget *entry,
 		return;
 
 	if (*entry_text) {
-		validate_entry(GTK_ENTRY(up->server_entry), error, _("GêBR supports the formats hostname or ip address."));
+		validate_entry(GTK_ENTRY(up->server_entry), error,
+		               _("GêBR supports the formats hostname or ip address."),
+		               DEFAULT_SERVERS_ENTRY_TEXT);
 	} else {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
