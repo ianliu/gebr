@@ -176,7 +176,7 @@ to GeBR.
 %setup -q -n %{name}-%{version}
 
 %build
-%configure --disable-debug --enable-gtk-doc
+%configure --disable-debug --enable-gtk-doc CFLAGS=-Wno-error
 make %{?_smp_mflags}
 
 %install
