@@ -173,7 +173,7 @@
       <mediaobject>
         <caption>GêBR public-key authentication. Suppose a client wants to stablish a connection. The client is requested for a login credential where he provides the key associated to the Maestro. The Maestro try to match the client key and one of his own public keys. In positive case, the client is allowed to communicate to that Maestro. Otherwise, he is requested for a password.</caption>
         <imageobject>
-                  <imagedata fileref="../../common-images/public_key_authentication_diagram.png" />
+					<imagedata fileref="../images/GeBR_public_key_diagram.png" />
         </imageobject>
       </mediaobject>
 
