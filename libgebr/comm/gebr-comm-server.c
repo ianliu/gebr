@@ -702,9 +702,29 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 		return;
 
 	if (!server->port) {
+		gchar *error = NULL;
+
+		gchar *output;
+		gchar *cmd_line = g_strdup_printf("host %s", server->address->str);
+		g_spawn_command_line_sync(cmd_line, &output, NULL, NULL, NULL);
+		g_free(cmd_line);
+
+		if (g_strcmp0(server->address->str, g_get_host_name()) && g_strrstr(output, "NXDOMAIN"))
+			error = g_strdup_printf(_("The host %s not found."), server->address->str);
+		else if (gebr_comm_server_is_maestro(server) &&
+		    !g_find_program_in_path("gebrm"))
+			error = g_strdup(_("Maestro not installed."));
+		else if (!g_find_program_in_path("gebrd"))
+			error = g_strdup(_("Server not installed."));
+		else
+			error = g_strdup(_("Could not run SSH server."));
+
 		gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "%s: Missing port number!", __func__);
-		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, _("Could not run server."));
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, error);
 		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run server '%s'."), server->address->str);
+
+		g_free(error);
+		g_free(output);
 		return;
 	}
 
