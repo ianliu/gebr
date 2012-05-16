@@ -24,13 +24,26 @@
     research and for use in courses.</para>
   <section>
     <title>GêBR Project</title>
-    <para>Our main objective is to help bring together the Brazilian
-      geophysics community, by developing tools to aid the dissemination of research in the
-      area.</para>
+
+    <para>The <emphasis>GêBR Project</emphasis> was initially proposed
+    to develop and promote the GêBR interface. During 2007–2008, the
+    core team of developers had offered several courses on seismic
+    processing with GêBR, at the most active research centers in
+    Geophysics in Brazil. Around 200 students and professionals have
+    had direct contact with the project in that period. In that
+    process we observed a demand for integration efforts among
+    Brazilian geophysical community. That motivated a redefinition for
+    the project’s goals.</para>
+
+    <blockquote><emphasis>Our main objective is to to stimulate the
+    integration of the Brazilian Geophysical Community by providing an
+    interface to geophysical data processing that could be used not
+    only for teaching purposes but also as a research dissemination
+    vehicle.</emphasis></blockquote>
+
     <para>For more information, visit the project's official site:
-      <emphasis>
-        <link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link>
-    </emphasis>.</para>
+      <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.
+    </para>
   </section>
   <section>
         <title>What's new</title>
@@ -38,16 +51,18 @@
       <listitem>
         Version 0.18.0 <emphasis>(May 12th 2012: current)</emphasis>
         <itemizedlist>
-					<listitem>
-						Usage of default folders of each Line (see definition in <xref linkend="projects_lines_line_paths"/>
-						and example of usage in <xref linkend="flow_editor_edit_input_output"/>).
-					</listitem>
-					<listitem>
-						Now it's possible to change the Maestro associated to a Line (see <xref linkend="projects_lines_change_the_maestro_of_a_line"/> ).
-					</listitem>
-					<listitem>
-						GêBR offers the option to browse the files remotely (see <xref linkend="flow_editor_remote_browsing"/>).
-					</listitem>
+	  <listitem>
+	    Prior to this version, Lines could have some directories, known as <emphasis>Line's paths</emphasis>. Shortcuts
+	    to those directories were available in each file browse dialog. From this version, to each Line it is associated a standard
+	    hierarchy of directories (see definition in <xref linkend="projects_lines_line_paths"/>
+	    and example of usage in <xref linkend="flow_editor_edit_input_output"/>).
+	  </listitem>
+	  <listitem>
+	    Now it's possible to change the Line's Maestro (see <xref linkend="projects_lines_change_the_maestro_of_a_line"/>).
+	  </listitem>
+	  <listitem>
+	    GêBR correctly displays remote folder (see <xref linkend="flow_editor_remote_browsing"/>).
+	  </listitem>
         </itemizedlist>
       </listitem>
       <listitem>
@@ -82,18 +97,16 @@
   </section>
   <section>
     <title>Technical Information</title>
-    <para>This guide is for GêBR 
-      <emphasis>version 0.18.0</emphasis>. The images used in this guide where captured
-      in the system 
-      <emphasis>Ubuntu 10.04</emphasis>. Therefore you may observe slight differences
-      if you are using another operating system. For specific installation instructions for each
-      operating system, see the 
-      <emphasis>
-        <link xlink:href="http://www.gebrproject.com/install-guide">install guide</link>
-      </emphasis>, in the 
-      <emphasis>
-        <link xlink:href="http://www.gebrproject.com">project's official site</link>
-    </emphasis>.</para>
+    <para>This user guide is for GêBR <emphasis>version
+      0.18.0</emphasis>. The images used in this guide where captured
+      in the system <emphasis>Ubuntu 10.04</emphasis>. Therefore, you
+      may observe slight differences if you are using another
+      operating system. For specific installation instructions for
+      each operating system, see the
+      <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">install
+      guide</link></emphasis>, in the
+      <emphasis><link xlink:href="http://www.gebrproject.com">project's
+      official site</link></emphasis>.</para>
   </section>
   <!-- Time da GêBR (GêBR Team) -->
   <xi:include href="gebr-team.xml" />
