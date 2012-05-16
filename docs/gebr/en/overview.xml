@@ -9,95 +9,146 @@
   xml:id="overview">
   
   <title>Overview</title>
-  <para>
-    In GêBR, the <emphasis role="bold">Seismic Processing Flows</emphasis> are
-    organized in greater unities, called <emphasis role="bold">Lines</emphasis>.
-    Lines are organized in  
-    <emphasis role="bold">Projects</emphasis>. Flows are 
-    <emphasis>Seismic Processing Flows</emphasis>. 
-  </para>
+  <para>The processing of a seismic data is carried out
+  by <emphasis>processing flows</emphasis>. A processing flow is a
+  chain of programs, which sequentially operates on an input data to
+  produce an output data from it. For example, processing flows can
+  be assembled to accomplish tasks like <emphasis>spike
+  deconvolution</emphasis>, <emphasis>ground-roll
+  atenuation</emphasis>, <emphasis>NMO correction</emphasis>, and so
+  on.</para>
+
+  <para>In GêBR, processing flows are referenced
+  as <emphasis role="bold">Flow</emphasis>. The complete processing of
+  a seismic data (also known as a <emphasis>seismic line</emphasis>,
+  in 2D case) involves several processing flows. The set of processing
+  flows is referenced as a <emphasis role="bold">Line</emphasis> in
+  the GêBR interface. Furthermore, it is common to have many seismic
+  lines acquired on a target area. A set of seismic lines is known as
+  a <emphasis role="bold">Project</emphasis>, in GêBR.</para>
+
+  <para>In summary, GêBR has three levels organization, from top to bottom:</para>
   <itemizedlist>
     <listitem>
       <para>
-        A <emphasis role="bold">Project</emphasis> is a set of
-        <emphasis role="bold">Lines</emphasis>
+        <emphasis role="bold">Project</emphasis>: It is a set of
+        <emphasis role="bold">Lines</emphasis>. A Project has only few
+	basic information and is used to cluster lines related
+	somehow.</para>
+    </listitem>
+    <listitem>
+      <para>
+        <emphasis role="bold">Line</emphasis>: It is a set of 
+        <emphasis role="bold">Flows</emphasis>. During the setup of
+        the Line, some important choices have to be made, mainly
+        concerning the organization of the <emphasis>processing
+        products</emphasis> (intermediate data, figures, tables, etc)
+        produced during the processing of a seismic line.
       </para>
     </listitem>
     <listitem>
       <para>
-        A <emphasis role="bold">Line</emphasis> is a set of 
-        <emphasis role="bold">Flows</emphasis>
+	<emphasis role="bold">Flow</emphasis>: It is a sequence of
+	programs, designed to accomplish a specific task, in the
+	course of the processing the seismic data.
       </para>
     </listitem>
   </itemizedlist>
-  <para>
-    So that, before creating and executing Flows, It's necessary
-    <emphasis role="bold"> to create projects and lines</emphasis>. See in 
-    <xref linkend="projects_lines_create_projects"/> how to create a project and 
-    <xref linkend="projects_lines_create_projects"/> to create a line and in 
-    <xref linkend="flows_browser_create_flow"/> to see how to create a Flow.
-  </para>
-  <para>GêBR uses a resource available by the machines you have access. The jobs are coordinated and distributed for
-    all machines by GêBR-maestro (coordinator). These jobs are effectively executed by GêBR-daemon (server). Requests 
-    are sent to maestro by GêBR-client (local).   
- </para>
-  The GêBR interface is organized in tabs:
-  <itemizedlist>
-    <listitem>
-      <guilabel>
-        Projects and Lines
-      </guilabel>: hierarchy: Flows in Lines and Lines in Projects;
-    </listitem>
-    <listitem>
-      <guilabel>
-        Flows
-      </guilabel>: creating and executing Flows;
-    </listitem>
-    <listitem>
-      <guilabel>
-        Flow Editor
-      </guilabel>: editing and executing a Flow;
-    </listitem>
-    <listitem>
-      <guilabel>
-        Job Control
-      </guilabel>: Visualization of results.
-    </listitem>
 
-    </itemizedlist>
-    <figure>
-      <mediaobject>
-        <caption>GêBR tabs</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_tabs.png"/>
-        </imageobject>
-      </mediaobject>
-    </figure>
+  <para>
+    Thus, before creating and executing Flows, it's necessary create
+    at least one Project owning one
+    Line. <xref linkend="projects_lines_create_projects"/>,
+    <xref linkend="projects_lines_create_lines"/> and
+    <xref linkend="flows_browser_create_flow"/> explain how this is
+    accomplished.
+  </para>
+
+  <para>To assemble a Flow, the user has to not only select the
+  programs, but also configure them properly, through their
+  parameters. Once the Flow is ready, it is time to actually execute
+  it.</para>
+
+  <para>Through GêBR, it is possible to take advantage of as many
+  machines as the user has access, to run the flows. This is done
+  transparently to the user and is only possible due to another
+  player, called <emphasis role="bold">Maestro</emphasis>.</para>
+  
+  <para>The GêBR interface, sometimes refered as GêBR only, is the
+  graphical interface with whom the user interacts with to build
+  processing flows, execute them, inspect results, etc. Usually, this
+  interface is installed and is running in the machine user has
+  physical contatct with.</para>
+
+  <para>When the user decides to execute a flow, GêBR sends this
+    request to the Maestro, giving rise to
+    a <emphasis role="bold">job</emphasis>. However the Maestro does
+    not execute the job itself. Indeed, it dispatches the job to some
+    of the
+    <emphasis role="bold">working machines</emphasis>, under its
+    control. Without interference, Maestro collects information about
+    the state of each working machine and ranks them according to
+    their capabilities and available resources at time. Therefore,
+    Maestro can take smart decisions about which machines are best
+    suited to run the job.</para>
+
+  <para>Finally, the working machines are the machines that actually
+  run the job. They put their computational power at disposal of the
+  Maestro. Under Maestros' coordination the working machines can even
+  cooperate to conclude processing jobs fasters.</para>
+    
+  <section xml:id="gebr_tabs">
+    <title>GêBR interface layout</title>
+
     <para>
-      GêBR also has additional resources in menu bar, on the top of the window. 
+      The GêBR interface is intentionally simple. It is organized in tabs:
+      <itemizedlist>
+	<listitem>
+	  <guilabel>Projects and Lines</guilabel>: for creating and manipulating
+	  Projects and Lines;
+	</listitem>
+	<listitem>
+	  <guilabel>Flows</guilabel>: for creating and executing Flows;
+	</listitem>
+	<listitem>
+	  <guilabel>Flow Editor</guilabel>: for editing and executing a Flow;
+	</listitem>
+	<listitem>
+	  <guilabel>Job Control</guilabel>: for inspecting the results.
+	</listitem>
+      </itemizedlist>
+      <!--
+      <figure>
+	<mediaobject>
+          <caption>GêBR tabs.</caption>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_tabs.png"/>
+          </imageobject>
+	</mediaobject>
+      </figure>
+      -->
+    </para>
+    
+    <para>
+      GêBR also has additional resources in menu bar, on the top of
+      the window.
       <itemizedlist>
         <listitem>
           Actions
           <itemizedlist>
             <listitem>
-              <guilabel>
-                Preferences 
-              </guilabel>: User preferences;
+              <guilabel>Preferences</guilabel>: User preferences;
             </listitem>
             <listitem>
-              <guilabel>
-								Connections settings
-              </guilabel>: Settings of the main connections performed by GêBR; 
+              <guilabel>Connections Assistant</guilabel>: Step-by-step
+              guided setup of the main connections performed by GêBR;
             </listitem>
             <listitem>
-              <guilabel>
-								Maestro/Servers 
-              </guilabel>: Configuration of Maestro, Servers and Groups of servers; 
+              <guilabel>Maestro/Servers</guilabel>: Configuration of
+              Maestro, Servers and Groups of servers;
             </listitem>
             <listitem>
-              <guilabel>
-                Quit 
-              </guilabel>: quit GêBR.
+              <guilabel>Quit</guilabel>: quit GêBR.
             </listitem>
           </itemizedlist>
         </listitem>
@@ -105,25 +156,20 @@
           Help 
           <itemizedlist>
             <listitem>
-              <guilabel>
-                Help
-              </guilabel> : GêBR's documentation;
+              <guilabel>Help</guilabel>: GêBR's documentation;
             </listitem>
             <listitem>
-              <guilabel>
-                Examples
-              </guilabel>: examples of seismic processing;
+              <guilabel>Examples</guilabel>: examples of seismic processing;
             </listitem>
             <listitem>
-              <guilabel>
-                About
-              </guilabel>: GêBR's version
+              <guilabel>About</guilabel>: GêBR's version, license and
+              staff information.
             </listitem>
           </itemizedlist>
         </listitem>
       </itemizedlist>
-
     </para>
+    <!--
     <figure>
       <mediaobject>
         <caption>GêBR's menus bar</caption>
@@ -132,6 +178,7 @@
         </imageobject>
       </mediaobject>
     </figure>
+    -->
     </section>
-  
+</section>  
 
