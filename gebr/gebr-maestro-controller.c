@@ -509,7 +509,9 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 	for (int i = 0; i < n-1; i++)
 		gtk_notebook_remove_page(nb, 0);
 
-	GList *tags = gebr_maestro_server_get_all_tags(maestro);
+	GList *tags = NULL;
+	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+		tags = gebr_maestro_server_get_all_tags(maestro);
 
 	for (GList *i = tags; i; i = i->next) {
 		const gchar *tag = i->data;
