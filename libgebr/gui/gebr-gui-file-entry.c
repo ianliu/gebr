@@ -240,7 +240,7 @@ void gebr_gui_file_entry_set_warning(GebrGuiFileEntry * self, const gchar * tool
 
 	g_return_if_fail (GEBR_GUI_IS_FILE_ENTRY (self));
 
-	gtk_entry_set_icon_from_stock(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+	gtk_entry_set_icon_from_stock(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, "folder-warning");
 	gtk_entry_set_icon_tooltip_text(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, tooltip);
 }
 
