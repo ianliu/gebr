@@ -244,7 +244,7 @@ static void job_process_finished(GebrCommProcess * process, gint status, GebrdJo
 	if (WEXITSTATUS(status) == 0)
 		job_status_notify_finished(job);
 	else
-		job_status_notify(job, JOB_STATUS_FAILED, _("Job exited with failure"));
+		job_status_notify(job, JOB_STATUS_FAILED, gebr_iso_date());
 }
 
 /**

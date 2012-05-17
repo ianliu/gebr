@@ -1071,8 +1071,10 @@ compute_subheader_label(GebrJob *job,
 		const gchar *tmp = gebr_localized_date(finish_date);
 		if (status == JOB_STATUS_FINISHED)
 			g_string_append_printf(finish, _("Finished at %s"), tmp);
-		else
+		else if (status == JOB_STATUS_CANCELED)
 			g_string_append_printf(finish, _("Canceled at %s"), tmp);
+		else if (status == JOB_STATUS_FAILED)
+			g_string_append_printf(finish, _("Failed at %s"), tmp);
 	}
 
 	if (status == JOB_STATUS_FINISHED) {
@@ -1095,15 +1097,20 @@ compute_subheader_label(GebrJob *job,
 	}
 
 	if (status == JOB_STATUS_CANCELED) {
+		g_string_append_c(finish, '\n');
+		g_string_append_printf(finish, _("Elapsed time: %s"),
+		                       gebr_job_get_elapsed_time(job));
 		*subheader = g_string_free(finish, FALSE);
 		*start_detail = g_string_free(start, FALSE);
 		return;
 	}
 
 	if (status == JOB_STATUS_FAILED) {
-		*subheader = g_strdup(_("Job failed"));
+		g_string_append_c(finish, '\n');
+		g_string_append_printf(finish, _("Elapsed time: %s"),
+		                       gebr_job_get_elapsed_time(job));
+		*subheader = g_string_free(finish, FALSE);
 		*start_detail = g_string_free(start, FALSE);
-		g_string_free(finish, TRUE);
 		return;
 	}
 
