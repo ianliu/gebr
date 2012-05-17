@@ -359,25 +359,28 @@ void flow_browse_info_update(void)
 	g_free(group);
 
 	/* Input file */
-	if (strlen(gebr_geoxml_flow_io_get_input(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input),
-				   gebr_geoxml_flow_io_get_input(gebr.flow));
+	gchar *input_file = gebr_geoxml_flow_io_get_input_real(gebr.flow);
+	if (strlen(input_file))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), input_file);
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), _("(none)"));
+	g_free(input_file);
 
 	/* Output file */
-	if (strlen(gebr_geoxml_flow_io_get_output(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output),
-				   gebr_geoxml_flow_io_get_output(gebr.flow));
+	gchar *output_file = gebr_geoxml_flow_io_get_output_real(gebr.flow);
+	if (strlen(output_file))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), output_file);
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), _("(none)"));
+	g_free(output_file);
 
 	/* Error file */
-	if (strlen(gebr_geoxml_flow_io_get_error(gebr.flow)))
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error),
-				   gebr_geoxml_flow_io_get_error(gebr.flow));
+	gchar *error_file = gebr_geoxml_flow_io_get_error(gebr.flow);
+	if (strlen(error_file))
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), error_file);
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), _("(none)"));
+	g_free(error_file);
 
 	/* Author and email */
 	text = g_string_new(NULL);
