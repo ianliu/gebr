@@ -1619,6 +1619,15 @@ gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro)
 	return g_strdup(g_get_home_dir());
 }
 
+gboolean
+gebr_maestro_server_has_home_dir(GebrMaestroServer *maestro)
+{
+	if (maestro->priv->home && strlen(maestro->priv->home))
+		return TRUE;
+
+	return FALSE;
+}
+
 gchar *
 gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro)
 {

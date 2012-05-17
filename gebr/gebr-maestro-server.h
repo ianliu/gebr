@@ -186,6 +186,8 @@ gchar *gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro);
 
 const gchar *gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro);
 
+gboolean gebr_maestro_server_has_home_dir(GebrMaestroServer *maestro);
+
 gchar *gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_set_clocks_diff(GebrMaestroServer *maestro, gint secs);
