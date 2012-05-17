@@ -9,93 +9,124 @@
   xml:id="overview">
   
   <title>Overview</title>
-  <para>The processing of a seismic data is carried out
-  by <emphasis>processing flows</emphasis>. A processing flow is a
-  chain of programs, which sequentially operates on an input data to
-  produce an output data from it. For example, processing flows can
-  be assembled to accomplish tasks like <emphasis>spike
-  deconvolution</emphasis>, <emphasis>ground-roll
-  atenuation</emphasis>, <emphasis>NMO correction</emphasis>, and so
-  on.</para>
 
-  <para>In GêBR, processing flows are referenced
-  as <emphasis role="bold">Flow</emphasis>. The complete processing of
-  a seismic data (also known as a <emphasis>seismic line</emphasis>,
-  in 2D case) involves several processing flows. The set of processing
-  flows is referenced as a <emphasis role="bold">Line</emphasis> in
-  the GêBR interface. Furthermore, it is common to have many seismic
-  lines acquired on a target area. A set of seismic lines is known as
-  a <emphasis role="bold">Project</emphasis>, in GêBR.</para>
+  <section xml:id="overview-elements">
+    <title>Projects, Lines and Flows</title>
+    
+    <para>The processing of a seismic data is carried out
+      by <emphasis>processing flows</emphasis>. A processing flow is a
+      chain of programs, which sequentially operates on an input data to
+      produce an output data from it. For example, processing flows can be
+      assembled to accomplish tasks like <emphasis>spike
+	deconvolution</emphasis>, <emphasis>ground-roll
+	atenuation</emphasis>, <emphasis>NMO correction</emphasis>, and so
+      on.</para>
 
-  <para>In summary, GêBR has three levels organization, from top to bottom:</para>
-  <itemizedlist>
-    <listitem>
-      <para>
-        <emphasis role="bold">Project</emphasis>: It is a set of
-        <emphasis role="bold">Lines</emphasis>. A Project has only few
-	basic information and is used to cluster lines related
-	somehow.</para>
-    </listitem>
-    <listitem>
-      <para>
-        <emphasis role="bold">Line</emphasis>: It is a set of 
-        <emphasis role="bold">Flows</emphasis>. During the setup of
-        the Line, some important choices have to be made, mainly
-        concerning the organization of the <emphasis>processing
-        products</emphasis> (intermediate data, figures, tables, etc)
-        produced during the processing of a seismic line.
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-	<emphasis role="bold">Flow</emphasis>: It is a sequence of
-	programs, designed to accomplish a specific task, in the
-	course of the processing the seismic data.
-      </para>
-    </listitem>
-  </itemizedlist>
+    <para>In GêBR, processing flows are referenced
+      as <emphasis role="bold">Flows</emphasis>. The complete processing of
+      a seismic data (also known as a <emphasis>seismic line</emphasis>,
+      in 2D case) involves several processing flows. The set of processing
+      flows is referenced as a <emphasis role="bold">Line</emphasis> in
+      the GêBR interface. Furthermore, it is common to have many seismic
+      lines acquired on a target area. A set of seismic lines is known as
+      a <emphasis role="bold">Project</emphasis>, in GêBR.</para>
 
-  <para>
-    Thus, before creating and executing Flows, it's necessary create
-    at least one Project owning one
-    Line. <xref linkend="projects_lines_create_projects"/>,
-    <xref linkend="projects_lines_create_lines"/> and
-    <xref linkend="flows_browser_create_flow"/> explain how this is
-    accomplished.
-  </para>
+    <para>In summary, GêBR has three levels organization, from top to bottom:</para>
+    <itemizedlist>
+      <listitem>
+	<para>
+          <emphasis role="bold">Project</emphasis>: It is a set of
+          <emphasis role="bold">Lines</emphasis>. A Project has only few
+	  basic information and is used to cluster lines related
+	  somehow.</para>
+      </listitem>
+      <listitem>
+	<para>
+          <emphasis role="bold">Line</emphasis>: It is a set of 
+          <emphasis role="bold">Flows</emphasis>. During the setup of
+          the Line, some important choices have to be made, mainly
+          concerning the organization of the <emphasis>processing
+            products</emphasis> (intermediate data, figures, tables, etc)
+          produced during the processing of a seismic line.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  <emphasis role="bold">Flow</emphasis>: It is a sequence of
+	  programs, designed to accomplish a specific task, in the
+	  course of the processing the seismic data.
+	</para>
+      </listitem>
+    </itemizedlist>
 
-  <para>To assemble a Flow, the user has to not only select the
-  programs, but also configure them properly, through their
-  parameters. Once the Flow is ready, it is time to actually execute
-  it.</para>
+    <para>
+      Thus, before creating and executing Flows, it's necessary create
+      at least one Project owning one
+      Line. <xref linkend="projects_lines_create_projects"/>,
+      <xref linkend="projects_lines_create_lines"/> and
+      <xref linkend="flows_browser_create_flow"/> explain how this is
+      accomplished.
+    </para>
 
-  <para>Through GêBR, it is possible to take advantage of as many
-  machines as the user has access, to run the flows. This is done
-  transparently to the user and is only possible due to another
-  player, called <emphasis role="bold">Maestro</emphasis>.</para>
+    <para>To assemble a Flow, the user has to not only select the
+      programs, but also configure them properly, through their
+      parameters. Once the Flow is ready, it is time to actually execute
+      it.</para>
+  </section>
+
+  <section xml:id="overview-connections">
+    <title>GêBR players</title>
+
+    <para>The GêBR set of tool is composed by three main player
+      categories: <emphasis role="bold">GêBR</emphasis> (the interface
+      itself), <emphasis role="bold">Maestros</emphasis>,
+      and <emphasis role="bold">working machines</emphasis>. But who
+      are those guys?</para>
+
+    <para>The GêBR interface, sometimes refered as GêBR only, is the
+      graphical interface with whom the user interacts with to build
+      processing flows, execute them, inspect results, etc. Usually, this
+      interface is installed and is running in the machine user has
+      physical contatct with.</para>
+
+    <para>Through GêBR, it is possible to take advantage of as many
+      machines as the user has access, to run processing flows. Those
+      machines are referenced as <emphasis role="bold">working
+      machines</emphasis> (or sometimes,
+      as <emphasis>servers</emphasis>). They may be local, meaning the
+      user is physically using them, or remote, meaning the user has
+      access to them through the network. No matter where the machines
+      are, they are equally treated by GêBR, which means that the user
+      does not have to care about that.</para>
+
+    <para>However, GêBR does not talk directly with the working
+      machines. This communication is established through another
+      player, the <emphasis role="bold">Maestro</emphasis>. It acts as
+      a coordinator of the working machines. Without interference,
+      Maestro collects information about the state of each working
+      machine and ranks them according to their capabilities and
+      available resources at time. Therefore, Maestro can take smart
+      decisions about which machines are best suited to run the
+      job.</para>
   
-  <para>The GêBR interface, sometimes refered as GêBR only, is the
-  graphical interface with whom the user interacts with to build
-  processing flows, execute them, inspect results, etc. Usually, this
-  interface is installed and is running in the machine user has
-  physical contatct with.</para>
+    <para>The working machines put their computational power at
+      disposal of the Maestro. Under Maestros' coordination the
+      working machines can even cooperate to conclude processing jobs
+      fasters.</para>
+ 
+   <para>When the user decides to execute a flow, GêBR sends this
+      request to the Maestro, giving rise to
+      a <emphasis role="bold">job</emphasis>. However the Maestro does
+      not execute the job itself. Indeed, it dispatches the job to
+      some of the working machines, under its control. Besides,
+      Maestro collects the results and all information about the job,
+      sending them back to GêBR, where they are presented to the
+      user.</para>
 
-  <para>When the user decides to execute a flow, GêBR sends this
-    request to the Maestro, giving rise to
-    a <emphasis role="bold">job</emphasis>. However the Maestro does
-    not execute the job itself. Indeed, it dispatches the job to some
-    of the
-    <emphasis role="bold">working machines</emphasis>, under its
-    control. Without interference, Maestro collects information about
-    the state of each working machine and ranks them according to
-    their capabilities and available resources at time. Therefore,
-    Maestro can take smart decisions about which machines are best
-    suited to run the job.</para>
-
-  <para>Finally, the working machines are the machines that actually
-  run the job. They put their computational power at disposal of the
-  Maestro. Under Maestros' coordination the working machines can even
-  cooperate to conclude processing jobs fasters.</para>
+   <para>This communication process, despiste complex, is completely
+     transparent to the user, which can concentrate on processing
+     seismic data, leaving all technical details to GêBR.</para>
+  </section>
     
   <section xml:id="gebr_tabs">
     <title>GêBR interface layout</title>
