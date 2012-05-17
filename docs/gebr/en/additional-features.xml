@@ -255,14 +255,17 @@
               </imageobject>
             </mediaobject>
           </figure>
-          <tip>To a better understanding about variables, check section 
-            <xref linkend="definindo_variaveis" />.</tip>
-          <tip>Positioning the pointer on the icon of the variable type, we can check the solved
-            expression.</tip>
-          <tip>We can navigate over the fields using the keys 
+          <tip><para>To a better understanding about variables, check
+              section <xref linkend="definindo_variaveis"
+              />.</para></tip>
+          <tip><para>Positioning the pointer on the icon of the
+              variable type, we can check the solved
+              expression.</para></tip>
+          <tip><para>We can navigate over the fields using the keys 
             <keycap>Enter</keycap>, 
             <keycap>Tab</keycap> or with the 
-            <mousebutton>Left button of the mouse</mousebutton>.</tip></step>
+            <mousebutton>Left button of the
+            mouse</mousebutton>.</para></tip></step>
       </procedure>
     </section>
     <section xml:id="definindo_variaveis">
@@ -300,11 +303,11 @@
               </imageobject>
             </mediaobject>
           </figure>
-          <tip>To use the variables in fields like 
-            <guimenuitem>Text</guimenuitem>, you must put the variable name embraced by square
-            brackets 
+          <tip><para>To use the variables in fields like
+            <guimenuitem>Text</guimenuitem>, you must put the variable
+            name embraced by square brackets
             <emphasis role="bold">[</emphasis> name-of-the-variable
-            <emphasis role="bold">]</emphasis>.</tip>
+            <emphasis role="bold">]</emphasis>.</para></tip>
         </step>
         <step>
           <para>Now we can use the variables in our newly-created "Example Flow".</para>
@@ -322,21 +325,24 @@
           </figure>
         </step>
       </procedure>
-      <tip>To validate a field of an expression or a variable, you just need to use the
-        key 
-        <keycap>Enter</keycap>.</tip>
-      <tip>To see all the available variables for auto-completion, we just need to type the
-        character 
-        <emphasis role="bold">[</emphasis>' (open brackets).</tip>
+      <tip><para>To validate a field of an expression or a variable,
+        you just need to use the
+        key <keycap>Enter</keycap>.</para></tip>
+      <tip><para>To see all the available variables for
+        auto-completion, we just need to type the character
+        <emphasis role="bold">[</emphasis>' (open brackets).</para></tip>
       <important>
-        <para>We can define the visibility of the variables, managing them in the lists 
+        <para>We can define the visibility of the variables, managing
+        them in the lists
           <guilabel>Project</guilabel>, 
-          <guilabel>Line</guilabel> and 
+          <guilabel>Line</guilabel> and
           <guilabel>Flow</guilabel>. Variables from the list 
           <guilabel>Project</guilabel> are visible to 
-          <emphasis role="bold">every flow</emphasis> of every line of the chosen project.
+          <emphasis role="bold">every flow</emphasis> of every line of
+          the chosen project.
           <guilabel>Lines</guilabel> are visible just for the 
-          <emphasis role="bold">flows of the selected flow</emphasis>. Variables from the list 
+          <emphasis role="bold">flows of the selected
+          flow</emphasis>. Variables from the list
           <guilabel>Flows</guilabel> are visible just for the 
           <emphasis role="bold">chosen flow</emphasis>.</para>
       </important>
@@ -561,14 +567,15 @@
               </figure>
             </listitem>
           </itemizedlist>
-          <tip>Every field, from program parameters or variables, is going to exhibit the icon 
+          <tip><para>Every field, from program parameters or
+          variables, is going to exhibit the icon
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../../common-images/icone_nao_configurado.png" />
                 </imageobject>
               </inlinemediaobject>
-          </guiicon>, and an explanation of the error.</tip>
+            </guiicon>, and an explanation of the error.</para></tip>
         </listitem>
       </itemizedlist>
     </section>
