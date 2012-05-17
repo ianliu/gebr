@@ -125,6 +125,7 @@
       </step>
     </procedure>
     <figure>
+      <title>Project's properties dialog box</title>
       <mediaobject>
         <caption>In the Project's properties dialog box you can edit
           the Title, Description, Author and Email.</caption>
@@ -150,11 +151,13 @@
   <section xml:id="projects_lines_create_lines">
     <title>Creating a Line</title>
 
-    
     <para>To create lines GêBR must be connected to a Maestro (see
-    <xref linkend="additional_features_maestro_servers_configuration"/>). Once
-    there are Projects, and GêBR is connected to a Maestro, you can
-    create Lines. To add a new Line to a Project follow the
+      <xref linkend="additional_features_maestro_servers_configuration"/>). Otherwise,
+      GêBR would not be able to submitted them for execution, since
+      this is done through the Maestro's intervenience.</para>
+
+    <para>Once there are Projects, and GêBR is connected to a Maestro,
+    you can create Lines. To add a new Line to a Project follow the
     steps:</para>
     <procedure>
       <step>Selected a target Project or a Line of the target
@@ -175,35 +178,34 @@
       </step>
     </procedure>
 
-    <para>Through assistant dialog, the user will be instructed to
+    <para>Through an assistant dialog, the user will be instructed to
       fill in the following information:</para>
     <itemizedlist>
-      <listitem><emphasis>Basic properties of the Line</emphasis>, which are
+      <listitem><para><emphasis>Basic properties of the Line</emphasis>, which are
 	<emphasis>Title</emphasis>, 
 	<emphasis>Description</emphasis>,
 	<emphasis>Author</emphasis> and his or her
-	<emphasis>e-mail</emphasis> address.
+	<emphasis>e-mail</emphasis> address.</para>
       </listitem>
       
-      <listitem><emphasis>The BASE path</emphasis>: a top directory
-      where most files referred in the Line should be placed (see
-      <xref linkend="projects_lines_line_paths" />).
+      <listitem><para><emphasis>The BASE path</emphasis>: a top
+      directory where most files referred in the Line should be placed
+      (see <xref linkend="projects_lines_line_paths" />).</para>
       </listitem>
       
-      <listitem><emphasis>Setting of the IMPORT path</emphasis>: a
-      directory used to easily find files outside the BASE directory.
+      <listitem><para><emphasis>The IMPORT path</emphasis>: a
+	  directory used to easily find files outside the BASE
+	  directory.</para>
       </listitem>
     </itemizedlist>
 
-    <para>
-      After creating a Line, the settings of the Line will be shown in
-      the <guilabel>Details</guilabel> panel, on the right of the main
-      window.
+    <para>After creating a Line, the settings of the Line will be
+      shown in the <guilabel>Details</guilabel> panel, on the right of
+      the main window.
     </para>
     
-    <para>
-      There is no limit for the number of projects and lines in GêBR.
-      You can create as many as you want.
+    <para>There is no limit for the number of Projects and Lines in
+      GêBR. You can create as many as you want.
     </para>
 
     <para>GêBR allows collapsing or expanding the view of the
@@ -217,6 +219,7 @@
 
   <section xml:id="projects_lines_delete">
     <title>Deleting a Project or a Line</title>
+
     <para>To remove a Line or Project select the Project or Line then left-click on 
       <guiicon>
 	<inlinemediaobject>
@@ -238,8 +241,9 @@
   
   <section xml:id="projects_lines_edit_properties">
     <title>Editing properties</title>
-		<para>The same settings performed in the creation of a Project or Line can be altered
-			through the Properties Editing.</para>
+		<para>The same settings performed during the creation
+			of a Project or Line can be altered through
+			the Properties Editing.</para>
     <para>To edit Project's or Line's properties, first select the Project or Line and then
       click on the button 
       <guiicon>
@@ -253,214 +257,287 @@
 
   <section xml:id="projects_lines_line_paths">
     <title>Important folders of a Line</title>
-		<para>Every time you create a line, besides setting the main informations of the line, you can set some important folders. From &#60;BASE&#62;, GêBR associates many folders to that line (&#60;BASE&#62;, &#60;IMPORT&#62;, &#60;TMP&#62;, &#60;EXPORT&#62;, &#60;TABLE&#62;, &#60;MISC&#62;). </para>
-	<para>For instance, if we set  &#60;BASE&#62;  as '/home/johndoe/GeBR/MyFirstLine/', GêBR will create these folders in the Servers Filesystem:
-		<itemizedlist>
-			<listitem><emphasis>&#60;BASE&#62;</emphasis>: /home/johndoe/GeBR/MyFirstLine/</listitem>
-			<listitem><emphasis>&#60;DATA&#62;</emphasis>: /home/johndoe/GeBR/MyFirstLine/data/</listitem>
-			<listitem><emphasis>&#60;TMP&#62;</emphasis>:  /home/johndoe/GeBR/MyFirstLine/tmp/</listitem>
-			<listitem><emphasis>&#60;EXPORT&#62;</emphasis>: /home/johndoe/GeBR/MyFirstLine/export/</listitem>
-			<listitem><emphasis>&#60;TABLE&#62;</emphasis>: /home/johndoe/GeBR/MyFirstLine/table/</listitem>
-			<listitem><emphasis>&#60;MISC&#62;</emphasis>: /home/johndoe/GeBR/MyFirstLine/custom/</listitem>
-		</itemizedlist>
-		
-		This set of folders can help you manage the data related to this Line (see <xref linkend="flow_editor_edit_input_output"/>).
-	</para>
+
+    <para>To better manage all files read or created during the
+      processing of a data, GêBR defines a directory structure to
+      store them. This structure is defined by a top directory, known
+      as BASE, and few other nested standard directories.</para>
+
+    <para>For instance, if the home folder of the user is
+    '/home/john', setting the BASE to '/home/john/GeBR/MyFirstLine/',
+    will have the effect to also define the following
+    directories:</para>
+      <table>
+	<tbody>
+	  <tr>
+	    <td>HOME: </td>
+	    <td> /home/john/</td>
+	  </tr>
+	  <tr>
+	    <td>BASE: </td>
+	    <td> /home/john/GeBR/MyFirstLine/</td>
+	  </tr>
+	  <tr>
+	    <td>DATA: </td>
+	    <td>/home/john/GeBR/MyFirstLine/data/</td>
+	  </tr>
+	  <tr>
+	    <td>TMP: </td>
+	    <td>/home/john/GeBR/MyFirstLine/tmp/</td>
+	  </tr>
+	  <tr>
+	    <td>EXPORT: </td>
+	    <td>/home/john/GeBR/MyFirstLine/export/</td>
+	  </tr>
+	  <tr>
+	    <td>TABLE: </td>
+	    <td>/home/john/GeBR/MyFirstLine/table/</td>
+	  </tr>
+	  <tr>
+	    <td>MISC: </td>
+	    <td>/home/john/GeBR/MyFirstLine/custom/</td>
+	  </tr>
+	</tbody>
+      </table>
+
+      <para>
+      This set of folders can help you manage the data related to this
+      Line (see <xref linkend="flow_editor_edit_input_output"/>).
+      </para>
+
+      <important>
+	<para>Remember that the processing takes place at the working
+	  machines. So, the directory structure describe above will be
+	  created there. In case the working machine is different
+	  from the local machine, where the GêBR interface is running,
+	  the user will not see the created directories by browsing the
+	  local machine's filesystem.</para>
+	<para>To be able to browse files in these directory, the
+          <emphasis>remote browse</emphasis> feature must be enabled
+          in the Maestro of the Line (see
+          <xref linkend="flow_editor_remote_browsing"/>).</para>
+      </important>
+
+      <note><para>Although it is not mandatory to adhere to this
+	  structure, it is highly recommended to do so.</para></note>
+
+  </section>
+
+  <section xml:id="projects_lines_change_the_maestro_of_a_line">
+    <title>Changing the Maestro of a Line</title>
+
+    <para>GêBR supports only one connected Maestro at time. However,
+    the user may have more than one Maestro at his or her
+    disposal.</para>
+
+    <para>Whenever a Maestro is connected, all Lines associates to
+      other Maestros will be unavailable for edition. The user can
+      however migrate a Line from its original Maestro to the
+      connected one. To do so, the Line has to selected. In
+      the <guilabel>Details</guilabel> panel, an icon in the upper
+      left corner indicates whether the Maestro defined for the Line
+      is connected or not. In case the original Maestro is not the
+      connect one, by clicking over that icon, GêBR will offer two
+      options:</para>
+
+    <itemizedlist>
+      <listitem>
+	<para>disconnect from the current Maestro and connect
+	  to the Maestro associated to the Line; or </para>
+      </listitem>
+      <listitem>
+	<para>dissociate the Line from its original Maestro and
+	  associate it to the connected Maestro.</para>
+      </listitem>
+    </itemizedlist>
+
+    <figure>
+      <title>Dialog for Lines from disconnected Maestros</title>
+    <mediaobject>
+      <caption>Options available when you want to edit/run a Line
+      associated to a disconnected Maestro.</caption>
+      <imageobject>
+	<imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png" />
+      </imageobject>
+    </mediaobject>
+    </figure>
+
+  </section>
+
+  <important>
+    <para>When a Line is migrated from one Maestro to another, all
+    data in the BASE directory and in its childs will remain in the
+    working servers of the original Maestro.
+    </para>
+  </important>
+
+  <section xml:id="projects_lines_import">
+    <title>Import a Project or a Line</title>
+    <para>In GêBR you can import Projects or Lines that were previously exported 
+      <xref linkend="projects_lines_export" />. To do so:</para>
+    <procedure>
+      <step>
+	<para>Click on the button 
+	  <guiicon>
+	    <inlinemediaobject>
+	      <imageobject>
+		<imagedata fileref="../../common-images/botao_importar_projeto.png" />
+	      </imageobject>
+	    </inlinemediaobject>
+	</guiicon></para>
+      </step>
+      <step>
+	<para>Select the Project or Line you want to import at window 
+	  <guilabel>Choose Project/Line to open</guilabel>. Only files with extension 
+	  <filename class="extension">prjz</filename> or 
+	  <filename class="extension">lnez</filename> will be show.</para>
+      </step>
+      <step>
+	<para>Click at button 
+	  <guibutton>Open</guibutton>.</para>
+      </step>
+    </procedure>
+    <para>The imported project is added to the list of projects, found
+      on the left of the main window. An imported Line joins the other
+      Lines, if they exist, of the Project that was selected when the
+      Line was imported. In both cases the imported item is identified
+      with the suffix
+      <emphasis role="bold">Imported</emphasis>.</para>
+
+    <note>
+      <para>In GêBR, Lines may only exist inside a Project, see this
+	concept in
+	<xref linkend="projects_lines_create_lines"/>. Therefore to
+	import a Line you must first select an existing Project, or
+	create a new.
+      </para>
+    </note>
+  </section>
+
+  <section xml:id="projects_lines_export">
+    <title>Exporting a Project or a Line</title>
+
+    <para>Although GêBR continuously saves all data, sometimes it is
+      desirable to have copies of your Project and Lines in a file
+      (for example, to share with others or to make backups). To
+      export a Project or a Line:</para>
+    <procedure>
+      <step>
+	<para>Select the Line or Project you wish to save.</para>
+      </step>
+      <step>
+	<para>Left-click on 
+	  <guiicon>
+	    <inlinemediaobject>
+	      <imageobject>
+		<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
+	      </imageobject>
+	    </inlinemediaobject>
+	</guiicon>.</para>
+      </step>
+      <step>
+	<para>A dialog box will appear where you can 
+	  <guilabel>choose the name of the file that will be saved</guilabel>; select a directory
+	  then type the file name, GêBR determines the extension automatically, 
+	  <filename class="extension">prjz</filename> for Projects or 
+	  <filename class="extension">lnez</filename> for Lines.</para>
+      </step>
+      <step>
+	<para>Left-click on 
+	  <guibutton>Save</guibutton>.</para>
+      </step>
+    </procedure>
+  </section>
+
+  <section xml:id="projects_lines_edit_comments_project">
+    <title>Editing comments</title>
+
+    <para>You add comments on the report of a Project or a Line.  To
+      do so, follow the steps:</para>
+
+    <procedure>
+      <step>
+	<para>Left-click on 
+	  <guibutton>Edit comments</guibutton>, which is located just below 
+	  <guilabel>Details</guilabel>, in the 
+	  <guilabel>Project's properties</guilabel> or 
+	  <guilabel>Line's Properties</guilabel> dialog box.</para>
+      </step>
+      <step>
+	<para>Fill in your comment in the text editor that appeared, when you have finished save
+	  your comment then close the editor.</para>
+	<para>In this editor you can save, print and pre-visualize your comment(s) by pressing
+	  one of the icons in the tool bar, or by using the editors menu.</para>
+      </step>
+    </procedure>
+    <figure>
+      <title>Built-in report editor</title>
+      <mediaobject>
+	<caption>The comment editor window.</caption>
+	<imageobject>
+	  <imagedata fileref="../images/janela_comentarios_de_linha.png" />
+	</imageobject>
+      </mediaobject>
+    </figure>
+    
+  </section>
+
+  <section xml:id="projects_lines_view_report_project">
+    <title>View the report</title>
+
+    <para>As explained in the above section, you can edit a report
+      containing additional information about the Project or Line. To
+      view the report left-click on View Report, found at the bottom
+      of the <guilabel>Details</guilabel> box, which is on the right
+      side of the main window.</para>
+
+    <para>After clicking on <guilabel>View Report</guilabel>, a window
+    will appear where you can:</para>
+
+    <procedure>
+      <step>
+	<para>Save;</para>
+      </step>
+      <step>
+	<para>Print the report.</para>
+      </step>
+    </procedure>
+    <para>In the menu Options you can:</para>
+    <procedure>
+      <step>
+	<para>Include your comments;</para>
+      </step>
+      <step>
+	<para>Include the Flow's report;</para>
+      </step>
+      <step>
+	<para>Configure the parameter table pertaining to the Flow's
+	programs;</para>
+      </step>
+      <step>
+	<para>Choose the presentation style of the report, as well as
+	  include other styles.</para>
+      </step>
+    </procedure>
+
+    <figure>
+      <title>Report view</title>
+      <mediaobject>
+	<caption>In the view report window, you can print or save to a
+	  file this report. In the options menu, as is shown above,
+	  you can include: your comments, the Flow's report, the
+	  parameter table and choose from a few pre-defined styles for
+	  the report.</caption>
+	<imageobject>
+	  <imagedata fileref="../images/janela_visualizar_relatorio.png" />
+	</imageobject>
+      </mediaobject>
+    </figure>
+
+    <para><xref linkend="flows_browser_view_report_flow" /> explains
+      in greater detail the View Report tool for Flows, which is very
+      similar to the Line's and Project's View Report except that in
+      this one you can add the Flow's report.</para>
+
+  </section>
 </section>
-<section xml:id="projects_lines_change_the_maestro_of_a_line">
-	<title>Changing the maestro of a Line</title>
-	<para>You can change the maestro of a Line when the connected maestro is different from
-		maestro that was originally configured for this line.
-	</para>
-	Besides the settings of basic information and of the paths, each Line has as a property the Maestro that holds its flows. As these information can be altered (see link properties_line), the maestro of the Line can also be altered. For that, you just need to connect to the destiny Maestro (different from the Maestro associated to the line) and click over the Line. You will see a disconnected icon in the upper edge. Clicking over it, GêBR will offer you two options: 
-	<itemizedlist>
-		<listitem>
-			Disconnect from the current maestro and connect to the maestro associated to that LIne
-		</listitem>
-		<listitem>
-			Dissociate the Line from the previous Maestro and associate it to the currently connected maestro (the data generated when associated to the previous Maestro will remain there).
-		</listitem>
-	</itemizedlist>
-				<mediaobject>
-					<caption>Options available when you want to edit/run a Line which Maestro is not connected.</caption>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png" />
-			</imageobject>
-		</mediaobject>
-		</section>
-		<section xml:id="projects_lines_import">
-			<title>Import a Project or a Line</title>
-			<para>In GêBR you can import Projects or Lines that were previously exported 
-				<xref linkend="projects_lines_export" />. To do so:</para>
-			<procedure>
-				<step>
-					<para>Click on the button 
-						<guiicon>
-							<inlinemediaobject>
-								<imageobject>
-									<imagedata fileref="../../common-images/botao_importar_projeto.png" />
-								</imageobject>
-							</inlinemediaobject>
-					</guiicon></para>
-				</step>
-				<step>
-					<para>Select the Project or Line you want to import at window 
-						<guilabel>Choose Project/Line to open</guilabel>. Only files with extension 
-						<filename class="extension">prjz</filename> or 
-						<filename class="extension">lnez</filename> will be show.</para>
-				</step>
-				<step>
-					<para>Click at button 
-						<guibutton>Open</guibutton>.</para>
-				</step>
-			</procedure>
-			<para>The imported project is added to the list of projects, found on the left of the main
-				window. An imported Line joins the other Lines, if they exist, of the Project that was
-				selected when the Line was imported. In both cases the imported item is identified with the
-				suffix 
-				<emphasis role="bold">Imported</emphasis>.</para>
-			<note>
-				<para>In GêBR, Lines may only exist inside a Project, see this concept in the Section 
-					<xref linkend="projects_lines_create_lines"/>. Therefore to import a Line you must
-					first 
-					select an existing Project, or create a new.
-				</para>
-			</note>
-		</section>
-		<section xml:id="projects_lines_export">
-			<title>Exporting a Project or a Line</title>
-			<para>Although GêBR continuously saves all data, sometimes it is desirable to have copies of
-				your Project and Lines in a file (for example, to share with others or to make backups). To
-				export a Project or a Line:</para>
-			<procedure>
-				<step>
-					<para>Select the Line or Project you wish to save.</para>
-				</step>
-				<step>
-					<para>Left-click on 
-						<guiicon>
-							<inlinemediaobject>
-								<imageobject>
-									<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
-								</imageobject>
-							</inlinemediaobject>
-					</guiicon></para>
-				</step>
-				<step>
-					<para>A dialog box will appear where you can 
-						<guilabel>choose the name of the file that will be saved</guilabel>; select a directory
-						then type the file name, GêBR determines the extension automatically, 
-						<filename class="extension">prjz</filename> for Projects or 
-						<filename class="extension">lnez</filename> for Lines.</para>
-				</step>
-				<step>
-					<para>Left-click on 
-						<guibutton>Save</guibutton>.</para>
-				</step>
-			</procedure>
-		</section>
-		<section xml:id="projects_lines_edit_comments_project">
-			<title>Editing comments</title>
-			<para>You can edit comments on the report to specify information about a Project or a Line.
-				To 
-				<emphasis role="bold">edit a comment</emphasis>:</para>
-			<procedure>
-				<step>
-					<para>Left-click on 
-						<guibutton>Edit comments</guibutton>, which is located just below 
-						<guilabel>Details</guilabel>, in the 
-						<guilabel>Project's properties</guilabel> or 
-						<guilabel>Line's Properties</guilabel> dialog box.</para>
-				</step>
-				<step>
-					<para>Fill in your comment in the text editor that appeared, when you have finished save
-						your comment then close the editor.</para>
-					<para>In this editor you can save, print and pre-visualize your comment(s) by pressing
-						one of the icons in the tool bar, or by using the editors menu.</para>
-				</step>
-			</procedure>
-			<figure>
-				<mediaobject>
-					<caption>The comment editor window.</caption>
-					<imageobject>
-						<imagedata fileref="../images/janela_comentarios_de_linha.png" />
-					</imageobject>
-				</mediaobject>
-			</figure>
-			<tip>
-				<para>In 
-					<menuchoice>
-						<guimenu>Actions</guimenu>
-						<guimenuitem>Preferences</guimenuitem>
-					</menuchoice> (the top left corner of GêBR's main window) you can determine the text editor
-					that will be used to edit reports. The standard editor is 
-					<application>gedit</application>. To use another editor, type the name of the editor in 
-					<guilabel>HTML Editor</guilabel>.</para>
-			</tip>
-			<note>
-				<para>You can only have 
-					<emphasis role="bold">one comment</emphasis> for each Project or Line.</para>
-			</note>
-			<para>
-				<important>
-					<para>To 
-						<emphasis role="bold">view a report</emphasis>:</para>
-					<itemizedlist>
-						<listitem>
-							<para>Select a Project or a Line and click the button 
-								<guibutton>View Report</guibutton>, found at the bottom of the 
-								<guilabel>Details</guilabel> box, which is on the right side of the main
-								window.</para>
-						</listitem>
-					</itemizedlist>
-				</important>
-			</para>
-		</section>
-		<section xml:id="projects_lines_view_report_project">
-			<title>View Report</title>
-			<para>As explained in the above section, you can edit a report containing additional
-				information about the Project or Line. To view the report left-click on View Report, found at
-				the bottom of the 
-				<guilabel>Details</guilabel> box, which is on the right side of the main window.</para>
-			<para>After clicking on 
-				<guilabel>View Report</guilabel>, a window will appear where you can:</para>
-			<procedure>
-				<step>
-					<para>Save;</para>
-				</step>
-				<step>
-					<para>Print the report.</para>
-				</step>
-			</procedure>
-			<para>In the menu Options you can:</para>
-			<procedure>
-				<step>
-					<para>Include your comments;</para>
-				</step>
-				<step>
-					<para>Include the Flow's report;</para>
-				</step>
-				<step>
-					<para>Configure the parameter table pertaining to the Flow's programs;</para>
-				</step>
-				<step>
-					<para>Choose the presentation style of the report, as well as include other
-						styles.</para>
-				</step>
-			</procedure>
-			<figure>
-				<mediaobject>
-					<caption>In the view report window, you can print or save to a file this report. In the
-						options menu, as is shown above, you can include: your comments, the Flow's report,
-						the parameter table and choose from a few pre-defined styles for the report.</caption>
-					<imageobject>
-						<imagedata fileref="../images/janela_visualizar_relatorio.png" />
-					</imageobject>
-				</mediaobject>
-			</figure>
-			<para>
-				<xref linkend="flows_browser_view_report_flow" /> explains in greater detail the View Report tool
-				for Flows, which is very similar to the Line's and Project's View Report except that in this
-				one you can add the Flow's report.</para>
-		</section>
-	</section>
