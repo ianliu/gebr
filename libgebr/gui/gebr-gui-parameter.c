@@ -1271,9 +1271,12 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 		}
 	}
 
-	if (!is_lower && parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE &&
-	    (g_str_has_prefix(text, "<") || g_str_has_prefix(text, "/")))
-		return FALSE;
+	if (!is_lower && parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		if (g_str_has_prefix(text, "/"))
+			return FALSE;
+		if (g_str_has_prefix(text, "<") && g_strrstr(text, ">"))
+			return FALSE;
+	}
 
 	retval = g_str_has_prefix(compl, word);
 
