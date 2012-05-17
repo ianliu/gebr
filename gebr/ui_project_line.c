@@ -1562,7 +1562,7 @@ on_maestro_state_change(GebrMaestroController *mc,
 				sensitive = FALSE;
 
 			if (sensitive)
-				gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", gebr_maestro_server_get_home_dir(maestro));
+				gebr_geoxml_line_set_path_by_name(line, "HOME", gebr_maestro_server_get_home_dir(maestro));
 
 			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
 			valid = gtk_tree_model_iter_next(model, &iter);
