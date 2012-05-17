@@ -350,6 +350,11 @@ void flow_browse_info_update(void)
 	/* Server */
 	gchar *group;
 	gebr_geoxml_flow_server_get_group(gebr.flow, NULL, &group);
+	if (group && !*group) {
+		g_free(group);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		group = g_strdup_printf("Maestro %s", gebr_maestro_server_get_address(maestro));
+	}
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server), group);
 	g_free(group);
 
@@ -736,4 +741,6 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
 	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
+
+	flow_browse_info_update();
 }
