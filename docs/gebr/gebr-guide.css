@@ -16,9 +16,7 @@ p { text-align: justify; }
 .figure .title { display: inline;}
 .figure .title:after { content: "." }
 
-.note p {color: #600000; }
-.tip p {color:  #600000; }
-.important p {color:  #800000; }
+.caution p, .note p, .tip p, .important p {color: #600000; }
 .caption {font-style: italic;
 	  font-size: small; }
 

@@ -7,9 +7,10 @@
   lang="en"
   version="5.0">
 
-  <info>
-    <title>GêBR - User Guide</title>
-  </info>
+  <title>GêBR User's Guide</title>
+
+  <!-- Acknowlegdements -->
+  <xi:include href="preamble.xml" />
 
   <!-- O que é a GêBR? -->
   <xi:include href="what-is-gebr.xml" />
