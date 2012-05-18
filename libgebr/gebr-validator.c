@@ -1272,7 +1272,9 @@ gboolean gebr_validator_evaluate_interval(GebrValidator *self,
 	g_return_val_if_fail(expr != NULL, FALSE);
 
 	if (!strlen(expr)) {
-		*value = g_strdup("");
+		if (value) {
+			*value = g_strdup("");
+		}
 		return TRUE;
 	}
 
