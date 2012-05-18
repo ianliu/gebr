@@ -1251,9 +1251,19 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 		break;
 	} case DICT_EDIT_VALUE: {
 		GError *error = NULL;
+		gchar *resolved;
+		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
+
+		if (gebr.line && type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+			gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+			resolved = gebr_resolve_relative_path(new_text, paths);
+			gebr_pairstrfreev(paths);
+		} else
+			resolved = g_strdup(new_text);
 
 		if (!cancel_edition)
-			gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), new_text, NULL, &error);
+			gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), resolved, NULL, &error);
+		g_free(resolved);
 
 		data->edition_valid = (error == NULL);
 
@@ -1354,7 +1364,15 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 			g_free(ini);
 			g_free(n);
 		}
+	} else if (gebr.line && type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+
+		gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+		value = gebr_relativise_path(value, mount_point, paths);
+		gebr_pairstrfreev(paths);
 	}
+
 
 	gebr_geoxml_object_ref(parameter);
 	gchar *keyword_escaped = g_markup_escape_text(keyword, -1);
