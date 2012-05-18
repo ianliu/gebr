@@ -710,10 +710,10 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 		g_free(cmd_line);
 
 		if (g_strcmp0(server->address->str, g_get_host_name()) && g_strrstr(output, "NXDOMAIN"))
-			error = g_strdup_printf(_("The host %s not found."), server->address->str);
+			error = g_strdup_printf(_("Host %s not found."), server->address->str);
 		else if (gebr_comm_server_is_maestro(server) &&
 		    !g_find_program_in_path("gebrm"))
-			error = g_strdup(_("Maestro not installed."));
+			error = g_strdup_printf(_("No GêBR-Maestro found in %s."), server->address->str);
 		else if (!g_find_program_in_path("gebrd"))
 			error = g_strdup(_("Server not installed."));
 		else
