@@ -701,32 +701,45 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 	if (server->error != SERVER_ERROR_NONE)
 		return;
 
+	gchar *filename = g_strdup_printf("%s-%s.tmp", server->address->str, gebr_comm_server_is_maestro(server) ? "maestro" : "server");
+	gchar *log_file = g_build_filename(g_get_home_dir(),".gebr", filename, NULL);
+	g_free(filename);
+
+	gchar *log_contents;
+	gboolean error_reading = !g_file_get_contents(log_file, &log_contents, NULL, NULL);
+	g_free(log_file);
+
+	gboolean command_not_found = FALSE;
+
+	gchar **log_lines = g_strsplit(log_contents, "\n", -1);
+	g_free(log_contents);
+
+	gint last_line = 0;
+	for (last_line = 0; log_lines[last_line]; last_line++);
+	last_line = last_line - 1;
+	for (; !*log_lines[last_line]; last_line--); //Rollback empty lines
+
+
+	if (!error_reading && g_strrstr(log_lines[last_line], "Exit status 127")) //SSH error code of command not found
+		command_not_found = TRUE;
+
 	if (!server->port) {
 		gchar *error = NULL;
 
-		gchar *output;
-		gchar *cmd_line = g_strdup_printf("host %s", server->address->str);
-		g_spawn_command_line_sync(cmd_line, &output, NULL, NULL, NULL);
-		g_free(cmd_line);
-
-		if (g_strcmp0(server->address->str, g_get_host_name()) && g_strrstr(output, "NXDOMAIN"))
-			error = g_strdup_printf(_("Host %s not found."), server->address->str);
-		else if (gebr_comm_server_is_maestro(server) &&
-		    !g_find_program_in_path("gebrm"))
-			error = g_strdup_printf(_("No GêBR-Maestro found in %s."), server->address->str);
-		else if (!g_find_program_in_path("gebrd"))
-			error = g_strdup(_("Server not installed."));
+		if (command_not_found)
+			error = g_strdup_printf(_("%s not found in %s"), gebr_comm_server_is_maestro(server) ? "Maestro" : "Server", server->address->str);
 		else
-			error = g_strdup(_("Could not run SSH server."));
+			error = g_strdup(log_lines[last_line]);
 
 		gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "%s: Missing port number!", __func__);
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, error);
 		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run server '%s'."), server->address->str);
 
 		g_free(error);
-		g_free(output);
+		g_strfreev(log_lines);
 		return;
 	}
+	g_strfreev(log_lines);
 
 	server->tried_existant_pass = FALSE;
 	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
