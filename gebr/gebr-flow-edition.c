@@ -822,6 +822,8 @@ flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar 
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	flow_edition_set_io();
+
+	update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 }
 
 gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
