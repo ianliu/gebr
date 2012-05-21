@@ -23,6 +23,7 @@
 
 #include "gebr-comm-protocol.h"
 #include "gebr-comm-protocol_p.h"
+#include "gebr-version.h"
 
 /*
  * Internal variables and variables
