@@ -262,12 +262,10 @@ on_daemons_changed(GebrMaestroServer *maestro,
 	gboolean maestro_has_servers = gebr_maestro_server_has_servers(maestro, FALSE);
 
 	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
-	GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 	GtkWidget *servers_view = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_view"));
 	GtkWidget *connect_all = GTK_WIDGET(gtk_builder_get_object(up->builder, "hbox8"));
 
 	if (maestro_has_servers) {
-		gtk_widget_hide(servers_label);
 		gtk_widget_show(servers_view);
 		gtk_widget_show(connect_all);
 
@@ -277,7 +275,6 @@ on_daemons_changed(GebrMaestroServer *maestro,
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, FALSE);
 
 	} else {
-		gtk_widget_show(servers_label);
 		gtk_widget_hide(servers_view);
 		gtk_widget_hide(connect_all);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, FALSE);
