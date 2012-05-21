@@ -1,3 +1,124 @@
+2012-05-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Bump protocol to 0.17.12 and fix inclusion of library in gebr-comm-
+	protocol.c
+
+2012-05-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* GeBR version and protocol version should be the same for now.
+	* Added tag 0.17.11 for changeset 73b8501db21c
+	* Release 0.17.11: Paper cuts.
+
+2012-05-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix validate Flow's I/O considering variables with line paths
+
+2012-05-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed segfault if evaluate is called without return value.
+
+2012-05-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Retivising path in dictionary and fixing the output file validating.
+
+2012-05-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modify treatments to GêBR connections (Fixes issue 1141)
+	* Improve tooltips messages of connections
+
+2012-05-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix auto-scroll of Job Control (Fixes issue 1131)
+	* Add Input and Output file on Flow details when necessary, and fix
+	some memory leaks. (Fixes issue 1109)
+	* Add maestro address when flow executed on maestro in Flow Browse
+	(Fixes issue 1146)
+	* Send current date when job failed, and set that on Job Control. Add
+	Elapsed time when canceled job too. (Fixes issue 1159)
+	* Comment Fix method gebr_geoxml_flow_validate to consider all I/O
+	errors (Fixes issue 1148)
+	* Minor fix on paths auto-complete in I/O's entry
+	* Add protection when call method gebr_validate_path with err_msg NULL
+	* Fix auto-complete of dictionary variables on I/O entry (Fixes issue
+	1164)
+
+2012-05-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add folder-warning stock icons to be used in parameters entries
+
+2012-05-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Relativise file paths when open parameters of a program (Fixes issue
+	1153)
+
+2012-05-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Revert previous wrong commit
+
+2012-05-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create base path when upgrade DTD and maestro doesn't have home yet
+	* Add method gebr_maestro_server_has_home_dir
+
+2012-05-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use line of model and not gebr.line in method
+	on_maestro_state_change to set home dir
+
+2012-05-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create Line Paths when GêBR loads old Lines (Fixes issue 1154)
+
+2012-05-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing link to page of download demos. (Fixes issue 1152)
+	* Don't show groups when maestro is not connected. (Fixes issue 1147)
+
+2012-05-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement message 'Could not run server' to contemplate other
+	errors. (Fixes issue 1141)
+	* Update toolbar sensitive and combobox when import flow and copy
+	program into empty flow. (Fixes issue 979)
+
+2012-05-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix tooltip for e-mail on GeBR Preferences
+
+2012-05-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.10 for changeset 36a850aeecde
+	* User -Wno-error to build rpm packages.
+	* Release 0.17.10: Sprint 55 freeze.
+
+2012-05-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* SegFault fix when trying to connect GêBR to a maestro of previous
+	version (0.16)
+
+2012-05-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add treatment for invalid iter when reorder programs on Flow Editor
+	(Seg. fault when drag program with control pressed)
+	* Populate list of project and lines when maestro are logged (in case
+	of connections wizard) and always populate if do not need wizard
+	* Improvement tooltips on servers entry in connections wizard and fix
+	criticals when prepare Servers Page
+
+2012-05-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix empty itens in Report
+
+2012-05-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use message to connect daemons sequentially on ConnectAll button of
+	wizard
+
+2012-05-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.9 for changeset 7532d2039488
+	* Release 0.17.9: connection issues fixes.
+
 2012-05-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Add method gebr_get_default_keys to use more than one key on ssh

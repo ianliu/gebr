@@ -1257,15 +1257,26 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 			return FALSE;
 	}
 
-	if (parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE &&
-	    (g_str_has_prefix(text, "<") || g_str_has_prefix(text, "/")))
-		return FALSE;
-
 	word = gebr_str_word_before_pos(text, &pos);
 
 	// We could not find a word under the cursor
 	if (!word)
 		return FALSE;
+
+	gboolean is_lower = TRUE;
+	for (gint i = 0; i < strlen(word); i++) {
+		if (!g_ascii_islower(word[i])) {
+			is_lower = FALSE;
+			break;
+		}
+	}
+
+	if (!is_lower && parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		if (g_str_has_prefix(text, "/"))
+			return FALSE;
+		if (g_str_has_prefix(text, "<") && g_strrstr(text, ">"))
+			return FALSE;
+	}
 
 	retval = g_str_has_prefix(compl, word);
 

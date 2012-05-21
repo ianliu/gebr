@@ -58,7 +58,7 @@ typedef enum {
 	WIZARD_STATUS_COMPLETE
 } WizardStatus;
 
-#define DEFAULT_SERVERS_ENTRY_TEXT _("Type hostname[.domain]")
+#define DEFAULT_SERVERS_ENTRY_TEXT _("Type hostname[.domain] or address")
 
 /*
  * Prototypes
@@ -79,7 +79,11 @@ static void on_assistant_destroy(GtkWidget *window,
 
 static void create_maestro_chooser_model(GtkListStore *model,
 					 GebrMaestroServer *maestro);
-static void validate_entry(GtkEntry *entry, gboolean error, const gchar *err_text);
+
+static void validate_entry(GtkEntry *entry,
+                           gboolean error,
+                           const gchar *err_text,
+                           const gchar *clean_text);
 
 static void
 save_preferences_configuration(struct ui_preferences *up)
@@ -258,12 +262,10 @@ on_daemons_changed(GebrMaestroServer *maestro,
 	gboolean maestro_has_servers = gebr_maestro_server_has_servers(maestro, FALSE);
 
 	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
-	GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 	GtkWidget *servers_view = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_view"));
 	GtkWidget *connect_all = GTK_WIDGET(gtk_builder_get_object(up->builder, "hbox8"));
 
 	if (maestro_has_servers) {
-		gtk_widget_hide(servers_label);
 		gtk_widget_show(servers_view);
 		gtk_widget_show(connect_all);
 
@@ -273,7 +275,6 @@ on_daemons_changed(GebrMaestroServer *maestro,
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, FALSE);
 
 	} else {
-		gtk_widget_show(servers_label);
 		gtk_widget_hide(servers_view);
 		gtk_widget_hide(connect_all);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, FALSE);
@@ -285,18 +286,7 @@ on_connect_all_server_clicked(GtkButton *button,
                               struct ui_preferences *up)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	GtkTreeIter iter;
-	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
-	gboolean valid = gtk_tree_model_get_iter_first (model, &iter);
-
-	while (valid) {
-		GebrDaemonServer *daemon;
-		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-		if (gebr_daemon_server_get_state(daemon) != SERVER_STATE_LOGGED)
-			gebr_daemon_server_connect(daemon);
-		valid = gtk_tree_model_iter_next(model, &iter);
-	}
-
+	gebr_maestro_server_connect_on_daemons(maestro);
 }
 
 static void
@@ -506,7 +496,7 @@ on_changed_validate_email(GtkWidget     *widget,
 		error = !gebr_validate_check_is_email(email);
 	}
 
-	validate_entry(GTK_ENTRY(up->email), error, _("Invalid email"));
+	validate_entry(GTK_ENTRY(up->email), error, _("Invalid email"), _("Your email address"));
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, !error);
 }
 
@@ -733,7 +723,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GObject *server_add = gtk_builder_get_object(up->builder, "server_add");
 			GObject *server_all = gtk_builder_get_object(up->builder, "server_all");
 
-			GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
 			GtkWidget *connect_all = GTK_WIDGET(gtk_builder_get_object(up->builder, "hbox8"));
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
@@ -760,7 +749,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GtkTreeModel *store = gebr_maestro_server_get_model(maestro, FALSE, NULL);
 			if (!gtk_tree_model_get_iter_first(store, &it)) {
 				gtk_widget_hide(GTK_WIDGET(view));
-				gtk_widget_show(servers_label);
 				gtk_widget_hide(connect_all);
 				gchar **split = g_strsplit(gebr_maestro_server_get_address(maestro), "@", -1);
 				if (split[1])
@@ -770,15 +758,18 @@ on_assistant_prepare(GtkAssistant *assistant,
 				g_strfreev(split);
 			} else {
 				gtk_widget_show(GTK_WIDGET(view));
-				gtk_widget_hide(servers_label);
 				gtk_widget_show(connect_all);
 			}
 
 			WizardStatus wizard_status = get_wizard_status(up);
-			if (wizard_status == WIZARD_STATUS_COMPLETE || wizard_status == WIZARD_STATUS_WITHOUT_GVFS) {
+			if (wizard_status == WIZARD_STATUS_COMPLETE || wizard_status == WIZARD_STATUS_WITHOUT_GVFS)
 				gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, TRUE);
-				gtk_widget_hide(servers_label);
-			}
+
+			if (!g_strcmp0(gebr_gui_enhanced_entry_get_text(GEBR_GUI_ENHANCED_ENTRY(up->server_entry)), ""))
+				gtk_widget_grab_focus(GTK_WIDGET(view));
+			else
+				gtk_widget_grab_focus(up->server_entry);
+
 			g_signal_connect(GTK_BUTTON(server_all), "clicked", G_CALLBACK(on_connect_all_server_clicked), up);
 			g_signal_connect(GTK_BUTTON(server_add), "clicked", G_CALLBACK(on_add_server_clicked), up);
 			g_signal_connect(GTK_ENTRY(up->server_entry), "activate", G_CALLBACK(on_entry_server_activate), up);
@@ -901,20 +892,23 @@ on_combo_set_text(GtkCellLayout   *cell_layout,
 static void
 validate_entry(GtkEntry *entry,
 	       gboolean error,
-	       const gchar *err_text)
+	       const gchar *err_text,
+	       const gchar *clean_text)
 {
 	if (!error) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(entry), clean_text);
 	} else {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, err_text);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(entry), err_text);
 	}
 }
 
 static void
 on_server_entry_changed(GtkWidget *entry,
-		struct ui_preferences *up)
+                        struct ui_preferences *up)
 {
 	const gchar *entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
 	GtkWidget *server_add = GTK_WIDGET(gtk_builder_get_object(up->builder, "server_add"));
@@ -926,11 +920,13 @@ on_server_entry_changed(GtkWidget *entry,
 		return;
 
 	if (*entry_text) {
-		validate_entry(GTK_ENTRY(up->server_entry), error, _("GêBR supports the formats hostname or ip address."));
+		validate_entry(GTK_ENTRY(up->server_entry), error,
+		               _("GêBR supports the formats hostname or ip address."),
+		               DEFAULT_SERVERS_ENTRY_TEXT);
 	} else {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
-		gtk_widget_set_tooltip_markup(up->server_entry, NULL);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(entry), DEFAULT_SERVERS_ENTRY_TEXT);
 	}
 }
 

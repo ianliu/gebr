@@ -203,12 +203,6 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 	else if (server->state == SERVER_STATE_CONNECT) {
 		gebrm_daemon_set_error_type(daemon, NULL);
 		gebrm_daemon_set_error_msg(daemon, NULL);
-
-		gboolean use_key = gebr_comm_server_get_use_public_key(server);
-		if (use_key) {
-			gebr_comm_server_append_key(server, gebm_daemon_append_key_finished, daemon);
-		}
-		gebr_remove_temporary_file(server->address->str, FALSE);
 	}
 
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
@@ -330,6 +324,12 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_home_dir(daemon, home->str);
 				g_debug("Definindo variavel mpi_flavors para '%s'", mpi_flavors->str);
 				gebrm_daemon_set_mpi_flavors(daemon, mpi_flavors->str);
+
+				gboolean use_key = gebr_comm_server_get_use_public_key(server);
+				if (use_key) {
+					gebr_comm_server_append_key(server, gebm_daemon_append_key_finished, daemon);
+				}
+				gebr_remove_temporary_file(server->address->str, FALSE);
 
 				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
 

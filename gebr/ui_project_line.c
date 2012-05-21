@@ -1561,8 +1561,18 @@ on_maestro_state_change(GebrMaestroController *mc,
 			else
 				sensitive = FALSE;
 
-			if (sensitive)
-				gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", gebr_maestro_server_get_home_dir(maestro));
+			if (sensitive) {
+				gchar *base_dir = gebr_geoxml_line_get_path_by_name(line, "BASE");
+
+				if (!gebr_maestro_server_has_home_dir(m)) {
+					gebr_geoxml_line_set_path_by_name(line, "HOME", gebr_maestro_server_get_home_dir(maestro));
+					gebr_ui_document_send_paths_to_maestro(m, GEBR_COMM_PROTOCOL_PATH_CREATE,
+					                                       NULL, base_dir);
+				} else
+					gebr_geoxml_line_set_path_by_name(line, "HOME", gebr_maestro_server_get_home_dir(maestro));
+
+				g_free(base_dir);
+			}
 
 			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
 			valid = gtk_tree_model_iter_next(model, &iter);
@@ -2004,6 +2014,9 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		for (gint i = 0; paths[i]; i++) {
 			if (!g_strcmp0(paths[i][1], "HOME")) {
 				g_string_append_printf(dump, "   <li>%s</li>\n", paths[i][0]);
+				continue;
+			}
+			if (!*paths[i][0]) {
 				continue;
 			}
 			gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);

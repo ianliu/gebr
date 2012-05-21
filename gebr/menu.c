@@ -517,7 +517,7 @@ void demos_list_create(GtkMenu *menu)
 		GtkWidget *menu_item;
 		menu_item = gtk_menu_item_new_with_label(_("Install Seismic Unix package.\n"
 							 "Click here to get the script of Seismic Unix on GêBR Project website."));
-		g_signal_connect(menu_item, "button_press_event", G_CALLBACK(open_url_on_press_event), NULL);
+		g_signal_connect(menu_item, "activate", G_CALLBACK(open_url_on_press_event), NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	}
 }

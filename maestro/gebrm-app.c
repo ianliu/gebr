@@ -359,7 +359,8 @@ gebrm_app_continue_connections_of_daemons(GebrmApp *app,
 
 		if (!from_append_key) {
 			GebrCommServer *server = gebrm_daemon_get_server(d);
-			if (gebr_comm_server_get_use_public_key(server))
+			if (gebrm_daemon_get_state(d) == SERVER_STATE_LOGGED &&
+			    gebr_comm_server_get_use_public_key(server))
 				return;
 		}
 
@@ -1170,14 +1171,30 @@ on_client_request(GebrCommProtocolSocket *socket,
 		}
 		else if (g_strcmp0(prefix, "/stop") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
+			const gchar *confirm = gebr_comm_uri_get_param(uri, "confirm");
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				GebrmDaemon *d = i->data;
 				if (!g_strcmp0(gebrm_daemon_get_address(d), addr)) {
-					GebrCommServer *server = gebrm_daemon_get_server(d);
-					gebr_comm_server_kill(server);
-					gebrm_daemon_set_error_type(d, "error:stop");
-					gebrm_daemon_set_error_msg(d, NULL);
-					send_server_status_message(app, socket, d, gebrm_daemon_get_autoconnect(d), SERVER_STATE_DISCONNECTED);
+					if (g_strcmp0(confirm, "yes") == 0
+					    || gebrm_daemon_get_uncompleted_tasks(d) <= 0) {
+						gebrm_daemon_set_disconnecting(d, TRUE);
+						GList *jobs = gebrm_daemon_get_list_of_jobs(d);
+						for (GList *j = jobs; j; j = j->next) {
+							GebrmJob *job = g_hash_table_lookup(app->priv->jobs, j->data);
+							if (job && gebrm_job_can_kill(job))
+								gebrm_job_kill_immediately(job);
+						}
+						gebrm_daemon_set_disconnecting(d, FALSE);
+						GebrCommServer *server = gebrm_daemon_get_server(d);
+						gebr_comm_server_kill(server);
+						gebrm_daemon_set_error_type(d, "error:stop");
+						gebrm_daemon_set_error_msg(d, NULL);
+						send_server_status_message(app, socket, d, gebrm_daemon_get_autoconnect(d), SERVER_STATE_DISCONNECTED);
+					}
+					else
+						gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+						                                      gebr_comm_protocol_defs.cfrm_def, 2,
+						                                      addr, "stop");
 				}
 			}
 		}

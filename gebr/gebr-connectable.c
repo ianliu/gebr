@@ -56,7 +56,8 @@ gebr_connectable_remove(GebrConnectable *connectable,
 
 void
 gebr_connectable_stop(GebrConnectable *connectable,
-                      const gchar     *address)
+                      const gchar     *address,
+                      const gchar     *confirm)
 {
-	GEBR_CONNECTABLE_GET_IFACE(connectable)->stop(connectable, address);
+	GEBR_CONNECTABLE_GET_IFACE(connectable)->stop(connectable, address, confirm);
 }

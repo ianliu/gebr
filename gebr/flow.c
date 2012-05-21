@@ -204,6 +204,9 @@ static gboolean flow_import_single (const gchar *path)
 	document_save(flow, FALSE, FALSE);
 	g_free(new_title);
 
+	gebr_flow_set_toolbar_sensitive();
+	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+
 	return TRUE;
 }
 
@@ -778,6 +781,7 @@ void flow_program_paste(void)
 	flow_program_check_sensitiveness();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 	flow_edition_revalidate_programs();
+	gebr_flow_set_toolbar_sensitive();
 }
 
 static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group)

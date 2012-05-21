@@ -23,6 +23,7 @@
 
 #include "gebr-comm-protocol.h"
 #include "gebr-comm-protocol_p.h"
+#include "gebr-version.h"
 
 /*
  * Internal variables and variables
@@ -311,6 +312,9 @@ GList *gebr_comm_protocol_split_new(GString * arguments, guint parts)
 		iarg = sep + arg_size;
 		if (i != parts-1) {
 			/* jump space between args */
+			if (!strlen(iarg))
+				goto err;
+
 			++iarg;
 
 			if (!strlen(iarg))
@@ -333,7 +337,7 @@ void gebr_comm_protocol_split_free(GList * split)
 const gchar *
 gebr_comm_protocol_get_version(void)
 {
-	return "1.1.0" NANOVERSION;
+	return gebr_version();
 }
 
 const gchar *

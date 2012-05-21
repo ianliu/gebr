@@ -1,28 +1,48 @@
+gebrproject (0.17.12) lucid; urgency=low
+
+  * Protocol version sync with gebr version.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 21 May 2012 11:49:57 -0300
+
+gebrproject (0.17.11) lucid; urgency=low
+
+  * Improve tooltips messages of connections
+  * Allow Line's paths use at dictionary.
+  * Paper cuts fixes.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 21 May 2012 08:08:36 -0300
+
+gebrproject (0.17.10) lucid; urgency=low
+
+  * SegFault fixes.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 14 May 2012 20:09:49 -0300
+
 gebrproject (0.17.9) maverick; urgency=low
 
   * Fixed connections and utf8 issues.
 
- -- Fabrício Matheus Gonçalves <fmatheus@dell4>  Fri, 11 May 2012 14:42:47 -0300
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Fri, 11 May 2012 14:42:47 -0300
 
 gebrproject (0.17.8) lucid; urgency=low
 
   * Updated translations
   * Minor fixes
 
- -- Fabrício Matheus Gonçalves <fmatheus@moe>  Thu, 10 May 2012 11:25:03 -0300
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Thu, 10 May 2012 11:25:03 -0300
 
 gebrproject (0.17.7) lucid; urgency=low
 
   * More File Chooser fixes.
   * Fix segfault after flow import.
 
- -- Fabrício Matheus Gonçalves <fmatheus@samos>  Tue, 08 May 2012 19:01:31 -0300
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Tue, 08 May 2012 19:01:31 -0300
 
 gebrproject (0.17.6) lucid; urgency=low
 
   * Fix segfault when cancel dialog of File Chooser
 
- -- Fabrício Matheus Gonçalves <fmatheus@bart>  Tue, 08 May 2012 01:18:49 -0300
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Tue, 08 May 2012 01:18:49 -0300
 
 gebrproject (0.17.5) lucid; urgency=low
 

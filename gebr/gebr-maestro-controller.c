@@ -509,7 +509,9 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 	for (int i = 0; i < n-1; i++)
 		gtk_notebook_remove_page(nb, 0);
 
-	GList *tags = gebr_maestro_server_get_all_tags(maestro);
+	GList *tags = NULL;
+	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+		tags = gebr_maestro_server_get_all_tags(maestro);
 
 	for (GList *i = tags; i; i = i->next) {
 		const gchar *tag = i->data;
@@ -808,7 +810,7 @@ on_server_stop(GtkMenuItem *menuitem,
 		if (!daemon)
 			continue;
 
-		gebr_connectable_stop(GEBR_CONNECTABLE(mc->priv->maestro), gebr_daemon_server_get_address(daemon));
+		gebr_connectable_stop(GEBR_CONNECTABLE(mc->priv->maestro), gebr_daemon_server_get_address(daemon), "");
 	}
 	on_server_group_changed(mc->priv->maestro, mc);
 }
@@ -1583,6 +1585,9 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 	else if (g_strcmp0(type, "remove") == 0)
 		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
 			 "Do you really want to remove it and cancel these jobs?</span>");
+	else if (g_strcmp0(type, "stop") == 0)
+		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+			 "Do you really want to stop it and cancel these jobs?</span>");
 
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                        GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
@@ -1597,6 +1602,8 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 
 		if (g_strcmp0(type, "remove") == 0)
 			gebr_connectable_remove(GEBR_CONNECTABLE(mc->priv->maestro), addr);
+		else if (g_strcmp0(type, "stop") == 0)
+			gebr_connectable_stop(GEBR_CONNECTABLE(mc->priv->maestro), addr, "yes");
 	}
 	gtk_widget_destroy(dialog);
 	gdk_threads_leave();

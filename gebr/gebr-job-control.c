@@ -55,6 +55,7 @@ struct _GebrJobControlPriv {
 	GtkListStore *status_model;
 	GtkListStore *store;
 	GtkTextBuffer *text_buffer;
+	GtkTextMark *text_mark;
 	GtkListStore *maestro_filter;
 	GList *cmd_views;
 	GtkWidget *filter_info_bar;
@@ -633,8 +634,7 @@ on_job_output(GebrJob *job,
 	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &end);
 	gtk_text_buffer_insert(jc->priv->text_buffer, &end, output, strlen(output));
 	if (gebr.config.job_log_auto_scroll)
-		gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(jc->priv->text_view), &end,
-					     0, FALSE, 0, 0);
+		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(jc->priv->text_view), jc->priv->text_mark, 0, FALSE, 0, 0);
 }
 
 static void
@@ -1071,8 +1071,10 @@ compute_subheader_label(GebrJob *job,
 		const gchar *tmp = gebr_localized_date(finish_date);
 		if (status == JOB_STATUS_FINISHED)
 			g_string_append_printf(finish, _("Finished at %s"), tmp);
-		else
+		else if (status == JOB_STATUS_CANCELED)
 			g_string_append_printf(finish, _("Canceled at %s"), tmp);
+		else if (status == JOB_STATUS_FAILED)
+			g_string_append_printf(finish, _("Failed at %s"), tmp);
 	}
 
 	if (status == JOB_STATUS_FINISHED) {
@@ -1095,15 +1097,20 @@ compute_subheader_label(GebrJob *job,
 	}
 
 	if (status == JOB_STATUS_CANCELED) {
+		g_string_append_c(finish, '\n');
+		g_string_append_printf(finish, _("Elapsed time: %s"),
+		                       gebr_job_get_elapsed_time(job));
 		*subheader = g_string_free(finish, FALSE);
 		*start_detail = g_string_free(start, FALSE);
 		return;
 	}
 
 	if (status == JOB_STATUS_FAILED) {
-		*subheader = g_strdup(_("Job failed"));
+		g_string_append_c(finish, '\n');
+		g_string_append_printf(finish, _("Elapsed time: %s"),
+		                       gebr_job_get_elapsed_time(job));
+		*subheader = g_string_free(finish, FALSE);
 		*start_detail = g_string_free(start, FALSE);
-		g_string_free(finish, TRUE);
 		return;
 	}
 
@@ -1991,7 +1998,7 @@ gebr_job_control_new(void)
 	/* Text view of output*/
 	jc->priv->text_buffer = gtk_text_buffer_new(NULL);
 	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &iter_end);
-	gtk_text_buffer_create_mark(jc->priv->text_buffer, "end", &iter_end, FALSE);
+	jc->priv->text_mark = gtk_text_buffer_create_mark(jc->priv->text_buffer, "end", &iter_end, FALSE);
 
 	text_view = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "textview_output"));
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->priv->text_buffer);

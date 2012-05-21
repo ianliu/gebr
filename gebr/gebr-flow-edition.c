@@ -822,6 +822,8 @@ flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar 
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	flow_edition_set_io();
+
+	update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 }
 
 gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
@@ -1054,6 +1056,10 @@ flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIte
 
 	/* Check if the moving iter is a control program */
 	model = gtk_tree_view_get_model (tree_view);
+
+	if (!gtk_list_store_iter_is_valid(GTK_LIST_STORE(model), iter))
+		return FALSE;
+
 	gtk_tree_model_get (model, iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 	con = gebr_geoxml_program_get_control (program);
 	if (con != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
