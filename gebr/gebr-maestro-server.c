@@ -329,15 +329,6 @@ state_changed(GebrCommServer *comm_server,
 			gebr_maestro_server_set_error(maestro, "error:ssh", err);
 		gebr_remove_temporary_file(comm_server->address->str, TRUE);
 	}
-	else if (state == SERVER_STATE_CONNECT) {
-		gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
-		if (use_key) {
-			gebr_comm_server_append_key(comm_server, gebr_maestro_server_append_key_finished, NULL);
-		} else if (!maestro->priv->wizard_setup){
-			gebr_maestro_server_connect_on_daemons(maestro);
-		}
-		gebr_remove_temporary_file(comm_server->address->str, TRUE);
-	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 		gebr_config_maestro_save();
@@ -545,6 +536,16 @@ parse_messages(GebrCommServer *comm_server,
 
 				gebr_comm_server_set_logged(comm_server);
 				gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
+
+				gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
+				if (use_key) {
+					gebr_comm_server_append_key(comm_server, gebr_maestro_server_append_key_finished, NULL);
+				} else if (!maestro->priv->wizard_setup) {
+					gebr_maestro_server_connect_on_daemons(maestro);
+				}
+
+				gebr_remove_temporary_file(comm_server->address->str, TRUE);
+
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
 				GList *arguments;
@@ -1308,11 +1309,13 @@ gebr_maestro_server_remove(GebrConnectable *connectable,
 
 static void
 gebr_maestro_server_stop(GebrConnectable *connectable,
-                         const gchar *address)
+                         const gchar *address,
+                         const gchar *confirm)
 {
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/stop");
 	gebr_comm_uri_add_param(uri, "address", address);
+	gebr_comm_uri_add_param(uri, "confirm", confirm);
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 
@@ -1761,6 +1764,9 @@ gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
 void
 gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
 {
+	if (g_strcmp0(maestro->priv->error_type, "error:none") != 0)
+		return;
+
 	g_debug("SEND CONNECT DAEMONS MESSAGE");
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 
@@ -1781,7 +1787,6 @@ gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
 void
 gebr_maestro_server_append_key_finished()
 {
-	g_debug("FINISHED APPEND GEBR KEY COMMAND");
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro->priv->wizard_setup)
 		return;
