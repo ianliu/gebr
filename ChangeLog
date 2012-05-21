@@ -1,3 +1,56 @@
+2012-05-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Last minute translations.
+
+2012-05-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update speed slider after setting I/O
+	* Fix critical on connections wizard
+
+2012-05-21  Ricardo Biloti  <Ricardo Biloti>
+
+	* Some rearrangement of text from one section to another
+
+2012-05-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix stuck of server connections after append key on server with
+	error
+
+2012-05-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update gebr translate to pt_BR
+
+2012-05-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.12 for changeset 56bea96db525
+	* Release 0.17.12: Protocol version.
+
+2012-05-18  Ricardo Biloti  <Ricardo Biloti>
+
+	* Enhancements in Flow browser tab section and others
+
+2012-05-17  Ricardo Biloti  <Ricardo Biloti>
+
+	* Fix missing <para> in tips
+	* Futher updates to the overview section
+	* CSS beautify
+	* Futher updates to Projects and Lines tab section
+
+2012-05-16  Ricardo Biloti  <Ricardo Biloti>
+
+	* Partial update to What's new
+	* Projects and Lines section update
+	* Overview update better describing projects, lines, flows and Maestro
+	* Team update
+
+2012-05-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add image of GeBR_public_key_authentication.png to the right place
+
+2012-05-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* First version of english documentation of GeBR 0.17.8
+
 2012-05-21  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* Bump protocol to 0.17.12 and fix inclusion of library in gebr-comm-

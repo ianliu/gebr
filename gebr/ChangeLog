@@ -1,3 +1,16 @@
+2012-05-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update speed slider after setting I/O
+	* Fix critical on connections wizard
+
+2012-05-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update gebr translate to pt_BR
+
+2012-05-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.12: Protocol version.
+
 2012-05-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.17.11: Paper cuts.
