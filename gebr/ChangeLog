@@ -1,3 +1,42 @@
+2012-05-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Retivising path in dictionary and fixing the output file validating.
+
+2012-05-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix auto-scroll of Job Control (Fixes issue 1131)
+	* Add Input and Output file on Flow details when necessary, and fix
+	some memory leaks. (Fixes issue 1109)
+	* Add maestro address when flow executed on maestro in Flow Browse
+	(Fixes issue 1146)
+	* Send current date when job failed, and set that on Job Control. Add
+	Elapsed time when canceled job too. (Fixes issue 1159)
+	* Create base path when upgrade DTD and maestro doesn't have home yet
+	* Add method gebr_maestro_server_has_home_dir
+
+2012-05-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use line of model and not gebr.line in method
+	on_maestro_state_change to set home dir
+
+2012-05-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing link to page of download demos. (Fixes issue 1152)
+	* Don't show groups when maestro is not connected. (Fixes issue 1147)
+
+2012-05-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update toolbar sensitive and combobox when import flow and copy
+	program into empty flow. (Fixes issue 979)
+
+2012-05-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix tooltip for e-mail on GeBR Preferences
+
+2012-05-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.10: Sprint 55 freeze.
+
 2012-05-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Add treatment for invalid iter when reorder programs on Flow Editor

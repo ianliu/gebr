@@ -1,3 +1,12 @@
+2012-05-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send current date when job failed, and set that on Job Control. Add
+	Elapsed time when canceled job too. (Fixes issue 1159)
+
+2012-05-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.10: Sprint 55 freeze.
+
 2012-05-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.17.9: connection issues fixes.
