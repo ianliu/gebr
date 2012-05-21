@@ -336,7 +336,7 @@ void gebr_comm_protocol_split_free(GList * split)
 const gchar *
 gebr_comm_protocol_get_version(void)
 {
-	return "1.1.0" NANOVERSION;
+	return gebr_version();
 }
 
 const gchar *
