@@ -359,7 +359,8 @@ gebrm_app_continue_connections_of_daemons(GebrmApp *app,
 
 		if (!from_append_key) {
 			GebrCommServer *server = gebrm_daemon_get_server(d);
-			if (gebr_comm_server_get_use_public_key(server))
+			if (gebrm_daemon_get_state(d) == SERVER_STATE_LOGGED &&
+			    gebr_comm_server_get_use_public_key(server))
 				return;
 		}
 
