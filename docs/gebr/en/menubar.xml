@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<section xml:id="menu">
+  <title>The <guimenu>Action</guimenu> menu</title>
+  
+  <para>From the <guimenu>Actions</guimenu> menu you can access your
+    <guimenuitem>Preferences</guimenuitem> and
+    configure <guimenuitem>Servers</guimenuitem>. If your enthusiasm
+    for GêBR has lead you to read the whole manual, you have
+    probably used almost all available features found in these
+    options.  But just in case, below you will find the
+    documentation for these options.</para>
+  
+  <section>
+    <title>Preferences</title>
+    <para>The details you provide in the
+      <guimenuitem>Preferences</guimenuitem> dialog box will be
+      adopted as the default by GêBR.  Specifically:</para>
+    <itemizedlist>
+      <listitem>
+        <para><guilabel>User name:</guilabel> will be used as the
+          default for <guilabel>Author:</guilabel> when you create
+          Projects, Lines and Flows.</para>
+      </listitem>
+      <listitem>
+        <para><guilabel>Email:</guilabel> will be used as the
+          default for <guilabel>Email:</guilabel> when you create
+          Projects, Lines and Flows.</para>
+      </listitem>
+      <listitem>
+        <para><guilabel>User's menus directory:</guilabel> will be
+          the default directory where <emphasis>GêBR's
+            Menus</emphasis> are maintained
+          (<filename class="extension">mnu</filename> files).</para>
+      </listitem>
+    </itemizedlist>
+    <figure id="maestro_server_dialog">
+      <title>Global GêBR preferences dialog box</title>
+      <mediaobject>
+        <caption>Preferences menu opens a dialog box where you edit
+          the user name, email, menu's directory and the HTML
+          editor.</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_preferences.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+  
+  <section xml:id="additional_features_maestro_servers_configuration">
+    <title>Maestro/Servers configuration</title>
+    <para>The Maestro/Servers Interface
+      has <emphasis>three</emphasis> parts:</para>
+    <itemizedlist>
+      <listitem>
+        <para><guilabel>Maestro</guilabel>: central unit of
+          coordination of multiple machines (for more information, see
+          <xref linkend="overview-connections" />).</para>
+      </listitem>
+      <listitem>
+        <para><guilabel>Servers</guilabel>: choose the servers
+          associated to the current Maestro.</para>
+      </listitem>
+      <listitem>
+        <para><guilabel>Groups</guilabel>: configure the groups of
+          Servers on the current Maestro.</para>
+      </listitem>
+    </itemizedlist>
+    
+    <figure>
+      <title>Maestro / Servers configuration dialog box</title>
+      <mediaobject>
+        <caption>Maestro entry.</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_maestro_servers_overview.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+      
+    <section xml:id="maestro">
+      <title>Maestro</title>
+
+
+      <!-- combobox must be documented too -->
+
+      <para>In the upper part of the Servers Interface (see
+        <xref linkend="maestro_server_dialog" />), there is an entry
+        in which the user can put the desired machine to use as
+        Maestro. A requirement is that the package GêBR-Maestro must
+        be installed on that machine. The state of the connection
+        between GêBR and the Maestro is shown by the right-side icon:
+      </para>
+      <itemizedlist>
+        <listitem><para>connected (<inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/gtk-connect.png" />
+              </imageobject>
+	    </inlinemediaobject>)</para></listitem>
+        <listitem><para>disconnected (<inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/gtk-disconnect.png" />
+              </imageobject>
+	    </inlinemediaobject>)</para></listitem>
+        <listitem><para>error (<inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/gtk-dialog-warning.png" />
+              </imageobject>
+	    </inlinemediaobject>)</para></listitem>
+      </itemizedlist>
+    </section>
+    
+    <section>
+      <title>Servers</title>
+      <para>Once the Maestro has been selected and the connection has
+        been successfully established, the user can associate working
+        machines to that Maestro.</para>
+
+      <para>The lines represent the machines associated to the
+        Maestro. Each line has some columns:</para>
+      <itemizedlist>
+	<listitem>
+	  <para><guilabel>AC</guilabel>: checkbox to activate or not
+	    the auto-connection to that server.</para>
+	</listitem>
+	<listitem>
+	  <para><guilabel>MPI</guilabel>: depicst whether the machine
+	  has support to MPI.</para>
+	</listitem>
+	<listitem>
+	  <para><guilabel>Address</guilabel>: hostname or IP address
+	  of the working machine.</para>
+	</listitem>
+	<listitem>
+	  <para><guilabel>CPU Clock</guilabel>: CPU clock of the
+	  working machine.</para>
+	</listitem>
+	<listitem>
+	  <para><guilabel>Memory</guilabel>: total memory of machine.</para>
+	</listitem>
+      </itemizedlist>
+
+
+      <para>The user can add a new machine by clicking
+        over <guilabel>New</guilabel> and entering the hostname or
+        IP address of the machine.</para>
+      
+    </section>
+
+    <section>
+      <title>Groups</title>
+      <para>The user can employ a subset of the machines associated to
+        the Maestro. This can be done through the creation of groups
+        of machines.</para>
+      <para>In the bottom part of the Servers interface (see
+        <xref linkend="maestro_server_dialog" />), the user can
+        create/edit Servers groups. The user must Drag and Drop the
+        Server to create a group.</para>
+      <para>To create a group, the user needs to click over a server
+        in the list and drag it to the <guiicon>+</guiicon> icon. A
+        text box will be prompted for the name of the group. Groups
+        with same names are not accepted.</para>
+
+      <!-- What happens when a group is created? How is it used? -->
+    </section>
+  </section>
+</section>
+  

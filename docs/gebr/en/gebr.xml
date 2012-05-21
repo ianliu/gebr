@@ -30,6 +30,9 @@
   <!-- A aba Controle de Tarefas -->
   <xi:include href="job-control-tab.xml" />
   
+  <!-- Menubar -->
+  <xi:include href="menubar.xml" />  
+
   <!-- Variáveis -->
   
   <!-- Recursos adicionais -->

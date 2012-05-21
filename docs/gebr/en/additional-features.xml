@@ -1,197 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <section
-  xmlns="http://docbook.org/ns/docbook"
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xlink="http://www.w3.org/1999/xlink"
-  lang="en"
-  version="5.0"
-  xml:id="additional_features">
+   xmlns="http://docbook.org/ns/docbook"
+   xmlns:xi="http://www.w3.org/2001/XInclude"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   lang="en"
+   version="5.0"
+   xml:id="additional_features">
 
-  <title>Additional features</title>
+  <title>Technical aspects</title>
 
-	<section xml:id="additional_features_infrastructure">
-		<title>
-		GêBR infrastructure
-		</title>
-    <para>GêBR can take benefit of the resources of multiple machines. To handle it, GêBR is
-      segmented in three layers:</para>
+  <section xml:id="additional_features_infrastructure">
+    <title>Intercommunication between players</title>
+
+    <para>GêBR can take benefit of the resources of multiple
+      machines. To handle it, GêBR is segmented in three
+      layers:</para>
+
     <itemizedlist>
-      <listitem>The host machine (GêBR-client), from where the user sends requests</listitem>
-      <listitem>An intermediate layer (GêBR-Maestro), where all the jobs are coordinated</listitem>
-      <listitem>Executors (GêBR-Server), where the jobs are executed</listitem>
+      <listitem>The local machine (the GêBR graphical interface
+	or <emphasis>the client</emphasis>), from where the user sends
+	requests.
+      </listitem>
+      <listitem>An intermediate layer (the Maestro), where all the
+	jobs are coordinated.
+      </listitem>
+      <listitem>Executors (the working machines
+      or <emphasis>servers</emphasis>), where the jobs are executed.
+      </listitem>
     </itemizedlist>
-    <mediaobject>
-      <caption>Layers of execution of GêBR</caption>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
-      </imageobject>
-    </mediaobject>
-    <para>GêBR can be connected to one maestro at once. Each maestro, in turn, can be connected
-      to many Servers. To ease the task of handling of files by the maestro, one requirement is that
-      all the Servers must be in the same Network File System (NFS).</para>
-	</section>
-  <section xml:id="menu">
-    <title>The 
-      <guimenu>Action</guimenu> menu</title>
-    <para>From the 
-      <guimenu>Actions</guimenu> menu you can access your 
-      <guimenuitem>Preferences</guimenuitem> and configure 
-      <guimenuitem>Servers</guimenuitem>. If your enthusiasm for GêBR has lead you to read the
-      whole manual, you have probably used almost all available features found in these options.
-      But just in case, below you will find the documentation for these options.</para>
-    <section>
-      <title>Preferences</title>
-      <para>The details you provide in the 
-        <guimenuitem>Preferences</guimenuitem> dialog box will be adopted as the default by GêBR.
-        Specifically:</para>
+    <figure>
+      <title>GêBR communication model</title>
+      <mediaobject>
+	<caption>Layers of execution of GêBR.</caption>
+	<imageobject>
+          <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
+	</imageobject>
+      </mediaobject>
+    </figure>
+
+    <note>
+      <para>GêBR can be connected to only one Maestro at once. Each
+	Maestro, in turn, can be connected to many Servers. However,
+	those Servers must share the file system containing the user's
+	home directory. This is usually provided by Network File System
+	(NFS) infrastructure.
+      </para>
+    </note>
+
+    <para>GêBR model comprises communications between machines,
+      namely:
+    </para>
+
       <itemizedlist>
-        <listitem>
-          <para>
-            <guilabel>User name:</guilabel> will be used as the default for 
-            <guilabel>Author:</guilabel> when you create Projects, Lines and Flows.</para>
-        </listitem>
-        <listitem>
-          <para>
-            <guilabel>Email:</guilabel> will be used as the default for 
-            <guilabel>Email:</guilabel> when you create Projects, Lines and Flows.</para>
-        </listitem>
-        <listitem>
-          <para>
-            <guilabel>User's menus directory:</guilabel> will be the default directory where 
-            <emphasis>GêBR's Menus</emphasis> are maintained (
-            <filename class="extension">mnu</filename> files).</para>
-        </listitem>
+	<listitem>Between GêBR-client and the Maestro.</listitem>
+	<listitem>Between the Maestro and the Servers.</listitem>
       </itemizedlist>
+
+      <para>All connections are performed using Secure Shell (SSH)
+	protocol. SSH is intended to provide secure encrypted
+	communication over a network. To establish such connections,
+	the user may be asked to provide his or her login password
+	multiple times. This can be cumbersome, if there are a lot of
+	working machines under the Maestro's domain.
+      </para>
+
+      <para>The SSH public-key authentication is an alternative method
+      to establish connections which eliminates the need for requests
+      for passwords. Despite less annoying, this method is equally
+      secure. It is based on public-key cryptography, where encryption
+      and decryption use public/private key pair for authentication
+      purposes. The Maestro knows the public key and only the Client
+      knows the associated private key.
+      </para>
+      
+      <para>If you choose GêBR to user public-key authentication by
+	checking <guimenuitem>"Use encryption key to automatically
+	authenticate the next session"</guimenuitem>, then GêBR will
+	create (if not existent) a private/public keys pair and will
+	keep the private key and will copy the public key to the
+	Maestro. Once this operation is successfully done, your
+	authentication on your Maestro will be automatically done
+	through public-key. In practical terms it means you will no
+	longer need to type your password to connect to that Maestro
+	through GêBR. Analogous behaviour occurs in the connection
+	between GêBR-Maestro and GêBR-Server.
+      </para>
+      
       <figure>
-        <mediaobject>
-          <caption>Preferences menu opens a dialog box where you edit the user name, email,
-            menu's directory and the HTML editor.</caption>
-          <imageobject>
-            <imagedata fileref="../images/GeBR_preferences.png" />
-          </imageobject>
-        </mediaobject>
+	<title>GêBR public-key authentication</title>
+	<mediaobject>
+	  <caption>Suppose a client wants to establish a connection
+	    with a Maestro. The client is requested for login
+	    credential, but instead it provides the key associated to
+	    the Maestro. The Maestro try to match the client key with
+	    one of his own public keys. In positive case, the client
+	    is allowed to communicate to that Maestro. Otherwise, it
+	    requests for the user's password.</caption>
+	  <imageobject>
+	    <imagedata fileref="../images/GeBR_public_key_diagram.png" />
+	  </imageobject>
+	</mediaobject>
       </figure>
-    </section>
+      
+      <para>Alternatively, you can create the private/public keys pair
+	by yourself
+	(consult <link xlink:show="new" xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
+	for more information).
+      </para>
+      
   </section>
-
-  <section xml:id="additional_features_maestro_servers_configuration">
-		<title>Maestro/Servers configuration</title>
-		<para>The Maestro/Servers Interface has <emphasis>three</emphasis> parts: 
-      <itemizedlist>
-        <listitem>
-          <para>Maestro - central unit of coordination of multiple machines (for more information, see <xref linkend="additional_features_infrastructure" />).</para>
-        </listitem>
-        <listitem>
-          <para>Servers - choose the servers associated to the current Maestro</para>
-        </listitem>
-        <listitem>
-          <para>Groups of Servers - configure the groups of Servers on the current Maestro</para>
-        </listitem>
-      <title>Maestro</title>
-      <mediaobject>
-        <caption>Maestro entry</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_maestro_servers_overview.png" />
-        </imageobject>
-      </mediaobject>
-    </itemizedlist></para>
-    <section>
-      <para>In the upper part of the Servers Interface, there is an entry in which the user can put
-        the desired machine to use as Maestro. A requirement is that the package GêBR-Maestro must be
-        installed on that machine. The state of the connection between GêBR and the Maestro is shown
-        by the right-side icon: 
-        <itemizedlist>
-          <listitem><para>connected (<inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../../common-images/gtk-connect.png" />
-                </imageobject>
-          </inlinemediaobject>)</para></listitem>
-          <listitem><para>disconnected (<inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../../common-images/gtk-disconnect.png" />
-                </imageobject>
-          </inlinemediaobject>)</para></listitem>
-          <listitem><para>error (<inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../../common-images/gtk-dialog-warning.png" />
-                </imageobject>
-          </inlinemediaobject>)</para></listitem>
-      </itemizedlist></para>
-    </section>
-    <section>
-      <title>Servers</title>
-      <para>Once selected a coordinator machine (Maestro), the user can associate machines to that
-        Maestro.</para>
-      <para>The lines represent the machines associated to the Maestro. Each line has two columns:
-        the first column shows if the option Auto-connect is activated or not; the second column
-        shows the name (hostname) of the machine. The user can add a new machine by clicking over New
-        and entering the name of address of the machine.</para>
-    </section>
-    <section>
-      <title>Groups</title>
-      <para>The user can use just a couple of machines associated to the Maestro. Using
-        different subsets of machines can be managed through the creation of groups of
-        machines.</para>
-      <para>In the bottom part of the Servers interface, the user can create/edit Servers groups.
-        The user must Drag and Drop the Server to create a group.</para>
-      <para>To create a group, the user needs to click over a server in the list and drag it to the
-        + icon. A text box is going to be prompted for the name of the group. Groups with same names
-        are not accepted.</para>
-    </section>
-  </section>
-
-  <section xml:id="ssh_authentication">
-    <title>SSH authentication</title>
-
-		<para>
-			GêBR infrastructure comprises communications between machines, namely:
-		</para>
-
-		<itemizedlist>
-			<listitem>
-				between GêBR-client and GêBR-Maestros 
-			</listitem>
-
-			<listitem>
-				between GêBR-Maestro and GêBR-servers. </listitem>
-		</itemizedlist>
-
-		<para>
-			All connections are performed using Secure Shell (SSH) protocol. SSH is intended to provide secure encrypted commnication over a network.
-			
-		</para>
-
-		<para>
-		The SSH public key authentication is based on public-key cryptography, where encrypton and decrypton use public/private key pair for authentication purposes. The Maestro knows the public key and only the Client knows the associated private key.
-		</para>
-
-		<para>
-		If you choose GêBR to user public-key authentication by checking <guimenuitem>"Use encryption key to automatically authenticate the next session"</guimenuitem>, then GêBR will create (if not existent) a private/public keys pair and will keep the private key and will copy the public key to the Maestro. Once this operation is successfully done, your authentication on your Maestro will be automatically done through public-key . In practical terms it means you will not need to write your password anymore to connect to that Maestro through GêBR. Analogous behaviour occurs in the connection between GêBR-Maestro and GêBR-Server.
-		</para>
-
-      <mediaobject>
-        <caption>GêBR public-key authentication. Suppose a client wants to stablish a connection. The client is requested for a login credential where he provides the key associated to the Maestro. The Maestro try to match the client key and one of his own public keys. In positive case, the client is allowed to communicate to that Maestro. Otherwise, he is requested for a password.</caption>
-        <imageobject>
-					<imagedata fileref="../images/GeBR_public_key_diagram.png" />
-        </imageobject>
-      </mediaobject>
-
-		<para>
-			Alternatively, you can create the private/public keys pair by yourself (consult <link xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link> for more information).
-		</para>
-
-	</section>
-
-	<section
-		xml:id="dictionary_variables">
-		<title>Variables Dictionary</title>
-		<section xml:id="janela_dicionario">
-			<title>The dictionary</title>
-			<para>The dictionary is a very flexible feature, that can be used in many forms and for many
-				purposes.</para>
+  
+  <section
+     xml:id="dictionary_variables">
+    <title>Variables Dictionary</title>
+    <section xml:id="janela_dicionario">
+      <title>The dictionary</title>
+      <para>The dictionary is a very flexible feature, that can be used in many forms and for many
+	purposes.</para>
       <para>Now the dictionary accepts expressions as input. Now, It's possible to define more complex variables.
-       In this section we will show some examples of variables usage in a flow.</para>
+	In this section we will show some examples of variables usage in a flow.</para>
       <para>Follow this simple example of how to define a variable in the dictionary:</para>
       <procedure>
         <step>
@@ -257,15 +185,15 @@
           </figure>
           <tip><para>To a better understanding about variables, check
               section <xref linkend="definindo_variaveis"
-              />.</para></tip>
+			    />.</para></tip>
           <tip><para>Positioning the pointer on the icon of the
               variable type, we can check the solved
               expression.</para></tip>
           <tip><para>We can navigate over the fields using the keys 
-            <keycap>Enter</keycap>, 
-            <keycap>Tab</keycap> or with the 
-            <mousebutton>Left button of the
-            mouse</mousebutton>.</para></tip></step>
+              <keycap>Enter</keycap>, 
+              <keycap>Tab</keycap> or with the 
+              <mousebutton>Left button of the
+		mouse</mousebutton>.</para></tip></step>
       </procedure>
     </section>
     <section xml:id="definindo_variaveis">
@@ -304,10 +232,10 @@
             </mediaobject>
           </figure>
           <tip><para>To use the variables in fields like
-            <guimenuitem>Text</guimenuitem>, you must put the variable
-            name embraced by square brackets
-            <emphasis role="bold">[</emphasis> name-of-the-variable
-            <emphasis role="bold">]</emphasis>.</para></tip>
+              <guimenuitem>Text</guimenuitem>, you must put the variable
+              name embraced by square brackets
+              <emphasis role="bold">[</emphasis> name-of-the-variable
+              <emphasis role="bold">]</emphasis>.</para></tip>
         </step>
         <step>
           <para>Now we can use the variables in our newly-created "Example Flow".</para>
@@ -326,14 +254,14 @@
         </step>
       </procedure>
       <tip><para>To validate a field of an expression or a variable,
-        you just need to use the
-        key <keycap>Enter</keycap>.</para></tip>
+          you just need to use the
+          key <keycap>Enter</keycap>.</para></tip>
       <tip><para>To see all the available variables for
-        auto-completion, we just need to type the character
-        <emphasis role="bold">[</emphasis>' (open brackets).</para></tip>
+          auto-completion, we just need to type the character
+          <emphasis role="bold">[</emphasis>' (open brackets).</para></tip>
       <important>
         <para>We can define the visibility of the variables, managing
-        them in the lists
+          them in the lists
           <guilabel>Project</guilabel>, 
           <guilabel>Line</guilabel> and
           <guilabel>Flow</guilabel>. Variables from the list 
@@ -342,7 +270,7 @@
           the chosen project.
           <guilabel>Lines</guilabel> are visible just for the 
           <emphasis role="bold">flows of the selected
-          flow</emphasis>. Variables from the list
+            flow</emphasis>. Variables from the list
           <guilabel>Flows</guilabel> are visible just for the 
           <emphasis role="bold">chosen flow</emphasis>.</para>
       </important>
@@ -568,57 +496,57 @@
             </listitem>
           </itemizedlist>
           <tip><para>Every field, from program parameters or
-          variables, is going to exhibit the icon
-            <guiicon>
-              <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../../common-images/icone_nao_configurado.png" />
-                </imageobject>
-              </inlinemediaobject>
-            </guiicon>, and an explanation of the error.</para></tip>
+              variables, is going to exhibit the icon
+              <guiicon>
+		<inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../../common-images/icone_nao_configurado.png" />
+                  </imageobject>
+		</inlinemediaobject>
+              </guiicon>, and an explanation of the error.</para></tip>
         </listitem>
       </itemizedlist>
     </section>
   </section>
   <section xml:id="additional_features_mpi_support">
-		<title>
-			Support to MPI programs
-		</title>
-		
-		<para>
-		The Message Passing Interface Standard (MPI) is a vendor independent standard library of message passing. The MPI Forum, which includes vendors, researchers, software library developers, and users, apply efforts to establish the the standards. The goal is to establish a portable and flexible standard for message passing programming. The design of MPI tries to match portability, efficiency, and flexibility. Nowadays, it is a widely used standard for writing message passing programs on high performance computers.
-		</para>
-		<para>
-		There are many implementations (flavors) of MPI, but the most widely used are OpenMPI and MPICH2. OpenMPI is an open source implementation and has influence of three earlier approaches: FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is another widely used implementation and is based on the MPI-2.2 standard.
-		</para>
-		
-		<para>
-		GêBR supports both OpenMPI and MPICH2. However, MPI programs can only run on servers that support the execution of MPI. Thus, for GêBR support of MPI, the user must have acces to servers/clusters that also support it.
-	</para>
-		<para>
-		In the Server Interface, in the MPI column, an icon indicates that the server of that row supports MPI. Roll over the icon to check the flavors of MPI available on that machine. You will be able to run your program just on machines that support the same flavor as the one used on your program.
-		</para>
-      <mediaobject>
-				<caption>
-					The second column indicates the types (flavors) of MPI available in your servers.
-				</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_servers_mpi.png" />
-        </imageobject>
-      </mediaobject>
-			<para>
-			To run an MPI program, you must first create a menu in DêBR and choose appropriately the MPI implementation used on your program. Then import it in GêBR. In the Flow Editor tab, if you double-click over the MPI program, you will be able to set the number of processes to be used by that MPI call.
-			</para>
+    <title>
+      Support to MPI programs
+    </title>
+    
+    <para>
+      The Message Passing Interface Standard (MPI) is a vendor independent standard library of message passing. The MPI Forum, which includes vendors, researchers, software library developers, and users, apply efforts to establish the the standards. The goal is to establish a portable and flexible standard for message passing programming. The design of MPI tries to match portability, efficiency, and flexibility. Nowadays, it is a widely used standard for writing message passing programs on high performance computers.
+    </para>
+    <para>
+      There are many implementations (flavors) of MPI, but the most widely used are OpenMPI and MPICH2. OpenMPI is an open source implementation and has influence of three earlier approaches: FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is another widely used implementation and is based on the MPI-2.2 standard.
+    </para>
+    
+    <para>
+      GêBR supports both OpenMPI and MPICH2. However, MPI programs can only run on servers that support the execution of MPI. Thus, for GêBR support of MPI, the user must have acces to servers/clusters that also support it.
+    </para>
+    <para>
+      In the Server Interface, in the MPI column, an icon indicates that the server of that row supports MPI. Roll over the icon to check the flavors of MPI available on that machine. You will be able to run your program just on machines that support the same flavor as the one used on your program.
+    </para>
+    <mediaobject>
+      <caption>
+	The second column indicates the types (flavors) of MPI available in your servers.
+      </caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_servers_mpi.png" />
+      </imageobject>
+    </mediaobject>
+    <para>
+      To run an MPI program, you must first create a menu in DêBR and choose appropriately the MPI implementation used on your program. Then import it in GêBR. In the Flow Editor tab, if you double-click over the MPI program, you will be able to set the number of processes to be used by that MPI call.
+    </para>
 
-      <mediaobject>
-        <caption>
-					Double clicking over an MPI program you can set the <emphasis>np</emphasis> parameter of MPI.
-				</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
-        </imageobject>
-      </mediaobject>
-			
+    <mediaobject>
+      <caption>
+	Double clicking over an MPI program you can set the <emphasis>np</emphasis> parameter of MPI.
+      </caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
+      </imageobject>
+    </mediaobject>
+    
   </section>
   <section xml:id="execution_log">
     <title>The execution log</title>

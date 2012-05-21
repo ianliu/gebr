@@ -272,9 +272,10 @@
       </step>
     </procedure>
     <note>
-      <para>There is 
-        <emphasis role="bold">no limit</emphasis> on the number of states for each Flow.</para>
+      <para>There is <emphasis role="bold">no limit</emphasis> on the
+      number of states for each Flow.</para>
     </note>
+
     <para>To open the list of saved states left-click on 
       <guiicon>
         <inlinemediaobject>
