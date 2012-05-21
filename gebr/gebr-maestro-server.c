@@ -1308,11 +1308,13 @@ gebr_maestro_server_remove(GebrConnectable *connectable,
 
 static void
 gebr_maestro_server_stop(GebrConnectable *connectable,
-                         const gchar *address)
+                         const gchar *address,
+                         const gchar *confirm)
 {
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/stop");
 	gebr_comm_uri_add_param(uri, "address", address);
+	gebr_comm_uri_add_param(uri, "confirm", confirm);
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 
