@@ -727,7 +727,7 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 		gchar *error = NULL;
 
 		if (command_not_found)
-			error = g_strdup_printf(_("%s not found in %s"), gebr_comm_server_is_maestro(server) ? "Maestro" : "Server", server->address->str);
+			error = g_strdup_printf(_("%s not found in %s"), gebr_comm_server_is_maestro(server) ? "Maestro" : _("Server"), server->address->str);
 		else
 			error = g_strdup(log_lines[last_line]);
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-07 14:48-0300\n"
+"POT-Creation-Date: 2012-05-21 17:46-0300\n"
 "PO-Revision-Date: 2011-11-18 16:09-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -22,23 +22,23 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. initiate the marathon to communicate to server
-#: ../comm/gebr-comm-server.c:276
+#: ../comm/gebr-comm-server.c:305
 #, c-format
 msgid "%p: Launching server at '%s'."
 msgstr "%p: Iniciando servidor em '%s'."
 
-#: ../comm/gebr-comm-server.c:338
+#: ../comm/gebr-comm-server.c:367
 #, c-format
 msgid "Stopping server at '%s'."
 msgstr "Parando servidor em '%s'."
 
 #. log
-#: ../comm/gebr-comm-server.c:421
+#: ../comm/gebr-comm-server.c:455
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../comm/gebr-comm-server.c:504
+#: ../comm/gebr-comm-server.c:537
 #, c-format
 msgid ""
 "Server '%s' needs SSH login.\n"
@@ -49,7 +49,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:507
+#: ../comm/gebr-comm-server.c:540
 #, c-format
 msgid ""
 "Wrong password for server '%s', please try again.\n"
@@ -60,48 +60,48 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:519
+#: ../comm/gebr-comm-server.c:552
 msgid "Please, enter password"
 msgstr "Por favor, digite sua senha"
 
-#: ../comm/gebr-comm-server.c:526
+#: ../comm/gebr-comm-server.c:559
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../comm/gebr-comm-server.c:532
+#: ../comm/gebr-comm-server.c:565
 msgid "No password provided."
 msgstr "Nenhuma senha informada."
 
-#: ../comm/gebr-comm-server.c:551
+#: ../comm/gebr-comm-server.c:584
 msgid "Please, answer the question"
 msgstr "Por favor, responda a pergunta"
 
-#: ../comm/gebr-comm-server.c:560
+#: ../comm/gebr-comm-server.c:593
 msgid "SSH host key question:"
 msgstr "Chave do servidor:"
 
-#: ../comm/gebr-comm-server.c:563
+#: ../comm/gebr-comm-server.c:596
 msgid "SSH host key rejected."
 msgstr "A chave SSH do servidor foi rejeitada."
 
 #. last \n
-#: ../comm/gebr-comm-server.c:573
+#: ../comm/gebr-comm-server.c:606
 #, c-format
 msgid "SSH error: %s"
 msgstr "Erro SSH: %s"
 
-#: ../comm/gebr-comm-server.c:574
+#: ../comm/gebr-comm-server.c:607
 #, c-format
 msgid "Received SSH error for server '%s': %s"
 msgstr "O servidor SSH em '%s' reportou o seguinte erro: %s"
 
 #. last \n
-#: ../comm/gebr-comm-server.c:580
+#: ../comm/gebr-comm-server.c:613
 #, c-format
 msgid "Received SSH message for server '%s': %s"
 msgstr "Mensagem SSH recebida do servidor '%s': %s"
 
-#: ../comm/gebr-comm-server.c:591
+#: ../comm/gebr-comm-server.c:624
 #, c-format
 msgid ""
 "SSH reported the following error: \n"
@@ -110,21 +110,30 @@ msgstr ""
 "SSH reportou o seguinte erro:\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:592
+#: ../comm/gebr-comm-server.c:625
 #, c-format
 msgid "SSH reported the following error for server '%s': %s"
 msgstr "SSH reportou o seguinte erro para o servidor '%s': %s"
 
-#: ../comm/gebr-comm-server.c:650 ../comm/gebr-comm-server.c:673
+#: ../comm/gebr-comm-server.c:683
 msgid "Could not run server."
 msgstr "Não foi possível executar o servidor."
 
-#: ../comm/gebr-comm-server.c:651 ../comm/gebr-comm-server.c:674
+#: ../comm/gebr-comm-server.c:684 ../comm/gebr-comm-server.c:736
 #, c-format
 msgid "Could not run server '%s'."
 msgstr "Não foi possível executar o servidor '%s'."
 
-#: ../comm/gebr-comm-server.c:853
+#: ../comm/gebr-comm-server.c:730
+#, c-format
+msgid "%s not found in %s"
+msgstr "%s não encontrado em %s"
+
+#: ../comm/gebr-comm-server.c:730
+msgid "Server"
+msgstr "Servidor"
+
+#: ../comm/gebr-comm-server.c:919
 #, c-format
 msgid "Server '%s' disconnected"
 msgstr "Servidor '%s' desconectado"
@@ -289,24 +298,24 @@ msgstr "Parâmetro obrigatório"
 msgid "The variable %s already exists in that scope"
 msgstr "A variável %s já existe neste escopo"
 
-#: ../gebr-validator.c:1380
+#: ../gebr-validator.c:1382
 #, c-format
 msgid "Required parameter"
 msgstr "Parâmetro obrigatório"
 
-#: ../gebr-validator.c:1391
+#: ../gebr-validator.c:1393
 #, c-format
 msgid "Accepts only integer values"
 msgstr "Aceita apenas valores inteiros"
 
-#: ../gebr-validator.c:1399
+#: ../gebr-validator.c:1401
 #, c-format
 msgid "Accepts only positive values"
 msgstr "Aceita apenas valores positivos"
 
 #. FIXME: The message below is untranslatable!
 #. Comment for translators: 1st %s is expression error; 2nd is variable label
-#: ../gebr-validator.c:1445
+#: ../gebr-validator.c:1447
 #, c-format
 msgid "%s on \"%s\""
 msgstr "%s on \"%s\""
@@ -505,51 +514,48 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../geoxml/flow.c:687 ../geoxml/flow.c:771
+#: ../geoxml/flow.c:693 ../geoxml/flow.c:810
 #, c-format
 msgid "No configured or enabled Programs found in Flow \"%s\"."
 msgstr "Nenhum Programa habilitado ou configurado encontrado no Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:717
+#: ../geoxml/flow.c:736
 #, c-format
 msgid "No input file was specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Nenhum arquivo de entrada foi especificado para o Programa \"%s\" no Fluxo "
 "\"%s\"."
 
-#: ../geoxml/flow.c:730
+#: ../geoxml/flow.c:749 ../geoxml/flow.c:762
 #, c-format
 msgid "Invalid input file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Arquivo de entrada especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:747
+#: ../geoxml/flow.c:781
 #, c-format
 msgid "The Flow \"%s\" expects an input file."
 msgstr "O Fluxo \"%s\" espera um arquivo de entrada."
 
-#: ../geoxml/flow.c:755
+#: ../geoxml/flow.c:791
 #, c-format
 msgid "Unexpected output file for the Flow \"%s\"."
 msgstr "Arquivo de saída inexperado para o Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:785
+#: ../geoxml/flow.c:838 ../geoxml/flow.c:852
 #, c-format
-msgid ""
-"Invalid output file file specified for the Program \"%s\" in Flow \"%s\"."
-msgstr ""
-"Arquivo de saída especificado para o Programa \"%s\" no Fluxo \"%s\" é "
-"inválido."
+msgid "Invalid output file specified for the Program \"%s\" in Flow \"%s\"."
+msgstr "Arquivo de saída inválido para o Programa \"%s\" no Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:799
+#: ../geoxml/flow.c:881 ../geoxml/flow.c:894
 #, c-format
 msgid "Invalid error file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Arquivo de log especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:869
+#: ../geoxml/flow.c:968
 msgid "Loop iteration counter"
 msgstr "Contador de iterações do Loop"
 
@@ -908,17 +914,17 @@ msgstr "Editar lista"
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-parameter.c:1752
+#: ../gui/gebr-gui-parameter.c:1771
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-parameter.c:1754
+#: ../gui/gebr-gui-parameter.c:1773
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
 
-#: ../gui/gebr-gui-program-edit.c:158
+#: ../gui/gebr-gui-program-edit.c:159
 msgid "Link"
 msgstr "Link"
 
@@ -1090,11 +1096,11 @@ msgstr "1 milissegundo"
 msgid "%ld miliseconds"
 msgstr "%ld milessegundos"
 
-#: ../utils.c:1214
+#: ../utils.c:1220
 msgid "The specified line path does not exist"
 msgstr "O caminho de linha específico não existe"
 
-#: ../utils.c:1216
+#: ../utils.c:1222
 msgid "The path must either start with < or /"
 msgstr "O caminho deve começar com < ou /"
 
