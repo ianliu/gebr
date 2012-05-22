@@ -22,111 +22,101 @@
 	</itemizedlist>
 	<section xml:id="sec_6_1">
 		<title>Toolbar</title>
-		<mediaobject>
-			<caption>Toolbar of Job Control</caption>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_jc_toolbar.png" />
-			</imageobject>
-		</mediaobject>
+		<figure>
+			<title>
+				Job Control toolbar
+			</title>
+			<mediaobject>
+				<caption>Toolbar of Job Control</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_jc_toolbar.png" />
+				</imageobject>
+			</mediaobject>
+		</figure>
 		<para>In this tab you can 
 			<emphasis role="bold">follow</emphasis> and, if so desired, 
 			<emphasis role="bold">interrupt</emphasis> the Flow's execution. The available commands
 			are:</para>
+
 		<itemizedlist>
 			<listitem>
-				<para>Save the Job's information in a file</para>
+				<para>
+					Save (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_salvar_log.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>
+					) to disk the output of the selected flow up to the moment.
+				</para>
+			</listitem>
+
+			<listitem>
+				<para>Clear Job (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/trash-empty.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>
+					). Eliminate from the job Control the selected Job. Caution is needed because the
+					process is irreversible.</para>
+				<para>You can only clear jobs that are not being executed ( 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon> or 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
+							</imageobject>
+						</inlinemediaobject>
+				</guiicon>).</para>
 			</listitem>
 			<listitem>
-				<para>Clear Job</para>
+				<para>Cancel this Job (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>
+					). You can cancel a running or queued job. When a Job is terminated in this manner,
+					the Job will be marked with 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
+							</imageobject>
+						</inlinemediaobject>
+				</guiicon>.</para>
 			</listitem>
+
 			<listitem>
-				<para>Cancel this Job</para>
-			</listitem>
-			<listitem>
-				<para>Filter Jobs</para>
+				<para>Filter Jobs (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/filter.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>
+					). You have the option to see just the desired results.
+				</para>
 			</listitem>
 		</itemizedlist>
-		<section xml:id="sec_6_1_1">
-			<title>Save 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/botao_salvar_log.png" />
-						</imageobject>
-					</inlinemediaobject>
-			</guiicon></title>
-			<para>Save to disk the output of the selected flow up to the moment.</para>
-		</section>
-		<section xml:id="sec_6_1_2">
-			<title>Clear 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/trash-empty.png" />
-						</imageobject>
-					</inlinemediaobject>
-			</guiicon></title>
-			<para>Eliminate from the job Control the selected Job. Caution is needed because the
-				process is irreversible.</para>
-			<para>You can only clear jobs that are not being executed ( 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
-						</imageobject>
-					</inlinemediaobject>
-				</guiicon> or 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
-						</imageobject>
-					</inlinemediaobject>
-			</guiicon>).</para>
-		</section>
-		<section xml:id="sec_6_1_3">
-			<title>Cancel 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
-						</imageobject>
-					</inlinemediaobject>
-			</guiicon></title>
-			<para>You can cancel a running or queued job. When a Job is terminated in this manner,
-				the Job will be marked with 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
-						</imageobject>
-					</inlinemediaobject>
-			</guiicon>.</para>
-		</section>
-		<section xml:id="sec_6_1_4">
-			<title>Filter 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/filter.png" />
-						</imageobject>
-					</inlinemediaobject>
-			</guiicon></title>
-			<para>GêBR offers the option to see just the desired results, by some criteria.</para>
-			<para>You can filter the results by two criteria:</para>
-			<itemizedlist>
-				<listitem><para>Group/Server</para></listitem>
-				<listitem><para>Status</para></listitem>
-			</itemizedlist>
-			<mediaobject>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_jc_filter.png" />
-				</imageobject>
-			</mediaobject>
-		</section>
 		<tip>As in anywhere else in GêBR, many of the toolbar functionalities can be accessed through
 			the context menu, using the mouse's right button.</tip>
 	</section>
+
 	<section>
 		<title>Left Panel</title>
 		<para>In the left panel, GêBR presents a list of flows executed by you, ordered by
@@ -177,11 +167,16 @@
 					</inlinemediaobject>
 			</guiicon>: waiting for another job.</listitem>
 		</itemizedlist>
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_jc_left_pane.png" />
-			</imageobject>
-		</mediaobject>
+
+		<figure>
+			<title>Job Control left panel</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_jc_left_pane.png" />
+				</imageobject>
+			</mediaobject>
+		</figure>
+		<caption>Screenshot of the Job Control list of jobs</caption>
 	</section>
 	<section>
 		<title>Right panel</title>
@@ -202,11 +197,16 @@
 				</inlinemediaobject>
 		</guiicon>.</para>
 
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_jc_more_details.png" />
-			</imageobject>
-		</mediaobject>
+		<figure>
+			<title>Job Control Right Panel</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_jc_more_details.png" />
+				</imageobject>
+			</mediaobject>
+			<caption> Job information. You can consult detailed information about the execution clicking on
+				Details. </caption>
+		</figure>
 		The provided information are:
 		<itemizedlist>
 			<listitem> <para>GêBR-maestro machine</para></listitem>
@@ -215,20 +215,20 @@
 			<listitem> <para>Distributions of the jobs to the servers</para></listitem>
 		</itemizedlist>
 
+		<figure>
+		<title>Jobs outputs</title>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="../images/GeBR_jc_output.png" />
 			</imageobject>
 		</mediaobject>
+		<caption>Screenshot of the outputs of a job.</caption>
+		</figure>
 		<para>The results (standard output) of the flow are shown. The redirected output are not
 			exhibited. Right-clicking on this window, an options menu is exhibited, by which you can
 			enable the automatic word wrap and the automatic scroll of window as the output is being
-			shown.</para>
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_jc_command_line.png" />
-			</imageobject>
-		</mediaobject>
+			shown.
+		</para>
 		<para>You can also consult the command lines executed by GêBR. You just need to
 			visit the tab Command line. The command lines are portable and can be copy-pasted through a
 			execution terminal.</para>

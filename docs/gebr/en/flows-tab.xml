@@ -46,12 +46,7 @@
     </listitem>
     <listitem>
       <para>
-        <link linkend="flows_browser_import_flow">Import a Flow,</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_export_flow">Export a Flow,</link>
+				<link linkend="flows_browser_import_flow">Import/Export a Flow,</link>
       </para>
     </listitem>
     <listitem>
@@ -311,74 +306,50 @@
     </caution>
   </section>
   <section xml:id="flows_browser_import_flow">
-    <title>Importing a Flow</title>
-    <para>GêBR allows you to import Flows that were previously exported 
-      <xref linkend="flows_browser_export_flow" />. To do so:</para>
-    <procedure>
-      <step>
-        <para>Check that you have already 
-          <emphasis role="bold">created and selected a Line</emphasis>, in the tab 
-          <guilabel>Projects and Lines</guilabel>. Remember that Flows can only exist inside Lines
-          (see this concept in Section 
-          <xref linkend="overview" />). To import a Flow you must first 
-          <emphasis role="bold">select a Line</emphasis> (or 
-          <xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
-      </step>
-      <step>
-        <para>Select the tab 
-          <guilabel>Flows</guilabel> and left-click on 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/botao_importar_projeto.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon>.</para>
-      </step>
-      <step>
-        <para>Navigate through the 
-          <guilabel>Choose a Flow to import</guilabel> and select a Flow you wish to import (only
-          the file types 
-          <filename class="extension">flw</filename> will appear).</para>
-      </step>
-      <step>
-        <para>Left-click on the button 
-          <guibutton>Open</guibutton>.</para>
-      </step>
-    </procedure>
-    <para>The imported Flow will be listed along with any other Flows of the selected
-      Line.</para>
-  </section>
-  <section xml:id="flows_browser_export_flow">
-    <title>Exporting a Flow</title>
+		<title>Importing/Exporting a Flow</title>
     <para>Although GêBR maintains all your data, you still might wish to copy your Flows to file
-      (perhaps to share with others or as a backup). To export a Flow:</para>
-    <procedure>
-      <step>
-        <para>Select the Flow you wish to save.</para>
-      </step>
-      <step>
-        <para>Left-click on 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/botao_exportar_projeto.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon>.</para>
-      </step>
-      <step>
+        <para></para>
+
         <para>In the window 
           <guilabel>Save Flow</guilabel>, navigate to the directory you desire and type a name for
           the file (GêBR will automatically determine the extension 
           <filename class="extension">flw</filename>).</para>
-      </step>
-      <step>
-        <para>Left-click on the button 
-          <guibutton>Save</guibutton>.</para>
-      </step>
-    </procedure>
-  </section>
+      (perhaps to share with others or as a backup). To do so:</para>
+		<procedure>
+			<step>
+				<para> In case of Import, you must first 
+					<emphasis role="bold">select a Flow</emphasis> (or see
+					<xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
+			</step>
+			<step>
+				<para>Select the tab 
+					<guilabel>Flows</guilabel> and left-click on 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_importar_projeto.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon> to import or on 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon> to export.
+				</para>
+			</step>
+			<step>
+				<para>Navigate through the files
+					and select the Flow you wish to import/export.</para>
+			</step>
+		</procedure>
+		<para>In case of Import, the imported Flow will be listed along with any other Flows of the selected
+			Line. Otherwise, in case of Export, the file containing the exported Flow will be created.</para>
+	</section>
+
+
   <section xml:id="flows_browser_execute_flow">
     <title>Executing a Flow</title>
     <para>This command is present in the tab 
@@ -392,6 +363,7 @@
         </inlinemediaobject>
       </guiicon>. 
       <figure>
+				<title>Flows tab.</title>
         <mediaobject>
           <caption>In the tab Flows you are able to execute several Flows sequentially by first:
             selecting the Flows you wish to use, and then left-click on 
