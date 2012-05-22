@@ -115,7 +115,7 @@
         Properties</guilabel>, will appear. Fill in the four standard fields:
           <guilabel>Title</guilabel>, <guilabel>Description</guilabel>
           (an one-line sentence), <guilabel>Author</guilabel> and
-          an <guilabel>E-mail</guilabel> address. Click
+          an <guilabel>e-mail</guilabel> address. Click
           on <guibutton>OK</guibutton> when ready.</para>
       </step>
     </procedure>
@@ -142,7 +142,7 @@
       <para>Performing the operations described above the user has
       just accomplished the creation of a Flow element in the
       interface. However, that new Flow still needs to be assembled,
-      i.e., the user needs to selected which programs will be
+      i.e., the user needs to select which programs will be
       chained to accomplish the purpose of the Flow. This further set
       up is describe in <xref linkend="flow_editor_create_flow" />.</para>
     </important>

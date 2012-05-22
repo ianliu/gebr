@@ -160,7 +160,7 @@
     you can create Lines. To add a new Line to a Project follow the
     steps:</para>
     <procedure>
-      <step>Selected a target Project or a Line of the target
+      <step>Select a target Project or a Line of the target
 	Project (see
 	<xref linkend="projects_lines_create_projects"/>);
       </step>
@@ -333,7 +333,7 @@
     <para>Whenever a Maestro is connected, all Lines associates to
       other Maestros will be unavailable for edition. The user can
       however migrate a Line from its original Maestro to the
-      connected one. To do so, the Line has to selected. In
+      connected one. To do so, the Line has to be selected. In
       the <guilabel>Details</guilabel> panel, an icon in the upper
       left corner indicates whether the Maestro defined for the Line
       is connected or not. In case the original Maestro is not the
@@ -343,7 +343,7 @@
     <itemizedlist>
       <listitem>
 	<para>disconnect from the current Maestro and connect
-	  to the Maestro associated to the Line; or </para>
+	  to the Maestro associated to the Line;  </para>
       </listitem>
       <listitem>
 	<para>dissociate the Line from its original Maestro and
@@ -372,9 +372,9 @@
   </important>
 
   <section xml:id="projects_lines_import">
-    <title>Import a Project or a Line</title>
+    <title>Importing a Project or a Line</title>
     <para>In GêBR you can import Projects or Lines that were previously exported 
-      <xref linkend="projects_lines_export" />. To do so:</para>
+      (<xref linkend="projects_lines_export" />). To do so:</para>
     <procedure>
       <step>
 	<para>Click on the button 
@@ -390,7 +390,7 @@
 	<para>Select the Project or Line you want to import at window 
 	  <guilabel>Choose Project/Line to open</guilabel>. Only files with extension 
 	  <filename class="extension">prjz</filename> or 
-	  <filename class="extension">lnez</filename> will be show.</para>
+	  <filename class="extension">lnez</filename> will be shown.</para>
       </step>
       <step>
 	<para>Click at button 
@@ -398,16 +398,16 @@
       </step>
     </procedure>
     <para>The imported project is added to the list of projects, found
-      on the left of the main window. An imported Line joins the other
-      Lines, if they exist, of the Project that was selected when the
-      Line was imported. In both cases the imported item is identified
+      on the left of the main window. An imported Line joins with the other
+      Lines of the Project that was selected when the 
+      Line was imported, if they exist. In both cases the imported item is identified
       with the suffix
       <emphasis role="bold">Imported</emphasis>.</para>
 
     <note>
-      <para>In GêBR, Lines may only exist inside a Project, see this
+      <para>In GêBR, Lines may only exist inside a Project (see this
 	concept in
-	<xref linkend="projects_lines_create_lines"/>. Therefore to
+	<xref linkend="projects_lines_create_lines"/>). Therefore to
 	import a Line you must first select an existing Project, or
 	create a new.
       </para>
@@ -417,8 +417,8 @@
   <section xml:id="projects_lines_export">
     <title>Exporting a Project or a Line</title>
 
-    <para>Although GêBR continuously saves all data, sometimes it is
-      desirable to have copies of your Project and Lines in a file
+    <para>Although GêBR continuously saves all data, sometimes is
+      desirable to have copies of your Projects and Lines in a file
       (for example, to share with others or to make backups). To
       export a Project or a Line:</para>
     <procedure>
@@ -436,11 +436,11 @@
 	</guiicon>.</para>
       </step>
       <step>
-	<para>A dialog box will appear where you can 
-	  <guilabel>choose the name of the file that will be saved</guilabel>; select a directory
-	  then type the file name, GêBR determines the extension automatically, 
-	  <filename class="extension">prjz</filename> for Projects or 
-	  <filename class="extension">lnez</filename> for Lines.</para>
+	<para>A dialog box will appear and there you can 
+	  <guilabel>choose the name of the file that will be saved</guilabel>; when you select a directory
+	  and type the file name, GêBR determines the extension automatically, 
+	  <filename class="extension">.prjz</filename> for Projects or 
+	  <filename class="extension">.lnez</filename> for Lines.</para>
       </step>
       <step>
 	<para>Left-click on 
@@ -452,7 +452,7 @@
   <section xml:id="projects_lines_edit_comments_project">
     <title>Editing comments</title>
 
-    <para>You add comments on the report of a Project or a Line.  To
+    <para>You can add comments on the report of a Project or a Line.  To
       do so, follow the steps:</para>
 
     <procedure>

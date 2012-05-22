@@ -60,7 +60,7 @@
     </itemizedlist>
 
     <para>
-      Thus, before creating and executing Flows, it's necessary create
+      Thus, before creating and executing Flows, it's necessary to create
       at least one Project owning one
       Line. <xref linkend="projects_lines_create_projects"/>,
       <xref linkend="projects_lines_create_lines"/> and
@@ -68,7 +68,7 @@
       accomplished.
     </para>
 
-    <para>To assemble a Flow, the user has to not only select the
+    <para>To assemble a Flow, the user has not only to select the
       programs, but also configure them properly, through their
       parameters. Once the Flow is ready, it is time to actually execute
       it.</para>
@@ -77,7 +77,7 @@
   <section xml:id="overview-connections">
     <title>GêBR players</title>
 
-    <para>The GêBR set of tool is composed by three main player
+    <para>The GêBR set of tools is composed by three main player
       categories: <emphasis role="bold">GêBR</emphasis> (the interface
       itself), <emphasis role="bold">Maestros</emphasis>,
       and <emphasis role="bold">working machines</emphasis>. But who
@@ -110,7 +110,7 @@
       job.</para>
   
     <para>The working machines put their computational power at
-      disposal of the Maestro. Under Maestros' coordination the
+      disposal of the Maestro. Under Maestro's coordination the
       working machines can even cooperate to conclude processing jobs
       fasters.</para>
  
