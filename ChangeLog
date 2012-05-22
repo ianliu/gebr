@@ -1,3 +1,29 @@
+2012-05-22  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Documentation further improvements
+
+2012-05-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply changes to GêBR english documentation
+
+2012-05-22  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* improving the documentantion (grammatical and sense mistakes)
+
+2012-05-22  Ricardo Biloti  <Ricardo Biloti>
+
+	* About message updated
+
+2012-05-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Apply markup escape on tooltips in dictionary to avoid criticals
+	when use brackets
+
+2012-05-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.13 for changeset b236181b33cc
+	* Release 0.17.13: User guide preview.
+
 2012-05-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Last minute translations.

@@ -1,3 +1,7 @@
+2012-05-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.13: User guide preview.
+
 2012-05-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Fix stuck of server connections after append key on server with
