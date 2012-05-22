@@ -435,13 +435,15 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 		}
 		g_clear_error(&error);
 	} else {
+		gchar *tooltip_escaped = g_markup_escape_text(tooltip, -1);
 		GebrGeoXmlParameterType type;
 		type = gebr_geoxml_parameter_get_type(param);
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 				   DICT_EDIT_VALUE_TYPE_IMAGE,
 				   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
 				   DICT_EDIT_VALUE_TYPE_TOOLTIP,
-				   tooltip, -1);
+				   tooltip_escaped, -1);
+		g_free(tooltip_escaped);
 	}
 	g_free(tooltip);
 }
@@ -1087,13 +1089,22 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 
 	gebr_validator_evaluate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &tooltip, &error);
 
+	gchar *tooltip_escaped = NULL;
+	if (tooltip)
+		tooltip_escaped = g_markup_escape_text(tooltip, -1);
+	else
+		tooltip_escaped = g_strdup(tooltip);
+
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
 	                   DICT_EDIT_VALUE_TYPE_IMAGE, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
-			   DICT_EDIT_VALUE_TYPE_TOOLTIP, tooltip,
+			   DICT_EDIT_VALUE_TYPE_TOOLTIP, tooltip_escaped,
 			   DICT_EDIT_VALUE_TYPE_VISIBLE, FALSE,
 			   DICT_EDIT_VALUE_VISIBLE, TRUE, -1);
 	gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,
 					  gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 1), TRUE);
+
+	g_free(tooltip_escaped);
+	g_free(tooltip);
 }
 
 static void
