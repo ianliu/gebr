@@ -1,4 +1,7 @@
 * { font-family: sans-serif, verdana, arial, helvetica; }
+
+.guilabel { font-variant:small-caps; }
+
 body { margin: 25px; }
 
 h2 { color: #000060; 
@@ -16,7 +19,14 @@ p { text-align: justify; }
 .figure .title { display: inline;}
 .figure .title:after { content: "." }
 
-.caution p, .note p, .tip p, .important p {color: #600000; }
+.tip h3, .note h3, .important h3, .caution h3 { margin-top: 10pt; }
+.tip p,  .note p,  .important p,  .caution p
+{    color: #600000;
+     padding: 10pt;
+     padding-left: 20pt;
+     padding-top: 0pt;
+     
+   }
 .caption {font-style: italic;
 	  font-size: small; }
 
@@ -29,5 +39,3 @@ a:hover   { color: #000;
 	    text-decoration: underline; 
 	    background-color: #fcfdd3
 	  }
-
-

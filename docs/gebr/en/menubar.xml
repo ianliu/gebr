@@ -55,7 +55,7 @@
       <listitem>
         <para><guilabel>Maestro</guilabel>: central unit of
           coordination of multiple machines (for more information, see
-          <xref linkend="overview-connections" />).</para>
+          <xref linkend="concepts_connections" />).</para>
       </listitem>
       <listitem>
         <para><guilabel>Servers</guilabel>: choose the servers

@@ -61,7 +61,7 @@
 	    Now it's possible to change the Line's Maestro (see <xref linkend="projects_lines_change_the_maestro_of_a_line"/>).
 	  </listitem>
 	  <listitem>
-	    GêBR correctly displays remote folder (see <xref linkend="flow_editor_remote_browsing"/>).
+	    GêBR correctly displays remote folder (see <xref linkend="remote_browsing"/>).
 	  </listitem>
         </itemizedlist>
       </listitem>

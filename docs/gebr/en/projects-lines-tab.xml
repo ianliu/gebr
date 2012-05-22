@@ -315,7 +315,7 @@
 	<para>To be able to browse files in these directory, the
           <emphasis>remote browse</emphasis> feature must be enabled
           in the Maestro of the Line (see
-          <xref linkend="flow_editor_remote_browsing"/>).</para>
+          <xref linkend="remote_browsing"/>).</para>
       </important>
 
       <note><para>Although it is not mandatory to adhere to this

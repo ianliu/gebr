@@ -25,12 +25,7 @@
     </listitem>
     <listitem>
       <para>
-        <link linkend="flows_browser_copy_paste_flows">Copy and paste Flows,</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_delete_flow">Delete Flows,</link>
+        <link linkend="flows_browser_copy_paste_del_flows">Coping, pasting and deleting Flows,</link>
       </para>
     </listitem>
     <listitem>
@@ -46,7 +41,7 @@
     </listitem>
     <listitem>
       <para>
-				<link linkend="flows_browser_import_flow">Import/Export a Flow,</link>
+  <link linkend="flows_browser_import_flow">Import/Export a Flow,</link>
       </para>
     </listitem>
     <listitem>
@@ -87,7 +82,7 @@
 
     <para>The third-level element of GêBR are processing flows or
       just <emphasis>Flows</emphasis> (see
-      <xref linkend="overview-elements" />).</para>
+      <xref linkend="concepts_elements" />).</para>
 
     <para>To create a Flow, follow the steps:</para>
 
@@ -143,9 +138,9 @@
     </important>
   </section>
 
-  <section xml:id="flows_browser_copy_paste_flows">
+  <section xml:id="flows_browser_copy_paste_del_flows">
 
-    <title>Copy and paste Flows</title>
+    <title>Coping, pasting and deleting Flows</title>
 
     <para>The clipboard provides the popular set of tools known as
       <emphasis>copy and paste</emphasis>. In GêBR a Flow (or set of
@@ -176,24 +171,6 @@
         <keycap>V</keycap>
     </keycombo>.</para>
 
-    <tip>
-      <para>You can select several Flows and then copy all of them to
-      the clipboard by
-      holding <keycombo><keycap>Ctrl</keycap>
-	  <mousebutton>Left-click</mousebutton>
-        </keycombo> or 
-        <keycombo><keycap>Shift</keycap>
-          <mousebutton>Left-click</mousebutton></keycombo>. Any Flow
-      (or a set of Flows) that has been copied to the clipboard can be
-      pasted to <emphasis>any Line</emphasis>. Simply switch to the
-      <guilabel>Projects and Lines</guilabel> tab, select the desired
-      Line, then go back to the <guilabel>Flows</guilabel> tab and
-      paste the Flow(s).</para>
-    </tip>
-  </section>
-
-  <section xml:id="flows_browser_delete_flow">
-    <title>Deleting Flows</title>
     <para>To delete a Flow (or set of Flows), select them then click on 
       <guiicon>
         <inlinemediaobject>
@@ -202,8 +179,9 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon>.</para>
+
     <tip>
-      <para>You can select several Flows at once and then delete them by holding 
+      <para>You can handle several Flows at once by holding
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Left-click</mousebutton>
@@ -213,7 +191,19 @@
           <mousebutton>Left-click</mousebutton>
       </keycombo>.</para>
     </tip>
+
+    <tip>
+      <para>Any Flow (or a set of Flows) that has been copied to the
+      clipboard can be pasted to <emphasis>any Line</emphasis>. Simply
+      switch to the
+      <guilabel>Projects and Lines</guilabel> tab, select the desired
+      Line, then go back to the <guilabel>Flows</guilabel> tab and
+      paste the Flow(s).</para>
+    </tip>
+  
+
   </section>
+
   <section xml:id="flows_browser_edit_properties_flow">
     <title>Editing Flow's properties</title>
     <para>To edit Flow's properties you must first select the Flow, then left-click on 
@@ -240,7 +230,7 @@
       Flows that are only slightly different from one another, however without having to discard or
       modify the original Flow.</para>
     <para>One way of doing this is to copy and paste the Flow (see the
-      section <xref linkend="flows_browser_copy_paste_flows" />.
+      section <xref linkend="flows_browser_copy_paste_del_flows" />.
       Another way is to save the state of the original Flow, then edit
       it to your heart desire, and when you wish you can return the
       Flow to its original state. To
@@ -306,7 +296,7 @@
     </caution>
   </section>
   <section xml:id="flows_browser_import_flow">
-		<title>Importing/Exporting a Flow</title>
+    <title>Importing/Exporting a Flow</title>
     <para>Although GêBR maintains all your data, you still might wish to copy your Flows to file
         <para></para>
 
@@ -315,39 +305,43 @@
           the file (GêBR will automatically determine the extension 
           <filename class="extension">flw</filename>).</para>
       (perhaps to share with others or as a backup). To do so:</para>
-		<procedure>
-			<step>
-				<para> In case of Import, you must first 
-					<emphasis role="bold">select a Flow</emphasis> (or see
-					<xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
-			</step>
-			<step>
-				<para>Select the tab 
-					<guilabel>Flows</guilabel> and left-click on 
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/botao_importar_projeto.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon> to import or on 
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon> to export.
-				</para>
-			</step>
-			<step>
-				<para>Navigate through the files
-					and select the Flow you wish to import/export.</para>
-			</step>
-		</procedure>
-		<para>In case of Import, the imported Flow will be listed along with any other Flows of the selected
-			Line. Otherwise, in case of Export, the file containing the exported Flow will be created.</para>
-	</section>
+    <procedure>
+      <step>
+        <para> In case of Import, you must first 
+          <emphasis role="bold">select a Flow</emphasis> (or see
+          <xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
+      </step>
+      <step>
+        <para>Select the tab 
+          <guilabel>Flows</guilabel> and left-click on 
+          <guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/botao_importar_projeto.png" />
+              </imageobject>
+            </inlinemediaobject>
+          </guiicon> to import or on 
+          <guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/botao_exportar_projeto.png" />
+              </imageobject>
+            </inlinemediaobject>
+          </guiicon> to export.
+        </para>
+      </step>
+      <step>
+        <para>Navigate through the files and
+          select the Flow you wish to
+          import/export.</para>
+      </step>
+    </procedure>
+    <para>In case of Import, the imported Flow will be
+      listed along with any other Flows of the
+      selected Line. Otherwise, in case of Export,
+      the file containing the exported Flow will be
+      created.</para>
+  </section>
 
 
   <section xml:id="flows_browser_execute_flow">
@@ -363,10 +357,11 @@
         </inlinemediaobject>
       </guiicon>. 
       <figure>
-				<title>Flows tab.</title>
+  <title>Flows tab</title>
         <mediaobject>
-          <caption>In the tab Flows you are able to execute several Flows sequentially by first:
-            selecting the Flows you wish to use, and then left-click on 
+          <caption>In the tab Flows you are able to execute several
+            Flows sequentially by first: selecting the Flows you wish
+            to use, and then left-click on
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
@@ -384,34 +379,44 @@
       <emphasis role="bold">multiple execution</emphasis> . You can do it by two different ways:
       </para>
     <itemizedlist>
-      <listitem><para>
-          Sequentially: Flows are executed in the order they are on the Flows List, on the left side of the window.
-          Each flow waits for the end of the previous job, to be executed. During this time, the awaiting flow shows an icon of "Waiting for job". If you wish to execute in a specific order, just reorder your Flows by Drag and Drop.
-        To execute on this mode, click on
+      <listitem>
+  <para>Sequentially: Flows are executed in the order
+          they are on the Flows List, on the left side of the window.
+          Each flow waits for the end of the previous job, to be
+          executed. During this time, the awaiting flow shows an icon
+          of "Waiting for job". If you wish to execute in a specific
+          order, just reorder your Flows by Drag and Drop.  To execute
+          on this mode, click on
         <guiicon>
           <inlinemediaobject>
             <imageobject>
               <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
             </imageobject>
           </inlinemediaobject>
-        </guiicon> or use Ctrl+R.
-      </para></listitem>
-      <listitem><para>
-          Parallely: Flows are executed simultaneously. It happens when there is no dependency between Flows. To,
-          execute on this mode use Ctrl+Shift+R.
-      </para></listitem>
+        </guiicon> or use Ctrl+R.</para>
+      </listitem>
+      <listitem>
+  <para>Parallely: Flows are executed simultaneously. It
+          happens when there is no dependency between Flows. To,
+          execute on this mode use Ctrl+Shift+R.</para>
+      </listitem>
     </itemizedlist>
 
    
-    <important>When executig many Flows, the configurations of the first flow on the list will
-     determine the others'. </important>
+    <important>
+      <para>When executig many Flows, the configurations of
+  the first flow on the list will determine the
+  others'.</para>
+    </important>
   </section>
 
    <section xml:id="flows_browser_speed_execution">
     <title>Execution speed</title>
-    <para>The flows' execution speed  is determined by the number of processors and priority of execution.
-     It's possible to  configure these parameters,
-      as detailed in <xref linkend="flow_editor_multicores"/> and <xref linkend="flow_editor_priority_execution"/>.  
+    <para>The flows' execution speed is determined by the number of
+     processors and priority of execution.  It's possible to configure
+     these parameters, as detailed in
+     <xref linkend="flow_editor_multicores"/> and
+     <xref linkend="flow_editor_priority_execution"/>.
      </para>
    </section>
 

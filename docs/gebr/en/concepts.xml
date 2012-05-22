@@ -10,7 +10,7 @@
   
   <title>Concepts</title>
 
-  <section xml:id="overview-elements">
+  <section xml:id="concepts_elements">
     <title>Projects, Lines and Flows</title>
     
     <para>The processing of a seismic data is carried out
@@ -74,7 +74,7 @@
       it.</para>
   </section>
 
-  <section xml:id="overview-connections">
+  <section xml:id="concepts_connections">
     <title>GêBR players</title>
 
     <para>The GêBR set of tools is composed by three main player
@@ -128,7 +128,7 @@
      seismic data, leaving all technical details to GêBR.</para>
   </section>
     
-  <section xml:id="gebr_tabs">
+  <section xml:id="concepts_gebr_gui_layout">
     <title>GêBR interface layout</title>
 
     <para>
