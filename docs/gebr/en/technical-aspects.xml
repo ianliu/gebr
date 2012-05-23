@@ -635,17 +635,6 @@
   <section xml:id="additional_features_mpi_support">
     <title>Support to MPI programs</title>
 
-    <para>The Message Passing Interface Standard (MPI) is a vendor
-      independent standard library of message passing. The MPI Forum,
-      which includes vendors, researchers, software library
-      developers, and users, apply efforts to establish the the
-      standards. The goal is to establish a portable and flexible
-      standard for message passing programming. The design of MPI
-      tries to match portability, efficiency, and
-      flexibility. Nowadays, it is a widely used standard for writing
-      message passing programs on high performance computers.
-    </para>
-
     <para>There are many implementations (flavors) of MPI, but the
     most widely used are OpenMPI and MPICH2. OpenMPI is an open source
     implementation and has influence of three earlier approaches:
