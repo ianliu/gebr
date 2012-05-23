@@ -8,12 +8,16 @@
   version="5.0"
   xml:id="controle_de_tarefas">
 
-  <title>The 
-    <guilabel>Job Control</guilabel> Tab</title>
-  <para>GêBr presents an interface to the organization and visualization of the results.</para>
+  <title>The <guilabel>Job Control</guilabel> tab</title>
+
+  <para>GêBr presents an interface to the organization and
+  visualization of the results.</para>
+
   <para>As seen in 
     <xref linkend="flows_browser_execute_flow" />, GêBR switches to the 
-    <guilabel>Job Control</guilabel> Tab whenever a Flow is executed.</para>
+    <guilabel>Job Control</guilabel> tab whenever a Flow is
+    executed.</para>
+
   <para>This tab has three sections:</para>
   <itemizedlist>
     <listitem><para>Toolbar: Operations over jobs</para></listitem>
@@ -80,7 +84,7 @@
               </imageobject>
             </inlinemediaobject>
           </guiicon>). You can cancel a running or queued job. When a
-          Job is terminated in this manner, the Job will be marked
+          Job is terminated in this manner, the job will be marked
           with
           <guiicon>
             <inlinemediaobject>

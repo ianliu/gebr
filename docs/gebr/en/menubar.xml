@@ -38,7 +38,7 @@
       <title>Global GêBR preferences dialog box</title>
       <mediaobject>
         <caption>Preferences menu opens a dialog box where you edit
-          the user name, email, menu's directory and the HTML
+          the user's name, e-mail, menu's directory and the HTML
           editor.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_preferences.png" />
@@ -79,9 +79,6 @@
       
     <section xml:id="maestro">
       <title>Maestro</title>
-
-
-      <!-- combobox must be documented too -->
 
       <para>In the upper part of the Servers Interface (see
         <xref linkend="maestro_server_dialog" />), there is an entry

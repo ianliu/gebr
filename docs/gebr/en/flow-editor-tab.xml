@@ -11,69 +11,25 @@
   <title>The <guilabel>Flow editor</guilabel> tab</title>
 
   <para>To create a new Flow, you can follow the instructions of
-    <xref linkend="flows_browser_create_flow" /></para>
+    <xref linkend="flows_browser_create_flow" />.</para>
 
   <para>Now that we know how to add programs to the Flow let us learn
-    how to configure these programs, and investigate the other tools
-    found in the <guilabel>Flow editor</guilabel> tab:</para>
+    how to configure these programs, and investigate other tools
+    found in the <guilabel>Flow editor</guilabel>.</para>
 
-  <itemizedlist>
-    <listitem>
-      <para>
-        <link linkend="flow_editor_create_flow">Assembling the Flow</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flow_editor_copy_program">Coping, pasting and
-          deleting programs</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flow_editor_edit_parameters_program">Edit a
-          program's parameters</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flow_editor_change_state_program">Change a
-          program's state</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flow_editor_edit_input_output">Edit the Flow's
-          input file and output file</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flow_editor_execute_flow">Execute a Flow</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flow_editor_multicores">Performance of
-          execution</link>
-      </para>
-    </listitem>
-  </itemizedlist>
   <tip>
-    <para>Instead of command buttons, try
+    <para>Instead of buttons from the toolbar, try
       using <emphasis role="bold">context menus</emphasis>. To do
-      so, <emphasis role="bold">right-click</emphasis> on a program you
-      have added. Notice that many command can be accessed through this
-      menu. For certain cases this method
-      is <emphasis role="bold">easier and faster</emphasis> then using
-      command buttons.</para>
+      so, <emphasis role="bold">right-click</emphasis> on a program
+      you have added. Notice that many command can be accessed through
+      this menu. For certain cases this method is easier and
+      faster than using command buttons.</para>
   </tip>
 
   <section xml:id="flow_editor_create_flow">
     <title>Assembling the Flow</title>
-    <para>In GêBR a 
-      <emphasis>Flow</emphasis> is a <emphasis>sequence of
-      operations</emphasis> defined by you. These operations, also
+    <para>In GêBR a <emphasis>Flow</emphasis> is a <emphasis>sequence
+      of operations</emphasis> defined by you. These operations, also
       called the Flow's <emphasis>programs</emphasis>, are organized
       into the following <emphasis>categories</emphasis> according to
       their purpose:</para>

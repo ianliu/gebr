@@ -9,9 +9,10 @@
   xml:id="project_line">
 
   <title>The <guilabel>Projects and Lines</guilabel> tab</title>
-  <para>The tab <guilabel>Projects and Lines</guilabel> is splitted up
-    in three parts: toolbar, list of Projects/Lines and
-    Details.</para>
+
+  <para>In the <guilabel>Projects and Lines</guilabel> tab
+  (see <xref linkend="sample_project_line_tab"/>)
+  the user can create and manage his or her Projects and Lines.</para>
 
     <figure id="sample_project_line_tab">
       <title>Projects and Line tab</title>
@@ -23,66 +24,13 @@
         </imageobject>
       </mediaobject>
     </figure>
-    
-  <para>The toolbar remains right below the tabs and has seven buttons, which
-    allows you to:</para>
-  <itemizedlist>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_create_projects">Create a Project</link>,
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_create_lines">Create a
-        Line</link>,
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_delete">Delete Projects
-        and/or Lines</link>,
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_edit_properties">Edit basic
-        properties of a Project or Line</link>,
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_import">Import a Project
-        or a Line</link>,
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_export">Export Projects
-          or Lines</link>.
-      </para>
-    </listitem>
-  </itemizedlist>
 
     <para>The right-side panel shows details about the selected
-    element (a Project or a Line) and is slightly different depending
-    the context. Despite the nature of the selected element, there is
-    two buttons at the bottom of the <guilabel>Details</guilabel>
-    frame:</para>
-
-  <itemizedlist>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_edit_comments_project">Edit comments,</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_view_report_project">View Report.</link>
-      </para>
-    </listitem>
-  </itemizedlist>
-
+      element (a Project or a Line) and is slightly different depending
+      the context. Despite the nature of the selected element, there is
+      two buttons at the bottom of the <guilabel>Details</guilabel>
+      frame edit and visualize the report.</para>
+    
   <tip>
     <para>Try using a 
       <emphasis>context menu</emphasis> instead of the buttons on the
@@ -234,18 +182,16 @@
 
     <note>
       <para>To delete a Project you must first delete all of its
-	Lines. A Project can only be deleted if it is Empty (no
-	lines).</para>
+	Lines. A Project can only be deleted if it has no Lines.</para>
     </note>
   </section>
   
   <section xml:id="projects_lines_edit_properties">
     <title>Editing properties</title>
-		<para>The same settings performed during the creation
-			of a Project or Line can be altered through
-			the Properties Editing.</para>
-    <para>To edit Project's or Line's properties, first select the Project or Line and then
-      click on the button 
+    <para>The same settings performed during the creation of a Project
+      or Line can be altered through the Properties Editing.</para>
+    <para>To edit Project's or Line's properties, first select the
+      Project or Line and then click on the button
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -264,18 +210,18 @@
       as BASE, and few other nested standard directories.</para>
 
     <para>For instance, if the home folder of the user is
-    '/home/john', setting the BASE to '/home/john/GeBR/MyFirstLine/',
-    will have the effect to also define the following
-    directories:</para>
+    '/home/john', setting the BASE to
+    '/home/john/GeBR/MyFirstLine/', will have the effect to also
+    define the following directories:</para>
       <table>
 	<tbody>
 	  <tr>
 	    <td>HOME: </td>
-	    <td> /home/john/</td>
+	    <td>/home/john/</td>
 	  </tr>
 	  <tr>
 	    <td>BASE: </td>
-	    <td> /home/john/GeBR/MyFirstLine/</td>
+	    <td>/home/john/GeBR/MyFirstLine/</td>
 	  </tr>
 	  <tr>
 	    <td>DATA: </td>
