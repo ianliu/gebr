@@ -10,25 +10,21 @@
 
   <title>The <guilabel>Flow editor</guilabel> tab</title>
 
-  <para>To create a new Flow, you can follow the instructions of
+  <para>To create a Flow, you can follow the instructions of
     <xref linkend="flows_browser_create_flow" />.</para>
-
-  <para>Now that we know how to add programs to the Flow let us learn
-    how to configure these programs, and investigate other tools
-    found in the <guilabel>Flow editor</guilabel>.</para>
 
   <tip>
     <para>Instead of buttons from the toolbar, try
       using <emphasis role="bold">context menus</emphasis>. To do
       so, <emphasis role="bold">right-click</emphasis> on a program
       you have added. Notice that many command can be accessed through
-      this menu. For certain cases this method is easier and
+      this menu. For certain cases, this method is easier and
       faster than using command buttons.</para>
   </tip>
 
   <section xml:id="flow_editor_create_flow">
     <title>Assembling the Flow</title>
-    <para>In GêBR a <emphasis>Flow</emphasis> is a <emphasis>sequence
+    <para>In GêBR, a <emphasis>Flow</emphasis> is a <emphasis>sequence
       of operations</emphasis> defined by you. These operations, also
       called the
       Flow's <emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
@@ -73,7 +69,7 @@
       </listitem>
     </itemizedlist>
 
-    <para>To create a Flow you must select and order programs from the
+    <para>To create a Flow, you must select and order programs from the
       above categories. Let us see how this is done:</para>
     <procedure>
       <step>
@@ -105,7 +101,7 @@
       <step>
         <para>Now select the tab <guilabel>Flow Editor</guilabel>. On
           the right side it will be shown a list with several menus.
-          Choose one of them and include it in your flow with a
+          Choose one of them and include it in your Flow with a
           double-click.
         </para>
       </step>
@@ -181,7 +177,7 @@
         <important>
           <para>To run a Flow 
             <emphasis role="bold">all the programs</emphasis> listed in the 
-            <guilabel>Flow sequence</guilabel> box must be 
+            <guilabel>Flow Sequence</guilabel> box must be 
             <guilabel>Configured</guilabel> (<guiicon>
               <inlinemediaobject>
                 <imageobject>
@@ -194,7 +190,7 @@
         <important>
           <para>The state of a Flow, or a set of Flows, can be changed
             by using the
-            hotkey <emphasis role="bold">spacebar</emphasis>, which
+            hotkey <emphasis role="bold">Spacebar</emphasis>, which
             alters the state of the selected programs in the order
             <emphasis role="bold">Not configured</emphasis>, 
             <emphasis role="bold">Disabled</emphasis> and 
@@ -203,7 +199,7 @@
         </important>
       </step>
     </procedure>
-    <para>Your flow is ready to be executed. Click on 
+    <para>Your Flow is ready to be executed. Click on 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -211,13 +207,13 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon> to do it.</para>
-    <para>There is 
-      no limit on the number of Flows you can have in one Line.</para>
-    <para>After you have created a Flow it will be visible on the left
+    <para>After you have created a Flow, it will be visible on the left
       side of the main window when the <guilabel>Flows</guilabel> tab
       is selected. The <guilabel>Details</guilabel> box, found on the
       right side of the main window, shows information on the selected
       Flow .</para>
+    <tip>There is 
+      no limit on the number of Flows you can have in one Line.</tip>
     <tip>
       <para>You can alter 
         <emphasis role="bold">the position</emphasis> of the Flow in
@@ -225,8 +221,7 @@
           mouse</emphasis> to the desired position.</para>
     </tip>
     <tip>
-      <para>Observe that the 
-        <emphasis role="bold">information bar</emphasis> just bellow
+      <para>The <emphasis role="bold">information bar</emphasis> just bellow
         the menu <guimenu>Actions</guimenu> shows the complete Flow
         tree of the selected Flow.</para>
     </tip>
@@ -282,21 +277,21 @@
     </tip>
 
     <caution>
-      <para>GêBR <emphasis role="bold">does not ask for
-        confirmation</emphasis> before deleting programs from a
+      <para>GêBR does <emphasis role="bold">not</emphasis> ask for
+        confirmation before deleting programs from a
         Flow.</para>
     </caution>
   </section>
 
   <section xml:id="flow_editor_edit_parameters_program">
     <title>Editing program's parameters</title>
-    <para>Program's parameters are a set of initial configurations
+    <para>Program's parameters compose a set of initial configurations
     defined by the user.</para>
     <para>To edit program's parameters:</para>
     <procedure>
       <step>
         <para>Select the program from the <guilabel>Flow
-            sequence</guilabel> box then click on
+            sequence</guilabel> box and click on
           <guiicon>
             <inlinemediaobject>
               <imageobject>
@@ -315,7 +310,7 @@
           <para>Click on the <guibutton>Help</guibutton> button
             (bottom left corner of the dialog box) to view
             the <emphasis role="bold">program's
-              documentation</emphasis>. This will certainly be useful
+              documentation</emphasis>. This will be certainly useful
             when you are editing the programs parameters.</para>
         </tip>
         <tip>
@@ -335,24 +330,24 @@
     <title>Changing a program's state</title>
     <para>After you have carried out process of
       <xref linkend="flow_editor_edit_parameters_program" />, the
-      program's mark is changed to
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/icone_configurado.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon> instead of the 
+      icon beside the program will change from 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
             <imagedata fileref="../../common-images/icone_nao_configurado.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>. This means that the program's state has gone
+			</guiicon> to
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/icone_configurado.png" />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon>. This means that the program's state passed 
       from <emphasis role="bold">Not configured</emphasis> to
       the <emphasis role="bold">Configured</emphasis> state. Besides
-      these two states the program can also be set to
+      these two states, the program can also be set to
       the <emphasis role="bold">Disabled</emphasis> state (<guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -399,7 +394,7 @@
 
   <section xml:id="flow_editor_edit_input_output">
     <title>Editing the Flow's input and output files</title>
-    <para>On many occasions in which you will need to extract data
+    <para>In many occasions, you will need to extract data
       from an input file and/or generate as a result an output file,
       or even an log file in case an error occurs.</para>
 
@@ -417,10 +412,14 @@
     </figure>
     <procedure>
       <step>
-        <para>Check you have selected a Flow, then select the Flow
-          editor tab, in the Flow sequence box you can edit the input,
-          output and log files paths by double clicking on them. See
-          figure:</para>
+				<para>Selecte a Flow, in the <guilabel>Flow</guilabel> tab,
+					and switch to the <guilabel>Flow Editor</guilabel> tab.</para>
+      </step>
+      <step>
+					<para>
+					In the Flow sequence box, you can edit the input,
+					output and log files paths by double clicking on them.
+					</para>
       </step>
       <step>
         <para>Type in the path or click on the icon 
@@ -436,15 +435,15 @@
       </step>
     </procedure>
 
-    <para>If you are going to use the folders associated to your Line,
+    <para>If you want to use the folders associated to your Line,
       you can either choose like above or you can use the feature of
-      autocomplete of the main folders of this Line.
+      autocomplete of the important folders of this Line.
     </para>
     <figure>
       <title>Autocomplete of paths</title>
       <mediaobject>
         <caption>
-          Autocomplete feature in Input file of a Flow.
+          Autocomplete feature in the Input file of a Flow.
         </caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_flow_editor_autocomplete.png" />
@@ -452,10 +451,10 @@
       </mediaobject>
     </figure>
 
-    <para>When you have chosen a path for your 
-      <guilabel>Flow's input/output</guilabel> note that their file
+    <para>When you choose a path for your 
+      <guilabel>Flow's input/output</guilabel>, their file
       paths will appear in the
-      <guilabel>Flow sequence</guilabel> box, indicate with the marks 
+      <guilabel>Flow sequence</guilabel> box, indicated by the icons
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -499,13 +498,13 @@
       Editor Tab and choose the "After <emphasis>Flow
         A</emphasis>".</para>
 
-    <para>By default the Flows are executed on the Maestro group.
+    <para>By default, the Flows are executed on the Maestro group.
       More details on the definition and selection of servers and
       groups of servers can be found in
       <xref linkend="additional_features_maestro_servers_configuration"/>.</para>
 
     <para>In the <guilabel>Flow Editor</guilabel> tab, even if you
-      have selected several Flow from the <guilabel>Flows</guilabel>
+      have selected several Flows from the <guilabel>Flows</guilabel>
       tab, when you click on
       <guiicon>
         <inlinemediaobject>
@@ -513,7 +512,7 @@
             <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-    </guiicon> only the first selected Flow will be executed.</para>
+    </guiicon>, only the first of the selected Flows will be executed.</para>
     <figure>
       <title>Execution queue</title>
       <mediaobject>
@@ -534,7 +533,7 @@
     </para>
 
     <para>At the moment the Flow is executed, GêBR automatically
-      switchs to the <guilabel>Job Control</guilabel> tab and displays a
+      switches to the <guilabel>Job Control</guilabel> tab and displays a
       report of the execution of the Flow .</para>
   </section>
 
@@ -569,8 +568,9 @@
     <para>After the <emphasis>Loop</emphasis> is added, you have
       access to a new variable,
       the <emphasis role="bold">iter</emphasis> (see
-      <xref linkend="dictionary_variables" />). This special variable
-      changes its value on each iteration (increasing or decrementing),
+			<xref linkend="dictionary_variables" />). The value of this 
+			special variable is modified
+      on each iteration (increasing or decrementing),
       according to the parameters set.</para>
 
     <figure>

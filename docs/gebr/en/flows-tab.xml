@@ -56,7 +56,7 @@
       </step>
     </procedure>
 
-    <para>After you have created a Flow it will be 
+    <para>After you have created a Flow, that it will be 
       visible on the left side of the main window when the 
       <guilabel>Flows</guilabel> tab is selected. The 
       <guilabel>Details</guilabel> box, found on the right side of the
@@ -69,7 +69,7 @@
         position.</para>
     </tip>
     <tip>
-      <para>Observe that the information bar just bellow the menu
+      <para>Observe that the information bar just below the menu
         <guimenu>Actions</guimenu> shows the parents Line and Project
         of the selected Flow.</para>
     </tip>
@@ -153,7 +153,7 @@
   <section xml:id="flows_browser_edit_properties_flow">
     <title>Editing Flow's properties</title>
     <para>To edit Flow's properties you must first select the Flow,
-    then left-click on
+    then click on
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -175,7 +175,7 @@
 
   <section xml:id="flows_browser_save_state_flow">
     <title>Saving a Flow's state</title>
-    <para>Working with GêBR you will find situations where it will be
+    <para>You will find situations when working with GêBR it will be
       useful to use an existing Flow as a basis to create new
       Flows. For example, you might want to experiment with Flows that
       are only slightly different from one another, however without
@@ -315,9 +315,9 @@
       <figure>
   <title>Flows tab</title>
         <mediaobject>
-          <caption>In the tab Flows you are able to execute several
-            Flows sequentially by first: selecting the Flows you wish
-            to use, and then left-click on
+          <caption>In the tab Flows, you are able to execute several
+            Flows sequentially by selecting the Flows you wish
+            to use, and then click on
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
@@ -337,9 +337,9 @@
       </para>
     <itemizedlist>
       <listitem>
-	<para>Sequentially: Flows are executed in the order
+	<para><emphasis>Sequentially</emphasis>: Flows are executed in the order
           they are on the Flows List, on the left side of the window.
-          Each flow waits for the end of the previous job, to be
+          Each Flow waits for the end of the previous job, to be
           executed. During this time, the awaiting flow shows an icon
           of "Waiting for job". If you wish to execute in a specific
           order, just reorder your Flows by Drag and Drop.  To execute
@@ -353,7 +353,7 @@
         </guiicon> or use Ctrl+R.</para>
       </listitem>
       <listitem>
-	<para>Parallely: Flows are executed simultaneously. It
+	<para><emphasis>Parallely</emphasis>: Flows are executed simultaneously. It
           happens when there is no dependency between Flows. To,
           execute on this mode use Ctrl+Shift+R.</para>
       </listitem>
@@ -368,7 +368,7 @@
   
   <section xml:id="flows_browser_speed_execution">
     <title>Execution speed</title>
-    <para>The flows' execution speed is determined by the number of
+    <para>The Flows' execution speed is determined by the number of
      processors and priority of execution. It's possible to configure
      these parameters, as detailed in
      <xref linkend="flow_editor_multicores"/> and
@@ -391,9 +391,9 @@
     <title>View Report</title>
     <para>This button appears in the <guilabel>Projects and
     Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
-    button allows the user to View the report about the Line or Flow
-    in use. The difference is that the Line's report can include the
-    Flow's report.  All other functions are described in
+    button allows the user to View the Report about the Line or Flow
+    in use. The difference is that the Line's Report can include the
+    Flow's Report.  All other functions are described in
     <xref linkend="projects_lines_view_report_project" />.</para>
   </section>
 </chapter>

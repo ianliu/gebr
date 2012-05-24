@@ -12,7 +12,7 @@
 
   <para>In the <guilabel>Projects and Lines</guilabel> tab
   (see <xref linkend="sample_project_line_tab"/>)
-  the user can create and manage his or her Projects and Lines.</para>
+  the user can create and manage his projects and lines.</para>
 
     <figure id="sample_project_line_tab">
       <title>Projects and Line tab</title>
@@ -25,7 +25,7 @@
       </mediaobject>
     </figure>
 
-    <para>The right-side panel shows details about the selected
+    <para>The right side shows details about the selected
       element (a Project or a Line) and is slightly different depending
       on the context. Despite the nature of the selected element, there are 
       two buttons at the bottom of the <guilabel>Details</guilabel>
@@ -74,7 +74,7 @@
     <figure>
       <title>Project's properties dialog box</title>
       <mediaobject>
-        <caption>In the Project's properties dialog box you can edit
+        <caption>In the Project's properties dialog box, you can edit
           the Title, Description, Author and Email.</caption>
         <imageobject>
           <imagedata fileref="../images/janela_properties_project.png" />
@@ -100,11 +100,11 @@
 
     <para>To create lines, GêBR must be connected to a Maestro (see
       <xref linkend="additional_features_maestro_servers_configuration"/>). Otherwise,
-      GêBR would not be able to submitted them for execution, since
+      GêBR would not be able to submit Flows for execution, since
       this is done through the Maestro's intervenience.</para>
 
-    <para>Once there are Projects, and GêBR is connected to a Maestro,
-    you can create Lines. To add a new Line to a Project follow the
+    <para>Once there are Projects and GêBR is connected to a Maestro,
+    the user can create Lines. To add a new Line to a Project, follow the
     steps:</para>
     <procedure>
       <step>Select a target Project or a Line of the target
@@ -155,9 +155,9 @@
       the main window.
     </para>
     
-    <para>There is no limit for the number of Projects and Lines in
+    <tip>There is no limit to the number of Projects and Lines in
       GêBR. You can create as many as you want.
-    </para>
+    </tip>
 
     <para>GêBR allows collapsing or expanding the view of the
     Projects. When collapsed, the Lines of a Project are hidden. When
@@ -181,12 +181,12 @@
 	</inlinemediaobject>
       </guiicon>.</para>
 
-    <para>When you delete a Line you are also deleting all of its
+    <para>When you delete a Line you are also deleting all its
       Flows.</para>
 
     <note>
       <para>To delete a Project you must first delete all of its
-	Lines. A Project can only be deleted if it has no Lines.</para>
+	Lines.</para>
     </note>
   </section>
   
@@ -208,9 +208,9 @@
   <section xml:id="projects_lines_line_paths">
     <title>Important folders of a Line</title>
 
-    <para>To better manage all files read or created during the
-      processing of a data, GêBR defines a directory structure to
-      store them. This structure is defined by a top directory, known
+		<para>GêBR defines a directories structure to aid 
+			in the task of management of the data associated to 
+			a set of Flows. This structure is defined by a top directory, known
       as BASE<indexterm><primary>BASE</primary></indexterm>, and few
       other nested standard directories.</para>
 
@@ -288,11 +288,11 @@
     <para>Whenever a Maestro is connected, all Lines associates to
       other Maestros will be unavailable for edition. The user can
       however migrate a Line from its original Maestro to the
-      connected one. To do so, the Line has to be selected. In
+      connected one. To do so, the Line must be selected. In
       the <guilabel>Details</guilabel> panel, an icon in the upper
       left corner indicates whether the Maestro defined for the Line
       is connected or not. In case the original Maestro is not the
-      connect one, by clicking over that icon, GêBR will offer two
+      connected one, by clicking over that icon, GêBR will offer two
       options:</para>
 
     <itemizedlist>
@@ -322,7 +322,7 @@
   <important>
     <para>When a Line is migrated from one Maestro to another, all
     data in the BASE<indexterm><primary>BASE</primary></indexterm>
-    directory and in its childs will remain in the working servers of
+    directory and in its children will remain in the working servers of
     the original Maestro.
     </para>
   </important>
@@ -375,7 +375,7 @@
   <section xml:id="projects_lines_export">
     <title>Exporting a Project or a Line</title>
 
-    <para>Although GêBR continuously saves all data, sometimes is
+    <para>Although GêBR continuously saves all data, sometimes it is
       desirable to have copies of your Projects and Lines in a file
       (for example, to share with others or to make backups). To
       export a Project or a Line:</para>
@@ -394,7 +394,7 @@
 	</guiicon>.</para>
       </step>
       <step>
-	<para>A dialog box will appear and there you can 
+	<para>A dialog box will appear and, there, you can 
 	  <guilabel>choose the name of the file that will be
 	  saved</guilabel>; when you select a directory and type the
 	  file name, GêBR determines the extension automatically,
@@ -456,7 +456,7 @@
       side of the main window.</para>
 
     <para>After clicking on <guilabel>View Report</guilabel>, a window
-    will appear where you can:</para>
+    will appear, where you can:</para>
 
     <procedure>
       <step>
@@ -487,7 +487,7 @@
     <figure>
       <title>Report view</title>
       <mediaobject>
-	<caption>In the view report window, you can print or save to a
+	<caption>In the <guilabel>View Report</guilabel> window, you can print or save to a
 	  file this report. In the options menu, as is shown above,
 	  you can include: your comments, the Flow's report, the
 	  parameter table and choose from a few pre-defined styles for
@@ -499,7 +499,7 @@
     </figure>
 
     <para><xref linkend="flows_browser_view_report_flow" /> explains
-      in greater detail the View Report tool for Flows, which is very
+      in greater details the View Report tool for Flows, which is very
       similar to the Line's and Project's View Report except that in
       this one you can add the Flow's report.</para>
 

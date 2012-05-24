@@ -71,8 +71,8 @@
     </para>
 
     <para>If you choose GêBR to user public-key authentication by
-      checking <guimenuitem>"Use encryption key to automatically
-        authenticate the next session"</guimenuitem>, then GêBR will
+      checking "<guimenuitem>Use encryption key to automatically
+        authenticate the next session</guimenuitem>", then GêBR will
       create (if not existent) a private/public keys pair and will
       keep the private key and will copy the public key to the
       Maestro. Once this operation is successfully done, your
@@ -99,7 +99,7 @@
       </mediaobject>
     </figure>
 
-    <para>Alternatively, you can create private/public key pair
+    <para>Alternatively, you can create the private/public key pair
       by yourself (consult <link xlink:show="new"
       xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
       for more information).
@@ -117,9 +117,9 @@
       yours.
     </para>
     <para>For most of the places you can pick a file (see window
-      below) you will be navigating through the Servers files.
+      below), you will be navigating through the Servers files.
     </para>
-    <para>Just in two places of GêBR you will not be browsing in the
+    <para>In two places of GêBR, you will not be browsing in the
       Servers filesystem: <emphasis>Import/Export</emphasis> of
       Projects, Lines or Flows. On these cases you may, for example,
       keep a backup of your Projects/Lines/Flows on your home computer
@@ -137,7 +137,7 @@
       bookmarks on the <guilabel>Places</guilabel> panel.</caption>
     </figure>
 
-    <para>GêBR puts markers (bookmarks) to the paths of the Line in
+    <para>GêBR puts markers (bookmarks) to the important folders of the Line in
       context (see <xref linkend="projects_lines_line_paths"/>), as you
       can see in the left edge of the window above. They aim to
       facilitate the access to the files of the Line.
@@ -496,17 +496,17 @@
       standard.
     </para>
 
-    <para>GêBR supports both OpenMPI and MPICH2. However, MPI
+    <para>GêBR supports <emphasis>both OpenMPI and MPICH2</emphasis>. However, MPI
       programs can only run on servers that support the execution of
       MPI. Thus, for GêBR support of MPI, the user must have acces to
       servers/clusters that also support it.
     </para>
 
-    <para>In the Server Interface, in the MPI column, an icon
+		<para>In the Maestro/Server Interface, in the MPI column, an icon
       indicates whether the working machine supports MPI. Roll over
       the icon to check the flavors of MPI available on that
       machine. You will be able to run parallell program just on
-      machines that support the same flavor as the one used on in the
+      machines that support the same flavor as the one used in the
       program.
     </para>
 
@@ -518,7 +518,7 @@
     </figure>
     
     <para>To run an MPI program, you must first create a menu in DêBR
-      and choose appropriately the MPI implementation used on your
+      and choose the proper MPI implementation to your
       program. Then import it in GêBR. In the Flow Editor tab, if you
       double-click over the MPI program, you will be able to set the
       number of processes to be used by that MPI call.
