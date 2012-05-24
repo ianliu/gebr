@@ -21,6 +21,7 @@ p { text-align: justify; }
 
 .figure .title { display: inline;}
 .figure .title:after { content: "." }
+.table  .title:after { content: "." }
 
 .tip h3, .note h3, .important h3, .caution h3 { margin-top: 10pt; }
 .tip p,  .note p,  .important p,  .caution p

@@ -218,7 +218,7 @@
     '/home/john', setting the BASE to
     '/home/john/GeBR/MyFirstLine/', will have the effect to also
     define the following directories:</para>
-      <table>
+      <informaltable>
 	<tbody>
 	  <tr>
 	    <td>HOME:<indexterm><primary>HOME</primary></indexterm> </td>
@@ -249,7 +249,7 @@
 	    <td>/home/john/GeBR/MyFirstLine/custom/</td>
 	  </tr>
 	</tbody>
-      </table>
+      </informaltable>
 
       <para>
       This set of folders can help you manage the data related to this

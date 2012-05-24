@@ -197,6 +197,22 @@
       capabilities and available resources at time. Therefore, Maestro
       can take smart decisions about which machines are best suited to
       run the job.</para>
+
+    <figure>
+      <title>Communitation layout between GêBR players</title>
+      <mediaobject>
+	<imageobject>
+          <imagedata fileref="../images/gebr-connections.png" />
+        </imageobject>
+      </mediaobject>
+      <caption>GêBR has no direct access to working machines. All
+      communitation flows through the Maestro, which is responsible to
+      receive GêBR requests and inquires and root them the working
+      machines, according its own criteria, always taking performance
+      into account. Maestro also centralizes outputs from the working
+      machines and send them back to GêBR.
+      </caption>
+    </figure>
   
     <para>The working machines put their computational power at
       disposal of the Maestro. Under Maestro's coordination the
@@ -205,12 +221,12 @@
  
    <para>When the user decides to execute a flow, GêBR sends this
       request to the Maestro, giving rise to
-      a <emphasis role="bold">job</emphasis>. However the Maestro does
-      not execute the job itself. Indeed, it dispatches the job to
-      some of the working machines, under its control. Besides,
-      Maestro collects the results and all information about the job,
-      sending them back to GêBR, where they are presented to the
-      user.</para>
+      a <emphasis role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>. However
+      the Maestro does not execute the job itself. Indeed, it
+      dispatches the job to some of the working machines, under its
+      control. Besides, Maestro collects the results and all
+      information about the job, sending them back to GêBR, where they
+      are presented to the user.</para>
 
    <para>This communication process, despiste complex, is completely
      transparent to the user, which can concentrate on processing
