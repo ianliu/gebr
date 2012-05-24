@@ -14,12 +14,13 @@
     <title>Intercommunication between players</title>
 
     <para>GêBR can take benefit of the resources of multiple
-      machines. To handle it, GêBR is segmented in three
-      layers:</para>
+      machines. To handle it, GêBR is segmented in three layers:</para>
 
     <itemizedlist>
       <listitem>The local machine (the GêBR graphical interface
-        or <emphasis>the client</emphasis>)<indexterm><primary>GêBR</primary><secondary>the interface</secondary></indexterm>, from where the user sends
+        or <emphasis>the
+        client</emphasis>)<indexterm><primary>GêBR</primary><secondary>the
+        interface</secondary></indexterm>, from where the user sends
         requests.
       </listitem>
       <listitem>An intermediate layer (the
@@ -32,15 +33,6 @@
         or <emphasis>servers</emphasis>), where the jobs are executed.
       </listitem>
     </itemizedlist>
-    <figure>
-      <title>GêBR communication model</title>
-      <mediaobject>
-        <caption>Layers of execution of GêBR.</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
-        </imageobject>
-      </mediaobject>
-    </figure>
 
     <note>
       <para>GêBR can be connected to only one Maestro at once. Each
@@ -51,8 +43,8 @@
       </para>
     </note>
 
-    <para>GêBR model comprises communications between machines,
-      namely:
+    <para>GêBR model comprises communications between machines (see
+      <xref linkend="communication_diagram"/>), namely:
     </para>
 
     <itemizedlist>
@@ -107,7 +99,7 @@
       </mediaobject>
     </figure>
 
-    <para>Alternatively, you can create the private/public keys pair
+    <para>Alternatively, you can create private/public key pair
       by yourself (consult <link xlink:show="new"
       xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
       for more information).
@@ -135,17 +127,14 @@
       (instead of on GêBR-server).
     </para>
     <figure>
-			<title>
-			Remote browsing of files
-			</title>
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png" />
-			</imageobject>
-		</mediaobject>
-			<caption>
-				Example of remote browsing of an output file.
-			</caption>
+      <title>Remote browsing of files</title>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png" />
+	</imageobject>
+      </mediaobject>
+      <caption>Example of remote browsing for an output file. Note the
+      bookmarks on the <guilabel>Places</guilabel> panel.</caption>
     </figure>
 
     <para>GêBR puts markers (bookmarks) to the paths of the Line in
@@ -180,35 +169,41 @@
       <listitem>The output of each step of the loop is not the input
         of any other step of the loop.</listitem>
     </itemizedlist>
-		<para>
-			We choose the amount of processors through an adjustment
-			bar, accessible via 
+    <para>
+      We choose the amount of processors through an adjustment bar,
+      accessible via
       <guiicon>
         <inlinemediaobject>
           <imageobject>
             <imagedata fileref="../../common-images/gebr-speed-one-core.png"/>
           </imageobject>
         </inlinemediaobject>
-			</guiicon>
-			 beside the Run button.
-		</para>
+      </guiicon>
+      beside the Run button.
+    </para>
+
     <figure>
-			<title>
-			Execution speed
-			</title>
-			<imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
-			<caption>
-			GêBR offers the possibility to adjust the execution settings. 
-			</caption>
+      <title>Execution speed</title>
+      <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
+      <caption>
+	GêBR offers the possibility to adjust the execution
+	settings. Through the slider, it is possible  instruct to
+	GêBR to do not fragment the job, therefore using only one
+	core, to fragment the job in such a way that all available
+	cores will be used (100%), or even to fragment the job in a way
+	that all cores get overloaded ( > 100%).
+      </caption>
     </figure>
     <para>Each level of the adjustment bar corresponds to a a number
       of cores used by the job.</para>
+    <note>
     <para>
-      Note that GêBR will not show this speedometer for
-      non-parallelizable flows (it will just show the Priority of
-      Execution).
+      GêBR does not show this speedometer for non-parallelizable flows
+      (it will just show the Priority of Execution).
     </para>
+    </note>
   </section>
+
   <section xml:id="flow_editor_priority_execution">
     <title>Priority of execution</title>
     <para>Computers, nowadays, are multitasked, what means that
@@ -221,15 +216,14 @@
       due to multitasking, by enabling the execution of the Flows in
       a <emphasis>Low Priority</emphasis> state:</para>
 
-      <figure>
-				<title>
-				Priority of Execution
-				</title>
-			<imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
-			<caption>
-			GêBR presents two possibilities of priority of execution: Low and High Priority.
-			</caption>
-      </figure>
+    <figure>
+      <title>Priority of Execution</title>
+      <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
+      <caption>
+	GêBR offers two possibilities of priority of execution: Low
+	and High Priority.
+      </caption>
+    </figure>
     <para>Two options are available: </para>
     <itemizedlist>
       <listitem>
@@ -286,41 +280,26 @@
     <section xml:id="variables">
       <title>Variables</title>
 
-      <para>In many situations we may want to store a value for a
-        later use. In seismic processing, a simple program may have
-        may have more than 100 parameters, sharing many values.  In
-        these cases, it is advisable to store the frequently used
-        values in variables.
-      </para>
-
       <para>The <guilabel>Dictionary of variables</guilabel> is an
-      interface to handle all your variables.
-      </para>
-
-      <para>You can access the <guilabel>Dictionary of
-      variables</guilabel> through the icon
+      interface to handle all your variables. It is accessed through
+      the icon
       <guiicon>
         <inlinemediaobject>
           <imageobject>
             <imagedata fileref="../../common-images/botao_dicionario_projeto.png"
-            />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon> (present in the toolbars of the 
+            /></imageobject></inlinemediaobject></guiicon>, in the
+            toolbars of the
       <guilabel>Projects and Lines</guilabel> and <guilabel>Flow
-      Editor</guilabel> tabs.)</para>
-
+      Editor</guilabel> tabs.</para>
 
       <para>GêBR has three levels of organization (see
         <xref linkend="concepts_elements"/>).  Your variables, thus,
         have three levels of visibility:</para>
       <itemizedlist>
         <listitem>Project's variables are visible to all Flows
-          associated to its Lines;</listitem>
-        <listitem>Line's variables are visible to all Flows
-          associated to it;</listitem>
-        <listitem>Flow's variables are just visible to
-          itself.</listitem>
+          associated to Lines of the Project;</listitem>
+        <listitem>Line's variables are visible to all its Flows;</listitem>
+        <listitem>Flow's variables are just visible to itself.</listitem>
       </itemizedlist>
       
       <para>
@@ -341,14 +320,16 @@
                   <imagedata fileref="../../common-images/integer-icon.png" />
                 </imageobject>
               </inlinemediaobject>
-            </guiicon>.
+            </guiicon>. Note defining distance_cm depending on
+            distance is valid because distance had been defined
+            before.
           </caption>
         </figure>
       </para>
 
-      <para>The dictionary validates the variables in a dynamic way,
-        revalidating them as you change the name, the value or the
-        position. Programs with errors are automatically revalidated
+      <para>The dictionary validates the variables dynamically,
+        revalidating them as soon as anything is changed in
+        dictionary. Programs with errors are automatically revalidated
         too (see <xref linkend="flow_editor_change_state_program" />).
       </para>
 
@@ -493,12 +474,26 @@
   <section xml:id="additional_features_mpi_support">
     <title>Support to MPI programs</title>
 
+    <para>Some programs, known as <emphasis>parallel
+	programs</emphasis><indexterm><primary>Program</primary><secondary>parallel</secondary></indexterm>,
+	deal themselves with the distribution of their computations
+	among many working machines. In this way, those programs are
+	much more efficient, exploit all available resources to run
+	faster. Technically, they employ a infrastructure known
+	as <emphasis>MPI</emphasis><indexterm><primary>MPI</primary></indexterm>. GêBR
+	supports parallel programs.
+    </para>
+
     <para>There are many implementations (flavors) of
       MPI<indexterm><primary>MPI</primary></indexterm>, but the most
-      widely used are OpenMPI and MPICH2. OpenMPI is an open source
-      implementation and has influence of three earlier approaches:
-      FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is another widely used
-      implementation and is based on the MPI-2.2 standard.
+      widely used are
+      OpenMPI<indexterm><primary>MPI</primary><secondary>OpenMPI</secondary></indexterm>
+      and
+      MPICH2<indexterm><primary>MPI</primary><secondary>MPICH2</secondary></indexterm>. OpenMPI
+      is an open source implementation and has influence of three
+      earlier approaches: FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is
+      another widely used implementation and is based on the MPI-2.2
+      standard.
     </para>
 
     <para>GêBR supports both OpenMPI and MPICH2. However, MPI
@@ -508,21 +503,20 @@
     </para>
 
     <para>In the Server Interface, in the MPI column, an icon
-      indicates that the server of that row supports MPI. Roll over the
-      icon to check the flavors of MPI available on that machine. You
-      will be able to run your program just on machines that support the
-      same flavor as the one used on your program.
+      indicates whether the working machine supports MPI. Roll over
+      the icon to check the flavors of MPI available on that
+      machine. You will be able to run parallell program just on
+      machines that support the same flavor as the one used on in the
+      program.
     </para>
 
-		<figure>
-			<title>
-			Indication of MPI availability
-			</title>
-		<imagedata fileref="../images/GeBR_servers_mpi.png" />
-			<caption>The second column indicates the types (flavors) of MPI
-				available in your servers.</caption>
-		</figure>
-
+    <figure>
+      <title>Indication of MPI availability</title>
+      <imagedata fileref="../images/GeBR_servers_mpi.png" />
+      <caption>The second column indicates the types (flavors) of MPI
+	available in your servers.</caption>
+    </figure>
+    
     <para>To run an MPI program, you must first create a menu in DêBR
       and choose appropriately the MPI implementation used on your
       program. Then import it in GêBR. In the Flow Editor tab, if you
@@ -530,12 +524,13 @@
       number of processes to be used by that MPI call.
     </para>
 
-		<figure>
-		<title>MPI settings</title>
-				<imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
-			<caption>Double clicking over an MPI program you can set
-				the <emphasis>np</emphasis> parameter of MPI.</caption>
-		</figure>
+    <figure>
+      <title>MPI settings</title>
+      <imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
+      <caption>Double clicking over an MPI program you can set
+	the <emphasis>number of process</emphasis> parameter of
+	MPI.</caption>
+    </figure>
 
   </section>
 

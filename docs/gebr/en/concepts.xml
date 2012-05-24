@@ -198,7 +198,7 @@
       can take smart decisions about which machines are best suited to
       run the job.</para>
 
-    <figure>
+    <figure xml:id="communication_diagram">
       <title>Communitation layout between GêBR players</title>
       <mediaobject>
 	<imageobject>

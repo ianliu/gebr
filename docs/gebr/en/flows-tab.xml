@@ -358,7 +358,6 @@
           execute on this mode use Ctrl+Shift+R.</para>
       </listitem>
     </itemizedlist>
-
    
     <important>
       <para>When executig many Flows, the configurations of
@@ -382,9 +381,10 @@
     <title>Editing comments</title>
     <para>This button appears in the <guilabel>Projects and
     Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
-    button allows the user to add comments about the selected Line or
-    Flow. See <xref linkend="projects_lines_edit_comments_project"
-    />.</para>
+    button allows the user to add
+    comments<indexterm><primary>Report</primary><secondary>of a
+    Flow</secondary></indexterm> about the selected Line or Flow. See
+    <xref linkend="projects_lines_edit_comments_project" />.</para>
   </section>
 
   <section xml:id="flows_browser_view_report_flow">
