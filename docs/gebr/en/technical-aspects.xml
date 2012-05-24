@@ -1,540 +1,566 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <section
-	xmlns="http://docbook.org/ns/docbook"
-	xmlns:xi="http://www.w3.org/2001/XInclude"
-	xmlns:xlink="http://www.w3.org/1999/xlink"
-	lang="en"
-	version="5.0"
-	xml:id="technical_aspects">
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  lang="en"
+  version="5.0"
+  xml:id="technical_aspects">
 
-	<title>Technical aspects</title>
+  <title>Technical aspects</title>
 
-	<section xml:id="intercommunication_between_players">
-		<title>Intercommunication between players</title>
+  <section xml:id="intercommunication_between_players">
+    <title>Intercommunication between players</title>
 
-		<para>GêBR can take benefit of the resources of multiple
-			machines. To handle it, GêBR is segmented in three
-			layers:</para>
+    <para>GêBR can take benefit of the resources of multiple
+      machines. To handle it, GêBR is segmented in three
+      layers:</para>
 
-		<itemizedlist>
-			<listitem>The local machine (the GêBR graphical interface
-				or <emphasis>the client</emphasis>), from where the user sends
-				requests.
-			</listitem>
-			<listitem>An intermediate layer (the Maestro), where all the
-				jobs are coordinated.
-			</listitem>
-			<listitem>Executors (the working machines
-				or <emphasis>servers</emphasis>), where the jobs are executed.
-			</listitem>
-		</itemizedlist>
-		<figure>
-			<title>GêBR communication model</title>
-			<mediaobject>
-				<caption>Layers of execution of GêBR.</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
-				</imageobject>
-			</mediaobject>
-		</figure>
+    <itemizedlist>
+      <listitem>The local machine (the GêBR graphical interface
+        or <emphasis>the client</emphasis>), from where the user sends
+        requests.
+      </listitem>
+      <listitem>An intermediate layer (the Maestro), where all the
+        jobs are coordinated.
+      </listitem>
+      <listitem>Executors (the working machines
+        or <emphasis>servers</emphasis>), where the jobs are executed.
+      </listitem>
+    </itemizedlist>
+    <figure>
+      <title>GêBR communication model</title>
+      <mediaobject>
+        <caption>Layers of execution of GêBR.</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
 
-		<note>
-			<para>GêBR can be connected to only one Maestro at once. Each
-				Maestro, in turn, can be connected to many Servers. However,
-				those Servers must share the file system containing the user's
-				home directory. This is usually provided by Network File System
-				(NFS) infrastructure.
-			</para>
-		</note>
+    <note>
+      <para>GêBR can be connected to only one Maestro at once. Each
+        Maestro, in turn, can be connected to many Servers. However,
+        those Servers must share the file system containing the user's
+        home directory. This is usually provided by Network File System
+        (NFS) infrastructure.
+      </para>
+    </note>
 
-		<para>GêBR model comprises communications between machines,
-			namely:
-		</para>
+    <para>GêBR model comprises communications between machines,
+      namely:
+    </para>
 
-		<itemizedlist>
-			<listitem>Between GêBR-client and the Maestro.</listitem>
-			<listitem>Between the Maestro and the Servers.</listitem>
-		</itemizedlist>
+    <itemizedlist>
+      <listitem>Between GêBR-client and the Maestro.</listitem>
+      <listitem>Between the Maestro and the Servers.</listitem>
+    </itemizedlist>
 
-		<para>All connections are performed using Secure Shell (SSH)
-			protocol. SSH is intended to provide secure encrypted
-			communication over a network. To establish such connections,
-			the user may be asked to provide his or her login password
-			multiple times. This can be cumbersome, if there are a lot of
-			working machines under the Maestro's domain.
-		</para>
+    <para>All connections are performed using Secure Shell (SSH)
+      protocol. SSH is intended to provide secure encrypted
+      communication over a network. To establish such connections,
+      the user may be asked to provide his or her login password
+      multiple times. This can be cumbersome, if there are a lot of
+      working machines under the Maestro's domain.
+    </para>
 
-		<para>The SSH public-key authentication is an alternative method
-			to establish connections which eliminates the need for requests
-			for passwords. Despite less annoying, this method is equally
-			secure. It is based on public-key cryptography, where encryption
-			and decryption use public/private key pair for authentication
-			purposes. The Maestro knows the public key and only the Client
-			knows the associated private key.
-		</para>
+    <para>The SSH public-key authentication is an alternative method
+      to establish connections which eliminates the need for requests
+      for passwords. Despite less annoying, this method is equally
+      secure. It is based on public-key cryptography, where encryption
+      and decryption use public/private key pair for authentication
+      purposes. The Maestro knows the public key and only the Client
+      knows the associated private key.
+    </para>
 
-		<para>If you choose GêBR to user public-key authentication by
-			checking <guimenuitem>"Use encryption key to automatically
-				authenticate the next session"</guimenuitem>, then GêBR will
-			create (if not existent) a private/public keys pair and will
-			keep the private key and will copy the public key to the
-			Maestro. Once this operation is successfully done, your
-			authentication on your Maestro will be automatically done
-			through public-key. In practical terms it means you will no
-			longer need to type your password to connect to that Maestro
-			through GêBR. Analogous behaviour occurs in the connection
-			between GêBR-Maestro and GêBR-Server.
-		</para>
+    <para>If you choose GêBR to user public-key authentication by
+      checking <guimenuitem>"Use encryption key to automatically
+        authenticate the next session"</guimenuitem>, then GêBR will
+      create (if not existent) a private/public keys pair and will
+      keep the private key and will copy the public key to the
+      Maestro. Once this operation is successfully done, your
+      authentication on your Maestro will be automatically done
+      through public-key. In practical terms it means you will no
+      longer need to type your password to connect to that Maestro
+      through GêBR. Analogous behaviour occurs in the connection
+      between GêBR-Maestro and GêBR-Server.
+    </para>
 
-		<figure>
-			<title>GêBR public-key authentication</title>
-			<mediaobject>
-				<caption>Suppose a client wants to establish a connection
-					with a Maestro. The client is requested for login
-					credential, but instead it provides the key associated to
-					the Maestro. The Maestro try to match the client key with
-					one of his own public keys. In positive case, the client
-					is allowed to communicate to that Maestro. Otherwise, it
-					requests for the user's password.</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_public_key_diagram.png" />
-				</imageobject>
-			</mediaobject>
-		</figure>
+    <figure>
+      <title>GêBR public-key authentication</title>
+      <mediaobject>
+        <caption>Suppose a client wants to establish a connection
+          with a Maestro. The client is requested for login
+          credential, but instead it provides the key associated to
+          the Maestro. The Maestro try to match the client key with
+          one of his own public keys. In positive case, the client
+          is allowed to communicate to that Maestro. Otherwise, it
+          requests for the user's password.</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_public_key_diagram.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
 
-		<para>Alternatively, you can create the private/public keys pair
-			by yourself
-			(consult <link xlink:show="new" xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
-			for more information).
-		</para>
+    <para>Alternatively, you can create the private/public keys pair
+      by yourself
+      (consult <link xlink:show="new" xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
+      for more information).
+    </para>
 
-	</section>
+  </section>
 
-	<section xml:id="remote_browsing">
-		<title>Accessing remote files</title>
+  <section xml:id="remote_browsing">
+    <title>Accessing remote files</title>
 
-		<para>GêBR infrastructure comprises GêBR-Client, GêBR-Maestro and
-			GêBR-Servers as main actors (see
-			<xref linkend="intercommunication_between_players"/>) and the
-			processing files, therefore, may be on different machines than
-			yours.
-		</para>
-		<para>
-			For most of the places you can pick a file (see window below) you will be navigating through the Servers files. 
-		</para>
-		<para>Just in two places of GêBR you will not be browsing in the
-			Servers filesystem: <emphasis>Import/Export</emphasis> of
-			Projects, Lines or Flows. On these cases you may, for example,
-			keep a backup of your Projects/Lines/Flows on your home computer
-			and, therefore, these files are kept on your computer filesystem
-			(instead of on GêBR-server).
-		</para>
-		<mediaobject>
-			<caption>
-				Example of remote browsing of an output file.
-			</caption>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png" />
-			</imageobject>
-		</mediaobject>
+    <para>GêBR infrastructure comprises GêBR-Client, GêBR-Maestro and
+      GêBR-Servers as main actors (see
+      <xref linkend="intercommunication_between_players"/>) and the
+      processing files, therefore, may be on different machines than
+      yours.
+    </para>
+    <para>
+      For most of the places you can pick a file (see window below) you will be navigating through the Servers files. 
+    </para>
+    <para>Just in two places of GêBR you will not be browsing in the
+      Servers filesystem: <emphasis>Import/Export</emphasis> of
+      Projects, Lines or Flows. On these cases you may, for example,
+      keep a backup of your Projects/Lines/Flows on your home computer
+      and, therefore, these files are kept on your computer filesystem
+      (instead of on GêBR-server).
+    </para>
+    <mediaobject>
+      <caption>
+        Example of remote browsing of an output file.
+      </caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png" />
+      </imageobject>
+    </mediaobject>
 
-		<para>GêBR puts markers (bookmarks) to the paths of the Line in
-			context (see <xref linkend="projects_lines_line_paths"/>), as you
-			can see in the left edge of the window above. They aim to
-			facilitate the access to the files of the Line.
-		</para>
+    <para>GêBR puts markers (bookmarks) to the paths of the Line in
+      context (see <xref linkend="projects_lines_line_paths"/>), as you
+      can see in the left edge of the window above. They aim to
+      facilitate the access to the files of the Line.
+    </para>
 
-		<note>
-			<para>If you open an external file browser (say Nautilus), these
-				bookmarks will appear there too. They disappear when you close
-				GêBR.</para>
-		</note>
-	</section>
+    <note>
+      <para>If you open an external file browser (say Nautilus), these
+        bookmarks will appear there too. They disappear when you close
+        GêBR.</para>
+    </note>
+  </section>
 
-	<section xml:id="flow_editor_multicores">
-		<title>Multiple cores</title>
-		<para>GêBR optimizes the execution of loops in multi-core
-			machines.</para>
+  <section xml:id="flow_editor_multicores">
+    <title>Multiple cores</title>
+    <para>GêBR optimizes the execution of loops in multi-core
+      machines.</para>
 
-		<para>GêBR takes advantage of the multi-core feature of most of
-			the recent machines. The execution of repetitive flows can be
-			optimized by this resource. If the Flow has Loops and is
-			parallelizable (given some criteria, shown below), then you can
-			adjust the execution's degree of performance based on the number
-			of processors.</para>
+    <para>GêBR takes advantage of the multi-core feature of most of
+      the recent machines. The execution of repetitive flows can be
+      optimized by this resource. If the Flow has Loops and is
+      parallelizable (given some criteria, shown below), then you can
+      adjust the execution's degree of performance based on the number
+      of processors.</para>
 
-		<para>To be considered parallelizable, besides having a loop, a
-			Flow must achieve one, and just one, of these criteria:</para>
-		<itemizedlist>
-			<listitem>The Flow does not have an output file;</listitem>
-			<listitem>The output of each step of the loop is not the input
-				of any other step of the loop.</listitem>
-		</itemizedlist>
-		<para>We choose the amount of processors through an adjustment
-			bar, next to the Run button.</para>
-		<imageobject>
-			<imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
-		</imageobject>
-		<para>Each level of the adjustment bar corresponds to a a number
-			of cores used by the job.</para>
-		<para>
-			Note that GêBR will not show this speedometer for
-			non-parallelizable flows (it will just show the Priority of
-			Execution).
-		</para>
-	</section>
-	<section xml:id="flow_editor_priority_execution">
-		<title>Priority of execution</title>
-		<para>Computers, nowadays, are multitasked, what means that
-			multiple things can be done at the same time. When many tasks
-			are executed at the same time, the computer can get overloaded
-			and decrease its performance. Seismic processing, particularly,
-			can exhaust the computer resources.</para>
-		<para>GêBR has a feature that overcomes the issue of overloading
-			due to multitasking, by enabling the execution of the Flows in
-			a <emphasis>Low Priority</emphasis> states:</para>
-		<imageobject>
-			<imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
-		</imageobject>
-		<para>Two options are available: </para>
-		<itemizedlist>
-			<listitem>
-				<para>
-					Low priority (the Flow is going to wait its turn to execute and try not to
-					overload the system)
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					High priority (the execution of the Flow is going to dispute for the computer
-					resources with the other active programs)
-				</para>
-			</listitem>
-		</itemizedlist>
-		<para>Technically, when running in "Low Priority" mode, GêBR will
-			reduce the run priority of the task, meaning it will tell the
-			computer that "it can wait more important things to be done".
-			This is the case when you have other things to do while you wait
-			your calculations to be done.  The "High Priority" mode means
-			GêBR will use greater run priority for the task, and that
-			implies it will act as a foreground process, demanding more
-			resources. It's the "I need this done" mode, when you need the
-			job to be finished as soon as possible, and you don't care if it
-			will fight for resources with other programs.</para>
+    <para>To be considered parallelizable, besides having a loop, a
+      Flow must achieve one, and just one, of these criteria:</para>
+    <itemizedlist>
+      <listitem>The Flow does not have an output file;</listitem>
+      <listitem>The output of each step of the loop is not the input
+        of any other step of the loop.</listitem>
+    </itemizedlist>
+    <para>We choose the amount of processors through an adjustment
+      bar, next to the Run button.</para>
+    <imageobject>
+      <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
+    </imageobject>
+    <para>Each level of the adjustment bar corresponds to a a number
+      of cores used by the job.</para>
+    <para>
+      Note that GêBR will not show this speedometer for
+      non-parallelizable flows (it will just show the Priority of
+      Execution).
+    </para>
+  </section>
+  <section xml:id="flow_editor_priority_execution">
+    <title>Priority of execution</title>
+    <para>Computers, nowadays, are multitasked, what means that
+      multiple things can be done at the same time. When many tasks
+      are executed at the same time, the computer can get overloaded
+      and decrease its performance. Seismic processing, particularly,
+      can exhaust the computer resources.</para>
+    <para>GêBR has a feature that overcomes the issue of overloading
+      due to multitasking, by enabling the execution of the Flows in
+      a <emphasis>Low Priority</emphasis> states:</para>
+    <imageobject>
+      <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
+    </imageobject>
+    <para>Two options are available: </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          Low priority (the Flow is going to wait its turn to execute and try not to
+          overload the system)
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          High priority (the execution of the Flow is going to dispute for the computer
+          resources with the other active programs)
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>Technically, when running in "Low Priority" mode, GêBR will
+      reduce the run priority of the task, meaning it will tell the
+      computer that "it can wait more important things to be done".
+      This is the case when you have other things to do while you wait
+      your calculations to be done.  The "High Priority" mode means
+      GêBR will use greater run priority for the task, and that
+      implies it will act as a foreground process, demanding more
+      resources. It's the "I need this done" mode, when you need the
+      job to be finished as soon as possible, and you don't care if it
+      will fight for resources with other programs.</para>
 
-		<para>If GêBR is the only program executing on your machine, i.e.,
-			it doesn't have a challenger for the computer resources, then
-			both states corresponds to the same situation.  This is the
-			"nightly job" situation, when (theoretically) no one is using
-			the machines and some jobs are left to be done for the next
-			morning.</para>
-	</section>
-	<section
-		xml:id="dictionary_variables">
-		<title>Dictionary of variables</title>
+    <para>If GêBR is the only program executing on your machine, i.e.,
+      it doesn't have a challenger for the computer resources, then
+      both states corresponds to the same situation.  This is the
+      "nightly job" situation, when (theoretically) no one is using
+      the machines and some jobs are left to be done for the next
+      morning.</para>
+  </section>
 
-		<section xml:id="variables">
-			<para>
-				In many situations we may want to store a value 
-				for a later use. In seismic processing, a simple program may have 
-				may have more than 100 parameters, sharing many values.
-				In these cases, it is advisable to store the frequently used values in variables.
-			</para>
-			<para>
-				The <guilabel>Dictionary of Variables</guilabel> is an interface to handle all your variables.
-			</para>
+  <section
+    xml:id="dictionary_variables">
+    <title>Dictionary of variables</title>
+    
+    <para>It is usual in the course of processing a data that many
+      flows depend on some fundamental quantities, like acquisition
+      parameters, for example. Those quantities may be provided
+      explicitly to each flow. Consider however a scenario where one
+      or some of those quantities have to be redefined. The user would
+      have to go through all flows which depend on them making the
+      necessary updates. Despite possible, this procedure is error
+      prone and time consuming. A better approach would be centralize
+      the definition of those common quantities, in such a way that a
+      change on them would be automatically propagated to all flows
+      where they are employed. This central place for definition of
+      quantities is the <emphasis role="bold">Dictionary of
+      variables</emphasis>.</para>
 
-			You can access the <guilabel>Dictionary of Variables</guilabel> through the icon 
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/botao_dicionario_projeto.png" />
-					</imageobject>
-				</inlinemediaobject>
-			</guiicon> (present in the toolbars of the 
-			<guilabel>Projects and Lines</guilabel> and <guilabel>Flow Editor</guilabel> tabs.
+    <section xml:id="variables">
+      <title>Variables</title>
+
+      <para>In many situations we may want to store a value for a
+        later use. In seismic processing, a simple program may have
+        may have more than 100 parameters, sharing many values.  In
+        these cases, it is advisable to store the frequently used
+        values in variables.
+      </para>
+
+      <para>The <guilabel>Dictionary of variables</guilabel> is an
+      interface to handle all your variables.
+      </para>
+
+      <para>You can access the <guilabel>Dictionary of
+      variables</guilabel> through the icon
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/botao_dicionario_projeto.png"
+            />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon> (present in the toolbars of the 
+      <guilabel>Projects and Lines</guilabel> and <guilabel>Flow
+      Editor</guilabel> tabs.)</para>
 
 
-			<para>
-				GêBR has three levels of organizations (see <xref linkend="concepts_elements"/>).
-				Your variables, thus, have three levels of visibility: 
-				<itemizedlist>
-					<listitem>Project's variables are visible to all Flows associated to its Lines;</listitem>
-					<listitem>Line's variables are visible to all Flows associated to it;</listitem>
-					<listitem>Flow's variables are just visible to itself.</listitem>
-				</itemizedlist>
-			</para>
+      <para>GêBR has three levels of organization (see
+        <xref linkend="concepts_elements"/>).  Your variables, thus,
+        have three levels of visibility:</para>
+      <itemizedlist>
+        <listitem>Project's variables are visible to all Flows
+          associated to its Lines;</listitem>
+        <listitem>Line's variables are visible to all Flows
+          associated to it;</listitem>
+        <listitem>Flow's variables are just visible to
+          itself.</listitem>
+      </itemizedlist>
+      
+      <para>
+        <figure>
+          <title>Dictionary of variables</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="../images/GeBR_dictionary_variables_example.png" />
+            </imageobject>
+          </mediaobject>
+          <caption>A variable with a value may be used with different
+            metrics throughout the Flows. Creating a variable for each
+            metric can help in this task. GêBR shows the computed
+            value when you pass the pointer over the icon
+            <guiicon>
+              <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/integer-icon.png" />
+                </imageobject>
+              </inlinemediaobject>
+            </guiicon>.
+          </caption>
+        </figure>
+      </para>
 
-			<para>
-				<figure>
-					<title>Dictionary of Variables</title>
-					<mediaobject>
-						<imageobject>
-							<imagedata fileref="../images/GeBR_dictionary_variables_example.png" />
-						</imageobject>
-					</mediaobject>
-					<caption>
-						A variable with a value may be used with different metrics throughout the Flows. Creating a variable for each metric can help in this task. GêBR shows the computed value when you pass the pointer over the icon
-						<guiicon>
-							<inlinemediaobject>
-								<imageobject>
-									<imagedata fileref="../../common-images/integer-icon.png" />
-								</imageobject>
-							</inlinemediaobject>
-						</guiicon>.
-					</caption>
-				</figure>
-			</para>
+      <para>The dictionary validates the variables in a dynamic way,
+        revalidating them as you change the name, the value or the
+        position. Programs with errors are automatically revalidated
+        too (see <xref linkend="flow_editor_change_state_program" />).
+      </para>
 
-			<para>
-				The dictionary validates the variables in a dynamic way, revalidating them as you
-				change the name, the value or the position. Programs with errors are automatically revalidated too
-				(see <xref linkend="flow_editor_change_state_program" />).
-			</para>
-			<para>
-				If the <guilabel>Dictionary of Variables</guilabel> finds an error among the variables, it is 
-				going to exhibit the icon
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/icone_nao_configurado.png" />
-						</imageobject>
-					</inlinemediaobject>
-				</guiicon> and an explanation of the error.
-			</para>
-			<para>
-				Besides using variables and expressions, we can use some predefined
-				functions:
-			</para>
-			<table>
-				<title>Available functions</title>
-				<tgroup cols='2'>
-					<thead>
-						<row>
-							<entry>Function</entry>
-							<entry>Sintax</entry>
-						</row>
-					</thead>
-					<tbody>
-						<row>
-							<entry>Square root</entry>
-							<entry>sqrt(
-								<emphasis>value</emphasis>)</entry>
-						</row>
-						<row>
-							<entry>Sine</entry>
-							<entry>s(
-								<emphasis>value</emphasis>)</entry>
-						</row>
-						<row>
-							<entry>Cosine</entry>
-							<entry>c(
-								<emphasis>value</emphasis>)</entry>
-						</row>
-						<row>
-							<entry>Arctangent</entry>
-							<entry>a(
-								<emphasis>value</emphasis>)</entry>
-						</row>
-						<row>
-							<entry>Natural Logarithm</entry>
-							<entry>l(
-								<emphasis>value</emphasis>)</entry>
-						</row>
-						<row>
-							<entry>Exponencial</entry>
-							<entry>e(
-								<emphasis>value</emphasis>)</entry>
-						</row>
-						<row>
-							<entry>Bessel</entry>
-							<entry>j(
-								<emphasis>order, value)</emphasis></entry>
-						</row>
-					</tbody>
-				</tgroup>
-			</table>
-		</section>
-		<tip>
-			<para>Positioning the pointer on the icon of the
-				variable type, we can check the solved
-				expression.</para>
-		</tip>
+      <para>If the <guilabel>Dictionary of variables</guilabel> finds
+        an error among the variables, it is going to exhibit the icon
+        <guiicon>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="../../common-images/icone_nao_configurado.png" />
+            </imageobject>
+          </inlinemediaobject>
+        </guiicon> and an explanation of the error.
+      </para>
 
-		<tip>
-			<para>We can navigate over the fields using the keys 
-				<keycap>Enter</keycap>, 
-				<keycap>Tab</keycap> or with the 
-				<mousebutton>Left button of the mouse</mousebutton>.
-			</para>
-		</tip>
+      <para>Besides using variables and expressions, we can use some
+        predefined functions:
+      </para>
 
-		<tip>
-			<para>To use the variables in fields like
-				<guimenuitem>Text</guimenuitem>, you must put the variable
-				name embraced by square brackets
-				<emphasis role="bold">[</emphasis> name-of-the-variable
-				<emphasis role="bold">]</emphasis>.
-			</para>
-		</tip>
+      <table>
+        <title>Available functions</title>
+        <tgroup cols='2'>
+          <thead>
+            <row>
+              <entry>Function</entry>
+              <entry>Sintax</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>Square root</entry>
+              <entry> sqrt(
+                <emphasis>value</emphasis>)</entry>
+            </row>
+            <row>
+              <entry>Sine</entry>
+              <entry>s(
+                <emphasis>value</emphasis>)</entry>
+            </row>
+            <row>
+              <entry>Cosine</entry>
+              <entry>c(
+                <emphasis>value</emphasis>)</entry>
+            </row>
+            <row>
+              <entry>Arctangent</entry>
+              <entry>a(
+                <emphasis>value</emphasis>)</entry>
+            </row>
+            <row>
+              <entry>Natural Logarithm</entry>
+              <entry>l(
+                <emphasis>value</emphasis>)</entry>
+            </row>
+            <row>
+              <entry>Exponencial</entry>
+              <entry>e(
+                <emphasis>value</emphasis>)</entry>
+            </row>
+            <row>
+              <entry>Bessel</entry>
+              <entry>j(
+                <emphasis>order, value)</emphasis></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+    <tip>
+      <para>Positioning the pointer on the icon of the
+        variable type, we can check the solved
+        expression.</para>
+    </tip>
 
-		<tip>
-			<para>
-				To see all the available variables for
-				auto-completion, we just need to type the character
-				<emphasis role="bold">[</emphasis>' (open brackets).
-			</para>
-		</tip>
+    <tip>
+      <para>We can navigate over the fields using the keys 
+        <keycap>Enter</keycap>, 
+        <keycap>Tab</keycap> or with the 
+        <mousebutton>Left button of the mouse</mousebutton>.
+      </para>
+    </tip>
 
-		<tip>
-			<para>We can reorder the dictionary variables by drag and drop. Since a
-				variable can just use another variable above it, this feature turns the declaration
-				of variables more flexible and dynamic.</para>
-		</tip>
+    <tip>
+      <para>To use the variables in fields like
+        <guimenuitem>Text</guimenuitem>, you must put the variable
+        name embraced by square brackets
+        <emphasis role="bold">[</emphasis> name-of-the-variable
+        <emphasis role="bold">]</emphasis>.
+      </para>
+    </tip>
 
-		<section xml:id="variavel_iter">
-			<title>The variable iter</title>
-			<para> GêBR allows the execution of repetitive procedures by 
-				creating Flows with <guilabel>Loops</guilabel> (see 
-				<xref linkend="flow_editor_loop" />). With <guilabel>Loops</guilabel>,
-				we have access to a special variable
-				called <emphasis role="bold">iter</emphasis>.
-			</para>
-			<para>
-				Upon execution, we might want to identify what is the current step of the 
-				Loop. The iter variable is devised with this aim.
-			</para>
-			<para>
-				For instance, we can throw the ouput of each step of the Loop 
-				to a file with a name identified by the step, 
-				output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see 
-				<xref linkend="fig_flow_editor_loop_output"/>).
-				<para>
+    <tip>
+      <para>
+        To see all the available variables for auto-completion, we
+        just need to type the
+        character <emphasis role="bold">[</emphasis>' (open brackets).
+      </para>
+    </tip>
 
-					<figure xml:id="fig_flow_editor_loop_output">
-						<title>Usage of iter variable</title>
-						<mediaobject>
-							<imageobject>
-								<imagedata fileref="../images/GeBR_flow_editor_loop_output.png" />
-							</imageobject>
-						</mediaobject>
-						<caption>
-							This Flow with a Loop program and number of loops equal to 3, is going to
-							throw the results to three different files, identified by the step of the
-							loop (output-1, output-2 and output-3).
-						</caption>
-					</figure>
+    <tip>
+      <para>We can reorder the dictionary variables by drag and
+        drop. Since a variable can just use another variable above it,
+        this feature turns the declaration of variables more flexible
+        and dynamic.</para>
+    </tip>
 
-				</para>
-			</para>
-		</section>
-	</section>
-	<section xml:id="additional_features_mpi_support">
-		<title>Support to MPI programs</title>
+    <section xml:id="variavel_iter">
+      <title>The variable iter</title>
+      <para> GêBR allows the execution of repetitive procedures by 
+        creating Flows with <guilabel>Loops</guilabel> (see 
+        <xref linkend="flow_editor_loop" />). With <guilabel>Loops</guilabel>,
+        we have access to a special variable
+        called <emphasis role="bold">iter</emphasis>.
+      </para>
 
-		<para>There are many implementations (flavors) of MPI, but the
-			most widely used are OpenMPI and MPICH2. OpenMPI is an open source
-			implementation and has influence of three earlier approaches:
-			FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is another widely used
-			implementation and is based on the MPI-2.2 standard.
-		</para>
+      <para>Upon execution, we might want to identify what is the current
+        step of the Loop. The iter variable is devised with this aim.
+      </para>
 
-		<para>GêBR supports both OpenMPI and MPICH2. However, MPI
-			programs can only run on servers that support the execution of
-			MPI. Thus, for GêBR support of MPI, the user must have acces to
-			servers/clusters that also support it.
-		</para>
+      <para>
+        For instance, we can throw the ouput of each step of the Loop 
+        to a file with a name identified by the step, 
+        output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see 
+        <xref linkend="fig_flow_editor_loop_output"/>).</para>
 
-		<para>In the Server Interface, in the MPI column, an icon
-			indicates that the server of that row supports MPI. Roll over the
-			icon to check the flavors of MPI available on that machine. You
-			will be able to run your program just on machines that support the
-			same flavor as the one used on your program.
-		</para>
+      <figure xml:id="fig_flow_editor_loop_output">
+        <title>Usage of iter variable</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_flow_editor_loop_output.png" />
+          </imageobject>
+        </mediaobject>
+        <caption>This Flow with a Loop program and number of loops
+          equal to 3, is going to throw the results to three
+          different files, identified by the step of the loop
+          (output-1, output-2 and output-3).
+        </caption>
+      </figure>
 
-		<mediaobject>
-			<caption>The second column indicates the types (flavors) of MPI
-				available in your servers.</caption>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_servers_mpi.png" />
-			</imageobject>
-		</mediaobject>
+    </section>
+  </section>
 
-		<para>To run an MPI program, you must first create a menu in DêBR
-			and choose appropriately the MPI implementation used on your
-			program. Then import it in GêBR. In the Flow Editor tab, if you
-			double-click over the MPI program, you will be able to set the
-			number of processes to be used by that MPI call.
-		</para>
+  <section xml:id="additional_features_mpi_support">
+    <title>Support to MPI programs</title>
 
-		<mediaobject>
-			<caption>Double clicking over an MPI program you can set
-				the <emphasis>np</emphasis> parameter of MPI.</caption>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
-			</imageobject>
-		</mediaobject>
+    <para>There are many implementations (flavors) of MPI, but the
+      most widely used are OpenMPI and MPICH2. OpenMPI is an open source
+      implementation and has influence of three earlier approaches:
+      FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is another widely used
+      implementation and is based on the MPI-2.2 standard.
+    </para>
 
-	</section>
+    <para>GêBR supports both OpenMPI and MPICH2. However, MPI
+      programs can only run on servers that support the execution of
+      MPI. Thus, for GêBR support of MPI, the user must have acces to
+      servers/clusters that also support it.
+    </para>
+
+    <para>In the Server Interface, in the MPI column, an icon
+      indicates that the server of that row supports MPI. Roll over the
+      icon to check the flavors of MPI available on that machine. You
+      will be able to run your program just on machines that support the
+      same flavor as the one used on your program.
+    </para>
+
+    <mediaobject>
+      <caption>The second column indicates the types (flavors) of MPI
+        available in your servers.</caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_servers_mpi.png" />
+      </imageobject>
+    </mediaobject>
+
+    <para>To run an MPI program, you must first create a menu in DêBR
+      and choose appropriately the MPI implementation used on your
+      program. Then import it in GêBR. In the Flow Editor tab, if you
+      double-click over the MPI program, you will be able to set the
+      number of processes to be used by that MPI call.
+    </para>
+
+    <mediaobject>
+      <caption>Double clicking over an MPI program you can set
+        the <emphasis>np</emphasis> parameter of MPI.</caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
+      </imageobject>
+    </mediaobject>
+
+  </section>
 
 <!--
-	<section xml:id="execution_log">
-		<title>The execution log</title>
+  <section xml:id="execution_log">
+    <title>The execution log</title>
 
-		<para>GêBR remembers most of the users actions, as well as the
-			results of these actions, in the <emphasis>execution
-			log</emphasis>. This log is shown at the bottom of the main
-			window, which can be presented in the collapsed form (default)
-			or the expanded form like the window below.</para>
+    <para>GêBR remembers most of the users actions, as well as the
+      results of these actions, in the <emphasis>execution
+      log</emphasis>. This log is shown at the bottom of the main
+      window, which can be presented in the collapsed form (default)
+      or the expanded form like the window below.</para>
 
-		<figure>
-			<mediaobject>
-				<caption>At the bottom of GêBR's main window you will find the
-					execution log, which displays information on all of GêBR
-					processes.</caption>
-				<imageobject>
-					<imagedata fileref="../images/janela_log_execucao.png" />
-				</imageobject>
-			</mediaobject>
-		</figure>
+    <figure>
+      <mediaobject>
+        <caption>At the bottom of GêBR's main window you will find the
+          execution log, which displays information on all of GêBR
+          processes.</caption>
+        <imageobject>
+          <imagedata fileref="../images/janela_log_execucao.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
 
-		<tip>
-			<para>In 
-				<menuchoice>
-					<guimenu>Actions</guimenu>
-					<guimenuitem>Preferences</guimenuitem>
-				</menuchoice> at the bottom of the dialog box, we can see the box 
-				<guilabel>Load past-execution log</guilabel>. By checking this
-				box we choose to exhibit the whole log, including actions from
-				past dates. By leaving the box unchecked we choose to have a
-				compact log, which only shows actions that have taken place
-				since GêBR's last initialization.</para>
-		</tip>
+    <tip>
+      <para>In 
+        <menuchoice>
+          <guimenu>Actions</guimenu>
+          <guimenuitem>Preferences</guimenuitem>
+        </menuchoice> at the bottom of the dialog box, we can see the box 
+        <guilabel>Load past-execution log</guilabel>. By checking this
+        box we choose to exhibit the whole log, including actions from
+        past dates. By leaving the box unchecked we choose to have a
+        compact log, which only shows actions that have taken place
+        since GêBR's last initialization.</para>
+    </tip>
 
-	</section>
+  </section>
 -->
 
 
-	<section xml:id="import_samples">
-		<title>Sample projects</title>
-		<para>In <menuchoice>
-				<guimenu>Help</guimenu>
-				<guimenuitem>Samples</guimenuitem>
-			</menuchoice> menu, the user can import available samples (see
-			figure below).</para>
+  <section xml:id="import_samples">
+    <title>Sample projects</title>
+    <para>In <menuchoice>
+        <guimenu>Help</guimenu>
+        <guimenuitem>Samples</guimenuitem>
+      </menuchoice> menu, the user can import available samples (see
+      figure below).</para>
 
-		<figure>
-			<title>Sample projects in <menuchoice>
-					<guimenu>Help</guimenu>
-					<guimenuitem>Samples</guimenuitem>
-			</menuchoice></title>
-			<mediaobject>
-				<caption>Screenshot of the Samples Menu.</caption>
-				<imageobject>
-					<imagedata fileref="../images/samples_en.png" />
-				</imageobject>
-			</mediaobject>
-		</figure>
-	</section>
+    <figure>
+      <title>Sample projects in <menuchoice>
+          <guimenu>Help</guimenu>
+          <guimenuitem>Samples</guimenuitem>
+      </menuchoice></title>
+      <mediaobject>
+        <caption>Screenshot of the Samples Menu.</caption>
+        <imageobject>
+          <imagedata fileref="../images/samples_en.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
 </section>
