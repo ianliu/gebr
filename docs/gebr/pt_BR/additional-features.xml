@@ -74,7 +74,7 @@
     </section>
 
   </section>
-  <section xml:id="servers_configuration">
+  <section xml:id="additional_features_maestro_servers_configuration">
     <title>Configurações de servidores</title>
     <para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. Para tanto, a GêBR
       tem três componentes:</para>

@@ -33,14 +33,23 @@
   <section>
     <title>Novidades</title>
     <itemizedlist>
-      <listitem>
-    <para>
-      A versão 0.16.0 está mais estável e apresenta novas funcionalidades (30 de Janeiro de 2012):
-    </para>
+			<listitem>
+				<emphasis role="bold">
+				A versão mais atual da documentação está disponível na em inglês através deste 
+				<ulink url="../../en/html/index.html">
+					link
+				</ulink>
+				.
+				</emphasis>
+			</listitem>
+			<listitem>
+				<para>
+					A versão 0.16.0 está mais estável e apresenta novas funcionalidades (30 de Janeiro de 2012):
+				</para>
         <itemizedlist>
           <listitem>
             Surge o conceito de maestro, permitindo que a GêBR execute trabalhos em
-            múltiplas máquinas.  (veja <xref linkend="servers_configuration" /> e
+            múltiplas máquinas.  (veja <xref linkend="additional_features_maestro_servers_configuration" /> e
             <xref linkend="flow_editor_multiple_machines" />).
           </listitem>
           <listitem>
