@@ -169,7 +169,7 @@
       machines</emphasis><indexterm><primary>Working
       machine</primary></indexterm>. But who are those guys?</para>
 
-    <para>The GêBR interface, sometimes refered as GêBR only, is the
+    <para>The GêBR interface, sometimes referred as GêBR only, is the
       graphical interface with whom the user interacts with to build
       processing flows, execute them, inspect results, etc. Usually, this
       interface is installed and is running in the machine user has
@@ -187,7 +187,7 @@
       which means that the user does not have to care about
       that.</para>
 
-    <para>However, GêBR does not talk directly with the working
+    <para>However, GêBR does not talk directly to the working
       machines. This communication is established through another
       player,
       the <emphasis role="bold">Maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>. It
@@ -228,7 +228,7 @@
       information about the job, sending them back to GêBR, where they
       are presented to the user.</para>
 
-   <para>This communication process, despiste complex, is completely
+   <para>This communication process, despite complex, is completely
      transparent to the user, which can concentrate on processing
      seismic data, leaving all technical details to GêBR.</para>
   </section>

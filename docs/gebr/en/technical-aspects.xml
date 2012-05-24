@@ -134,14 +134,19 @@
       and, therefore, these files are kept on your computer filesystem
       (instead of on GêBR-server).
     </para>
-    <mediaobject>
-      <caption>
-        Example of remote browsing of an output file.
-      </caption>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png" />
-      </imageobject>
-    </mediaobject>
+    <figure>
+			<title>
+			Remote browsing of files
+			</title>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png" />
+			</imageobject>
+		</mediaobject>
+			<caption>
+				Example of remote browsing of an output file.
+			</caption>
+    </figure>
 
     <para>GêBR puts markers (bookmarks) to the paths of the Line in
       context (see <xref linkend="projects_lines_line_paths"/>), as you
@@ -175,11 +180,27 @@
       <listitem>The output of each step of the loop is not the input
         of any other step of the loop.</listitem>
     </itemizedlist>
-    <para>We choose the amount of processors through an adjustment
-      bar, next to the Run button.</para>
-    <imageobject>
-      <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
-    </imageobject>
+		<para>
+			We choose the amount of processors through an adjustment
+			bar, accessible via 
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/gebr-speed-one-core.png"/>
+          </imageobject>
+        </inlinemediaobject>
+			</guiicon>
+			 beside the Run button.
+		</para>
+    <figure>
+			<title>
+			Execution speed
+			</title>
+			<imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
+			<caption>
+			GêBR offers the possibility to adjust the execution settings. 
+			</caption>
+    </figure>
     <para>Each level of the adjustment bar corresponds to a a number
       of cores used by the job.</para>
     <para>
@@ -195,12 +216,20 @@
       are executed at the same time, the computer can get overloaded
       and decrease its performance. Seismic processing, particularly,
       can exhaust the computer resources.</para>
+
     <para>GêBR has a feature that overcomes the issue of overloading
       due to multitasking, by enabling the execution of the Flows in
-      a <emphasis>Low Priority</emphasis> states:</para>
-    <imageobject>
-      <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
-    </imageobject>
+      a <emphasis>Low Priority</emphasis> state:</para>
+
+      <figure>
+				<title>
+				Priority of Execution
+				</title>
+			<imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
+			<caption>
+			GêBR presents two possibilities of priority of execution: Low and High Priority.
+			</caption>
+      </figure>
     <para>Two options are available: </para>
     <itemizedlist>
       <listitem>
@@ -485,13 +514,14 @@
       same flavor as the one used on your program.
     </para>
 
-    <mediaobject>
-      <caption>The second column indicates the types (flavors) of MPI
-        available in your servers.</caption>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_servers_mpi.png" />
-      </imageobject>
-    </mediaobject>
+		<figure>
+			<title>
+			Indication of MPI availability
+			</title>
+		<imagedata fileref="../images/GeBR_servers_mpi.png" />
+			<caption>The second column indicates the types (flavors) of MPI
+				available in your servers.</caption>
+		</figure>
 
     <para>To run an MPI program, you must first create a menu in DêBR
       and choose appropriately the MPI implementation used on your
@@ -500,13 +530,12 @@
       number of processes to be used by that MPI call.
     </para>
 
-    <mediaobject>
-      <caption>Double clicking over an MPI program you can set
-        the <emphasis>np</emphasis> parameter of MPI.</caption>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
-      </imageobject>
-    </mediaobject>
+		<figure>
+		<title>MPI settings</title>
+				<imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
+			<caption>Double clicking over an MPI program you can set
+				the <emphasis>np</emphasis> parameter of MPI.</caption>
+		</figure>
 
   </section>
 

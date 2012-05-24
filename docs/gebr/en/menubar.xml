@@ -80,7 +80,7 @@
     <figure>
       <title>Maestro / Servers configuration dialog box</title>
       <mediaobject>
-        <caption>Maestro entry.</caption>
+				<caption>The Maestro/Servers Configurations interface in divided in three parts: maestro, list of servers and groups of servers.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_maestro_servers_overview.png" />
         </imageobject>
