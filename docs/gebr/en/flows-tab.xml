@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<section
+<chapter
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -152,7 +152,8 @@
 
   <section xml:id="flows_browser_edit_properties_flow">
     <title>Editing Flow's properties</title>
-    <para>To edit Flow's properties you must first select the Flow, then left-click on 
+    <para>To edit Flow's properties you must first select the Flow,
+    then left-click on
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -165,11 +166,13 @@
     fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>, <guilabel>Author</guilabel>
     and <guilabel>Email</guilabel>.</para>
   </section>
+
   <section xml:id="flows_browser_edit_dictionary">
     <title>Editing the Flow's parameter dictionary</title>
     <para>This feature is documented in the section 
       <xref linkend="dictionary_variables" />.</para>
   </section>
+
   <section xml:id="flows_browser_save_state_flow">
     <title>Saving a Flow's state</title>
     <para>Working with GêBR you will find situations where it will be
@@ -177,6 +180,7 @@
       Flows. For example, you might want to experiment with Flows that
       are only slightly different from one another, however without
       having to discard or modify the original Flow.</para>
+
     <para>One way of doing this is to copy and paste the Flow (see the
       section <xref linkend="flows_browser_copy_paste_del_flows" />.
       Another way is to save the state of the original Flow, then edit
@@ -205,8 +209,8 @@
       </step>
     </procedure>
     <note>
-      <para>There is <emphasis role="bold">no limit</emphasis> on the
-      number of states for each Flow.</para>
+      <para>There is no limit on the number of states for each
+      Flow.</para>
     </note>
 
     <para>To open the list of saved states left-click on 
@@ -246,6 +250,7 @@
       forever</emphasis>.</para>
     </caution>
   </section>
+
   <section xml:id="flows_browser_import_flow">
     <title>Importing/Exporting a Flow</title>
     <para>Although GêBR maintains all your data, you still might wish
@@ -357,15 +362,15 @@
    
     <important>
       <para>When executig many Flows, the configurations of
-  the first flow on the list will determine the
-  others'.</para>
+	the first flow on the list will determine the
+	others'.</para>
     </important>
   </section>
-
-   <section xml:id="flows_browser_speed_execution">
+  
+  <section xml:id="flows_browser_speed_execution">
     <title>Execution speed</title>
     <para>The flows' execution speed is determined by the number of
-     processors and priority of execution.  It's possible to configure
+     processors and priority of execution. It's possible to configure
      these parameters, as detailed in
      <xref linkend="flow_editor_multicores"/> and
      <xref linkend="flow_editor_priority_execution"/>.
@@ -391,4 +396,4 @@
     Flow's report.  All other functions are described in
     <xref linkend="projects_lines_view_report_project" />.</para>
   </section>
-</section>
+</chapter>

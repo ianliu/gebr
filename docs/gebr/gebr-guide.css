@@ -4,10 +4,13 @@
 
 body { margin: 25px; }
 
-h2 { color: #000060; 
+.chapter h2 { color: #000060; 
      border-bottom-color: #000000;
      border-bottom: solid 1pt;
      margin-top: 2em; }
+
+.section h2 {border: none;
+	    margin-top: 1em;}
 
 h3 { color: #000060;
      margin-top: 1.5em; }

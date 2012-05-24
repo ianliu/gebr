@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<section
+<chapter
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -32,12 +32,11 @@
       frame edit and visualize the report.</para>
     
   <tip>
-    <para>Try using a 
-      <emphasis>context menu</emphasis> instead of the buttons on the
-      toolbar. To do so,
-      <emphasis>right-click</emphasis> on one of the Projects or Lines
-      you have created.  Notice that many commands can be found in
-      this context menu. For certain cases this method is
+    <para>Try using a <emphasis>context menu</emphasis> instead of the
+      buttons on the toolbar. To do
+      so, <emphasis>right-click</emphasis> on one of the Projects or
+      Lines you have created.  Notice that many commands can be found
+      in this context menu. For certain cases this method is
       even <emphasis>easier and faster</emphasis> then using the
       toolbar buttons.</para>
   </tip>
@@ -129,20 +128,24 @@
     <para>Through an assistant dialog, the user will be instructed to
       fill in the following information:</para>
     <itemizedlist>
-      <listitem><para><emphasis>Basic properties of the Line</emphasis>, which are
+      <listitem><para><emphasis>Basic properties of the
+      Line</emphasis>, which are
 	<emphasis>Title</emphasis>, 
 	<emphasis>Description</emphasis>,
 	<emphasis>Author</emphasis> and his or her
 	<emphasis>e-mail</emphasis> address.</para>
       </listitem>
       
-      <listitem><para><emphasis>The BASE path</emphasis>: a top
-      directory where most files referred in the Line should be placed
-      (see <xref linkend="projects_lines_line_paths" />).</para>
+      <listitem><para><emphasis>The BASE
+      path</emphasis><indexterm><primary>BASE</primary></indexterm>: a
+      top directory where most files referred in the Line should be
+      placed (see <xref linkend="projects_lines_line_paths"
+      />).</para>
       </listitem>
       
-      <listitem><para><emphasis>The IMPORT path</emphasis>: a
-	  directory used to easily find files outside the BASE
+      <listitem><para><emphasis>The IMPORT
+	  path</emphasis><indexterm><primary>IMPORT</primary></indexterm>:
+	  a directory used to easily find files outside the BASE
 	  directory.</para>
       </listitem>
     </itemizedlist>
@@ -168,7 +171,8 @@
   <section xml:id="projects_lines_delete">
     <title>Deleting a Project or a Line</title>
 
-    <para>To remove a Line or Project select the Project or Line then left-click on 
+    <para>To remove a Line or Project select the Project or Line then
+    left-click on
       <guiicon>
 	<inlinemediaobject>
 	  <imageobject>
@@ -207,7 +211,8 @@
     <para>To better manage all files read or created during the
       processing of a data, GêBR defines a directory structure to
       store them. This structure is defined by a top directory, known
-      as BASE, and few other nested standard directories.</para>
+      as BASE<indexterm><primary>BASE</primary></indexterm>, and few
+      other nested standard directories.</para>
 
     <para>For instance, if the home folder of the user is
     '/home/john', setting the BASE to
@@ -216,7 +221,7 @@
       <table>
 	<tbody>
 	  <tr>
-	    <td>HOME: </td>
+	    <td>HOME:<indexterm><primary>HOME</primary></indexterm> </td>
 	    <td>/home/john/</td>
 	  </tr>
 	  <tr>
@@ -224,23 +229,23 @@
 	    <td>/home/john/GeBR/MyFirstLine/</td>
 	  </tr>
 	  <tr>
-	    <td>DATA: </td>
+	    <td>DATA:<indexterm><primary>DATA</primary></indexterm> </td>
 	    <td>/home/john/GeBR/MyFirstLine/data/</td>
 	  </tr>
 	  <tr>
-	    <td>TMP: </td>
+	    <td>TMP:<indexterm><primary>TMP</primary></indexterm> </td>
 	    <td>/home/john/GeBR/MyFirstLine/tmp/</td>
 	  </tr>
 	  <tr>
-	    <td>EXPORT: </td>
+	    <td>EXPORT:<indexterm><primary>EXPORT</primary></indexterm> </td>
 	    <td>/home/john/GeBR/MyFirstLine/export/</td>
 	  </tr>
 	  <tr>
-	    <td>TABLE: </td>
+	    <td>TABLE:<indexterm><primary>TABLE</primary></indexterm> </td>
 	    <td>/home/john/GeBR/MyFirstLine/table/</td>
 	  </tr>
 	  <tr>
-	    <td>MISC: </td>
+	    <td>MISC:<indexterm><primary>MISC</primary></indexterm ></td>
 	    <td>/home/john/GeBR/MyFirstLine/custom/</td>
 	  </tr>
 	</tbody>
@@ -253,15 +258,18 @@
 
       <important>
 	<para>Remember that the processing takes place at the working
-	  machines. So, the directory structure describe above will be
-	  created there. In case the working machine is different
-	  from the local machine, where the GêBR interface is running,
-	  the user will not see the created directories by browsing the
-	  local machine's filesystem.</para>
+	  machines<indexterm><primary>Working
+	  machine</primary></indexterm>. So, the directory structure
+	  describe above will be created there. In case the working
+	  machine is different from the local machine, where the GêBR
+	  interface is running, the user will not see the created
+	  directories by browsing the local machine's
+	  filesystem.</para>
 	<para>To be able to browse files in these directory, the
-          <emphasis>remote browse</emphasis> feature must be enabled
-          in the Maestro of the Line (see
-          <xref linkend="remote_browsing"/>).</para>
+          <emphasis>remote browse</emphasis><indexterm><primary>Remote
+          browsing</primary></indexterm> feature must be enabled in
+          the Maestro<indexterm><primary>Maestro</primary></indexterm>
+          of the Line (see <xref linkend="remote_browsing"/>).</para>
       </important>
 
       <note><para>Although it is not mandatory to adhere to this
@@ -272,9 +280,10 @@
   <section xml:id="projects_lines_change_the_maestro_of_a_line">
     <title>Changing the Maestro of a Line</title>
 
-    <para>GêBR supports only one connected Maestro at time. However,
-    the user may have more than one Maestro at his or her
-    disposal.</para>
+    <para>GêBR supports only one connected
+    Maestro<indexterm><primary>Maestro</primary></indexterm> at
+    time. However, the user may have more than one Maestro at his or
+    her disposal.</para>
 
     <para>Whenever a Maestro is connected, all Lines associates to
       other Maestros will be unavailable for edition. The user can
@@ -289,7 +298,7 @@
     <itemizedlist>
       <listitem>
 	<para>disconnect from the current Maestro and connect
-	  to the Maestro associated to the Line;  </para>
+	  to the Maestro associated to the Line; or</para>
       </listitem>
       <listitem>
 	<para>dissociate the Line from its original Maestro and
@@ -312,15 +321,17 @@
 
   <important>
     <para>When a Line is migrated from one Maestro to another, all
-    data in the BASE directory and in its childs will remain in the
-    working servers of the original Maestro.
+    data in the BASE<indexterm><primary>BASE</primary></indexterm>
+    directory and in its childs will remain in the working servers of
+    the original Maestro.
     </para>
   </important>
 
   <section xml:id="projects_lines_import">
     <title>Importing a Project or a Line</title>
-    <para>In GêBR you can import Projects or Lines that were previously exported 
-      (<xref linkend="projects_lines_export" />). To do so:</para>
+    <para>In GêBR you can import Projects or Lines that were
+      previously exported (<xref linkend="projects_lines_export"
+      />). To do so:</para>
     <procedure>
       <step>
 	<para>Click on the button 
@@ -334,7 +345,8 @@
       </step>
       <step>
 	<para>Select the Project or Line you want to import at window 
-	  <guilabel>Choose Project/Line to open</guilabel>. Only files with extension 
+	  <guilabel>Choose Project/Line to open</guilabel>. Only files
+	  with extension
 	  <filename class="extension">prjz</filename> or 
 	  <filename class="extension">lnez</filename> will be shown.</para>
       </step>
@@ -343,11 +355,11 @@
 	  <guibutton>Open</guibutton>.</para>
       </step>
     </procedure>
-    <para>The imported project is added to the list of projects, found
-      on the left of the main window. An imported Line joins with the other
-      Lines of the Project that was selected when the 
-      Line was imported, if they exist. In both cases the imported item is identified
-      with the suffix
+    <para>The imported Project is added to the list of projects, found
+      on the left of the main window. An imported Line joins with the
+      other Lines of the Project that was selected when the Line was
+      imported, if they exist. In both cases the imported item is
+      identified with the suffix
       <emphasis role="bold">Imported</emphasis>.</para>
 
     <note>
@@ -383,8 +395,9 @@
       </step>
       <step>
 	<para>A dialog box will appear and there you can 
-	  <guilabel>choose the name of the file that will be saved</guilabel>; when you select a directory
-	  and type the file name, GêBR determines the extension automatically, 
+	  <guilabel>choose the name of the file that will be
+	  saved</guilabel>; when you select a directory and type the
+	  file name, GêBR determines the extension automatically,
 	  <filename class="extension">.prjz</filename> for Projects or 
 	  <filename class="extension">.lnez</filename> for Lines.</para>
       </step>
@@ -398,8 +411,11 @@
   <section xml:id="projects_lines_edit_comments_project">
     <title>Editing comments</title>
 
-    <para>You can add comments on the report of a Project or a Line.  To
-      do so, follow the steps:</para>
+    <para>You can add comments on the
+      report<indexterm><primary>Report</primary><secondary>of a
+      Project</secondary></indexterm><indexterm><primary>Report</primary><secondary>of
+      a Line</secondary></indexterm> of a Project or a Line.  To do
+      so, follow the steps:</para>
 
     <procedure>
       <step>
@@ -410,10 +426,12 @@
 	  <guilabel>Line's Properties</guilabel> dialog box.</para>
       </step>
       <step>
-	<para>Fill in your comment in the text editor that appeared, when you have finished save
-	  your comment then close the editor.</para>
-	<para>In this editor you can save, print and pre-visualize your comment(s) by pressing
-	  one of the icons in the tool bar, or by using the editors menu.</para>
+	<para>Fill in your comment in the text editor that appeared,
+	  when you have finished save your comment then close the
+	  editor.</para>
+	<para>In this editor you can save, print and pre-visualize
+	  your comment(s) by pressing one of the icons in the tool
+	  bar, or by using the editors menu.</para>
       </step>
     </procedure>
     <figure>
@@ -486,4 +504,4 @@
       this one you can add the Flow's report.</para>
 
   </section>
-</section>
+</chapter>

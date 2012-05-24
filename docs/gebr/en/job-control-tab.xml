@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<section
+<chapter
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -24,6 +24,7 @@
     <listitem><para>Left Panel: List of jobs</para></listitem>
     <listitem><para>Righ Panel: Details of a selected job</para></listitem>
   </itemizedlist>
+
   <section xml:id="sec_6_1">
     <title>Toolbar</title>
     <figure>
@@ -170,6 +171,7 @@
     </figure>
     <caption>Screenshot of the Job Control list of jobs.</caption>
   </section>
+
   <section>
     <title>Right panel</title>
     <para>In the upper part, information of the selected flow is
@@ -220,13 +222,15 @@
     </mediaobject>
     <caption>Screenshot of the outputs of a job.</caption>
     </figure>
-    <para>The results (standard output) of the flow are shown. The redirected output are not
-      exhibited. Right-clicking on this window, an options menu is exhibited, by which you can
-      enable the automatic word wrap and the automatic scroll of window as the output is being
-      shown.
+    <para>The results (standard output) of the Flow are shown. The
+      redirected output are not exhibited. Right-clicking on this
+      window, an options menu is exhibited, by which you can enable
+      the automatic word wrap and the automatic scroll of window as
+      the output is being shown.
     </para>
-    <para>You can also consult the command lines executed by GêBR. You just need to
-      visit the tab Command line. The command lines are portable and can be copy-pasted through a
-      execution terminal.</para>
+    <para>You can also consult the command lines executed by GêBR. You
+      just need to visit the <guilabel>Command line</guilabel>
+      tab. The command lines are portable and can be copy-pasted
+      to a execution terminal.</para>
   </section>
-</section>
+</chapter>

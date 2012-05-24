@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<section
+<chapter
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -19,13 +19,16 @@
 
     <itemizedlist>
       <listitem>The local machine (the GêBR graphical interface
-        or <emphasis>the client</emphasis>), from where the user sends
+        or <emphasis>the client</emphasis>)<indexterm><primary>GêBR</primary><secondary>the interface</secondary></indexterm>, from where the user sends
         requests.
       </listitem>
-      <listitem>An intermediate layer (the Maestro), where all the
-        jobs are coordinated.
+      <listitem>An intermediate layer (the
+        Maestro)<indexterm><primary>Maestro</primary></indexterm>,
+        where all the jobs are coordinated.
       </listitem>
-      <listitem>Executors (the working machines
+      <listitem>Executors (the working
+        machines<indexterm><primary>Working
+        machine</primary></indexterm>
         or <emphasis>servers</emphasis>), where the jobs are executed.
       </listitem>
     </itemizedlist>
@@ -41,10 +44,10 @@
 
     <note>
       <para>GêBR can be connected to only one Maestro at once. Each
-        Maestro, in turn, can be connected to many Servers. However,
-        those Servers must share the file system containing the user's
-        home directory. This is usually provided by Network File System
-        (NFS) infrastructure.
+        Maestro, in turn, can be connected to many working
+        machines. However, those machines must share the file system
+        containing the user's home directory. This is usually provided
+        by Network File System (NFS) infrastructure.
       </para>
     </note>
 
@@ -54,7 +57,8 @@
 
     <itemizedlist>
       <listitem>Between GêBR-client and the Maestro.</listitem>
-      <listitem>Between the Maestro and the Servers.</listitem>
+      <listitem>Between the Maestro and the working
+      machines.</listitem>
     </itemizedlist>
 
     <para>All connections are performed using Secure Shell (SSH)
@@ -104,8 +108,8 @@
     </figure>
 
     <para>Alternatively, you can create the private/public keys pair
-      by yourself
-      (consult <link xlink:show="new" xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
+      by yourself (consult <link xlink:show="new"
+      xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
       for more information).
     </para>
 
@@ -114,14 +118,14 @@
   <section xml:id="remote_browsing">
     <title>Accessing remote files</title>
 
-    <para>GêBR infrastructure comprises GêBR-Client, GêBR-Maestro and
-      GêBR-Servers as main actors (see
+    <para>GêBR infrastructure comprises GêBR, Maestro and working
+      machines as main actors (see
       <xref linkend="intercommunication_between_players"/>) and the
       processing files, therefore, may be on different machines than
       yours.
     </para>
-    <para>
-      For most of the places you can pick a file (see window below) you will be navigating through the Servers files. 
+    <para>For most of the places you can pick a file (see window
+      below) you will be navigating through the Servers files.
     </para>
     <para>Just in two places of GêBR you will not be browsing in the
       Servers filesystem: <emphasis>Import/Export</emphasis> of
@@ -155,7 +159,7 @@
   <section xml:id="flow_editor_multicores">
     <title>Multiple cores</title>
     <para>GêBR optimizes the execution of loops in multi-core
-      machines.</para>
+      working machines<indexterm><primary>Working machine</primary><secondary>multi-core</secondary></indexterm>.</para>
 
     <para>GêBR takes advantage of the multi-core feature of most of
       the recent machines. The execution of repetitive flows can be
@@ -201,14 +205,14 @@
     <itemizedlist>
       <listitem>
         <para>
-          Low priority (the Flow is going to wait its turn to execute and try not to
-          overload the system)
+          Low priority (the Flow is going to wait its turn to execute
+          and try not to overload the system).
         </para>
       </listitem>
       <listitem>
         <para>
-          High priority (the execution of the Flow is going to dispute for the computer
-          resources with the other active programs)
+          High priority (the execution of the Flow is going to dispute
+          for the computer resources with the other active programs).
         </para>
       </listitem>
     </itemizedlist>
@@ -247,7 +251,8 @@
       change on them would be automatically propagated to all flows
       where they are employed. This central place for definition of
       quantities is the <emphasis role="bold">Dictionary of
-      variables</emphasis>.</para>
+      variables</emphasis><indexterm><primary>Dictionary of
+      variables</primary></indexterm>.</para>
 
     <section xml:id="variables">
       <title>Variables</title>
@@ -459,8 +464,9 @@
   <section xml:id="additional_features_mpi_support">
     <title>Support to MPI programs</title>
 
-    <para>There are many implementations (flavors) of MPI, but the
-      most widely used are OpenMPI and MPICH2. OpenMPI is an open source
+    <para>There are many implementations (flavors) of
+      MPI<indexterm><primary>MPI</primary></indexterm>, but the most
+      widely used are OpenMPI and MPICH2. OpenMPI is an open source
       implementation and has influence of three earlier approaches:
       FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is another widely used
       implementation and is based on the MPI-2.2 standard.
@@ -541,7 +547,6 @@
   </section>
 -->
 
-
   <section xml:id="import_samples">
     <title>Sample projects</title>
     <para>In <menuchoice>
@@ -563,4 +568,4 @@
       </mediaobject>
     </figure>
   </section>
-</section>
+</chapter>

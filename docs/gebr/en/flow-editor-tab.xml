@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<section
+<chapter
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -30,9 +30,10 @@
     <title>Assembling the Flow</title>
     <para>In GêBR a <emphasis>Flow</emphasis> is a <emphasis>sequence
       of operations</emphasis> defined by you. These operations, also
-      called the Flow's <emphasis>programs</emphasis>, are organized
-      into the following <emphasis>categories</emphasis> according to
-      their purpose:</para>
+      called the
+      Flow's <emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
+      are organized into the following <emphasis>categories</emphasis>
+      according to their purpose:</para>
     <itemizedlist>
       <listitem>
         <para>Data Compression</para>
@@ -117,10 +118,11 @@
           <title>Flow editor tab</title>
           <mediaobject>
             <caption>In the Flow editor, on the right side of the main
-              window you will see the Menus box. From this box you can
-              add programs to your Flow, which will appear in the Flow
-              sequence box on the left side of the main
-              window.</caption>
+              window you will see the
+              Menus<indexterm><primary>Menu</primary></indexterm>
+              box. From this box you can add programs to your Flow,
+              which will appear in the Flow sequence box on the left
+              side of the main window.</caption>
             <imageobject>
               <imagedata fileref="../images/GeBR_flow_browser_flow_assembling.png" />
             </imageobject>
@@ -128,7 +130,7 @@
         </figure>
       </step>
       <step>
-        <para>To enable a program of your flow, you will have to
+        <para>To enable a program of your Flow, you will have to
           right-click over it and select
           the <emphasis>Configured</emphasis> option. The icon will
           change from
@@ -186,7 +188,8 @@
                   <imagedata fileref="../../common-images/icone_configurado.png" />
                 </imageobject>
               </inlinemediaobject>
-          </guiicon>). Otherwise the Flow will not be executed as expected.</para>
+          </guiicon>). Otherwise the Flow will not be executed as
+          expected.</para>
         </important>
         <important>
           <para>The state of a Flow, or a set of Flows, can be changed
@@ -382,8 +385,7 @@
     </tip>
     <important>
       <para>
-        <emphasis role="bold">Disabled</emphasis> programs (
-        <guiicon>
+        <emphasis role="bold">Disabled</emphasis> programs (<guiicon>
           <inlinemediaobject>
             <imageobject>
               <imagedata fileref="../../common-images/icone_desabilitado.png" />
@@ -497,13 +499,14 @@
       Editor Tab and choose the "After <emphasis>Flow
         A</emphasis>".</para>
 
-    <para>By default the Flows are executed on the Maestro group .
+    <para>By default the Flows are executed on the Maestro group.
       More details on the definition and selection of servers and
       groups of servers can be found in
       <xref linkend="additional_features_maestro_servers_configuration"/>.</para>
 
-    <para>In the Flow Editor Tab, even if you have selected several
-      Flow from the Flows Tab, when you click on
+    <para>In the <guilabel>Flow Editor</guilabel> tab, even if you
+      have selected several Flow from the <guilabel>Flows</guilabel>
+      tab, when you click on
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -514,9 +517,9 @@
     <figure>
       <title>Execution queue</title>
       <mediaobject>
-        <caption>Screenshot of the Flow Editor Tab. In the first menu
-          of the <emphasis>Run</emphasis>, you can choose after which
-          flow it will be executed.
+        <caption>Screenshot of the <guilabel>Flow Editor</guilabel>
+          tab. In the first menu of the <emphasis>Run</emphasis>, you
+          can choose after which flow it will be executed.
         </caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_flow_editor_queue.png" />
@@ -531,14 +534,16 @@
     </para>
 
     <para>At the moment the Flow is executed, GêBR automatically
-      switchs to the <guilabel>Job Control</guilabel> Tab and displays a
+      switchs to the <guilabel>Job Control</guilabel> tab and displays a
       report of the execution of the Flow .</para>
   </section>
 
 
   <section xml:id="flow_editor_loop">
     <title>Executing a Flow multiple times</title>
-    <para>The program <emphasis>Loop</emphasis> (from the category
+    <para>The
+    program <emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm>
+    (from the category
       <emphasis role="bold">Loops</emphasis>) has a totally different
       usage compared to the remaining programs from GêBR. We are going
       to see some of these differences.</para>
@@ -551,12 +556,10 @@
       further details).</para>
 
     <figure>
-      <title>
-      Loop program
-      </title>
+      <title>Loop program</title>
     <mediaobject>
-      <caption>Screenshot of program 
-        <emphasis>Loop</emphasis>, added to a Flow and properly configured.</caption>
+      <caption>Screenshot of program <emphasis>Loop</emphasis>, added
+      to a Flow and properly configured.</caption>
       <imageobject>
         <imagedata fileref="../images/GeBR_flow_editor_loop.png" />
       </imageobject>
@@ -587,9 +590,11 @@
   <section xml:id="flow_editor_multiple_machines">
     <title>Multiple machines</title>
     <para>If GêBR is connected to multiple machines through the
-      Servers Configuration interface, and the selected Flow is
-      parallelizable (see below the criteria to be parallelizable),
-      then you have the option to run in a distributed way.</para>
+      <guilabel>Servers Configuration</guilabel> interface, and the
+      selected Flow is
+      parallelizable<indexterm><primary>Flow</primary><secondary>parallelizable</secondary></indexterm>
+      (see below the criteria to be parallelizable), then you have the
+      option to run in a distributed way.</para>
 
     <para>To be considered parallelizable, besides having a loop, a
       Flow must achieve one of these criteria:</para>
@@ -611,7 +616,8 @@
       available machines according to their ranking.</para>
 
     <para>If you want to run a Flow in a specified machine, then he
-      can force the execution by going to Flow Editor tab, as choosing
-      the machine of execution as shown below.</para>
+      can force the execution by going to <guilabel>Flow
+      Editor</guilabel> tab, as choosing the working machine as shown
+      below.</para>
   </section>
-</section>
+</chapter>

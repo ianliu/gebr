@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<article
+<book
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -38,4 +38,7 @@
   <!-- Recursos adicionais -->
   <xi:include href="technical-aspects.xml" />
 
-</article>
+  <!-- Index -->
+  <index xmlns='http://docbook.org/ns/docbook'/>
+    
+</book>

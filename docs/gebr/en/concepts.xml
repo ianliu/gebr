@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<section
+<chapter
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -14,22 +14,27 @@
     <title>Projects, Lines and Flows</title>
     
     <para>The processing of a seismic data is carried out
-      by <emphasis>processing flows</emphasis>. A processing flow is a
-      chain of programs, which sequentially operates on an input data to
-      produce an output data from it. For example, processing flows can be
-      assembled to accomplish tasks like <emphasis>spike
-	deconvolution</emphasis>, <emphasis>ground-roll
-	atenuation</emphasis>, <emphasis>NMO correction</emphasis>, and so
-      on.</para>
+      by <emphasis>processing
+      flows</emphasis><indexterm><primary>Processing
+      flow</primary></indexterm>. A processing flow is a chain of
+      programs, which sequentially operates on an input data to
+      produce an output data from it. For example, processing flows
+      can be assembled to accomplish tasks like <emphasis>spike
+      deconvolution</emphasis>, <emphasis>ground-roll
+      atenuation</emphasis>, <emphasis>NMO correction</emphasis>, and
+      so on.</para>
 
     <para>In GêBR, processing flows are referenced
-      as <emphasis role="bold">Flows</emphasis>. The complete processing of
-      a seismic data (also known as a <emphasis>seismic line</emphasis>,
-      in 2D case) involves several processing flows. The set of processing
-      flows is referenced as a <emphasis role="bold">Line</emphasis> in
-      the GêBR interface. Furthermore, it is common to have many seismic
-      lines acquired on a target area. A set of seismic lines is known as
-      a <emphasis role="bold">Project</emphasis>, in GêBR.</para>
+      as <emphasis role="bold">Flows</emphasis><indexterm><primary>Flow</primary></indexterm>. The
+      complete processing of a seismic data (also known as
+      a <emphasis>seismic line</emphasis>, in 2D case) involves
+      several processing flows. The set of processing flows is
+      referenced as
+      a <emphasis role="bold">Line</emphasis><indexterm><primary>Line</primary></indexterm>
+      in the GêBR interface. Furthermore, it is common to have many
+      seismic lines acquired on a target area. A set of seismic lines
+      is known as a <emphasis role="bold">Project</emphasis><indexterm><primary>Project</primary></indexterm>, in
+      GêBR.</para>
 
     <para>In summary, GêBR has three levels organization, from top to
     bottom:</para>
@@ -81,19 +86,21 @@
     <para>A Flow is a sequence of programs, as just explained. In
       GêBR, the user might think that there is a list of available
       programs to assemble Flows. This is partially true only. Indeed,
-      Flows are built from <emphasis role="bold">Menus</emphasis>. But
+      Flows are built from <emphasis role="bold">Menus</emphasis><indexterm><primary>Menu</primary></indexterm>. But
       what is a Menu?</para>
 
     <para>A <emphasis role="bold">Menus</emphasis> is a representation
-      of a single program or a set of programs. This means that when
-      the user adds a Menu to a Flow, he or she is in fact adding one
-      or more programs to the Flow at once. Why is that so? Think
-      about common tasks that are accomplished by a standard sequence
-      of programs. Instead of building a Flow by adding programs one
-      by one, the Flow could be built from a Menu, which packs the
-      whole set of programs. For example, consider the task of adding
-      header to a raw data to come up with a seismic data in Seismic
-      Unix format. <xref linkend="program_versus_menu" /> shows two
+      of a single
+      program<indexterm><primary>Program</primary></indexterm> or a
+      set of programs. This means that when the user adds a Menu to a
+      Flow, he or she is in fact adding one or more programs to the
+      Flow at once. Why is that so? Think about common tasks that are
+      accomplished by a standard sequence of programs. Instead of
+      building a Flow by adding programs one by one, the Flow could be
+      built from a Menu, which packs the whole set of programs. For
+      example, consider the task of adding header to a raw data to
+      come up with a seismic data in Seismic Unix
+      format. <xref linkend="program_versus_menu" /> shows two
       possibilities to assemble the same flow, depending on how the
       programs <emphasis>SU Add Header</emphasis> and <emphasis>SU Set
       Header</emphasis> are represented, either as two independent
@@ -131,8 +138,9 @@
     <para>After assembling the flow, to complete its set up, the user
       has to inspect each program of the flow and define its
       parameters. Programs may depend on many parameters, from a
-      variety of types. GêBR support parameters of the following
-      types:</para>
+      variety of types. GêBR support
+      parameters<indexterm><primary>Parameters</primary><secondary>supported
+      types of</secondary></indexterm> of the following types:</para>
     <itemizedlist>
       <listitem>Number (real or integers, limited or not to a range)</listitem>
       <listitem>Text</listitem>
@@ -154,10 +162,12 @@
     <title>GêBR players</title>
 
     <para>The GêBR set of tools is composed by three main player
-      categories: <emphasis role="bold">GêBR</emphasis> (the interface
-      itself), <emphasis role="bold">Maestros</emphasis>,
-      and <emphasis role="bold">working machines</emphasis>. But who
-      are those guys?</para>
+      categories: <emphasis role="bold">GêBR</emphasis><indexterm><primary>GêBR</primary><secondary>the
+      interface</secondary></indexterm> (the interface
+      itself), <emphasis role="bold">Maestros</emphasis><indexterm><primary>Maestro</primary></indexterm>,
+      and <emphasis role="bold">working
+      machines</emphasis><indexterm><primary>Working
+      machine</primary></indexterm>. But who are those guys?</para>
 
     <para>The GêBR interface, sometimes refered as GêBR only, is the
       graphical interface with whom the user interacts with to build
@@ -169,21 +179,24 @@
       machines as the user has access, to run processing flows. Those
       machines are referenced as <emphasis role="bold">working
       machines</emphasis> (or sometimes,
-      as <emphasis>servers</emphasis>). They may be local, meaning the
-      user is physically using them, or remote, meaning the user has
-      access to them through the network. No matter where the machines
-      are, they are equally treated by GêBR, which means that the user
-      does not have to care about that.</para>
+      as <emphasis>servers</emphasis><indexterm><primary>Server
+	</primary><see>Working machines</see></indexterm>). They may
+      be local, meaning the user is physically using them, or remote,
+      meaning the user has access to them through the network. No
+      matter where the machines are, they are equally treated by GêBR,
+      which means that the user does not have to care about
+      that.</para>
 
     <para>However, GêBR does not talk directly with the working
       machines. This communication is established through another
-      player, the <emphasis role="bold">Maestro</emphasis>. It acts as
-      a coordinator of the working machines. Without interference,
-      Maestro collects information about the state of each working
-      machine and ranks them according to their capabilities and
-      available resources at time. Therefore, Maestro can take smart
-      decisions about which machines are best suited to run the
-      job.</para>
+      player,
+      the <emphasis role="bold">Maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>. It
+      acts as a coordinator of the working machines. Without
+      interference, Maestro collects information about the state of
+      each working machine and ranks them according to their
+      capabilities and available resources at time. Therefore, Maestro
+      can take smart decisions about which machines are best suited to
+      run the job.</para>
   
     <para>The working machines put their computational power at
       disposal of the Maestro. Under Maestro's coordination the
@@ -287,5 +300,5 @@
     </figure>
     -->
     </section>
-</section>  
+</chapter>
 
