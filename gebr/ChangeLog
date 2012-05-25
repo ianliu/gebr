@@ -1,3 +1,12 @@
+2012-05-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing links to #additional_features_maestro_servers_configuration
+	and #intercommunication_between_players
+
+2012-05-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.14: Documentation further improvements
+
 2012-05-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Apply markup escape on tooltips in dictionary to avoid criticals

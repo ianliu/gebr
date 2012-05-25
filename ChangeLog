@@ -1,3 +1,56 @@
+2012-05-24  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge user guide review.
+
+2012-05-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix broken link from GêBR (in pt_BR) to Maestro/Servers
+	configuration section of the documentation
+	* Alter Centos install script and Fedora/Centos specs
+	* Last fixes of English documentation prior to GêBR live 12-05
+
+2012-05-24  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Futher misc improvements
+	* Section numbering (fix issue 1182)
+
+2012-05-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Insert missing title/caption of images in english documentation and
+	minor English fixes
+
+2012-05-24  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* New figure added and minor fixes
+	* Introduction of index
+
+2012-05-23  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Improvements mainly in dictionary of variables section
+
+2012-05-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Shrink dictionary section of english documentation
+
+2012-05-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing links to #additional_features_maestro_servers_configuration
+	and #intercommunication_between_players
+
+2012-05-23  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Keep improving the documentation
+	* Suppress paragraph due to possible copyright issues
+
+2012-05-22  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* New section about menus and programs
+
+2012-05-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.14 for changeset 5b7ecd704152
+	* Release 0.17.14: Documentation further improvements
+
 2012-05-22  Ricardo Biloti  <biloti@gebrproject.com>
 
 	* Documentation further improvements
