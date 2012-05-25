@@ -1,3 +1,15 @@
+gebrproject (0.17.14) lucid; urgency=low
+
+  * Documentation further improvements.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Tue, 22 May 2012 19:26:51 -0300
+
+gebrproject (0.17.13) lucid; urgency=low
+
+  * User guide review.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 21 May 2012 18:00:54 -0300
+
 gebrproject (0.17.12) lucid; urgency=low
 
   * Protocol version sync with gebr version.

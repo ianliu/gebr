@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<section
+<chapter
   xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -8,142 +8,36 @@
   version="5.0"
   xml:id="flows_tab">
 
-  <title>The 
-    <guilabel>Flows</guilabel> tab</title>
-  <para>Just bellow the 
-    <guilabel>Flows</guilabel> tab there are ten buttons, plus two more buttons at the bottom of
-    the Details box. These buttons will allow you to:</para>
-  <itemizedlist>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_create_flow">Create a Flow</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_copy_flow">Copy Flows to the clipboard</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_paste_flow">Paste Flows from the clipboard</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_delete_flow">Delete Flows</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_edit_properties_flow">Edit Flow's properties</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_save_state_flow">Save a Flow's state</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_import_flow">Import a Flow</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_export_flow">Export a Flow</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_execute_flow">Execute a Flow</link>
-      </para>
-    </listitem>
- 
-    <listitem>
-     <para>
-       <link linkend="flows_browser_speed_execution">Execution speed</link>
-      </para>
-    </listitem>
+  <title>The <guilabel>Flows</guilabel> tab</title>
 
+  <para>In this tab, the user can manage the Flows of the current
+    Line. Note the similarity with the <guilabel>Projects and
+    Lines</guilabel> tab.</para>
 
-    <listitem>
-      <para>
-        <link linkend="flows_browser_edit_comments_flow">Edit comments</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="flows_browser_view_report_flow">View Report</link>
-      </para>
-    </listitem>
-  </itemizedlist>
   <tip>
-    <para>Instead of these buttons, try using the 
-      <emphasis role="bold">context menu</emphasis>. To do so, 
-      <emphasis role="bold">right-click</emphasis> on a Flow you have created. Notice that many
-      features can be accessed through this method. For certain cases this is an 
-      <emphasis role="bold">easier and simpler</emphasis> choice.</para>
+    <para>Instead of the buttons in toolbar, try using
+    the <emphasis role="bold">context menu</emphasis>. To do
+    so, <emphasis role="bold">right-click</emphasis> on a Flow you
+    have created. Notice that many features can be accessed through
+    this method. For certain cases this is an easier and simpler
+    choice.</para>
   </tip>
+
   <section xml:id="flows_browser_create_flow">
     <title>Creating Flows</title>
-    <para>In GêBR a 
-      <emphasis>Flow</emphasis> is a  
-      <emphasis>sequence of operations</emphasis> defined by you. These operations,
-      also called the Flow's 
-      <emphasis>programs</emphasis>, are organized into the following 
-      <emphasis>categories</emphasis> according to their purpose:</para>
-    <itemizedlist>
-      <listitem>
-        <para>Data Compression</para>
-      </listitem>
-      <listitem>
-        <para>Editing, Sorting and Manipulation</para>
-      </listitem>
-      <listitem>
-        <para>File tools</para>
-      </listitem>
-      <listitem>
-        <para>Filtering, Transforms and Attributes</para>
-      </listitem>
-      <listitem>
-        <para>Gain, NMO, Stack and Standard Processes</para>
-      </listitem>
-      <listitem>
-        <para>Graphics</para>
-      </listitem>
-      <listitem>
-        <para>Import/Export</para>
-      </listitem>
-      <listitem>
-        <para>Migration and Dip Moveout</para>
-      </listitem>
-      <listitem>
-        <para>Multiple Supression</para>
-      </listitem>
-      <listitem>
-        <para>Seismic Unix</para>
-      </listitem>
-      <listitem>
-        <para>Simulation and Model Building</para>
-      </listitem>
-      <listitem>
-        <para>Utilities</para>
-      </listitem>
-    </itemizedlist>
-    <para>To 
-      <emphasis role="bold">create a Flow</emphasis> you must 
-      <emphasis role="bold">select and order programs</emphasis> from the above categories. Let us
-      see how this is done:</para>
+
+    <para>The third-level element of GêBR are processing flows or
+      just <emphasis>Flows</emphasis> (see
+      <xref linkend="concepts_elements" />).</para>
+
+    <para>To create a Flow, follow the steps:</para>
+
     <procedure>
-      <step>
-        <para>In the tab 
-          <guilabel>Projects and Lines</guilabel>, check that you have selected 
-          a Line.</para>
+      <step><para>In the tab <guilabel>Projects and Lines</guilabel>,
+          check that you have selected a Line.</para>
       </step>
-      <step>
-        <para>Now click on the tab 
-          <guilabel>Flows</guilabel>, then left-click on 
+      <step><para>Go to <guilabel>Flows</guilabel> tab, then
+      left-click on
           <guiicon>
             <inlinemediaobject>
               <imageobject>
@@ -153,168 +47,64 @@
         </guiicon>.</para>
       </step>
       <step>
-        <para>The dialog box 
-          <guilabel>Flow "New Flow" Properties</guilabel> will appear, fill in a 
-          <emphasis>title</emphasis> for this Flow (for example, 
-          <userinput>My First Flow</userinput>). You can also give a brief 
-          <emphasis>description</emphasis> of the Flow, the 
-          <emphasis>author</emphasis> and an 
-          <emphasis>e-mail</emphasis> for contact. If you are done filling in this Flows properties
-          click on 
-          <guibutton>OK</guibutton>.</para>
-      </step>
-      <step>
-        <para>Now select the tab 
-          <guilabel>Flow Editor</guilabel>. On the right side it will be shown a list with several menus.
-          Choose one of them and include it in your flow with a double-click.
-        </para>
-      </step>
-      <step>
-        <para>
-          If you need a specific order to the selected programs of your flow, you just need to
-          drag and drop the desired programs.
-        </para>
-        <figure>
-          <mediaobject>
-            <caption>In the Flow editor, on the right side of the main window you will see the
-              Menus box. From this box you can add programs to your Flow, which will appear in the
-              Flow sequence box on the left side of the main window.</caption>
-            <imageobject>
-              <imagedata fileref="../images/GeBR_flow_browser_flow_assembling.png" />
-            </imageobject>
-          </mediaobject>
-        </figure>
-      </step>
-      <step>
-        <para> To enable a program of your flow, you will have to right-click over it and select the
-          <emphasis>Configured </emphasis> option.
-          The icon will change from 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/icone_nao_configurado.png" />
-              </imageobject>
-            </inlinemediaobject>
-          </guiicon>
-          to
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/icone_configurado.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon>.</para>
-        <figure>
-          <mediaobject>
-            <caption>
-              To enable a program, select the Configured option.</caption>
-            <imageobject>
-              <imagedata fileref="../images/GeBR_flow_browser_flow_assembling_02.png" />
-            </imageobject>
-          </mediaobject>
-        </figure>
-        <tip>
-          <para>If you want to change all programs, or a few, to the configured state
-            simultaneously, select them by using 
-            <keycombo>
-              <keycap>Ctrl</keycap>
-              <mousebutton>Click</mousebutton>
-            </keycombo>. Then right-click on one of the selected programs, choose the option 
-            <guilabel>Configured</guilabel> from the menu that appeared. All the programs that were
-            selected will be altered to the state 
-            <guiicon>
-              <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../../common-images/icone_configurado.png" />
-                </imageobject>
-              </inlinemediaobject>
-          </guiicon>.</para>
-        </tip>
-        <important>
-          <para>To run a Flow 
-            <emphasis role="bold">all the programs</emphasis> listed in the 
-            <guilabel>Flow sequence</guilabel> box must be 
-            <guilabel>Configured</guilabel> (
-            <guiicon>
-              <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../../common-images/icone_configurado.png" />
-                </imageobject>
-              </inlinemediaobject>
-          </guiicon>). Otherwise the Flow will not be executed as expected.</para>
-        </important>
-        <important>
-          <para>The state of a Flow, or a set of Flows, can be changed by using the hotkey 
-            <emphasis role="bold">spacebar</emphasis>, which alters the state of the selected programs 
-            in the order 
-            <emphasis role="bold">Not configured</emphasis>, 
-            <emphasis role="bold">Disabled</emphasis> and 
-            <emphasis role="bold">Configured</emphasis>. The meaning of these states will be
-            further described later on.</para>
-        </important>
+        <para>A dialog box, named <guilabel>Flow "New Flow"
+        Properties</guilabel>, will appear. Fill in the four standard fields:
+          <guilabel>Title</guilabel>, <guilabel>Description</guilabel>
+          (an one-line sentence), <guilabel>Author</guilabel> and
+          an <guilabel>e-mail</guilabel> address. Click
+          on <guibutton>OK</guibutton> when ready.</para>
       </step>
     </procedure>
-    <para>Your flow is ready to be executed. Click on 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon> to do it.</para>
-    <para>There is 
-      <emphasis role="bold">no limit</emphasis> on the number of Flows you can have in one Line.</para>
-      <para>After you have created a Flow it will be 
-      <emphasis role="bold">visible on the left side of the main window</emphasis> when the 
+
+    <para>After you have created a Flow, that it will be 
+      visible on the left side of the main window when the 
       <guilabel>Flows</guilabel> tab is selected. The 
-      <guilabel>Details</guilabel> box, found on the right side of the main window, shows
-      information on the selected Flow .</para>
+      <guilabel>Details</guilabel> box, found on the right side of the
+      main window, shows information about the selected Flow.
+    </para>
+
     <tip>
-      <para>You can alter 
-        <emphasis role="bold">the position</emphasis> of the Flow in the list by 
-        <emphasis role="bold">dragging the Flow with the mouse</emphasis> to the desired
+      <para>You can alter the position of the Flow in the list by
+        dragging the Flow with the mouse to the desired
         position.</para>
     </tip>
     <tip>
-      <para>Observe that the 
-        <emphasis role="bold">information bar</emphasis> just bellow the menu 
-        <guimenu>Actions</guimenu> shows the complete Flow tree of the selected Flow.</para>
+      <para>Observe that the information bar just below the menu
+        <guimenu>Actions</guimenu> shows the parents Line and Project
+        of the selected Flow.</para>
     </tip>
+
+    <important>
+      <para>Performing the operations described above the user has
+      just accomplished the creation of a Flow element in the
+      interface. However, that new Flow still needs to be assembled,
+      i.e., the user needs to select which programs will be
+      chained to accomplish the purpose of the Flow. This further set
+      up is describe in <xref linkend="flow_editor_create_flow" />.</para>
+    </important>
   </section>
 
-  <section xml:id="flows_browser_copy_flow">
-    <title>Copying Flows to the clipboard</title>
-    <para>The clipboard provides the popular set of tools known as 
-      <emphasis role="bold">copying and pasting</emphasis>. In GêBR a Flow (or set of Flows) can be
-      copied to the clipboard by using the button 
+  <section xml:id="flows_browser_copy_paste_del_flows">
+
+    <title>Coping, pasting and deleting Flows</title>
+
+    <para>The clipboard provides the popular set of tools known as
+      <emphasis>copy and paste</emphasis>. In GêBR a Flow (or set of
+      Flows) can be copied to the clipboard and paste back to the same
+      Line or to other Lines. To copy Flows to the clipboard, first
+      select them with the mouse, and then use the button
       <guiicon>
         <inlinemediaobject>
           <imageobject>
             <imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon> or by using the known shortcut 
+      </guiicon> or press the usual shortcut
       <keycombo>
         <keycap>Ctrl</keycap>
         <keycap>C</keycap>
-    </keycombo>.</para>
-    <tip>
-      <para>You can select several Flows and then copy all of them to the clipboard by holding 
-        <keycombo>
-          <keycap>Ctrl</keycap>
-          <mousebutton>Left-click</mousebutton>
-        </keycombo> or 
-        <keycombo>
-          <keycap>Shift</keycap>
-          <mousebutton>Left-click</mousebutton>
-      </keycombo>.</para>
-    </tip>
-  </section>
-  <section xml:id="flows_browser_paste_flow">
-    <title>Pasting Flows from the clipboard</title>
-    <para>After copying 
-      <xref linkend="flows_browser_copy_flow" />, a Flow (or a set of Flows) you can paste
-      it by clicking on the button 
+    </keycombo>. After copying, a Flow (or a set of Flows) you can paste it
+      by clicking on the button
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -326,15 +116,7 @@
         <keycap>Ctrl</keycap>
         <keycap>V</keycap>
     </keycombo>.</para>
-    <tip>
-      <para>Any Flow (or a set of Flows) that has been copied to the clipboard can be pasted to 
-        <emphasis role="bold">any Line</emphasis>. Simply switch to the 
-        <guilabel>Projects and Lines</guilabel> tab, select the desired Line, then go back to the 
-        <guilabel>Flows</guilabel> tab and paste the Flow(s).</para>
-    </tip>
-  </section>
-  <section xml:id="flows_browser_delete_flow">
-    <title>Deleting Flows</title>
+
     <para>To delete a Flow (or set of Flows), select them then click on 
       <guiicon>
         <inlinemediaobject>
@@ -343,8 +125,9 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon>.</para>
+
     <tip>
-      <para>You can select several Flows at once and then delete them by holding 
+      <para>You can handle several Flows at once by holding
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Left-click</mousebutton>
@@ -354,10 +137,23 @@
           <mousebutton>Left-click</mousebutton>
       </keycombo>.</para>
     </tip>
+
+    <tip>
+      <para>Any Flow (or a set of Flows) that has been copied to the
+      clipboard can be pasted to <emphasis>any Line</emphasis>. Simply
+      switch to the
+      <guilabel>Projects and Lines</guilabel> tab, select the desired
+      Line, then go back to the <guilabel>Flows</guilabel> tab and
+      paste the Flow(s).</para>
+    </tip>
+  
+
   </section>
+
   <section xml:id="flows_browser_edit_properties_flow">
     <title>Editing Flow's properties</title>
-    <para>To edit Flow's properties you must first select the Flow, then left-click on 
+    <para>To edit Flow's properties you must first select the Flow,
+    then click on
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -365,26 +161,31 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon>.</para>
-    <para>In the 
-      <guilabel>Flows properties</guilabel> dialog box you can edit the fields 
-      <guilabel>Title, Description, Author and Email</guilabel>.</para>
+    <para>In the <guilabel>Flows properties</guilabel> dialog box you
+    can edit the
+    fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>, <guilabel>Author</guilabel>
+    and <guilabel>Email</guilabel>.</para>
   </section>
+
   <section xml:id="flows_browser_edit_dictionary">
     <title>Editing the Flow's parameter dictionary</title>
     <para>This feature is documented in the section 
       <xref linkend="dictionary_variables" />.</para>
   </section>
+
   <section xml:id="flows_browser_save_state_flow">
     <title>Saving a Flow's state</title>
-    <para>Working with GêBR you will find situations where it will be useful to use an
-      existing Flow as a basis to create new Flows. For example, you might want to experiment with
-      Flows that are only slightly different from one another, however without having to discard or
-      modify the original Flow.</para>
-    <para>One way of doing this is to copy and paste the Flow (see the section 
-      <xref linkend="flows_browser_copy_flow" />and 
-      <xref linkend="flows_browser_paste_flow" />).  
-      Another way is to save the state of the original Flow, then edit it to your heart desire,
-      and when you wish you can return the Flow to its original state. To 
+    <para>You will find situations when working with GêBR it will be
+      useful to use an existing Flow as a basis to create new
+      Flows. For example, you might want to experiment with Flows that
+      are only slightly different from one another, however without
+      having to discard or modify the original Flow.</para>
+
+    <para>One way of doing this is to copy and paste the Flow (see the
+      section <xref linkend="flows_browser_copy_paste_del_flows" />.
+      Another way is to save the state of the original Flow, then edit
+      it to your heart desire, and when you wish you can return the
+      Flow to its original state. To
       <emphasis role="bold">save the Flow's state</emphasis>:</para>
     <procedure>
       <step>
@@ -398,9 +199,9 @@
         </guiicon>.</para>
       </step>
       <step>
-        <para>If you want, you can write a comment on the state in the dialog box 
-          <guilabel>Save the Flow's state</guilabel>, as to identify this saved state later
-          on.</para>
+        <para>If you want, you can write a comment on the state in the
+        dialog box <guilabel>Save the Flow's state</guilabel>, as to
+        identify this saved state later on.</para>
       </step>
       <step>
         <para>Left-click on 
@@ -408,9 +209,10 @@
       </step>
     </procedure>
     <note>
-      <para>There is 
-        <emphasis role="bold">no limit</emphasis> on the number of states for each Flow.</para>
+      <para>There is no limit on the number of states for each
+      Flow.</para>
     </note>
+
     <para>To open the list of saved states left-click on 
       <guiicon>
         <inlinemediaobject>
@@ -425,39 +227,45 @@
             <imagedata fileref="../../common-images/botao_salvar_estado.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>, then select the state you wish to recover. Whenever you select a saved state from
-      the list, the dialog 
+      </guiicon>, then select the state you wish to recover. Whenever
+      you select a saved state from the list, the dialog
       <emphasis>Backup Current State</emphasis> will appear. If you click on 
-      <guibutton>Yes</guibutton> the dialog
-      <emphasis>Save the Flow's State</emphasis> will appear, where you can save this new state. If
-      you click on 
-      <guibutton>No</guibutton>, GêBR will simply revert to the chosen state without saving the
-      current state.</para>
+      <guibutton>Yes</guibutton> the dialog <emphasis>Save the Flow's
+      State</emphasis> will appear, where you can save this new
+      state. If you click on <guibutton>No</guibutton>, GêBR will
+      simply revert to the chosen state without saving the current
+      state.</para>
     <tip>
-      <para>If you are sure you have saved your current state, we recommend that you click on 
-        <guibutton>No</guibutton>, in the dialog box 
-        <emphasis>Backup Current State</emphasis>, as to avoid a bloated state list.</para>
+      <para>If you are sure you have saved your current state, we
+      recommend that you click on <guibutton>No</guibutton>, in the
+      dialog box <emphasis>Backup Current State</emphasis>, as to
+      avoid a bloated state list.</para>
     </tip>
     <caution>
-      <para>GêBR continuously saves the list of Flow states. Even if you turn off your computer
-        this list will be recovered when you open GêBR again. However, if you 
-        <emphasis role="bold">delete the Flow</emphasis> all the saved states will 
-        <emphasis role="bold">immediately disappear forever</emphasis>.</para>
+      <para>GêBR continuously saves the list of Flow states. Even if
+      you turn off your computer this list will be recovered when you
+      open GêBR again. However, if you <emphasis role="bold">delete
+      the Flow</emphasis> all the saved states
+      will <emphasis role="bold">immediately disappear
+      forever</emphasis>.</para>
     </caution>
   </section>
+
   <section xml:id="flows_browser_import_flow">
-    <title>Importing a Flow</title>
-    <para>GêBR allows you to import Flows that were previously exported 
-      <xref linkend="flows_browser_export_flow" />. To do so:</para>
+    <title>Importing/Exporting a Flow</title>
+    <para>Although GêBR maintains all your data, you still might wish
+      to copy your Flows to file to be able to share them, for
+      instance.</para>
+
+        <para>In the window <guilabel>Save Flow</guilabel>, navigate
+          to the directory you desire and type a name for the file
+          (GêBR will automatically determine the extension
+          <filename class="exension">flw</filename>). To do so:</para>
     <procedure>
       <step>
-        <para>Check that you have already 
-          <emphasis role="bold">created and selected a Line</emphasis>, in the tab 
-          <guilabel>Projects and Lines</guilabel>. Remember that Flows can only exist inside Lines
-          (see this concept in Section 
-          <xref linkend="overview" />). To import a Flow you must first 
-          <emphasis role="bold">select a Line</emphasis> (or 
-          <xref linkend="projects_lines_create_projects_and_lines" />, if one does not exist).</para>
+        <para> In case of Import, you must first 
+          <emphasis role="bold">select a Flow</emphasis> (or see
+          <xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
       </step>
       <step>
         <para>Select the tab 
@@ -468,52 +276,30 @@
                 <imagedata fileref="../../common-images/botao_importar_projeto.png" />
               </imageobject>
             </inlinemediaobject>
-        </guiicon>.</para>
-      </step>
-      <step>
-        <para>Navigate through the 
-          <guilabel>Choose a Flow to import</guilabel> and select a Flow you wish to import (only
-          the file types 
-          <filename class="extension">flw</filename> will appear).</para>
-      </step>
-      <step>
-        <para>Left-click on the button 
-          <guibutton>Open</guibutton>.</para>
-      </step>
-    </procedure>
-    <para>The imported Flow will be listed along with any other Flows of the selected
-      Line.</para>
-  </section>
-  <section xml:id="flows_browser_export_flow">
-    <title>Exporting a Flow</title>
-    <para>Although GêBR maintains all your data, you still might wish to copy your Flows to file
-      (perhaps to share with others or as a backup). To export a Flow:</para>
-    <procedure>
-      <step>
-        <para>Select the Flow you wish to save.</para>
-      </step>
-      <step>
-        <para>Left-click on 
+          </guiicon> to import or on 
           <guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/botao_exportar_projeto.png" />
               </imageobject>
             </inlinemediaobject>
-        </guiicon>.</para>
+          </guiicon> to export.
+        </para>
       </step>
       <step>
-        <para>In the window 
-          <guilabel>Save Flow</guilabel>, navigate to the directory you desire and type a name for
-          the file (GêBR will automatically determine the extension 
-          <filename class="extension">flw</filename>).</para>
-      </step>
-      <step>
-        <para>Left-click on the button 
-          <guibutton>Save</guibutton>.</para>
+        <para>Navigate through the files and
+          select the Flow you wish to
+          import/export.</para>
       </step>
     </procedure>
+    <para>In case of Import, the imported Flow will be
+      listed along with any other Flows of the
+      selected Line. Otherwise, in case of Export,
+      the file containing the exported Flow will be
+      created.</para>
   </section>
+
+
   <section xml:id="flows_browser_execute_flow">
     <title>Executing a Flow</title>
     <para>This command is present in the tab 
@@ -527,9 +313,11 @@
         </inlinemediaobject>
       </guiicon>. 
       <figure>
+  <title>Flows tab</title>
         <mediaobject>
-          <caption>In the tab Flows you are able to execute several Flows sequentially by first:
-            selecting the Flows you wish to use, and then left-click on 
+          <caption>In the tab Flows, you are able to execute several
+            Flows sequentially by selecting the Flows you wish
+            to use, and then click on
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
@@ -543,57 +331,69 @@
         </mediaobject>
     </figure></para>
    
-    <para>In GêBR, It's possible to execute a set of Flows. This operation is called 
-      <emphasis role="bold">multiple execution</emphasis> . You can do it by two different ways:
+    <para>In GêBR, It's possible to execute a set of Flows. This
+    operation is called <emphasis role="bold">multiple
+    execution</emphasis>. You can do it by two different ways:
       </para>
     <itemizedlist>
-      <listitem><para>
-          Sequentially: Flows are executed in the order they are on the Flows List, on the left side of the window.
-          Each flow waits for the end of the previous job, to be executed. During this time, the awaiting flow shows an icon of "Waiting for job". If you wish to execute in a specific order, just reorder your Flows by Drag and Drop.
-        To execute on this mode, click on
+      <listitem>
+	<para><emphasis>Sequentially</emphasis>: Flows are executed in the order
+          they are on the Flows List, on the left side of the window.
+          Each Flow waits for the end of the previous job, to be
+          executed. During this time, the awaiting flow shows an icon
+          of "Waiting for job". If you wish to execute in a specific
+          order, just reorder your Flows by Drag and Drop.  To execute
+          on this mode, click on
         <guiicon>
           <inlinemediaobject>
             <imageobject>
               <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
             </imageobject>
           </inlinemediaobject>
-        </guiicon> or use Ctrl+R.
-      </para></listitem>
-      <listitem><para>
-          Parallely: Flows are executed simultaneously. It happens when there is no dependency between Flows. To,
-          execute on this mode use Ctrl+Shift+R.
-      </para></listitem>
+        </guiicon> or use Ctrl+R.</para>
+      </listitem>
+      <listitem>
+	<para><emphasis>Parallely</emphasis>: Flows are executed simultaneously. It
+          happens when there is no dependency between Flows. To,
+          execute on this mode use Ctrl+Shift+R.</para>
+      </listitem>
     </itemizedlist>
-
    
-    <important>When executig many Flows, the configurations of the first flow on the list will
-     determine the others'. </important>
+    <important>
+      <para>When executig many Flows, the configurations of
+	the first flow on the list will determine the
+	others'.</para>
+    </important>
   </section>
-
-   <section xml:id="flows_browser_speed_execution">
+  
+  <section xml:id="flows_browser_speed_execution">
     <title>Execution speed</title>
-    <para>The flows' execution speed  is determined by the number of processors and priority of execution.
-     It's possible to  configure these parameters,
-      as detailed in <xref linkend="flow_editor_multicores"/> and <xref linkend="flow_editor_priority_execution"/>.  
+    <para>The Flows' execution speed is determined by the number of
+     processors and priority of execution. It's possible to configure
+     these parameters, as detailed in
+     <xref linkend="flow_editor_multicores"/> and
+     <xref linkend="flow_editor_priority_execution"/>.
      </para>
    </section>
 
   
   <section xml:id="flows_browser_edit_comments_flow">
     <title>Editing comments</title>
-    <para>This button appears in the 
-      <guilabel>Projects and Lines</guilabel> tab and in 
-      <guilabel>Flows</guilabel> tab. This button allows the user to add comments about the selected
-      Line or Flow. See 
-      <xref linkend="projects_lines_edit_comments_project" />.</para>
+    <para>This button appears in the <guilabel>Projects and
+    Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
+    button allows the user to add
+    comments<indexterm><primary>Report</primary><secondary>of a
+    Flow</secondary></indexterm> about the selected Line or Flow. See
+    <xref linkend="projects_lines_edit_comments_project" />.</para>
   </section>
+
   <section xml:id="flows_browser_view_report_flow">
     <title>View Report</title>
-    <para>This button appears in the 
-      <guilabel>Projects and Lines</guilabel> tab and in 
-      <guilabel>Flows</guilabel> tab. This button allows the user to View the report about the Line or
-      Flow in use. The difference is that the Line's report can include the Flow's report.
-      All other functions are described in 
-      <xref linkend="projects_lines_view_report_project" />.</para>
+    <para>This button appears in the <guilabel>Projects and
+    Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
+    button allows the user to View the Report about the Line or Flow
+    in use. The difference is that the Line's Report can include the
+    Flow's Report.  All other functions are described in
+    <xref linkend="projects_lines_view_report_project" />.</para>
   </section>
-</section>
+</chapter>

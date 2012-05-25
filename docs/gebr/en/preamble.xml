@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<acknowledgements>
+  <para>The GêBR Project kindly thanks the support of:</para>
+  <itemizedlist>
+    <listitem>Brazilian oil company, Petrobras.</listitem>
+    <listitem>Brazilian Geophysical Society (SBGf).</listitem>
+    <listitem>National Institute for Petroleum Geophysics (INCTP-GP).</listitem>
+    <listitem>Brazilian universities and research centers.</listitem>
+  </itemizedlist>
+  <inlinemediaobject>
+    <imageobject>
+      <imagedata fileref="../images/gebr-logo.png" />
+    </imageobject>
+  </inlinemediaobject>
+</acknowledgements>

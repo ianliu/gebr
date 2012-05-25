@@ -32,6 +32,7 @@ endif
 
 html-ok: $(srcdir)/*.xml
 	xsltproc --xinclude -o $(builddir)/html/index.html \
+		--stringparam  section.label.includes.component.label 1 \
 		$(srcdir)/../gebr-guide.xsl \
 		$(srcdir)/gebr.xml && touch html-ok
 

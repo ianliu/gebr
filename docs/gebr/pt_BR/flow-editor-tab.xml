@@ -197,7 +197,7 @@
       específico, ao invés de escolher  <emphasis>Imediatamente</emphasis>,
       vá para a aba <guilabel>Editor de Fluxos</guilabel> e escolha 
       <emphasis> Após FluxoX </emphasis>.
-      Por padrão, os fluxos são executados no grupo do Maestro. Veja em <xref linkend="servers_configuration"/> como definir e editar os servidores/grupos que podem ser utilizados na execução.</para>
+      Por padrão, os fluxos são executados no grupo do Maestro. Veja em <xref linkend="additional_features_maestro_servers_configuration"/> como definir e editar os servidores/grupos que podem ser utilizados na execução.</para>
     <figure>
       <mediaobject>
 	      <caption>Na segundo campo de <guilabel>Executar</guilabel>, você pode selecionar <emphasis>após
@@ -287,7 +287,7 @@
  <section xml:id="flow_editor_multiple_machines">
     <title>Execução em várias máquinas</title>
     <para>Se a GêBR estiver conectada a várias máquinas (configuração através do
-      <xref linkend="servers_configuration" />), e o Fluxo for paralelizável (veja 
+      <xref linkend="additional_features_maestro_servers_configuration" />), e o Fluxo for paralelizável (veja 
       abaixo os critérios para um Fluxo ser paralelizável), então o usuário tem a
       opção de executar o Fluxo de forma distribuída.</para>
     <para>Para ser <emphasis>paralelizável</emphasis>, o Fluxo precisa satisfazer um

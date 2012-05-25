@@ -1478,9 +1478,9 @@ on_ssh_info_button_clicked (GtkButton *button, gpointer pointer)
 
 	loc = setlocale(LC_MESSAGES, NULL);
 	if (g_str_has_prefix (loc, "pt"))
-		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html#ssh_authentication";
+		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html#intercommunication_between_players";
 	else
-		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#ssh_authentication";
+		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#intercommunication_between_players";
 
 	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
 		gtk_show_uri(NULL, "http://www.gebrproject.com", GDK_CURRENT_TIME, NULL);
