@@ -40,6 +40,7 @@ enum {
 	FSEQ_SENSITIVE,
 	FSEQ_TOOLTIP,
 	FSEQ_NEVER_OPENED,
+	FSEQ_FILE_COLUMN,
 	FSEQ_N_COLUMN
 };
 
@@ -76,6 +77,7 @@ struct _GebrFlowEdition {
 	GtkListStore *fseq_store;
 	GtkWidget *fseq_view;
 	GtkCellRenderer *text_renderer;
+	GtkCellRenderer *file_renderer;
 
 	/* available system and user's menus */
 	GtkWidget *menu_view;

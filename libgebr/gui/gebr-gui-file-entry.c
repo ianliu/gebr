@@ -159,8 +159,9 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 	gchar ***paths = gebr_geoxml_line_get_paths(file_entry->line);
 
 	gchar *new_text;
+	const gchar *entry_text = gtk_entry_get_text(GTK_ENTRY(file_entry->entry));
 	gint response = gebr_file_chooser_set_remote_navigation(chooser_dialog,
-	                                                        GTK_ENTRY(file_entry->entry),
+	                                                        entry_text,
 	                                                        file_entry->prefix,
 	                                                        paths, TRUE,
 	                                                        &new_text);

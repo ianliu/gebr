@@ -1079,12 +1079,21 @@ on_gtk_tree_view_drag_drop(GtkTreeView * tree_view, GdkDragContext * drag_contex
 }
 
 void
+gebr_gui_gtk_tree_view_set_drag_source_dest(GtkTreeView * tree_view)
+{
+	const static GtkTargetEntry target_entries[] = {
+			{"reorder", GTK_TARGET_SAME_WIDGET, 1}
+	};
+
+	gtk_tree_view_enable_model_drag_source(tree_view, GDK_MODIFIER_MASK, target_entries, 1, GDK_ACTION_MOVE);
+	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1, GDK_ACTION_MOVE);
+}
+
+void
 gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkTreeViewReorderCallback callback,
 					    GebrGuiGtkTreeViewReorderCallback can_callback, gpointer user_data)
 {
-	const static GtkTargetEntry target_entries[] = {
-		{"reorder", GTK_TARGET_SAME_WIDGET, 1}
-	};
+
 	struct reorder_data *data;
 
 	if (tree_view == NULL || callback == NULL)
@@ -1095,8 +1104,7 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
 	data->can_callback = can_callback;
 	data->user_data = user_data;
 
-	gtk_tree_view_enable_model_drag_source(tree_view, GDK_MODIFIER_MASK, target_entries, 1, GDK_ACTION_MOVE);
-	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1, GDK_ACTION_MOVE);
+	gebr_gui_gtk_tree_view_set_drag_source_dest(tree_view);
 
 	g_signal_connect(tree_view, "drag-begin", G_CALLBACK(on_gtk_tree_view_drag_begin), data);
 	g_signal_connect(tree_view, "drag-drop", G_CALLBACK(on_gtk_tree_view_drag_drop), data);
@@ -1316,7 +1324,7 @@ gebr_file_chooser_set_current_directory (const gchar *entry_text, const gchar *p
 
 gint
 gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
-                                        GtkEntry *entry,
+                                        const gchar *entry_text,
 					gchar *sftp_prefix,
                                         gchar ***paths,
                                         gboolean insert_bookmarks,
@@ -1326,7 +1334,6 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 
 	gint response;
 	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);;
-	const gchar *entry_text = gtk_entry_get_text(entry);
 	gchar *err_filechooser = NULL;
 
 	if (sftp_prefix) {
