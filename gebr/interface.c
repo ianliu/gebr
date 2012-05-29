@@ -729,8 +729,8 @@ void gebr_setup_ui(void)
 	 * Log status bar
 	 */
 	gebr.ui_log = log_setup_ui();
-	gtk_widget_show_all(gebr.ui_log->widget);
-	gtk_box_pack_end(GTK_BOX(main_vbox), gebr.ui_log->widget, FALSE, FALSE, 0);
+	gtk_widget_show_all(gebr.ui_log->box);
+	gtk_box_pack_end(GTK_BOX(main_vbox), gebr.ui_log->box, FALSE, FALSE, 0);
 
 	gebr.last_notebook = -1;
 	g_signal_connect(GTK_OBJECT(gebr.notebook), "switch-page", G_CALLBACK(on_notebook_switch_page), NULL);

@@ -27,6 +27,7 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/date.h>
 
+#include "gebr-maestro-controller.h"
 #include "ui_log.h"
 #include "gebr.h"
 
@@ -56,6 +57,8 @@ struct ui_log *log_setup_ui(void)
 	GtkCellRenderer *renderer;
 
 	ui_log = g_new(struct ui_log, 1);
+
+	ui_log->box = gtk_hbox_new(FALSE, 10);
 	ui_log->widget = gtk_expander_new("");
 
 	/*
@@ -87,6 +90,36 @@ struct ui_log *log_setup_ui(void)
 	col = gtk_tree_view_column_new_with_attributes(_("Message"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_log->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", GEBR_LOG_MESSAGE);
+
+	/*
+	 * Maestro / Remote Browse
+	 */
+	GtkWidget *internal_box = gtk_hbox_new(FALSE, 5);
+
+	ui_log->maestro_icon = gtk_image_new();
+	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->maestro_icon, FALSE, FALSE, 5);
+
+	ui_log->maestro_label = gtk_label_new(_("No maestro connected."));
+	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->maestro_label, FALSE, FALSE, 5);
+
+	ui_log->remote_browse = gtk_image_new();
+	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->remote_browse, FALSE, FALSE, 5);
+
+	gchar *text = g_markup_printf_escaped("<b>No maestro</b>");
+	gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
+	g_free(text);
+
+	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_BUTTON);
+	gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));
+
+	gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
+	gtk_widget_set_tooltip_text(ui_log->remote_browse, "Remote browse disabled");
+
+	/*
+	 * Pack Maestro / Remote Browse with Log
+	 */
+	gtk_box_pack_start(GTK_BOX(ui_log->box), ui_log->widget, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(ui_log->box), internal_box, FALSE, FALSE, 5);
 
 	return ui_log;
 }
@@ -162,4 +195,74 @@ void gebr_log_add_message_to_list(struct ui_log *ui_log, GebrLogMessage *message
 
 	/* frees */
 	g_string_free(markuped_date, TRUE);
+}
+
+static void
+on_maestro_error(GebrMaestroServer *maestro,
+		const gchar *addr,
+		const gchar *error_type,
+		const gchar *error_msg,
+		struct ui_log *ui_log)
+{
+	if (g_strcmp0(error_type, "error:none") != 0) {
+		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
+		gtk_widget_set_tooltip_text(ui_log->maestro_icon, error_msg);
+
+		gchar *text = g_markup_printf_escaped("<b>Maestro %s</b>", addr);
+		gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
+		g_free(text);
+
+		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
+		gtk_widget_set_tooltip_text(ui_log->remote_browse, "Remote browse disabled");
+	}
+}
+
+static void
+on_state_change(GebrMaestroServer *maestro,
+                struct ui_log *ui_log)
+{
+	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_CONNECT, GTK_ICON_SIZE_BUTTON);
+		gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Connected"));
+
+		const gchar *addr = gebr_maestro_server_get_address(maestro);
+
+		gchar *text = g_markup_printf_escaped("<b>Maestro %s</b>", addr);
+		gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
+
+		g_free(text);
+
+		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+		if (prefix) {
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-ok", GTK_ICON_SIZE_BUTTON);
+			gtk_widget_set_tooltip_text(ui_log->remote_browse, "Remote browse enabled");
+
+			g_free(prefix);
+		} else {
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
+			gtk_widget_set_tooltip_text(ui_log->remote_browse, "Remote browse disabled");
+		}
+	} else {
+		const gchar *error_msg;
+		const gchar *error_type;
+		gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
+		if (g_strcmp0(error_type, "error:none") != 0) {
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
+			gtk_widget_set_tooltip_text(ui_log->maestro_icon, error_msg);
+		} else {
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_BUTTON);
+			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));
+		}
+	}
+}
+
+void
+gebr_log_update_maestro_info(struct ui_log *ui_log,
+                             GebrMaestroServer *maestro)
+{
+	g_signal_connect(maestro, "state-change",
+	                 G_CALLBACK(on_state_change), ui_log);
+
+	g_signal_connect(maestro, "maestro-error",
+	                 G_CALLBACK(on_maestro_error), ui_log);
 }

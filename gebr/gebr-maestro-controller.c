@@ -1876,7 +1876,8 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
 	gebr_maestro_server_connect(self->priv->maestro);
-//	gebr_config_save(FALSE);
+
+	gebr_log_update_maestro_info(gebr.ui_log, self->priv->maestro);
 }
 
 GebrMaestroServer *
