@@ -255,7 +255,6 @@ Although it is not mandatory to adhere to this structure, it is highly recommend
         <property name="wrap">True</property>
       </object>
       <packing>
-        <property name="expand">False</property>
         <property name="padding">5</property>
         <property name="position">0</property>
       </packing>
@@ -266,19 +265,6 @@ Although it is not mandatory to adhere to this structure, it is highly recommend
         <property name="n_rows">2</property>
         <property name="column_spacing">5</property>
         <property name="row_spacing">5</property>
-        <child>
-          <object class="GtkEntry" id="entry_base">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="invisible_char">&#x25CF;</property>
-            <property name="secondary_icon_stock">gtk-directory</property>
-            <property name="secondary_icon_activatable">True</property>
-            <property name="secondary_icon_sensitive">True</property>
-          </object>
-          <packing>
-            <property name="x_padding">5</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
@@ -295,6 +281,19 @@ To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&
             <property name="x_padding">5</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkEntry" id="entry_base">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="invisible_char">&#x25CF;</property>
+            <property name="secondary_icon_stock">gtk-directory</property>
+            <property name="secondary_icon_activatable">True</property>
+            <property name="secondary_icon_sensitive">True</property>
+          </object>
+          <packing>
+            <property name="x_padding">5</property>
+          </packing>
+        </child>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -303,9 +302,47 @@ To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&
       </packing>
     </child>
     <child>
-      <object class="GtkFrame" id="hierarchy_base">
-        <property name="label_xalign">0</property>
-        <property name="shadow_type">none</property>
+      <object class="GtkVBox" id="hierarchy_base">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkHBox" id="hbox12">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkLabel" id="label8">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">&lt;b&gt;Directories hierarchy&lt;/b&gt;</property>
+                <property name="use_markup">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="paths_help_button">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="relief">none</property>
+                <child>
+                  <object class="GtkImage" id="image1">
+                    <property name="visible">True</property>
+                    <property name="stock">gtk-dialog-question</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkAlignment" id="alignment1">
             <property name="visible">True</property>
@@ -684,16 +721,13 @@ To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&
               </object>
             </child>
           </object>
-        </child>
-        <child type="label">
-          <object class="GtkLabel" id="label8">
-            <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Directories hierarchy&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
       <packing>
+        <property name="padding">5</property>
         <property name="position">2</property>
       </packing>
     </child>
