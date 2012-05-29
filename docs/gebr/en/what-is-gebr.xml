@@ -38,12 +38,12 @@
     developers had offered several courses on seismic processing with
     GêBR, at the most active research centers in Geophysics in
     Brazil. Around 200 students and professionals have had direct
-    contact with the project in that period. In that process we
+    contact with the project in that period. In that process the GêBR
     observed a demand for integration efforts among Brazilian
     geophysical community. That motivated a redefinition for the
     project’s goals.</para>
 
-    <blockquote><emphasis>Our main objective is to stimulate the
+    <blockquote><emphasis>The main objective of GêBR is to stimulate the
     integration of the Brazilian Geophysical Community by providing an
     interface to geophysical data processing that could be used not
     only for teaching purposes but also as a research dissemination
@@ -119,8 +119,8 @@
     <title>Technical Information</title>
     <para>This user guide is for GêBR <emphasis>version
       0.18.0</emphasis>. The images used in this guide where captured
-      in the system <emphasis>Ubuntu 10.04</emphasis>. Therefore, you
-      may observe slight differences if you are using another
+      in the system <emphasis>Ubuntu 10.04</emphasis>. Therefore, the user
+      may observe slight differences if the user is using another
       operating system. For specific installation instructions for
       each operating system, see the
       <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">install
