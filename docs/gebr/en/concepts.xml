@@ -89,7 +89,7 @@
       Flows are built from <emphasis role="bold">Menus</emphasis><indexterm><primary>Menu</primary></indexterm>. But
       what is a Menu?</para>
 
-    <para>A <emphasis role="bold">Menus</emphasis> is a representation
+    <para>A <emphasis role="bold">Menu</emphasis> is a representation
       of a single
       program<indexterm><primary>Program</primary></indexterm> or a
       set of programs. This means that when the user adds a Menu to a
