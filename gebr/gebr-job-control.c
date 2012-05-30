@@ -1800,6 +1800,7 @@ on_maestro_state_changed(GebrMaestroController *mc,
 {
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED)
 		clear_jobs_for_maestro(jc, maestro);
+	on_reset_filter(NULL, jc);
 }
 
 /* Public methods {{{1 */
