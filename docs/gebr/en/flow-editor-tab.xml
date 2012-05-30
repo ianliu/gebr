@@ -10,14 +10,14 @@
 
   <title>The <guilabel>Flow editor</guilabel> tab</title>
 
-  <para>To create a Flow, you can follow the instructions of
+  <para>To create a Flow, the user can follow the instructions of
     <xref linkend="flows_browser_create_flow" />.</para>
 
   <tip>
     <para>Instead of buttons from the toolbar, try
       using <emphasis role="bold">context menus</emphasis>. To do
       so, <emphasis role="bold">right-click</emphasis> on a program
-      you have added. Notice that many command can be accessed through
+      that has been already added. The user can notice that many commands can be accessed through
       this menu. For certain cases, this method is easier and
       faster than using command buttons.</para>
   </tip>
@@ -25,8 +25,8 @@
   <section xml:id="flow_editor_create_flow">
     <title>Assembling the Flow</title>
     <para>In GêBR, a <emphasis>Flow</emphasis> is a <emphasis>sequence
-      of operations</emphasis> defined by you. These operations, also
-      called the
+      of operations</emphasis> defined by the user. These operations, also
+      called
       Flow's <emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
       are organized into the following <emphasis>categories</emphasis>
       according to their purpose:</para>
@@ -69,12 +69,12 @@
       </listitem>
     </itemizedlist>
 
-    <para>To create a Flow, you must select and order programs from the
-      above categories. Let us see how this is done:</para>
+    <para>To create a Flow, the user must select and order programs from the
+      above categories. Now, the user can see how this is done:</para>
     <procedure>
       <step>
         <para>In the tab <guilabel>Projects and Lines</guilabel>,
-          check that you have selected a Line.</para>
+          check that a Line has been selected.</para>
       </step>
       <step>
         <para>Now click on the tab 
@@ -89,34 +89,34 @@
       </step>
       <step>
         <para>The dialog box <guilabel>Flow "New Flow"
-            Properties</guilabel> will appear, fill in
+            Properties</guilabel> will appear. The user must fill in
           a <emphasis>title</emphasis> for this Flow (for
-          example, <userinput>My First Flow</userinput>). You can
+          example, <userinput>My First Flow</userinput>). The user can
           also give a brief <emphasis>description</emphasis> of the
           Flow, the <emphasis>author</emphasis> and
-          an <emphasis>e-mail</emphasis> for contact. If you are
+          an <emphasis>e-mail</emphasis> for contact. If the user is
           done filling in this Flows properties click
           on <guibutton>OK</guibutton>.</para>
       </step>
       <step>
-        <para>Now select the tab <guilabel>Flow Editor</guilabel>. On
-          the right side it will be shown a list with several menus.
-          Choose one of them and include it in your Flow with a
+        <para>Now the user has to select the tab <guilabel>Flow Editor</guilabel>. On
+          the right side a list with several menus will be shown .
+          Choose one of them and include it in the Flow with a
           double-click.
         </para>
       </step>
       <step>
-        <para>If you need a specific order to the selected programs
-          of your flow, you just need to drag and drop the desired
+        <para>If the user needs a specific order to the selected programs
+          of the flow, he or she just needs to drag and drop the desired
           programs.
         </para>
         <figure>
           <title>Flow editor tab</title>
           <mediaobject>
-            <caption>In the Flow editor, on the right side of the main
-              window you will see the
-              Menus<indexterm><primary>Menu</primary></indexterm>
-              box. From this box you can add programs to your Flow,
+            <caption>In the Flow Editor tab, the user will see 
+            the Menus<indexterm><primary>Menu</primary></indexterm>
+              bo, on the right side of the main window.
+               From this box the user can add programs to the Flow,
               which will appear in the Flow sequence box on the left
               side of the main window.</caption>
             <imageobject>
@@ -126,7 +126,7 @@
         </figure>
       </step>
       <step>
-        <para>To enable a program of your Flow, you will have to
+        <para>To enable a program of the Flow, the user has to
           right-click over it and select
           the <emphasis>Configured</emphasis> option. The icon will
           change from
@@ -156,8 +156,8 @@
           </mediaobject>
         </figure>
         <tip>
-          <para>If you want to change all programs, or a few, to the
-            configured state simultaneously, select them by using
+          <para>If the user wants to change all programs, or a few, to the
+            configured state simultaneously, he or she can select them by using
             <keycombo>
               <keycap>Ctrl</keycap>
               <mousebutton>Click</mousebutton>
@@ -199,7 +199,7 @@
         </important>
       </step>
     </procedure>
-    <para>Your Flow is ready to be executed. Click on 
+    <para>The Flow is ready to be executed. Click on 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -207,15 +207,15 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon> to do it.</para>
-    <para>After you have created a Flow, it will be visible on the left
+    <para>After the Flow has been, it will be visible on the left
       side of the main window when the <guilabel>Flows</guilabel> tab
       is selected. The <guilabel>Details</guilabel> box, found on the
-      right side of the main window, shows information on the selected
+      right side of the main window, shows information about the selected
       Flow .</para>
     <tip>There is 
-      no limit on the number of Flows you can have in one Line.</tip>
+      no limit on the number of Flows that can be created inside a Line.</tip>
     <tip>
-      <para>You can alter 
+      <para>The user can alter 
         <emphasis role="bold">the position</emphasis> of the Flow in
         the list by <emphasis role="bold">dragging the Flow with the
           mouse</emphasis> to the desired position.</para>
@@ -229,8 +229,8 @@
 
 
   <section xml:id="flow_editor_copy_program">
-    <title>Coping, pasting and deleting programs</title>
-    <para>In the same manner we can copy and paste Flows (see
+    <title>Copying, pasting and deleting programs</title>
+    <para>In the same manner the user can copy and paste Flows (see
       <xref linkend="flows_browser_copy_paste_del_flows" />), a
       program (or set of programs) can be copied to the clipboard by
       clicking
@@ -257,7 +257,7 @@
     </guiicon>.</para>
 
     <tip>
-      <para>You can deal with several programs at once by holding
+      <para>The user can deal with several programs at once by holding
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Click</mousebutton>
@@ -270,10 +270,10 @@
 
     <tip>
       <para>A program (or set of programs) that have been copied to
-        the clipboard can be pasted any Flow, and not just the Flow of
-        origin. Simply switch to the <guilabel>Flows</guilabel> tab,
+        the clipboard can be pasted on any Flow, and not just the Flow of
+        origin. The user can simply switch to the <guilabel>Flows</guilabel> tab,
         select the target Flow, go back to the <guilabel>Flow
-        editor</guilabel> tab and paste the program(s).</para>
+        Editor</guilabel> tab and paste the program(s).</para>
     </tip>
 
     <caution>
@@ -287,7 +287,7 @@
     <title>Editing program's parameters</title>
     <para>Program's parameters compose a set of initial configurations
     defined by the user.</para>
-    <para>To edit program's parameters:</para>
+    <para>To edit program's parameters the user must follow the steps below:</para>
     <procedure>
       <step>
         <para>Select the program from the <guilabel>Flow
@@ -307,20 +307,20 @@
           program's parameter vary greatly both in size and
           type.</para>
         <tip>
-          <para>Click on the <guibutton>Help</guibutton> button
+          <para>The user can click on the <guibutton>Help</guibutton> button
             (bottom left corner of the dialog box) to view
             the <emphasis role="bold">program's
               documentation</emphasis>. This will be certainly useful
-            when you are editing the programs parameters.</para>
+            when the user is editing the programs parameters.</para>
         </tip>
         <tip>
-          <para>Click on the <guibutton>Default</guibutton> button
-            when you want the program to return to its default
+          <para>The user can click on the <guibutton>Default</guibutton> button
+            when he or she wants the program to return to its default
             configurations.</para>
         </tip>
       </step>
       <step>
-        <para>When you are done click on the <guibutton>OK</guibutton>
+        <para>When the user is done, he or she has to click on the <guibutton>OK</guibutton>
           button.</para>
       </step>
     </procedure>
@@ -328,7 +328,7 @@
 
   <section xml:id="flow_editor_change_state_program">
     <title>Changing a program's state</title>
-    <para>After you have carried out process of
+    <para>After the user has carried out process of
       <xref linkend="flow_editor_edit_parameters_program" />, the
       icon beside the program will change from 
       <guiicon>
@@ -354,16 +354,16 @@
             <imagedata fileref="../../common-images/icone_desabilitado.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>). You can alternate between these states by using two
-      methods, you can either <mousebutton>right-click</mousebutton>
-      on the program and then select from the context menu the desired
-      state, or by using the shortcut
+      </guiicon>). The user can alternate between these states by using two
+      methods:  <mousebutton>right-clicking</mousebutton>
+      on the program and then select the desired state from the context menu 
+      or using the shortcut
       <keycombo>
         <keycap>Spacebar</keycap>
     </keycombo> to change the state(s) of the selected programs.</para>
 
     <tip>
-      <para>You can select several programs whose state you wish to
+      <para>The user can select several programs whose state is desired to
         change by holding
         <keycombo>
           <keycap>Ctrl</keycap>
@@ -376,7 +376,7 @@
     </tip>
     <tip>
       <para>Changing a program state does not alter its parameter
-        configuration. You can safely alternate between states.</para>
+        configuration. The user can safely alternate between states.</para>
     </tip>
     <important>
       <para>
@@ -386,24 +386,24 @@
               <imagedata fileref="../../common-images/icone_desabilitado.png" />
             </imageobject>
           </inlinemediaobject>
-        </guiicon>) will be ignored when you execute your Flow. With
-        this you can <emphasis role="bold">enable and disable parts of
-          your Flow</emphasis>.</para>
+        </guiicon>) will be ignored when the Flow runs. This
+        way, the user can <emphasis role="bold">enable and disable parts of
+          the Flow</emphasis>.</para>
     </important>
   </section>
 
   <section xml:id="flow_editor_edit_input_output">
     <title>Editing the Flow's input and output files</title>
-    <para>In many occasions, you will need to extract data
+    <para>In many occasions, the user will need to extract data
       from an input file and/or generate as a result an output file,
       or even an log file in case an error occurs.</para>
 
-    <para>How to associate an input, output and error file to a Flow:</para>
+    <para>To associate an input, output and error file to a Flow, the user must follow this steps:</para>
     <figure>
       <title>Input file setting</title>
       <mediaobject>
-        <caption>Select the Flow Editor Tab, in the Flow sequence box
-          you can edit the input, output and log files for this Flow
+        <caption>Select the Flow Editor Tab. In the Flow sequence box
+          the user can edit the input, output and log files for this Flow
           sequence.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_flow_editor_input_file.png" />
@@ -412,12 +412,12 @@
     </figure>
     <procedure>
       <step>
-				<para>Selecte a Flow, in the <guilabel>Flow</guilabel> tab,
+				<para>Select a Flow, in the <guilabel>Flow</guilabel> tab,
 					and switch to the <guilabel>Flow Editor</guilabel> tab.</para>
       </step>
       <step>
 					<para>
-					In the Flow sequence box, you can edit the input,
+					In the Flow sequence box, the user can edit the input,
 					output and log files paths by double clicking on them.
 					</para>
       </step>
@@ -435,8 +435,8 @@
       </step>
     </procedure>
 
-    <para>If you want to use the folders associated to your Line,
-      you can either choose like above or you can use the feature of
+    <para>If the user wants to use the folders associated to the Line,
+      he or she can either choose like above or the user can use the feature of
       autocomplete of the important folders of this Line.
     </para>
     <figure>
@@ -451,7 +451,7 @@
       </mediaobject>
     </figure>
 
-    <para>When you choose a path for your 
+    <para>When the user chooses a path for the 
       <guilabel>Flow's input/output</guilabel>, their file
       paths will appear in the
       <guilabel>Flow sequence</guilabel> box, indicated by the icons
@@ -471,9 +471,9 @@
       </guiicon>, below and above the Flow's programs (if there are
       any).</para>
     <note>
-      <para>If you wish to <emphasis role="bold">remove a
+      <para>If the user wishes to <emphasis role="bold">remove a
           set</emphasis> from the list, select them by pressing
-        <emphasis role="bold">right-click</emphasis> then click on 
+        <emphasis role="bold">right-click</emphasis> and then click on 
         <guimenuitem>Exclude</guimenuitem>.</para>
     </note>
   </section>
@@ -481,31 +481,31 @@
 
   <section xml:id="flow_editor_execute_flow">
     <title>Executing a Flow</title>
-    <para>To execute the current Flow click on 
+    <para>To execute the current Flow, the user has to click on 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
             <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>. Or using the tab <guilabel>Flows</guilabel>
+      </guiicon> or use the <guilabel>Flows</guilabel> tab
       (check <xref linkend="flows_browser_execute_flow"/>).</para>
 
-    <para>In the Flow Editor Tab, you can execute a
+    <para>In the Flow Editor Tab, the user can execute a
       Flow <emphasis>after</emphasis> another Flow, creating a queue of
       execution. To execute after a specific Flow, instead of
-      executing <emphasis>"Immediately"</emphasis>, switch to the Flow
+      executing <emphasis>"Immediately"</emphasis>, the user can switch to the Flow
       Editor Tab and choose the "After <emphasis>Flow
         A</emphasis>".</para>
 
     <para>By default, the Flows are executed on the Maestro group.
-      More details on the definition and selection of servers and
+      More details about the definition and selection of servers and
       groups of servers can be found in
       <xref linkend="additional_features_maestro_servers_configuration"/>.</para>
 
-    <para>In the <guilabel>Flow Editor</guilabel> tab, even if you
-      have selected several Flows from the <guilabel>Flows</guilabel>
-      tab, when you click on
+    <para>In the <guilabel>Flow Editor</guilabel> tab, even if the user
+      has selected several Flows from the <guilabel>Flows</guilabel>
+      tab, when he/she clicks on
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -517,7 +517,7 @@
       <title>Execution queue</title>
       <mediaobject>
         <caption>Screenshot of the <guilabel>Flow Editor</guilabel>
-          tab. In the first menu of the <emphasis>Run</emphasis>, you
+          tab. In the first menu of the <emphasis>Run</emphasis>, the user
           can choose after which flow it will be executed.
         </caption>
         <imageobject>
@@ -527,7 +527,7 @@
     </figure>
 
     <para>
-    You can also set execution parameters, like performance and
+    The user can also set execution parameters, like performance and
     priority of execution (see sections <xref linkend="flow_editor_multicores"/> and 
     <xref linkend="flow_editor_priority_execution"/>).
     </para>
@@ -544,11 +544,11 @@
     program <emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm>
     (from the category
       <emphasis role="bold">Loops</emphasis>) has a totally different
-      usage compared to the remaining programs from GêBR. We are going
+      usage compared to the remaining programs from GêBR. The user is going
       to see some of these differences.</para>
 
-    <para>When we add the program Loop, we can see it always appears
-      in the top of the Flow. That happens to indicate that the Flow
+    <para>When the user adds the program Loop, it always appears
+      on the top of the Flow. That happens to indicate that the Flow
       is going to be executed more than once, according to the
       parameters set for the program. (see
       <xref linkend="flow_editor_edit_parameters_program" /> for
@@ -565,7 +565,7 @@
     </mediaobject>
     </figure>
 
-    <para>After the <emphasis>Loop</emphasis> is added, you have
+    <para>After the <emphasis>Loop</emphasis> is added, the user has
       access to a new variable,
       the <emphasis role="bold">iter</emphasis> (see
 			<xref linkend="dictionary_variables" />). The value of this 
@@ -594,13 +594,13 @@
       selected Flow is
       parallelizable<indexterm><primary>Flow</primary><secondary>parallelizable</secondary></indexterm>
       (see below the criteria to be parallelizable), then you have the
-      option to run in a distributed way.</para>
+      option to run it in a distributed way.</para>
 
     <para>To be considered parallelizable, besides having a loop, a
       Flow must achieve one of these criteria:</para>
     <itemizedlist>
       <listitem>
-        <para>The Flow does not have an output file;</para>
+        <para>The Flow does not have an output file or, if it has one, the output has to depend on the variable iter;</para>
       </listitem>
       <listitem>
         <para>The output of each step of the loop is not the input of
@@ -612,10 +612,10 @@
       machine at the time of execution (GêBR rank them based mainly in
       availability and speed). In a distributed execution, it may be
       important to differentiate the Priority mode. When the Flow is
-      parallelizable, it is the split up and distributed between the
+      parallelizable, it is splitted up and distributed between the
       available machines according to their ranking.</para>
 
-    <para>If you want to run a Flow in a specified machine, then he
+    <para>If the user wants to run a Flow in a specific machine, then he
       can force the execution by going to <guilabel>Flow
       Editor</guilabel> tab, as choosing the working machine as shown
       below.</para>
