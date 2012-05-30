@@ -167,9 +167,10 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 	                                                        &new_text);
 
 	if (response == GTK_RESPONSE_OK) {
-		gtk_entry_set_text(GTK_ENTRY(file_entry->entry), new_text);
-
+		gchar *path = gebr_relativise_path(new_text, file_entry->prefix, paths);
+		gtk_entry_set_text(GTK_ENTRY(file_entry->entry), path);
 		g_signal_emit(file_entry, object_signals[PATH_CHANGED], 0);
+		g_free(path);
 	}
 
 	gtk_widget_grab_focus (file_entry->entry);
