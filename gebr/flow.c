@@ -609,7 +609,7 @@ gboolean flow_revision_save(void)
 
 			revision = gebr_geoxml_flow_append_revision(GEBR_GEOXML_FLOW(flow), 
 								    gtk_entry_get_text(GTK_ENTRY(entry)));
-			document_save(flow, TRUE, FALSE);
+			document_save(flow, FALSE, FALSE);
 			flow_browse_load_revision(revision, TRUE);
 			flow_browse_info_update();
 			ret = TRUE;
