@@ -44,6 +44,7 @@
 
 #include "gebrd-server.h"
 #include "gebrd.h"
+#include "gebrd-job.h"
 
 
 /*
@@ -261,14 +262,31 @@ void server_new_connection(void)
 	if (!gebrd_user_has_connection(gebrd->user)) {
 		client_add(client);
 		gebrd_message(GEBR_LOG_DEBUG, "client_add");
-	} else {
+	} else if (!job_has_running_jobs()) {
 		gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
-						      gebr_comm_protocol_defs.err_def, 2,
-						      "connection-refused",
-						      gebrd_user_get_daemon_id(gebrd->user));
+		                                      gebr_comm_protocol_defs.err_def, 2,
+		                                      "connection-stolen",
+		                                      gebrd_user_get_daemon_id(gebrd->user));
+
+		struct client *connection = gebrd_user_get_connection(gebrd->user);
+		client_disconnected(connection->socket, connection);
+
+		gebrd_message(GEBR_LOG_DEBUG, "client_get_from_another");
+
+	} else {
+		if (job_has_running_jobs())
+			gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
+			                                      gebr_comm_protocol_defs.err_def, 2,
+			                                      "connection-refused-job",
+			                                      gebrd_user_get_daemon_id(gebrd->user));
+		else
+			gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
+			                                      gebr_comm_protocol_defs.err_def, 2,
+			                                      "connection-refused",
+			                                      gebrd_user_get_daemon_id(gebrd->user));
+
 		g_object_unref(client);
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "server_new_connection");
 }
-

@@ -576,6 +576,16 @@ on_daemon_init(GebrmDaemon *daemon,
 		goto err;
 	}
 
+	if (g_strcmp0(error_type, "connection-refused-job") == 0) {
+		error = "error:connection-refused-job";
+		goto err;
+	}
+
+	if (g_strcmp0(error_type, "connection-stolen") == 0) {
+		error = "error:connection-stolen";
+		goto err;
+	}
+
 	if (g_strcmp0(error_type, "protocol") == 0) {
 		error = "error:protocol";
 		goto err;

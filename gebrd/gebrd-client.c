@@ -49,7 +49,6 @@
  * Private functions
  */
 
-static void client_disconnected(GebrCommProtocolSocket * socket, struct client *client);
 static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request, struct client *client);
 static void client_process_response(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request,
 				    GebrCommHttpMsg * response, struct client *client);
@@ -87,7 +86,7 @@ void client_free(struct client *client)
 	g_free(client);
 }
 
-static void
+void
 client_disconnected(GebrCommProtocolSocket * socket,
 		    struct client *client)
 {

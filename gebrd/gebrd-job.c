@@ -729,6 +729,18 @@ void job_list(struct client *client)
 	}
 }
 
+gboolean
+job_has_running_jobs(void)
+{
+	for (GList *link = gebrd->user->jobs; link != NULL; link = g_list_next(link)) {
+		GebrdJob *job = (GebrdJob *)link->data;
+		if (job->parent.status == JOB_STATUS_RUNNING)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+
 void job_send_clients_job_notify(GebrdJob *job)
 {
 	struct client *client = gebrd_user_get_connection(gebrd->user);

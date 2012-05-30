@@ -140,6 +140,11 @@ void job_notify(GebrdJob *job, struct client *client);
 /**
  */
 void job_list(struct client *client);
+
+/**
+ */
+gboolean job_has_running_jobs(void);
+
 /**
  */
 void job_send_clients_job_notify(GebrdJob *job);

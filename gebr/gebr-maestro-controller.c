@@ -1702,6 +1702,8 @@ on_daemon_error(GebrMaestroServer *maestro,
 		message = _("This server is using a different protocol version");
 	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
 		message = _("This server is already registered at another maestro");
+	} else if (g_strcmp0(error_type, "error:connection-refused-job") == 0) {
+		message = _("This server working for another maestro");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {
 		message = error_msg;
 	} else if (g_strcmp0(error_type, "error:xauth") == 0) {
