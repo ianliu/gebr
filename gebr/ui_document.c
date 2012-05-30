@@ -234,6 +234,20 @@ on_title_entry_changed(GtkEntry *entry,
 		gtk_widget_set_sensitive(widget, TRUE);
 }
 
+static void
+on_paths_button_clicked (GtkButton *button, gpointer pointer)
+{
+	const gchar *section = "projects_lines_line_paths";
+	gchar *error;
+
+	on_help_button_clicked (section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
+
 void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
@@ -305,6 +319,8 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	GtkWidget *main_props = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
 	GtkWidget *table = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
 	GtkWidget *info_label = GTK_WIDGET(gtk_builder_get_object(builder, "info_label"));
+	GtkWidget *paths_help_button = GTK_WIDGET(gtk_builder_get_object(builder, "paths_help_button"));
+	g_signal_connect(GTK_BUTTON(paths_help_button), "clicked", G_CALLBACK(on_paths_button_clicked), NULL);
 	gtk_widget_hide(info_label);
 
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
@@ -352,7 +368,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
 		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
-				"This directories structure can be not the same on your local machine.</i>"), maestro_addr);
+				"This directories structure can not be the same on your local machine.</i>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 		g_free(text_maestro);

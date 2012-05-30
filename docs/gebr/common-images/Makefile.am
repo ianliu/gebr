@@ -19,7 +19,6 @@ common_imagesdir = $(datadir)/doc/gebr/common-images
 common_images_DATA =				\
 	botao_adicionar_caminho.png		\
 	botao_apagar_projeto.png		\
-	botao_arquivos_entrada_saida.png	\
 	botao_colar_fluxo.png			\
 	botao_copiar_fluxo.png			\
 	botao_criar_fluxo.png			\
@@ -29,18 +28,21 @@ common_images_DATA =				\
 	botao_editar_caminhos.png		\
 	botao_editar_propriedades_projeto.png	\
 	botao_executar_fluxo.png		\
-	botao_exportar_menu.png			\
 	botao_exportar_projeto.png		\
 	botao_importar_projeto.png		\
-	botao_limpar_log_atual.png		\
-	botao_limpar_logs_inativos.png		\
 	botao_matar_tarefa.png			\
 	botao_mudar_estado.png			\
-	botao_salvar_estado_lista.png		\
 	botao_salvar_estado.png			\
+	botao_salvar_estado_lista.png		\
 	botao_salvar_log.png			\
 	botao_terminar_tarefa.png		\
-	caution.gif				\
+	chronometer.png				\
+	filter.png				\
+	gebr-speed-one-core.png			\
+	gebr-speed-verylow.png			\
+	gtk-connect.png				\
+	gtk-dialog-warning.png			\
+	gtk-disconnect.png			\
 	icone_arquivo_entrada.png		\
 	icone_arquivo_erro.png			\
 	icone_arquivo_saida.png			\
@@ -54,9 +56,8 @@ common_images_DATA =				\
 	icone_tarefa_concluida_sucesso.png	\
 	icone_tarefa_em_execucao.png		\
 	icone_tarefa_terminada_erro.png		\
-	important.gif				\
-	note.gif				\
-	tip.gif					\
+	integer-icon.png			\
+	trash-empty.png				\
 	$(NULL)
 
 EXTRA_DIST = $(common_images_DATA)

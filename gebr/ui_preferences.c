@@ -380,20 +380,14 @@ create_view_for_servers(struct ui_preferences *up)
 static void
 on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
 {
-	gchar *loc;
-	const gchar *path;
+	const gchar *section = "additional_features_maestro_servers_configuration";
+	gchar *error;
 
-	loc = setlocale(LC_MESSAGES, NULL);
-	if (g_str_has_prefix (loc, "pt"))
-		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html#additional_features_maestro_servers_configuration";
-	else
-		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#additional_features_maestro_servers_configuration";
+	on_help_button_clicked (section, &error);
 
-	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
-		gtk_show_uri(NULL, "http://www.gebrproject.com", GDK_CURRENT_TIME, NULL);
-		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
-			      _("Could not load help. "
-				"Certify it was installed correctly."));
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
 	}
 }
 

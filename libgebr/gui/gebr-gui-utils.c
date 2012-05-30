@@ -22,6 +22,7 @@
 #include "../libgebr-gettext.h"
 #include "../utils.h"
 
+#include <locale.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1372,4 +1373,29 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 	g_free(filename);
 
 	return response;
+}
+
+void
+on_help_button_clicked(const gchar *section, gchar **error)
+{
+	gchar *loc;
+	gchar *path;
+
+	loc = setlocale(LC_MESSAGES, NULL);
+	if (g_str_has_prefix (loc, "pt"))
+		path = g_strconcat ("file://", GEBR_USERDOC_DIR,
+				    "/pt_BR/html/index.html#", section, NULL);
+	else
+		path = g_strconcat("file://", GEBR_USERDOC_DIR,
+				   "/en/html/index.html#", section, NULL);
+
+	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
+		gtk_show_uri(NULL, "http://www.gebrproject.com", 
+			     GDK_CURRENT_TIME, NULL);
+		*error = g_strdup ( _("Could not load help. "
+				"Certify it was installed correctly."));
+	} else {
+		*error = NULL;
+	}
+	g_free(path);
 }

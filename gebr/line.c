@@ -322,6 +322,21 @@ get_builder_objects(GtkBuilder *builder, const gchar *prefix, GHashTable *hash, 
 		g_free(aux);
 	}
 }
+
+static void
+on_paths_button_clicked (GtkButton *button, gpointer pointer)
+{
+	const gchar *section = "projects_lines_line_paths";
+	gchar *error;
+
+	on_help_button_clicked (section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
+
 static void
 on_assistant_prepare(GtkAssistant *assistant,
 		     GtkWidget *current_page,
@@ -367,6 +382,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 		const gchar *entr_text = gtk_entry_get_text(GTK_ENTRY(entry_base));
 		if (!entr_text || !entr_text[0])
 			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
+
+		GtkWidget *paths_help_button = GTK_WIDGET(gtk_builder_get_object(data->builder, "paths_help_button"));
+		g_signal_connect(GTK_BUTTON(paths_help_button), "clicked", G_CALLBACK(on_paths_button_clicked), NULL);
 
 		gchar *text_maestro = g_markup_printf_escaped(_("<small>Remember that the processing takes "
                                                                 "place at the working servers. So, the "
@@ -550,13 +568,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	g_signal_connect(entry_base, "icon-press", G_CALLBACK(on_line_callback_base_entry_press), data->assistant);
 	g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->assistant);
-
-	//GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	//gchar *path = g_build_filename(gebr_maestro_server_get_home_dir(maestro),"GeBR",
-	//                               gebr_geoxml_line_create_key(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line))),
-	//                               NULL);
-	//gtk_entry_set_text (GTK_ENTRY(entry_base), path);
-	//g_free(path);
 
 	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line));
 	gtk_entry_set_text(GTK_ENTRY(entry_title), title);

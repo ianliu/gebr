@@ -535,5 +535,7 @@ gint gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
                                              gboolean insert_bookmarks,
                                              gchar **new_text);
 
+void on_help_button_clicked(const gchar *section, gchar **error);
+
 G_END_DECLS
 #endif				//__GEBR_GUI_UTILS_H
