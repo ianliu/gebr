@@ -36,7 +36,7 @@
         </imageobject>
       </mediaobject>
     </figure>
-    <para>In this tab you can 
+    <para>In this tab the user can 
       <emphasis role="bold">follow</emphasis> and, if so desired, 
       <emphasis role="bold">interrupt</emphasis> the Flow's execution. The available commands
       are:</para>
@@ -62,7 +62,7 @@
             </inlinemediaobject>
           </guiicon>). Eliminate from the job Control the selected Job. Caution is needed because the
           process is irreversible.</para>
-        <para>You can only clear jobs that are not being executed (<guiicon>
+        <para>The user can only clear jobs that are not being executed (<guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
@@ -84,7 +84,7 @@
                 <imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>). You can cancel a running or queued job. When a
+          </guiicon>). The user can cancel a running or queued job. When a
           Job is terminated in this manner, the job will be marked
           with
           <guiicon>
@@ -103,7 +103,7 @@
                 <imagedata fileref="../../common-images/filter.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>). You have the option to see just the desired
+          </guiicon>). The user has the option to see just the desired
           results.
         </para>
       </listitem>
@@ -116,8 +116,8 @@
   <section>
     <title>Left Panel</title>
     <para>In the left panel, GêBR presents a list of flows executed by
-      you, ordered by moment of execution. Each exhibited flow can be
-      in one of three states:</para>
+      the user, ordered by moment of execution. Each exhibited Flow can be
+      in one of four states:</para>
     <itemizedlist>
       <listitem>
         <para>
@@ -175,7 +175,7 @@
   <section>
     <title>Right panel</title>
     <para>In the upper part, information of the selected flow is
-      exhibited. More information are shown clicking
+      exhibited. More informations are shown clicking
       over <emphasis>More Details</emphasis>. Among the exhibited
       information there are:</para>
     <itemizedlist>
@@ -183,7 +183,7 @@
       <listitem><para>input/output files</para></listitem>
       <listitem><para>servers group in which the flow were executed</para></listitem>
     </itemizedlist>
-    <para>You can also consult which machines were effectively used in
+    <para>The user can also consult which machines were effectively used in
       the group and how the distribution of the work was done by
       clicking over
       <guiicon>
@@ -201,7 +201,7 @@
           <imagedata fileref="../images/GeBR_jc_more_details.png" />
         </imageobject>
       </mediaobject>
-      <caption> Job information. You can consult detailed information
+      <caption> Job information. The user can consult detailed information
         about the execution clicking on Details. </caption>
     </figure>
     The provided information are:
@@ -224,12 +224,12 @@
     </figure>
     <para>The results (standard output) of the Flow are shown. The
       redirected output are not exhibited. Right-clicking on this
-      window, an options menu is exhibited, by which you can enable
+      window, an Options menu is exhibited, by which the user can enable
       the automatic word wrap and the automatic scroll of window as
       the output is being shown.
     </para>
-    <para>You can also consult the command lines executed by GêBR. You
-      just need to visit the <guilabel>Command line</guilabel>
+    <para>The user can also consult the command lines executed by GêBR. He
+      just needs to visit the <guilabel>Command Line</guilabel>
       tab. The command lines are portable and can be copy-pasted
       to a execution terminal.</para>
   </section>

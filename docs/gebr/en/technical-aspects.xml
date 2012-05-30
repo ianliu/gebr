@@ -62,7 +62,7 @@
     </para>
 
     <para>The SSH public-key authentication is an alternative method
-      to establish connections which eliminates the need for requests
+      to establish connections which eliminates the need of requests
       for passwords. Despite less annoying, this method is equally
       secure. It is based on public-key cryptography, where encryption
       and decryption use public/private key pair for authentication
@@ -70,15 +70,15 @@
       knows the associated private key.
     </para>
 
-    <para>If you choose GêBR to user public-key authentication by
+    <para>If the user chooses GêBR to use public-key authentication by
       checking "<guimenuitem>Use encryption key to automatically
         authenticate the next session</guimenuitem>", then GêBR will
       create (if not existent) a private/public keys pair and will
       keep the private key and will copy the public key to the
-      Maestro. Once this operation is successfully done, your
-      authentication on your Maestro will be automatically done
-      through public-key. In practical terms it means you will no
-      longer need to type your password to connect to that Maestro
+      Maestro. Once this operation is successfully done, the user's
+      authentication on user's Maestro will be automatically done
+      through public-key. In practical terms it means the user will no
+      longer need to type the password to connect to that Maestro
       through GêBR. Analogous behaviour occurs in the connection
       between GêBR-Maestro and GêBR-Server.
     </para>
@@ -99,8 +99,8 @@
       </mediaobject>
     </figure>
 
-    <para>Alternatively, you can create the private/public key pair
-      by yourself (consult <link xlink:show="new"
+    <para>Alternatively, the user can create the private/public key pair
+      by himself (consult <link xlink:show="new"
       xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
       for more information).
     </para>
@@ -116,14 +116,14 @@
       processing files, therefore, may be on different machines than
       yours.
     </para>
-    <para>For most of the places you can pick a file (see window
-      below), you will be navigating through the Servers files.
+    <para>For most of the places the user can pick a file (see window
+      below), the user will be navigating through the Servers files.
     </para>
-    <para>In two places of GêBR, you will not be browsing in the
+    <para>In two places of GêBR, the user will not be browsing in the
       Servers filesystem: <emphasis>Import/Export</emphasis> of
-      Projects, Lines or Flows. On these cases you may, for example,
-      keep a backup of your Projects/Lines/Flows on your home computer
-      and, therefore, these files are kept on your computer filesystem
+      Projects, Lines or Flows. On these cases the user may, for example,
+      keep a backup of your Projects/Lines/Flows on his/her home computer
+      and, therefore, these files are kept on user's computer filesystem
       (instead of on GêBR-server).
     </para>
     <figure>
@@ -138,15 +138,14 @@
     </figure>
 
     <para>GêBR puts markers (bookmarks) to the important folders of the Line in
-      context (see <xref linkend="projects_lines_line_paths"/>), as you
+      context (see <xref linkend="projects_lines_line_paths"/>), as the user
       can see in the left edge of the window above. They aim to
       facilitate the access to the files of the Line.
     </para>
 
     <note>
-      <para>If you open an external file browser (say Nautilus), these
-        bookmarks will appear there too. They disappear when you close
-        GêBR.</para>
+      <para>If the user opens an external file browser (say Nautilus), these
+        bookmarks will appear there too. They disappear when GêBR is closed.</para>
     </note>
   </section>
 
@@ -158,19 +157,19 @@
     <para>GêBR takes advantage of the multi-core feature of most of
       the recent machines. The execution of repetitive flows can be
       optimized by this resource. If the Flow has Loops and is
-      parallelizable (given some criteria, shown below), then you can
+      parallelizable (given some criteria, shown below), then the user can
       adjust the execution's degree of performance based on the number
       of processors.</para>
 
     <para>To be considered parallelizable, besides having a loop, a
       Flow must achieve one, and just one, of these criteria:</para>
     <itemizedlist>
-      <listitem>The Flow does not have an output file;</listitem>
+      <listitem>The Flow does not have an output file or, if the output file exists, it has to depend on the variable iter;</listitem>
       <listitem>The output of each step of the loop is not the input
         of any other step of the loop.</listitem>
     </itemizedlist>
     <para>
-      We choose the amount of processors through an adjustment bar,
+      The user can choose the amount of processors through an adjustment bar,
       accessible via
       <guiicon>
         <inlinemediaobject>
@@ -242,15 +241,15 @@
     <para>Technically, when running in "Low Priority" mode, GêBR will
       reduce the run priority of the task, meaning it will tell the
       computer that "it can wait more important things to be done".
-      This is the case when you have other things to do while you wait
-      your calculations to be done.  The "High Priority" mode means
+      This is the case when the user has other things to do while waits
+      the calculations to be done.  The "High Priority" mode means
       GêBR will use greater run priority for the task, and that
       implies it will act as a foreground process, demanding more
-      resources. It's the "I need this done" mode, when you need the
-      job to be finished as soon as possible, and you don't care if it
+      resources. It's the "I need this done now" mode, when the user needs the
+      job to be finished as soon as possible, and the user doesn't care if it
       will fight for resources with other programs.</para>
 
-    <para>If GêBR is the only program executing on your machine, i.e.,
+    <para>If GêBR is the only program executing on the machine, i.e.,
       it doesn't have a challenger for the computer resources, then
       both states corresponds to the same situation.  This is the
       "nightly job" situation, when (theoretically) no one is using
@@ -281,7 +280,7 @@
       <title>Variables</title>
 
       <para>The <guilabel>Dictionary of variables</guilabel> is an
-      interface to handle all your variables. It is accessed through
+      interface to handle all the variables. It is accessed through
       the icon
       <guiicon>
         <inlinemediaobject>
@@ -293,7 +292,7 @@
       Editor</guilabel> tabs.</para>
 
       <para>GêBR has three levels of organization (see
-        <xref linkend="concepts_elements"/>).  Your variables, thus,
+        <xref linkend="concepts_elements"/>).  The variables, thus,
         have three levels of visibility:</para>
       <itemizedlist>
         <listitem>Project's variables are visible to all Flows
@@ -313,7 +312,7 @@
           <caption>A variable with a value may be used with different
             metrics throughout the Flows. Creating a variable for each
             metric can help in this task. GêBR shows the computed
-            value when you pass the pointer over the icon
+            value when the user passes the pointer over the icon
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
@@ -344,7 +343,7 @@
         </guiicon> and an explanation of the error.
       </para>
 
-      <para>Besides using variables and expressions, we can use some
+      <para>Besides using variables and expressions, the user can use some
         predefined functions:
       </para>
 
@@ -399,12 +398,12 @@
     </section>
     <tip>
       <para>Positioning the pointer on the icon of the
-        variable type, we can check the solved
+        variable type, the user can check the solved
         expression.</para>
     </tip>
 
     <tip>
-      <para>We can navigate over the fields using the keys 
+      <para>The user can navigate over the fields using the keys 
         <keycap>Enter</keycap>, 
         <keycap>Tab</keycap> or with the 
         <mousebutton>Left button of the mouse</mousebutton>.
@@ -413,7 +412,7 @@
 
     <tip>
       <para>To use the variables in fields like
-        <guimenuitem>Text</guimenuitem>, you must put the variable
+        <guimenuitem>Text</guimenuitem>, the user must put the variable
         name embraced by square brackets
         <emphasis role="bold">[</emphasis> name-of-the-variable
         <emphasis role="bold">]</emphasis>.
@@ -422,14 +421,14 @@
 
     <tip>
       <para>
-        To see all the available variables for auto-completion, we
+        To see all the available variables for auto-completion, the user
         just need to type the
         character <emphasis role="bold">[</emphasis>' (open brackets).
       </para>
     </tip>
 
     <tip>
-      <para>We can reorder the dictionary variables by drag and
+      <para>The user can reorder the dictionary variables by drag and
         drop. Since a variable can just use another variable above it,
         this feature turns the declaration of variables more flexible
         and dynamic.</para>
@@ -440,16 +439,16 @@
       <para> GêBR allows the execution of repetitive procedures by 
         creating Flows with <guilabel>Loops</guilabel> (see 
         <xref linkend="flow_editor_loop" />). With <guilabel>Loops</guilabel>,
-        we have access to a special variable
+        the user has access to a special variable
         called <emphasis role="bold">iter</emphasis>.
       </para>
 
-      <para>Upon execution, we might want to identify what is the current
+      <para>Upon execution, the user might want to identify what is the current
         step of the Loop. The iter variable is devised with this aim.
       </para>
 
       <para>
-        For instance, we can throw the ouput of each step of the Loop 
+        For instance, the user can throw the ouput of each step of the Loop 
         to a file with a name identified by the step, 
         output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see 
         <xref linkend="fig_flow_editor_loop_output"/>).</para>
@@ -505,7 +504,7 @@
 		<para>In the Maestro/Server Interface, in the MPI column, an icon
       indicates whether the working machine supports MPI. Roll over
       the icon to check the flavors of MPI available on that
-      machine. You will be able to run parallell program just on
+      machine. The user will be able to run parallell program just on
       machines that support the same flavor as the one used in the
       program.
     </para>
@@ -514,20 +513,20 @@
       <title>Indication of MPI availability</title>
       <imagedata fileref="../images/GeBR_servers_mpi.png" />
       <caption>The second column indicates the types (flavors) of MPI
-	available in your servers.</caption>
+	available in the servers.</caption>
     </figure>
     
-    <para>To run an MPI program, you must first create a menu in DêBR
-      and choose the proper MPI implementation to your
-      program. Then import it in GêBR. In the Flow Editor tab, if you
-      double-click over the MPI program, you will be able to set the
+    <para>To run an MPI program, the user must first create a menu in DêBR
+      and choose the proper MPI implementation to the
+      program. Then import it in GêBR. In the Flow Editor tab, if the user
+      double-click over the MPI program, he/she will be able to set the
       number of processes to be used by that MPI call.
     </para>
 
     <figure>
       <title>MPI settings</title>
       <imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
-      <caption>Double clicking over an MPI program you can set
+      <caption>Double clicking over an MPI program the user can set
 	the <emphasis>number of process</emphasis> parameter of
 	MPI.</caption>
     </figure>
@@ -546,7 +545,7 @@
 
     <figure>
       <mediaobject>
-        <caption>At the bottom of GêBR's main window you will find the
+        <caption>At the bottom of GêBR's main window the user will find the
           execution log, which displays information on all of GêBR
           processes.</caption>
         <imageobject>
@@ -560,10 +559,10 @@
         <menuchoice>
           <guimenu>Actions</guimenu>
           <guimenuitem>Preferences</guimenuitem>
-        </menuchoice> at the bottom of the dialog box, we can see the box 
+        </menuchoice> at the bottom of the dialog box, the user can see the box 
         <guilabel>Load past-execution log</guilabel>. By checking this
-        box we choose to exhibit the whole log, including actions from
-        past dates. By leaving the box unchecked we choose to have a
+        box the user chooses to exhibit the whole log, including actions from
+        past dates. By leaving the box unchecked the user chooses to have a
         compact log, which only shows actions that have taken place
         since GêBR's last initialization.</para>
     </tip>

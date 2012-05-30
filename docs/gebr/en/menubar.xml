@@ -10,28 +10,28 @@
 
   <title>The <guimenu>Action</guimenu> menu</title>
   
-  <para>From the <guimenu>Actions</guimenu> menu, you can access your
+  <para>From the <guimenu>Actions</guimenu> menu, the user can access the
     <guimenuitem>Preferences</guimenuitem> and
-    configure <guimenuitem>Servers</guimenuitem>. If your enthusiasm
-    for GêBR has lead you to read the whole manual, you have
+    configure <guimenuitem>Servers</guimenuitem>. If the user's enthusiasm
+    for GêBR has lead him/her to read the whole manual, then the user has
     probably used almost all available features found in these
-    options. But just in case, below you will find the
-    documentation for these options.</para>
+    options. But just in case, the user will find the documentation for these options
+    below.</para>
   
   <section>
     <title>Preferences</title>
-    <para>The details you provide in the
+    <para>The details the user provides in the
       <guimenuitem>Preferences</guimenuitem> dialog box will be
       adopted as the default by GêBR.  Specifically:</para>
     <itemizedlist>
       <listitem>
         <para><guilabel>User name:</guilabel> will be used as the
-          default for <guilabel>Author:</guilabel> when you create
+          default for <guilabel>Author</guilabel>, when the user creates
           Projects, Lines and Flows.</para>
       </listitem>
       <listitem>
         <para><guilabel>Email:</guilabel> will be used as the
-          default for <guilabel>Email:</guilabel> when you create
+          default for <guilabel>Email</guilabel>, when the user creates
           Projects, Lines and Flows.</para>
       </listitem>
       <listitem>
@@ -44,7 +44,7 @@
     <figure id="maestro_server_dialog">
       <title>Global GêBR preferences dialog box</title>
       <mediaobject>
-        <caption>Preferences menu opens a dialog box where you edit
+        <caption>Preferences menu opens a dialog box where the user edits
           the user's name, e-mail, menu's directory and the HTML
           editor.</caption>
         <imageobject>
@@ -80,7 +80,7 @@
     <figure>
       <title>Maestro / Servers configuration dialog box</title>
       <mediaobject>
-				<caption>The Maestro/Servers Configurations interface in divided in three parts: maestro, list of servers and groups of servers.</caption>
+				<caption>The Maestro/Servers Configurations interface is divided in three parts: maestro, list of servers and groups of servers.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_maestro_servers_overview.png" />
         </imageobject>
@@ -124,15 +124,15 @@
         machiness<indexterm><primary>Working
         machine</primary></indexterm> to that Maestro.</para>
 
-      <para>The lines represent the machines associated to the
-        Maestro. Each line has some columns:</para>
+      <para>Each line in the Servers window represents the each machine associated to the
+        Maestro. The lines have some columns:</para>
       <itemizedlist>
 	<listitem>
 	  <para><guilabel>AC</guilabel>: checkbox to activate or not
 	    the auto-connection to that server.</para>
 	</listitem>
 	<listitem>
-	  <para><guilabel>MPI</guilabel>: depicst whether the machine
+	  <para><guilabel>MPI</guilabel>: depicts whether the machine
 	  has support to
 	  MPI<indexterm><primary>MPI</primary></indexterm>.</para>
 	</listitem>
@@ -145,7 +145,7 @@
 	  working machine.</para>
 	</listitem>
 	<listitem>
-	  <para><guilabel>Memory</guilabel>: total memory of machine.</para>
+	  <para><guilabel>Memory</guilabel>: total memory of the machine.</para>
 	</listitem>
       </itemizedlist>
 
