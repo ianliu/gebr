@@ -573,8 +573,8 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_entry_set_text(GTK_ENTRY(entry_title), title);
 	g_free(title);
 
-	gtk_entry_set_text(GTK_ENTRY(entry_author), gebr.config.username->str);
-	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr.config.email->str);
+	gtk_entry_set_text(GTK_ENTRY(entry_author), gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.project)));
+	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.project)));
 
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);

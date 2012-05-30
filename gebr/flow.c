@@ -72,8 +72,8 @@ void flow_new (void)
 	/* Create a new flow */
 	flow = GEBR_GEOXML_FLOW(document_new(GEBR_GEOXML_DOCUMENT_TYPE_FLOW));
 	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(flow), _("New Flow"));
-	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr.config.username->str);
-	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr.config.email->str);
+	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.line)));
+	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line)));
 
 	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
 	iter = line_append_flow_iter(flow, line_flow);
