@@ -324,6 +324,9 @@ state_changed(GebrCommServer *comm_server,
 		gebr_comm_server_close_x11_forward(comm_server);
 		gtk_list_store_clear(maestro->priv->groups_store);
 
+		if (!gebr.quit)
+			gebr_project_line_show(gebr.ui_project_line);
+
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
 		if (err && *err)
 			gebr_maestro_server_set_error(maestro, "error:ssh", err);
@@ -332,6 +335,8 @@ state_changed(GebrCommServer *comm_server,
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 		gebr_config_maestro_save();
+
+		gebr_project_line_show(gebr.ui_project_line);
 
 		if (!gebr.populate_list) {
 			gebr.populate_list = TRUE;

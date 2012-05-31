@@ -2036,14 +2036,10 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
-		gebr_project_line_show(gebr.ui_project_line);
-		flow_browse_reload_selected();
 		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, TRUE);
 		break;
 	case SERVER_STATE_LOGGED:
 		gebr_flow_edition_update_server(fe, maestro);
-		gebr_project_line_show(gebr.ui_project_line);
-		flow_browse_reload_selected();
 		break;
 	default:
 		break;

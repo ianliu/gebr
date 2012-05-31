@@ -1542,9 +1542,6 @@ on_maestro_state_change(GebrMaestroController *mc,
                         GebrMaestroServer *maestro,
                         GebrUiProjectLine *upl)
 {
-	if (gebr.last_notebook == NOTEBOOK_PAGE_PROJECT_LINE)
-		gebr_project_line_show(upl);
-
 	GebrGeoXmlLine *line;
 	GtkTreeIter parent, iter;
 	GtkTreeModel *model = GTK_TREE_MODEL(upl->store);
