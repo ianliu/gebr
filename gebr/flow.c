@@ -1211,7 +1211,10 @@ gebr_flow_set_toolbar_sensitive(void)
 
 	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
 		sensitive = FALSE;
-	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
+
+	if (!maestro || !gebr_maestro_server_has_connected_daemon(maestro))
+		sensitive_exec_slider = FALSE;
+	else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
 		sensitive_exec_slider = FALSE;
 	else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
 		sensitive_exec_slider = FALSE;

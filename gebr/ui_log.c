@@ -222,8 +222,13 @@ on_state_change(GebrMaestroServer *maestro,
                 struct ui_log *ui_log)
 {
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_CONNECT, GTK_ICON_SIZE_BUTTON);
-		gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Connected"));
+		if (gebr_maestro_server_has_connected_daemon(maestro)) {
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_CONNECT, GTK_ICON_SIZE_BUTTON);
+			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Connected"));
+		} else {
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
+			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Maestro without connected servers"));
+		}
 
 		const gchar *addr = gebr_maestro_server_get_address(maestro);
 
@@ -259,6 +264,13 @@ on_state_change(GebrMaestroServer *maestro,
 void
 gebr_log_update_maestro_info(struct ui_log *ui_log,
                              GebrMaestroServer *maestro)
+{
+	on_state_change(maestro, ui_log);
+}
+
+void
+gebr_log_update_maestro_info_signal(struct ui_log *ui_log,
+                                    GebrMaestroServer *maestro)
 {
 	g_signal_connect(maestro, "state-change",
 	                 G_CALLBACK(on_state_change), ui_log);

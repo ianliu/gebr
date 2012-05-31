@@ -27,6 +27,7 @@
 #include <glib/gi18n.h>
 #include "gebr-maestro-server.h"
 #include "gebr-marshal.h"
+#include "flow.h"
 #include <locale.h>
 #include "ui_project_line.h"
 #include <libgebr/gui/gebr-gui-utils.h>
@@ -900,8 +901,11 @@ on_daemons_changed(GebrMaestroServer *maestro,
                    GebrMaestroController *mc)
 {
 	gebr_maestro_controller_update_daemon_model(maestro, mc);
+	gebr_flow_set_toolbar_sensitive();
 
 	g_signal_emit(mc, signals[DAEMONS_CHANGED], 0);
+
+	gebr_log_update_maestro_info(gebr.ui_log, maestro);
 }
 
 void
@@ -1898,7 +1902,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 
 	gebr_maestro_server_connect(self->priv->maestro);
 
-	gebr_log_update_maestro_info(gebr.ui_log, self->priv->maestro);
+	gebr_log_update_maestro_info_signal(gebr.ui_log, self->priv->maestro);
 }
 
 GebrMaestroServer *

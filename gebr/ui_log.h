@@ -54,5 +54,8 @@ void gebr_log_add_message_to_list(struct ui_log *ui_log, GebrLogMessage *message
 void gebr_log_update_maestro_info(struct ui_log *ui_log,
                                   GebrMaestroServer *maestro);
 
+void gebr_log_update_maestro_info_signal(struct ui_log *ui_log,
+                                         GebrMaestroServer *maestro);
+
 G_END_DECLS
 #endif				//__UI_GEBR_LOG_H
