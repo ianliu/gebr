@@ -248,6 +248,35 @@ on_paths_button_clicked (GtkButton *button, gpointer pointer)
 	}
 }
 
+static void
+on_document_button_clicked (GtkButton *button, gpointer doc_type_pointer)
+{
+	GebrGeoXmlDocumentType doc_type = (GebrGeoXmlDocumentType)(GPOINTER_TO_INT(doc_type_pointer));
+	gchar *section;
+
+	switch (doc_type) {
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+		section = g_strdup("projects_lines_create_lines");
+		break;
+	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+		section = g_strdup("flows_browser_create_flow");
+		break;
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
+		section = g_strdup("projects_lines_create_projects");
+		break;
+	default:
+		g_warn_if_reached();
+	}
+
+	gchar *error;
+	on_help_button_clicked (section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
+
 void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
@@ -351,6 +380,12 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
+
+	GtkWidget *document_help_button = GTK_WIDGET(gtk_builder_get_object(builder, "document_help_button"));
+	g_signal_connect(GTK_BUTTON(document_help_button),
+			 "clicked",
+			 G_CALLBACK(on_document_button_clicked),
+			 GINT_TO_POINTER((gint)gebr_geoxml_document_get_type(document)));
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");

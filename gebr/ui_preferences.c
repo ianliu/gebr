@@ -1003,6 +1003,20 @@ set_maestro_chooser_page(GtkBuilder *builder,
 	gtk_combo_box_set_active(combo, 0);
 }
 
+static void
+on_preferences_button_clicked (GtkButton *button, gpointer pointer)
+{
+	const gchar *section = "actions_preferences";
+	gchar *error;
+
+	on_help_button_clicked (section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
+
 /**
  * Assembly preference window.
  *
@@ -1161,6 +1175,11 @@ preferences_setup_ui(gboolean first_run,
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);
 
+		GtkWidget *help_preferences_box = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "help_preferences_box"));
+		GtkWidget *help_preferences_dummy_box = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "help_preferences_dummy_box"));
+		gtk_widget_hide(help_preferences_box);
+		gtk_widget_hide(help_preferences_dummy_box);
+
 		if (!first_run && wizard_run && !insert_preferences) {
 			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
 			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
@@ -1187,6 +1206,9 @@ preferences_setup_ui(gboolean first_run,
 
 		on_changed_validate_email(ui_preferences->email, ui_preferences);
 		g_signal_connect(ui_preferences->email, "changed", G_CALLBACK(on_changed_validate_email), ui_preferences);
+
+		GtkWidget *help_preferences_button = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "help_preferences_button"));
+		g_signal_connect(GTK_BUTTON(help_preferences_button), "clicked", G_CALLBACK(on_preferences_button_clicked), NULL);
 
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);

@@ -18,7 +18,7 @@
     options. But just in case, the user will find the documentation for these options
     below.</para>
   
-  <section>
+  <section id="actions_preferences">
     <title>Preferences</title>
     <para>The details the user provides in the
       <guimenuitem>Preferences</guimenuitem> dialog box will be

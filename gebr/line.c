@@ -361,6 +361,10 @@ on_assistant_prepare(GtkAssistant *assistant,
                                                                   "processing flows."), maestro_addr);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
+		GtkWidget *document_help_button = GTK_WIDGET(gtk_builder_get_object(data->builder, "document_help_button"));
+		GtkWidget *document_help_dummy_label = GTK_WIDGET(gtk_builder_get_object(data->builder, "document_help_dummy_label"));
+		gtk_widget_hide(document_help_button);
+		gtk_widget_hide(document_help_dummy_label);
 
 	} else if (page == 2) {
 		GObject *paths_label= gtk_builder_get_object(data->builder, "paths_label");
@@ -517,7 +521,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_window_set_position(GTK_WINDOW(assistant), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
 
-	g_debug("On '%s', line '%d', teste:'%s' ", __FILE__, __LINE__, "TeSTANDO");
 	WizardData *data = g_new(WizardData, 1);
 	data->assistant = assistant;
 	data->builder = builder;
@@ -627,7 +630,6 @@ create_base_import_file_chooser(gchar *title,
 	gint response = gebr_file_chooser_set_remote_navigation(file_chooser,
 	                                                        entry_text, prefix, paths, FALSE,
 	                                                        &new_text);
-
 	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 
 	if (response == GTK_RESPONSE_OK) {

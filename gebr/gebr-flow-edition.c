@@ -740,7 +740,6 @@ static void _open_activated(GebrFlowEdition *fe,
 	gint response = gebr_file_chooser_set_remote_navigation(dialog, entry_text,
 	                                                        prefix, paths, TRUE,
 	                                                        &new_text);
-
 	if (response == GTK_RESPONSE_YES) {
 		g_object_set(fe->text_renderer, "text", new_text, NULL);
 		
