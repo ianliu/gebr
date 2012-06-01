@@ -1130,6 +1130,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 				gebrm_daemon_connect(d, NULL, socket);
 				gebrm_config_save_server(d);
 			}
+			if (!connect_daemon)
+				app->priv->connect_all = FALSE;
 		}
 		else if (g_strcmp0(prefix, "/ssh-answer") == 0) {
 			GebrmDaemon *daemon = NULL;
