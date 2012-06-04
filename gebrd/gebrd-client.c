@@ -328,13 +328,6 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 
-			/*
-			 * FIXME: When maestro stolen idle daemon from another, the message of ret_def
-			 * needs little more time to send. Add sleep with 1 second to do that!
-			 * Need revision!
-			 */
-			sleep(1);
-
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 11,
 							      gebrd->hostname,

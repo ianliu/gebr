@@ -422,12 +422,21 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				verify_connect_all(app);
 			}
 		}
+
+		const gchar *err = gebrm_daemon_get_error_type(daemon);
+		if (g_strcmp0(err, "error:connection-stolen") == 0) {
+			gebrm_daemon_set_error_type(daemon, NULL);
+			for (GList *i = app->priv->connections; i; i = i->next) {
+				GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+				gebrm_daemon_connect(daemon, NULL, socket);
+			}
+		}
 	}
 
-	else if (state == SERVER_STATE_OPEN_TUNNEL) {
+	else if (state == SERVER_STATE_RUN) {
 		if (app->priv->connect_all) {
 			gebrm_daemon_set_canceled(daemon, TRUE);
-			guint timeout = g_timeout_add(5000, time_out_daemon, app);
+			guint timeout = g_timeout_add(6000, time_out_daemon, app);
 			gebrm_daemon_set_timeout(daemon, timeout);
 		}
 	}
