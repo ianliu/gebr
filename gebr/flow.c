@@ -554,6 +554,20 @@ void flow_set_paths_to_empty(GebrGeoXmlFlow * flow)
 	gebr_flow_modify_paths(flow, func, TRUE, NULL);
 }
 
+static void
+on_flows_help_button_clicked (GtkButton *button, gpointer pointer)
+{
+	const gchar *section = "flows_browser_save_state_flow";
+	gchar *error;
+
+	on_help_button_clicked (section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
+
 gboolean flow_revision_save(void)
 {
 	GtkWidget *dialog;
@@ -583,11 +597,21 @@ gboolean flow_revision_save(void)
 	gtk_alignment_set_padding(GTK_ALIGNMENT(align), 10, 10, 10, 10);
 	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), align, TRUE, TRUE, 0);
 
+	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+	GtkWidget *help_button = gtk_button_new();
+	GtkWidget *help_image  = GTK_WIDGET(gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_MENU));
+
+	gtk_button_set_image(GTK_BUTTON(help_button), help_image);
+	gtk_button_set_relief(GTK_BUTTON(help_button), GTK_RELIEF_NONE);
+	g_signal_connect(GTK_BUTTON(help_button), "clicked", G_CALLBACK(on_flows_help_button_clicked), NULL);
+
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align), vbox);
 
 	label = gtk_label_new(_("Write a description about this version of the selected Flows:"));
-	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), help_button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
