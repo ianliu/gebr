@@ -387,10 +387,11 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
                                            gboolean sensitive,
                                            gboolean maestro_err)
 {
-	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive == TRUE) {
+	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive)
 		sensitive = FALSE;
-		maestro_err = FALSE;
-	}
+
+	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0 && sensitive)
+		sensitive = FALSE;
 
 	const gchar *tooltip_disconn;
 	const gchar *tooltip_execute;
@@ -401,7 +402,17 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 		else
 			tooltip_disconn = _("Select a line of this project to execute a flow");
 	} else {
-		tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
+			tooltip_disconn = _("The Maestro of this line is disconnected.\nConnecting it to execute a flow.");
+		else if (maestro && !gebr_maestro_server_has_connected_daemon(maestro))
+			tooltip_disconn = _("There is no servers connected to this line.\nConnecting at least one to execute a flow.");
+		else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
+			tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
+		else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+			tooltip_disconn = _("This flow does not contain programs\nAdd at least one to execute this flow");
+		else
+			tooltip_disconn = _("Execute");
 	}
 	tooltip_execute = _("Execute");
 
@@ -1269,6 +1280,7 @@ static void flow_edition_menu_add(void)
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 	gebr_flow_set_toolbar_sensitive();
+	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
 
 	/* and to the GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
