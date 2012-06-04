@@ -535,6 +535,8 @@ on_mount_status_changed(GebrMaestroServer *maestro,
                         struct ui_preferences *up)
 {
 	set_status_for_mount(maestro, status, up);
+
+	gebr_log_update_maestro_info(gebr.ui_log, maestro);
 }
 
 static void

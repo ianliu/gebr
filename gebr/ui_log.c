@@ -222,7 +222,7 @@ on_state_change(GebrMaestroServer *maestro,
                 struct ui_log *ui_log)
 {
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-		if (gebr_maestro_server_has_connected_daemon(maestro)) {
+		if (gebr_maestro_server_has_servers(maestro, TRUE)) {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_CONNECT, GTK_ICON_SIZE_BUTTON);
 			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Connected"));
 		} else {

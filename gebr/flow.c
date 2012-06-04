@@ -1223,7 +1223,7 @@ gebr_flow_set_toolbar_sensitive(void)
 		no_line_selected = TRUE;
 	}
 
-	if (maestro && !gebr_maestro_server_has_connected_daemon(maestro))
+	if (maestro && !gebr_maestro_server_has_servers(maestro, TRUE))
 		sensitive_exec_slider = FALSE;
 	else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
 		sensitive_exec_slider = FALSE;
