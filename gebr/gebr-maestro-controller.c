@@ -138,7 +138,7 @@ insert_new_entry(GebrMaestroController *mc)
 	gtk_list_store_prepend(mc->priv->model, &iter);
 	gtk_list_store_set(mc->priv->model, &iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
-	                   MAESTRO_CONTROLLER_ADDR, _("New"),
+	                   MAESTRO_CONTROLLER_ADDR, _("Add a worker"),
 	                   MAESTRO_CONTROLLER_EDITABLE, TRUE,
 	                   -1);
 }
@@ -926,7 +926,7 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 	                   -1);
 
 	if (!daemon && !insert_new) {
-		gchar *text = g_strdup_printf(_("Servers of Maestro %s"), gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
+		gchar *text = g_strdup_printf(_("Working machines of Maestro %s"), gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
 		g_object_set(cell, "text", text, NULL);
 		g_object_set(cell, "sensitive", FALSE, NULL);
 		g_free(text);
@@ -1435,7 +1435,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	set_widget_drag_dest(self, GTK_WIDGET(event));
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
-	gtk_window_set_title(GTK_WINDOW(dialog), _("GêBR - Maestro / Servers"));
+	gtk_window_set_title(GTK_WINDOW(dialog), _("GêBR - Maestro / Workers"));
 	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), self);
 	g_signal_connect(dialog, "destroy", G_CALLBACK(on_dialog_destroy), self);
 
@@ -1697,21 +1697,21 @@ on_daemon_error(GebrMaestroServer *maestro,
 	} else if (g_strcmp0(error_type, "error:nfs") == 0) {
 		message = _("This server has a different NFS");
 	} else if (g_strcmp0(error_type, "error:id") == 0) {
-		message = _("Server already added");
-		second = g_strdup_printf(_("The server %s was already added in"
+		message = _("Working machine already added");
+		second = g_strdup_printf(_("The working machine %s was already added in"
 					   " this maestro. It will be"
 					   " automatically removed."), addr);
 		show_dialog = TRUE;
 	} else if (g_strcmp0(error_type, "error:protocol") == 0) {
-		message = _("This server is using a different protocol version");
+		message = _("This working machine is using a different protocol version");
 	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
-		message = _("This server is already registered at another maestro");
+		message = _("This working machine is already registered at another maestro");
 	} else if (g_strcmp0(error_type, "error:connection-refused-job") == 0) {
-		message = _("This server working for another maestro");
+		message = _("This working machine working for another maestro");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {
 		message = error_msg;
 	} else if (g_strcmp0(error_type, "error:xauth") == 0) {
-		message = _("This server cannot connect to display. Try reconnect it");
+		message = _("This working machine cannot connect to display. Try reconnect it");
 	}
 
 	if (show_dialog) {

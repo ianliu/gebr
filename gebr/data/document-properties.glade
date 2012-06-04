@@ -320,9 +320,9 @@ Although it is not mandatory to adhere to this structure, it is highly recommend
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;small&gt;Remember that the processing takes place at the working servers. So, the structure which is being defined here will be created there.
+            <property name="label" translatable="yes">&lt;small&gt;Remember that the processing takes place at the working machines. So, the structure which is being defined here will be created there.
 
-To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&gt; feature must be enable in the Maestro.&lt;/small&gt;</property>
+To be able to browse files in these directory, the &lt;i&gt;remote browsing&lt;/i&gt; feature must be enable in the Maestro.&lt;/small&gt;</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -847,7 +847,7 @@ To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&
         <property name="visible">True</property>
         <property name="label" translatable="yes">G&#xEA;BR will create some directories to organize the files 
 created during the data processing.
-These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.</property>
+These directories will be created on the working machines of maestro &lt;b&gt;XXX&lt;/b&gt;.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>

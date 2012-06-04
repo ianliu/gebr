@@ -1271,7 +1271,7 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 5);
 
 	gchar *txt = g_markup_printf_escaped(_("The presented files are from your <b>local machine</b> "
-					       "and may not represent the files on the <b>servers</b>."));
+					       "and may not represent the files on the <b>working machines</b>."));
 	GtkWidget *label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), txt);
 

@@ -4,7 +4,7 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="dialog_maestro">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">G&#xEA;BR - Maestro / Servers</property>
+    <property name="title" translatable="yes">G&#xEA;BR - Maestro / Working machines</property>
     <property name="default_width">600</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
@@ -136,7 +136,7 @@
                             <child>
                               <object class="GtkLabel" id="label5">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">&lt;i&gt;Drop a server to create a group!&lt;/i&gt;</property>
+                                <property name="label" translatable="yes">&lt;i&gt;Drop a working machine to create a group!&lt;/i&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                             </child>

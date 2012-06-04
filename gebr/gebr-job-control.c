@@ -768,10 +768,10 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		markup = g_markup_printf_escaped(_("Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
 						   "Executed on total <b>%d</b> processes on %s <b>%s</b>,\n"
 						   "%s"
-						   "distributed on <b>%d</b> servers.\n"),
+						   "distributed on <b>%d</b> working machine(s).\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
 						  total_procs, type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
-						  g_strcmp0(niceness, "0")? _("using the machines idle time, ") : "",
+						  g_strcmp0(niceness, "0")? _("using the working machines idle time, ") : "",
 						  n_servers);
 		g_string_append(resources, markup);
 

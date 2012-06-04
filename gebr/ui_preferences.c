@@ -516,7 +516,7 @@ set_status_for_mount(GebrMaestroServer *maestro,
 	}
 	else if (status == STATUS_MOUNT_NOK) {
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browse is disabled!"));
+		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browsing is disabled!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, TRUE);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);
@@ -725,9 +725,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs at least one <i>connected server</i> "
+			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs at least one <i>connected working machine</i> "
                                                                              "to run processing flows. You must either connect to a new "
-                                                                             "servers or connect all servers already registered below.\n"),
+                                                                             "one or connect your already registered working machines.\n"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
@@ -1116,19 +1116,19 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), servers_info);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), servers_info, TRUE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), servers_info, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Servers"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Working Machines"));
 
 		// SERVERS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_servers);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Servers"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Working Machines"));
 
 		// GVFS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), mount_gvfs);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), mount_gvfs, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), mount_gvfs, _("Remote Browse"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), mount_gvfs, _("Remote Browsing"));
 
 		ui_preferences->prev_page = INITIAL_PAGE;
 		ui_preferences->back_button = gtk_button_new_with_mnemonic("_Back");
@@ -1138,13 +1138,13 @@ preferences_setup_ui(gboolean first_run,
 		ui_preferences->dialog = assistant;
 
 		GtkWidget *maestro_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "maestro_info_label"));
-		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<i>Maestro</i> is in between the GêBR and the working servers. "
+		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<i>Maestro</i> is in between the GêBR and the working machines. "
                                                                       "It receives all requests for flow execution and dispatches them "
-                                                                      "to groups of servers.\n\n"
+                                                                      "to groups of working machines .\n\n"
                                                                       "Without interference, Maestro collects information about the "
-                                                                      "state of each working server and ranks them according to their "
+                                                                      "state of each working machines and ranks them according to their "
                                                                       "capabilities and available resources at time. Therefore, Maestro "
-                                                                      "can take smart decisions about which servers are best suited to "
+                                                                      "can take smart decisions about which working machines are best suited to "
                                                                       "run a processing flow."));
 
 		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
@@ -1161,9 +1161,9 @@ preferences_setup_ui(gboolean first_run,
                                                                   "checkbox, whenever your password is requested.</i></small>"));
 
 		GtkWidget *mount_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "mount_info_label"));
-		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Every processing flow in GêBR runs on working servers, which may "
+		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Every processing flow in GêBR runs on working machines, which may "
                                                                     "be elsewhere. <i>Remote browsing</i> is a feature that allows "
-                                                                    "the user to see the files generated on the working servers.\n\n"
+                                                                    "the user to see the files generated on the working machines.\n\n"
                                                                     "To enable this feature your login password may be asked."));
 		/* Set Preferences Page */
 		set_preferences_page(builder, ui_preferences);

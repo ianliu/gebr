@@ -391,7 +391,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_signal_connect(GTK_BUTTON(paths_help_button), "clicked", G_CALLBACK(on_paths_button_clicked), NULL);
 
 		gchar *text_maestro = g_markup_printf_escaped(_("<small>Remember that the processing takes "
-                                                                "place at the working servers. So, the "
+                                                                "place at the working machines. So, the "
                                                                 "structure which is about to be defined here will "
                                                                 "be created there.\n\nTo be able to browse "
                                                                 "files in these directory, the <i>remote "

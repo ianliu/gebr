@@ -334,7 +334,7 @@ void flow_browse_info_update(void)
 	}
 
 	/* I/O labels */
-	markup = g_markup_printf_escaped("<b>%s</b>", _("Server:"));
+	markup = g_markup_printf_escaped("<b>%s</b>", _("Working machine:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.server_label), markup);
 	g_free(markup);
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Input:"));
