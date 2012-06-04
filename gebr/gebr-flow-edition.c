@@ -269,6 +269,7 @@ flow_edition_setup_ui(void)
 						    (GebrGuiGtkTreeViewReorderCallback) flow_edition_may_reorder,
 						    fe);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(fe->fseq_view), FALSE);
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(fe->fseq_view), FALSE);
 
 	/* Icon column */
 	renderer = gtk_cell_renderer_pixbuf_new();
