@@ -523,6 +523,20 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 	}
 }
 
+static void
+on_dictionary_help_button_clicked (GtkButton *button, gpointer pointer)
+{
+	const gchar *section = "dictionary_variables";
+	gchar *error;
+
+	on_help_button_clicked (section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
+
 void document_dict_edit_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -601,7 +615,17 @@ void document_dict_edit_setup_ui(void)
 
 	GtkWidget *message_hbox = gtk_hbox_new(FALSE, 4);
 	gtk_box_pack_start(GTK_BOX(message_hbox), warning_image, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(message_hbox), label, FALSE, TRUE, 0);
+
+	GtkWidget *help_button = gtk_button_new();
+	GtkWidget *help_image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_MENU);
+
+	gtk_button_set_relief(GTK_BUTTON(help_button), GTK_RELIEF_NONE);
+	gtk_button_set_image(GTK_BUTTON(help_button), help_image);
+	g_signal_connect(GTK_BUTTON(help_button), "clicked", G_CALLBACK(on_dictionary_help_button_clicked), NULL);
+
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(message_hbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(message_hbox), help_button, FALSE, TRUE, 0);
 
 	data->event_box = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(data->event_box), message_hbox);
@@ -877,7 +901,7 @@ static void gebr_dict_update_wizard(struct dict_edit_data *data) {
 	switch (dict_edit_get_column_index_for_renderer(data->editing_cell, data)) {
 	case DICT_EDIT_KEYWORD:
 		gtk_label_set_text(GTK_LABEL(data->label),
-				   _("Please enter an unique variable name."));
+				   _("Please enter a unique variable name."));
 		break;
 	case DICT_EDIT_VALUE: {
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
