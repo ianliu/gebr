@@ -145,7 +145,7 @@
                         <child type="tab">
                           <object class="GtkImage" id="image1">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-add</property>
+                            <property name="stock">group</property>
                           </object>
                           <packing>
                             <property name="tab_fill">False</property>

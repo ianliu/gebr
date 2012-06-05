@@ -110,6 +110,7 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/view-sort-ascending.png	\
 	16x16/stock/view-sort-descending.png	\
 	16x16/stock/window-close.png
+	16x16/stock/group.png
 
 libgebr_gui_icons22x22stockdir = $(datadir)/libgebr/icons/gebr-theme/22x22/stock
 libgebr_gui_icons22x22stock_DATA =		\
@@ -202,7 +203,8 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/view-refresh.png	\
 	22x22/stock/view-sort-ascending.png	\
 	22x22/stock/view-sort-descending.png	\
-	22x22/stock/window-close.png
+	22x22/stock/window-close.png	\
+	22x22/stock/group.png
 
 libgebr_gui_icons48x48stockdir = $(datadir)/libgebr/icons/gebr-theme/48x48/stock
 libgebr_gui_icons48x48stock_DATA =		\
@@ -296,6 +298,7 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/view-sort-ascending.png	\
 	48x48/stock/view-sort-descending.png	\
 	48x48/stock/window-close.png
+	48x48/stock/group.png
 
 libgebr_gui_iconsscalablestockdir = $(datadir)/libgebr/icons/gebr-theme/scalable/stock
 libgebr_gui_iconsscalablestock_DATA = \
@@ -307,6 +310,7 @@ libgebr_gui_iconsscalablestock_DATA = \
 	scalable/stock/gebr-speed-one-core.svg	\
 	scalable/stock/object-locked.svgz   \
 	scalable/stock/object-unlocked.svgz   \
+	scalable/stock/group.svgz   \
 	$(NULL)
 
 EXTRA_DIST = 					\
