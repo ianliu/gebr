@@ -38,6 +38,9 @@ struct _GebrDaemonServerPriv {
 	gchar *clock;
 	gchar *model;
 	gchar *memory;
+
+	/* To represent connection */
+	guint timeout;
 };
 
 enum {
@@ -187,6 +190,8 @@ gebr_daemon_server_init(GebrDaemonServer *daemon)
 	daemon->priv->maestro_addr = NULL;
 	daemon->priv->ac = TRUE;
 	daemon->priv->mpi_flavors = NULL;
+
+	daemon->priv->timeout = -1;
 }
 
 GebrDaemonServer *
@@ -398,4 +403,17 @@ gebr_daemon_server_accepts_mpi(GebrDaemonServer *daemon,
 	g_strfreev(tmp);
 
 	return i != -1;
+}
+
+guint
+gebr_daemon_server_get_timeout(GebrDaemonServer *daemon)
+{
+	return daemon->priv->timeout;
+}
+
+void
+gebr_daemon_server_set_timeout(GebrDaemonServer *daemon,
+                               guint timeout)
+{
+	daemon->priv->timeout = timeout;
 }

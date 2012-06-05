@@ -37,6 +37,7 @@ struct _GebrMaestroControllerPriv {
 	GebrMaestroServer *maestro;
 	GtkBuilder *builder;
 	GtkWidget *servers_view;
+	GtkWidget *spinner;
 
 	GtkListStore *model;
 
@@ -936,6 +937,88 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 	}
 }
 
+typedef struct progressData {
+	GtkCellRenderer *cell;
+	GtkTreeModel *model;
+} ProgressData;
+
+gboolean
+update_spinner(gpointer user_data)
+{
+	ProgressData *data = user_data;
+
+	gint p;
+	g_object_get(data->cell, "pulse", &p, NULL);
+
+	if (p == 12)
+		p = 0;
+	else
+		p++;
+
+	g_object_set(data->cell, "pulse", p, NULL);
+
+	GtkTreeIter iter;
+	GtkTreePath *path;
+
+	gboolean valid = gtk_tree_model_get_iter_first(data->model, &iter);
+	valid = gtk_tree_model_iter_next(data->model, &iter);
+	while (valid) {
+		path = gtk_tree_model_get_path(data->model, &iter);
+		if (path) {
+			gtk_tree_model_row_changed(data->model, path, &iter);
+			gtk_tree_path_free(path);
+		}
+		valid = gtk_tree_model_iter_next(data->model, &iter);
+	}
+
+	return TRUE;
+}
+
+void
+gebr_maestro_controller_daemon_server_progress_func(GtkTreeViewColumn *tree_column,
+                                                    GtkCellRenderer *cell,
+                                                    GtkTreeModel *model,
+                                                    GtkTreeIter *iter,
+                                                    gpointer data)
+{
+	gboolean editable;
+
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get(model, iter,
+	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
+	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
+	                   -1);
+
+	if(editable) {
+		g_object_set(cell, "visible", FALSE, "active", FALSE, NULL);
+		return;
+	}
+
+	if (!daemon)
+		return;
+
+	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
+	guint timeout = gebr_daemon_server_get_timeout(daemon);
+
+	if (state == SERVER_STATE_DISCONNECTED || state == SERVER_STATE_LOGGED) {
+		g_object_set(cell, "visible", FALSE, "active", FALSE, NULL);
+		if (timeout != -1) {
+			g_object_set(cell, "pulse", 0, NULL);
+			if (g_source_remove(timeout))
+				gebr_daemon_server_set_timeout(daemon, -1);
+		}
+	} else {
+		g_object_set(cell, "visible", TRUE, "active", TRUE, NULL);
+		if (timeout == -1) {
+			ProgressData *user_data = g_new(ProgressData, 1);
+			user_data->cell = cell;
+			user_data->model = model;
+			timeout = g_timeout_add(83, (GSourceFunc) update_spinner, user_data);
+			gebr_daemon_server_set_timeout(daemon, timeout);
+		}
+	}
+}
+
 void
 gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column,
                                                   GtkCellRenderer *cell,
@@ -952,7 +1035,7 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 	                   -1);
 
 	if(editable) {
-		g_object_set(cell, "stock-id", NULL, NULL);
+		g_object_set(cell, "visible", FALSE, "stock-id", NULL, NULL);
 		return;
 	}
 
@@ -963,18 +1046,24 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 	const gchar *stock_id = NULL;
 
 	const gchar *error = gebr_daemon_server_get_error(daemon);
+	gboolean visible = TRUE;
 
 	if (!error || !*error)
 	{
 		switch (state) {
-		case SERVER_STATE_UNKNOWN:
 		case SERVER_STATE_DISCONNECTED:
+			visible = TRUE;
+			stock_id = GTK_STOCK_DISCONNECT;
+			break;
+		case SERVER_STATE_UNKNOWN:
 		case SERVER_STATE_CONNECT:
 		case SERVER_STATE_RUN:
 		case SERVER_STATE_OPEN_TUNNEL:
-			stock_id = GTK_STOCK_DISCONNECT;
+			visible = FALSE;
+			stock_id = NULL;
 			break;
 		case SERVER_STATE_LOGGED:
+			visible = TRUE;
 			stock_id = GTK_STOCK_CONNECT;
 			break;
 		default:
@@ -982,10 +1071,15 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 			break;
 		}
 	}
-	else
+	else {
+		if (state != SERVER_STATE_DISCONNECTED)
+			visible = FALSE;
+		else
+			visible = TRUE;
 		stock_id = GTK_STOCK_DIALOG_WARNING;
+	}
 
-	g_object_set(cell, "stock-id", stock_id, NULL);
+	g_object_set(cell, "visible", visible, "stock-id", stock_id, NULL);
 }
 
 static void
@@ -1259,6 +1353,10 @@ on_dialog_response(GtkDialog *dialog,
 {
 	g_object_unref(self->priv->builder);
 	self->priv->builder = NULL;
+	gtk_widget_destroy(self->priv->spinner);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+	gebr_maestro_server_reset_daemons_timeout(maestro);
 }
 
 static void
@@ -1320,6 +1418,15 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	/*
 	 * Maestro combobox
 	 */
+	GtkBox *maestro_box = GTK_BOX(gtk_builder_get_object(self->priv->builder, "maestro_box"));
+
+	/* Create Spinner */
+	self->priv->spinner = gtk_spinner_new();
+	gtk_box_pack_start(maestro_box, self->priv->spinner, FALSE, FALSE, 5);
+	gtk_widget_set_size_request(self->priv->spinner, 22, 22);
+	gtk_box_reorder_child(maestro_box, self->priv->spinner, 0);
+	gtk_widget_show_all(GTK_WIDGET(maestro_box));
+
 	GebrMaestroServer *maestro = self->priv->maestro;
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
@@ -1387,6 +1494,11 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, _("Address"));
 	gtk_tree_view_column_set_min_width(col, 100);
+
+	renderer = gtk_cell_renderer_spinner_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_progress_func,
+	                                        NULL, NULL);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
@@ -1644,35 +1756,37 @@ on_maestro_error(GebrMaestroServer *maestro,
 
 	gchar *message = gebr_maestro_server_translate_error(error_type, error_msg);
 
-	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(mc->priv->builder, 
-									     "combo_maestro"));
-	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
+	GtkImage *status_image = GTK_IMAGE(gtk_builder_get_object(mc->priv->builder, "maestro_status"));
+
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 
 	if (state == SERVER_STATE_DISCONNECTED) {
+		gebr_maestro_server_reset_daemons_timeout(maestro);
+
+		gtk_widget_show(GTK_WIDGET(status_image));
+		gtk_widget_hide(mc->priv->spinner);
+		gtk_spinner_start(GTK_SPINNER(mc->priv->spinner));
+
 		if (!message) {
-			gtk_entry_set_icon_from_stock(entry,
-			                              GTK_ENTRY_ICON_SECONDARY,
-			                              GTK_STOCK_DISCONNECT);
-			gtk_entry_set_icon_tooltip_text(entry,
-			                                GTK_ENTRY_ICON_SECONDARY,
-			                                _("Disconnected"));
+			gtk_image_set_from_stock(status_image, GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
+			gtk_widget_set_tooltip_text(GTK_WIDGET(status_image), _("Disconnected"));
 		} else {
-			gtk_entry_set_icon_from_stock(entry,
-						      GTK_ENTRY_ICON_SECONDARY,
-						      GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_text(entry,
-							GTK_ENTRY_ICON_SECONDARY,
-							message);
+			gtk_image_set_from_stock(status_image, GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
+			gtk_widget_set_tooltip_text(GTK_WIDGET(status_image), message);
 		}
 	} else if (state == SERVER_STATE_LOGGED) {
-		gtk_entry_set_icon_from_stock(entry,
-					      GTK_ENTRY_ICON_SECONDARY,
-					      GTK_STOCK_CONNECT);
-		gtk_entry_set_icon_tooltip_text(entry,
-						GTK_ENTRY_ICON_SECONDARY,
-						_("Connected"));
+		gtk_widget_show(GTK_WIDGET(status_image));
+		gtk_widget_hide(mc->priv->spinner);
+		gtk_spinner_stop(GTK_SPINNER(mc->priv->spinner));
+
+		gtk_image_set_from_stock(status_image, GTK_STOCK_CONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(status_image), _("Connected"));
+	}
+	else {
+		gtk_widget_hide(GTK_WIDGET(status_image));
+		gtk_widget_show(mc->priv->spinner);
+		gtk_widget_set_tooltip_text(mc->priv->spinner, _("Connecting"));
 	}
 
 	if (message)

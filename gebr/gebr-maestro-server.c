@@ -353,12 +353,11 @@ state_changed(GebrCommServer *comm_server,
 	const gchar *error_msg = maestro->priv->error_msg;
 
 	if (state == SERVER_STATE_LOGGED
-	    || state == SERVER_STATE_DISCONNECTED) {
+	    || state == SERVER_STATE_DISCONNECTED)
 		g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
-		g_signal_emit(maestro, signals[MAESTRO_ERROR], 0,
-			      maestro->priv->address, error_type, error_msg);
-	}
 
+	g_signal_emit(maestro, signals[MAESTRO_ERROR], 0,
+		      maestro->priv->address, error_type, error_msg);
 	g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 }
 
@@ -1797,4 +1796,27 @@ gebr_maestro_server_append_key_finished()
 		return;
 
 	gebr_maestro_server_connect_on_daemons(maestro);
+}
+
+void
+gebr_maestro_server_reset_daemons_timeout(GebrMaestroServer *maestro)
+{
+	gboolean valid;
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
+
+	valid = gtk_tree_model_get_iter_first(model, &iter);
+	while (valid) {
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+
+		if (daemon) {
+			guint timeout = gebr_daemon_server_get_timeout(daemon);
+			if (timeout != -1)
+				g_source_remove(timeout);
+			gebr_daemon_server_set_timeout(daemon, -1);
+		}
+
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
 }
