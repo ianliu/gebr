@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 17:46-0300\n"
+"POT-Creation-Date: 2012-06-05 13:36-0300\n"
 "PO-Revision-Date: 2011-11-18 16:09-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -24,13 +24,13 @@ msgstr ""
 #. initiate the marathon to communicate to server
 #: ../comm/gebr-comm-server.c:305
 #, c-format
-msgid "%p: Launching server at '%s'."
-msgstr "%p: Iniciando servidor em '%s'."
+msgid "%p: Launching machine at '%s'."
+msgstr "%p: Iniciando máquina em '%s'."
 
 #: ../comm/gebr-comm-server.c:367
 #, c-format
-msgid "Stopping server at '%s'."
-msgstr "Parando servidor em '%s'."
+msgid "Stopping machine at '%s'."
+msgstr "Parando máquina '%s'."
 
 #. log
 #: ../comm/gebr-comm-server.c:455
@@ -41,22 +41,22 @@ msgstr "Redirecionando saída gráfica de '%s'."
 #: ../comm/gebr-comm-server.c:537
 #, c-format
 msgid ""
-"Server '%s' needs SSH login.\n"
+"Machine '%s' needs SSH login.\n"
 "\n"
 "%s"
 msgstr ""
-"Servidor '%s' precisa de login SSH.\n"
+"Máquina '%s' precisa de login SSH.\n"
 "\n"
 "%s"
 
 #: ../comm/gebr-comm-server.c:540
 #, c-format
 msgid ""
-"Wrong password for server '%s', please try again.\n"
+"Wrong password for machine '%s', please try again.\n"
 "\n"
 "%s"
 msgstr ""
-"Senha incorreta para o servidor '%s', por favor tente novamente.\n"
+"Senha incorreta para a máquina '%s', por favor tente novamente.\n"
 "\n"
 "%s"
 
@@ -92,14 +92,14 @@ msgstr "Erro SSH: %s"
 
 #: ../comm/gebr-comm-server.c:607
 #, c-format
-msgid "Received SSH error for server '%s': %s"
-msgstr "O servidor SSH em '%s' reportou o seguinte erro: %s"
+msgid "Received SSH error for machine '%s': %s"
+msgstr "O máquina '%s' reportou o seguinte erro de SSH: %s"
 
 #. last \n
 #: ../comm/gebr-comm-server.c:613
 #, c-format
-msgid "Received SSH message for server '%s': %s"
-msgstr "Mensagem SSH recebida do servidor '%s': %s"
+msgid "Received SSH message of machine '%s': %s"
+msgstr "Mensagem de SSH recebida da máquina '%s': %s"
 
 #: ../comm/gebr-comm-server.c:624
 #, c-format
@@ -112,17 +112,17 @@ msgstr ""
 
 #: ../comm/gebr-comm-server.c:625
 #, c-format
-msgid "SSH reported the following error for server '%s': %s"
-msgstr "SSH reportou o seguinte erro para o servidor '%s': %s"
+msgid "SSH reported the following error for machine '%s': %s"
+msgstr "SSH reportou o seguinte erro da máquina '%s': %s"
 
 #: ../comm/gebr-comm-server.c:683
-msgid "Could not run server."
-msgstr "Não foi possível executar o servidor."
+msgid "Could not run machine."
+msgstr "Não foi possível executar a máquina."
 
 #: ../comm/gebr-comm-server.c:684 ../comm/gebr-comm-server.c:736
 #, c-format
-msgid "Could not run server '%s'."
-msgstr "Não foi possível executar o servidor '%s'."
+msgid "Could not run machine '%s'."
+msgstr "Não foi possível executar a máquina '%s'."
 
 #: ../comm/gebr-comm-server.c:730
 #, c-format
@@ -135,8 +135,8 @@ msgstr "Servidor"
 
 #: ../comm/gebr-comm-server.c:919
 #, c-format
-msgid "Server '%s' disconnected"
-msgstr "Servidor '%s' desconectado"
+msgid "Machine '%s' disconnected"
+msgstr "Máquina '%s' desconectada"
 
 #: ../comm/socketchannel/socketchannel.c:28 ../geoxml-utils/upgrade.c:48
 #: ../geoxml-utils/validate.c:54
@@ -771,7 +771,7 @@ msgstr "GêBR Core Team"
 
 #: ../gui/gebr-gui-about.c:96
 msgid ""
-"Copyright (C) 2007-2011 GêBR core team (http://www.gebrproject.com/)\n"
+"Copyright (C) 2007-2012 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
 "This program is free software: you can redistribute it and/or modify it "
 "under the terms of the GNU General Public License as published by the Free "
@@ -950,18 +950,23 @@ msgstr ""
 msgid "\\u2205"
 msgstr "\\u2205"
 
-#: ../gui/gebr-gui-utils.c:1208
+#: ../gui/gebr-gui-utils.c:1216
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
 
-#: ../gui/gebr-gui-utils.c:1237
+#: ../gui/gebr-gui-utils.c:1273
 #, c-format
 msgid ""
 "The presented files are from your <b>local machine</b> and may not represent "
-"the files on the <b>servers</b>."
+"the files on the <b>working machines</b>."
 msgstr ""
-"Os arquivos apresentados aqui são de sua <b>máquina local</b> e podem não "
-"representar os arquivos nos <b>servidores</b>."
+"Os arquivos apresentados são de sua <b>máquina local</b> e podem não "
+"representar os arquivos nas <b>máquinas de processamento</b>."
+
+#: ../gui/gebr-gui-utils.c:1424
+msgid "Could not load help. Certify it was installed correctly."
+msgstr ""
+"Não foi possível carregar a Ajuda. Certifique-se de que ele está instalado."
 
 #: ../utils.c:767
 msgid "A moment"

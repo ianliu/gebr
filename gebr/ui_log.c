@@ -113,7 +113,7 @@ struct ui_log *log_setup_ui(void)
 	gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));
 
 	gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_set_tooltip_text(ui_log->remote_browse, "Remote browsing disabled");
+	gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
 
 	/*
 	 * Pack Maestro / Remote Browse with Log
@@ -213,7 +213,7 @@ on_maestro_error(GebrMaestroServer *maestro,
 		g_free(text);
 
 		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
-		gtk_widget_set_tooltip_text(ui_log->remote_browse, "Remote browsing disabled");
+		gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
 	}
 }
 
@@ -227,7 +227,7 @@ on_state_change(GebrMaestroServer *maestro,
 			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Connected"));
 		} else {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
-			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Maestro without connected servers"));
+			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Maestro without connected working machines"));
 		}
 
 		const gchar *addr = gebr_maestro_server_get_address(maestro);
@@ -240,12 +240,12 @@ on_state_change(GebrMaestroServer *maestro,
 		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 		if (prefix) {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-ok", GTK_ICON_SIZE_BUTTON);
-			gtk_widget_set_tooltip_text(ui_log->remote_browse, "Remote browsing enabled");
+			gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing enabled"));
 
 			g_free(prefix);
 		} else {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
-			gtk_widget_set_tooltip_text(ui_log->remote_browse, "Remote browsing disabled");
+			gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
 		}
 	} else {
 		const gchar *error_msg;

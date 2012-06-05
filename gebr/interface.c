@@ -161,9 +161,9 @@ static const GtkActionEntry actions_entries_job_control[] = {
 	{"job_control_close", "trash-empty", N_("Close"),
 		"Delete", N_("Clear selected Jobs"), G_CALLBACK(on_job_control_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
-		NULL, N_("Ask server to cancel the selected Job"), G_CALLBACK(on_job_control_stop)},
+		NULL, N_("Ask working machine to cancel the selected Job"), G_CALLBACK(on_job_control_stop)},
 	{"job_control_filter", "filter", N_("Filter"),
-		NULL, N_("Filter jobs by server group, server and status"), NULL},
+		NULL, N_("Filter jobs by working machines group, working machine and status"), NULL},
 };
 
 static const GtkActionEntry status_action_entries[] = {

@@ -407,7 +407,7 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
 			tooltip_disconn = _("The Maestro of this line is disconnected.\nConnecting it to execute a flow.");
 		else if (maestro && !gebr_maestro_server_has_servers(maestro, TRUE))
-			tooltip_disconn = _("There is no servers connected to this line.\nConnecting at least one to execute a flow.");
+			tooltip_disconn = _("There is no working machines connected to this line.\nConnecting at least one to execute a flow.");
 		else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
 			tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
 		else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)

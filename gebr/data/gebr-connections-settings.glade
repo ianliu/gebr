@@ -424,9 +424,9 @@ Your login password may be asked to stablish the connection.</property>
         <child>
           <object class="GtkLabel" id="maestro_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is in between the G&#xEA;BR and the working machines. It receives all requests for flow execution and dispatches them to groups of servers.
+            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is in between the G&#xEA;BR and the working machines. It receives all requests for flow execution and dispatches them to groups of working machines.
 
-Without interference, Maestro collects information about the state of each working machine and ranks them according to their capabilities and available resources at time. Therefore, Maestro can take smart decisions about which servers are best suited to run a processing flow.</property>
+Without interference, Maestro collects information about the state of each working machine and ranks them according to their capabilities and available resources at time. Therefore, Maestro can take smart decisions about which working machines are best suited to run a processing flow.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -760,7 +760,7 @@ Without interference, Maestro collects information about the state of each worki
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="ypad">10</property>
-                <property name="label" translatable="yes">In this version, G&#xEA;BR introduces new features that will speed up your processing flows, like automatic selection of the fastest server available and split of processing job among servers.
+                <property name="label" translatable="yes">In this version, G&#xEA;BR introduces new features that will speed up your processing flows, like automatic selection of the fastest working machine available and split of processing job among working machines.
 
 These is possible due to a new player, called Maestro.
 
@@ -921,7 +921,7 @@ Your login credentials may be asked to be able to browse the remote file system.
         <property name="xpad">10</property>
         <property name="label" translatable="yes">&lt;i&gt;A Maestro without working machines is like a general without soldiers.&lt;/i&gt;
 
-&lt;i&gt;Working machines&lt;/i&gt; are the ones that actually execute the processing flows. They put their computational power at disposal of the Maestro, which coordinates them to cooperate to conclude processing jobs faster.</property>
+&lt;i&gt;Working machines&lt;/i&gt; are the ones who actually execute the processing flows. They put their computational power at disposal of the Maestro, which coordinates them to cooperate to conclude processing jobs faster.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>

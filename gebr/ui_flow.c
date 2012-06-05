@@ -221,10 +221,10 @@ run_flow(GebrGeoXmlFlow *flow,
 		gchar *msg = NULL;
 		switch (type) {
 		case MAESTRO_SERVER_TYPE_GROUP:
-			msg = g_strdup_printf(_("There are no connected servers on group %s."), name);
+			msg = g_strdup_printf(_("There are no connected working machines on group %s."), name);
 			break;
 		case MAESTRO_SERVER_TYPE_DAEMON:
-			msg = g_strdup_printf(_("The selected server (%s) is not connected."), name);
+			msg = g_strdup_printf(_("The selected working machine (%s) is not connected."), name);
 			break;
 		default:
 			msg = g_strdup("");

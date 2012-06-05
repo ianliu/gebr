@@ -429,7 +429,7 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 	gtk_list_store_append(new_model, &new_iter);
 	gtk_list_store_set(new_model, &new_iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
-	                   MAESTRO_CONTROLLER_ADDR, _("Drop servers to increment this group!"),
+	                   MAESTRO_CONTROLLER_ADDR, _("Drop working machines here to increment this group!"),
 	                   -1);
 
 	return GTK_TREE_MODEL(new_model);
@@ -1203,9 +1203,9 @@ server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		gtk_tree_model_get(GTK_TREE_MODEL(self->priv->model), iter, MAESTRO_CONTROLLER_AUTOCONN, &autoconnect, -1);
 
 		if (autoconnect)
-			gtk_tooltip_set_text(tooltip, _("Connect server when GêBR starts"));
+			gtk_tooltip_set_text(tooltip, _("Connect to this working machine when GêBR starts"));
 		else
-			gtk_tooltip_set_text(tooltip, _("Do not connect server when GêBR starts"));
+			gtk_tooltip_set_text(tooltip, _("Do not connect to this working machine when GêBR starts"));
 
 		return TRUE;
 	}
@@ -1603,13 +1603,13 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 	}
 
 	if (g_strcmp0(type, "disconnect") == 0)
-		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
 			 "Do you really want to disconnect it and cancel these jobs?</span>");
 	else if (g_strcmp0(type, "remove") == 0)
-		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
 			 "Do you really want to remove it and cancel these jobs?</span>");
 	else if (g_strcmp0(type, "stop") == 0)
-		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
 			 "Do you really want to stop it and cancel these jobs?</span>");
 
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -1695,7 +1695,7 @@ on_daemon_error(GebrMaestroServer *maestro,
 	if (!*error_type) {
 		message = NULL;
 	} else if (g_strcmp0(error_type, "error:nfs") == 0) {
-		message = _("This server has a different NFS");
+		message = _("This working machine has a different NFS");
 	} else if (g_strcmp0(error_type, "error:id") == 0) {
 		message = _("Working machine already added");
 		second = g_strdup_printf(_("The working machine %s was already added in"
