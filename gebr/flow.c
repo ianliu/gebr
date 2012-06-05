@@ -681,8 +681,11 @@ void flow_program_remove(void)
 	flow_program_check_sensitiveness();
 	flow_edition_set_io();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+
 	gebr_flow_set_toolbar_sensitive();
-	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
+	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
+
 	if (valid)
 		flow_edition_select_component_iter(&iter);
 }
