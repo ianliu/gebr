@@ -218,22 +218,35 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_geoxml_document_unref(clone);
 
 	if (!has_connected_server(maestro, type, name)) {
+		gchar *new_name;
 		gchar *msg = NULL;
 		switch (type) {
 		case MAESTRO_SERVER_TYPE_GROUP:
-			msg = g_strdup_printf(_("There are no connected working machines on group %s."), name);
+			if (!strlen(name))
+				new_name = g_strdup_printf("Maestro %s", gebr_maestro_server_get_address(maestro));
+			else
+				new_name = g_strdup(name);
+
+			msg = g_markup_printf_escaped(_("<span size='large' weight='bold'>Execution error</span>\n\n"
+							"There are no connected working machines on group <b>%s</b>."), new_name);
+			g_free(new_name);
 			break;
 		case MAESTRO_SERVER_TYPE_DAEMON:
-			msg = g_strdup_printf(_("The selected working machine (%s) is not connected."), name);
+			msg = g_markup_printf_escaped(_("<span size='large' weight='bold'>Execution error</span>\n\n"
+							"The selected working machine (<b>%s</b>) is not connected."), name);
 			break;
 		default:
 			msg = g_strdup("");
+			break;
 		}
 
 		GtkWidget *dialog  = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window),
 									GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-		                                                        "<span size='large' weight='bold'>%s</span>", msg);
+		                                                        NULL);
+
+		gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
+
 		g_free(msg);
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_destroy(dialog);

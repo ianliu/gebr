@@ -902,7 +902,6 @@ on_daemons_changed(GebrMaestroServer *maestro,
                    GebrMaestroController *mc)
 {
 	gebr_maestro_controller_update_daemon_model(maestro, mc);
-	gebr_flow_set_toolbar_sensitive();
 
 	g_signal_emit(mc, signals[DAEMONS_CHANGED], 0);
 
