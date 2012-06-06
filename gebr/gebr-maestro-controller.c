@@ -1393,7 +1393,7 @@ on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
 	const gchar *section = "additional_features_maestro_servers_configuration";
 	gchar *error;
 
-	on_help_button_clicked (section, &error);
+	gebr_gui_help_button_clicked(section, &error);
 
 	if (error) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);

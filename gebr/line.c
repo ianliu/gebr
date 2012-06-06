@@ -329,7 +329,7 @@ on_paths_button_clicked (GtkButton *button, gpointer pointer)
 	const gchar *section = "projects_lines_line_paths";
 	gchar *error;
 
-	on_help_button_clicked (section, &error);
+	gebr_gui_help_button_clicked(section, &error);
 
 	if (error) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);

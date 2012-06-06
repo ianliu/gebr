@@ -55,6 +55,8 @@
 //==============================================================================
 static void on_save_activate(GtkAction * action, GebrGuiHelpEditWidget * self);
 
+static void on_help_clicked(GtkAction * action, GebrGuiHtmlViewerWindow * self);
+
 static GtkWidget * create_help_edit_window(GebrGeoXmlDocument * document);
 
 static void on_help_edit_window_destroy(GtkWidget * widget, gpointer user_data);
@@ -75,10 +77,20 @@ static const GtkActionEntry action_entries[] = {
 };
 static guint n_action_entries = G_N_ELEMENTS(action_entries);
 
+static const GtkActionEntry help_editor_entries[] = {
+	{"EditorHelpMenu", NULL, N_("_Help")},
+	{"EditorHelpAction", GTK_STOCK_HELP, NULL, NULL,
+		N_("GêBR Guide"), G_CALLBACK(on_help_clicked)},
+};
+static guint n_help_editor_entries = G_N_ELEMENTS(help_editor_entries);
+
 static const GtkActionEntry html_viewer_entries[] = {
 	{"OptionsMenu", NULL, N_("_Options")},
 	{"ParameterTableMenu", NULL, N_("Parameter table")},
 	{"StyleMenu", NULL, N_("_Style")},
+	{"ViewerHelpMenu", NULL, N_("_Help")},
+	{"ViewerHelpAction", GTK_STOCK_HELP, NULL, NULL,
+		N_("GêBR Guide"), G_CALLBACK(on_help_clicked)},
 
 };
 static guint n_html_viewer_entries = G_N_ELEMENTS (html_viewer_entries);
@@ -121,12 +133,23 @@ static const gchar *html_viewer_ui_def =
 "    <menuitem action='StyleNoneAction' />"
 "   </menu>"
 "  </menu>"
+"  <menu action='ViewerHelpMenu'>"
+"   <menuitem action='ViewerHelpAction' />"
+"  </menu>"
 " </menubar>"
 "</ui>";
 
 //==============================================================================
 // PRIVATE METHODS 							       =
 //==============================================================================
+static void on_help_clicked(GtkAction *action, GebrGuiHtmlViewerWindow * self)
+{
+	if (g_strcmp0(gtk_action_get_name(action), "EditorHelpAction") == 0)
+		gebr_gui_help_button_clicked("projects_lines_edit_comments_project", NULL);
+	else
+		gebr_gui_help_button_clicked("projects_lines_view_report_project", NULL);
+}
+
 static GtkWidget *
 create_help_edit_window(GebrGeoXmlDocument * document)
 {
@@ -151,10 +174,8 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 	window = gebr_gui_help_edit_window_new(help_edit_widget);
 	help_edit_window = GEBR_GUI_HELP_EDIT_WINDOW(window);
 
-
 	g_signal_connect(window, "destroy",
 			 G_CALLBACK(on_help_edit_window_destroy), document);
-
 
 	void 
 	free_help(GtkWidget * widget,
@@ -203,7 +224,31 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 	gtk_ui_manager_add_ui(ui_manager, merge_id, filemenu,
 			      "SaveAction", "SaveAction", GTK_UI_MANAGER_MENUITEM, TRUE);
 	g_object_unref(action_group);
+
+	// Add Help
+	action_group = gtk_action_group_new("GebrHelpMenu");
+	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(action_group, help_editor_entries, n_help_editor_entries, widget);
+
+	ui_manager = gebr_gui_help_edit_window_get_ui_manager(help_edit_window);
+	merge_id = gtk_ui_manager_new_merge_id(ui_manager);
+
+	filemenu = gebr_gui_help_edit_window_get_menu_bar_path(help_edit_window);
+	gchar *help_menu;
+	help_menu = g_strconcat(gebr_gui_help_edit_window_get_menu_bar_path(help_edit_window), "/EditorHelpMenu", NULL);
+
+	gtk_ui_manager_insert_action_group(ui_manager, action_group, merge_id);
+
+	gtk_ui_manager_add_ui(ui_manager, merge_id, filemenu,
+			      "EditorHelpMenu", "EditorHelpMenu", GTK_UI_MANAGER_MENU, FALSE);
+	gtk_ui_manager_add_ui(ui_manager, merge_id, help_menu,
+			      "EditorHelpAction", "EditorHelpAction", GTK_UI_MANAGER_MENUITEM, FALSE);
+
+	g_object_unref(action_group);
+	g_free(help_menu);
+
 	gtk_window_set_default_size(GTK_WINDOW(window), 400, 500);
+
 
 	return window;
 }

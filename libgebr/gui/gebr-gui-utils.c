@@ -1236,7 +1236,7 @@ on_filechooser_help_button_clicked (GtkButton *button, gpointer pointer)
 	const gchar *section = "remote_browsing";
 	gchar *error;
 
-	on_help_button_clicked (section, &error);
+	gebr_gui_help_button_clicked(section, &error);
 
 	if (error) {//FIXME
 		//gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
@@ -1405,10 +1405,11 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 }
 
 void
-on_help_button_clicked(const gchar *section, gchar **error)
+gebr_gui_help_button_clicked(const gchar *section, gchar **error)
 {
 	gchar *loc;
 	gchar *path;
+	gchar *local_error;
 
 	loc = setlocale(LC_MESSAGES, NULL);
 	if (g_str_has_prefix (loc, "pt"))
@@ -1421,10 +1422,15 @@ on_help_button_clicked(const gchar *section, gchar **error)
 	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
 		gtk_show_uri(NULL, "http://www.gebrproject.com", 
 			     GDK_CURRENT_TIME, NULL);
-		*error = g_strdup ( _("Could not load help. "
+		local_error = g_strdup ( _("Could not load help. "
 				"Certify it was installed correctly."));
 	} else {
-		*error = NULL;
+		local_error = NULL;
 	}
+	if (error)
+		*error = local_error;
+	else
+		g_free(local_error);
+
 	g_free(path);
 }
