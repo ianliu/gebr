@@ -111,6 +111,12 @@ void gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_
                                                         GtkTreeIter *iter,
                                                         gpointer data);
 
+void gebr_maestro_controller_daemon_server_progress_func(GtkTreeViewColumn *tree_column,
+                                                         GtkCellRenderer *cell,
+                                                         GtkTreeModel *model,
+                                                         GtkTreeIter *iter,
+                                                         gpointer data);
+
 void gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column,
                                                        GtkCellRenderer *cell,
                                                        GtkTreeModel *model,
