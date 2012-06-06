@@ -178,9 +178,7 @@
     <para>Through GêBR, it is possible to take advantage of as many
       machines as the user has access, to run processing flows. Those
       machines are referenced as <emphasis role="bold">working
-      machines</emphasis> (or sometimes,
-      as <emphasis>servers</emphasis><indexterm><primary>Server
-	</primary><see>Working machines</see></indexterm>). They may
+      machines</emphasis> . They may
       be local, meaning the user is physically using them, or remote,
       meaning the user has access to them through the network. No
       matter where the machines are, they are equally treated by GêBR,
@@ -199,7 +197,7 @@
       run the job.</para>
 
     <figure xml:id="communication_diagram">
-      <title>Communitation layout between GêBR players</title>
+      <title>Communication layout between GêBR players</title>
       <mediaobject>
 	<imageobject>
           <imagedata fileref="../images/gebr-connections.png" />
@@ -280,8 +278,8 @@
               guided setup of the main connections performed by GêBR;
             </listitem>
             <listitem>
-              <guilabel>Maestro/Servers</guilabel>: Configuration of
-              Maestro, Servers and Groups of servers;
+              <guilabel>Maestro/Working Machines</guilabel>: Configuration of
+              Maestro, working machines and Groups of working machines;
             </listitem>
             <listitem>
               <guilabel>Quit</guilabel>: quit GêBR.

@@ -322,7 +322,7 @@
   <important>
     <para>When a Line is migrated from one Maestro to another, all
     data in the BASE<indexterm><primary>BASE</primary></indexterm>
-    directory and in its children will remain in the working servers of
+    directory and in its children will remain in the working machines of
     the original Maestro.
     </para>
   </important>

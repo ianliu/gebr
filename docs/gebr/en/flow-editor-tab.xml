@@ -499,8 +499,8 @@
         A</emphasis>".</para>
 
     <para>By default, the Flows are executed on the Maestro group.
-      More details about the definition and selection of servers and
-      groups of servers can be found in
+      More details about the definition and selection of working machines and
+      groups of working machines can be found in
       <xref linkend="additional_features_maestro_servers_configuration"/>.</para>
 
     <para>In the <guilabel>Flow Editor</guilabel> tab, even if the user
@@ -590,7 +590,7 @@
   <section xml:id="flow_editor_multiple_machines">
     <title>Multiple machines</title>
     <para>If GêBR is connected to multiple machines through the
-      <guilabel>Servers Configuration</guilabel> interface, and the
+			<guilabel>Maestro/Workers Configuration</guilabel> interface, and the
       selected Flow is
       parallelizable<indexterm><primary>Flow</primary><secondary>parallelizable</secondary></indexterm>
       (see below the criteria to be parallelizable), then you have the
