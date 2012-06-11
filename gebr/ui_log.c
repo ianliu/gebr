@@ -99,15 +99,8 @@ struct ui_log *log_setup_ui(void)
 	ui_log->maestro_icon = gtk_image_new();
 	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->maestro_icon, FALSE, FALSE, 5);
 
-	ui_log->maestro_label = gtk_label_new(_("No maestro connected."));
-	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->maestro_label, FALSE, FALSE, 5);
-
 	ui_log->remote_browse = gtk_image_new();
 	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->remote_browse, FALSE, FALSE, 5);
-
-	gchar *text = g_markup_printf_escaped("<b>No maestro</b>");
-	gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
-	g_free(text);
 
 	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_BUTTON);
 	gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));
@@ -205,15 +198,18 @@ on_maestro_error(GebrMaestroServer *maestro,
 		struct ui_log *ui_log)
 {
 	if (g_strcmp0(error_type, "error:none") != 0) {
-		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
-		gtk_widget_set_tooltip_text(ui_log->maestro_icon, error_msg);
+		gchar *msg = g_strdup(error_msg);
 
-		gchar *text = g_markup_printf_escaped("<b>Maestro %s</b>", addr);
-		gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
+		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
+
+		gchar *text = g_strdup_printf(_("Error on %s:\n%s"),addr, g_strstrip(msg));
+		gtk_widget_set_tooltip_text(ui_log->maestro_icon, text);
 		g_free(text);
 
 		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
 		gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
+
+		g_free(msg);
 	}
 }
 
@@ -221,21 +217,21 @@ static void
 on_state_change(GebrMaestroServer *maestro,
                 struct ui_log *ui_log)
 {
+	const gchar *addr = gebr_maestro_server_get_address(maestro);
+
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		if (gebr_maestro_server_has_servers(maestro, TRUE)) {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_CONNECT, GTK_ICON_SIZE_BUTTON);
-			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Connected"));
+
+			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> connected"), addr);
+			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+			g_free(text);
 		} else {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
-			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Maestro without connected working machines"));
+			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> without connected working machines"), addr);
+			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+			g_free(text);
 		}
-
-		const gchar *addr = gebr_maestro_server_get_address(maestro);
-
-		gchar *text = g_markup_printf_escaped("<b>Maestro %s</b>", addr);
-		gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
-
-		g_free(text);
 
 		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 		if (prefix) {
@@ -252,11 +248,19 @@ on_state_change(GebrMaestroServer *maestro,
 		const gchar *error_type;
 		gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
 		if (g_strcmp0(error_type, "error:none") != 0) {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
-			gtk_widget_set_tooltip_text(ui_log->maestro_icon, error_msg);
+			gchar *msg = g_strdup(error_msg);
+
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
+			gchar *text = g_markup_printf_escaped(_("Error on <b>%s</b>:\n%s"),addr, g_strstrip(msg));
+			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+
+			g_free(text);
+			g_free(msg);
 		} else {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_BUTTON);
-			gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));
+			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> disconnected"), addr);
+			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+			g_free(text);
 		}
 	}
 }
