@@ -102,10 +102,10 @@ struct ui_log *log_setup_ui(void)
 	ui_log->remote_browse = gtk_image_new();
 	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->remote_browse, FALSE, FALSE, 5);
 
-	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_BUTTON);
+	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));
 
-	gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
+	gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
 
 	/*
@@ -200,13 +200,13 @@ on_maestro_error(GebrMaestroServer *maestro,
 	if (g_strcmp0(error_type, "error:none") != 0) {
 		gchar *msg = g_strdup(error_msg);
 
-		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
+		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
 		gchar *text = g_strdup_printf(_("Error on %s:\n%s"),addr, g_strstrip(msg));
 		gtk_widget_set_tooltip_text(ui_log->maestro_icon, text);
 		g_free(text);
 
-		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
+		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
 
 		g_free(msg);
@@ -221,13 +221,13 @@ on_state_change(GebrMaestroServer *maestro,
 
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		if (gebr_maestro_server_has_servers(maestro, TRUE)) {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_CONNECT, GTK_ICON_SIZE_BUTTON);
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_CONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
 			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> connected"), addr);
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
 			g_free(text);
 		} else {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_BUTTON);
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
 			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> without connected working machines"), addr);
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
 			g_free(text);
@@ -235,12 +235,12 @@ on_state_change(GebrMaestroServer *maestro,
 
 		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 		if (prefix) {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-ok", GTK_ICON_SIZE_BUTTON);
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-ok", GTK_ICON_SIZE_LARGE_TOOLBAR);
 			gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing enabled"));
 
 			g_free(prefix);
 		} else {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_BUTTON);
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
 			gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
 		}
 	} else {
@@ -250,14 +250,14 @@ on_state_change(GebrMaestroServer *maestro,
 		if (g_strcmp0(error_type, "error:none") != 0) {
 			gchar *msg = g_strdup(error_msg);
 
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
 			gchar *text = g_markup_printf_escaped(_("Error on <b>%s</b>:\n%s"),addr, g_strstrip(msg));
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
 
 			g_free(text);
 			g_free(msg);
 		} else {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_BUTTON);
+			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
 			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> disconnected"), addr);
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
 			g_free(text);
