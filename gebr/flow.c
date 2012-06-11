@@ -506,7 +506,7 @@ gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), &xml, NULL, NULL);
 		GebrGeoXmlFlow *rev;
 		if (gebr_geoxml_document_load_buffer((GebrGeoXmlDocument **)&rev, xml) == GEBR_GEOXML_RETV_SUCCESS) {
-			gebr_flow_modify_paths(rev, func, set_programs_unconfigured, NULL);
+			gebr_flow_modify_paths(rev, func, set_programs_unconfigured, data);
 			g_free(xml);
 			gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(rev), &xml);
 			gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(revision), xml, NULL, NULL);
