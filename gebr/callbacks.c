@@ -413,9 +413,7 @@ void on_configure_wizard_activate(void)
 
 void on_configure_servers_activate(void)
 {
-	GtkDialog *dialog = gebr_maestro_controller_create_dialog(gebr.maestro_controller);
-	gtk_dialog_run(dialog);
-	gtk_widget_destroy(GTK_WIDGET(dialog));
+	gebr_maestro_controller_create_dialog(gebr.maestro_controller);
 }
 
 void on_help_contents_activate(void)

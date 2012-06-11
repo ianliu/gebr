@@ -1360,12 +1360,28 @@ on_dialog_response(GtkDialog *dialog,
                    gint response,
                    GebrMaestroController *self)
 {
-	g_object_unref(self->priv->builder);
-	self->priv->builder = NULL;
-	gtk_widget_destroy(self->priv->spinner);
+	if (response == GTK_RESPONSE_CLOSE) {
+		g_object_unref(self->priv->builder);
+		self->priv->builder = NULL;
+		gtk_widget_destroy(self->priv->spinner);
 
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
-	gebr_maestro_server_reset_daemons_timeout(maestro);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+		gebr_maestro_server_reset_daemons_timeout(maestro);
+
+		gtk_widget_destroy(GTK_WIDGET(dialog));
+	}
+	else if (response == GTK_RESPONSE_HELP) {
+		const gchar *section = "additional_features_maestro_servers_configuration";
+		gchar *error;
+
+		gebr_gui_help_button_clicked(section, &error);
+
+		if (error) {
+			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+			g_free(error);
+		}
+		return;
+	}
 }
 
 static void
@@ -1397,21 +1413,7 @@ on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 	gebr_maestro_server_set_autoconnect(mc->priv->maestro, daemon, !ac);
 }
 
-static void
-on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
-{
-	const gchar *section = "additional_features_maestro_servers_configuration";
-	gchar *error;
-
-	gebr_gui_help_button_clicked(section, &error);
-
-	if (error) {
-		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
-		g_free(error);
-	}
-}
-
-GtkDialog *
+void
 gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 {
 	self->priv->builder = gtk_builder_new();
@@ -1442,9 +1444,6 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_entry_set_text(entry, gebr_maestro_server_get_address(maestro));
 	g_signal_connect(entry, "activate", G_CALLBACK(connect_to_maestro), self);
 
-	GtkWidget *maestro_help_button = GTK_WIDGET(gtk_builder_get_object(self->priv->builder, "maestro_help_button"));
-	g_signal_connect(GTK_BUTTON(maestro_help_button), "clicked", G_CALLBACK(on_maestro_info_button_clicked), NULL);
-
 	const gchar *error_type, *error_msg;
 	gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
 	on_maestro_error(maestro, gebr_maestro_server_get_address(maestro),
@@ -1453,9 +1452,6 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	GtkButton *connect_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_connect"));
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_to_maestro_clicked), self);
-
-	//GtkButton *stop_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_stop"));
-	//g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_to_maestro_clicked), self);
 
 	/*
 	 * Servers treeview
@@ -1557,6 +1553,9 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
 	gtk_window_set_title(GTK_WINDOW(dialog), _("GêBR - Maestro / Workers"));
+
+	gtk_dialog_add_button(dialog, _("Help"), GTK_RESPONSE_HELP);
+
 	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), self);
 	g_signal_connect(dialog, "destroy", G_CALLBACK(on_dialog_destroy), self);
 
@@ -1565,7 +1564,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkWidget *btn_close = GTK_WIDGET(gtk_builder_get_object(self->priv->builder, "btn_close"));
 	gtk_widget_grab_focus(btn_close);
 
-	return dialog;
+	gtk_dialog_run(dialog);
 }
 
 static void
