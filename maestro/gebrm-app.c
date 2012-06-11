@@ -178,6 +178,7 @@ send_server_status_message(GebrmApp *app,
 
 	gchar *ncores = g_strdup_printf("%d", gebrm_daemon_get_ncores(daemon));
 	gchar *clock = g_strdup_printf("%lf", gebrm_daemon_get_clock(daemon));
+	const gchar *memory = gebrm_daemon_get_memory(daemon);
 
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.ssta_def, 8,
@@ -186,9 +187,9 @@ send_server_status_message(GebrmApp *app,
 					      state,
 					      ac,
 					      ncores,
-					      clock,
+					      g_strtod(clock, NULL) > 0? clock : "",
 					      gebrm_daemon_get_model_name(daemon),
-					      gebrm_daemon_get_memory(daemon));
+					      g_strtod(memory, NULL) > 0? memory : "");
 
 	gebrm_daemon_send_error_message(daemon, socket);
 

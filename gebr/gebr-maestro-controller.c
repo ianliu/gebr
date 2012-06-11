@@ -1154,9 +1154,14 @@ daemon_server_cpu_clock_func(GtkTreeViewColumn *tree_column,
 	}
 
 	gchar *cpu_clock;
-	gdouble clock = atof(gebr_daemon_server_get_cpu_clock(daemon))/1000;
+	const gchar *clock_str = gebr_daemon_server_get_cpu_clock(daemon);
 
-	cpu_clock = g_strdup_printf("%.1lf GHz", clock);
+	if (strlen(clock_str) > 0) {
+		gdouble clock = atof(clock_str)/1000;
+		cpu_clock = g_strdup_printf("%.1lf GHz", clock);
+	} else {
+		cpu_clock = g_strdup("");
+	}
 
 	g_object_set(cell, "text", cpu_clock, NULL);
 
@@ -1184,9 +1189,14 @@ daemon_server_memory_func(GtkTreeViewColumn *tree_column,
 	}
 
 	gchar *memory;
-	gdouble mem = g_strtod(gebr_daemon_server_get_memory(daemon), NULL)/1000/1000;
+	const gchar *mem_str = gebr_daemon_server_get_memory(daemon);
 
-	memory = g_strdup_printf("%.1lf GB", mem);
+	if (strlen(mem_str) > 0) {
+		gdouble mem = g_strtod(mem_str, NULL)/1000/1000;
+		memory = g_strdup_printf("%.1lf GB", mem);
+	} else {
+		memory = g_strdup("");
+	}
 
 	g_object_set(cell, "text", memory, NULL);
 
