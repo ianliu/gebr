@@ -1147,7 +1147,7 @@ preferences_setup_ui(gboolean first_run,
                                                                       "It receives all requests for flow execution and dispatches them "
                                                                       "to groups of working machines .\n\n"
                                                                       "Without interference, Maestro collects information about the "
-                                                                      "state of each working machines and ranks them according to their "
+                                                                      "state of each working machine and ranks them according to their "
                                                                       "capabilities and available resources at time. Therefore, Maestro "
                                                                       "can take smart decisions about which working machines are best suited to "
                                                                       "run a processing flow."));

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-05 13:36-0300\n"
+"POT-Creation-Date: 2012-06-11 10:01-0300\n"
 "PO-Revision-Date: 2011-11-18 16:09-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -906,20 +906,20 @@ msgstr ""
 msgid "All"
 msgstr "Todos"
 
-#: ../gui/gebr-gui-parameter.c:943
+#: ../gui/gebr-gui-parameter.c:945
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../gui/gebr-gui-parameter.c:1088
+#: ../gui/gebr-gui-parameter.c:1090
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-parameter.c:1771
+#: ../gui/gebr-gui-parameter.c:1773
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-parameter.c:1773
+#: ../gui/gebr-gui-parameter.c:1775
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
@@ -963,7 +963,7 @@ msgstr ""
 "Os arquivos apresentados são de sua <b>máquina local</b> e podem não "
 "representar os arquivos nas <b>máquinas de processamento</b>."
 
-#: ../gui/gebr-gui-utils.c:1424
+#: ../gui/gebr-gui-utils.c:1425
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se de que ele está instalado."
