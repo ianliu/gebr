@@ -1360,10 +1360,10 @@ on_dialog_response(GtkDialog *dialog,
                    gint response,
                    GebrMaestroController *self)
 {
-	if (response == GTK_RESPONSE_CLOSE) {
+	if (response == GTK_RESPONSE_CLOSE ||
+	    response == GTK_RESPONSE_DELETE_EVENT) {
 		g_object_unref(self->priv->builder);
 		self->priv->builder = NULL;
-		gtk_widget_destroy(self->priv->spinner);
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
 		gebr_maestro_server_reset_daemons_timeout(maestro);

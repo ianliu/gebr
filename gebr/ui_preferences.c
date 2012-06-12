@@ -1182,11 +1182,6 @@ preferences_setup_ui(gboolean first_run,
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);
 
-		GtkWidget *help_preferences_box = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "help_preferences_box"));
-		GtkWidget *help_preferences_dummy_box = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "help_preferences_dummy_box"));
-		gtk_widget_hide(help_preferences_box);
-		gtk_widget_hide(help_preferences_dummy_box);
-
 		if (!first_run && wizard_run && !insert_preferences) {
 			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
 			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
