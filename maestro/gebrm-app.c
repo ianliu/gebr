@@ -179,6 +179,8 @@ send_server_status_message(GebrmApp *app,
 	gchar *ncores = g_strdup_printf("%d", gebrm_daemon_get_ncores(daemon));
 	gchar *clock = g_strdup_printf("%lf", gebrm_daemon_get_clock(daemon));
 	const gchar *memory = gebrm_daemon_get_memory(daemon);
+	if (!memory)
+		memory = "0";
 
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.ssta_def, 8,
@@ -1903,7 +1905,7 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	}
 
 	/* success, send port */
-	gchar *port_str = g_strdup_printf("%u\n", port);
+	gchar *port_str = g_strdup_printf(GEBR_PORT_PREFIX "%u\n", port);
 
 	if (write(fd, port_str, strlen(port_str)) == -1)
 		exit(-1);

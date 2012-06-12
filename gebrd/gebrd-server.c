@@ -84,10 +84,11 @@ static gboolean server_run_lock(gboolean *already_running)
 				gebrd_message(GEBR_LOG_ERROR,
 				              _("Cannot run interactive server, GêBR daemon is already running"));
 			} else {
-				gchar buffer[100];
-				snprintf(buffer, sizeof(buffer), "%d\n", port);
-				if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
+				gchar *buffer;
+				buffer = g_strdup_printf(GEBR_PORT_PREFIX "%d\n", port);
+				if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)) < 0)
 					g_warning("Failed to write in file with error code %d", errno);
+				g_free(buffer);
 			}
 
 			*already_running = TRUE;
@@ -216,13 +217,14 @@ gboolean server_init(void)
 	/* success, send port */
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
 		      gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
-	gchar buffer[100];
-	snprintf(buffer, sizeof(buffer), "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
-	if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)+1) <= 0) {
+	gchar *buffer;
+	buffer = g_strdup_printf(GEBR_PORT_PREFIX "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
+	if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)) <= 0) {
+		g_free(buffer);
 		g_warning("%s:%d: Failed to write in file with error code %d", __FILE__, __LINE__, errno);
 		goto err;
 	}
-
+	g_free(buffer);
 	return TRUE;
 err:	
 	gebrd_message(GEBR_LOG_ERROR, _("Could not init server. Quiting..."));

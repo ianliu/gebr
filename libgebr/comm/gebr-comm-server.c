@@ -511,6 +511,12 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 	if (output->len <= 2)
 		return TRUE;
 
+	gchar *start = g_strrstr(output->str, GEBR_PORT_PREFIX);
+	if (start) {
+		g_string_erase(output, 0, start - output->str + strlen(GEBR_PORT_PREFIX));
+		return FALSE;
+	}
+
 	if (output->str[output->len - 2] == ':') {
 		GString *string;
 		GString *password;
@@ -626,8 +632,6 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 						     server->address->str, output->str);
 			return TRUE;
 		}
-
-		return FALSE;
 	}
 
 out:	return TRUE;
