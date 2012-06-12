@@ -139,7 +139,7 @@ insert_new_entry(GebrMaestroController *mc)
 	gtk_list_store_prepend(mc->priv->model, &iter);
 	gtk_list_store_set(mc->priv->model, &iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
-	                   MAESTRO_CONTROLLER_ADDR, _("Add a worker"),
+	                   MAESTRO_CONTROLLER_ADDR, _("Add a node"),
 	                   MAESTRO_CONTROLLER_EDITABLE, TRUE,
 	                   -1);
 }
@@ -430,7 +430,7 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 	gtk_list_store_append(new_model, &new_iter);
 	gtk_list_store_set(new_model, &new_iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
-	                   MAESTRO_CONTROLLER_ADDR, _("Drop working machines here to increment this group!"),
+	                   MAESTRO_CONTROLLER_ADDR, _("Drop nodes here to increment this group!"),
 	                   -1);
 
 	return GTK_TREE_MODEL(new_model);
@@ -926,7 +926,7 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 	                   -1);
 
 	if (!daemon && !insert_new) {
-		gchar *text = g_strdup_printf(_("Working machines of Maestro %s"), gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
+		gchar *text = g_strdup_printf(_("nodes of Maestro %s"), gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
 		g_object_set(cell, "text", text, NULL);
 		g_object_set(cell, "sensitive", FALSE, NULL);
 		g_free(text);
@@ -1306,9 +1306,9 @@ server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		gtk_tree_model_get(GTK_TREE_MODEL(self->priv->model), iter, MAESTRO_CONTROLLER_AUTOCONN, &autoconnect, -1);
 
 		if (autoconnect)
-			gtk_tooltip_set_text(tooltip, _("Connect to this working machine when GêBR starts"));
+			gtk_tooltip_set_text(tooltip, _("Connect to this node when GêBR starts"));
 		else
-			gtk_tooltip_set_text(tooltip, _("Do not connect to this working machine when GêBR starts"));
+			gtk_tooltip_set_text(tooltip, _("Do not connect to this node when GêBR starts"));
 
 		return TRUE;
 	}
@@ -1552,7 +1552,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	set_widget_drag_dest(self, GTK_WIDGET(event));
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
-	gtk_window_set_title(GTK_WINDOW(dialog), _("GêBR - Maestro / Workers"));
+	gtk_window_set_title(GTK_WINDOW(dialog), _("GêBR - Maestro / Nodes"));
 
 	gtk_dialog_add_button(dialog, _("Help"), GTK_RESPONSE_HELP);
 
@@ -1721,13 +1721,13 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 	}
 
 	if (g_strcmp0(type, "disconnect") == 0)
-		msg = N_("<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
 			 "Do you really want to disconnect it and cancel these jobs?</span>");
 	else if (g_strcmp0(type, "remove") == 0)
-		msg = N_("<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
 			 "Do you really want to remove it and cancel these jobs?</span>");
 	else if (g_strcmp0(type, "stop") == 0)
-		msg = N_("<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
 			 "Do you really want to stop it and cancel these jobs?</span>");
 
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -1815,23 +1815,23 @@ on_daemon_error(GebrMaestroServer *maestro,
 	if (!*error_type) {
 		message = NULL;
 	} else if (g_strcmp0(error_type, "error:nfs") == 0) {
-		message = _("This working machine has a different NFS");
+		message = _("This node has a different NFS");
 	} else if (g_strcmp0(error_type, "error:id") == 0) {
-		message = _("Working machine already added");
-		second = g_strdup_printf(_("The working machine %s was already added in"
+		message = _("Node already added");
+		second = g_strdup_printf(_("The node %s was already added in"
 					   " this maestro. It will be"
 					   " automatically removed."), addr);
 		show_dialog = TRUE;
 	} else if (g_strcmp0(error_type, "error:protocol") == 0) {
-		message = _("This working machine is using a different protocol version");
+		message = _("This node is using a different protocol version");
 	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
-		message = _("This working machine is already registered at another maestro");
+		message = _("This node is already registered at another maestro");
 	} else if (g_strcmp0(error_type, "error:connection-refused-job") == 0) {
-		message = _("This working machine working for another maestro");
+		message = _("This node is working for another maestro");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {
 		message = error_msg;
 	} else if (g_strcmp0(error_type, "error:xauth") == 0) {
-		message = _("This working machine cannot connect to display. Try reconnect it");
+		message = _("This node cannot connect to display. Try reconnect it");
 	}
 
 	if (show_dialog) {

@@ -389,7 +389,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	if (!name) {
 		jc->priv->use_filter_servers = FALSE;
 		for (GList *i = labels; i; i = i->next)
-			if (g_str_has_prefix(gtk_label_get_text(i->data), "Group/Working machine:"))
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Group/Node:"))
 				gtk_widget_destroy(GTK_WIDGET(i->data));
 		g_list_free(box);
 		g_list_free(labels);
@@ -398,7 +398,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 
 
 	if (!jc->priv->use_filter_servers) {
-		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group/Server: %s</span>", display);
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group/Node: %s</span>", display);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -409,7 +409,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
 			if (g_str_has_prefix(filter, "Group/")) {
-				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Group/Working machine: %s</span>", display);
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Group/Node: %s</span>", display);
 				gtk_label_set_markup(i->data, new_text);
 				g_free(new_text);
 			}
@@ -751,7 +751,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 
 	const gchar *maddr = gebr_job_get_maestro_address(job);
 	if (!nprocs || !niceness)
-		g_string_printf(resources, _("Waiting for working machines details"));
+		g_string_printf(resources, _("Waiting for nodes details"));
 	else {
 		const gchar *type_str = gebr_job_get_server_group_type(job);
 		const gchar *groups = gebr_job_get_server_group(job);
@@ -768,10 +768,10 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		markup = g_markup_printf_escaped(_("Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
 						   "Executed on total <b>%d</b> processes on %s <b>%s</b>,\n"
 						   "%s"
-						   "distributed on <b>%d</b> working machine(s).\n"),
+						   "distributed on <b>%d</b> node(s).\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
-						  total_procs, type == MAESTRO_SERVER_TYPE_DAEMON? _("working machine") : _("group"), groups,
-						  g_strcmp0(niceness, "0")? _("using the working machines idle time, ") : "",
+						  total_procs, type == MAESTRO_SERVER_TYPE_DAEMON? _("node") : _("group"), groups,
+						  g_strcmp0(niceness, "0")? _("using the nodes idle time, ") : "",
 						  n_servers);
 		g_string_append(resources, markup);
 
@@ -1123,7 +1123,7 @@ compute_subheader_label(GebrJob *job,
 	}
 
 	if (status == JOB_STATUS_INITIAL) {
-		*subheader = _("Waiting for working machines");
+		*subheader = _("Waiting for nodes");
 		*start_detail = NULL;
 		g_string_free(start, TRUE);
 		g_string_free(finish, TRUE);
@@ -1221,7 +1221,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 			if (!task->cmd_line)
 				continue;
 
-			gchar *title = g_strdup_printf(_("Command line for task %d of %d (working machine: %s)"),
+			gchar *title = g_strdup_printf(_("Command line for task %d of %d (node: %s)"),
 						       task->frac, total, task->server);
 			GtkWidget *expander = gtk_expander_new(title);
 			gtk_expander_set_expanded(GTK_EXPANDER(expander), FALSE);
@@ -2234,8 +2234,8 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 		gint n;
 		gchar *servers = g_strjoinv(", ", gebr_job_get_servers(job, &n));
 
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking working machine to cancel Job."));
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking working machine \"%s\" to cancel Job \"%s\"."),
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking node to cancel Job."));
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking node \"%s\" to cancel Job \"%s\"."),
 			     servers, gebr_job_get_title(job));
 		g_free(servers);
 

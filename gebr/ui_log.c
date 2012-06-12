@@ -228,7 +228,7 @@ on_state_change(GebrMaestroServer *maestro,
 			g_free(text);
 		} else {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
-			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> without connected working machines"), addr);
+			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> without connected nodes"), addr);
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
 			g_free(text);
 		}

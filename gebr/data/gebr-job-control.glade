@@ -492,7 +492,7 @@
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Process distribution among working machines&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Process distribution among working nodes&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -566,7 +566,7 @@
         <child>
           <object class="GtkLabel" id="label7">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Group/Working Machines&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Group/Working Nodes&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>

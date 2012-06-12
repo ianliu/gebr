@@ -228,12 +228,12 @@ run_flow(GebrGeoXmlFlow *flow,
 				new_name = g_strdup(name);
 
 			msg = g_markup_printf_escaped(_("<span size='large' weight='bold'>Execution error</span>\n\n"
-							"There are no connected working machines on group <b>%s</b>."), new_name);
+							"There are no connected nodes on group <b>%s</b>."), new_name);
 			g_free(new_name);
 			break;
 		case MAESTRO_SERVER_TYPE_DAEMON:
 			msg = g_markup_printf_escaped(_("<span size='large' weight='bold'>Execution error</span>\n\n"
-							"The selected working machine (<b>%s</b>) is not connected."), name);
+							"The selected node (<b>%s</b>) is not connected."), name);
 			break;
 		default:
 			msg = g_strdup("");

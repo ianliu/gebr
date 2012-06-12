@@ -730,9 +730,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs at least one <i>connected working machine</i> "
+			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs at least one <i>connected node</i> "
                                                                              "to run processing flows. You must either connect to a new "
-                                                                             "one or connect your already registered working machines.\n"),
+                                                                             "one or connect your already registered nodes.\n"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
@@ -1096,8 +1096,8 @@ preferences_setup_ui(gboolean first_run,
 			g_free(intro_label_version_text);
 			GtkWidget *intro_label2  = GTK_WIDGET(gtk_builder_get_object(builder, "intro_label2"));
 			gchar *intro_label2_text = g_strdup_printf(_("In this version, GêBR introduces new features that will speed up your "
-								"processing flows, like automatic selection of the fastest working machine available "
-								"and split of processing job among working machines.\n\n"
+								"processing flows, like automatic selection of the fastest node available "
+								"and split of processing job among nodes.\n\n"
 								"These is possible due to a new player, called Maestro.\n\n"
 								"To take advantage of those features, some set up must be done. This "
 								"assistant will guide you through this process.\n"));
@@ -1121,13 +1121,13 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), servers_info);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), servers_info, TRUE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), servers_info, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Working Machines"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Nodes"));
 
 		// SERVERS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_servers);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Working Machines"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Nodes"));
 
 		// GVFS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), mount_gvfs);
@@ -1143,22 +1143,22 @@ preferences_setup_ui(gboolean first_run,
 		ui_preferences->dialog = assistant;
 
 		GtkWidget *maestro_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "maestro_info_label"));
-		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<i>Maestro</i> is in between the GêBR and the working machines. "
+		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<i>Maestro</i> is in between GêBR and the working nodes. "
                                                                       "It receives all requests for flow execution and dispatches them "
-                                                                      "to groups of working machines .\n\n"
+                                                                      "to groups of nodes .\n\n"
                                                                       "Without interference, Maestro collects information about the "
-                                                                      "state of each working machine and ranks them according to their "
+                                                                      "state of each node and ranks them according to their "
                                                                       "capabilities and available resources at time. Therefore, Maestro "
-                                                                      "can take smart decisions about which working machines are best suited to "
+                                                                      "can take smart decisions about which nodes are best suited to "
                                                                       "run a processing flow."));
 
 		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
-		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs to establish a connection to the Maestro to send "
-                                                                  "jobs and receive outputs.\n\nAll data exchange between the Maestro and "
-                                                                  "GêBR flows through <i>encrypted channels</i>. Such channels "
+		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs to establish a connection to a Maestro to send "
+                                                                  "jobs and receive outputs.\n\nAll data exchange between Maestro and "
+                                                                  "the working nodes is performed throughc <i>encrypted channels</i>. Such channels "
                                                                   "are established using SSH protocol, which is a standard way to "
                                                                   "access remote machines with reasonable level of security.\n\n"
-                                                                  "To actually establish the connections, SSH may request your "
+                                                                  "To establish the connections, SSH may request your "
                                                                   "login password.\n\n"
                                                                   "<small><i>This connection process can be extremely simplified "
                                                                   "using an alternative authetication method based on public keys. "
@@ -1166,9 +1166,9 @@ preferences_setup_ui(gboolean first_run,
                                                                   "checkbox, whenever your password is requested.</i></small>"));
 
 		GtkWidget *mount_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "mount_info_label"));
-		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Every processing flow in GêBR runs on working machines, which may "
+		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Every processing flow in GêBR runs on nodes, which may "
                                                                     "be elsewhere. <i>Remote browsing</i> is a feature that allows "
-                                                                    "the user to see the files generated on the working machines.\n\n"
+                                                                    "the user to see the files generated on the nodes.\n\n"
                                                                     "To enable this feature your login password may be asked."));
 		/* Set Preferences Page */
 		set_preferences_page(builder, ui_preferences);

@@ -61,7 +61,7 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, NULL, G_CALLBACK(on_configure_preferences_activate)},
 	{"actions_connections", GTK_STOCK_ABOUT, N_("_Connection Assistant"),
 		NULL, NULL, G_CALLBACK(on_configure_wizard_activate)},
-	{"actions_servers", GTK_STOCK_NETWORK, N_("_Maestro / Workers"),
+	{"actions_servers", GTK_STOCK_NETWORK, N_("_Maestro / Nodes"),
 		NULL, NULL, G_CALLBACK(on_configure_servers_activate)},
 	{"actions_quit", GTK_STOCK_QUIT, NULL,
 		"<Control>q", NULL, G_CALLBACK(on_quit_activate)},
@@ -161,9 +161,9 @@ static const GtkActionEntry actions_entries_job_control[] = {
 	{"job_control_close", "trash-empty", N_("Close"),
 		"Delete", N_("Clear selected Jobs"), G_CALLBACK(on_job_control_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
-		NULL, N_("Ask working machine to cancel the selected Job"), G_CALLBACK(on_job_control_stop)},
+		NULL, N_("Ask node to cancel the selected Job"), G_CALLBACK(on_job_control_stop)},
 	{"job_control_filter", "filter", N_("Filter"),
-		NULL, N_("Filter jobs by working machines group, working machine and status"), NULL},
+		NULL, N_("Filter jobs by group, node and status"), NULL},
 };
 
 static const GtkActionEntry status_action_entries[] = {
@@ -708,7 +708,7 @@ void gebr_setup_ui(void)
 	GtkWidget *tool_button = gebr_gui_tool_button_new();
 	GtkWidget *filter_button = gtk_image_new_from_stock("filter", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_container_add(GTK_CONTAINER(tool_button), filter_button);
-	gtk_widget_set_tooltip_text( filter_button, "Filter jobs by server group, server and status");
+	gtk_widget_set_tooltip_text( filter_button, "Filter jobs by group, nodes or status");
 
 	gtk_button_set_relief(GTK_BUTTON(tool_button), GTK_RELIEF_NONE);
 	gebr_job_control_setup_filter_button(gebr.job_control, GEBR_GUI_TOOL_BUTTON(tool_button));

@@ -386,7 +386,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_signal_connect(GTK_BUTTON(paths_help_button), "clicked", G_CALLBACK(on_paths_button_clicked), NULL);
 
 		gchar *text_maestro = g_markup_printf_escaped(_("<small>Remember that the processing takes "
-                                                                "place at the working machines. So, the "
+                                                                "place at the nodes. So, the "
                                                                 "structure which is about to be defined here will "
                                                                 "be created there.\n\nTo be able to browse "
                                                                 "files in these directories, the features of"
@@ -404,7 +404,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		GObject *label;
 		gchar *text_maestro = g_markup_printf_escaped(_("Below is the hierarchy of directories GêBR is about to create.\n\n"
-								"These directories will be created on the working machines of Maestro <b>%s</b>."), maestro_addr);
+								"These directories will be created on the nodes of Maestro <b>%s</b>."), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 

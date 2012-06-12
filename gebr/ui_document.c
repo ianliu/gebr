@@ -386,14 +386,6 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
-	/*
-	GtkWidget *document_help_button = GTK_WIDGET(gtk_builder_get_object(builder, "document_help_button"));
-	g_signal_connect(GTK_BUTTON(document_help_button),
-			 "clicked",
-			 G_CALLBACK(on_document_button_clicked),
-			 );
-			 */
-
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
 
@@ -409,7 +401,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		GObject *label;
 
 		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
-		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of working machines of Maestro <b>%s</b>.\n"
+		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of nodes of Maestro <b>%s</b>.\n"
 				"This directories structure can not be the same on your local machine.</i>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
