@@ -119,8 +119,6 @@ static void on_queue_set_text(GtkCellLayout   *cell_layout,
 
 static void on_queue_combobox_changed (GtkComboBox *combo, GebrFlowEdition *fe);
 
-static void update_speed_slider_sensitiveness(GebrFlowEdition *fe);
-
 static void select_file_column(GtkTreeView *tree_view, GebrFlowEdition *fe);
 
 static gboolean
@@ -363,8 +361,8 @@ flow_edition_setup_ui(void)
 	return fe;
 }
 
-static void
-update_speed_slider_sensitiveness(GebrFlowEdition *fe)
+void
+gebr_flow_edition_update_speed_slider_sensitiveness(GebrFlowEdition *fe)
 {
 	gboolean sensitive;
 	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_first_mpi_program(gebr.flow);
@@ -898,7 +896,7 @@ flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar 
 
 	flow_edition_set_io();
 
-	update_speed_slider_sensitiveness(gebr.ui_flow_edition);
+	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 }
 
 gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
@@ -1278,8 +1276,10 @@ static void flow_edition_menu_add(void)
 		gebr_validator_insert(gebr.validator, dict_iter, NULL, NULL);
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+
 	gebr_flow_set_toolbar_sensitive();
 	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 
 	/* and to the GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
@@ -1869,7 +1869,7 @@ flow_edition_revalidate_programs(void)
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
 	}
 
-	update_speed_slider_sensitiveness(gebr.ui_flow_edition);
+	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 }
 
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
@@ -2065,7 +2065,7 @@ gebr_flow_edition_show(GebrFlowEdition *fe)
 	if (gebr.line)
 		gebr_flow_set_toolbar_sensitive();
 
-	update_speed_slider_sensitiveness(fe);
+	gebr_flow_edition_update_speed_slider_sensitiveness(fe);
 
 	if (gebr.config.niceness == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fe->nice_button_high), TRUE);

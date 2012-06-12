@@ -165,6 +165,8 @@ void flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
                                                 gboolean sensitive,
                                                 gboolean maestro_err);
 
+void gebr_flow_edition_update_speed_slider_sensitiveness(GebrFlowEdition *fe);
+
 void gebr_flow_edition_hide(GebrFlowEdition *self);
 
 void gebr_flow_edition_show(GebrFlowEdition *self);

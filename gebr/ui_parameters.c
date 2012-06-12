@@ -178,6 +178,7 @@ parameters_actions(GtkDialog *dialog, gint response, GebrGuiProgramEdit *program
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
 
 		flow_edition_set_io();
+		gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 		break;
 	}
 	case GTK_RESPONSE_APPLY: {
