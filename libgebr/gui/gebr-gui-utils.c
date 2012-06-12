@@ -1230,19 +1230,6 @@ gboolean gebr_gui_gtk_tree_iter_equal_to(GtkTreeIter *iter1, GtkTreeIter *iter2)
 	return iter1->user_data == iter2->user_data;
 }
 
-static void
-on_filechooser_help_button_clicked (GtkButton *button, gpointer pointer)
-{
-	const gchar *section = "remote_browsing";
-	gchar *error;
-
-	gebr_gui_help_button_clicked(section, &error);
-
-	if (error) {//FIXME
-		//gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
-		g_free(error);
-	}
-}
 gboolean
 gebr_file_chooser_set_warning_widget(gchar ***paths,
 				     gchar *file,
@@ -1254,18 +1241,9 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
 
 	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
-	GtkWidget *help_image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_BUTTON);
-	GtkWidget *help_button = gtk_button_new();
-	gtk_button_set_image(GTK_BUTTON(help_button), help_image);
-
 	GtkWidget *dummy_label = gtk_label_new(NULL);
-	gtk_button_set_relief(GTK_BUTTON(help_button), GTK_RELIEF_NONE);
-	gtk_button_set_alignment(GTK_BUTTON(help_button), 1, 0.5);
 
 	gtk_box_pack_start(GTK_BOX(hbox), dummy_label, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(hbox), help_button, FALSE, FALSE, 5);
-
-	g_signal_connect(GTK_BUTTON(help_button), "clicked", G_CALLBACK(on_filechooser_help_button_clicked), NULL);
 
 	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 5);
@@ -1352,6 +1330,24 @@ gebr_file_chooser_set_current_directory (const gchar *entry_text, const gchar *p
 	}
 }
 
+static void
+on_response_event(GtkDialog *dialog,
+                  gint       response_id,
+                  gpointer   user_data)
+{
+	if (response_id == GTK_RESPONSE_HELP) {
+		const gchar *section = "remote_browsing";
+		gchar *error;
+
+		gebr_gui_help_button_clicked(section, &error);
+
+		if (error) {//FIXME
+			//gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+			g_free(error);
+		}
+	}
+}
+
 gint
 gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
                                         const gchar *entry_text,
@@ -1374,9 +1370,17 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 		gebr_file_chooser_set_warning_widget(paths, filename, dialog);
 	}
 
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
+
 	gtk_widget_show_all(dialog);
 
-	response = gtk_dialog_run(GTK_DIALOG(dialog));
+	g_signal_connect(dialog, "response", G_CALLBACK(on_response_event), NULL);
+
+	while (1) {
+		response = gtk_dialog_run(GTK_DIALOG(dialog));
+		if (response != GTK_RESPONSE_HELP)
+			break;
+	}
 
 	gchar *uri = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(dialog));
 	if (uri) {
