@@ -398,9 +398,12 @@ GebrGeoXmlProgram *gebr_geoxml_flow_get_first_mpi_program(GebrGeoXmlFlow * flow)
 
 	GebrGeoXmlSequence *program;
 	gebr_geoxml_flow_get_program(flow, &program, 0);
-	for (; program != NULL; gebr_geoxml_sequence_next(&program))
-		if (strlen(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program))))
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program));
+		if (strlen(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program))) > 0
+		    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 			return GEBR_GEOXML_PROGRAM(program);
+	}
 
 	return NULL;
 }
