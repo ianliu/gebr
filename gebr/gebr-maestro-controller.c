@@ -1614,25 +1614,18 @@ on_question_request(GebrMaestroServer *maestro,
 }
 
 static void
-on_ssh_info_button_clicked (GtkButton *button, gpointer pointer)
+on_password_dialog_response(GtkDialog *dialog, gint response, gpointer pointer)
 {
-	gchar *loc;
-	const gchar *path;
+	gchar *error;
 
-	loc = setlocale(LC_MESSAGES, NULL);
-	if (g_str_has_prefix (loc, "pt"))
-		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html#intercommunication_between_players";
-	else
-		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#intercommunication_between_players";
-
-	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
-		gtk_show_uri(NULL, "http://www.gebrproject.com", GDK_CURRENT_TIME, NULL);
-		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
-			      _("Could not load help. "
-				"Certify it was installed correctly."));
+	if (response == GTK_RESPONSE_HELP) {
+		gebr_gui_help_button_clicked("intercommunication_between_players", &error);
+		if (error) {
+			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+			g_free(error);
+		}
 	}
 }
-
 static PasswordKeys *
 on_password_request(GebrMaestroServer *maestro,
 		    const gchar *address,
@@ -1642,8 +1635,10 @@ on_password_request(GebrMaestroServer *maestro,
 	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Enter password"),
 							NULL,
 							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK,
-							GTK_RESPONSE_OK, NULL);
+							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+							GTK_STOCK_OK, GTK_RESPONSE_OK,
+							GTK_STOCK_HELP, GTK_RESPONSE_HELP,
+							NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
 	gchar *title = g_strdup_printf(_("Trying to connect on %s"), address);
@@ -1663,13 +1658,6 @@ on_password_request(GebrMaestroServer *maestro,
 	GtkWidget *down_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(down_vbox), checkbox, TRUE, TRUE, 5);
 
-	GtkWidget *ssh_info_button = gtk_button_new_with_label(_("More info"));
-	GtkWidget *hbox_info = gtk_hbox_new(FALSE, 5);
-	gtk_button_set_alignment(GTK_BUTTON(ssh_info_button), 1.0, 0.5);
-	gtk_button_set_relief(GTK_BUTTON(ssh_info_button), GTK_RELIEF_HALF);
-	g_signal_connect(ssh_info_button, "clicked", G_CALLBACK(on_ssh_info_button_clicked), NULL);
-	gtk_box_pack_end(GTK_BOX(hbox_info), ssh_info_button, FALSE, FALSE, 1);
-	gtk_box_pack_end(GTK_BOX(down_vbox), hbox_info, FALSE, FALSE, 1);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), down_vbox, TRUE, TRUE, 5);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), FALSE);
@@ -1680,7 +1668,17 @@ on_password_request(GebrMaestroServer *maestro,
 		gtk_widget_set_sensitive(checkbox, FALSE);
 
 	gtk_widget_show_all(dialog);
-	gboolean confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
+	g_signal_connect(dialog, "response", G_CALLBACK(on_password_dialog_response), NULL);
+	gint response;
+	gboolean confirmed;
+
+	while (1) {
+		response = gtk_dialog_run(GTK_DIALOG(dialog));
+		if (response != GTK_RESPONSE_HELP) {
+			confirmed = response == GTK_RESPONSE_OK;
+			break;
+		}
+	}
 
 	gchar *password;
 	gboolean use_key;
