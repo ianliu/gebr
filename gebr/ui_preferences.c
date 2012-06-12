@@ -1214,8 +1214,11 @@ preferences_setup_ui(gboolean first_run,
 		on_changed_validate_email(ui_preferences->email, ui_preferences);
 		g_signal_connect(ui_preferences->email, "changed", G_CALLBACK(on_changed_validate_email), ui_preferences);
 
-		GtkWidget *help_preferences_button = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "help_preferences_button"));
+
+		GtkWidget *help_preferences_button = gtk_button_new_from_stock(GTK_STOCK_HELP);
+		gtk_assistant_add_action_widget(GTK_ASSISTANT(assistant), help_preferences_button);
 		g_signal_connect(GTK_BUTTON(help_preferences_button), "clicked", G_CALLBACK(on_preferences_button_clicked), NULL);
+		gtk_widget_show(help_preferences_button);
 
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);
