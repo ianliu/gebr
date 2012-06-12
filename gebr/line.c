@@ -361,11 +361,6 @@ on_assistant_prepare(GtkAssistant *assistant,
                                                                   "processing flows."), maestro_addr);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
-		GtkWidget *document_help_button = GTK_WIDGET(gtk_builder_get_object(data->builder, "document_help_button"));
-		GtkWidget *document_help_dummy_label = GTK_WIDGET(gtk_builder_get_object(data->builder, "document_help_dummy_label"));
-		gtk_widget_hide(document_help_button);
-		gtk_widget_hide(document_help_dummy_label);
-
 	} else if (page == 2) {
 		GObject *paths_label= gtk_builder_get_object(data->builder, "paths_label");
 		gchar *paths_label_text= g_markup_printf_escaped(_("To better manage all files read or created during the processing of a data, "

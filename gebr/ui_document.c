@@ -248,8 +248,9 @@ on_paths_button_clicked (GtkButton *button, gpointer pointer)
 	}
 }
 
+
 static void
-on_document_button_clicked (GtkButton *button, gpointer doc_type_pointer)
+on_document_help_button_clicked (GtkButton *button, gpointer doc_type_pointer)
 {
 	GebrGeoXmlDocumentType doc_type = (GebrGeoXmlDocumentType)(GPOINTER_TO_INT(doc_type_pointer));
 	gchar *section;
@@ -338,11 +339,13 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	data->cancel_button = cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	data->back_button = gtk_button_new_from_stock(GTK_STOCK_GO_BACK);
 	data->apply_button = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+	GtkWidget *help_button = gtk_button_new_from_stock(GTK_STOCK_HELP);
 
 	g_signal_connect(window, "destroy", G_CALLBACK(on_properties_destroy), data);
 	g_signal_connect(ok_button, "clicked", G_CALLBACK(on_response_ok), data);
 	g_signal_connect(data->back_button, "clicked", G_CALLBACK(on_properties_back), data);
 	g_signal_connect(data->apply_button, "clicked", G_CALLBACK(on_properties_apply), data);
+	g_signal_connect(help_button, "clicked", G_CALLBACK(on_document_help_button_clicked), GINT_TO_POINTER((gint)gebr_geoxml_document_get_type(document)));
 	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
 
 	GtkWidget *main_props = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
@@ -353,12 +356,14 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_widget_hide(info_label);
 
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
+	gtk_box_pack_start(GTK_BOX(button_box), help_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), data->back_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), data->apply_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
 	gtk_widget_show(button_box);
+	gtk_widget_show(help_button);
 
 	update_buttons_visibility(data, PROPERTIES_EDIT);
 
@@ -381,11 +386,13 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
+	/*
 	GtkWidget *document_help_button = GTK_WIDGET(gtk_builder_get_object(builder, "document_help_button"));
 	g_signal_connect(GTK_BUTTON(document_help_button),
 			 "clicked",
 			 G_CALLBACK(on_document_button_clicked),
-			 GINT_TO_POINTER((gint)gebr_geoxml_document_get_type(document)));
+			 );
+			 */
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
@@ -451,8 +458,10 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				break;
 			}
 		}
-		gtk_entry_set_text(entry_import, import_path);
-		g_free(import_path);
+		if (import_path) {
+			gtk_entry_set_text(entry_import, import_path);
+			g_free(import_path);
+		}
 	}
 
 	gtk_widget_show(window);
