@@ -522,7 +522,7 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit *gebr_gui_va
 
 	__parameter_list_value_widget_update(self);
 	gebr_gui_parameter_widget_set_non_list_widget_value(self, "");
-
+	gebr_gui_parameter_widget_validate(self);
 	g_string_free(value, TRUE);
 }
 
