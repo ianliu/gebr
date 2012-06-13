@@ -27,17 +27,16 @@
         Maestro)<indexterm><primary>Maestro</primary></indexterm>,
         where all the jobs are coordinated.
       </listitem>
-      <listitem>Executors (the working
-        machines<indexterm><primary>Working
-        machine</primary></indexterm>
-        or <emphasis>working machines</emphasis>), where the jobs are executed.
+      <listitem>Executors (the nodes
+        <indexterm><primary>Node </primary></indexterm>
+        or <emphasis>nodes</emphasis>), where the jobs are executed.
       </listitem>
     </itemizedlist>
 
     <note>
       <para>GêBR can be connected to only one Maestro at once. Each
-        Maestro, in turn, can be connected to many working
-        machines. However, those machines must share the file system
+				Maestro, in turn, can be connected to many nodes.
+				However, those machines must share the file system
         containing the user's home directory. This is usually provided
         by Network File System (NFS) infrastructure.
       </para>
@@ -49,8 +48,7 @@
 
     <itemizedlist>
       <listitem>Between client and Maestro.</listitem>
-      <listitem>Between Maestro and the working
-      machines.</listitem>
+      <listitem>Between Maestro and the nodes.</listitem>
     </itemizedlist>
 
     <para>All connections are performed using Secure Shell (SSH)
@@ -58,7 +56,7 @@
       communication over a network. To establish such connections,
       the user may be asked to provide his or her login password
       multiple times. This can be cumbersome, if there are a lot of
-      working machines under the Maestro's domain.
+      nodes under the Maestro's domain.
     </para>
 
     <para>The SSH public-key authentication is an alternative method
@@ -80,7 +78,7 @@
       through public-key. In practical terms it means the user will no
       longer need to type the password to connect to that Maestro
       through GêBR. Analogous behaviour occurs in the connection
-      between Maestro and working machine.
+      between Maestro and node.
     </para>
 
     <figure>
@@ -110,21 +108,21 @@
   <section xml:id="remote_browsing">
     <title>Accessing remote files</title>
 
-    <para>GêBR infrastructure comprises GêBR, Maestro and working
-      machines as main actors (see
+    <para>GêBR infrastructure comprises GêBR, Maestro and nodes
+      as main actors (see
       <xref linkend="intercommunication_between_players"/>) and the
       processing files, therefore, may be on different machines than
       yours.
     </para>
     <para>For most of the places the user can pick a file (see window
-      below), the user will be navigating through the working machines files.
+      below), the user will be navigating through the nodes files.
     </para>
     <para>In two places of GêBR, the user will not be browsing in the
-      working machines filesystem: <emphasis>Import/Export</emphasis> of
+      nodes filesystem: <emphasis>Import/Export</emphasis> of
       Projects, Lines or Flows. On these cases the user may, for example,
       keep a backup of your Projects/Lines/Flows on his/her home computer
       and, therefore, these files are kept on user's computer filesystem
-      (instead of on working machine).
+      (instead of on node).
     </para>
     <figure>
       <title>Remote browsing of files</title>
@@ -152,7 +150,7 @@
   <section xml:id="flow_editor_multicores">
     <title>Multiple cores</title>
     <para>GêBR optimizes the execution of loops in multi-core
-      working machines<indexterm><primary>Working machine</primary><secondary>multi-core</secondary></indexterm>.</para>
+      nodes<indexterm><primary>Node</primary><secondary>multi-core</secondary></indexterm>.</para>
 
     <para>GêBR takes advantage of the multi-core feature of most of
       the recent machines. The execution of repetitive flows can be
@@ -476,7 +474,7 @@
     <para>Some programs, known as <emphasis>parallel
 	programs</emphasis><indexterm><primary>Program</primary><secondary>parallel</secondary></indexterm>,
 	deal themselves with the distribution of their computations
-	among many working machines. In this way, those programs are
+	among many nodes. In this way, those programs are
 	much more efficient, exploit all available resources to run
 	faster. Technically, they employ a infrastructure known
 	as <emphasis>MPI</emphasis><indexterm><primary>MPI</primary></indexterm>. GêBR
@@ -496,13 +494,13 @@
     </para>
 
     <para>GêBR supports <emphasis>both OpenMPI and MPICH2</emphasis>. However, MPI
-      programs can only run on working machines that support the execution of
+      programs can only run on nodes that support the execution of
       MPI. Thus, for GêBR support of MPI, the user must have acces to
-      working machines/clusters that also support it.
+      nodes/clusters that also support it.
     </para>
 
-		<para>In the Maestro/Workers Interface, in the MPI column, an icon
-      indicates whether the working machine supports MPI. Roll over
+		<para>In the Maestro/Nodes Interface, in the MPI column, an icon
+      indicates whether the node supports MPI. Roll over
       the icon to check the flavors of MPI available on that
       machine. The user will be able to run parallell program just on
       machines that support the same flavor as the one used in the
@@ -513,7 +511,7 @@
       <title>Indication of MPI availability</title>
       <imagedata fileref="../images/GeBR_servers_mpi.png" />
       <caption>The second column indicates the types (flavors) of MPI
-	available in the working machines.</caption>
+	available in the nodes.</caption>
     </figure>
     
     <para>To run an MPI program, the user must first create a menu in DêBR

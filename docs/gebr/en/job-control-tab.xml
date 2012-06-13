@@ -181,7 +181,7 @@
     <itemizedlist>
       <listitem><para>moment of start/finish of the flow</para></listitem>
       <listitem><para>input/output files</para></listitem>
-      <listitem><para>the working machines group in which the flow were executed</para></listitem>
+      <listitem><para>the nodes group in which the flow were executed</para></listitem>
     </itemizedlist>
     <para>The user can also consult which machines were effectively used in
       the group and how the distribution of the work was done by
@@ -210,7 +210,7 @@
       <listitem> <para>GêBR (client)</para></listitem>
       <listitem> <para>Total number of processors used in the execution</para></listitem>
       <listitem> <para>Distribution of the jobs to
-      the working machines</para></listitem>
+      the nodes</para></listitem>
     </itemizedlist>
 
     <figure>

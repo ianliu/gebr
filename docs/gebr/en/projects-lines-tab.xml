@@ -257,11 +257,11 @@
       </para>
 
       <important>
-	<para>Remember that the processing takes place at the working
-	  machines<indexterm><primary>Working
-	  machine</primary></indexterm>. So, the directory structure
-	  describe above will be created there. In case the working
-	  machine is different from the local machine, where the GêBR
+	<para>Remember that the processing takes place at the 
+		<indexterm><primary>Node
+	  </primary></indexterm>. So, the directory structure
+	  describe above will be created there. In case the node 
+	  is different from the local machine, where the GêBR
 	  interface is running, the user will not see the created
 	  directories by browsing the local machine's
 	  filesystem.</para>
@@ -322,7 +322,7 @@
   <important>
     <para>When a Line is migrated from one Maestro to another, all
     data in the BASE<indexterm><primary>BASE</primary></indexterm>
-    directory and in its children will remain in the working machines of
+    directory and in its children will remain in the nodes of
     the original Maestro.
     </para>
   </important>
