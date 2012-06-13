@@ -517,6 +517,12 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 		return FALSE;
 	}
 
+	for (gint i = 0; output->str[i]; i++) {
+		if (!g_ascii_isdigit(output->str[i]))
+			break;
+		return FALSE;
+	}
+
 	if (output->str[output->len - 2] == ':') {
 		GString *string;
 		GString *password;
