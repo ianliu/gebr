@@ -1438,3 +1438,13 @@ gebr_kill_by_port(gint port)
 	g_free(cmd_line);
 	return ret;
 }
+
+gchar *
+gebr_create_id_with_current_time()
+{
+	GTimeVal result;
+
+	g_get_current_time(&result);
+
+	return g_strdup_printf("%ld", result.tv_sec);
+}

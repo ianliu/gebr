@@ -514,7 +514,7 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 
 			revision_data = g_string_new(NULL);
 
-			gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
+			gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment, NULL);
 			g_string_append_printf (revision_data, "<hr /><p>%s</p><p>%s</p>",
 						comment, date);
 			g_string_insert (merged_help, flow_i, revision_data->str); 
@@ -606,13 +606,17 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow,
 	gebr_geoxml_object_unref(root);
 	gebr_geoxml_object_unref(first_revision);
 
-	gebr_geoxml_flow_set_revision_data(revision, revision_xml, gebr_iso_date(), comment);
+	gebr_geoxml_flow_set_revision_data(revision, revision_xml, gebr_iso_date(), comment, NULL);
 	g_free(revision_xml);
 
 	return revision;
 }
 
-void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gchar * flow, const gchar * date, const gchar * comment)
+void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision,
+                                        const gchar * flow,
+                                        const gchar * date,
+                                        const gchar * comment,
+                                        const gchar * id)
 {
 	g_return_if_fail(revision != NULL);
 	if (flow != NULL)
@@ -621,6 +625,8 @@ void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gch
 		__gebr_geoxml_set_attr_value((GdomeElement *) revision, "date", date);
 	if (comment != NULL)
 		__gebr_geoxml_set_attr_value((GdomeElement *) revision, "comment", comment);
+	if (id != NULL)
+		__gebr_geoxml_set_attr_value((GdomeElement *) revision, "id", id);
 }
 
 enum GEBR_GEOXML_RETV
@@ -645,7 +651,11 @@ gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow,
 	return retval;
 }
 
-void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment)
+void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision,
+                                        gchar ** flow,
+                                        gchar ** date,
+                                        gchar ** comment,
+                                        gchar ** id)
 {
 	g_return_if_fail(revision != NULL);
 
@@ -660,6 +670,9 @@ void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** 
 
 	if (comment)
 		*comment = __gebr_geoxml_get_attr_value((GdomeElement *) revision, "comment");
+
+	if (id)
+		*id = __gebr_geoxml_get_attr_value((GdomeElement *) revision, "id");
 }
 
 glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow)

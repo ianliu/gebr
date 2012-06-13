@@ -206,6 +206,15 @@ void gebr_geoxml_document_set_author(GebrGeoXmlDocument * document, const gchar 
 void gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar * email);
 
 /**
+ * Change the @document parent id to @parent_id
+ *
+ * If @document is NULL nothing is done.
+ *
+ * \see gebr_geoxml_document_get_parent_id
+ */
+void gebr_geoxml_document_set_parent_id(GebrGeoXmlDocument * document, const gchar * parent_id);
+
+/**
  * gebr_geoxml_document_get_dict_parameters:
  * @document: a #GebrGeoXmlDocument
  *
@@ -294,6 +303,15 @@ gchar *gebr_geoxml_document_get_author(GebrGeoXmlDocument * document);
  * \see gebr_geoxml_document_set_email
  */
 gchar *gebr_geoxml_document_get_email(GebrGeoXmlDocument * document);
+
+/**
+ * Get the @document 's parent id
+ *
+ * If @document is NULL returns NULL.
+ *
+ * \See gebr_geoxml_document_set_parent_id
+ */
+gchar *gebr_geoxml_document_get_parent_id(GebrGeoXmlDocument * document);
 
 /**
  * Get the \p document 'c creation date

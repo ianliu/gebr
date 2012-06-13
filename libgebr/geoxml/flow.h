@@ -348,7 +348,11 @@ GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, cons
  * @revision should not be NULL.
  * If \p flow is NULL nothing is done.
  */
-void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gchar * flow, const gchar * date, const gchar * comment);
+void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision,
+                                        const gchar * flow,
+                                        const gchar * date,
+                                        const gchar * comment,
+                                        const gchar * id);
 
 /**
  * gebr_geoxml_flow_get_revision:
@@ -379,7 +383,11 @@ gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow,
  *
  * If \p revision in NULL nothing is done.
  */
-void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment);
+void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision,
+                                        gchar ** flow,
+                                        gchar ** date,
+                                        gchar ** comment,
+                                        gchar ** id);
 
 /**
  * Get the number of revisions \p flow has.

@@ -508,7 +508,7 @@ void test_gebr_geoxml_flow_get_and_set_revision_data(void){
 	// Test if it will fail when revision is passed as NULL
 	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
 
-		gebr_geoxml_flow_set_revision_data(NULL, "theflow", "01/02/8000", "commented");
+		gebr_geoxml_flow_set_revision_data(NULL, "theflow", "01/02/8000", "commented", NULL);
 		exit(0);
 	}
 	g_test_trap_assert_failed();
@@ -516,7 +516,7 @@ void test_gebr_geoxml_flow_get_and_set_revision_data(void){
 	// Test if the comment passed on append is correct
 	flow = gebr_geoxml_flow_new();
 	revision = gebr_geoxml_flow_append_revision(flow, "comment");
-	gebr_geoxml_flow_get_revision_data(revision, NULL, NULL, &strcomment);
+	gebr_geoxml_flow_get_revision_data(revision, NULL, NULL, &strcomment, NULL);
 	g_assert_cmpstr(strcomment, ==, "comment");
 
 	// Convert @flow to a string
@@ -525,8 +525,8 @@ void test_gebr_geoxml_flow_get_and_set_revision_data(void){
 	// Get date
 	now = gebr_iso_date();
 
-	gebr_geoxml_flow_set_revision_data(revision, flow_xml, now, "commented");
-	gebr_geoxml_flow_get_revision_data(revision, &strflow, &strdate, &strcomment);
+	gebr_geoxml_flow_set_revision_data(revision, flow_xml, now, "commented", NULL);
+	gebr_geoxml_flow_get_revision_data(revision, &strflow, &strdate, &strcomment, NULL);
 
 	g_assert_cmpstr(strflow, ==, flow_xml);
 	g_assert_cmpstr(strcomment, ==, "commented");

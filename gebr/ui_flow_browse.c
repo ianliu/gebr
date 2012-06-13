@@ -434,7 +434,7 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 	GtkWidget *menu_item;
 	GtkWidget *menu_item_rev;
 
-	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
+	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment, NULL);
 	label = g_string_new(NULL);
 	g_string_printf(label, "%s: %s", date, comment);
 
@@ -673,7 +673,7 @@ flow_browse_on_revision_revert_activate(GtkMenuItem *menu_item,
 	gboolean report_merged = FALSE;
 	GtkTreeIter iter;
 
-	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment);
+	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment, NULL);
 	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision, &report_merged)) {
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state '%s' ('%s')."), comment, date);

@@ -75,6 +75,8 @@ void flow_new (void)
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.line)));
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line)));
 
+	gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOC(flow), "");
+
 	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
 	iter = line_append_flow_iter(flow, line_flow);
 
@@ -503,13 +505,13 @@ gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 	gebr_geoxml_flow_get_revision(flow, &revision, 0);
 	for (; revision != NULL; gebr_geoxml_sequence_next(&revision)) {
 		gchar *xml;
-		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), &xml, NULL, NULL);
+		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), &xml, NULL, NULL, NULL);
 		GebrGeoXmlFlow *rev;
 		if (gebr_geoxml_document_load_buffer((GebrGeoXmlDocument **)&rev, xml) == GEBR_GEOXML_RETV_SUCCESS) {
 			gebr_flow_modify_paths(rev, func, set_programs_unconfigured, data);
 			g_free(xml);
 			gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(rev), &xml);
-			gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(revision), xml, NULL, NULL);
+			gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(revision), xml, NULL, NULL, NULL);
 			document_free(GEBR_GEOXML_DOCUMENT(rev));
 		}
 		g_free(xml);

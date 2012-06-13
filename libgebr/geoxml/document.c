@@ -865,7 +865,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			for (; seq; gebr_geoxml_sequence_next(&seq)) {
 				gchar *flow_xml;
 				GebrGeoXmlDocument *revdoc;
-				gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &flow_xml, NULL, NULL);
+				gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &flow_xml, NULL, NULL, NULL);
 
 				if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
 					g_free(flow_xml);
@@ -874,7 +874,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 				g_free(flow_xml);
 				gebr_geoxml_document_to_string(revdoc, &flow_xml);
-				gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(seq), flow_xml, NULL, NULL);
+				gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(seq), flow_xml, NULL, NULL, NULL);
 				gebr_geoxml_document_free(revdoc);
 				g_free(flow_xml);
 			}
@@ -1349,6 +1349,11 @@ void gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar *
 	set_document_simple_property(document, "email", email);
 }
 
+void gebr_geoxml_document_set_parent_id(GebrGeoXmlDocument * document, const gchar * parent_id)
+{
+	set_document_simple_property(document, "parent", parent_id);
+}
+
 GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocument * document)
 {
 	g_return_val_if_fail (document != NULL, NULL);
@@ -1539,6 +1544,11 @@ gchar *gebr_geoxml_document_get_author(GebrGeoXmlDocument * document)
 gchar *gebr_geoxml_document_get_email(GebrGeoXmlDocument * document)
 {
 	return get_document_property(document, "email");
+}
+
+gchar *gebr_geoxml_document_get_parent_id(GebrGeoXmlDocument * document)
+{
+	return get_document_property(document, "parent");
 }
 
 gchar *
