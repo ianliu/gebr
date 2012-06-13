@@ -529,6 +529,7 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit *gebr_gui_va
 static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
 				       struct gebr_gui_parameter_widget *parameter_widget)
 {
+	gebr_gui_parameter_widget_validate(parameter_widget);
 	__parameter_list_value_widget_update(parameter_widget);
 }
 
@@ -674,6 +675,7 @@ static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 	}
 	if (!gtk_entry_get_icon_stock(entry, GTK_ENTRY_ICON_SECONDARY))
 		__set_type_icon(parameter_widget);
+	gebr_gui_parameter_widget_validate(parameter_widget);
 	return FALSE;
 }
 

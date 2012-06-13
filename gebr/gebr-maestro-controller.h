@@ -83,7 +83,7 @@ GType gebr_maestro_controller_get_type(void) G_GNUC_CONST;
 
 GebrMaestroController *gebr_maestro_controller_new();
 
-GtkDialog *gebr_maestro_controller_create_dialog(GebrMaestroController *self);
+void gebr_maestro_controller_create_dialog(GebrMaestroController *self);
 
 GebrMaestroServer * gebr_maestro_controller_get_maestro(GebrMaestroController *self);
 
@@ -110,6 +110,12 @@ void gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_
                                                         GtkTreeModel *model,
                                                         GtkTreeIter *iter,
                                                         gpointer data);
+
+void gebr_maestro_controller_daemon_server_progress_func(GtkTreeViewColumn *tree_column,
+                                                         GtkCellRenderer *cell,
+                                                         GtkTreeModel *model,
+                                                         GtkTreeIter *iter,
+                                                         gpointer data);
 
 void gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column,
                                                        GtkCellRenderer *cell,

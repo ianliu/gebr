@@ -173,7 +173,7 @@ main(int argc, char *argv[])
 
 			if (!gebr_comm_listen_socket_is_local_port_available(port)) {
 				if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
-					g_print("%s\n", lock_contents);
+					g_print(GEBR_PORT_PREFIX "%s\n", lock_contents);
 					exit(0);
 				} else {		//It is running in a different version
 					gebr_kill_by_port(port);

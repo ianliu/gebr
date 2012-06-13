@@ -419,7 +419,7 @@ job_new(GebrdJob **_job,
 		gchar **tmp2 = g_strsplit(tmp[i], ",", -1);
 		for (gint j = 1; tmp2[j]; j++) {
 			GList *value = g_hash_table_lookup(job->mpi_servers, tmp2[j]);
-			value = g_list_prepend(value, g_strdup(tmp2[0]));
+			value = g_list_append(value, g_strdup(tmp2[0]));
 			g_debug("VALUE TO INSERT ON HASH IN %s IS %s", tmp2[j], tmp2[0]);
 			g_hash_table_insert(job->mpi_servers, g_strdup(tmp2[j]), value);
 		}
@@ -728,6 +728,18 @@ void job_list(struct client *client)
 		job_notify(job, client);
 	}
 }
+
+gboolean
+job_has_running_jobs(void)
+{
+	for (GList *link = gebrd->user->jobs; link != NULL; link = g_list_next(link)) {
+		GebrdJob *job = (GebrdJob *)link->data;
+		if (job->parent.status == JOB_STATUS_RUNNING)
+			return TRUE;
+	}
+	return FALSE;
+}
+
 
 void job_send_clients_job_notify(GebrdJob *job)
 {

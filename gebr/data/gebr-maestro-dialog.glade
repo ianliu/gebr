@@ -4,7 +4,7 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="dialog_maestro">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">G&#xEA;BR - Maestro / Servers</property>
+    <property name="title" translatable="yes">G&#xEA;BR - Maestro / Working nodes</property>
     <property name="default_width">600</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
@@ -29,24 +29,6 @@
                     <property name="position">0</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkButton" id="maestro_help_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="relief">none</property>
-                    <child>
-                      <object class="GtkImage" id="image2">
-                        <property name="visible">True</property>
-                        <property name="stock">gtk-dialog-question</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -54,14 +36,31 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox1">
+              <object class="GtkHBox" id="maestro_box">
                 <property name="visible">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <object class="GtkImage" id="maestro_status">
+                    <property name="width_request">22</property>
+                    <property name="height_request">22</property>
+                    <property name="visible">True</property>
+                    <property name="stock">gtk-missing-image</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="padding">5</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
                 <child>
                   <object class="GtkComboBoxEntry" id="combo_maestro">
                     <property name="visible">True</property>
                   </object>
                   <packing>
-                    <property name="position">0</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -74,12 +73,13 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="position">1</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="padding">5</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -136,7 +136,7 @@
                             <child>
                               <object class="GtkLabel" id="label5">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">&lt;i&gt;Drop a server to create a group!&lt;/i&gt;</property>
+                                <property name="label" translatable="yes">&lt;i&gt;Drop a working node to create a group!&lt;/i&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                             </child>
@@ -145,7 +145,7 @@
                         <child type="tab">
                           <object class="GtkImage" id="image1">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-add</property>
+                            <property name="stock">group</property>
                           </object>
                           <packing>
                             <property name="tab_fill">False</property>
@@ -169,7 +169,7 @@
             </child>
           </object>
           <packing>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child internal-child="action_area">
@@ -200,7 +200,7 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">btn_close</action-widget>
+      <action-widget response="-7">btn_close</action-widget>
     </action-widgets>
   </object>
 </interface>

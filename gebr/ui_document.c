@@ -240,7 +240,37 @@ on_paths_button_clicked (GtkButton *button, gpointer pointer)
 	const gchar *section = "projects_lines_line_paths";
 	gchar *error;
 
-	on_help_button_clicked (section, &error);
+	gebr_gui_help_button_clicked(section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
+
+
+static void
+on_document_help_button_clicked (GtkButton *button, gpointer doc_type_pointer)
+{
+	GebrGeoXmlDocumentType doc_type = (GebrGeoXmlDocumentType)(GPOINTER_TO_INT(doc_type_pointer));
+	gchar *section;
+
+	switch (doc_type) {
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+		section = g_strdup("projects_lines_create_lines");
+		break;
+	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+		section = g_strdup("flows_browser_create_flow");
+		break;
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
+		section = g_strdup("projects_lines_create_projects");
+		break;
+	default:
+		g_warn_if_reached();
+	}
+
+	gchar *error;
+	gebr_gui_help_button_clicked(section, &error);
 
 	if (error) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
@@ -309,11 +339,13 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	data->cancel_button = cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	data->back_button = gtk_button_new_from_stock(GTK_STOCK_GO_BACK);
 	data->apply_button = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+	GtkWidget *help_button = gtk_button_new_from_stock(GTK_STOCK_HELP);
 
 	g_signal_connect(window, "destroy", G_CALLBACK(on_properties_destroy), data);
 	g_signal_connect(ok_button, "clicked", G_CALLBACK(on_response_ok), data);
 	g_signal_connect(data->back_button, "clicked", G_CALLBACK(on_properties_back), data);
 	g_signal_connect(data->apply_button, "clicked", G_CALLBACK(on_properties_apply), data);
+	g_signal_connect(help_button, "clicked", G_CALLBACK(on_document_help_button_clicked), GINT_TO_POINTER((gint)gebr_geoxml_document_get_type(document)));
 	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
 
 	GtkWidget *main_props = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
@@ -324,12 +356,14 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_widget_hide(info_label);
 
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
+	gtk_box_pack_start(GTK_BOX(button_box), help_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), data->back_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), data->apply_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
 	gtk_widget_show(button_box);
+	gtk_widget_show(help_button);
 
 	update_buttons_visibility(data, PROPERTIES_EDIT);
 
@@ -367,7 +401,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		GObject *label;
 
 		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
-		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
+		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of nodes of Maestro <b>%s</b>.\n"
 				"This directories structure can not be the same on your local machine.</i>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
@@ -416,8 +450,10 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				break;
 			}
 		}
-		gtk_entry_set_text(entry_import, import_path);
-		g_free(import_path);
+		if (import_path) {
+			gtk_entry_set_text(entry_import, import_path);
+			g_free(import_path);
+		}
 	}
 
 	gtk_widget_show(window);
@@ -488,6 +524,67 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 	}
 }
 
+/*
+ * Function created to enable the insertion of the Help button
+ */
+static void
+close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *data)
+{
+	flow_edition_revalidate_programs();
+
+	for (int i = 0; data->documents[i] != NULL; ++i) {
+		GebrGeoXmlSequence *i_parameter;
+
+		i_parameter =
+			gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_document_get_dict_parameters
+								   (data->documents[i]));
+		for (; i_parameter != NULL; gebr_geoxml_sequence_next(&i_parameter)) {
+			gtk_tree_iter_free(gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(i_parameter)));
+
+			GebrGeoXmlObject * object = GEBR_GEOXML_OBJECT(i_parameter);
+			gebr_geoxml_object_set_user_data(object, NULL);
+		}
+	}
+
+	if (gebr.flow)
+		flow_edition_set_io();
+
+	gtk_widget_destroy(dialog);
+
+	for (int i = 0; data->documents[i] != NULL; ++i)
+		document_save(data->documents[i], TRUE, FALSE);
+
+	g_free(data);
+
+	/* restore binding sets */
+	GtkWidget *entry_for_binding = gtk_entry_new();
+	GtkBindingSet *binding_set = gtk_binding_set_by_class(GTK_ENTRY_GET_CLASS(entry_for_binding));
+	gtk_binding_entry_add_signal(binding_set, GDK_Return, 0, "activate", 0);
+	gtk_binding_entry_add_signal(binding_set, GDK_ISO_Enter, 0, "activate", 0);
+	gtk_binding_entry_add_signal(binding_set, GDK_KP_Enter, 0, "activate", 0);
+	gtk_widget_destroy(entry_for_binding);
+}
+
+static void
+parameters_actions(GtkDialog *dialog, gint response, gpointer pointer)
+{
+	struct dict_edit_data *data = pointer;
+	gchar *error;
+	switch (response) {
+	case GTK_RESPONSE_HELP:
+		gebr_gui_help_button_clicked("dictionary_variables", &error);
+
+		if (error) {
+			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+			g_free(error);
+		}
+		return;
+	case GTK_RESPONSE_CLOSE:
+		close_and_destroy_dictionary_dialog(GTK_WIDGET(dialog), data);
+		break;
+	}
+}
+
 void document_dict_edit_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -554,7 +651,9 @@ void document_dict_edit_setup_ui(void)
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, 
+					     GTK_STOCK_HELP, GTK_RESPONSE_HELP, 
+					     NULL);
 	gtk_window_set_default_size(GTK_WINDOW(dialog), 600, 500);
 
 	GtkWidget *warning_image = gtk_image_new();
@@ -719,42 +818,9 @@ void document_dict_edit_setup_ui(void)
 	gebr_dict_update_wizard(data);
 
 	gtk_widget_show_all(dialog);
+	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), data);
 	gtk_dialog_run(GTK_DIALOG(dialog));
-
-	flow_edition_revalidate_programs();
-
-	for (int i = 0; data->documents[i] != NULL; ++i) {
-		GebrGeoXmlSequence *i_parameter;
-
-		i_parameter =
-		    gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_document_get_dict_parameters
-							       (data->documents[i]));
-		for (; i_parameter != NULL; gebr_geoxml_sequence_next(&i_parameter)) {
-			gtk_tree_iter_free(gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(i_parameter)));
-
-			GebrGeoXmlObject * object = GEBR_GEOXML_OBJECT(i_parameter);
-			gebr_geoxml_object_set_user_data(object, NULL);
-		}
-	}
-
-	if (gebr.flow)
-		flow_edition_set_io();
-
-	gtk_widget_destroy(dialog);
-
-	for (int i = 0; data->documents[i] != NULL; ++i)
-		document_save(data->documents[i], TRUE, FALSE);
-
-	g_free(data);
 	g_string_free(dialog_title, TRUE);
-
-	/* restore binding sets */
-	entry_for_binding = gtk_entry_new();
-	binding_set = gtk_binding_set_by_class(GTK_ENTRY_GET_CLASS(entry_for_binding));
-	gtk_binding_entry_add_signal(binding_set, GDK_Return, 0, "activate", 0);
-	gtk_binding_entry_add_signal(binding_set, GDK_ISO_Enter, 0, "activate", 0);
-	gtk_binding_entry_add_signal(binding_set, GDK_KP_Enter, 0, "activate", 0);
-	gtk_widget_destroy(entry_for_binding);
 }
 
 static GList *program_list_from_used_variables(const gchar *var_name)
@@ -842,7 +908,7 @@ static void gebr_dict_update_wizard(struct dict_edit_data *data) {
 	switch (dict_edit_get_column_index_for_renderer(data->editing_cell, data)) {
 	case DICT_EDIT_KEYWORD:
 		gtk_label_set_text(GTK_LABEL(data->label),
-				   _("Please enter an unique variable name."));
+				   _("Please enter a unique variable name."));
 		break;
 	case DICT_EDIT_VALUE: {
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));

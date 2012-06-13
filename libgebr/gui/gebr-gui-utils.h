@@ -429,6 +429,12 @@ gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GtkTreeView * tree_view
  */
 typedef gboolean(*GebrGuiGtkTreeViewReorderCallback) (GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
 						      GtkTreeViewDropPosition drop_position, gpointer user_data);
+
+/**
+ * Set and enabled drag source and dest of @tree_view
+ */
+void gebr_gui_gtk_tree_view_set_drag_source_dest(GtkTreeView * tree_view);
+
 /**
  * Make \p tree_view reorderable.
  * \param reorder_callback Responsible for reordering. Its return value is ignored.
@@ -523,13 +529,13 @@ void gebr_file_chooser_set_current_directory (const gchar *entr,
                                               gchar **error);
 
 gint gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
-                                             GtkEntry *entry,
+                                             const gchar *entry_text,
                                              gchar *sftp_prefix,
                                              gchar ***paths,
                                              gboolean insert_bookmarks,
                                              gchar **new_text);
 
-void on_help_button_clicked(const gchar *section, gchar **error);
+void gebr_gui_help_button_clicked(const gchar *section, gchar **error);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_UTILS_H

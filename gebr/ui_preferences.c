@@ -361,6 +361,11 @@ create_view_for_servers(struct ui_preferences *up)
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_min_width(col, 100);
 
+	renderer = gtk_cell_renderer_spinner_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_progress_func,
+	                                        NULL, NULL);
+
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_status_func,
@@ -383,7 +388,7 @@ on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
 	const gchar *section = "additional_features_maestro_servers_configuration";
 	gchar *error;
 
-	on_help_button_clicked (section, &error);
+	gebr_gui_help_button_clicked(section, &error);
 
 	if (error) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
@@ -516,7 +521,7 @@ set_status_for_mount(GebrMaestroServer *maestro,
 	}
 	else if (status == STATUS_MOUNT_NOK) {
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browse is disabled!"));
+		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browsing is disabled!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, TRUE);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);
@@ -535,6 +540,8 @@ on_mount_status_changed(GebrMaestroServer *maestro,
                         struct ui_preferences *up)
 {
 	set_status_for_mount(maestro, status, up);
+
+	gebr_log_update_maestro_info(gebr.ui_log, maestro);
 }
 
 static void
@@ -723,9 +730,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs at least one <i>connected server</i> "
+			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs at least one <i>connected node</i> "
                                                                              "to run processing flows. You must either connect to a new "
-                                                                             "servers or connect all servers already registered below.\n"),
+                                                                             "one or connect your already registered nodes.\n"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
@@ -1003,6 +1010,20 @@ set_maestro_chooser_page(GtkBuilder *builder,
 	gtk_combo_box_set_active(combo, 0);
 }
 
+static void
+on_preferences_button_clicked (GtkButton *button, gpointer pointer)
+{
+	const gchar *section = "actions_preferences";
+	gchar *error;
+
+	gebr_gui_help_button_clicked(section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
+
 /**
  * Assembly preference window.
  *
@@ -1075,8 +1096,8 @@ preferences_setup_ui(gboolean first_run,
 			g_free(intro_label_version_text);
 			GtkWidget *intro_label2  = GTK_WIDGET(gtk_builder_get_object(builder, "intro_label2"));
 			gchar *intro_label2_text = g_strdup_printf(_("In this version, GêBR introduces new features that will speed up your "
-								"processing flows, like automatic selection of the fastest server available "
-								"and split of processing job among servers.\n\n"
+								"processing flows, like automatic selection of the fastest node available "
+								"and split of processing job among nodes.\n\n"
 								"These is possible due to a new player, called Maestro.\n\n"
 								"To take advantage of those features, some set up must be done. This "
 								"assistant will guide you through this process.\n"));
@@ -1100,19 +1121,19 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), servers_info);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), servers_info, TRUE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), servers_info, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Servers"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Nodes"));
 
 		// SERVERS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_servers);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Servers"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Nodes"));
 
 		// GVFS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), mount_gvfs);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), mount_gvfs, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), mount_gvfs, _("Remote Browse"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), mount_gvfs, _("Remote Browsing"));
 
 		ui_preferences->prev_page = INITIAL_PAGE;
 		ui_preferences->back_button = gtk_button_new_with_mnemonic("_Back");
@@ -1122,22 +1143,22 @@ preferences_setup_ui(gboolean first_run,
 		ui_preferences->dialog = assistant;
 
 		GtkWidget *maestro_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "maestro_info_label"));
-		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<i>Maestro</i> is in between the GêBR and the working servers. "
+		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<i>Maestro</i> is in between GêBR and the working nodes. "
                                                                       "It receives all requests for flow execution and dispatches them "
-                                                                      "to groups of servers.\n\n"
+                                                                      "to groups of nodes .\n\n"
                                                                       "Without interference, Maestro collects information about the "
-                                                                      "state of each working server and ranks them according to their "
+                                                                      "state of each node and ranks them according to their "
                                                                       "capabilities and available resources at time. Therefore, Maestro "
-                                                                      "can take smart decisions about which servers are best suited to "
+                                                                      "can take smart decisions about which nodes are best suited to "
                                                                       "run a processing flow."));
 
 		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
-		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs to establish a connection to the Maestro to send "
-                                                                  "jobs and receive outputs.\n\nAll data exchange between the Maestro and "
-                                                                  "GêBR flows through <i>encrypted channels</i>. Such channels "
+		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs to establish a connection to a Maestro to send "
+                                                                  "jobs and receive outputs.\n\nAll data exchange between Maestro and "
+                                                                  "the working nodes is performed throughc <i>encrypted channels</i>. Such channels "
                                                                   "are established using SSH protocol, which is a standard way to "
                                                                   "access remote machines with reasonable level of security.\n\n"
-                                                                  "To actually establish the connections, SSH may request your "
+                                                                  "To establish the connections, SSH may request your "
                                                                   "login password.\n\n"
                                                                   "<small><i>This connection process can be extremely simplified "
                                                                   "using an alternative authetication method based on public keys. "
@@ -1145,9 +1166,9 @@ preferences_setup_ui(gboolean first_run,
                                                                   "checkbox, whenever your password is requested.</i></small>"));
 
 		GtkWidget *mount_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "mount_info_label"));
-		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Every processing flow in GêBR runs on working servers, which may "
+		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Every processing flow in GêBR runs on nodes, which may "
                                                                     "be elsewhere. <i>Remote browsing</i> is a feature that allows "
-                                                                    "the user to see the files generated on the working servers.\n\n"
+                                                                    "the user to see the files generated on the nodes.\n\n"
                                                                     "To enable this feature your login password may be asked."));
 		/* Set Preferences Page */
 		set_preferences_page(builder, ui_preferences);
@@ -1187,6 +1208,12 @@ preferences_setup_ui(gboolean first_run,
 
 		on_changed_validate_email(ui_preferences->email, ui_preferences);
 		g_signal_connect(ui_preferences->email, "changed", G_CALLBACK(on_changed_validate_email), ui_preferences);
+
+
+		GtkWidget *help_preferences_button = gtk_button_new_from_stock(GTK_STOCK_HELP);
+		gtk_assistant_add_action_widget(GTK_ASSISTANT(assistant), help_preferences_button);
+		g_signal_connect(GTK_BUTTON(help_preferences_button), "clicked", G_CALLBACK(on_preferences_button_clicked), NULL);
+		gtk_widget_show(help_preferences_button);
 
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);

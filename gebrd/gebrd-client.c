@@ -49,7 +49,6 @@
  * Private functions
  */
 
-static void client_disconnected(GebrCommProtocolSocket * socket, struct client *client);
 static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request, struct client *client);
 static void client_process_response(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request,
 				    GebrCommHttpMsg * response, struct client *client);
@@ -87,7 +86,7 @@ void client_free(struct client *client)
 	g_free(client);
 }
 
-static void
+void
 client_disconnected(GebrCommProtocolSocket * socket,
 		    struct client *client)
 {
@@ -328,6 +327,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			cpu_clock = gebrd_cpu_info_get (cpuinfo, 0, "cpu MHz");
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
+
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 11,
 							      gebrd->hostname,

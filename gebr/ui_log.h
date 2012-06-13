@@ -33,10 +33,16 @@ enum {
 };
 
 struct ui_log {
+	GtkWidget *box;
+
 	GtkWidget *widget;
 
 	GtkListStore *store;
 	GtkWidget *view;
+
+	GtkWidget *maestro_icon;
+	GtkWidget *maestro_label;
+	GtkWidget *remote_browse;
 };
 
 struct ui_log *log_setup_ui(void);
@@ -44,6 +50,12 @@ struct ui_log *log_setup_ui(void);
 void log_set_message(struct ui_log *ui_log, const gchar * message);
 
 void gebr_log_add_message_to_list(struct ui_log *ui_log, GebrLogMessage *message);
+
+void gebr_log_update_maestro_info(struct ui_log *ui_log,
+                                  GebrMaestroServer *maestro);
+
+void gebr_log_update_maestro_info_signal(struct ui_log *ui_log,
+                                         GebrMaestroServer *maestro);
 
 G_END_DECLS
 #endif				//__UI_GEBR_LOG_H

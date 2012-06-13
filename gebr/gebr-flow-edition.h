@@ -40,6 +40,7 @@ enum {
 	FSEQ_SENSITIVE,
 	FSEQ_TOOLTIP,
 	FSEQ_NEVER_OPENED,
+	FSEQ_FILE_COLUMN,
 	FSEQ_N_COLUMN
 };
 
@@ -76,6 +77,7 @@ struct _GebrFlowEdition {
 	GtkListStore *fseq_store;
 	GtkWidget *fseq_view;
 	GtkCellRenderer *text_renderer;
+	GtkCellRenderer *file_renderer;
 
 	/* available system and user's menus */
 	GtkWidget *menu_view;
@@ -162,6 +164,8 @@ void flow_program_check_sensitiveness (void);
 void flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
                                                 gboolean sensitive,
                                                 gboolean maestro_err);
+
+void gebr_flow_edition_update_speed_slider_sensitiveness(GebrFlowEdition *fe);
 
 void gebr_flow_edition_hide(GebrFlowEdition *self);
 

@@ -44,6 +44,7 @@
 
 #include "gebrd-server.h"
 #include "gebrd.h"
+#include "gebrd-job.h"
 
 
 /*
@@ -83,10 +84,11 @@ static gboolean server_run_lock(gboolean *already_running)
 				gebrd_message(GEBR_LOG_ERROR,
 				              _("Cannot run interactive server, GêBR daemon is already running"));
 			} else {
-				gchar buffer[100];
-				snprintf(buffer, sizeof(buffer), "%d\n", port);
-				if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
+				gchar *buffer;
+				buffer = g_strdup_printf(GEBR_PORT_PREFIX "%d\n", port);
+				if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)) < 0)
 					g_warning("Failed to write in file with error code %d", errno);
+				g_free(buffer);
 			}
 
 			*already_running = TRUE;
@@ -215,13 +217,14 @@ gboolean server_init(void)
 	/* success, send port */
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
 		      gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
-	gchar buffer[100];
-	snprintf(buffer, sizeof(buffer), "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
-	if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)+1) <= 0) {
+	gchar *buffer;
+	buffer = g_strdup_printf(GEBR_PORT_PREFIX "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
+	if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)) <= 0) {
+		g_free(buffer);
 		g_warning("%s:%d: Failed to write in file with error code %d", __FILE__, __LINE__, errno);
 		goto err;
 	}
-
+	g_free(buffer);
 	return TRUE;
 err:	
 	gebrd_message(GEBR_LOG_ERROR, _("Could not init server. Quiting..."));
@@ -261,14 +264,30 @@ void server_new_connection(void)
 	if (!gebrd_user_has_connection(gebrd->user)) {
 		client_add(client);
 		gebrd_message(GEBR_LOG_DEBUG, "client_add");
-	} else {
+	} else if (!job_has_running_jobs()) {
 		gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
-						      gebr_comm_protocol_defs.err_def, 2,
-						      "connection-refused",
-						      gebrd_user_get_daemon_id(gebrd->user));
+		                                      gebr_comm_protocol_defs.err_def, 2,
+		                                      "connection-stolen",
+		                                      gebrd_user_get_daemon_id(gebrd->user));
+
+		gebrd_message(GEBR_LOG_DEBUG, "client_get_from_another");
+
+		struct client *connection = gebrd_user_get_connection(gebrd->user);
+		client_disconnected(connection->socket, connection);
+	} else {
+		if (job_has_running_jobs())
+			gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
+			                                      gebr_comm_protocol_defs.err_def, 2,
+			                                      "connection-refused-job",
+			                                      gebrd_user_get_daemon_id(gebrd->user));
+		else
+			gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
+			                                      gebr_comm_protocol_defs.err_def, 2,
+			                                      "connection-refused",
+			                                      gebrd_user_get_daemon_id(gebrd->user));
+
 		g_object_unref(client);
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "server_new_connection");
 }
-

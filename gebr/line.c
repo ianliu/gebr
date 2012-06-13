@@ -329,7 +329,7 @@ on_paths_button_clicked (GtkButton *button, gpointer pointer)
 	const gchar *section = "projects_lines_line_paths";
 	gchar *error;
 
-	on_help_button_clicked (section, &error);
+	gebr_gui_help_button_clicked(section, &error);
 
 	if (error) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
@@ -352,7 +352,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 	if (page == 1) {
 		GObject *info_label= gtk_builder_get_object(data->builder, "info_label");
 		gchar *info_label_text= g_markup_printf_escaped(_("The <i>Line</i> structure in GêBR gathers many "
-                                                                  "processing flows.\n\nThis name comes from "
+                                                                  "processing flows.\n\nThe term <i>line</i> comes from "
                                                                   "the notion that the processing of a data "
                                                                   "set, acquired over a seismic line, is performed "
                                                                   "in several steps by the processing flows.\n\n"
@@ -361,7 +361,6 @@ on_assistant_prepare(GtkAssistant *assistant,
                                                                   "processing flows."), maestro_addr);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
-
 	} else if (page == 2) {
 		GObject *paths_label= gtk_builder_get_object(data->builder, "paths_label");
 		gchar *paths_label_text= g_markup_printf_escaped(_("To better manage all files read or created during the processing of a data, "
@@ -387,11 +386,11 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_signal_connect(GTK_BUTTON(paths_help_button), "clicked", G_CALLBACK(on_paths_button_clicked), NULL);
 
 		gchar *text_maestro = g_markup_printf_escaped(_("<small>Remember that the processing takes "
-                                                                "place at the working servers. So, the "
+                                                                "place at the nodes. So, the "
                                                                 "structure which is about to be defined here will "
                                                                 "be created there.\n\nTo be able to browse "
-                                                                "files in these directory, the <i>remote "
-                                                                "browse</i> feature must be enabled in the "
+                                                                "files in these directories, the features of"
+								"<i>remote browsing</i> must be enabled in the "
                                                                 "Maestro %s.</small>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
@@ -405,7 +404,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		GObject *label;
 		gchar *text_maestro = g_markup_printf_escaped(_("Below is the hierarchy of directories GêBR is about to create.\n\n"
-								"These directories will be created on servers of Maestro <b>%s</b>."), maestro_addr);
+								"These directories will be created on the nodes of Maestro <b>%s</b>."), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
@@ -517,7 +516,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_window_set_position(GTK_WINDOW(assistant), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
 
-	g_debug("On '%s', line '%d', teste:'%s' ", __FILE__, __LINE__, "TeSTANDO");
 	WizardData *data = g_new(WizardData, 1);
 	data->assistant = assistant;
 	data->builder = builder;
@@ -573,8 +571,8 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_entry_set_text(GTK_ENTRY(entry_title), title);
 	g_free(title);
 
-	gtk_entry_set_text(GTK_ENTRY(entry_author), gebr.config.username->str);
-	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr.config.email->str);
+	gtk_entry_set_text(GTK_ENTRY(entry_author), gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.project)));
+	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.project)));
 
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
@@ -623,10 +621,10 @@ create_base_import_file_chooser(gchar *title,
 	gchar ***paths = gebr_generate_paths_with_home(home);
 
 	gchar *new_text;
+	const gchar *entry_text = gtk_entry_get_text(entry);
 	gint response = gebr_file_chooser_set_remote_navigation(file_chooser,
-	                                                        entry, prefix, paths, FALSE,
+	                                                        entry_text, prefix, paths, FALSE,
 	                                                        &new_text);
-
 	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 
 	if (response == GTK_RESPONSE_OK) {

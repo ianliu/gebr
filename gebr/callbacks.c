@@ -111,6 +111,7 @@ void on_quit_activate(void)
 	GtkTreeIter iter;
 	GebrMaestroServer *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED) {
+		gebr.quit = TRUE;
 		// Disconnect client from maestro
 		gebr_maestro_server_disconnect(m, TRUE);
 
@@ -412,9 +413,7 @@ void on_configure_wizard_activate(void)
 
 void on_configure_servers_activate(void)
 {
-	GtkDialog *dialog = gebr_maestro_controller_create_dialog(gebr.maestro_controller);
-	gtk_dialog_run(dialog);
-	gtk_widget_destroy(GTK_WIDGET(dialog));
+	gebr_maestro_controller_create_dialog(gebr.maestro_controller);
 }
 
 void on_help_contents_activate(void)

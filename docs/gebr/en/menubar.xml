@@ -12,13 +12,13 @@
   
   <para>From the <guimenu>Actions</guimenu> menu, the user can access the
     <guimenuitem>Preferences</guimenuitem> and
-    configure <guimenuitem>Servers</guimenuitem>. If the user's enthusiasm
+		configure the <guimenuitem>Maestro/Nodes</guimenuitem> settings. If the user's enthusiasm
     for GêBR has lead him/her to read the whole manual, then the user has
     probably used almost all available features found in these
     options. But just in case, the user will find the documentation for these options
     below.</para>
   
-  <section>
+  <section id="actions_preferences">
     <title>Preferences</title>
     <para>The details the user provides in the
       <guimenuitem>Preferences</guimenuitem> dialog box will be
@@ -55,10 +55,10 @@
   </section>
   
   <section xml:id="additional_features_maestro_servers_configuration">
-    <title>Maestro/Servers configuration</title>
-    <para>The Maestro/Servers
-      Interface<indexterm><primary>Maestro</primary></indexterm><indexterm><primary>Working
-	  machine</primary></indexterm> has <emphasis>three</emphasis> parts:</para>
+    <title>Maestro/Nodes configuration</title>
+    <para>The Maestro/Nodes
+      Interface<indexterm><primary>Maestro</primary></indexterm><indexterm><primary>Node
+	  </primary></indexterm> has <emphasis>three</emphasis> parts:</para>
     <itemizedlist>
       <listitem>
         <para><guilabel>Maestro</guilabel>: central unit of
@@ -66,21 +66,21 @@
           <xref linkend="concepts_connections" />).</para>
       </listitem>
       <listitem>
-        <para><guilabel>Servers</guilabel>: choose the servers
+        <para><guilabel>Nodes</guilabel>: choose the nodes
           associated to the current Maestro.</para>
       </listitem>
       <listitem>
-        <para><guilabel>Groups</guilabel><indexterm><primary>Working
-	      machine</primary><secondary>group
+        <para><guilabel>Groups</guilabel><indexterm><primary>Node
+	      </primary><secondary>group
 	      of</secondary></indexterm>: configure the groups of
-	      Servers on the current Maestro.</para>
+	      Nodes on the current Maestro.</para>
       </listitem>
     </itemizedlist>
     
     <figure>
-      <title>Maestro / Servers configuration dialog box</title>
+      <title>Maestro / Nodes configuration dialog box</title>
       <mediaobject>
-				<caption>The Maestro/Servers Configurations interface is divided in three parts: maestro, list of servers and groups of servers.</caption>
+				<caption>The Maestro/Nodes configuration interface is divided in three parts: maestro, list of nodes and groups of nodes.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_maestro_servers_overview.png" />
         </imageobject>
@@ -91,7 +91,7 @@
       <title>Maestro</title>
 
       <para>In the upper part of the
-        Servers<indexterm><primary>Maestro</primary></indexterm>
+				<indexterm><primary>Maestro</primary></indexterm>/Nodes
         Interface (see <xref linkend="maestro_server_dialog" />),
         there is an entry in which the user can put the desired
         machine to use as Maestro. A requirement is that the Maestro
@@ -118,18 +118,18 @@
     </section>
     
     <section>
-      <title>Servers</title>
+      <title>Nodes</title>
       <para>Once the Maestro has been selected and the connection has
-        been successfully established, the user can associate working
-        machiness<indexterm><primary>Working
-        machine</primary></indexterm> to that Maestro.</para>
+        been successfully established, the user can associate nodes 
+        <indexterm><primary>Node
+        </primary></indexterm> to that Maestro.</para>
 
-      <para>Each line in the Servers window represents the each machine associated to the
+      <para>Each line of the Nodes window represents each machine associated to the
         Maestro. The lines have some columns:</para>
       <itemizedlist>
 	<listitem>
 	  <para><guilabel>AC</guilabel>: checkbox to activate or not
-	    the auto-connection to that server.</para>
+	    the auto-connection to that node.</para>
 	</listitem>
 	<listitem>
 	  <para><guilabel>MPI</guilabel>: depicts whether the machine
@@ -138,11 +138,11 @@
 	</listitem>
 	<listitem>
 	  <para><guilabel>Address</guilabel>: hostname or IP address
-	  of the working machine.</para>
+	  of the node.</para>
 	</listitem>
 	<listitem>
 	  <para><guilabel>CPU Clock</guilabel>: CPU clock of the
-	  working machine.</para>
+	  node.</para>
 	</listitem>
 	<listitem>
 	  <para><guilabel>Memory</guilabel>: total memory of the machine.</para>
@@ -163,11 +163,11 @@
         machine</primary><secondary>group
         of</secondary></indexterm>. This can be done through the
         creation of groups of machines.</para>
-      <para>In the bottom part of the Servers interface (see
+			<para>In the bottom part of the Maestro/Nodes interface (see
         <xref linkend="maestro_server_dialog" />), the user can
-        create/edit Servers groups. The user must Drag and Drop the
-        Server to create a group.</para>
-      <para>To create a group, the user needs to click over a server
+        create/edit nodes groups. The user must Drag and Drop the
+        node to create a group.</para>
+      <para>To create a group, the user needs to click over a node
         in the list and drag it to the <guiicon>+</guiicon> icon. A
         text box will be prompted for the name of the group. Groups
         with same names are not accepted.</para>

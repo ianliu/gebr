@@ -119,7 +119,7 @@ static void on_queue_set_text(GtkCellLayout   *cell_layout,
 
 static void on_queue_combobox_changed (GtkComboBox *combo, GebrFlowEdition *fe);
 
-static void update_speed_slider_sensitiveness(GebrFlowEdition *fe);
+static void select_file_column(GtkTreeView *tree_view, GebrFlowEdition *fe);
 
 static gboolean
 menu_search_func(GtkTreeModel *model,
@@ -246,14 +246,16 @@ flow_edition_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
 	fe->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
-							 G_TYPE_STRING,
-							 G_TYPE_STRING,
-							 G_TYPE_POINTER,
-							 G_TYPE_INT,
-							 G_TYPE_BOOLEAN,
-							 G_TYPE_BOOLEAN,
-							 G_TYPE_STRING,
-							 G_TYPE_BOOLEAN);
+	                                    G_TYPE_STRING,
+	                                    G_TYPE_STRING,
+	                                    G_TYPE_POINTER,
+	                                    G_TYPE_INT,
+	                                    G_TYPE_BOOLEAN,
+	                                    G_TYPE_BOOLEAN,
+	                                    G_TYPE_STRING,
+	                                    G_TYPE_BOOLEAN,
+	                                    G_TYPE_STRING);
+
 	fe->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(fe->fseq_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(fe->fseq_view)),
 				    GTK_SELECTION_MULTIPLE);
@@ -265,7 +267,9 @@ flow_edition_setup_ui(void)
 						    (GebrGuiGtkTreeViewReorderCallback) flow_edition_may_reorder,
 						    fe);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(fe->fseq_view), FALSE);
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(fe->fseq_view), FALSE);
 
+	/* Icon column */
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(fe->fseq_view), col);
@@ -274,9 +278,11 @@ flow_edition_setup_ui(void)
 	g_object_set(G_OBJECT(fe->fseq_view), "has-tooltip", TRUE, NULL);
 	g_signal_connect(G_OBJECT(fe->fseq_view), "query-tooltip", G_CALLBACK(on_flow_sequence_query_tooltip), fe);
 
+	/* Text column */
 	fe->text_renderer = renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(fe->fseq_view), col);
+	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "markup", FSEQ_TITLE_COLUMN);
 	gtk_tree_view_column_add_attribute(col, renderer, "editable", FSEQ_EDITABLE);
 	gtk_tree_view_column_add_attribute(col, renderer, "ellipsize", FSEQ_ELLIPSIZE);
@@ -285,6 +291,15 @@ flow_edition_setup_ui(void)
 	g_signal_connect(renderer, "edited", G_CALLBACK(flow_edition_component_edited), NULL);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(flow_edition_component_editing_started), NULL);
 	g_signal_connect(renderer, "editing-canceled", G_CALLBACK(flow_edition_component_editing_canceled), NULL);
+
+	/* Directories column */
+	fe->file_renderer = renderer = gtk_cell_renderer_pixbuf_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(fe->fseq_view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "sensitive", FSEQ_SENSITIVE);
+	gtk_tree_view_column_add_attribute(col, renderer, "stock-id", FSEQ_FILE_COLUMN);
+
+	g_signal_connect(fe->fseq_view, "cursor-changed", G_CALLBACK(select_file_column), fe);
 
 	/* Space key pressed on flow component changes its configured status */
 	g_signal_connect(fe->fseq_view, "key-press-event",
@@ -346,8 +361,8 @@ flow_edition_setup_ui(void)
 	return fe;
 }
 
-static void
-update_speed_slider_sensitiveness(GebrFlowEdition *fe)
+void
+gebr_flow_edition_update_speed_slider_sensitiveness(GebrFlowEdition *fe)
 {
 	gboolean sensitive;
 	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_first_mpi_program(gebr.flow);
@@ -371,10 +386,11 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
                                            gboolean sensitive,
                                            gboolean maestro_err)
 {
-	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive == TRUE) {
+	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive)
 		sensitive = FALSE;
-		maestro_err = FALSE;
-	}
+
+	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0 && sensitive)
+		sensitive = FALSE;
 
 	const gchar *tooltip_disconn;
 	const gchar *tooltip_execute;
@@ -385,7 +401,15 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 		else
 			tooltip_disconn = _("Select a line of this project to execute a flow");
 	} else {
-		tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
+			tooltip_disconn = _("The Maestro of this line is disconnected.\nConnecting it to execute a flow.");
+		else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
+			tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
+		else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+			tooltip_disconn = _("This flow does not contain programs\nAdd at least one to execute this flow");
+		else
+			tooltip_disconn = _("Execute");
 	}
 	tooltip_execute = _("Execute");
 
@@ -523,6 +547,7 @@ void flow_edition_set_io(void)
 			   FSEQ_EDITABLE, sensitivity? TRUE : FALSE,
 			   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START,
 			   FSEQ_TOOLTIP, tooltip,
+			   FSEQ_FILE_COLUMN, GTK_STOCK_DIRECTORY,
 			   -1);
 	g_free(title);
 	g_free(tooltip);
@@ -585,6 +610,7 @@ void flow_edition_set_io(void)
 			   FSEQ_EDITABLE, sensitivity? TRUE : FALSE,
 			   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START,
 			   FSEQ_TOOLTIP, tooltip,
+			   FSEQ_FILE_COLUMN, GTK_STOCK_DIRECTORY,
 			   -1);
 	g_free(title);
 	g_free(tooltip);
@@ -642,6 +668,7 @@ void flow_edition_set_io(void)
 			   FSEQ_EDITABLE, sensitivity? TRUE : FALSE,
 			   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START,
 			   FSEQ_TOOLTIP, tooltip,
+			   FSEQ_FILE_COLUMN, GTK_STOCK_DIRECTORY,
 			   -1);
 
 	flow_browse_info_update();
@@ -676,26 +703,34 @@ void flow_edition_component_activated(void)
 	g_free(title);
 }
 
-static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEvent *event)
+static void _open_activated(GebrFlowEdition *fe,
+                            const gchar *path)
 {
-	gchar *path = g_object_get_data(G_OBJECT(entry), "path");
+	gchar *entry_text;
 	GtkTreeIter iter;
-	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
+	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(fe->fseq_store), &iter, path);
 
 	GtkFileChooserAction action;
 	gchar *stock;
 	gchar *title = NULL;
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
+		entry_text = gebr_geoxml_flow_io_get_input(gebr.flow);
+
 		action = GTK_FILE_CHOOSER_ACTION_OPEN;
 		stock = GTK_STOCK_OPEN;
 		title = g_strdup(_("Choose an input file"));
 	} else {
 		action = GTK_FILE_CHOOSER_ACTION_SAVE;
 		stock = GTK_STOCK_SAVE;
-		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+			entry_text = gebr_geoxml_flow_io_get_output(gebr.flow);
+
 			title = g_strdup(_("Choose an output file"));
-		else
+		}
+		else {
+			entry_text = gebr_geoxml_flow_io_get_error(gebr.flow);
 			title = g_strdup(_("Choose a log file"));
+		}
 	}
 	if (!title)
 		title = g_strdup(_("Choose file"));
@@ -710,22 +745,61 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 
 	gchar *new_text;
-	gint response = gebr_file_chooser_set_remote_navigation(dialog, entry,
+	gint response = gebr_file_chooser_set_remote_navigation(dialog, entry_text,
 	                                                        prefix, paths, TRUE,
 	                                                        &new_text);
-
 	if (response == GTK_RESPONSE_YES) {
-		gtk_entry_set_text(entry, new_text);
+		g_object_set(fe->text_renderer, "text", new_text, NULL);
 		
-		GtkCellRenderer *renderer = g_object_get_data(G_OBJECT(entry), "renderer");
-		gtk_cell_renderer_stop_editing(renderer, FALSE);
-		flow_edition_component_edited(GTK_CELL_RENDERER_TEXT(renderer), path, new_text);
+		flow_edition_component_edited(GTK_CELL_RENDERER_TEXT(fe->text_renderer), g_strdup(path), new_text);
 	}
 
 	g_free(new_text);
-	g_free(path);
 	g_free(title);
+	g_free(entry_text);
 	gebr_pairstrfreev(paths);
+}
+
+static void
+select_file_column(GtkTreeView *tree_view,
+                   GebrFlowEdition *fe)
+{
+	GtkTreeIter iter;
+
+	gebr_gui_gtk_tree_view_turn_to_single_selection(tree_view);
+	if (!flow_edition_get_selected_component(&iter, TRUE))
+		return;
+
+	gebr_gui_gtk_tree_view_set_drag_source_dest(tree_view);
+
+	if (!gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) &&
+	    !gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) &&
+	    !gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
+		return;
+
+	gboolean sensitive;
+	gtk_tree_model_get(GTK_TREE_MODEL(fe->fseq_store), &iter,
+	                   FSEQ_SENSITIVE, &sensitive, -1);
+
+	if (!sensitive)
+		return;
+
+	GtkTreePath *path;
+	GtkTreeViewColumn *column;
+	gtk_tree_view_get_cursor(tree_view, &path, &column);
+
+	gint pos, wid;
+	if(!gtk_tree_view_column_cell_get_position(column, fe->file_renderer, &pos, &wid))
+		return;
+
+	gchar *path_str = gtk_tree_path_to_string(path);
+
+	gtk_tree_view_unset_rows_drag_source(tree_view);
+
+	_open_activated(fe, path_str);
+
+	g_free(path_str);
+	gtk_tree_path_free(path);
 }
 
 static void populate_io_popup(GtkEntry *entry, GtkMenu *menu)
@@ -760,7 +834,6 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 
 	gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
 
-	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	g_object_set_data(G_OBJECT(entry), "path", g_strdup(path));
 	g_object_set_data(G_OBJECT(entry), "renderer", renderer);
 
@@ -782,7 +855,7 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 	    (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter) && (g_strcmp0(error, "") == 0)))
 		gtk_entry_set_text(entry, "");
 
-	g_signal_connect(entry, "icon-release", G_CALLBACK(open_activated), NULL);
+//	g_signal_connect(entry, "icon-release", G_CALLBACK(open_activated), NULL);
 	g_signal_connect(entry, "populate-popup", G_CALLBACK(populate_io_popup), NULL);
 }
 
@@ -823,7 +896,7 @@ flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar 
 
 	flow_edition_set_io();
 
-	update_speed_slider_sensitiveness(gebr.ui_flow_edition);
+	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 }
 
 gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
@@ -1203,7 +1276,10 @@ static void flow_edition_menu_add(void)
 		gebr_validator_insert(gebr.validator, dict_iter, NULL, NULL);
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+
 	gebr_flow_set_toolbar_sensitive();
+	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 
 	/* and to the GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
@@ -1793,7 +1869,7 @@ flow_edition_revalidate_programs(void)
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
 	}
 
-	update_speed_slider_sensitiveness(gebr.ui_flow_edition);
+	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 }
 
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
@@ -1970,14 +2046,10 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
-		gebr_project_line_show(gebr.ui_project_line);
-		flow_browse_reload_selected();
 		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, TRUE);
 		break;
 	case SERVER_STATE_LOGGED:
 		gebr_flow_edition_update_server(fe, maestro);
-		gebr_project_line_show(gebr.ui_project_line);
-		flow_browse_reload_selected();
 		break;
 	default:
 		break;
@@ -1993,7 +2065,7 @@ gebr_flow_edition_show(GebrFlowEdition *fe)
 	if (gebr.line)
 		gebr_flow_set_toolbar_sensitive();
 
-	update_speed_slider_sensitiveness(fe);
+	gebr_flow_edition_update_speed_slider_sensitiveness(fe);
 
 	if (gebr.config.niceness == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fe->nice_button_high), TRUE);

@@ -178,6 +178,9 @@ send_server_status_message(GebrmApp *app,
 
 	gchar *ncores = g_strdup_printf("%d", gebrm_daemon_get_ncores(daemon));
 	gchar *clock = g_strdup_printf("%lf", gebrm_daemon_get_clock(daemon));
+	const gchar *memory = gebrm_daemon_get_memory(daemon);
+	if (!memory)
+		memory = "0";
 
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.ssta_def, 8,
@@ -186,9 +189,9 @@ send_server_status_message(GebrmApp *app,
 					      state,
 					      ac,
 					      ncores,
-					      clock,
+					      g_strtod(clock, NULL) > 0? clock : "",
 					      gebrm_daemon_get_model_name(daemon),
-					      gebrm_daemon_get_memory(daemon));
+					      g_strtod(memory, NULL) > 0? memory : "");
 
 	gebrm_daemon_send_error_message(daemon, socket);
 
@@ -422,12 +425,21 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				verify_connect_all(app);
 			}
 		}
+
+		const gchar *err = gebrm_daemon_get_error_type(daemon);
+		if (g_strcmp0(err, "error:connection-stolen") == 0) {
+			gebrm_daemon_set_error_type(daemon, NULL);
+			for (GList *i = app->priv->connections; i; i = i->next) {
+				GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+				gebrm_daemon_connect(daemon, NULL, socket);
+			}
+		}
 	}
 
-	else if (state == SERVER_STATE_OPEN_TUNNEL) {
+	else if (state == SERVER_STATE_RUN) {
 		if (app->priv->connect_all) {
 			gebrm_daemon_set_canceled(daemon, TRUE);
-			guint timeout = g_timeout_add(5000, time_out_daemon, app);
+			guint timeout = g_timeout_add(6000, time_out_daemon, app);
 			gebrm_daemon_set_timeout(daemon, timeout);
 		}
 	}
@@ -573,6 +585,16 @@ on_daemon_init(GebrmDaemon *daemon,
 		} else {
 			error = "error:connection-refused";
 		}
+		goto err;
+	}
+
+	if (g_strcmp0(error_type, "connection-refused-job") == 0) {
+		error = "error:connection-refused-job";
+		goto err;
+	}
+
+	if (g_strcmp0(error_type, "connection-stolen") == 0) {
+		error = "error:connection-stolen";
 		goto err;
 	}
 
@@ -1120,6 +1142,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 				gebrm_daemon_connect(d, NULL, socket);
 				gebrm_config_save_server(d);
 			}
+			if (!connect_daemon)
+				app->priv->connect_all = FALSE;
 		}
 		else if (g_strcmp0(prefix, "/ssh-answer") == 0) {
 			GebrmDaemon *daemon = NULL;
@@ -1881,7 +1905,7 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	}
 
 	/* success, send port */
-	gchar *port_str = g_strdup_printf("%u\n", port);
+	gchar *port_str = g_strdup_printf(GEBR_PORT_PREFIX "%u\n", port);
 
 	if (write(fd, port_str, strlen(port_str)) == -1)
 		exit(-1);

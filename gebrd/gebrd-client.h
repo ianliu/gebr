@@ -38,6 +38,9 @@ void client_add(GebrCommProtocolSocket *client);
 
 void client_free(struct client *client);
 
+void client_disconnected(GebrCommProtocolSocket * socket,
+                         struct client *client);
+
 GList * parse_comma_separated_string(gchar *str);
 
 G_END_DECLS

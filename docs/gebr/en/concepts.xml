@@ -164,10 +164,11 @@
     <para>The GêBR set of tools is composed by three main player
       categories: <emphasis role="bold">GêBR</emphasis><indexterm><primary>GêBR</primary><secondary>the
       interface</secondary></indexterm> (the interface
-      itself), <emphasis role="bold">Maestros</emphasis><indexterm><primary>Maestro</primary></indexterm>,
-      and <emphasis role="bold">working
-      machines</emphasis><indexterm><primary>Working
-      machine</primary></indexterm>. But who are those guys?</para>
+    	itself), <emphasis role="bold">Maestros</emphasis>
+	    <indexterm><primary>Maestro</primary></indexterm>,
+      and <emphasis role="bold">nodes
+      </emphasis><indexterm><primary>Node
+      </primary></indexterm>. But who are those guys?</para>
 
     <para>The GêBR interface, sometimes referred as GêBR only, is the
       graphical interface with whom the user interacts with to build
@@ -177,53 +178,51 @@
 
     <para>Through GêBR, it is possible to take advantage of as many
       machines as the user has access, to run processing flows. Those
-      machines are referenced as <emphasis role="bold">working
-      machines</emphasis> (or sometimes,
-      as <emphasis>servers</emphasis><indexterm><primary>Server
-	</primary><see>Working machines</see></indexterm>). They may
+      machines are referenced as <emphasis role="bold">nodes
+      </emphasis> . They may
       be local, meaning the user is physically using them, or remote,
       meaning the user has access to them through the network. No
       matter where the machines are, they are equally treated by GêBR,
       which means that the user does not have to care about
       that.</para>
 
-    <para>However, GêBR does not talk directly to the working
-      machines. This communication is established through another
-      player,
-      the <emphasis role="bold">Maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>. It
-      acts as a coordinator of the working machines. Without
+		<para>However, GêBR does not talk directly to the.
+			This communication is established through another
+			player, the <emphasis role="bold">Maestro</emphasis>
+			<indexterm><primary>Maestro</primary></indexterm>. It
+      acts as a coordinator of the nodes. Without
       interference, Maestro collects information about the state of
-      each working machine and ranks them according to their
+      each node and ranks them according to their
       capabilities and available resources at time. Therefore, Maestro
       can take smart decisions about which machines are best suited to
       run the job.</para>
 
     <figure xml:id="communication_diagram">
-      <title>Communitation layout between GêBR players</title>
+      <title>Communication layout between GêBR players</title>
       <mediaobject>
 	<imageobject>
           <imagedata fileref="../images/gebr-connections.png" />
         </imageobject>
       </mediaobject>
-      <caption>GêBR has no direct access to working machines. All
+      <caption>GêBR has no direct access to nodes. All
       communitation flows through the Maestro, which is responsible to
-      receive GêBR requests and inquires and root them the working
-      machines, according its own criteria, always taking performance
-      into account. Maestro also centralizes outputs from the working
-      machines and send them back to GêBR.
+			receive GêBR requests and inquires and root them the nodes,
+			according its own criteria, always taking performance
+      into account. Maestro also centralizes outputs from the nodes 
+      and send them back to GêBR.
       </caption>
     </figure>
   
-    <para>The working machines put their computational power at
+    <para>The nodes put their computational power at
       disposal of the Maestro. Under Maestro's coordination the
-      working machines can even cooperate to conclude processing jobs
+      nodes can even cooperate to conclude processing jobs
       fasters.</para>
  
    <para>When the user decides to execute a flow, GêBR sends this
       request to the Maestro, giving rise to
       a <emphasis role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>. However
       the Maestro does not execute the job itself. Indeed, it
-      dispatches the job to some of the working machines, under its
+      dispatches the job to some of the nodes, under its
       control. Besides, Maestro collects the results and all
       information about the job, sending them back to GêBR, where they
       are presented to the user.</para>
@@ -280,8 +279,8 @@
               guided setup of the main connections performed by GêBR;
             </listitem>
             <listitem>
-              <guilabel>Maestro/Servers</guilabel>: Configuration of
-              Maestro, Servers and Groups of servers;
+              <guilabel>Maestro/Nodes</guilabel>: Configuration of
+              Maestro, nodes and Groups of nodes;
             </listitem>
             <listitem>
               <guilabel>Quit</guilabel>: quit GêBR.

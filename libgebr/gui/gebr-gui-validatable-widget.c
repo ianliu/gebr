@@ -58,7 +58,7 @@ gboolean gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
 	else
 		retval = gebr_validator_validate_expr(self, expression, type, &error);
 
-	if (!error && !*expression && gebr_geoxml_program_parameter_get_required(pparam))
+	if (!error && !*expression && gebr_geoxml_program_parameter_get_required(pparam) && !gebr_geoxml_program_parameter_has_value(pparam))
 		g_set_error(&error,
 			    GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_EMPTY_EXPR,

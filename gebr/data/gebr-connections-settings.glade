@@ -155,6 +155,18 @@ Your login password may be asked to stablish the connection.</property>
       </packing>
     </child>
     <child>
+      <object class="GtkEntry" id="entry_name">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="invisible_char">&#x25CF;</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="right_attach">2</property>
+        <property name="y_options"></property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkLabel" id="label8">
         <property name="visible">True</property>
         <property name="xalign">0</property>
@@ -166,6 +178,20 @@ Your login password may be asked to stablish the connection.</property>
         <property name="x_options">GTK_FILL</property>
         <property name="y_options"></property>
         <property name="x_padding">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEntry" id="entry_email">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="invisible_char">&#x25CF;</property>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="right_attach">2</property>
+        <property name="top_attach">1</property>
+        <property name="bottom_attach">2</property>
+        <property name="y_options"></property>
       </packing>
     </child>
     <child>
@@ -183,32 +209,6 @@ Your login password may be asked to stablish the connection.</property>
       </packing>
     </child>
     <child>
-      <object class="GtkEntry" id="entry_name">
-        <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="invisible_char">&#x25CF;</property>
-      </object>
-      <packing>
-        <property name="left_attach">1</property>
-        <property name="right_attach">2</property>
-        <property name="y_options">GTK_FILL</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkEntry" id="entry_email">
-        <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="invisible_char">&#x25CF;</property>
-      </object>
-      <packing>
-        <property name="left_attach">1</property>
-        <property name="right_attach">2</property>
-        <property name="top_attach">1</property>
-        <property name="bottom_attach">2</property>
-        <property name="y_options">GTK_FILL</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkEventBox" id="menus_box">
         <property name="visible">True</property>
         <child>
@@ -220,7 +220,7 @@ Your login password may be asked to stablish the connection.</property>
         <property name="right_attach">2</property>
         <property name="top_attach">2</property>
         <property name="bottom_attach">3</property>
-        <property name="y_options">GTK_FILL</property>
+        <property name="y_options"></property>
       </packing>
     </child>
   </object>
@@ -231,7 +231,7 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one &lt;i&gt;connected server&lt;/i&gt; to run processing flows. You must either connect to new servers or connect to all servers alredy registred below.</property>
+        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one &lt;i&gt;connected working nodes&lt;/i&gt; to run processing flows. You must either connect to new working node or connect to all of them alredy registred below.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -368,9 +368,9 @@ Your login password may be asked to stablish the connection.</property>
         <child>
           <object class="GtkLabel" id="maestro_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is in between the G&#xEA;BR and the working servers. It receives all requests for flow execution and dispatches them to groups of servers.
+            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is in between the G&#xEA;BR and the working nodes. It receives all requests for flow execution and dispatches them to groups of nodes.
 
-Without interference, Maestro collects information about the state of each working server and ranks them according to their capabilities and available resources at time. Therefore, Maestro can take smart decisions about which servers are best suited to run a processing flow.</property>
+Without interference, Maestro collects information about the state of each node and ranks them according to their capabilities and available resources at time. Therefore, Maestro can take smart decisions about which nodes are best suited to run a processing flow.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -530,7 +530,7 @@ Without interference, Maestro collects information about the state of each worki
             <property name="visible">True</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
-            <property name="label" translatable="yes">&lt;b&gt;Servers&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Working nodes&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -576,7 +576,7 @@ Without interference, Maestro collects information about the state of each worki
             <property name="visible">True</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
-            <property name="label" translatable="yes">&lt;b&gt;Remote browse&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Remote browsing&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -704,7 +704,7 @@ Without interference, Maestro collects information about the state of each worki
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="ypad">10</property>
-                <property name="label" translatable="yes">In this version, G&#xEA;BR introduces new features that will speed up your processing flows, like automatic selection of the fastest server available and split of processing job among servers.
+                <property name="label" translatable="yes">In this version, G&#xEA;BR introduces new features that will speed up your processing flows, like automatic selection of the fastest working node available and split of processing job among working nodes.
 
 These is possible due to a new player, called Maestro.
 
@@ -760,7 +760,7 @@ Your login credentials may be asked to be able to browse the remote file system.
             <property name="homogeneous">True</property>
             <child>
               <object class="GtkButton" id="mount_button">
-                <property name="label" translatable="yes">Enable remote browse</property>
+                <property name="label" translatable="yes">Enable remote browsing</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -863,9 +863,9 @@ Your login credentials may be asked to be able to browse the remote file system.
       <object class="GtkLabel" id="server_info_second_label">
         <property name="visible">True</property>
         <property name="xpad">10</property>
-        <property name="label" translatable="yes">&lt;i&gt;A Maestro without Servers is like a general without soldiers.&lt;/i&gt;
+        <property name="label" translatable="yes">&lt;i&gt;A Maestro without nodes is like a general without soldiers.&lt;/i&gt;
 
-&lt;i&gt;Working servers&lt;/i&gt; are the machines that actually execute the processing flows. They put their computational power at disposal of the Maestro, which coordinates them to cooperate to conclude processing jobs faster.</property>
+The &lt;i&gt;working nodes&lt;/i&gt; are the ones who actually execute the processing flows. They put their computational power at disposal of the Maestro, which coordinates them to cooperate to conclude processing jobs faster.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>

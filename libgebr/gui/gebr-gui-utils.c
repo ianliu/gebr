@@ -119,7 +119,6 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 	}
 
 	/* FIXME: call default implementation to do this */
-	g_signal_emit_by_name(tree_view, "cursor-changed");
 	menu = popup_callback->callback(GTK_WIDGET(tree_view), popup_callback->user_data);
 	if (menu == NULL)
 		return TRUE;
@@ -1080,12 +1079,21 @@ on_gtk_tree_view_drag_drop(GtkTreeView * tree_view, GdkDragContext * drag_contex
 }
 
 void
+gebr_gui_gtk_tree_view_set_drag_source_dest(GtkTreeView * tree_view)
+{
+	const static GtkTargetEntry target_entries[] = {
+			{"reorder", GTK_TARGET_SAME_WIDGET, 1}
+	};
+
+	gtk_tree_view_enable_model_drag_source(tree_view, GDK_MODIFIER_MASK, target_entries, 1, GDK_ACTION_MOVE);
+	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1, GDK_ACTION_MOVE);
+}
+
+void
 gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkTreeViewReorderCallback callback,
 					    GebrGuiGtkTreeViewReorderCallback can_callback, gpointer user_data)
 {
-	const static GtkTargetEntry target_entries[] = {
-		{"reorder", GTK_TARGET_SAME_WIDGET, 1}
-	};
+
 	struct reorder_data *data;
 
 	if (tree_view == NULL || callback == NULL)
@@ -1096,8 +1104,7 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
 	data->can_callback = can_callback;
 	data->user_data = user_data;
 
-	gtk_tree_view_enable_model_drag_source(tree_view, GDK_MODIFIER_MASK, target_entries, 1, GDK_ACTION_MOVE);
-	gtk_tree_view_enable_model_drag_dest(tree_view, target_entries, 1, GDK_ACTION_MOVE);
+	gebr_gui_gtk_tree_view_set_drag_source_dest(tree_view);
 
 	g_signal_connect(tree_view, "drag-begin", G_CALLBACK(on_gtk_tree_view_drag_begin), data);
 	g_signal_connect(tree_view, "drag-drop", G_CALLBACK(on_gtk_tree_view_drag_drop), data);
@@ -1222,8 +1229,9 @@ gboolean gebr_gui_gtk_tree_iter_equal_to(GtkTreeIter *iter1, GtkTreeIter *iter2)
 
 	return iter1->user_data == iter2->user_data;
 }
+
 gboolean
-gebr_file_chooser_set_warning_widget(gchar ***paths, 
+gebr_file_chooser_set_warning_widget(gchar ***paths,
 				     gchar *file,
 				     GtkWidget *chooser_dialog)
 {
@@ -1232,11 +1240,16 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
 
+	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+	GtkWidget *dummy_label = gtk_label_new(NULL);
+
+	gtk_box_pack_start(GTK_BOX(hbox), dummy_label, TRUE, TRUE, 5);
+
 	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 5);
 
 	gchar *txt = g_markup_printf_escaped(_("The presented files are from your <b>local machine</b> "
-					       "and may not represent the files on the <b>servers</b>."));
+					       "and may not represent the files on the <b>nodes</b>."));
 	GtkWidget *label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), txt);
 
@@ -1246,6 +1259,8 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 	gtk_label_set_line_wrap_mode(GTK_LABEL(label), PANGO_WRAP_WORD);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
 	gtk_widget_set_size_request(label, 130, -1);
+
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
 	gtk_widget_show_all(vbox);
 	gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER(chooser_dialog), vbox);
@@ -1315,9 +1330,27 @@ gebr_file_chooser_set_current_directory (const gchar *entry_text, const gchar *p
 	}
 }
 
+static void
+on_response_event(GtkDialog *dialog,
+                  gint       response_id,
+                  gpointer   user_data)
+{
+	if (response_id == GTK_RESPONSE_HELP) {
+		const gchar *section = "remote_browsing";
+		gchar *error;
+
+		gebr_gui_help_button_clicked(section, &error);
+
+		if (error) {//FIXME
+			//gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+			g_free(error);
+		}
+	}
+}
+
 gint
 gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
-                                        GtkEntry *entry,
+                                        const gchar *entry_text,
 					gchar *sftp_prefix,
                                         gchar ***paths,
                                         gboolean insert_bookmarks,
@@ -1327,7 +1360,6 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 
 	gint response;
 	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);;
-	const gchar *entry_text = gtk_entry_get_text(entry);
 	gchar *err_filechooser = NULL;
 
 	if (sftp_prefix) {
@@ -1338,9 +1370,17 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 		gebr_file_chooser_set_warning_widget(paths, filename, dialog);
 	}
 
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
+
 	gtk_widget_show_all(dialog);
 
-	response = gtk_dialog_run(GTK_DIALOG(dialog));
+	g_signal_connect(dialog, "response", G_CALLBACK(on_response_event), NULL);
+
+	while (1) {
+		response = gtk_dialog_run(GTK_DIALOG(dialog));
+		if (response != GTK_RESPONSE_HELP)
+			break;
+	}
 
 	gchar *uri = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(dialog));
 	if (uri) {
@@ -1369,10 +1409,11 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 }
 
 void
-on_help_button_clicked(const gchar *section, gchar **error)
+gebr_gui_help_button_clicked(const gchar *section, gchar **error)
 {
 	gchar *loc;
 	gchar *path;
+	gchar *local_error;
 
 	loc = setlocale(LC_MESSAGES, NULL);
 	if (g_str_has_prefix (loc, "pt"))
@@ -1385,10 +1426,15 @@ on_help_button_clicked(const gchar *section, gchar **error)
 	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
 		gtk_show_uri(NULL, "http://www.gebrproject.com", 
 			     GDK_CURRENT_TIME, NULL);
-		*error = g_strdup ( _("Could not load help. "
+		local_error = g_strdup ( _("Could not load help. "
 				"Certify it was installed correctly."));
 	} else {
-		*error = NULL;
+		local_error = NULL;
 	}
+	if (error)
+		*error = local_error;
+	else
+		g_free(local_error);
+
 	g_free(path);
 }

@@ -1,4 +1,4 @@
-define name @PACKAGE_NAME@
+%define name @PACKAGE_NAME@
 %define version @PACKAGE_VERSION@
 %define release 1%{dist}
 

@@ -349,11 +349,21 @@ gebr_job_get_servers(GebrJob *job, gint *n)
 	g_return_val_if_fail(n != NULL, NULL);
 	g_return_val_if_fail(job != NULL, NULL);
 
+	gint j = 0;
 	GebrJobTask *tasks = gebr_job_get_tasks(job, n);
+
 	gchar **servers = g_new0(gchar*, *n+1);
-	for (int i=0; i < *n; i++)
-		servers[i] = g_strdup(tasks[i].server);
+
+	for (gint i = 0; i < *n; i++) {
+		if (tasks[i].percentage > 0) {
+			servers[i] = g_strdup(tasks[i].server);
+			j++;
+		}
+	}
+
 	servers[*n] = NULL;
+	*n = j;
+
 	return servers;
 }
 
@@ -397,7 +407,7 @@ gebr_job_get_command_line(GebrJob *job)
 {
 	GString *cmd_line = g_string_new("");
 	for (int i = 0; i < job->priv->n_servers; i++) {
-		g_string_append_printf(cmd_line, _("Command line (server %s):\n"), job->priv->tasks[i].server);
+		g_string_append_printf(cmd_line, _("Command line (node %s):\n"), job->priv->tasks[i].server);
 		g_string_append_printf(cmd_line, "%s\n\n", job->priv->tasks[i].cmd_line);
 	}
 	return g_string_free(cmd_line, FALSE);

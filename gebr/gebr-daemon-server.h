@@ -126,6 +126,11 @@ const gchar *gebr_daemon_server_get_memory(GebrDaemonServer *daemon);
 gboolean gebr_daemon_server_accepts_mpi(GebrDaemonServer *daemon,
 					const gchar *mpi_flavor);
 
+guint gebr_daemon_server_get_timeout(GebrDaemonServer *daemon);
+
+void gebr_daemon_server_set_timeout(GebrDaemonServer *daemon,
+                                    guint timeout);
+
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */

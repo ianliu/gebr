@@ -121,7 +121,7 @@ const gchar * gebr_gui_help_edit_window_get_menu_bar_path(GebrGuiHelpEditWindow 
 
 const gchar * gebr_gui_help_edit_window_get_file_menu_path(GebrGuiHelpEditWindow * self);
 
-const gchar * gebr_gui_help_edit_window_get_edit_menu_path(GebrGuiHelpEditWindow * self);
+const gchar * gebr_gui_help_edit_window_get_help_menu_path(GebrGuiHelpEditWindow * self);
 
 const gchar * gebr_gui_help_edit_window_get_menu_mark(GebrGuiHelpEditWindow * self);
 

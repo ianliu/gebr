@@ -215,10 +215,19 @@ void gebrd_init(void)
 			}
 		} else {
 			/* wait for server_init sign that it finished */
-			gchar buffer[100];
-			if (read(gebrd->finished_starting_pipe[0], buffer, 10) == -1)
-				exit(1);
-			fprintf(stdout, "%s", buffer);
+			gchar c;
+			GString *buf = g_string_sized_new(20);
+			while (read(gebrd->finished_starting_pipe[0], &c, 1) > 0) {
+				g_string_append_c(buf, c);
+				if (c == '\n') {
+					g_string_append_c(buf, '\0');
+					fprintf(stdout, "%s", buf->str);
+					g_string_free(buf, TRUE);
+					return;
+				}
+			}
+			/* Read failed */
+			exit(1);
 		}
 	}
 }

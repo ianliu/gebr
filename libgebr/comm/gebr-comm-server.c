@@ -302,7 +302,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 		binary = "gebrd";
 
 	/* initiate the marathon to communicate to server */
-	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("%p: Launching server at '%s'."),
+	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("%p: Launching machine at '%s'."),
 				     server->socket, server->address->str);
 
 	GebrCommTerminalProcess *process;
@@ -364,7 +364,7 @@ void gebr_comm_server_kill(GebrCommServer *server)
 {
 	GebrCommTerminalProcess *process;
 
-	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Stopping server at '%s'."),
+	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Stopping machine at '%s'."),
 				     server->address->str);
 
 	server->tried_existant_pass = FALSE;
@@ -511,6 +511,18 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 	if (output->len <= 2)
 		return TRUE;
 
+	gchar *start = g_strrstr(output->str, GEBR_PORT_PREFIX);
+	if (start) {
+		g_string_erase(output, 0, start - output->str + strlen(GEBR_PORT_PREFIX));
+		return FALSE;
+	}
+
+	for (gint i = 0; output->str[i]; i++) {
+		if (!g_ascii_isdigit(output->str[i]))
+			break;
+		return FALSE;
+	}
+
 	if (output->str[output->len - 2] == ':') {
 		GString *string;
 		GString *password;
@@ -534,10 +546,10 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 
 		string = g_string_new(NULL);
 		if (server->tried_existant_pass == FALSE)
-			g_string_printf(string, _("Server '%s' needs SSH login.\n\n%s"),
+			g_string_printf(string, _("Machine '%s' needs SSH login.\n\n%s"),
 					server->address->str, output->str);
 		else
-			g_string_printf(string, _("Wrong password for server '%s', please try again.\n\n%s"),
+			g_string_printf(string, _("Wrong password for machine '%s', please try again.\n\n%s"),
 					server->address->str, output->str);
 
 		if (server->priv->is_interactive) {
@@ -604,13 +616,13 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 		g_string_erase(output, strlen(output->str)-1, 1); //last \n
 
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH error: %s"), output->str);
-		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH error for server '%s': %s"),
+		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH error for machine '%s': %s"),
 					     server->address->str, output->str);
 	} else if (output->str[output->len - 4] == '.') {
 		gebr_g_string_replace(output, "\r\n", "\n");
 		g_string_erase(output, strlen(output->str)-1, 1); //last \n
 
-		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH message for server '%s': %s"),
+		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH message of machine '%s': %s"),
 					     server->address->str, output->str);
 	} else if (!strcmp(output->str, "yes\r\n")) {
 		goto out;
@@ -622,12 +634,10 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 
 			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, 
 							    _("SSH reported the following error: \n%s"), output->str);
-			gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("SSH reported the following error for server '%s': %s"),
+			gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("SSH reported the following error for machine '%s': %s"),
 						     server->address->str, output->str);
 			return TRUE;
 		}
-
-		return FALSE;
 	}
 
 out:	return TRUE;
@@ -680,8 +690,8 @@ static void gebr_comm_ssh_run_server_read(GebrCommTerminalProcess * process, Geb
 	if (port) {
 		server->port = port;
 	} else {
-		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, _("Could not run server."));
-		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run server '%s'."), server->address->str);
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, _("Could not run machine."));
+		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run machine '%s'."), server->address->str);
 	}
 
 out:	g_string_free(output, TRUE);
@@ -733,7 +743,7 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 
 		gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "%s: Missing port number!", __func__);
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, error);
-		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run server '%s'."), server->address->str);
+		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run machine '%s'."), server->address->str);
 
 		g_free(error);
 		g_strfreev(log_lines);
@@ -816,7 +826,7 @@ static void gebr_comm_server_disconnected_state(GebrCommServer *server,
 
 static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServerState state)
 {
-	g_debug("State of server %s changed from %s to %s",
+	g_debug("State of machine %s changed from %s to %s",
 		server->address->str,
 		gebr_comm_server_state_to_string(server->state),
 		gebr_comm_server_state_to_string(state));
@@ -916,7 +926,7 @@ gebr_comm_server_socket_disconnected(GebrCommProtocolSocket *socket,
 				     GebrCommServer *server)
 {
 	gebr_comm_server_disconnected_state(server, SERVER_ERROR_UNKNOWN, "");
-	gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Server '%s' disconnected"), 
+	gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Machine '%s' disconnected"), 
 				     server->address->str);
 }
 

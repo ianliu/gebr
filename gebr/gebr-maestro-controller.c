@@ -27,6 +27,7 @@
 #include <glib/gi18n.h>
 #include "gebr-maestro-server.h"
 #include "gebr-marshal.h"
+#include "flow.h"
 #include <locale.h>
 #include "ui_project_line.h"
 #include <libgebr/gui/gebr-gui-utils.h>
@@ -36,6 +37,7 @@ struct _GebrMaestroControllerPriv {
 	GebrMaestroServer *maestro;
 	GtkBuilder *builder;
 	GtkWidget *servers_view;
+	GtkWidget *spinner;
 
 	GtkListStore *model;
 
@@ -137,7 +139,7 @@ insert_new_entry(GebrMaestroController *mc)
 	gtk_list_store_prepend(mc->priv->model, &iter);
 	gtk_list_store_set(mc->priv->model, &iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
-	                   MAESTRO_CONTROLLER_ADDR, _("New"),
+	                   MAESTRO_CONTROLLER_ADDR, _("Add a node"),
 	                   MAESTRO_CONTROLLER_EDITABLE, TRUE,
 	                   -1);
 }
@@ -428,7 +430,7 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 	gtk_list_store_append(new_model, &new_iter);
 	gtk_list_store_set(new_model, &new_iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
-	                   MAESTRO_CONTROLLER_ADDR, _("Drop servers to increment this group!"),
+	                   MAESTRO_CONTROLLER_ADDR, _("Drop nodes here to increment this group!"),
 	                   -1);
 
 	return GTK_TREE_MODEL(new_model);
@@ -902,6 +904,8 @@ on_daemons_changed(GebrMaestroServer *maestro,
 	gebr_maestro_controller_update_daemon_model(maestro, mc);
 
 	g_signal_emit(mc, signals[DAEMONS_CHANGED], 0);
+
+	gebr_log_update_maestro_info(gebr.ui_log, maestro);
 }
 
 void
@@ -922,13 +926,95 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 	                   -1);
 
 	if (!daemon && !insert_new) {
-		gchar *text = g_strdup_printf(_("Servers of Maestro %s"), gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
+		gchar *text = g_strdup_printf(_("nodes of Maestro %s"), gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
 		g_object_set(cell, "text", text, NULL);
 		g_object_set(cell, "sensitive", FALSE, NULL);
 		g_free(text);
 	} else {
 		g_object_set(cell, "text", addr, NULL);
 		g_object_set(cell, "sensitive", TRUE, NULL);
+	}
+}
+
+typedef struct progressData {
+	GtkCellRenderer *cell;
+	GtkTreeModel *model;
+} ProgressData;
+
+gboolean
+update_spinner(gpointer user_data)
+{
+	ProgressData *data = user_data;
+
+	gint p;
+	g_object_get(data->cell, "pulse", &p, NULL);
+
+	if (p == 12)
+		p = 0;
+	else
+		p++;
+
+	g_object_set(data->cell, "pulse", p, NULL);
+
+	GtkTreeIter iter;
+	GtkTreePath *path;
+
+	gboolean valid = gtk_tree_model_get_iter_first(data->model, &iter);
+	valid = gtk_tree_model_iter_next(data->model, &iter);
+	while (valid) {
+		path = gtk_tree_model_get_path(data->model, &iter);
+		if (path) {
+			gtk_tree_model_row_changed(data->model, path, &iter);
+			gtk_tree_path_free(path);
+		}
+		valid = gtk_tree_model_iter_next(data->model, &iter);
+	}
+
+	return TRUE;
+}
+
+void
+gebr_maestro_controller_daemon_server_progress_func(GtkTreeViewColumn *tree_column,
+                                                    GtkCellRenderer *cell,
+                                                    GtkTreeModel *model,
+                                                    GtkTreeIter *iter,
+                                                    gpointer data)
+{
+	gboolean editable;
+
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get(model, iter,
+	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
+	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
+	                   -1);
+
+	if(editable) {
+		g_object_set(cell, "visible", FALSE, "active", FALSE, NULL);
+		return;
+	}
+
+	if (!daemon)
+		return;
+
+	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
+	guint timeout = gebr_daemon_server_get_timeout(daemon);
+
+	if (state == SERVER_STATE_DISCONNECTED || state == SERVER_STATE_LOGGED) {
+		g_object_set(cell, "visible", FALSE, "active", FALSE, NULL);
+		if (timeout != -1) {
+			g_object_set(cell, "pulse", 0, NULL);
+			if (g_source_remove(timeout))
+				gebr_daemon_server_set_timeout(daemon, -1);
+		}
+	} else {
+		g_object_set(cell, "visible", TRUE, "active", TRUE, NULL);
+		if (timeout == -1) {
+			ProgressData *user_data = g_new(ProgressData, 1);
+			user_data->cell = cell;
+			user_data->model = model;
+			timeout = g_timeout_add(83, (GSourceFunc) update_spinner, user_data);
+			gebr_daemon_server_set_timeout(daemon, timeout);
+		}
 	}
 }
 
@@ -948,7 +1034,7 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 	                   -1);
 
 	if(editable) {
-		g_object_set(cell, "stock-id", NULL, NULL);
+		g_object_set(cell, "visible", FALSE, "stock-id", NULL, NULL);
 		return;
 	}
 
@@ -959,18 +1045,24 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 	const gchar *stock_id = NULL;
 
 	const gchar *error = gebr_daemon_server_get_error(daemon);
+	gboolean visible = TRUE;
 
 	if (!error || !*error)
 	{
 		switch (state) {
-		case SERVER_STATE_UNKNOWN:
 		case SERVER_STATE_DISCONNECTED:
+			visible = TRUE;
+			stock_id = GTK_STOCK_DISCONNECT;
+			break;
+		case SERVER_STATE_UNKNOWN:
 		case SERVER_STATE_CONNECT:
 		case SERVER_STATE_RUN:
 		case SERVER_STATE_OPEN_TUNNEL:
-			stock_id = GTK_STOCK_DISCONNECT;
+			visible = FALSE;
+			stock_id = NULL;
 			break;
 		case SERVER_STATE_LOGGED:
+			visible = TRUE;
 			stock_id = GTK_STOCK_CONNECT;
 			break;
 		default:
@@ -978,10 +1070,15 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 			break;
 		}
 	}
-	else
+	else {
+		if (state != SERVER_STATE_DISCONNECTED)
+			visible = FALSE;
+		else
+			visible = TRUE;
 		stock_id = GTK_STOCK_DIALOG_WARNING;
+	}
 
-	g_object_set(cell, "stock-id", stock_id, NULL);
+	g_object_set(cell, "visible", visible, "stock-id", stock_id, NULL);
 }
 
 static void
@@ -1057,9 +1154,14 @@ daemon_server_cpu_clock_func(GtkTreeViewColumn *tree_column,
 	}
 
 	gchar *cpu_clock;
-	gdouble clock = atof(gebr_daemon_server_get_cpu_clock(daemon))/1000;
+	const gchar *clock_str = gebr_daemon_server_get_cpu_clock(daemon);
 
-	cpu_clock = g_strdup_printf("%.1lf GHz", clock);
+	if (strlen(clock_str) > 0) {
+		gdouble clock = atof(clock_str)/1000;
+		cpu_clock = g_strdup_printf("%.1lf GHz", clock);
+	} else {
+		cpu_clock = g_strdup("");
+	}
 
 	g_object_set(cell, "text", cpu_clock, NULL);
 
@@ -1087,9 +1189,14 @@ daemon_server_memory_func(GtkTreeViewColumn *tree_column,
 	}
 
 	gchar *memory;
-	gdouble mem = g_strtod(gebr_daemon_server_get_memory(daemon), NULL)/1000/1000;
+	const gchar *mem_str = gebr_daemon_server_get_memory(daemon);
 
-	memory = g_strdup_printf("%.1lf GB", mem);
+	if (strlen(mem_str) > 0) {
+		gdouble mem = g_strtod(mem_str, NULL)/1000/1000;
+		memory = g_strdup_printf("%.1lf GB", mem);
+	} else {
+		memory = g_strdup("");
+	}
 
 	g_object_set(cell, "text", memory, NULL);
 
@@ -1199,9 +1306,9 @@ server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		gtk_tree_model_get(GTK_TREE_MODEL(self->priv->model), iter, MAESTRO_CONTROLLER_AUTOCONN, &autoconnect, -1);
 
 		if (autoconnect)
-			gtk_tooltip_set_text(tooltip, _("Connect server when GêBR starts"));
+			gtk_tooltip_set_text(tooltip, _("Connect to this node when GêBR starts"));
 		else
-			gtk_tooltip_set_text(tooltip, _("Do not connect server when GêBR starts"));
+			gtk_tooltip_set_text(tooltip, _("Do not connect to this node when GêBR starts"));
 
 		return TRUE;
 	}
@@ -1253,8 +1360,28 @@ on_dialog_response(GtkDialog *dialog,
                    gint response,
                    GebrMaestroController *self)
 {
-	g_object_unref(self->priv->builder);
-	self->priv->builder = NULL;
+	if (response == GTK_RESPONSE_CLOSE ||
+	    response == GTK_RESPONSE_DELETE_EVENT) {
+		g_object_unref(self->priv->builder);
+		self->priv->builder = NULL;
+
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+		gebr_maestro_server_reset_daemons_timeout(maestro);
+
+		gtk_widget_destroy(GTK_WIDGET(dialog));
+	}
+	else if (response == GTK_RESPONSE_HELP) {
+		const gchar *section = "additional_features_maestro_servers_configuration";
+		gchar *error;
+
+		gebr_gui_help_button_clicked(section, &error);
+
+		if (error) {
+			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+			g_free(error);
+		}
+		return;
+	}
 }
 
 static void
@@ -1286,21 +1413,7 @@ on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 	gebr_maestro_server_set_autoconnect(mc->priv->maestro, daemon, !ac);
 }
 
-static void
-on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
-{
-	const gchar *section = "additional_features_maestro_servers_configuration";
-	gchar *error;
-
-	on_help_button_clicked (section, &error);
-
-	if (error) {
-		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
-		g_free(error);
-	}
-}
-
-GtkDialog *
+void
 gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 {
 	self->priv->builder = gtk_builder_new();
@@ -1316,14 +1429,20 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	/*
 	 * Maestro combobox
 	 */
+	GtkBox *maestro_box = GTK_BOX(gtk_builder_get_object(self->priv->builder, "maestro_box"));
+
+	/* Create Spinner */
+	self->priv->spinner = gtk_spinner_new();
+	gtk_box_pack_start(maestro_box, self->priv->spinner, FALSE, FALSE, 5);
+	gtk_widget_set_size_request(self->priv->spinner, 22, 22);
+	gtk_box_reorder_child(maestro_box, self->priv->spinner, 0);
+	gtk_widget_show_all(GTK_WIDGET(maestro_box));
+
 	GebrMaestroServer *maestro = self->priv->maestro;
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 	gtk_entry_set_text(entry, gebr_maestro_server_get_address(maestro));
 	g_signal_connect(entry, "activate", G_CALLBACK(connect_to_maestro), self);
-
-	GtkWidget *maestro_help_button = GTK_WIDGET(gtk_builder_get_object(self->priv->builder, "maestro_help_button"));
-	g_signal_connect(GTK_BUTTON(maestro_help_button), "clicked", G_CALLBACK(on_maestro_info_button_clicked), NULL);
 
 	const gchar *error_type, *error_msg;
 	gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
@@ -1333,9 +1452,6 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	GtkButton *connect_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_connect"));
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_to_maestro_clicked), self);
-
-	//GtkButton *stop_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_stop"));
-	//g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_to_maestro_clicked), self);
 
 	/*
 	 * Servers treeview
@@ -1384,6 +1500,11 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_tree_view_column_set_title(col, _("Address"));
 	gtk_tree_view_column_set_min_width(col, 100);
 
+	renderer = gtk_cell_renderer_spinner_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_progress_func,
+	                                        NULL, NULL);
+
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_status_func,
@@ -1431,7 +1552,10 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	set_widget_drag_dest(self, GTK_WIDGET(event));
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
-	gtk_window_set_title(GTK_WINDOW(dialog), _("GêBR - Maestro / Servers"));
+	gtk_window_set_title(GTK_WINDOW(dialog), _("GêBR - Maestro / Nodes"));
+
+	gtk_dialog_add_button(dialog, _("Help"), GTK_RESPONSE_HELP);
+
 	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), self);
 	g_signal_connect(dialog, "destroy", G_CALLBACK(on_dialog_destroy), self);
 
@@ -1440,7 +1564,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkWidget *btn_close = GTK_WIDGET(gtk_builder_get_object(self->priv->builder, "btn_close"));
 	gtk_widget_grab_focus(btn_close);
 
-	return dialog;
+	gtk_dialog_run(dialog);
 }
 
 static void
@@ -1490,25 +1614,18 @@ on_question_request(GebrMaestroServer *maestro,
 }
 
 static void
-on_ssh_info_button_clicked (GtkButton *button, gpointer pointer)
+on_password_dialog_response(GtkDialog *dialog, gint response, gpointer pointer)
 {
-	gchar *loc;
-	const gchar *path;
+	gchar *error;
 
-	loc = setlocale(LC_MESSAGES, NULL);
-	if (g_str_has_prefix (loc, "pt"))
-		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html#intercommunication_between_players";
-	else
-		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#intercommunication_between_players";
-
-	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
-		gtk_show_uri(NULL, "http://www.gebrproject.com", GDK_CURRENT_TIME, NULL);
-		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
-			      _("Could not load help. "
-				"Certify it was installed correctly."));
+	if (response == GTK_RESPONSE_HELP) {
+		gebr_gui_help_button_clicked("intercommunication_between_players", &error);
+		if (error) {
+			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+			g_free(error);
+		}
 	}
 }
-
 static PasswordKeys *
 on_password_request(GebrMaestroServer *maestro,
 		    const gchar *address,
@@ -1518,8 +1635,10 @@ on_password_request(GebrMaestroServer *maestro,
 	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Enter password"),
 							NULL,
 							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK,
-							GTK_RESPONSE_OK, NULL);
+							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+							GTK_STOCK_OK, GTK_RESPONSE_OK,
+							GTK_STOCK_HELP, GTK_RESPONSE_HELP,
+							NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
 	gchar *title = g_strdup_printf(_("Trying to connect on %s"), address);
@@ -1539,13 +1658,6 @@ on_password_request(GebrMaestroServer *maestro,
 	GtkWidget *down_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(down_vbox), checkbox, TRUE, TRUE, 5);
 
-	GtkWidget *ssh_info_button = gtk_button_new_with_label(_("More info"));
-	GtkWidget *hbox_info = gtk_hbox_new(FALSE, 5);
-	gtk_button_set_alignment(GTK_BUTTON(ssh_info_button), 1.0, 0.5);
-	gtk_button_set_relief(GTK_BUTTON(ssh_info_button), GTK_RELIEF_HALF);
-	g_signal_connect(ssh_info_button, "clicked", G_CALLBACK(on_ssh_info_button_clicked), NULL);
-	gtk_box_pack_end(GTK_BOX(hbox_info), ssh_info_button, FALSE, FALSE, 1);
-	gtk_box_pack_end(GTK_BOX(down_vbox), hbox_info, FALSE, FALSE, 1);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), down_vbox, TRUE, TRUE, 5);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), FALSE);
@@ -1556,7 +1668,17 @@ on_password_request(GebrMaestroServer *maestro,
 		gtk_widget_set_sensitive(checkbox, FALSE);
 
 	gtk_widget_show_all(dialog);
-	gboolean confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
+	g_signal_connect(dialog, "response", G_CALLBACK(on_password_dialog_response), NULL);
+	gint response;
+	gboolean confirmed;
+
+	while (1) {
+		response = gtk_dialog_run(GTK_DIALOG(dialog));
+		if (response != GTK_RESPONSE_HELP) {
+			confirmed = response == GTK_RESPONSE_OK;
+			break;
+		}
+	}
 
 	gchar *password;
 	gboolean use_key;
@@ -1599,13 +1721,13 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 	}
 
 	if (g_strcmp0(type, "disconnect") == 0)
-		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
 			 "Do you really want to disconnect it and cancel these jobs?</span>");
 	else if (g_strcmp0(type, "remove") == 0)
-		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
 			 "Do you really want to remove it and cancel these jobs?</span>");
 	else if (g_strcmp0(type, "stop") == 0)
-		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
 			 "Do you really want to stop it and cancel these jobs?</span>");
 
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -1640,35 +1762,37 @@ on_maestro_error(GebrMaestroServer *maestro,
 
 	gchar *message = gebr_maestro_server_translate_error(error_type, error_msg);
 
-	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(mc->priv->builder, 
-									     "combo_maestro"));
-	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
+	GtkImage *status_image = GTK_IMAGE(gtk_builder_get_object(mc->priv->builder, "maestro_status"));
+
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 
 	if (state == SERVER_STATE_DISCONNECTED) {
+		gebr_maestro_server_reset_daemons_timeout(maestro);
+
+		gtk_widget_show(GTK_WIDGET(status_image));
+		gtk_widget_hide(mc->priv->spinner);
+		gtk_spinner_start(GTK_SPINNER(mc->priv->spinner));
+
 		if (!message) {
-			gtk_entry_set_icon_from_stock(entry,
-			                              GTK_ENTRY_ICON_SECONDARY,
-			                              GTK_STOCK_DISCONNECT);
-			gtk_entry_set_icon_tooltip_text(entry,
-			                                GTK_ENTRY_ICON_SECONDARY,
-			                                _("Disconnected"));
+			gtk_image_set_from_stock(status_image, GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
+			gtk_widget_set_tooltip_text(GTK_WIDGET(status_image), _("Disconnected"));
 		} else {
-			gtk_entry_set_icon_from_stock(entry,
-						      GTK_ENTRY_ICON_SECONDARY,
-						      GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_text(entry,
-							GTK_ENTRY_ICON_SECONDARY,
-							message);
+			gtk_image_set_from_stock(status_image, GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
+			gtk_widget_set_tooltip_text(GTK_WIDGET(status_image), message);
 		}
 	} else if (state == SERVER_STATE_LOGGED) {
-		gtk_entry_set_icon_from_stock(entry,
-					      GTK_ENTRY_ICON_SECONDARY,
-					      GTK_STOCK_CONNECT);
-		gtk_entry_set_icon_tooltip_text(entry,
-						GTK_ENTRY_ICON_SECONDARY,
-						_("Connected"));
+		gtk_widget_show(GTK_WIDGET(status_image));
+		gtk_widget_hide(mc->priv->spinner);
+		gtk_spinner_stop(GTK_SPINNER(mc->priv->spinner));
+
+		gtk_image_set_from_stock(status_image, GTK_STOCK_CONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(status_image), _("Connected"));
+	}
+	else {
+		gtk_widget_hide(GTK_WIDGET(status_image));
+		gtk_widget_show(mc->priv->spinner);
+		gtk_widget_set_tooltip_text(mc->priv->spinner, _("Connecting"));
 	}
 
 	if (message)
@@ -1691,21 +1815,23 @@ on_daemon_error(GebrMaestroServer *maestro,
 	if (!*error_type) {
 		message = NULL;
 	} else if (g_strcmp0(error_type, "error:nfs") == 0) {
-		message = _("This server has a different NFS");
+		message = _("This node has a different NFS");
 	} else if (g_strcmp0(error_type, "error:id") == 0) {
-		message = _("Server already added");
-		second = g_strdup_printf(_("The server %s was already added in"
+		message = _("Node already added");
+		second = g_strdup_printf(_("The node %s was already added in"
 					   " this maestro. It will be"
 					   " automatically removed."), addr);
 		show_dialog = TRUE;
 	} else if (g_strcmp0(error_type, "error:protocol") == 0) {
-		message = _("This server is using a different protocol version");
+		message = _("This node is using a different protocol version");
 	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
-		message = _("This server is already registered at another maestro");
+		message = _("This node is already registered at another maestro");
+	} else if (g_strcmp0(error_type, "error:connection-refused-job") == 0) {
+		message = _("This node is working for another maestro");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {
 		message = error_msg;
 	} else if (g_strcmp0(error_type, "error:xauth") == 0) {
-		message = _("This server cannot connect to display. Try reconnect it");
+		message = _("This node cannot connect to display. Try reconnect it");
 	}
 
 	if (show_dialog) {
@@ -1895,7 +2021,8 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
 	gebr_maestro_server_connect(self->priv->maestro);
-//	gebr_config_save(FALSE);
+
+	gebr_log_update_maestro_info_signal(gebr.ui_log, self->priv->maestro);
 }
 
 GebrMaestroServer *

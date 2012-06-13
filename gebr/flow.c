@@ -72,8 +72,8 @@ void flow_new (void)
 	/* Create a new flow */
 	flow = GEBR_GEOXML_FLOW(document_new(GEBR_GEOXML_DOCUMENT_TYPE_FLOW));
 	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(flow), _("New Flow"));
-	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr.config.username->str);
-	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr.config.email->str);
+	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.line)));
+	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line)));
 
 	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
 	iter = line_append_flow_iter(flow, line_flow);
@@ -506,7 +506,7 @@ gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), &xml, NULL, NULL);
 		GebrGeoXmlFlow *rev;
 		if (gebr_geoxml_document_load_buffer((GebrGeoXmlDocument **)&rev, xml) == GEBR_GEOXML_RETV_SUCCESS) {
-			gebr_flow_modify_paths(rev, func, set_programs_unconfigured, NULL);
+			gebr_flow_modify_paths(rev, func, set_programs_unconfigured, data);
 			g_free(xml);
 			gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(rev), &xml);
 			gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(revision), xml, NULL, NULL);
@@ -554,6 +554,24 @@ void flow_set_paths_to_empty(GebrGeoXmlFlow * flow)
 	gebr_flow_modify_paths(flow, func, TRUE, NULL);
 }
 
+static void
+on_response_event(GtkDialog *dialog,
+                  gint       response_id,
+                  gpointer   user_data)
+{
+	if (response_id == GTK_RESPONSE_HELP) {
+		const gchar *section = "flows_browser_save_state_flow";
+		gchar *error;
+
+		gebr_gui_help_button_clicked(section, &error);
+
+		if (error) {
+			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+			g_free(error);
+		}
+	}
+}
+
 gboolean flow_revision_save(void)
 {
 	GtkWidget *dialog;
@@ -588,13 +606,25 @@ gboolean flow_revision_save(void)
 
 	label = gtk_label_new(_("Write a description about this version of the selected Flows:"));
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 
+	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
+	g_signal_connect(dialog, "response", G_CALLBACK(on_response_event), NULL);
+
 	gtk_widget_show_all(dialog);
 
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+	gint response;
+	while (1) {
+		response = gtk_dialog_run(GTK_DIALOG(dialog));
+
+		if (response != GTK_RESPONSE_HELP)
+			break;
+	}
+
+	if (response == GTK_RESPONSE_OK) {
 
 		GebrGeoXmlRevision *revision;
 
@@ -609,7 +639,7 @@ gboolean flow_revision_save(void)
 
 			revision = gebr_geoxml_flow_append_revision(GEBR_GEOXML_FLOW(flow), 
 								    gtk_entry_get_text(GTK_ENTRY(entry)));
-			document_save(flow, TRUE, FALSE);
+			document_save(flow, FALSE, FALSE);
 			flow_browse_load_revision(revision, TRUE);
 			flow_browse_info_update();
 			ret = TRUE;
@@ -657,7 +687,11 @@ void flow_program_remove(void)
 	flow_program_check_sensitiveness();
 	flow_edition_set_io();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+
 	gebr_flow_set_toolbar_sensitive();
+	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
+
 	if (valid)
 		flow_edition_select_component_iter(&iter);
 }
@@ -782,6 +816,7 @@ void flow_program_paste(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 	flow_edition_revalidate_programs();
 	gebr_flow_set_toolbar_sensitive();
+	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
 }
 
 static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group)
@@ -1208,9 +1243,19 @@ gebr_flow_set_toolbar_sensitive(void)
 
 	gboolean sensitive = TRUE;
 	gboolean sensitive_exec_slider;
+	gboolean maestro_disconnected = FALSE;
+	gboolean no_line_selected = FALSE;
 
-	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
+	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED) {
 		sensitive = FALSE;
+		maestro_disconnected = TRUE;
+	}
+
+	if (!gebr.line) {
+		sensitive = FALSE;
+		no_line_selected = TRUE;
+	}
+
 	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
 		sensitive_exec_slider = FALSE;
 	else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
@@ -1240,6 +1285,13 @@ gebr_flow_set_toolbar_sensitive(void)
 		gtk_widget_show(gebr.ui_flow_browse->info_window);
 		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
 	} else {
+		if (no_line_selected)
+			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
+		else if (maestro_disconnected)
+			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
+			                   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
+			                     "Try changing its maestro or connecting it."));
+
 		gtk_widget_show(gebr.ui_flow_browse->warn_window);
 		gtk_widget_hide(gebr.ui_flow_browse->info_window);
 	}

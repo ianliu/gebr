@@ -18,7 +18,7 @@
       <guimenuitem>Preferências</guimenuitem> e 
       <guimenuitem>Servidores</guimenuitem>. Se você leu todo o manual, provavelmente já usou quase todos os recursos
       disponíveis nessas duas janelas. De qualquer forma, segue a documentação.</para>
-    <section>
+    <section id="actions_preferences">
       <title>Preferências</title>
       <para>As definições que você faz na janela 
         <guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
