@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-11 09:59-0300\n"
+"POT-Creation-Date: 2012-06-13 14:53-0300\n"
 "PO-Revision-Date: 2012-05-10 09:41-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -49,7 +49,7 @@ msgstr "Fluxo quebrado"
 msgid "Warning"
 msgstr "Aviso"
 
-#: ../callbacks.c:435 ../gebr-maestro-controller.c:1622
+#: ../callbacks.c:433
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se que ela foi instalada "
@@ -141,14 +141,14 @@ msgstr ""
 
 #: ../data/document-properties.glade.h:21
 msgid ""
-"<small>Remember that the processing takes place at the working machines. So, "
+"<small>Remember that the processing takes place at the working nodes. So, "
 "the structure which is being defined here will be created there.\n"
 "\n"
-"To be able to browse files in these directory, the <i>remote browsing</i> "
+"To be able to browse files in these directory, the <i>remote browse</i> "
 "feature must be enable in the Maestro.</small>"
 msgstr ""
-"<small>Lembre-se que o processamento ocorre nas máquinas de processamento. "
-"Então, a estrutura definida será criada lá.\n"
+"<small>Lembre-se que o processamento ocorre nos nós de processamento. Então, "
+"a estrutura definida será criada lá.\n"
 "\n"
 "Para poder navegar no arquivos destes diretórios, a funcionalidade de "
 "<i>navegação remota</i> deve estar habilitada no Maestro.</small>"
@@ -169,7 +169,7 @@ msgstr ""
 msgid "Author"
 msgstr "Autor"
 
-#: ../data/document-properties.glade.h:27 ../gebr-flow-edition.c:357
+#: ../data/document-properties.glade.h:27 ../gebr-flow-edition.c:355
 msgid "Description"
 msgstr "Descrição"
 
@@ -201,13 +201,12 @@ msgstr "Arquivos temporários"
 msgid ""
 "G&#xEA;BR will create some directories to organize the files \n"
 "created during the data processing.\n"
-"These directories will be created on the working machines of maestro <b>XXX</"
-"b>."
+"These directories will be created on nodes of maestro <b>XXX</b>."
 msgstr ""
 "G&#xEA;BR criará arquivos para organizar seus arquivos\n"
 "utilizados durante o processamento de dados.\n"
-"Estes diretórios serão criados nas máquinas de processamento do maestro "
-"<b>XXX</b>."
+"Estes diretórios serão criados nos nós de processamento do maestro <b>XXX</"
+"b>."
 
 #: ../data/document-properties.glade.h:37
 msgid "Paths to store:"
@@ -226,7 +225,7 @@ msgstr ""
 "O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu diretório "
 "<b>BASE</b>."
 
-#: ../data/document-properties.glade.h:40 ../gebr-flow-edition.c:350
+#: ../data/document-properties.glade.h:40 ../gebr-flow-edition.c:348
 msgid "Title"
 msgstr "Título"
 
@@ -280,8 +279,8 @@ msgid "<b>Executed at:</b>"
 msgstr "<b>Executado em</b>:"
 
 #: ../data/gebr-job-control.glade.h:2
-msgid "<b>Group/Working Machines</b>"
-msgstr "<b>Grupo/Máquinas de processamento</b>"
+msgid "<b>Group/Working Nodes</b>"
+msgstr "<b>Grupo/Nós</b>"
 
 #: ../data/gebr-job-control.glade.h:3
 msgid "<b>Input file:</b> foo/bar.txt"
@@ -301,10 +300,10 @@ msgid "<b>Output file:</b> foo/bar.txt"
 msgstr "<b>Arquivo de saída:</b> foo/bar.txt"
 
 #: ../data/gebr-job-control.glade.h:7
-msgid "<b>Process distribution among working machines</b>"
+msgid "<b>Process distribution among working nodes</b>"
 msgstr ""
 "<b>Distribuição dos processos entre\n"
-"as máquinas de processamento</b>"
+"os nós de processamento</b>"
 
 #: ../data/gebr-job-control.glade.h:8
 msgid "<b>Resources</b>"
@@ -327,7 +326,7 @@ msgstr "Detalhes"
 msgid "Dismiss"
 msgstr "Ignorar"
 
-#: ../data/gebr-job-control.glade.h:13 ../flow.c:1110
+#: ../data/gebr-job-control.glade.h:13 ../flow.c:1116
 msgid "Output"
 msgstr "Saída"
 
@@ -336,13 +335,12 @@ msgid "<b>Groups</b>"
 msgstr "<b>Grupos</b>"
 
 #: ../data/gebr-maestro-dialog.glade.h:3
-msgid "<i>Drop a working machine to create a group!</i>"
-msgstr ""
-"<i>Arraste uma máquina de processamento para cá para criar um grupo!</i>"
+msgid "<i>Drop a working node to create a group!</i>"
+msgstr "<i>Arraste um nó para criar um grupo!</i>"
 
 #: ../data/gebr-maestro-dialog.glade.h:4
-msgid "G&#xEA;BR - Maestro / Working machines"
-msgstr "G&#xEA;BR - Maestro / Máquinas de processamento"
+msgid "G&#xEA;BR - Maestro / Working nodes"
+msgstr "G&#xEA;BR - Maestro / Nós de processamento"
 
 #: ../data/gebr.desktop.in.in.h:1
 msgid "Assemble and run flows and manage jobs"
@@ -490,15 +488,15 @@ msgstr ""
 msgid "document"
 msgstr "documento"
 
-#: ../document.c:289 ../ui_document.c:1654 ../ui_help.c:197 ../ui_help.c:284
+#: ../document.c:289 ../ui_document.c:1661 ../ui_help.c:197 ../ui_help.c:284
 msgid "project"
 msgstr "projeto"
 
-#: ../document.c:292 ../ui_document.c:1656 ../ui_help.c:194 ../ui_help.c:288
+#: ../document.c:292 ../ui_document.c:1663 ../ui_help.c:194 ../ui_help.c:288
 msgid "line"
 msgstr "linha"
 
-#: ../document.c:295 ../ui_document.c:1658 ../ui_help.c:191 ../ui_help.c:292
+#: ../document.c:295 ../ui_document.c:1665 ../ui_help.c:191 ../ui_help.c:292
 msgid "flow"
 msgstr "fluxo"
 
@@ -644,103 +642,103 @@ msgstr "Fluxos selecionados exportados para %s."
 msgid "Could not export Flow(s). See log file for more information."
 msgstr "Impossível exportar Fluxo(s). Veja log para mais detalhes."
 
-#: ../flow.c:588
+#: ../flow.c:592
 msgid "Save selected Flows?"
 msgstr "Salvar Fluxos selecionados?"
 
-#: ../flow.c:611
+#: ../flow.c:607
 msgid "Write a description about this version of the selected Flows:"
 msgstr "Descreva esta versão dos Fluxos selecionados:"
 
-#: ../flow.c:757
+#: ../flow.c:763
 msgid "Could not paste Flow. It was probably deleted."
 msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
-#: ../flow.c:796
+#: ../flow.c:802
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../flow.c:890
+#: ../flow.c:896
 msgid "Instance"
 msgstr "Instância"
 
-#: ../flow.c:933
+#: ../flow.c:939
 #, c-format
 msgid "Parameters for the Program \"%s\""
 msgstr "Parâmetros para o Programa \"%s\""
 
-#: ../flow.c:951
+#: ../flow.c:957
 msgid "Parameter"
 msgstr "Parâmetro"
 
-#: ../flow.c:951 ../flow.c:1042 ../ui_document.c:685
+#: ../flow.c:957 ../flow.c:1048 ../ui_document.c:725
 msgid "Value"
 msgstr "Valor"
 
-#: ../flow.c:1042
+#: ../flow.c:1048
 msgid "Variables"
 msgstr "Variáveis"
 
-#: ../flow.c:1042 ../ui_document.c:662
+#: ../flow.c:1048 ../ui_document.c:702
 msgid "Keyword"
 msgstr "Palavra-chave"
 
-#: ../flow.c:1042
+#: ../flow.c:1048
 msgid "Result"
 msgstr "Resultado"
 
-#: ../flow.c:1042 ../ui_document.c:723
+#: ../flow.c:1048 ../ui_document.c:763
 msgid "Comment"
 msgstr "Comentário"
 
-#: ../flow.c:1045 ../ui_document.c:1658
+#: ../flow.c:1051 ../ui_document.c:1665
 msgid "Flow"
 msgstr "Fluxo"
 
-#: ../flow.c:1046 ../line.c:535 ../ui_document.c:1656
+#: ../flow.c:1052 ../line.c:530 ../ui_document.c:1663
 msgid "Line"
 msgstr "Linha"
 
-#: ../flow.c:1046 ../ui_document.c:1654
+#: ../flow.c:1052 ../ui_document.c:1661
 msgid "Project"
 msgstr "Projeto"
 
-#: ../flow.c:1077
+#: ../flow.c:1083
 msgid "There are no variables in this scope"
 msgstr "Não existem variáveis neste escopo"
 
-#: ../flow.c:1108
+#: ../flow.c:1114
 msgid "I/O table"
 msgstr "Tabela de entrada/saída"
 
-#: ../flow.c:1109
+#: ../flow.c:1115
 msgid "Input"
 msgstr "Entrada"
 
-#: ../flow.c:1109 ../flow.c:1110 ../flow.c:1111 ../ui_flow_browse.c:366
+#: ../flow.c:1115 ../flow.c:1116 ../flow.c:1117 ../ui_flow_browse.c:366
 #: ../ui_flow_browse.c:374 ../ui_flow_browse.c:382
 msgid "(none)"
 msgstr "(nenhum)"
 
-#: ../flow.c:1111
+#: ../flow.c:1117
 msgid "Error"
 msgstr "Log de erro"
 
 #. Comment for translators:
 #. "By" as in "By John McClane"
-#: ../flow.c:1170 ../ui_project_line.c:1963
+#: ../flow.c:1176 ../ui_project_line.c:1963
 msgid "By"
 msgstr "Por"
 
-#: ../flow.c:1178
+#: ../flow.c:1184
 msgid "Flow composed of the program(s):"
 msgstr "Fluxo composto pelo(s) programa(s):"
 
-#: ../flow.c:1283 ../ui_flow_browse.c:127
+#: ../flow.c:1289 ../ui_flow_browse.c:127
 msgid "No Line is selected\n"
 msgstr "Nenhuma Linha selecionada.\n"
 
-#: ../flow.c:1286 ../ui_flow_browse.c:129
+#: ../flow.c:1292 ../ui_flow_browse.c:129
 msgid ""
 "The Maestro of this Line is disconnected,\n"
 "then you cannot edit flows.\n"
@@ -750,30 +748,30 @@ msgstr ""
 "portanto, você não pode editar os fluxos.\n"
 "Tente alterar seu Maestro ou conectar-se a ele."
 
-#: ../gebr-flow-edition.c:231
+#: ../gebr-flow-edition.c:229
 msgid "Run"
 msgstr "Executar"
 
-#: ../gebr-flow-edition.c:240
+#: ../gebr-flow-edition.c:238
 msgid "Flow sequence"
 msgstr "Seqüência de Fluxo"
 
 #.
 #. * Right side: Menu list
 #.
-#: ../gebr-flow-edition.c:322
+#: ../gebr-flow-edition.c:320
 msgid "Menus"
 msgstr "Menus"
 
-#: ../gebr-flow-edition.c:402
+#: ../gebr-flow-edition.c:400
 msgid "Select a line to execute a flow"
 msgstr "Selecione uma linha deste projeto para executar um fluxo."
 
-#: ../gebr-flow-edition.c:404
+#: ../gebr-flow-edition.c:402
 msgid "Select a line of this project to execute a flow"
 msgstr "Selecione a linha deste projeto para executar um fluxo."
 
-#: ../gebr-flow-edition.c:408
+#: ../gebr-flow-edition.c:406
 msgid ""
 "The Maestro of this line is disconnected.\n"
 "Connecting it to execute a flow."
@@ -782,7 +780,7 @@ msgstr ""
 "\n"
 "Conecte-se ao maestro <b>%s</b> para executar esta linha"
 
-#: ../gebr-flow-edition.c:410
+#: ../gebr-flow-edition.c:408
 msgid ""
 "This line does not contain flows\n"
 "Create a flow to execute this line"
@@ -790,7 +788,7 @@ msgstr ""
 "A linha não contém fluxos\n"
 "Crie um fluxo para executar esta linha"
 
-#: ../gebr-flow-edition.c:412
+#: ../gebr-flow-edition.c:410
 msgid ""
 "This flow does not contain programs\n"
 "Add at least one to execute this flow"
@@ -798,85 +796,85 @@ msgstr ""
 "Este fluxo não contém programas\n"
 "Adicione um programa para executar este programa."
 
-#: ../gebr-flow-edition.c:414 ../gebr-flow-edition.c:416 ../interface.c:118
+#: ../gebr-flow-edition.c:412 ../gebr-flow-edition.c:414 ../interface.c:118
 msgid "Execute"
 msgstr "Executar"
 
-#: ../gebr-flow-edition.c:457
+#: ../gebr-flow-edition.c:455
 msgid "No program selected."
 msgstr "Nenhum programa selecionado."
 
-#: ../gebr-flow-edition.c:511
+#: ../gebr-flow-edition.c:509
 msgid "Input file"
 msgstr "Arquivo de entrada"
 
-#: ../gebr-flow-edition.c:537
+#: ../gebr-flow-edition.c:535
 #, c-format
 msgid "Input file \"%s\""
 msgstr "Arquivo de entrada \"%s\""
 
-#: ../gebr-flow-edition.c:568
+#: ../gebr-flow-edition.c:566
 msgid "Output file"
 msgstr "Arquivo de saída"
 
-#: ../gebr-flow-edition.c:592
+#: ../gebr-flow-edition.c:590
 #, c-format
 msgid "Append to output file \"%s\""
 msgstr "Acrescentar ao arquivo de saída \"%s\""
 
-#: ../gebr-flow-edition.c:594
+#: ../gebr-flow-edition.c:592
 #, c-format
 msgid "Overwrite output file \"%s\""
 msgstr "Sobrescrever arquivo de saída \"%s\""
 
-#: ../gebr-flow-edition.c:626
+#: ../gebr-flow-edition.c:624
 msgid "Log file"
 msgstr "Arquivo de log"
 
-#: ../gebr-flow-edition.c:650
+#: ../gebr-flow-edition.c:648
 #, c-format
 msgid "Append to log file \"%s\""
 msgstr "Acrescentar ao arquivo de log \"%s\""
 
-#: ../gebr-flow-edition.c:652
+#: ../gebr-flow-edition.c:650
 #, c-format
 msgid "Overwrite log file \"%s\""
 msgstr "Sobrescrever arquivo de log \"%s\""
 
-#: ../gebr-flow-edition.c:703
+#: ../gebr-flow-edition.c:701
 #, c-format
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
 
-#: ../gebr-flow-edition.c:723
+#: ../gebr-flow-edition.c:721
 msgid "Choose an input file"
 msgstr "Escolha um arquivo de entrada"
 
-#: ../gebr-flow-edition.c:730
+#: ../gebr-flow-edition.c:728
 msgid "Choose an output file"
 msgstr "Escolha um arquivo de saída"
 
-#: ../gebr-flow-edition.c:734
+#: ../gebr-flow-edition.c:732
 msgid "Choose a log file"
 msgstr "Escolha um arquivo de log"
 
-#: ../gebr-flow-edition.c:738
+#: ../gebr-flow-edition.c:736
 msgid "Choose file"
 msgstr "Escolha um arquivo"
 
-#: ../gebr-flow-edition.c:821
+#: ../gebr-flow-edition.c:819
 msgid "Insert Variable"
 msgstr "Inserir Variável"
 
-#: ../gebr-flow-edition.c:1096
+#: ../gebr-flow-edition.c:1094
 msgid "No menu selected."
 msgstr "Nenhum menu selecionado."
 
-#: ../gebr-flow-edition.c:1101
+#: ../gebr-flow-edition.c:1099
 msgid "Select a menu instead of a category."
 msgstr "Selecione um menu ao invés de uma categoria."
 
-#: ../gebr-flow-edition.c:1266
+#: ../gebr-flow-edition.c:1264
 msgid "This Flow already contains a loop"
 msgstr "Fluxo já contém um Loop"
 
@@ -970,8 +968,8 @@ msgstr ""
 
 #: ../gebr-job-control.c:754
 #, c-format
-msgid "Waiting for working machines details"
-msgstr "Esperando por detalhes das máquinas de processamento"
+msgid "Waiting for nodes details"
+msgstr "Esperando por detalhes dos nós de processamento"
 
 #: ../gebr-job-control.c:766
 #, c-format
@@ -983,23 +981,23 @@ msgstr "%s"
 msgid ""
 "Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
 "Executed on total <b>%d</b> processes on %s <b>%s</b>,\n"
-"%sdistributed on <b>%d</b> working machine(s).\n"
+"%sdistributed on <b>%d</b> node(s).\n"
 msgstr ""
 "Tarefa submetida por <b>%s</b> ao Maestro <b>%s</b>.\n"
 "Executada utilizando <b>%d</b> processo(s) em %s <b>%s</b>,\n"
-"%sdistribuída em <b>%d</b> máquinas de processamento.\n"
+"%sdistribuída em <b>%d</b> nós de processamento.\n"
 
 #: ../gebr-job-control.c:773
-msgid "working machine"
-msgstr "Máquina de processamento"
+msgid "node"
+msgstr "nó"
 
 #: ../gebr-job-control.c:773
 msgid "group"
 msgstr "grupo"
 
 #: ../gebr-job-control.c:774
-msgid "using the working machines idle time, "
-msgstr "utilizando o tempo ocioso da máquina"
+msgid "using the nodes idle time, "
+msgstr "utilizando o tempo ocioso das máquinas"
 
 #: ../gebr-job-control.c:781
 #, c-format
@@ -1041,13 +1039,13 @@ msgid "Waiting for job"
 msgstr "Esperando pela tarefa"
 
 #: ../gebr-job-control.c:1126
-msgid "Waiting for working machines"
-msgstr "Esperando pelas máquinas de processamento"
+msgid "Waiting for nodes"
+msgstr "Esperando pelos nós de processamento"
 
 #: ../gebr-job-control.c:1224
 #, c-format
-msgid "Command line for task %d of %d (working machine: %s)"
-msgstr "Linha de comando para tarefa %d de %d (máquina de processamento: %s)"
+msgid "Command line for task %d of %d (node: %s)"
+msgstr "Linha de comando para tarefa %d de %d (nó: %s)"
 
 #: ../gebr-job-control.c:1290
 #, c-format
@@ -1189,15 +1187,14 @@ msgid "Are you sure you want to cancel the selected Jobs?"
 msgstr "Tem certeza que quer cancelar as Tarefas selecionadas?"
 
 #: ../gebr-job-control.c:2237
-msgid "Asking working machine to cancel Job."
-msgstr "Requisitando cancelamento da tarefa às máquinas de processamento."
+msgid "Asking node to cancel Job."
+msgstr "Requisitando cancelamento da tarefa aos nós de processamento."
 
 #: ../gebr-job-control.c:2238
 #, c-format
-msgid "Asking working machine \"%s\" to cancel Job \"%s\"."
+msgid "Asking node \"%s\" to cancel Job \"%s\"."
 msgstr ""
-"Requisitando à máquina de processamento \"%s\" o cancelamento da Tarefa \"%s"
-"\"."
+"Requisitando ao nó de processamento \"%s\" o cancelamento da Tarefa \"%s\"."
 
 #: ../gebr-job-control.c:2262 ../gebr-job-control.c:2266
 msgid "Clear Job"
@@ -1214,12 +1211,12 @@ msgstr "Tem certeza que quer limpar as Tarefas selecionadas?"
 
 #: ../gebr-job.c:410
 #, c-format
-msgid "Command line (working machine %s):\n"
-msgstr "Linha de comando (máquina de processamento %s):\n"
+msgid "Command line (node %s):\n"
+msgstr "Linha de comando (nó %s):\n"
 
 #: ../gebr-maestro-controller.c:142
-msgid "Add a worker"
-msgstr "Adicione uma máquina de processamento"
+msgid "Add a node"
+msgstr "Adicione um nó de processamento"
 
 #: ../gebr-maestro-controller.c:178
 msgid "The group name already exists"
@@ -1234,14 +1231,14 @@ msgid "Choose the group name and press ENTER"
 msgstr "Escolha o nome do grupo e pressione ENTER."
 
 #: ../gebr-maestro-controller.c:433
-msgid "Drop working machines here to increment this group!"
-msgstr "Arraste máquinas de processamento para cá para incrementar este grupo!"
+msgid "Drop nodes here to increment this group!"
+msgstr "Arraste nós de processamento para cá para incrementar este grupo!"
 
 #: ../gebr-maestro-controller.c:482
 msgid "_Remove from group"
 msgstr "Remover do grupo"
 
-#: ../gebr-maestro-controller.c:535 ../gebr-maestro-controller.c:1494
+#: ../gebr-maestro-controller.c:535 ../gebr-maestro-controller.c:1500
 msgid "Address"
 msgstr "Endereço"
 
@@ -1264,14 +1261,14 @@ msgstr "Parar"
 
 #: ../gebr-maestro-controller.c:929
 #, c-format
-msgid "Working machines of Maestro %s"
-msgstr "Máquinas de processamento associadas ao Maestro %s"
+msgid "nodes of Maestro %s"
+msgstr "nós de processamento associadas ao Maestro %s"
 
-#: ../gebr-maestro-controller.c:1244
+#: ../gebr-maestro-controller.c:1254
 msgid "Invalid input"
 msgstr "Entrada inválida"
 
-#: ../gebr-maestro-controller.c:1245
+#: ../gebr-maestro-controller.c:1255
 #, c-format
 msgid ""
 "GêBR supports the formats hostname or ip address.\n"
@@ -1283,31 +1280,35 @@ msgstr ""
 "\n"
 "A entrada %s será automaticamente removida."
 
-#: ../gebr-maestro-controller.c:1299
-msgid "Connect to this working machine when GêBR starts"
-msgstr "Conecte à máquina de processamento ao iniciar a GêBR"
+#: ../gebr-maestro-controller.c:1309
+msgid "Connect to this node when GêBR starts"
+msgstr "Conectar-se a este nó ao iniciar a GêBR"
 
-#: ../gebr-maestro-controller.c:1301
-msgid "Do not connect to this working machine when GêBR starts"
-msgstr "Não conectar-se à máquina de processamento ao iniciar a GêBR"
+#: ../gebr-maestro-controller.c:1311
+msgid "Do not connect to this node when GêBR starts"
+msgstr "Não conectar-se a este nó de processamento ao iniciar a GêBR"
 
-#: ../gebr-maestro-controller.c:1468
+#: ../gebr-maestro-controller.c:1474
 msgid "AC"
 msgstr "AC"
 
-#: ../gebr-maestro-controller.c:1521
+#: ../gebr-maestro-controller.c:1527
 msgid "CPU Clock"
 msgstr "Clock CPU"
 
-#: ../gebr-maestro-controller.c:1533
+#: ../gebr-maestro-controller.c:1539
 msgid "Memory"
 msgstr "Memória"
 
-#: ../gebr-maestro-controller.c:1549
-msgid "GêBR - Maestro / Workers"
-msgstr "GêBR - Maestro / Máquinas de Processamento"
+#: ../gebr-maestro-controller.c:1555
+msgid "GêBR - Maestro / Nodes"
+msgstr "GêBR - Maestro / Nós de processamento"
 
-#: ../gebr-maestro-controller.c:1593
+#: ../gebr-maestro-controller.c:1557
+msgid "Help"
+msgstr "Ajuda"
+
+#: ../gebr-maestro-controller.c:1602
 #, c-format
 msgid ""
 "<span size='large'>%s</span>\n"
@@ -1316,109 +1317,102 @@ msgstr ""
 "<span size='large'>%s</span>\n"
 "%s"
 
-#: ../gebr-maestro-controller.c:1596
+#: ../gebr-maestro-controller.c:1605
 #, c-format
 msgid "SSH question from %s"
 msgstr "Pergunta do SSH de %s"
 
-#: ../gebr-maestro-controller.c:1633
+#: ../gebr-maestro-controller.c:1635
 msgid "Enter password"
 msgstr "Entre com a senha"
 
-#: ../gebr-maestro-controller.c:1640
+#: ../gebr-maestro-controller.c:1644
 #, c-format
 msgid "Trying to connect on %s"
 msgstr "Tentando conectar-se a %s"
 
-#: ../gebr-maestro-controller.c:1643
+#: ../gebr-maestro-controller.c:1647
 #, c-format
 msgid "<b>%s</b> is asking for your login password."
 msgstr "<b>%s</b> está requisitando senha de login."
 
-#: ../gebr-maestro-controller.c:1653
+#: ../gebr-maestro-controller.c:1657
 msgid "Use encryption key to automatically authenticate the next session."
 msgstr "Utilizar chaves criptográficas para autenticar a próxima sessão."
 
-#: ../gebr-maestro-controller.c:1657
-msgid "More info"
-msgstr "Mais informações"
-
-#: ../gebr-maestro-controller.c:1717
+#: ../gebr-maestro-controller.c:1724
 #, c-format
 msgid ""
-"<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
+"<span size='large' weight='bold'>The node %s is executing jobs.\n"
 "Do you really want to disconnect it and cancel these jobs?</span>"
 msgstr ""
-"<span size='large' weight='bold'>A máquina de processamento %s está "
-"executando tarefas.\n"
+"<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente desconectá-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1720
+#: ../gebr-maestro-controller.c:1727
 #, c-format
 msgid ""
-"<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
+"<span size='large' weight='bold'>The node %s is executing jobs.\n"
 "Do you really want to remove it and cancel these jobs?</span>"
 msgstr ""
-"<span size='large' weight='bold'>A máquina de processamento %s está "
-"executando tarefas.\n"
+"<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1723
+#: ../gebr-maestro-controller.c:1730
 #, c-format
 msgid ""
-"<span size='large' weight='bold'>The working machine %s is executing jobs.\n"
+"<span size='large' weight='bold'>The node %s is executing jobs.\n"
 "Do you really want to stop it and cancel these jobs?</span>"
 msgstr ""
-"<span size='large' weight='bold'>A máquina de processamento %s está "
-"executando tarefas.\n"
+"<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente para-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1772 ../ui_log.c:113 ../ui_log.c:259
+#: ../gebr-maestro-controller.c:1779 ../ui_log.c:106
 msgid "Disconnected"
 msgstr "Desconectado"
 
-#: ../gebr-maestro-controller.c:1783 ../ui_log.c:227
+#: ../gebr-maestro-controller.c:1790
 msgid "Connected"
 msgstr "Conectado"
 
-#: ../gebr-maestro-controller.c:1788
+#: ../gebr-maestro-controller.c:1795
 msgid "Connecting"
 msgstr "Conectando..."
 
-#: ../gebr-maestro-controller.c:1811
-msgid "This working machine has a different NFS"
-msgstr "Esta máquina de processamento tem um NFS diferente"
+#: ../gebr-maestro-controller.c:1818
+msgid "This node has a different NFS"
+msgstr "Este nó de processamento tem um sistema de arquivos diferente"
 
-#: ../gebr-maestro-controller.c:1813
-msgid "Working machine already added"
-msgstr "Máquina de processamento já adicionada"
-
-#: ../gebr-maestro-controller.c:1814
-#, c-format
-msgid ""
-"The working machine %s was already added in this maestro. It will be "
-"automatically removed."
-msgstr ""
-"A máquina de processamento %s já foi adicionada a este maestro. Ela será "
-"automaticamente removida."
-
-#: ../gebr-maestro-controller.c:1819
-msgid "This working machine is using a different protocol version"
-msgstr "Esta máquina de processamento usa uma versão de protocolo diferente"
+#: ../gebr-maestro-controller.c:1820
+msgid "Node already added"
+msgstr "Nó de processamento já adicionado"
 
 #: ../gebr-maestro-controller.c:1821
-msgid "This working machine is already registered at another maestro"
-msgstr "Esta máquina de processamento já está registrada em um outro maestro"
-
-#: ../gebr-maestro-controller.c:1823
-msgid "This working machine working for another maestro"
-msgstr "Esta máquina de processamento já está registrada em um outro maestro"
-
-#: ../gebr-maestro-controller.c:1827
-msgid "This working machine cannot connect to display. Try reconnect it"
+#, c-format
+msgid ""
+"The node %s was already added in this maestro. It will be automatically "
+"removed."
 msgstr ""
-"Não foi possível conectar-se ao ambiente gráfico da máquina de "
-"processamento. Tente reconectá-la ."
+"O nó de processamento %s já foi adicionado a este maestro. Ele será "
+"automaticamente removido."
+
+#: ../gebr-maestro-controller.c:1826
+msgid "This node is using a different protocol version"
+msgstr "Este nó de processamento usa uma versão de protocolo diferente"
+
+#: ../gebr-maestro-controller.c:1828
+msgid "This node is already registered at another maestro"
+msgstr "Este nó de processamento já está registrado em um outro maestro"
+
+#: ../gebr-maestro-controller.c:1830
+msgid "This node is working for another maestro"
+msgstr "Este nó de processamento já está registrado em um outro maestro"
+
+#: ../gebr-maestro-controller.c:1834
+msgid "This node cannot connect to display. Try reconnect it"
+msgstr ""
+"Não foi possível conectar-se ao ambiente gráfico do nó de processamento. "
+"Tente reconectá-lo."
 
 #: ../gebr-maestro-server.c:1438
 msgid "Local Maestro"
@@ -1479,8 +1473,8 @@ msgid "_Connection Assistant"
 msgstr "Assistente de _Conexões"
 
 #: ../interface.c:64
-msgid "_Maestro / Workers"
-msgstr "_Maestro / Máquinas de processamento"
+msgid "_Maestro / Nodes"
+msgstr "_Maestro / Nós de processamento"
 
 #: ../interface.c:72
 msgid "Samples"
@@ -1493,7 +1487,7 @@ msgstr "Exemplos"
 msgid "New Project"
 msgstr "Novo Projeto"
 
-#: ../interface.c:81 ../interface.c:82 ../line.c:690
+#: ../interface.c:81 ../interface.c:82 ../line.c:685
 msgid "New Line"
 msgstr "Nova Linha"
 
@@ -1628,17 +1622,17 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: ../interface.c:164
-msgid "Ask working machine to cancel the selected Job"
+msgid "Ask node to cancel the selected Job"
 msgstr ""
-"Requisitar à máquina de processamento o cancelamento das tarefas selecionadas"
+"Requisitar ao nó de processamento o cancelamento das tarefas selecionadas"
 
 #: ../interface.c:165
 msgid "Filter"
 msgstr "Filtro"
 
 #: ../interface.c:166
-msgid "Filter jobs by working machines group, working machine and status"
-msgstr "Filtrar fluxos por grupos, máquinas de processamento e estado"
+msgid "Filter jobs by group, node and status"
+msgstr "Filtrar fluxos por grupos, nós de processamento e estado"
 
 #: ../interface.c:170
 msgid "Configured"
@@ -1749,7 +1743,7 @@ msgstr ""
 msgid "Error!"
 msgstr "Erro!"
 
-#: ../line.c:196 ../ui_document.c:1755
+#: ../line.c:196 ../ui_document.c:1762
 msgid "The directory could not be created!"
 msgstr "O diretório não pode ser criado!"
 
@@ -1765,11 +1759,11 @@ msgstr ""
 msgid "Warning!"
 msgstr "Aviso!"
 
-#: ../line.c:208 ../ui_document.c:1763
+#: ../line.c:208 ../ui_document.c:1770
 msgid "The directory already exists!"
 msgstr "O diretório já existe!"
 
-#: ../line.c:244 ../ui_document.c:1797
+#: ../line.c:244 ../ui_document.c:1804
 msgid "Timed Out!"
 msgstr "Limite de tempo excedido!"
 
@@ -1801,7 +1795,7 @@ msgstr ""
 "Esta Linha será anexada ao Maestro atual (%s), o qual será encarregado de "
 "rodar seus fluxos de processamento."
 
-#: ../line.c:371
+#: ../line.c:366
 #, c-format
 msgid ""
 "To better manage all files read or created during the processing of a data, "
@@ -1823,87 +1817,87 @@ msgstr ""
 "Embora não seja obrigatório aderir a esta estrutura, é altamente recomendado "
 "fazer isso."
 
-#: ../line.c:393
+#: ../line.c:388
+#, fuzzy, c-format
 msgid ""
-"<small>Remember that the processing takes place at the working machines. So, "
-"the structure which is about to be defined here will be created there.\n"
+"<small>Remember that the processing takes place at the nodes. So, the "
+"structure which is about to be defined here will be created there.\n"
 "\n"
 "To be able to browse files in these directories, the features of<i>remote "
 "browsing</i> must be enabled in the Maestro %s.</small>"
 msgstr ""
-"<small>Lembre-se que o processamento ocorre nas máquinas de processamento. "
-"Então, a estrutura definida será criada lá.\n"
+"<small>Lembre-se que o processamento ocorre nos nós de processamento. Então, "
+"a estrutura definida será criada lá.\n"
 "\n"
 "Para poder navegar no arquivos destes diretórios, a funcionalidade de "
 "<i>navegação remota</i> deve estar habilitada no Maestro.</small>"
 
-#: ../line.c:411
+#: ../line.c:406
 #, c-format
 msgid ""
 "Below is the hierarchy of directories GêBR is about to create.\n"
 "\n"
-"These directories will be created on the working machines of Maestro <b>%s</"
-"b>."
+"These directories will be created on the nodes of Maestro <b>%s</b>."
 msgstr ""
 "Abaixo está a hierarquia de diretórios que a GêBR criará.\n"
 "\n"
-"Estes diretórios serão criados nas máquinas de processamento conectadas ao "
+"Estes diretórios serão criados nos nós de processamento conectadas ao "
 "Maestro <b>%s</b>."
 
-#: ../line.c:418
+#: ../line.c:413
 #, c-format
 msgid "<i>&lt;BASE&gt;: <b>%s</b></i>"
 msgstr "<i>&lt;BASE&gt;: <b>%s</b></i>"
 
-#: ../line.c:454 ../line.c:461
+#: ../line.c:449 ../line.c:456
 msgid "<i>not defined</i>"
 msgstr "<i>Não definido</i>"
 
-#: ../line.c:476 ../line.c:564 ../ui_document.c:2002
+#: ../line.c:471 ../line.c:559 ../ui_document.c:2009
 msgid "Creating directories..."
 msgstr "Criando diretórios..."
 
-#: ../line.c:522
+#: ../line.c:517
 msgid "Creating a new Line"
 msgstr "Criando uma nova Linha"
 
-#: ../line.c:540
+#: ../line.c:535
 msgid "Line Paths"
 msgstr "Caminhos de linha"
 
-#: ../line.c:545 ../ui_document.c:411
+#: ../line.c:540 ../ui_document.c:410
 msgid "BASE Path"
 msgstr "Caminho BASE"
 
-#: ../line.c:550 ../ui_document.c:441
+#: ../line.c:545 ../ui_document.c:440
 msgid "IMPORT Path"
 msgstr "Caminho IMPORT"
 
-#: ../line.c:555
+#: ../line.c:550
 msgid "Directories Hierarchy"
 msgstr "Hierarquia de Diretórios"
 
-#: ../line.c:560
+#: ../line.c:555
 msgid "Summary"
 msgstr "Sumário"
 
 #. log action
-#: ../line.c:731
+#: ../line.c:726
 #, c-format
 msgid "Deleting child Flow '%s'."
 msgstr "Apagando o Fluxo filho '%s'."
 
-#: ../line.c:745
+#: ../line.c:740
 #, c-format
 msgid "Deleting Line '%s'."
 msgstr "Apagando a Linha '%s'."
 
-#: ../line.c:747
+#: ../line.c:742
 #, c-format
 msgid "Deleting Line '%s' from project '%s'."
 msgstr "Apagando a Linha '%s' do projeto '%s'."
 
-#: ../line.c:836
+#: ../line.c:831
 msgid "Flows loaded."
 msgstr "Fluxos carregados."
 
@@ -2001,73 +1995,72 @@ msgstr "Acrescentar um novo parâmetro."
 msgid "Remove current parameters."
 msgstr "Remover parâmetros atuais."
 
-#: ../ui_document.c:316
+#: ../ui_document.c:317
 #, c-format
 msgid "%s '%s' - Properties"
 msgstr "%s '%s' - Propriedades"
 
-#: ../ui_document.c:365 ../ui_preferences.c:1085 ../ui_preferences.c:1198
-#: ../ui_preferences.c:1207
+#: ../ui_document.c:370 ../ui_preferences.c:1085 ../ui_preferences.c:1193
+#: ../ui_preferences.c:1202
 msgid "Preferences"
 msgstr "Preferências"
 
-#: ../ui_document.c:405
+#: ../ui_document.c:404
 #, c-format
 msgid ""
-"<i>You will browse on files and folders of working machines of Maestro <b>%"
-"s</b>.\n"
+"<i>You will browse on files and folders of nodes of Maestro <b>%s</b>.\n"
 "This directories structure can not be the same on your local machine.</i>"
 msgstr ""
-"<i>Você navegará nos diretórios das máquinas de processamento do Maestro <b>%"
-"s</b>, o qual pode não representar os mesmos arquivos que os de sua máquina "
+"<i>Você navegará nos diretórios dos nós de processamento do Maestro <b>%s</"
+"b>, o qual pode não representar os mesmos arquivos que os de sua máquina "
 "local.</i>"
 
-#: ../ui_document.c:601
+#: ../ui_document.c:649
 #, c-format
 msgid "Variables dictionary for %s \"%s\""
 msgstr "Dicionário de variáveis para %s \"%s\""
 
-#: ../ui_document.c:700 ../ui_document.c:1147
+#: ../ui_document.c:740 ../ui_document.c:1154
 msgid "Number"
 msgstr "Número"
 
-#: ../ui_document.c:702 ../ui_document.c:1145
+#: ../ui_document.c:742 ../ui_document.c:1152
 msgid "String"
 msgstr "Texto"
 
-#: ../ui_document.c:894
+#: ../ui_document.c:901
 msgid "Click 'New' to create a variable."
 msgstr "Clique em 'Nova' para criar uma variável."
 
-#: ../ui_document.c:904
+#: ../ui_document.c:911
 msgid "Please enter a unique variable name."
 msgstr "Por favor, digite um nome de variável único."
 
-#: ../ui_document.c:912
+#: ../ui_document.c:919
 msgid "Please enter a number or expression."
 msgstr "Por favor, digite um número ou expressão."
 
-#: ../ui_document.c:916
+#: ../ui_document.c:923
 msgid "Please enter a text."
 msgstr "Por favor, insira um texto."
 
-#: ../ui_document.c:924
+#: ../ui_document.c:931
 msgid "Please enter a comment."
 msgstr "Por favor, digite um comentário."
 
-#: ../ui_document.c:1127
+#: ../ui_document.c:1134
 msgid "Click to select type for a new parameter"
 msgstr "Clique para escolher o tipo de um novo parâmetro"
 
-#: ../ui_document.c:1200
+#: ../ui_document.c:1207
 msgid "Cannot use reserved keyword 'iter'."
 msgstr "A palavra-chave 'iter' não pode ser usada."
 
-#: ../ui_document.c:1205
+#: ../ui_document.c:1212
 msgid "This keyword is reserved."
 msgstr "Esta palavra-chave é reservada."
 
-#: ../ui_document.c:1210
+#: ../ui_document.c:1217
 msgid ""
 "Valid keywords are lower case characters from 'a' to 'z', numbers or "
 "underscore."
@@ -2075,33 +2068,33 @@ msgstr ""
 "Palavras-chaves válidas são compostas por letras minúsculas, números e "
 "sublinhado '_'."
 
-#: ../ui_document.c:1539
+#: ../ui_document.c:1546
 msgid ""
 "There is a parameter which already uses this keyword. Please choose another."
 msgstr ""
 "Outro parâmetro já utiliza esta palavra-chave. Por favor escolha outra."
 
-#: ../ui_document.c:1579
+#: ../ui_document.c:1586
 msgid "<i>New</i>"
 msgstr "<i>Nova</i>"
 
-#: ../ui_document.c:1660
+#: ../ui_document.c:1667
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: ../ui_document.c:1660
+#: ../ui_document.c:1667
 msgid "unknown"
 msgstr "desconhecido"
 
-#: ../ui_document.c:1744
+#: ../ui_document.c:1751
 msgid "Sucess!"
 msgstr "Sucesso!"
 
-#: ../ui_document.c:1746
+#: ../ui_document.c:1753
 msgid "The directory were successfully created!"
 msgstr "Os diretórios foram criados com sucesso!"
 
-#: ../ui_document.c:1752
+#: ../ui_document.c:1759
 msgid ""
 "Press the back buttom to change the BASE directory\n"
 "or the line title."
@@ -2109,7 +2102,7 @@ msgstr ""
 "Pressione o botão voltar para mudar o diretório BASE\n"
 " ou o título desta linha."
 
-#: ../ui_document.c:1760
+#: ../ui_document.c:1767
 msgid ""
 "You can change the BASE directory by pressing the\n"
 "back buttom or use this folder anyway."
@@ -2117,7 +2110,7 @@ msgstr ""
 "Você pode mudar o diretório BASE pressionando o\n"
 "botão voltar ou usar esta pasta assim mesmo."
 
-#: ../ui_document.c:1801
+#: ../ui_document.c:1808
 msgid ""
 "Could not create directory.\n"
 "Try reconnecting your maestro."
@@ -2126,18 +2119,20 @@ msgstr ""
 "Tente reconectar seu maestro."
 
 #: ../ui_flow.c:230
+#, c-format
 msgid ""
 "<span size='large' weight='bold'>Execution error</span>\n"
 "\n"
-"There are no connected working machines on group <b>%s</b>."
-msgstr "Não há máquinas de processamento conectados neste grupo %s."
+"There are no connected nodes on group <b>%s</b>."
+msgstr "Não há nós de processamento conectados neste grupo %s."
 
 #: ../ui_flow.c:235
+#, c-format
 msgid ""
 "<span size='large' weight='bold'>Execution error</span>\n"
 "\n"
-"The selected working machine (<b>%s</b>) is not connected."
-msgstr "A máquina de processamento selecionada (%s) não está conectada."
+"The selected node (<b>%s</b>) is not connected."
+msgstr "O nó de processamento selecionada (%s) não está conectada."
 
 #. Date labels
 #: ../ui_flow_browse.c:297
@@ -2171,8 +2166,8 @@ msgstr "Este Fluxo teve seu estado salvo %ld vezes"
 
 #. I/O labels
 #: ../ui_flow_browse.c:337
-msgid "Working machine:"
-msgstr "Máquina de processamento"
+msgid "Node:"
+msgstr "Nó: "
 
 #: ../ui_flow_browse.c:340
 msgid "Input:"
@@ -2304,21 +2299,46 @@ msgstr "Data"
 msgid "Message"
 msgstr "Mensagem"
 
-#: ../ui_log.c:102
-msgid "No maestro connected."
-msgstr "Maestro desconectado"
-
-#: ../ui_log.c:116 ../ui_log.c:216 ../ui_log.c:248
+#: ../ui_log.c:109 ../ui_log.c:210 ../ui_log.c:244
 msgid "Remote browsing disabled"
 msgstr "A navegação remota está desabilitada!"
 
-#: ../ui_log.c:230
-msgid "Maestro without connected working machines"
-msgstr "Maestro sem máquinas de processamento conectadas"
+#: ../ui_log.c:205
+#, c-format
+msgid ""
+"Error on %s:\n"
+"%s"
+msgstr ""
+"Erro em %s:\n"
+"%s"
 
-#: ../ui_log.c:243
+#: ../ui_log.c:226
+#, c-format
+msgid "Maestro <b>%s</b> connected"
+msgstr "Maestro <b>%s</b> desconectado"
+
+#: ../ui_log.c:231
+#, c-format
+msgid "Maestro <b>%s</b> without connected nodes"
+msgstr "Maestro <b>%s</b> sem nós de processamento conectados"
+
+#: ../ui_log.c:239
 msgid "Remote browsing enabled"
 msgstr "A navegação remota está habilitada!"
+
+#: ../ui_log.c:254
+#, c-format
+msgid ""
+"Error on <b>%s</b>:\n"
+"%s"
+msgstr ""
+"Erro em <b>%s</b>:\n"
+"%s"
+
+#: ../ui_log.c:261
+#, c-format
+msgid "Maestro <b>%s</b> disconnected"
+msgstr "Maestro <b>%s</b> desconectado"
 
 #: ../ui_parameters.c:55
 msgid "Parameters"
@@ -2459,14 +2479,13 @@ msgstr "Maestro"
 #: ../ui_preferences.c:733
 #, c-format
 msgid ""
-"Maestro <b>%s</b> needs at least one <i>connected working machine</i> to run "
-"processing flows. You must either connect to a new one or connect your "
-"already registered working machines.\n"
+"Maestro <b>%s</b> needs at least one <i>connected node</i> to run processing "
+"flows. You must either connect to a new one or connect your already "
+"registered nodes.\n"
 msgstr ""
-"Maestro <b>%s</b> precisa de ao menos uma <i>máquina de processamento "
-"conectada</i> para executar os fluxos de processamento. Você deve adicionar "
-"uma nova máquina de processamento ou conectar-se às máquinas registradas "
-"abaixo.\n"
+"Maestro <b>%s</b> precisa de ao menos um <i>nóconectado</i> para executar os "
+"fluxos de processamento. Você deve adicionar uma nova máquina de "
+"processamento ou conectar-se às máquinas registradas abaixo.\n"
 
 #: ../ui_preferences.c:837
 msgid "You should know your name"
@@ -2513,8 +2532,8 @@ msgstr "É a primeira vez que você usa GêBR %s."
 #, c-format
 msgid ""
 "In this version, GêBR introduces new features that will speed up your "
-"processing flows, like automatic selection of the fastest working machine "
-"available and split of processing job among working machines.\n"
+"processing flows, like automatic selection of the fastest node available and "
+"split of processing job among nodes.\n"
 "\n"
 "These is possible due to a new player, called Maestro.\n"
 "\n"
@@ -2522,9 +2541,8 @@ msgid ""
 "assistant will guide you through this process.\n"
 msgstr ""
 "Nesta versão, GêBR introduz novas funcionalidades que vão acelerar os seus "
-"fluxos de processamento, como seleção automática das máquinas de "
-"processamento mais rápidasdisponíveis e divisão do processamento entre as "
-"máquinas de processamento.\n"
+"fluxos de processamento, como seleção automática dos nós de processamento "
+"mais rápidas disponíveis e divisão do processamento entre as nós.\n"
 "\n"
 "Isto é possível graças a um novo ator, chamado Maestro.\n"
 "\n"
@@ -2532,8 +2550,8 @@ msgstr ""
 "assistente irá guiá-lo através desse processo.\n"
 
 #: ../ui_preferences.c:1124 ../ui_preferences.c:1130
-msgid "Working Machines"
-msgstr "Máquinas de processamento"
+msgid "Nodes"
+msgstr "Nós"
 
 #: ../ui_preferences.c:1136
 msgid "Remote Browsing"
@@ -2541,35 +2559,34 @@ msgstr "Navegação remota"
 
 #: ../ui_preferences.c:1146
 msgid ""
-"<i>Maestro</i> is in between the GêBR and the working machines. It receives "
-"all requests for flow execution and dispatches them to groups of working "
-"machines .\n"
+"<i>Maestro</i> is in between GêBR and the working nodes. It receives all "
+"requests for flow execution and dispatches them to groups of nodes .\n"
 "\n"
 "Without interference, Maestro collects information about the state of each "
-"working machine and ranks them according to their capabilities and available "
-"resources at time. Therefore, Maestro can take smart decisions about which "
-"working machines are best suited to run a processing flow."
+"node and ranks them according to their capabilities and available resources "
+"at time. Therefore, Maestro can take smart decisions about which nodes are "
+"best suited to run a processing flow."
 msgstr ""
-"O <b>Maestro</b> está entre a G&#xEA;BR e as máquinas de processamento.Ele "
+"O <b>Maestro</b> está entre a G&#xEA;BR e os nós de processamento. Ele "
 "recebe todas as requisições para execução dos fluxos e envia para um grupo "
-"de máquinas de processamento.\n"
+"de nós.\n"
 "\n"
-"Autonomamente, o Maestro coleta informações sobre o estado de cada máquina "
-"de processamento e a classifica de acordo com suas capacidades e recursos "
-"disponíveis no momento. Portanto, o Maestro pode tomar decisões inteligentes "
-"sobre quais máquinas de processamento são mais adequadas para executar cada "
-"fluxo."
+"Sem interferência, o Maestro coleta informações sobre o estado de cada "
+"máquina e classifica-a de acordo com suas capacidades e recursos disponíveis "
+"no momento. Portanto, o Maestro pode tomar decisões inteligentes sobre quais "
+"servidores são mais adequados para executar cada fluxo."
 
 #: ../ui_preferences.c:1156
 msgid ""
-"GêBR needs to establish a connection to the Maestro to send jobs and receive "
+"GêBR needs to establish a connection to a Maestro to send jobs and receive "
 "outputs.\n"
 "\n"
-"All data exchange between the Maestro and GêBR flows through <i>encrypted "
-"channels</i>. Such channels are established using SSH protocol, which is a "
-"standard way to access remote machines with reasonable level of security.\n"
+"All data exchange between Maestro and the working nodes is performed "
+"throughc <i>encrypted channels</i>. Such channels are established using SSH "
+"protocol, which is a standard way to access remote machines with reasonable "
+"level of security.\n"
 "\n"
-"To actually establish the connections, SSH may request your login password.\n"
+"To establish the connections, SSH may request your login password.\n"
 "\n"
 "<small><i>This connection process can be extremely simplified using an "
 "alternative authetication method based on public keys. The adoption of this "
@@ -2584,8 +2601,7 @@ msgstr ""
 "que é um modo padrão para acessar máquinas remotas com um nível de segurança "
 "razoável.\n"
 "\n"
-"Para realmente estabelecer as conexões, SSH pode solicitar sua senha de "
-"login.\n"
+"Para estabelecer as conexões, o SSH solicitar sua senha de login.\n"
 "\n"
 "<small><i>Este processo de conexão pode ser extremamente simplificado usando "
 "um método de autenticação alternativo baseado em chaves públicas. A adoção "
@@ -2594,15 +2610,15 @@ msgstr ""
 
 #: ../ui_preferences.c:1169
 msgid ""
-"Every processing flow in GêBR runs on working machines, which may be "
-"elsewhere. <i>Remote browsing</i> is a feature that allows the user to see "
-"the files generated on the working machines.\n"
+"Every processing flow in GêBR runs on nodes, which may be elsewhere. "
+"<i>Remote browsing</i> is a feature that allows the user to see the files "
+"generated on the nodes.\n"
 "\n"
 "To enable this feature your login password may be asked."
 msgstr ""
-"Cada fluxo de processamento na GêBR é executado pelas máquinas de "
-"processamento.A <i>navegação remota</i> é uma funcionalidade que permite ao "
-"usuário ver os arquivos gerados nas máquinas de processamento.\n"
+"Cada fluxo de processamento na GêBR é executado pelos nós de processamento. "
+"A <i>navegação remota</i> é uma funcionalidade que permite ao usuário ver os "
+"arquivos gerados nas máquinas de processamento.\n"
 "\n"
 "Para habilitar esta funcionalidade, sua senha de login pode ser requisitada."
 
@@ -2825,24 +2841,23 @@ msgstr "Caminhos da linha:"
 
 #: ../data/gebr-connections-settings.glade.h:2
 msgid ""
-"<b>Maestro</b> is in between the G&#xEA;BR and the working machines. It "
+"<b>Maestro</b> is in between the G&#xEA;BR and the working nodes. It "
 "receives all requests for flow execution and dispatches them to groups of "
-"working machines.\n"
+"nodes.\n"
 "\n"
 "Without interference, Maestro collects information about the state of each "
-"working machine and ranks them according to their capabilities and available "
-"resources at time. Therefore, Maestro can take smart decisions about which "
-"working machines are best suited to run a processing flow."
+"node and ranks them according to their capabilities and available resources "
+"at time. Therefore, Maestro can take smart decisions about which nodes are "
+"best suited to run a processing flow."
 msgstr ""
-"O <b>Maestro</b> está entre a G&#xEA;BR e as máquinas de processamento. Ele "
+"O <b>Maestro</b> está entre a G&#xEA; BR e os nós de processamento. Ele "
 "recebe todas as requisições para execução dos fluxos e envia para um grupo "
-"de máquinas de processamento.\n"
+"de nós de processamento.\n"
 "\n"
-"Autônomamente, o Maestro coleta informações sobre o estado de cada máquina "
-"de processamento e a classifica de acordo com suas capacidades e recursos "
-"disponíveis no momento. Portanto, o Maestro pode tomar decisões inteligentes "
-"sobre quais máquinas de processamento são as mais adequadas para executar "
-"cada fluxo."
+"Sem interferência, o Maestro coleta informações sobre o estado de cada "
+"máquina e classifica-a de acordo com suas capacidades e recursos disponíveis "
+"no momento. Portanto, o Maestro pode tomar decisões inteligentes sobre quais "
+"servidores são mais adequados para executar cada fluxo."
 
 #: ../data/gebr-connections-settings.glade.h:5
 msgid "<b>Preferences</b>"
@@ -2853,22 +2868,20 @@ msgid "<b>Remote browsing</b>"
 msgstr "<b>Navegação Remota</b>"
 
 #: ../data/gebr-connections-settings.glade.h:8
-msgid "<b>Working machines</b>"
-msgstr "<b>Máquinas de processamento</b>"
+msgid "<b>Working nodes</b>"
+msgstr "<b>Nós de processamento</b>"
 
 #: ../data/gebr-connections-settings.glade.h:9
 msgid ""
-"<i>A Maestro without working machines is like a general without soldiers.</"
-"i>\n"
+"<i>A Maestro without nodes is like a general without soldiers.</i>\n"
 "\n"
-"<i>Working machines</i> are the ones who actually execute the processing "
+"The <i>working nodes</i> are the ones who actually execute the processing "
 "flows. They put their computational power at disposal of the Maestro, which "
 "coordinates them to cooperate to conclude processing jobs faster."
 msgstr ""
-"<i>Um maestro sem máquinas de processamento é como um general sem soldados.</"
-"i>\n"
+"<i>Um maestro sem nós de processamento é como um general sem soldados.</i>\n"
 "\n"
-"<b>Máquinas de processameto</b> representam onde os fluxos de processamento "
+"<b>Nós de processamento</b> representam onde os fluxos de processamento "
 "são realmente executados. Eles colocam seu poder computacional a disposição "
 "do Maestro, o qual os coordena para cooperar e concluir o execução das "
 "tarefas mais rapidamente."
@@ -2943,8 +2956,8 @@ msgstr ""
 #: ../data/gebr-connections-settings.glade.h:28
 msgid ""
 "In this version, G&#xEA;BR introduces new features that will speed up your "
-"processing flows, like automatic selection of the fastest working machine "
-"available and split of processing job among working machines.\n"
+"processing flows, like automatic selection of the fastest working node "
+"available and split of processing job among working nodes.\n"
 "\n"
 "These is possible due to a new player, called Maestro.\n"
 "\n"
@@ -2953,7 +2966,7 @@ msgid ""
 msgstr ""
 "Nesta versão, G&#xEA;BR introduz novas funcionalidades que vão acelerar os "
 "seus fluxos de processamento, como seleção automática dos mais rápidos "
-"disponíveis e divisão do processamento entre as máquinas de processamento.\n"
+"disponíveis e divisão do processamento entre os nós.\n"
 "\n"
 "Isto é possível graças a um novo ator, chamado Maestro.\n"
 "\n"
@@ -3027,6 +3040,64 @@ msgstr "Conectar-se ao Maestro <b>XXX</b>"
 msgid "What do you want to do?"
 msgstr "O que deseja fazer?"
 
+#~ msgid "working machine"
+#~ msgstr "Máquina de processamento"
+
+#~ msgid "Waiting for working machines"
+#~ msgstr "Esperando pelas máquinas de processamento"
+
+#~ msgid "More info"
+#~ msgstr "Mais informações"
+
+#~ msgid "Working machine:"
+#~ msgstr "Máquina de processamento"
+
+#~ msgid "No maestro connected."
+#~ msgstr "Maestro desconectado"
+
+#~ msgid "Working Machines"
+#~ msgstr "Máquinas de processamento"
+
+#~ msgid ""
+#~ "<i>Maestro</i> is in between the GêBR and the working machines. It "
+#~ "receives all requests for flow execution and dispatches them to groups of "
+#~ "working machines .\n"
+#~ "\n"
+#~ "Without interference, Maestro collects information about the state of "
+#~ "each working machine and ranks them according to their capabilities and "
+#~ "available resources at time. Therefore, Maestro can take smart decisions "
+#~ "about which working machines are best suited to run a processing flow."
+#~ msgstr ""
+#~ "O <b>Maestro</b> está entre a G&#xEA;BR e as máquinas de processamento."
+#~ "Ele recebe todas as requisições para execução dos fluxos e envia para um "
+#~ "grupo de máquinas de processamento.\n"
+#~ "\n"
+#~ "Autonomamente, o Maestro coleta informações sobre o estado de cada "
+#~ "máquina de processamento e a classifica de acordo com suas capacidades e "
+#~ "recursos disponíveis no momento. Portanto, o Maestro pode tomar decisões "
+#~ "inteligentes sobre quais máquinas de processamento são mais adequadas "
+#~ "para executar cada fluxo."
+
+#~ msgid ""
+#~ "<b>Maestro</b> is in between the G&#xEA;BR and the working machines. It "
+#~ "receives all requests for flow execution and dispatches them to groups of "
+#~ "working machines.\n"
+#~ "\n"
+#~ "Without interference, Maestro collects information about the state of "
+#~ "each working machine and ranks them according to their capabilities and "
+#~ "available resources at time. Therefore, Maestro can take smart decisions "
+#~ "about which working machines are best suited to run a processing flow."
+#~ msgstr ""
+#~ "O <b>Maestro</b> está entre a G&#xEA;BR e as máquinas de processamento. "
+#~ "Ele recebe todas as requisições para execução dos fluxos e envia para um "
+#~ "grupo de máquinas de processamento.\n"
+#~ "\n"
+#~ "Autônomamente, o Maestro coleta informações sobre o estado de cada "
+#~ "máquina de processamento e a classifica de acordo com suas capacidades e "
+#~ "recursos disponíveis no momento. Portanto, o Maestro pode tomar decisões "
+#~ "inteligentes sobre quais máquinas de processamento são as mais adequadas "
+#~ "para executar cada fluxo."
+
 #~ msgid ""
 #~ "There is no working machines connected to this line.\n"
 #~ "Connecting at least one to execute a flow."
@@ -3055,26 +3126,6 @@ msgstr "O que deseja fazer?"
 #~ "Para ser capaz de navegar no arquivos destes diretórios, a  "
 #~ "funcionalidade de <i>navegação remota</i> deve ser habilitada no Maestro."
 #~ "</small>"
-
-#~ msgid ""
-#~ "<b>Maestro</b> is in between the G&#xEA;BR and the working machines. It "
-#~ "receives all requests for flow execution and dispatches them to groups of "
-#~ "servers.\n"
-#~ "\n"
-#~ "Without interference, Maestro collects information about the state of "
-#~ "each working machine and ranks them according to their capabilities and "
-#~ "available resources at time. Therefore, Maestro can take smart decisions "
-#~ "about which servers are best suited to run a processing flow."
-#~ msgstr ""
-#~ "O <b>Maestro</b> está entre a G&#xEA; BR e os máquinas de processamento. "
-#~ "Ele recebe todas as requisições para execução dos fluxos e envia para um "
-#~ "grupo de máquinas de processamento.\n"
-#~ "\n"
-#~ "Sem interferência, o Maestro coleta informações sobre o estado de cada "
-#~ "máquina e classifica-a de acordo com suas capacidades e recursos "
-#~ "disponíveis no momento. Portanto, o Maestro pode tomar decisões "
-#~ "inteligentes sobre quais servidores são mais adequados para executar cada "
-#~ "fluxo."
 
 #~ msgid "New"
 #~ msgstr "Novo"
