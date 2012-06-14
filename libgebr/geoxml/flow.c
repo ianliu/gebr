@@ -167,6 +167,9 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 	document = gebr_geoxml_document_new("flow", GEBR_GEOXML_FLOW_VERSION);
 
 	root = gebr_geoxml_document_root_element(document);
+	
+	GdomeElement *parent = __gebr_geoxml_insert_new_element(root, "parent", NULL);
+	
 	server = __gebr_geoxml_insert_new_element(root, "server", NULL);
 	__gebr_geoxml_set_attr_value (server, "group-type", "group");
 	__gebr_geoxml_set_attr_value (server, "group-name", "");
@@ -176,7 +179,6 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 	gdome_el_unref(__gebr_geoxml_insert_new_element(io, "output", NULL), &exception);
 	gdome_el_unref(__gebr_geoxml_insert_new_element(io, "error", NULL), &exception);
 	gdome_el_unref(__gebr_geoxml_insert_new_element(server, "lastrun", NULL), &exception);
-	gdome_el_unref(__gebr_geoxml_insert_new_element(root, "parent", NULL), &exception);
 
 	GdomeElement *date = __gebr_geoxml_get_first_element(root, "date");
 	gdome_el_unref(__gebr_geoxml_insert_new_element(date, "lastrun", NULL), &exception);
@@ -185,6 +187,7 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 	gdome_el_unref(date, &exception);
 	gdome_el_unref(root, &exception);
 	gdome_el_unref(io, &exception);
+	gdome_el_unref(parent, &exception);
 
 	return GEBR_GEOXML_FLOW(document);
 }
