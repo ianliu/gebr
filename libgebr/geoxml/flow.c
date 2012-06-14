@@ -489,6 +489,9 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 					     __gebr_geoxml_get_element_value((GdomeElement *) revision)))
 		return FALSE;
 
+	gchar *id;
+	gebr_geoxml_flow_get_revision_data(revision, NULL, NULL, NULL, &id);
+
 	flow_help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
 	revision_help = gebr_geoxml_document_get_help (revision_flow);
 	merged_help = g_string_new (flow_help);
@@ -564,6 +567,9 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	}
 
 	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (flow), merged_help->str);
+	gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT (flow), id);
+
+	g_free(id);
 	g_string_free (merged_help, TRUE);
 
 	return TRUE;
