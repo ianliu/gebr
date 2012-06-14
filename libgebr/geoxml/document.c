@@ -1349,9 +1349,9 @@ void gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar *
 	set_document_simple_property(document, "email", email);
 }
 
-void gebr_geoxml_document_set_parent_id(GebrGeoXmlDocument * document, const gchar * parent_id)
+void gebr_geoxml_document_set_parent_id(GebrGeoXmlDocument * document, const gchar * parent)
 {
-	set_document_simple_property(document, "parent", parent_id);
+	set_document_simple_property(document, "parent", parent);
 }
 
 GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocument * document)

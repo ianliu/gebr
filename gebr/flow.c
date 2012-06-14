@@ -629,6 +629,7 @@ gboolean flow_revision_save(void)
 	if (response == GTK_RESPONSE_OK) {
 
 		GebrGeoXmlRevision *revision;
+		gchar *id;
 
 		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 
@@ -641,6 +642,10 @@ gboolean flow_revision_save(void)
 
 			revision = gebr_geoxml_flow_append_revision(GEBR_GEOXML_FLOW(flow), 
 								    gtk_entry_get_text(GTK_ENTRY(entry)));
+
+			gebr_geoxml_flow_get_revision_data(revision, NULL, NULL, NULL, &id);
+			gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(flow), id);
+
 			document_save(flow, FALSE, FALSE);
 			flow_browse_load_revision(revision, TRUE);
 			flow_browse_info_update();

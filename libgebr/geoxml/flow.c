@@ -176,6 +176,7 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 	gdome_el_unref(__gebr_geoxml_insert_new_element(io, "output", NULL), &exception);
 	gdome_el_unref(__gebr_geoxml_insert_new_element(io, "error", NULL), &exception);
 	gdome_el_unref(__gebr_geoxml_insert_new_element(server, "lastrun", NULL), &exception);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(root, "parent", NULL), &exception);
 
 	GdomeElement *date = __gebr_geoxml_get_first_element(root, "date");
 	gdome_el_unref(__gebr_geoxml_insert_new_element(date, "lastrun", NULL), &exception);
@@ -606,7 +607,8 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow,
 	gebr_geoxml_object_unref(root);
 	gebr_geoxml_object_unref(first_revision);
 
-	gebr_geoxml_flow_set_revision_data(revision, revision_xml, gebr_iso_date(), comment, NULL);
+	gebr_geoxml_flow_set_revision_data(revision, revision_xml, gebr_iso_date(),
+					   comment, gebr_create_id_with_current_time()); 
 	g_free(revision_xml);
 
 	return revision;
@@ -670,7 +672,6 @@ void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision,
 
 	if (comment)
 		*comment = __gebr_geoxml_get_attr_value((GdomeElement *) revision, "comment");
-
 	if (id)
 		*id = __gebr_geoxml_get_attr_value((GdomeElement *) revision, "id");
 }
