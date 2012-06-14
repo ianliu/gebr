@@ -709,8 +709,35 @@ static void flow_browse_on_revision_delete_activate(GtkWidget * widget, GebrGeoX
 						  _("If you choose to remove this revision "
 						    "you will not be able to recover it later."));
 	if (response) {
-		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(revision));
+		gchar *id;
+		gchar *flow_xml;
+		GebrGeoXmlDocument *revdoc;
+
+		gebr_geoxml_flow_get_revision_data(revision, &flow_xml, NULL, NULL, &id);
+
+		if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+			g_free(flow_xml);
+			g_free(id);
+			return;
+		}
+		g_free(flow_xml);
+
+		gchar *parent_id = gebr_geoxml_document_get_parent_id(revdoc);
+		gchar *head_parent = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(gebr.flow));
+
+		gebr_geoxml_document_free(revdoc);
+
+		GHashTable *hash_rev = gebr_flow_revisions_hash_create(gebr.flow);
+
+		gboolean change_head_parent = flow_revision_remove(gebr.flow, id, head_parent, hash_rev);
+
+		if (change_head_parent)
+			gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(gebr.flow), parent_id);
+
+		gebr_flow_revisions_hash_free(hash_rev);
+
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
+
 		menu_item = g_object_get_data(G_OBJECT(widget), "menu-item-to-be-removed");
 		gtk_widget_destroy(GTK_WIDGET(menu_item));
 		flow_browse_info_update();

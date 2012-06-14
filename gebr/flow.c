@@ -661,6 +661,99 @@ gboolean flow_revision_save(void)
 	return ret;
 }
 
+gboolean
+flow_revision_remove(GebrGeoXmlFlow *flow,
+                     gchar *id_remove,
+                     gchar *parent_head,
+                     GHashTable *hash)
+{
+	gboolean result;
+	GString *childs = g_hash_table_lookup(hash, id_remove);
+
+	gchar *id;
+	GebrGeoXmlSequence *seq;
+
+	gboolean removed = FALSE;
+	gebr_geoxml_flow_get_revision(flow, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), NULL, NULL, NULL, &id);
+		if (!g_strcmp0(id, id_remove)) {
+			gebr_geoxml_sequence_remove(seq);
+			removed = TRUE;
+			break;
+		}
+	}
+
+	g_warn_if_fail(removed == TRUE);
+
+	if (!childs) {
+		gboolean has_head = (g_strcmp0(parent_head, id) == 0);
+		g_free(id);
+		return has_head;
+	}
+
+	gchar **ids = g_strsplit(childs->str, ",", -1);
+	for (gint i = 0; ids[i]; i++)
+		result = (flow_revision_remove(flow, ids[i], parent_head, hash) || result);
+
+	g_free(id);
+
+	return result;
+}
+
+GHashTable *
+gebr_flow_revisions_hash_create(GebrGeoXmlFlow *flow)
+{
+	GHashTable *hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	GebrGeoXmlSequence *seq;
+	gebr_geoxml_flow_get_revision(flow, &seq, 0);
+
+	for(; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlRevision *rev = GEBR_GEOXML_REVISION(seq);
+		gchar *flow_xml;
+		gchar *id;
+		GebrGeoXmlDocument *revdoc;
+
+		gebr_geoxml_flow_get_revision_data(rev, &flow_xml, NULL, NULL, &id);
+
+		if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+			g_free(flow_xml);
+			g_free(id);
+			return NULL;
+		}
+		g_free(flow_xml);
+
+		gchar *parent_id = gebr_geoxml_document_get_parent_id(revdoc);
+
+		GString *childs = g_hash_table_lookup(hash, parent_id);
+		if (!childs) {
+			GString *new_child = g_string_new(id);
+			g_hash_table_insert(hash, parent_id, new_child);
+		} else {
+			g_string_append_c(childs, ',');
+			g_string_append(childs, id);
+			g_hash_table_insert(hash, parent_id, childs);
+		}
+		gebr_geoxml_document_free(revdoc);
+	}
+
+	return hash;
+}
+
+void
+gebr_flow_revisions_hash_free(GHashTable *revision)
+{
+	void free_hash(gpointer key, gpointer value)
+	{
+		GString *str_value = value;
+		g_string_free(str_value, TRUE);
+	}
+
+	g_hash_table_foreach(revision, (GHFunc) free_hash, NULL);
+	g_hash_table_destroy(revision);
+}
+
 void flow_program_remove(void)
 {
 	GtkTreeIter iter;

@@ -65,15 +65,34 @@ void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, GebrGeoXmlLine *line, gch
 void flow_set_paths_to_empty(GebrGeoXmlFlow * flow);
 
 /**
+ * Remove selected program from flow process.
+ */
+void flow_program_remove(void);
+
+/**
  * Make a revision from current flow.
  * Opens a dialog asking the user for a comment of it.
  */
 gboolean flow_revision_save(void);
 
 /**
- * Remove selected program from flow process.
+ *
  */
-void flow_program_remove(void);
+gboolean flow_revision_remove(GebrGeoXmlFlow *flow,
+                              gchar *id_remove,
+                              gchar *parent_head,
+                              GHashTable *hash);
+
+/**
+ *
+ */
+GHashTable *gebr_flow_revisions_hash_create(GebrGeoXmlFlow *flow);
+
+/**
+ *
+ */
+void gebr_flow_revisions_hash_free(GHashTable *revision);
+
 /**
  * Move selected program to top in the processing flow.
  */
