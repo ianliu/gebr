@@ -61,6 +61,7 @@
 #include "types.h"
 #include "value_sequence.h"
 #include "xml.h"
+#include "date.h"
 
 #include "parameters.h"
 
@@ -984,6 +985,78 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 			g_free(value);
 			gebr_geoxml_object_unref(element);
+		}
+	}
+
+	/* 0.3.9 to 0.4.0 */
+	if (strcmp(version, "0.4.0") < 0) {
+		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.4.0");
+
+			GdomeElement *before = __gebr_geoxml_get_first_element(root_element, "category");
+			GdomeElement *parent = __gebr_geoxml_insert_new_element(root_element, "parent", before);
+
+			gchar *parent_id = NULL;
+			gchar *last_date = NULL;
+
+			GebrGeoXmlSequence *seq;
+			gebr_geoxml_flow_get_revision(GEBR_GEOXML_FLOW(*document), &seq, 0);
+
+			for (; seq; gebr_geoxml_sequence_next(&seq)) {
+				gchar *flow_xml;
+				gchar *date;
+				gchar *id;
+				GebrGeoXmlDocument *revdoc;
+
+				id = gebr_create_id_with_current_time();
+
+				gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &flow_xml, &date, NULL, NULL);
+
+				if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+					g_free(flow_xml);
+					continue;
+				}
+
+				g_free(flow_xml);
+
+				/* Find the most recent revision to be the parent of *document */
+				gboolean set_id = FALSE;
+				if (!last_date) {
+					last_date = g_strdup(date);
+					set_id = TRUE;
+				} else {
+					GTimeVal current = gebr_iso_date_to_g_time_val(date);
+					GTimeVal last = gebr_iso_date_to_g_time_val(last_date);
+					if (current.tv_sec > last.tv_sec) {
+						g_free(last_date);
+						last_date = g_strdup(date);
+						set_id = TRUE;
+					}
+				}
+
+				if (set_id) {
+					if (parent_id)
+						g_free(parent_id);
+					parent_id = g_strdup(id);
+				}
+
+				gebr_geoxml_document_to_string(revdoc, &flow_xml);
+				gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(seq), flow_xml, NULL, NULL, id);
+
+				gebr_geoxml_document_free(revdoc);
+				g_free(date);
+				g_free(id);
+				g_free(flow_xml);
+			}
+
+			if (!parent_id)
+				parent_id = g_strdup("");
+
+			gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(*document), parent_id);
+
+			g_free(parent_id);
+			gdome_el_unref(parent, &exception);
+			gdome_el_unref(before, &exception);
 		}
 	}
 
