@@ -1462,7 +1462,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
         gtk_drag_source_set(GTK_WIDGET(view), GDK_BUTTON1_MASK, entries, n_entries, GDK_ACTION_COPY);
         g_signal_connect(view, "drag-data-get", G_CALLBACK(drag_data_get_handl), NULL);
-	gtk_drag_source_set_icon_stock(GTK_WIDGET(view), GTK_STOCK_NETWORK);
+	gtk_drag_source_set_icon_stock(GTK_WIDGET(view), "group");
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
 	                                          (GebrGuiGtkPopupCallback) gebr_maestro_controller_server_popup_menu, self);

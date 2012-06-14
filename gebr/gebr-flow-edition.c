@@ -1735,7 +1735,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 	} else {
 		const gchar *stock_id;
 		if (type == MAESTRO_SERVER_TYPE_GROUP)
-			stock_id = GTK_STOCK_NETWORK;
+			stock_id = "group";
 		else {
 			if (is_connected)
 				stock_id = GTK_STOCK_CONNECT;
