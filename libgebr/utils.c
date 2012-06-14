@@ -1446,5 +1446,5 @@ gebr_create_id_with_current_time()
 
 	g_get_current_time(&result);
 
-	return g_strdup_printf("%ld", result.tv_sec);
+	return g_strdup_printf("%ld%ld", result.tv_sec, result.tv_usec);
 }
