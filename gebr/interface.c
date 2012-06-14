@@ -61,7 +61,7 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, NULL, G_CALLBACK(on_configure_preferences_activate)},
 	{"actions_connections", GTK_STOCK_ABOUT, N_("_Connection Assistant"),
 		NULL, NULL, G_CALLBACK(on_configure_wizard_activate)},
-	{"actions_servers", GTK_STOCK_NETWORK, N_("_Maestro / Nodes"),
+	{"actions_servers", "group", N_("_Maestro / Nodes"),
 		NULL, NULL, G_CALLBACK(on_configure_servers_activate)},
 	{"actions_quit", GTK_STOCK_QUIT, NULL,
 		"<Control>q", NULL, G_CALLBACK(on_quit_activate)},
