@@ -40,7 +40,14 @@ static void flow_browse_load(void);
 
 static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 					 GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
+
+static void revisions_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+                                       GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
+
 static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_flow_browse);
+
+static GtkMenu *revisions_popup_menu(GtkWidget * widget,
+                                     GebrUiFlowBrowse *ui_flow_browse);
 static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_revision_delete_activate(GtkWidget * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_flow_move(void);
@@ -55,11 +62,10 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 
 	GtkWidget *page;
 	GtkWidget *hpanel;
-	GtkWidget *frame;
 	GtkWidget *scrolled_window;
+	GtkWidget *scrolled_window_info;
+	GtkWidget *scrolled_window_rev;
 	GtkWidget *infopage;
-	GtkWidget *table;
-	gint row;
 
 	/* alloc */
 	ui_flow_browse = g_new(GebrUiFlowBrowse, 1);
@@ -110,16 +116,24 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FB_TITLE);
 
-	/*
-	 * Right side: flow info
-	 */
-	GtkWidget *info_box = gtk_vbox_new(FALSE, 0);
-	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	ui_flow_browse->info_window = scrolled_window;
-	gtk_box_pack_start(GTK_BOX(info_box), scrolled_window, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
+	/*
+	 * Right side: flow info tab
+	 */
+	scrolled_window_info = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window_info),
+	                               GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+	/* Get glade file */
+	ui_flow_browse->info.builder_flow = gtk_builder_new();
+	gtk_builder_add_from_file(ui_flow_browse->info.builder_flow, GEBR_GLADE_DIR "/flow-properties.glade", NULL);
+
+	infopage = gtk_vbox_new(FALSE, 0);
+	GtkWidget *infopage_flow = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "main"));
+
+	ui_flow_browse->info_window = infopage_flow;
+
+	gtk_box_pack_start(GTK_BOX(infopage), infopage_flow, FALSE, TRUE, 0);
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
@@ -129,126 +143,107 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 		ui_flow_browse->warn_window = gtk_label_new(_("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
 							      "Try changing its maestro or connecting it."));
 	gtk_widget_set_sensitive(ui_flow_browse->warn_window, FALSE);
-	gtk_box_pack_start(GTK_BOX(info_box), ui_flow_browse->warn_window, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->warn_window, TRUE, TRUE, 0);
 
-	gtk_paned_pack2(GTK_PANED(hpanel), info_box, TRUE, FALSE);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window_info), infopage);
 
-	frame = gtk_frame_new(_("Details"));
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), frame);
-	infopage = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), infopage);
 
 	/* Title */
-	ui_flow_browse->info.title = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.title), 0, 0);
-	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->info.title, FALSE, TRUE, 0);
+	ui_flow_browse->info.title = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "label_title"));
 
 	/* Description */
-	ui_flow_browse->info.description = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.description), 0, 0);
-	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->info.description, FALSE, TRUE, 10);
+	ui_flow_browse->info.description = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "label_description"));
 
-	ui_flow_browse->info.rev_num = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.rev_num), 0, 0);
-	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->info.rev_num, FALSE, TRUE, 10);
+	/* Revision */
+	ui_flow_browse->info.rev_num = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "desc_revision"));
 
 	/* Dates */
-	table = gtk_table_new(4, 2, FALSE), row = 0;
-	gtk_box_pack_start(GTK_BOX(infopage), table, FALSE, TRUE, 10);
+	ui_flow_browse->info.created_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "created_title"));
+	ui_flow_browse->info.created = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "created_label"));
 
-	ui_flow_browse->info.created_label = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.created_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created_label, 0, 1, row, row + 1,
-			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
-	ui_flow_browse->info.created = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.created), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.created, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+	ui_flow_browse->info.modified_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "modified_title"));
+	ui_flow_browse->info.modified = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "modified_label"));
 
-	ui_flow_browse->info.modified_label = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.modified_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified_label, 0, 1, row, row + 1,
-			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
-	ui_flow_browse->info.modified = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.modified), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.modified, 1, 2, row, row + 1,
-			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3), row++;
-
-	ui_flow_browse->info.lastrun_label = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.lastrun_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun_label, 0, 1, row, row + 1,
-			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
-	ui_flow_browse->info.lastrun = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.lastrun), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.lastrun, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
+	/* Last execution */
+	ui_flow_browse->info.lastrun = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "lastrun_label"));
 
 	/* I/O */
-	table = gtk_table_new(3, 2, FALSE), row = 0;
-	gtk_box_pack_start(GTK_BOX(infopage), table, FALSE, TRUE, 10);
+	ui_flow_browse->info.input_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "input_title"));
+	ui_flow_browse->info.input = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "input_label"));
 
-	ui_flow_browse->info.server_label = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.server_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.server_label, 0, 1, row, row + 1,
-			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
-	ui_flow_browse->info.server = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.server), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.server, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+	ui_flow_browse->info.output_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "output_title"));
+	ui_flow_browse->info.output = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "output_label"));
 
-	ui_flow_browse->info.input_label = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.input_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input_label, 0, 1, row, row + 1,
-			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
-	ui_flow_browse->info.input = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.input), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.input, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+	ui_flow_browse->info.error_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "log_title"));
+	ui_flow_browse->info.error = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "log_label"));
 
-	ui_flow_browse->info.output_label = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.output_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output_label, 0, 1, row, row + 1,
-			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	ui_flow_browse->info.output = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.output), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.output, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3),
-	    row++;
-
-	ui_flow_browse->info.error_label = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.error_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error_label, 0, 1, row, row + 1,
-			 (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	ui_flow_browse->info.error = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.error), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_flow_browse->info.error, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
-	row++;
+	/* Author */
+	ui_flow_browse->info.author = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "linkbutton_email"));
 
 	/* Help */
-	
-	GtkWidget * hbox;
-	hbox = gtk_hbox_new(FALSE, 0);
+	GtkWidget * hbox_help;
+	hbox_help = gtk_hbox_new(FALSE, 0);
 
 	ui_flow_browse->info.help_view = gtk_button_new_with_label(_("View Report"));
 	ui_flow_browse->info.help_edit = gtk_button_new_with_label(_("Edit Comments"));
 
-	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->info.help_view, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->info.help_edit, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_help), ui_flow_browse->info.help_view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_help), ui_flow_browse->info.help_edit, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help_view), "clicked",
 			 G_CALLBACK(flow_browse_show_help), NULL);
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->info.help_edit), "clicked",
 			 G_CALLBACK(flow_browse_edit_help), NULL);
-	gtk_box_pack_end(GTK_BOX(infopage), hbox, FALSE, TRUE, 0);
+
+	gtk_box_pack_end(GTK_BOX(infopage), hbox_help, FALSE, TRUE, 0);
 	g_object_set(ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
 	g_object_set(ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
 
-	/* Author */
-	ui_flow_browse->info.author = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_flow_browse->info.author), 0, 0);
-	gtk_box_pack_end(GTK_BOX(infopage), ui_flow_browse->info.author, FALSE, TRUE, 0);
+	/*
+	 * Right side: revisions tab
+	 */
+	GtkWidget *revpage;
+
+	scrolled_window_rev = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window_rev),
+	                               GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+	revpage = gtk_vbox_new(FALSE, 0);
+	GtkWidget *revpage_flow = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "revisions_main"));
+
+	ui_flow_browse->rev_view = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "rev_treeview"));
+
+	ui_flow_browse->rev_store = gtk_tree_store_new(REV_N_COLUMN,
+	                                               G_TYPE_STRING,	/* Comment */
+	                                               G_TYPE_STRING,	/* Date */
+	                                               G_TYPE_POINTER,	/* GebrGeoXmlRevision pointer */
+	                                               G_TYPE_BOOLEAN	/* Current */
+	                                               );
+
+	gtk_tree_view_set_model(GTK_TREE_VIEW(ui_flow_browse->rev_view), GTK_TREE_MODEL(ui_flow_browse->rev_store));
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->rev_view), TRUE);
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->rev_view)),
+	                            GTK_SELECTION_SINGLE);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->rev_view), FALSE);
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->rev_view),
+	                                          (GebrGuiGtkPopupCallback) revisions_popup_menu, ui_flow_browse);
+
+	g_signal_connect(ui_flow_browse->rev_view, "row-activated", G_CALLBACK(revisions_on_row_activated),
+	                 ui_flow_browse);
+
+	gtk_box_pack_start(GTK_BOX(revpage), revpage_flow, FALSE, TRUE, 0);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window_rev), revpage);
+
+
+	/**
+	 * Create Notebook
+	 */
+	GtkWidget *notebook = gtk_notebook_new();
+	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_TOP);
+
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrolled_window_info, gtk_label_new(_("Details")));
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrolled_window_rev, gtk_label_new(_("Revisions")));
+
+	gtk_paned_pack2(GTK_PANED(hpanel), notebook, TRUE, FALSE);
 
 	return ui_flow_browse;
 }
@@ -258,22 +253,21 @@ void flow_browse_info_update(void)
 	if (gebr.flow == NULL) {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.title), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.description), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server_label), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.author), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.rev_num), "");
+
+		gtk_link_button_set_uri(GTK_LINK_BUTTON(gebr.ui_flow_browse->info.author), "");
+		gtk_button_set_label(GTK_BUTTON(gebr.ui_flow_browse->info.author), "");
 
 		g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
 		g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
@@ -283,16 +277,17 @@ void flow_browse_info_update(void)
 	}
 
 	gchar *markup;
-	GString *text;
 
 	/* Title in bold */
-	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)));
+	markup = g_markup_printf_escaped("<span size='xx-large'>%s</span>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.title), markup);
 	g_free(markup);
+
 	/* Description in italic */
-	markup = g_markup_printf_escaped("<i>%s</i>", gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow)));
+	markup = g_markup_printf_escaped("<span size='large'><i>%s</i></span>", gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow)));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.description), markup);
 	g_free(markup);
+
 	/* Date labels */
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Created:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.created_label), markup);
@@ -300,43 +295,68 @@ void flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Modified:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.modified_label), markup);
 	g_free(markup);
-	markup = g_markup_printf_escaped("<b>%s</b>", _("Last run:"));
-	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun_label), markup);
-	g_free(markup);
+
 	/* Dates */
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.created),
 			   gebr_localized_date(gebr_geoxml_document_get_date_created(GEBR_GEOXML_DOC(gebr.flow))));
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified),
 			   gebr_localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOC(gebr.flow))));
-	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun),
-			   gebr_localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow)));
 
         /* Revisions */
         {
-                char * str_tmp;
-                glong nrevision = gebr_geoxml_flow_get_revisions_number(gebr.flow);
+                gchar * str_tmp;
+                gchar *date;
+                gchar *comment;
 
-                switch (nrevision){
-                case 0:
-                        str_tmp = g_strdup( _("This Flow has never had its state saved"));
-                        break;
-                case 1:
-                        str_tmp = g_strdup(_("This Flow had its state saved once"));
-                        break;
-                case 2:
-                        str_tmp = g_strdup(_("This Flow had its state saved twice"));
-                        break;
-                default:
-                        str_tmp = g_strdup_printf(_("This Flow had its state saved %ld times"), nrevision);
-                }
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.rev_num), str_tmp);
-		g_free(str_tmp);
+                if (gebr_geoxml_flow_get_parent_revision(gebr.flow, &date, &comment, NULL))
+                	str_tmp = g_markup_printf_escaped(_("<b>Revision of origin:</b>  %s <span size='small'>(saved in %s)</span>"), comment, date);
+                else
+                	str_tmp = g_strdup(_("This Flow has never had its state saved"));
+
+                gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.rev_num), str_tmp);
+                g_free(str_tmp);
+
+//                glong nrevision = gebr_geoxml_flow_get_revisions_number(gebr.flow);
+//
+//                switch (nrevision){
+//                case 0:
+//                        str_tmp = g_strdup( _("This Flow has never had its state saved"));
+//                        break;
+//                case 1:
+//                        str_tmp = g_strdup(_("This Flow had its state saved once"));
+//                        break;
+//                case 2:
+//                        str_tmp = g_strdup(_("This Flow had its state saved twice"));
+//                        break;
+//                default:
+//                        str_tmp = g_strdup_printf(_("This Flow had its state saved %ld times"), nrevision);
+//                }
 	}
 
+        /* Server */
+        gchar *last_text;
+
+        const gchar *last_run = gebr_geoxml_flow_get_date_last_run(gebr.flow);
+        if (!last_run || !*last_run) {
+        	last_text = g_strdup(_("This flow was never executed"));
+        } else {
+        	gchar *group;
+        	gebr_geoxml_flow_server_get_group(gebr.flow, NULL, &group);
+        	if (group && !*group) {
+        		g_free(group);
+        		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+        		group = g_strdup_printf("Maestro %s", gebr_maestro_server_get_address(maestro));
+        	}
+
+        	last_text = g_markup_printf_escaped("Last execution in %s at <b>%s</b>", gebr_localized_date(last_run), group);
+
+        	g_free(group);
+        }
+
+	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
+        g_free(last_text);
+
 	/* I/O labels */
-	markup = g_markup_printf_escaped("<b>%s</b>", _("Node:"));
-	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.server_label), markup);
-	g_free(markup);
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Input:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.input_label), markup);
 	g_free(markup);
@@ -346,17 +366,6 @@ void flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Log:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.error_label), markup);
 	g_free(markup);
-
-	/* Server */
-	gchar *group;
-	gebr_geoxml_flow_server_get_group(gebr.flow, NULL, &group);
-	if (group && !*group) {
-		g_free(group);
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-		group = g_strdup_printf("Maestro %s", gebr_maestro_server_get_address(maestro));
-	}
-	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server), group);
-	g_free(group);
 
 	/* Input file */
 	gchar *input_file = gebr_geoxml_flow_io_get_input_real(gebr.flow);
@@ -383,12 +392,15 @@ void flow_browse_info_update(void)
 	g_free(error_file);
 
 	/* Author and email */
-	text = g_string_new(NULL);
-	g_string_printf(text, "%s <%s>",
-			gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(gebr.flow)),
-			gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(gebr.flow)));
-	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.author), text->str);
-	g_string_free(text, TRUE);
+	gchar *tmp;
+	tmp = g_strconcat("mailto:", gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.flow)), NULL);
+	gtk_link_button_set_uri(GTK_LINK_BUTTON(gebr.ui_flow_browse->info.author), tmp);
+	g_free(tmp);
+
+	tmp = g_strconcat(gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.flow)), " <",
+	                  gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.flow)), ">", NULL);
+	gtk_button_set_label(GTK_BUTTON(gebr.ui_flow_browse->info.author), tmp);
+	g_free(tmp);
 
 	/* Info button */
 	if (gebr.flow != NULL){
@@ -577,6 +589,13 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 }
 
+static void
+revisions_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+                           GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse)
+{
+	return;
+}
+
 /**
  * \internal
  * Build popup menu
@@ -649,6 +668,29 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute")));
 
  out:	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
+}
+
+static GtkMenu *
+revisions_popup_menu(GtkWidget * widget,
+                     GebrUiFlowBrowse *ui_flow_browse)
+{
+	GtkWidget *menu;
+//	GtkWidget *menu_item;
+
+//	GtkTreeIter iter;
+
+	/* no line, no new flow possible */
+	if (gebr.flow == NULL)
+		return NULL;
+
+	menu = gtk_menu_new();
+
+//	gtk_container_add(GTK_CONTAINER(menu),
+//	                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "Revert")));
+//	gtk_container_add(GTK_CONTAINER(menu),
+//	                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "Remove")));
 
 	return GTK_MENU(menu);
 }
