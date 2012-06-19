@@ -1450,18 +1450,17 @@ gchar *
 gebr_geoxml_flow_create_dot_code(GHashTable *hash)
 {
         GList *keylist = g_hash_table_get_keys(hash);
-        GList *valuelist = g_hash_table_get_values(hash);
-        GList *key, *value = g_list_first(valuelist);
+        GList *valuelist_aux = g_hash_table_get_values(hash);
+	GList *valuelist;
         GString *graph = g_string_new("");
-        gchar **aux;
-        gint i;
 
+	valuelist = gebr_double_list_to_list(valuelist_aux);
         graph =  g_string_append(graph, ("digraph {\n"));
-        for (key = g_list_first(keylist); key != NULL; key = g_list_next(key)) {
-                aux = g_strsplit ((gchar *)value->data, ",", -1);
-                for (i = 0; aux[i]; i++)
-                        graph =  g_string_append(graph, g_markup_printf_escaped("%s->%s \n", (gchar *)key->data, aux[i]));
-                value = g_list_next(value);
+        for (GList *parent = g_list_first(keylist); parent; parent = parent->next) {
+		for (GList *child = g_list_first(keylist); child; child = child->next) {
+                        graph =  g_string_append(graph, g_markup_printf_escaped(
+							"%s->%s \n",(gchar *)parent->data, (gchar *)child->data));
+		}
         }
         graph =  g_string_append(graph, ("}\n"));
         return g_string_free(graph,FALSE);
