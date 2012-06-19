@@ -1448,3 +1448,17 @@ gebr_create_id_with_current_time()
 
 	return g_strdup_printf("%ld%ld", result.tv_sec, result.tv_usec);
 }
+
+GList *
+gebr_double_list_to_list(GList *double_list)
+{
+	GList *single_list = NULL; 
+	
+	void append_list(GList *element)
+	{
+		single_list = g_list_concat(single_list, element);
+	}
+
+	g_list_foreach(double_list, (GFunc)append_list, single_list);
+	return single_list;
+}

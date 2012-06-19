@@ -253,7 +253,7 @@ static void
 on_document_help_button_clicked (GtkButton *button, gpointer doc_type_pointer)
 {
 	GebrGeoXmlDocumentType doc_type = (GebrGeoXmlDocumentType)(GPOINTER_TO_INT(doc_type_pointer));
-	gchar *section;
+	gchar *section = NULL;
 
 	switch (doc_type) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
@@ -271,6 +271,7 @@ on_document_help_button_clicked (GtkButton *button, gpointer doc_type_pointer)
 
 	gchar *error;
 	gebr_gui_help_button_clicked(section, &error);
+	g_free(section);
 
 	if (error) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);

@@ -1466,3 +1466,31 @@ gebr_geoxml_flow_create_dot_code(GHashTable *hash)
         graph =  g_string_append(graph, ("}\n"));
         return g_string_free(graph,FALSE);
 }
+
+gchar *
+gebr_geoxml_flow_revisions_get_root_id(GHashTable *hash)
+{
+	if (!hash)
+		return NULL;
+
+	gchar *root = NULL;
+
+
+	GList *parents = g_hash_table_get_keys(hash);
+	GList *children_aux = g_hash_table_get_values(hash);
+	GList *children = gebr_double_list_to_list(children_aux);
+
+	for (GList *i = parents; i; i = i->next) {
+		if (!g_list_find(children, i->data)) {
+			root = g_strdup(i->data);
+			break;
+		}
+	}
+
+	//Do not need to free children_aux
+	g_list_free(children_aux);
+	g_list_free(parents);
+	g_list_free(children);
+
+	return root;
+}

@@ -668,7 +668,7 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
                      GHashTable *hash)
 {
 	gboolean result;
-	GString *childs = g_hash_table_lookup(hash, id_remove);
+	GList *children = g_hash_table_lookup(hash, id_remove);
 
 	gchar *id;
 	GebrGeoXmlSequence *seq;
@@ -686,15 +686,21 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 
 	g_warn_if_fail(removed == TRUE);
 
-	if (!childs) {
+	if (!children) {
 		gboolean has_head = (g_strcmp0(parent_head, id) == 0);
 		g_free(id);
 		return has_head;
 	}
 
-	gchar **ids = g_strsplit(childs->str, ",", -1);
-	for (gint i = 0; ids[i]; i++)
-		result = (flow_revision_remove(flow, ids[i], parent_head, hash) || result);
+	GList  *child;
+	GList *list = children;
+
+	while (list) {
+		child = g_list_first(list);
+		result = (flow_revision_remove(flow, child->data,
+					       parent_head, hash) || result);
+		list = g_list_next(list);
+	}
 
 	g_free(id);
 
@@ -726,28 +732,21 @@ gebr_flow_revisions_hash_create(GebrGeoXmlFlow *flow)
 
 		gchar *parent_id = gebr_geoxml_document_get_parent_id(revdoc);
 
-		GString *childs = g_hash_table_lookup(hash, parent_id);
-		if (!childs) {
-			GString *new_child = g_string_new(id);
-			g_hash_table_insert(hash, parent_id, new_child);
-		} else {
-			g_string_append_c(childs, ',');
-			g_string_append(childs, id);
-			g_hash_table_insert(hash, parent_id, childs);
-		}
+		GList *childs = g_hash_table_lookup(hash, parent_id);
+		childs = g_list_prepend(childs, id);
+		g_hash_table_insert(hash, parent_id, childs);
 		gebr_geoxml_document_free(revdoc);
 	}
 
 	return hash;
 }
-
 void
 gebr_flow_revisions_hash_free(GHashTable *revision)
 {
 	void free_hash(gpointer key, gpointer value)
 	{
-		GString *str_value = value;
-		g_string_free(str_value, TRUE);
+		GList *list = value;
+		g_list_free(list);
 	}
 
 	g_hash_table_foreach(revision, (GHFunc) free_hash, NULL);

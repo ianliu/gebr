@@ -363,6 +363,11 @@ gchar * gebr_key_filename(gboolean public);
 
 gchar *gebr_create_id_with_current_time();
 
+/*
+ * Transform a list of lists in a single list
+ */
+GList *gebr_double_list_to_list(GList *double_list);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

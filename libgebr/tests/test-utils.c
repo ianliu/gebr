@@ -380,6 +380,17 @@ test_gebr_calculate_number_of_processors(void)
 	g_assert_cmpint(gebr_calculate_number_of_processors(nprocs[3], agression[3]), ==, 9);
 }
 
+void
+test_gebr_double_list_to_list(void)
+{
+	/*
+	GList *list1 = NULL;
+	GList *list2 = NULL;
+	
+	list = g_list_prepend(list1, "A");
+	g_list_prepend(list, list1);
+	*/
+}
 
 int main(int argc, char *argv[])
 {
@@ -399,6 +410,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/gebr_gtk_bookmarks_add_paths", test_gebr_gtk_bookmarks_add_paths);
 	g_test_add_func("/libgebr/utils/gebr_gtk_bookmarks_remove_paths", test_gebr_gtk_bookmarks_remove_paths);
 	g_test_add_func("/libgebr/utils/test_gebr_calculate_number_of_processors", test_gebr_calculate_number_of_processors);
+	g_test_add_func("/libgebr/utils/gebr_double_list_to_list", test_gebr_double_list_to_list);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();

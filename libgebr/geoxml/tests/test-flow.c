@@ -756,6 +756,58 @@ void test_gebr_geoxml_flow_create_dot_code(void)
         g_hash_table_destroy(hash);
 }
 
+void test_gebr_geoxml_flow_revisions_get_root_id(void)
+{
+//gebr_geoxml_flow_revisions_get_root_id(GHashTable *hash)
+	GList *values = NULL;
+	gchar *result1, *result2, *result3, *result4;
+
+	void list_free(gpointer data) {
+		g_list_free(data);
+	}
+
+	GHashTable *hash1 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, list_free);
+	GHashTable *hash2 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, list_free);
+	GHashTable *hash3 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, list_free);
+	GHashTable *hash4 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, list_free);
+
+	values = NULL;
+	values = g_list_prepend(values, "B");
+	values = g_list_prepend(values, "C");
+	g_hash_table_insert(hash1, "A", values);
+	result1 = gebr_geoxml_flow_revisions_get_root_id(hash1);
+        g_assert_cmpstr(result1, ==, "A");
+
+	values = NULL;
+	values = g_list_prepend(values, "B");
+	g_hash_table_insert(hash2, "A", values);
+	values = NULL;
+	values = g_list_prepend(values, "C");
+	g_hash_table_insert(hash2, "B", values);
+	values = NULL;
+	values = g_list_prepend(values, "D");
+	g_hash_table_insert(hash2, "C", values);
+	values = NULL;
+	values = g_list_prepend(values, "E");
+	g_hash_table_insert(hash2, "D", values);
+	result2 = gebr_geoxml_flow_revisions_get_root_id(hash2);
+        g_assert_cmpstr(result2, ==, "A");
+
+	result3 = gebr_geoxml_flow_revisions_get_root_id(NULL);
+        g_assert(result3 == NULL);
+
+	values = g_list_prepend(values, "NULL");
+	g_hash_table_insert(hash4, "A", values);
+	result4 = gebr_geoxml_flow_revisions_get_root_id(hash4);
+        g_assert_cmpstr(result4, ==, "A");
+
+
+	g_hash_table_destroy(hash1);
+	g_hash_table_destroy(hash2);
+	g_hash_table_destroy(hash3);
+	g_hash_table_destroy(hash4);
+}
+
 //static void test_gebr_geoxml_flow_calulate_weights(void)
 //{
 //	gdouble *weights;
@@ -802,8 +854,9 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/is_parallelizable", test_gebr_geoxml_flow_is_parallelizable);
 //	g_test_add_func("/libgebr/geoxml/flow/calculate_weights", test_gebr_geoxml_flow_calulate_weights);
 	g_test_add_func("/libgebr/geoxml/flow/gebr_geoxml_flow_create_dot_code", test_gebr_geoxml_flow_create_dot_code);
-
+	g_test_add_func("/libgebr/geoxml/flow/gebr_geoxml_flow_revisions_get_root_id", test_gebr_geoxml_flow_revisions_get_root_id);
 	gint ret = g_test_run();
+
 	gebr_geoxml_finalize();
 	return ret;
 }

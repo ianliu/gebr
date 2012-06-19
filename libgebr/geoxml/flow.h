@@ -573,8 +573,11 @@ gchar * gebr_geoxml_flow_io_get_output_real(GebrGeoXmlFlow *flow);
 
 gboolean gebr_geoxml_flow_is_single_core(GebrGeoXmlFlow *flow,
                                          GebrValidator *validator);
+
 gchar * gebr_geoxml_flow_create_dot_code(GHashTable *hash);
 
+gchar *gebr_geoxml_flow_revisions_get_root_id(GHashTable *hash);
+	
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H
