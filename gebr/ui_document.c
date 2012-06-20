@@ -2245,7 +2245,6 @@ void on_changed_validate_email(GtkEntry *entry, GtkWidget *widget)
 	}
 	validate_entry(GTK_ENTRY(entry), error, _("Invalid email"), _("Your email address"));
 	gtk_widget_set_sensitive(widget, !error);
-	//gtk_assistant_set_page_complete(GTK_ASSISTANT(widget), widget, !error);
 }
 
 void
