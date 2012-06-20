@@ -1487,20 +1487,18 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		gchar *comment = NULL;
 		gulong int_id = gebr_geoxml_flow_get_revision_index_by_id(flow, (gchar *)id);
 		gint status =  gebr_geoxml_flow_get_revision(flow, &revision, int_id);
+		if (status != GEBR_GEOXML_RETV_SUCCESS)
+			g_warn_if_reached();
 
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &date, &comment, NULL);
 
-		if (status != GEBR_GEOXML_RETV_SUCCESS)
-			g_warn_if_reached();
-		gchar *label = g_strdup_printf("%s ", (gchar*)id);
-		gchar *format_edges = g_markup_printf_escaped(
-				"%s [label = '%s', shape = 'box']\n",
-				label,
+		gchar *format_edges = g_strdup_printf(
+				"%s [label = \"%s\", shape = \"box\"]\n",
+				(gchar*)id,
 				comment);
 
 		graph =  g_string_append(graph, format_edges);
 		g_free(format_edges);
-		g_free(label);
 		g_free(date);
 		g_free(comment);
 		gebr_geoxml_object_unref(revision);
@@ -1516,9 +1514,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 	void print_edges(gchar *key, GList *value, GString *text) {
 		for (GList *child = value; child; child = child->next) {
-			gchar *edge = g_markup_printf_escaped("%s->%s \n", key, (gchar*)child->data);
-			g_string_append_printf(text, "%s", edge);
-			g_free(edge);
+			g_string_append_printf(text, "%s->%s \n", key, (gchar*)child->data);
 		}
 		
 	}

@@ -764,20 +764,23 @@ gebr_flow_revisions_hash_free(GHashTable *revision)
 gboolean
 gebr_flow_revisions_create_graph(GebrGeoXmlFlow *flow,
                                  GHashTable *revs,
-                                 gchar ** png_filename)
+                                 gchar **png_filename)
 {
-	gchar *dot_content = gebr_geoxml_flow_create_dot_code(flow, revs);
-
-	gchar *dotfile = g_build_filename(g_get_home_dir(), ".gebr", "tmp.dot", NULL);
-
+	GError *error = NULL;
+	gchar *dotfile = g_build_filename(g_get_home_dir(), ".gebr", "gebr", "data", "tmp.dot", NULL);
 	gchar *filename = g_strdup_printf("%s.png", gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 	gchar *pngfile = g_build_filename(g_get_home_dir(), ".gebr", "gebr", "data", filename, NULL);
 
-	gchar *cmd_line = g_strdup_printf("bash -c \"echo \'%s\' > %s; dot -Tpng %s > %s; rm %s\"",
-	                                  dot_content, dotfile, dotfile, pngfile, dotfile);
+	gchar *dot_content = gebr_geoxml_flow_create_dot_code(flow, revs);
+	g_file_set_contents(dotfile, dot_content, -1, &error);
+	if (error)
+		g_warn_if_reached();
 
+
+
+	gchar *cmd_line = g_strdup_printf("bash -c \"dot -Tpng %s > %s\"; rm %s",
+	                                  dotfile, pngfile, dotfile);
 	gint exit;
-	GError *error = NULL;
 
 	g_debug("=====> CMD_LINE: %s", cmd_line);
 
