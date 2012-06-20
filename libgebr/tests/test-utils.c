@@ -383,13 +383,29 @@ test_gebr_calculate_number_of_processors(void)
 void
 test_gebr_double_list_to_list(void)
 {
-	/*
 	GList *list1 = NULL;
 	GList *list2 = NULL;
+	GList *double_list = NULL;
+	GList *single_list = NULL;
+	gint n = 4;
 	
-	list = g_list_prepend(list1, "A");
-	g_list_prepend(list, list1);
-	*/
+	char text[10][10] = {"A", "B", "C", "D", "E", "F"};
+
+	list1 = g_list_prepend(list1, text[0]);
+	list1 = g_list_prepend(list1, text[1]);
+
+	list2 = g_list_prepend(list2, text[2]);
+	list2 = g_list_prepend(list2, text[3]);
+
+	double_list = g_list_prepend(double_list, list1);
+	double_list = g_list_prepend(double_list, list2);
+	single_list = gebr_double_list_to_list(double_list);
+
+
+	for (gint i = 0; i < n; i++) {
+		g_assert_cmpstr(g_list_nth_data(single_list, i),
+				==, text[n-i-1]);
+	}
 }
 
 int main(int argc, char *argv[])

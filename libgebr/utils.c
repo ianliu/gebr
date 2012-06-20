@@ -1452,8 +1452,8 @@ gebr_create_id_with_current_time()
 GList *
 gebr_double_list_to_list(GList *double_list)
 {
-	GList *single_list = NULL; 
-	
+	GList *single_list = NULL;
+
 	void append_list(GList *element)
 	{
 		single_list = g_list_concat(single_list, element);
