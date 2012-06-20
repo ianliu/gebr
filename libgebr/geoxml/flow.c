@@ -711,6 +711,29 @@ gebr_geoxml_flow_get_revision_index_by_id(GebrGeoXmlFlow *flow,
 		return -1;
 }
 
+GebrGeoXmlRevision *
+gebr_geoxml_flow_get_revision_by_id(GebrGeoXmlFlow *flow,
+                                    gchar *id)
+{
+	GebrGeoXmlRevision *revision = NULL;
+	gboolean find_rev = FALSE;
+	GebrGeoXmlSequence *seq;
+	gebr_geoxml_flow_get_revision(flow, &seq, 0);
+
+	for (; !find_rev && seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlRevision *rev = GEBR_GEOXML_REVISION(seq);
+		gchar *rev_id;
+		gebr_geoxml_flow_get_revision_data(rev, NULL, NULL, NULL, &rev_id);
+		if (g_strcmp0(rev_id, id) == 0) {
+			find_rev = TRUE;
+			revision = rev;
+			gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(revision));
+		}
+		g_free(rev_id);
+	}
+
+	return revision;
+}
 
 gboolean
 gebr_geoxml_flow_get_parent_revision(GebrGeoXmlFlow *flow,
@@ -1457,12 +1480,13 @@ gebr_geoxml_flow_create_dot_code(GHashTable *hash)
 	valuelist = gebr_double_list_to_list(valuelist_aux);
         graph =  g_string_append(graph, ("digraph {\n"));
         for (GList *parent = g_list_first(keylist); parent; parent = parent->next) {
-		for (GList *child = g_list_first(keylist); child; child = child->next) {
-                        graph =  g_string_append(graph, g_markup_printf_escaped(
-							"%s->%s \n",(gchar *)parent->data, (gchar *)child->data));
+		for (GList *child = valuelist; child; child = child->next) {
+			graph = g_string_append(graph, g_markup_printf_escaped("%s->%s \n",
+			                                                       (gchar *)parent->data, (gchar *)child->data));
 		}
         }
         graph =  g_string_append(graph, ("}\n"));
+
         return g_string_free(graph,FALSE);
 }
 
@@ -1489,7 +1513,6 @@ gebr_geoxml_flow_revisions_get_root_id(GHashTable *hash)
 	//Do not need to free children_aux
 	g_list_free(children_aux);
 	g_list_free(parents);
-	g_list_free(children);
 
 	return root;
 }

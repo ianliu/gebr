@@ -732,9 +732,17 @@ gebr_flow_revisions_hash_create(GebrGeoXmlFlow *flow)
 
 		gchar *parent_id = gebr_geoxml_document_get_parent_id(revdoc);
 
+		if (!parent_id || !*parent_id) {
+			g_free(id);
+			gebr_geoxml_document_free(revdoc);
+			continue;
+		}
+
 		GList *childs = g_hash_table_lookup(hash, parent_id);
-		childs = g_list_prepend(childs, id);
+		childs = g_list_prepend(childs, g_strdup(id));
 		g_hash_table_insert(hash, parent_id, childs);
+
+		g_free(id);
 		gebr_geoxml_document_free(revdoc);
 	}
 
@@ -751,6 +759,44 @@ gebr_flow_revisions_hash_free(GHashTable *revision)
 
 	g_hash_table_foreach(revision, (GHFunc) free_hash, NULL);
 	g_hash_table_destroy(revision);
+}
+
+gboolean
+gebr_flow_revisions_create_graph(GebrGeoXmlFlow *flow,
+                                 GHashTable *revs,
+                                 gchar ** png_filename)
+{
+	gchar *dot_content = gebr_geoxml_flow_create_dot_code(revs);
+
+	gchar *dotfile = g_build_filename(g_get_home_dir(), ".gebr", "tmp.dot", NULL);
+
+	gchar *filename = g_strdup_printf("%s.png", gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
+	gchar *pngfile = g_build_filename(g_get_home_dir(), ".gebr", "gebr", "data", filename, NULL);
+
+	gchar *cmd_line = g_strdup_printf("bash -c \"echo \'%s\' > %s; dot -Tpng %s > %s; rm %s\"",
+	                                  dot_content, dotfile, dotfile, pngfile, dotfile);
+
+	gint exit;
+	GError *error = NULL;
+
+	g_debug("=====> CMD_LINE: %s", cmd_line);
+
+	if (!g_spawn_command_line_sync(cmd_line, NULL, NULL, &exit, &error))
+		return FALSE;
+
+	if (error)
+		return FALSE;
+
+	if (png_filename)
+		*png_filename = g_strdup(pngfile);
+
+	g_free(dot_content);
+	g_free(cmd_line);
+	g_free(filename);
+	g_free(dotfile);
+	g_free(pngfile);
+
+	return TRUE;
 }
 
 void flow_program_remove(void)

@@ -93,6 +93,10 @@ GHashTable *gebr_flow_revisions_hash_create(GebrGeoXmlFlow *flow);
  */
 void gebr_flow_revisions_hash_free(GHashTable *revision);
 
+gboolean gebr_flow_revisions_create_graph(GebrGeoXmlFlow *flow,
+                                          GHashTable *revs,
+                                          gchar ** png_filename);
+
 /**
  * Move selected program to top in the processing flow.
  */

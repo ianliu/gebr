@@ -395,6 +395,9 @@ void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision,
 gulong gebr_geoxml_flow_get_revision_index_by_id(GebrGeoXmlFlow *flow,
                                                  gchar *parent_id);
 
+GebrGeoXmlRevision *gebr_geoxml_flow_get_revision_by_id(GebrGeoXmlFlow *flow,
+                                                        gchar *id);
+
 /**
  *
  */

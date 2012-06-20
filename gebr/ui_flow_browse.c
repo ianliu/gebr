@@ -223,12 +223,22 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->rev_view), TRUE);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->rev_view)),
 	                            GTK_SELECTION_SINGLE);
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->rev_view), FALSE);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->rev_view), TRUE);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->rev_view),
 	                                          (GebrGuiGtkPopupCallback) revisions_popup_menu, ui_flow_browse);
 
 	g_signal_connect(ui_flow_browse->rev_view, "row-activated", G_CALLBACK(revisions_on_row_activated),
 	                 ui_flow_browse);
+
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->rev_view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", REV_COMMENT);
+
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->rev_view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", REV_DATE);
 
 	gtk_box_pack_start(GTK_BOX(revpage), revpage_flow, FALSE, TRUE, 0);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window_rev), revpage);
@@ -473,6 +483,92 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 		gtk_menu_shell_append(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item_rev);
 }
 
+static void
+create_revisions_model_recursive(GHashTable *revs,
+                                 gchar *id,
+                                 gchar *id_active,
+                                 GtkTreeIter *parent,
+                                 GebrGeoXmlFlow *flow,
+                                 GebrUiFlowBrowse *fb)
+{
+	GList *childrens;
+	gchar *comment;
+	gchar *date;
+	GtkTreeIter iter;
+	GebrGeoXmlRevision *revision = gebr_geoxml_flow_get_revision_by_id(flow, id);
+
+	if (!revision)
+		return;
+
+	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment, NULL);
+
+	gtk_tree_store_insert(fb->rev_store, &iter, parent, 0);
+	gtk_tree_store_set(fb->rev_store, &iter,
+	                   REV_COMMENT, comment,
+	                   REV_DATE, date,
+	                   REV_XMLPOINTER, revision,
+	                   REV_ACTIVE, g_strcmp0(id_active, id) == 0? TRUE : FALSE,
+			   -1);
+
+	childrens = g_hash_table_lookup(revs, id);
+
+	if (!childrens)
+		return;
+
+	g_debug("PARENT LIST: %s", id);
+	void print_list(gpointer data) {
+		g_debug("==== CHILDREN LIST: %s", (gchar*)data);
+	}
+
+	g_list_foreach(childrens, (GFunc)print_list, NULL);
+
+	for (GList *i = childrens; i; i = i->next) {
+		gchar *id_child = i->data;
+		create_revisions_model_recursive(revs, id_child, id_active, &iter, flow, fb);
+	}
+
+	g_free(comment);
+	g_free(date);
+	g_list_free(childrens);
+	gebr_geoxml_object_unref(revision);
+}
+
+static void
+flow_browse_create_revisions_model(GebrGeoXmlFlow *flow,
+                                   GebrUiFlowBrowse *fb)
+{
+	gchar *id_root;
+	gchar *id_active;
+	GHashTable *revs = gebr_flow_revisions_hash_create(flow);
+
+	id_root = gebr_geoxml_flow_revisions_get_root_id(revs);
+	id_active = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(flow));
+
+	gtk_tree_store_clear(gebr.ui_flow_browse->rev_store);
+
+	create_revisions_model_recursive(revs, id_root, id_active, NULL, flow, fb);
+
+//	gebr_flow_revisions_hash_free(revs);
+}
+
+static void
+flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
+                                GebrUiFlowBrowse *fb)
+{
+	GHashTable *revs = gebr_flow_revisions_hash_create(flow);
+	gchar *png_filename;
+
+	if (gebr_flow_revisions_create_graph(flow, revs, &png_filename)) {
+		GtkImage *image = GTK_IMAGE(gtk_builder_get_object(fb->info.builder_flow, "rev_image"));
+		gtk_image_set_from_file(image, png_filename);
+	}
+
+	g_free(png_filename);
+
+//	gebr_flow_revisions_hash_free(revs);
+}
+
+
 /**
  * \internal
  * Load a selected flow from file when selected in "Flow Browser".
@@ -510,9 +606,22 @@ static void flow_browse_load(void)
 	flow_edition_load_components();
 
 	/* load revisions */
+	gboolean has_revision = FALSE;
 	gebr_geoxml_flow_get_revision(gebr.flow, &revision, 0);
-	for (; revision != NULL; gebr_geoxml_sequence_next(&revision))
+	for (; revision != NULL; gebr_geoxml_sequence_next(&revision)) {
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
+		has_revision = TRUE;
+	}
+
+	/* Create model for Revisions */
+	if (has_revision) {
+		flow_browse_create_revisions_model(gebr.flow,
+		                                   gebr.ui_flow_browse);
+
+		flow_browse_add_revisions_graph(gebr.flow,
+		                                gebr.ui_flow_browse);
+	}
+
 
 	gebr_flow_edition_select_group_for_flow(gebr.ui_flow_edition,
 						gebr.flow);

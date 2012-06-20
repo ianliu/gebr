@@ -1459,6 +1459,6 @@ gebr_double_list_to_list(GList *double_list)
 		single_list = g_list_concat(single_list, element);
 	}
 
-	g_list_foreach(double_list, (GFunc)append_list, single_list);
+	g_list_foreach(double_list, (GFunc)append_list, NULL);
 	return single_list;
 }
