@@ -63,8 +63,10 @@ typedef struct {
 	GtkWidget *warn_window;
 
 	GtkWidget *revisions_button;
-	GtkWidget *revisions_menu;
 
+	GtkWidget *rev_main;
+	GtkWidget *revpage_main;
+	GtkWidget *revpage_warn;
 	GtkWidget *rev_view;
 	GtkTreeStore *rev_store;
 
@@ -107,7 +109,7 @@ typedef struct {
  * Return:
  * The structure containing relevant data.
  */
-GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu);
+GebrUiFlowBrowse *flow_browse_setup_ui();
 
 /**
  * Update information shown about the selected flow
@@ -132,12 +134,6 @@ void flow_browse_select_iter(GtkTreeIter * iter);
  * Turn multiple selection into single.
  */
 void flow_browse_single_selection(void);
-
-/**
- * Load \p revision into the list of revision.
- * If \p new is TRUE, then it is prepended; otherwise, appended.
- */
-void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new);
 
 void flow_browse_show_help(void);
 

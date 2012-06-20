@@ -110,8 +110,7 @@ void flow_free(void)
 		valid = gtk_list_store_remove(gebr.ui_flow_edition->fseq_store, &iter);
 	}
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), model);
-	gtk_container_foreach(GTK_CONTAINER(gebr.ui_flow_browse->revisions_menu),
-			      (GtkCallback) gtk_widget_destroy, NULL);
+
 	flow_browse_info_update();
 }
 
@@ -647,8 +646,7 @@ gboolean flow_revision_save(void)
 			gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(flow), id);
 
 			document_save(flow, FALSE, FALSE);
-			flow_browse_load_revision(revision, TRUE);
-			flow_browse_info_update();
+			flow_browse_reload_selected();
 			ret = TRUE;
 
 			//document_free(flow);
@@ -692,15 +690,9 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 		return has_head;
 	}
 
-	GList  *child;
-	GList *list = children;
-
-	while (list) {
-		child = g_list_first(list);
-		result = (flow_revision_remove(flow, child->data,
-					       parent_head, hash) || result);
-		list = g_list_next(list);
-	}
+	for (GList *i = children; i; i = i->next)
+		result = (flow_revision_remove(flow, i->data,
+		                               parent_head, hash) || result);
 
 	g_free(id);
 
@@ -733,6 +725,8 @@ gebr_flow_revisions_hash_create(GebrGeoXmlFlow *flow)
 		gchar *parent_id = gebr_geoxml_document_get_parent_id(revdoc);
 
 		if (!parent_id || !*parent_id) {
+			GList *childs = g_hash_table_lookup(hash, id);
+			g_hash_table_insert(hash, g_strdup(id), childs);
 			g_free(id);
 			gebr_geoxml_document_free(revdoc);
 			continue;
@@ -1427,10 +1421,10 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive);
 	gtk_widget_set_sensitive(gebr.ui_flow_browse->speed_button, sensitive_exec_slider);
-	gtk_widget_set_sensitive(gebr.ui_flow_browse->revisions_button, sensitive);
 
 	if (sensitive) {
 		gtk_widget_show(gebr.ui_flow_browse->info_window);
+		gtk_widget_show(gebr.ui_flow_browse->rev_main);
 		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
 	} else {
 		if (no_line_selected)
@@ -1441,6 +1435,7 @@ gebr_flow_set_toolbar_sensitive(void)
 			                     "Try changing its maestro or connecting it."));
 
 		gtk_widget_show(gebr.ui_flow_browse->warn_window);
+		gtk_widget_hide(gebr.ui_flow_browse->rev_main);
 		gtk_widget_hide(gebr.ui_flow_browse->info_window);
 	}
 

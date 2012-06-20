@@ -4,6 +4,7 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkVBox" id="main">
     <property name="visible">True</property>
+    <property name="border_width">5</property>
     <child>
       <object class="GtkHBox" id="box2">
         <property name="visible">True</property>
@@ -246,81 +247,130 @@
       </packing>
     </child>
   </object>
-  <object class="GtkVBox" id="revisions_main">
+  <object class="GtkVBox" id="main_rev">
     <property name="visible">True</property>
+    <property name="border_width">5</property>
     <child>
-      <object class="GtkLabel" id="rev_title">
+      <object class="GtkVBox" id="revisions_main">
         <property name="visible">True</property>
-        <property name="xalign">0</property>
-        <property name="label" translatable="yes">&lt;span size='x-large'&gt;Revisions&lt;/span&gt;</property>
-        <property name="use_markup">True</property>
+        <child>
+          <object class="GtkLabel" id="rev_title">
+            <property name="visible">True</property>
+            <property name="xalign">0</property>
+            <property name="label" translatable="yes">&lt;span size='x-large'&gt;Revisions&lt;/span&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="padding">5</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="rev_descrip">
+            <property name="visible">True</property>
+            <property name="xalign">0</property>
+            <property name="ypad">3</property>
+            <property name="label" translatable="yes">&lt;span size='large'&gt;&lt;i&gt;Descri&#xE7;&#xE3;o sobre o que &#xE9; uma revis&#xE3;o...&lt;/i&gt;&lt;/span&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="padding">5</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkVPaned" id="vpaned1">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="position">2</property>
+            <property name="position_set">True</property>
+            <child>
+              <object class="GtkScrolledWindow" id="scrolledwindow1">
+                <property name="height_request">150</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="rev_treeview">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFrame" id="graph_frame">
+                <property name="visible">True</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">none</property>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolledwindow2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <object class="GtkViewport" id="viewport1">
+                        <property name="visible">True</property>
+                        <property name="resize_mode">queue</property>
+                        <child>
+                          <object class="GtkImage" id="rev_image">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-missing-image</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel" id="graph_title">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Graph&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="padding">5</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
       </object>
       <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="padding">5</property>
         <property name="position">0</property>
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="rev_descrip">
-        <property name="visible">True</property>
-        <property name="xalign">0</property>
-        <property name="ypad">3</property>
-        <property name="label" translatable="yes">&lt;span size='large'&gt;&lt;i&gt;Descri&#xE7;&#xE3;o sobre o que &#xE9; uma revis&#xE3;o...&lt;/i&gt;&lt;/span&gt;</property>
-        <property name="use_markup">True</property>
+      <object class="GtkVBox" id="revisions_warn">
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="label" translatable="yes">There are no revisions</property>
+          </object>
+          <packing>
+            <property name="position">0</property>
+          </packing>
+        </child>
       </object>
       <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="padding">5</property>
         <property name="position">1</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkVPaned" id="vpaned1">
-        <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <child>
-          <object class="GtkScrolledWindow" id="scrolledwindow1">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
-            <child>
-              <object class="GtkTreeView" id="rev_treeview">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="resize">True</property>
-            <property name="shrink">False</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkScrolledWindow" id="scrolledwindow2">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
-            <child>
-              <object class="GtkImage" id="rev_image">
-                <property name="visible">True</property>
-                <property name="stock">gtk-missing-image</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="resize">True</property>
-            <property name="shrink">True</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="padding">5</property>
-        <property name="position">2</property>
       </packing>
     </child>
   </object>

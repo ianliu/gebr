@@ -89,7 +89,26 @@ flow_revisions_func(GtkTreeViewColumn *tree_column,
 	g_free(text);
 }
 
-GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
+static gboolean
+on_revisions_focus_in(GtkWidget     *widget,
+                      GdkEventFocus *event,
+                      GebrUiFlowBrowse *fb)
+{
+	gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+	return FALSE;
+}
+
+static gboolean
+on_revisions_focus_out(GtkWidget     *widget,
+                      GdkEventFocus *event,
+                      GebrUiFlowBrowse *fb)
+{
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+	return FALSE;
+
+}
+
+GebrUiFlowBrowse *flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
 
@@ -105,7 +124,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 
 	/* alloc */
 	ui_flow_browse = g_new(GebrUiFlowBrowse, 1);
-	ui_flow_browse->revisions_menu = revisions_menu;
 
 	/* Create flow browse page */
 	page = gtk_vbox_new(FALSE, 0);
@@ -244,7 +262,15 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	                               GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	revpage = gtk_vbox_new(FALSE, 0);
-	GtkWidget *revpage_flow = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "revisions_main"));
+
+	ui_flow_browse->rev_main = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "main_rev"));
+
+	ui_flow_browse->revpage_main = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "revisions_main"));
+
+	ui_flow_browse->revpage_warn = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "revisions_warn"));
+
+	gtk_widget_show(ui_flow_browse->revpage_main);
+	gtk_widget_hide(ui_flow_browse->revpage_warn);
 
 	ui_flow_browse->rev_view = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "rev_treeview"));
 
@@ -267,6 +293,10 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	                 ui_flow_browse);
 	g_signal_connect(ui_flow_browse->rev_view, "key-press-event", G_CALLBACK(revision_on_key_pressed),
 	                 ui_flow_browse);
+	g_signal_connect(ui_flow_browse->rev_view, "focus-in-event", G_CALLBACK(on_revisions_focus_in),
+	                ui_flow_browse);
+	g_signal_connect(ui_flow_browse->rev_view, "focus-out-event", G_CALLBACK(on_revisions_focus_out),
+	                ui_flow_browse);
 
 
 	renderer = gtk_cell_renderer_text_new();
@@ -276,7 +306,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_tree_view_column_set_cell_data_func(col, renderer, flow_revisions_func,
 	                                        NULL, NULL);
 
-	gtk_box_pack_start(GTK_BOX(revpage), revpage_flow, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(revpage), ui_flow_browse->rev_main, TRUE, TRUE, 0);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window_rev), revpage);
 
 
@@ -466,43 +496,6 @@ void flow_browse_single_selection(void)
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 }
 
-void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
-{
-	GString *label;
-	gchar *date;
-	gchar *comment;
-
-	GtkWidget *submenu;
-	GtkWidget *menu_item;
-	GtkWidget *menu_item_rev;
-
-	gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment, NULL);
-	label = g_string_new(NULL);
-	g_string_printf(label, "%s: %s", date, comment);
-
-	submenu = gtk_menu_new();
-	menu_item_rev = gtk_menu_item_new_with_label(label->str);
-
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REVERT_TO_SAVED, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
-//	g_signal_connect(menu_item, "activate", G_CALLBACK(flow_browse_on_revision_revert_activate), revision);
-	gebr_geoxml_object_ref(revision);
-
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DELETE, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
-	g_object_set_data(G_OBJECT(menu_item), "menu-item-to-be-removed", menu_item_rev);
-//	g_signal_connect(menu_item, "activate", G_CALLBACK(flow_browse_on_revision_delete_activate), revision);
-	gebr_geoxml_object_ref(revision);
-
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item_rev), submenu);
-	gtk_widget_show_all(submenu);
-	gtk_widget_show(menu_item_rev);
-	if (new)
-		gtk_menu_shell_prepend(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item_rev);
-	else
-		gtk_menu_shell_append(GTK_MENU_SHELL(gebr.ui_flow_browse->revisions_menu), menu_item_rev);
-}
-
 static void
 create_revisions_model_recursive(GHashTable *revs,
                                  gchar *id,
@@ -529,6 +522,7 @@ create_revisions_model_recursive(GHashTable *revs,
 	                   REV_XMLPOINTER, revision,
 	                   REV_ACTIVE, g_strcmp0(id_active, id) == 0? TRUE : FALSE,
 			   -1);
+
 
 	childrens = g_hash_table_lookup(revs, id);
 
@@ -622,18 +616,21 @@ static void flow_browse_load(void)
 	/* load revisions */
 	gboolean has_revision = FALSE;
 	gebr_geoxml_flow_get_revision(gebr.flow, &revision, 0);
-	for (; revision != NULL; gebr_geoxml_sequence_next(&revision)) {
-		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
+	for (; revision != NULL && !has_revision; gebr_geoxml_sequence_next(&revision))
 		has_revision = TRUE;
-	}
 
 	/* Create model for Revisions */
 	if (has_revision) {
+		gtk_widget_show(gebr.ui_flow_browse->revpage_main);
+		gtk_widget_hide(gebr.ui_flow_browse->revpage_warn);
 		flow_browse_create_revisions_model(gebr.flow,
 		                                   gebr.ui_flow_browse);
 
 		flow_browse_add_revisions_graph(gebr.flow,
 		                                gebr.ui_flow_browse);
+	} else {
+		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
+		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 	}
 
 
@@ -923,7 +920,6 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit")));
 
 	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), ui_flow_browse->revisions_menu);
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());

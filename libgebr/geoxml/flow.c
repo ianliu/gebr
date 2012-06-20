@@ -1479,7 +1479,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 	valuelist = gebr_double_list_to_list(valuelist_aux);
 
-	graph =  g_string_append(graph, ("digraph {\n"));
+	graph =  g_string_append(graph, ("digraph {\ngraph [bgcolor=transparent]\n"));
 
 	void print_format(GebrGeoXmlFlow *flow, gchar *id, GString *graph) {
 		GebrGeoXmlSequence *revision = NULL;
@@ -1538,7 +1538,7 @@ gebr_geoxml_flow_revisions_get_root_id(GHashTable *hash)
 	GList *children = gebr_double_list_to_list(children_aux);
 
 	for (GList *i = parents; i; i = i->next) {
-		if (!g_list_find(children, i->data)) {
+		if (!g_list_find_custom(children, i->data, (GCompareFunc)g_strcmp0)) {
 			root = g_strdup(i->data);
 			break;
 		}

@@ -109,7 +109,7 @@ static const GtkActionEntry actions_entries_flow[] = {
 	{"flow_dict_edit", "accessories-dictionary", N_("Variables dictionary"),
 		NULL, N_("Edit variables dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
 	{"flow_change_revision", "document-open-recent", N_("Saved status"),
-		NULL, NULL, NULL},
+		"<Control>S", N_("Save a version of the selected Flows"), G_CALLBACK(on_flow_revision_save_activate)},
 	{"flow_import", "document-import", N_("Import"), NULL,
 		N_("Import Flows"), G_CALLBACK(on_flow_import_activate)},
 	{"flow_export", "document-export", N_("Export"),
@@ -443,8 +443,6 @@ void gebr_setup_ui(void)
 
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
-	GtkToolItem *tool_item;
-	GtkWidget *menu;
 	GtkAction *action;
 
 	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment for\nseismic processing tools"));
@@ -598,13 +596,9 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"))), -1);
 
-	menu = gtk_menu_new();
-	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
-	g_signal_connect(GTK_OBJECT(tool_item), "clicked", G_CALLBACK(on_flow_revision_save_activate), NULL);
-	g_signal_connect(GTK_OBJECT(tool_item), "show-menu", G_CALLBACK(on_flow_revision_show_menu), NULL);
-	gebr_gui_gtk_widget_set_tooltip(GTK_WIDGET(tool_item), _("Save or Restore a version of the selected Flows"));
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
-	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
+	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
@@ -620,8 +614,8 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
 
-	gebr.ui_flow_browse = flow_browse_setup_ui(menu);
-	gebr.ui_flow_browse->revisions_button = GTK_WIDGET(tool_item);
+	gebr.ui_flow_browse = flow_browse_setup_ui();
+
 	insert_speed_controler(GTK_TOOLBAR(toolbar),
 			       &gebr.ui_flow_browse->nice_button_high,
 			       &gebr.ui_flow_browse->nice_button_low,
