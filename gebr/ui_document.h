@@ -76,6 +76,10 @@ void gebr_ui_document_send_paths_to_maestro(GebrMaestroServer *maestro,
 					    const gchar *oldmsg,
 					    const gchar *newmsg);
 
+void on_changed_validate_email(GtkEntry *entry, GtkWidget *widget);
+
+void validate_entry(GtkEntry *entry, gboolean error, const gchar *err_text, const gchar *clean_text);
+
 G_END_DECLS
 
 #endif				//__UI_DOCUMENT_H
