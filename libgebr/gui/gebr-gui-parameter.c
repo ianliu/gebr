@@ -480,6 +480,7 @@ static void __on_edit_list_toggled(GtkToggleButton * toggle_button, struct gebr_
 	} else if (parameter_widget->parameter_type != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
 		gtk_widget_hide(GTK_WIDGET(parameter_widget->gebr_gui_value_sequence_edit));
 
+	gebr_gui_parameter_widget_validate(parameter_widget);
 	gtk_widget_set_sensitive(parameter_widget->list_value_widget, !toggled);
 }
 
