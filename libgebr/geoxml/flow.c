@@ -1470,21 +1470,59 @@ gebr_geoxml_flow_is_single_core(GebrGeoXmlFlow *flow,
 }
 
 gchar *
-gebr_geoxml_flow_create_dot_code(GHashTable *hash)
+gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 {
-        GList *keylist = g_hash_table_get_keys(hash);
         GList *valuelist_aux = g_hash_table_get_values(hash);
 	GList *valuelist;
         GString *graph = g_string_new("");
+	gchar *root_id = NULL;
 
 	valuelist = gebr_double_list_to_list(valuelist_aux);
-        graph =  g_string_append(graph, ("digraph {\n"));
-        for (GList *parent = g_list_first(keylist); parent; parent = parent->next) {
-		for (GList *child = valuelist; child; child = child->next) {
-			graph = g_string_append(graph, g_markup_printf_escaped("%s->%s \n",
-			                                                       (gchar *)parent->data, (gchar *)child->data));
+
+	graph =  g_string_append(graph, ("digraph {\n"));
+
+	void print_format(GebrGeoXmlFlow *flow, gchar *id, GString *graph) {
+		GebrGeoXmlSequence *revision = NULL;
+		gchar *date = NULL;
+		gchar *comment = NULL;
+		gulong int_id = gebr_geoxml_flow_get_revision_index_by_id(flow, (gchar *)id);
+		gint status =  gebr_geoxml_flow_get_revision(flow, &revision, int_id);
+
+		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &date, &comment, NULL);
+
+		if (status != GEBR_GEOXML_RETV_SUCCESS)
+			g_warn_if_reached();
+		gchar *label = g_strdup_printf("%s ", (gchar*)id);
+		gchar *format_edges = g_markup_printf_escaped(
+				"%s [label = '%s', shape = 'box']\n",
+				label,
+				comment);
+
+		graph =  g_string_append(graph, format_edges);
+		g_free(format_edges);
+		g_free(label);
+		g_free(date);
+		g_free(comment);
+		gebr_geoxml_object_unref(revision);
+	}
+
+
+	//Print formats 
+	for (GList *child = valuelist; child; child = child->next) {
+		print_format(flow, child->data, graph);
+	}
+	root_id = gebr_geoxml_flow_revisions_get_root_id(hash);
+	print_format(flow, root_id, graph);
+
+	void print_edges(gchar *key, GList *value, GString *text) {
+		for (GList *child = value; child; child = child->next) {
+			gchar *edge = g_markup_printf_escaped("%s->%s \n", key, (gchar*)child->data);
+			g_string_append_printf(text, "%s", edge);
+			g_free(edge);
 		}
-        }
+		
+	}
+	g_hash_table_foreach(hash, (GHFunc) print_edges, graph);
         graph =  g_string_append(graph, ("}\n"));
 
         return g_string_free(graph,FALSE);

@@ -766,7 +766,7 @@ gebr_flow_revisions_create_graph(GebrGeoXmlFlow *flow,
                                  GHashTable *revs,
                                  gchar ** png_filename)
 {
-	gchar *dot_content = gebr_geoxml_flow_create_dot_code(revs);
+	gchar *dot_content = gebr_geoxml_flow_create_dot_code(flow, revs);
 
 	gchar *dotfile = g_build_filename(g_get_home_dir(), ".gebr", "tmp.dot", NULL);
 

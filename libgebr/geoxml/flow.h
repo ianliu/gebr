@@ -577,7 +577,7 @@ gchar * gebr_geoxml_flow_io_get_output_real(GebrGeoXmlFlow *flow);
 gboolean gebr_geoxml_flow_is_single_core(GebrGeoXmlFlow *flow,
                                          GebrValidator *validator);
 
-gchar * gebr_geoxml_flow_create_dot_code(GHashTable *hash);
+gchar * gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash);
 
 gchar *gebr_geoxml_flow_revisions_get_root_id(GHashTable *hash);
 	

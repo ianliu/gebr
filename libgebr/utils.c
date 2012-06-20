@@ -1454,11 +1454,9 @@ gebr_double_list_to_list(GList *double_list)
 {
 	GList *single_list = NULL;
 
-	void append_list(GList *element)
-	{
-		single_list = g_list_concat(single_list, element);
+	for (GList *i = double_list; i; i = i->next) {
+		single_list = g_list_concat(single_list, g_list_copy(i->data));
+	
 	}
-
-	g_list_foreach(double_list, (GFunc)append_list, NULL);
 	return single_list;
 }
