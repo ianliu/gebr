@@ -771,7 +771,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 						   "distributed on <b>%d</b> node(s).\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
 						  total_procs, type == MAESTRO_SERVER_TYPE_DAEMON? _("node") : _("group"), groups,
-						  g_strcmp0(niceness, "0")? _("using the nodes idle time, ") : "",
+						  g_strcmp0(niceness, "0")? _("using the nodes idle time,\n") : "",
 						  n_servers);
 		g_string_append(resources, markup);
 
