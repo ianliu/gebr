@@ -1488,25 +1488,40 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		gchar *comment = NULL;
 		gchar *unescaped_comment = NULL;
 		gchar *format_node = NULL;
+		gchar *date = NULL;
+		gchar *iso_date = NULL;
+		gchar **time_field = NULL;
+		gchar **iso_date_field;
 		gulong int_id = gebr_geoxml_flow_get_revision_index_by_id(flow, (gchar *)id);
 		gint status =  gebr_geoxml_flow_get_revision(flow, &revision, int_id);
 
 		if (status != GEBR_GEOXML_RETV_SUCCESS)
 			g_warn_if_reached();
 
-		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, NULL, &unescaped_comment, NULL);
+		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
+		iso_date_field = g_strsplit(iso_date, " ", -1);
+		time_field = g_strsplit(iso_date_field[4], ":", -1);
 
+		date = g_strdup_printf("%s %s, %s  %s:%s %s", iso_date_field[2], iso_date_field[1], iso_date_field[3],
+				time_field[0], time_field[1], iso_date_field[5]);
 		comment = g_strescape(unescaped_comment, NULL);
 			
 		if (is_head) {
 			format_node = g_strdup_printf(
-					"%s [label = \"%s (modified)\", color=\"blue\","
-					"fontcolor=\"blue\"]\n", head, comment);
+					"%s [ label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
+					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s*</font></td>"
+					"</tr><tr><td align=\"center\">%s</td></tr></table>>, shape = note, color = \"#000080\","
+					"fontsize = 10]",
+					head, comment, _("Current"));
 		} else {
 			format_node = g_strdup_printf(
-					"%s [label = \"%s\", shape = \"box\"]\n",
+					"%s [ label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
+					"<tr><td bgcolor=\"#000040\" align=\"center\"><font color=\"white\">%s</font></td></tr>"
+					"<tr><td align=\"center\">%s</td></tr></table>>, shape = note,"
+					"fontsize = 10]",
 					(gchar*)id,
-					comment);
+					comment,
+					date);
 		}
 
 		graph =  g_string_append(graph, format_node);
@@ -1514,6 +1529,10 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		g_free(format_node);
 		g_free(unescaped_comment);
 		g_free(comment);
+		g_free(iso_date);
+		g_free(date);
+		g_strfreev(iso_date_field);
+		g_strfreev(time_field);
 		gebr_geoxml_object_unref(revision);
 	}
 
@@ -1541,7 +1560,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 	g_free(parent_id);
 
-        return g_string_free(graph,FALSE);
+        return g_string_free(graph, FALSE);
 }
 
 gchar *
