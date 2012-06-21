@@ -723,8 +723,36 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 				include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 				document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
 				gebr_validator_set_document(gebr.validator,(GebrGeoXmlDocument**)(&flow), GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
-				gchar * flow_cont = gebr_flow_get_detailed_report(flow, include_table, FALSE);
+				gchar * flow_cont = gebr_flow_get_detailed_report(flow, include_table, FALSE, NULL, NULL);
 				g_string_append(content, flow_cont);
+
+				if (gebr.config.detailed_line_include_revisions_report) {
+					GebrGeoXmlSequence *seq;
+					gebr_geoxml_flow_get_revision(flow, &seq, 0);
+					for (; seq; gebr_geoxml_sequence_next(&seq)) {
+						gchar *rev_xml;
+						gchar *comment;
+						gchar *date;
+						GebrGeoXmlDocument *revdoc;
+
+						gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &rev_xml, &date, &comment, NULL);
+						if (gebr_geoxml_document_load_buffer(&revdoc, rev_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+							g_free(rev_xml);
+							g_free(comment);
+							g_free(date);
+							g_warn_if_reached();
+						}
+
+						gchar * rev_cont = gebr_flow_get_detailed_report(GEBR_GEOXML_FLOW(revdoc), include_table, FALSE, comment, date);
+						g_string_append_printf (content,
+						                        "<div class='gebr-geoxml-flow'>%s</div>\n", rev_cont);
+						g_free(rev_xml);
+						g_free(comment);
+						g_free(date);
+						gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(revdoc));
+					}
+				}
+
 				g_free(flow_cont);
 				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 			}
@@ -737,7 +765,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 		else
 			styles = gebr_document_report_get_styles_string (report);
 
-		header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document), TRUE);
+		header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document), TRUE, NULL, NULL);
 
 		if (gebr.config.detailed_flow_include_report && inner_body)
 			g_string_append_printf (content, "<div class='gebr-geoxml-flow'>%s</div>\n", inner_body);

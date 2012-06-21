@@ -476,7 +476,6 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	if (flow == NULL || revision == NULL)
 		return FALSE;
 
-	GString *merged_help;
 	gchar *revision_help;
 	gchar *flow_help;
 	GebrGeoXmlDocument *revision_flow;
@@ -495,51 +494,9 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 
 	flow_help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
 	revision_help = gebr_geoxml_document_get_help (revision_flow);
-	merged_help = g_string_new (flow_help);
-	if (strlen (revision_help) > 1) {
-		gchar *revision_xml;
-		regex_t regexp;
-		regmatch_t matchptr[2];
-		gssize start = -1;
-		gssize length = -1;
-		gssize flow_i = -1;
-
-		regcomp(&regexp, "<body[^>]*>\\(.*\\?\\)<\\/body>", REG_ICASE);
-		if (!regexec(&regexp, revision_help, 2, matchptr, 0)) {
-			start = matchptr[1].rm_so;
-			length = matchptr[1].rm_eo - matchptr[1].rm_so;
-		}
-
-		regcomp (&regexp, "</body>", REG_NEWLINE | REG_ICASE);
-		if (!regexec (&regexp, flow_help, 1, matchptr, 0)) {
-			flow_i = matchptr[0].rm_so;
-		}
-
-		if (start != -1 && length != -1 && flow_i != -1){
-			gchar * date = NULL;
-			gchar * comment = NULL;
-			GString * revision_data;
-
-			revision_data = g_string_new(NULL);
-
-			gebr_geoxml_flow_get_revision_data(revision, NULL, &date, &comment, NULL);
-			g_string_append_printf (revision_data, "<hr /><p>%s</p><p>%s</p>",
-						comment, date);
-			g_string_insert (merged_help, flow_i, revision_data->str); 
-			g_string_insert_len (merged_help, flow_i + revision_data->len, revision_help + start, length); 
-		}
-
-		gebr_geoxml_document_set_help (revision_flow, "");
-		gebr_geoxml_document_to_string (revision_flow, &revision_xml);
-		__gebr_geoxml_set_element_value((GdomeElement *) revision, revision_xml, __gebr_geoxml_create_CDATASection);
-		g_free (revision_xml);
-		if(report_merged)
-			*report_merged = TRUE;
-	}
-	g_free(flow_help);
-	g_free(revision_help);
 
 	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
+
 	/* remove all elements till first_revision
 	 * WARNING: for this implementation to work revision must be
 	 * the last child of flow. Be careful when changing the DTD!
@@ -567,11 +524,11 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 				      (GdomeNode *) new_node, (GdomeNode *) first_revision, &exception);
 	}
 
-	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (flow), merged_help->str);
+	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (flow), revision_help);
 	gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT (flow), id);
 
 	g_free(id);
-	g_string_free (merged_help, TRUE);
+	g_free(revision_help);
 
 	return TRUE;
 }
@@ -588,7 +545,6 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow,
 	g_return_val_if_fail(comment != NULL, NULL);
 
 	revision_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
-	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (revision_flow), "");
 
 	GdomeElement * revision_root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(revision_flow));
 	/* remove revisions from the revision flow. */

@@ -145,6 +145,7 @@ struct gebr {
 		GString *detailed_line_css;
 		gboolean detailed_line_include_report;
 		gboolean detailed_line_include_flow_report;
+		gboolean detailed_line_include_revisions_report;
 		GebrHelpParamTable detailed_line_parameter_table;
 	} config;
 

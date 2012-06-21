@@ -296,3 +296,16 @@ p.credits { margin-bottom: 20px;}
     padding-right: 0px;
 
 }
+
+.gebr-flow-revision {
+	margin: 0px;
+    padding-top: 6px;
+    padding-bottom: 2px;
+    color: #336666;
+}
+.gebr-flow-revision .title {
+	font-size: 11pt;
+}
+.gebr-flow-revision .date {
+	font-size: 9pt;
+}

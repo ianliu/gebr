@@ -292,6 +292,7 @@ gebr_config_load(void)
 	gebr.config.detailed_flow_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_flow_parameter_table", 0);
 	gebr.config.detailed_line_include_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_report", FALSE);
 	gebr.config.detailed_line_include_flow_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
+	gebr.config.detailed_line_include_revisions_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_revisions_report", FALSE);
 	gebr.config.detailed_line_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_line_parameter_table", 0);
 	gebr.config.flow_exec_speed = g_key_file_get_double(gebr.config.key_file, "general", "flow_exec_speed", NULL);
 	gebr.config.niceness = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "niceness", 1);
@@ -479,6 +480,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_string (gebr.config.key_file, "general", "detailed_line_css", gebr.config.detailed_line_css->str);
 	g_key_file_set_boolean (gebr.config.key_file, "general", "detailed_line_include_report", gebr.config.detailed_line_include_report);
 	g_key_file_set_boolean (gebr.config.key_file, "general", "detailed_line_include_flow_report", gebr.config.detailed_line_include_flow_report);
+	g_key_file_set_boolean (gebr.config.key_file, "general", "detailed_line_include_revisions_report", gebr.config.detailed_line_include_revisions_report);
 	g_key_file_set_integer (gebr.config.key_file, "general", "detailed_line_parameter_table", gebr.config.detailed_line_parameter_table);
 	g_key_file_set_double (gebr.config.key_file, "general", "flow_exec_speed", gebr.config.flow_exec_speed);
 	g_key_file_set_integer(gebr.config.key_file, "general", "niceness", gebr.config.niceness);

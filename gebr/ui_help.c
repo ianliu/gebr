@@ -65,6 +65,8 @@ static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, 
 
 static void on_include_comment_activate (GtkToggleAction *action, GebrGuiHtmlViewerWindow *window);
 
+static void on_include_revisions_report_activate(GtkToggleAction *action, GebrGuiHtmlViewerWindow *window);
+
 static void on_include_flows_report_activate (GtkToggleAction *action, GebrGuiHtmlViewerWindow *window);
 
 static void on_ptbl_changed (GtkRadioAction *action, GtkRadioAction *current, GebrGuiHtmlViewerWindow *window);
@@ -101,6 +103,9 @@ static const GtkToggleActionEntry html_viewer_toggle_entries[] = {
 
 	{"IncludeFlowsReportAction", NULL, N_("Include the _Flow's report"), NULL,
 		NULL, G_CALLBACK (on_include_flows_report_activate), TRUE},
+
+	{"IncludeRevisionsReportAction", NULL, N_("Include the report of the revisions of _Flows"), NULL,
+		NULL, G_CALLBACK (on_include_revisions_report_activate), TRUE},
 };
 static guint n_html_viewer_toggle_entries = G_N_ELEMENTS (html_viewer_toggle_entries);
 
@@ -334,6 +339,30 @@ static void on_include_comment_activate (GtkToggleAction *action, GebrGuiHtmlVie
 	g_free (report);
 }
 
+static void on_include_revisions_report_activate(GtkToggleAction *action, GebrGuiHtmlViewerWindow *window)
+{
+	gchar *report;
+	gboolean flag;
+	GebrGeoXmlObject *object;
+	GtkAction *action_param_table;
+	GtkUIManager *manager;
+	const gchar *path_param_table;
+
+	object = g_object_get_data (G_OBJECT (window), HTML_WINDOW_OBJECT);
+	flag = gtk_toggle_action_get_active (action);
+	gebr.config.detailed_line_include_revisions_report = flag;
+
+	manager = gebr_gui_html_viewer_window_get_ui_manager (window);
+
+	path_param_table = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/ParameterTableMenu";
+	action_param_table = gtk_ui_manager_get_action(manager, path_param_table);
+	gtk_action_set_sensitive(action_param_table, gebr.config.detailed_line_include_revisions_report);
+
+	report = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
+	gebr_gui_html_viewer_window_show_html (window, report);
+	g_free (report);
+}
+
 static void on_include_flows_report_activate (GtkToggleAction *action, GebrGuiHtmlViewerWindow *window)
 {
 	gchar *report;
@@ -559,6 +588,8 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 			const gchar *path_param_table;
 
 			path = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/IncludeCommentAction";
+			name = "IncludeRevisionsReportAction";
+			gtk_ui_manager_add_ui (manager, merge_id, path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
 			name = "IncludeFlowsReportAction";
 			gtk_ui_manager_add_ui (manager, merge_id, path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
 
@@ -566,6 +597,8 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), gebr.config.detailed_line_include_report);
 			action = gtk_action_group_get_action (group, "IncludeFlowsReportAction");
 			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), gebr.config.detailed_line_include_flow_report);
+			action = gtk_action_group_get_action (group, "IncludeRevisionsReportAction");
+			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), gebr.config.detailed_line_include_revisions_report);
 
 			path_param_table = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/ParameterTableMenu";
 			action = gtk_ui_manager_get_action(manager, path_param_table);

@@ -1305,7 +1305,10 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow)
 	return g_string_free(dump, FALSE);
 }
 
-gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
+gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow,
+                                  gboolean include_date,
+                                  gchar *rev_comment,
+                                  gchar *rev_date)
 {
 	gchar *date;
 	GString *dump;
@@ -1318,11 +1321,20 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 	dump = g_string_new(NULL);
 	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
 	description = gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(flow));
-	g_string_printf(dump,
-			"<h1>%s</h1>\n"
-			"<h2>%s</h2>\n",
-			title,
-			description);
+	if (rev_comment && rev_date)
+		g_string_printf(dump,
+		                "<h1>%s</h1> "
+		                "<div class='gebr-flow-revision'>"
+		                "	<span class='title'>Revision: %s </span>"
+		                "	<span class='date'>(%s)</span>"
+		                "</div>\n"
+		                "<h2>%s</h2>\n",
+		                title, rev_comment, rev_date, description);
+	else
+		g_string_printf(dump,
+		                "<h1>%s</h1>\n"
+		                "<h2>%s</h2>\n",
+		                title, description);
 	g_free(title);
 	g_free(description);
 
@@ -1369,7 +1381,11 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date)
 	return g_string_free(dump, FALSE);
 }
 
-gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table, gboolean include_date)
+gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow,
+                                       gboolean include_table,
+                                       gboolean include_date,
+                                       gchar *rev_comment,
+                                       gchar *rev_date)
 { // OK
 	gchar * table;
 	gchar * inner;
@@ -1387,7 +1403,7 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 
 	table = include_table ? gebr_flow_generate_parameter_value_table (flow) : "";
 	flow_dict = include_table ? gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(flow), TRUE, TRUE) : "";
-	header = gebr_flow_generate_header (flow, include_date);
+	header = gebr_flow_generate_header (flow, include_date, rev_comment, rev_date);
 	report = g_strdup_printf ("<div class='gebr-geoxml-flow'>%s%s%s%s</div>\n", header, inner, flow_dict, table);
 
 	if (include_table) {
