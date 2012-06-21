@@ -27,6 +27,8 @@
 #include <gtk/gtk.h>
 
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
+
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
 #include <libgebr/gebr-tar.h>
@@ -114,6 +116,18 @@ void flow_free(void)
 	flow_browse_info_update();
 }
 
+static void
+flow_delete_graph_file(gchar *filename)
+{
+	GString *path;
+
+	path = document_get_path(filename);
+	path = g_string_append(path, ".png");
+	g_unlink(path->str);
+
+	g_string_free(path, TRUE);
+}
+
 void flow_delete(gboolean confirm)
 {
 	gpointer document;
@@ -160,7 +174,10 @@ void flow_delete(gboolean confirm)
 		gebr_remove_help_edit_window(document);
 		valid = gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter);
 		flow_free();
+
 		document_delete(filename);
+		flow_delete_graph_file(filename);
+
 		g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
 
 		g_free(title);
@@ -691,6 +708,9 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 		g_free(id);
 		return has_head;
 	}
+
+	if (!g_strcmp0(id_remove, parent_head))
+		result = TRUE;
 
 	for (GList *i = children; i; i = i->next)
 		result = (flow_revision_remove(flow, i->data,
