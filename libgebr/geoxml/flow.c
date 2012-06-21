@@ -1476,6 +1476,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 	GList *valuelist;
         GString *graph = g_string_new("");
 	gchar *root_id = NULL;
+	const gchar *head = "head";
 
 	valuelist = gebr_double_list_to_list(valuelist_aux);
 
@@ -1492,13 +1493,13 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &date, &comment, NULL);
 
-		gchar *format_edges = g_strdup_printf(
+		gchar *format_node = g_strdup_printf(
 				"%s [label = \"%s\", shape = \"box\"]\n",
 				(gchar*)id,
 				comment);
 
-		graph =  g_string_append(graph, format_edges);
-		g_free(format_edges);
+		graph =  g_string_append(graph, format_node);
+		g_free(format_node);
 		g_free(date);
 		g_free(comment);
 		gebr_geoxml_object_unref(revision);
@@ -1512,14 +1513,26 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 	root_id = gebr_geoxml_flow_revisions_get_root_id(hash);
 	print_format(flow, root_id, graph);
 
+	gchar *parent_id = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(flow));
+	gchar *format_head = g_strdup_printf(
+			"\"%s\" [label = \"%s\", color=\"blue\","
+			"fontcolor=\"blue\"]\n", head, _("Now"));
+
+	graph =  g_string_append(graph, format_head);
+	g_string_append_printf(graph, "%s->%s[style=filled] \n", parent_id, head);
+
 	void print_edges(gchar *key, GList *value, GString *text) {
 		for (GList *child = value; child; child = child->next) {
-			g_string_append_printf(text, "%s->%s \n", key, (gchar*)child->data);
+			g_string_append_printf(text, "%s->%s[style=filled] \n",
+					       key, (gchar*)child->data);
 		}
-		
 	}
+
 	g_hash_table_foreach(hash, (GHFunc) print_edges, graph);
         graph =  g_string_append(graph, ("}\n"));
+
+	g_free(parent_id);
+	g_free(format_head);
 
         return g_string_free(graph,FALSE);
 }
