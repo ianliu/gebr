@@ -348,6 +348,10 @@ void flow_browse_info_update(void)
 		g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
 		g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
 
+		/* Update revisions tab */
+		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
+		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
+
 		navigation_bar_update();
 		return;
 	}

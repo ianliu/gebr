@@ -172,6 +172,8 @@ void flow_delete(gboolean confirm)
 	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
 		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
 
+	flow_browse_info_update();
+
 	project_line_info_update();
 }
 
