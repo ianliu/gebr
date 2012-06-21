@@ -1,4 +1,4 @@
-<!ELEMENT flow (title, description, help, author, email, dict, date, parent, category*, server, program*, revision*)>
+<!ELEMENT flow (title, description, help, author, email, dict, parent, date, category*, server, program*, revision*)>
 <!ATTLIST flow
 	version CDATA #FIXED "0.4.0">
 

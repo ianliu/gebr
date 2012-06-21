@@ -168,7 +168,6 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 
 	root = gebr_geoxml_document_root_element(document);
 	
-	GdomeElement *parent = __gebr_geoxml_insert_new_element(root, "parent", NULL);
 	
 	server = __gebr_geoxml_insert_new_element(root, "server", NULL);
 	__gebr_geoxml_set_attr_value (server, "group-type", "group");
@@ -182,6 +181,8 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 
 	GdomeElement *date = __gebr_geoxml_get_first_element(root, "date");
 	gdome_el_unref(__gebr_geoxml_insert_new_element(date, "lastrun", NULL), &exception);
+
+	GdomeElement *parent = __gebr_geoxml_insert_new_element(root, "parent", date);
 
 	gdome_el_unref(server, &exception);
 	gdome_el_unref(date, &exception);
