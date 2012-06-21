@@ -719,7 +719,13 @@ gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
 
 		flow_source = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
 		GString *path = document_get_path(flow_source);
+
+		/* Remove flow's file */
 		g_unlink(path->str);
+		/* Remove flow's graph image */
+		path = g_string_append(path, ".png");
+		g_unlink(path->str);
+
 		g_string_free(path, TRUE);
 
 		/* log action */
