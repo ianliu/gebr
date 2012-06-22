@@ -757,13 +757,21 @@ Your login credentials may be asked to be able to browse the remote file system.
         <child>
           <object class="GtkHBox" id="hbox2">
             <property name="visible">True</property>
+            <property name="border_width">5</property>
             <property name="homogeneous">True</property>
             <child>
               <object class="GtkButton" id="mount_button">
-                <property name="label" translatable="yes">Enable remote browsing</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <child>
+                  <object class="GtkLabel" id="label12">
+                    <property name="width_request">100</property>
+                    <property name="height_request">15</property>
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Enable</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -773,11 +781,15 @@ Your login credentials may be asked to be able to browse the remote file system.
             </child>
           </object>
           <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">1</property>
           </packing>
         </child>
       </object>
       <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
         <property name="position">0</property>
       </packing>
     </child>
@@ -786,18 +798,6 @@ Your login credentials may be asked to be able to browse the remote file system.
         <property name="visible">True</property>
         <property name="border_width">20</property>
         <property name="spacing">15</property>
-        <child>
-          <object class="GtkLabel" id="mount_status_title">
-            <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Status&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkAlignment" id="status_container1">
             <property name="visible">True</property>
@@ -834,11 +834,13 @@ Your login credentials may be asked to be able to browse the remote file system.
             </child>
           </object>
           <packing>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
       <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
         <property name="position">1</property>
       </packing>
     </child>
