@@ -223,6 +223,9 @@ unmount_gvfs(GebrMaestroServer *maestro,
 
 	maestro->priv->has_connected_daemon = FALSE;
 
+	if (!quit)
+		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_NOK);
+
 	if (!maestro->priv->mount_location)
 		return;
 
