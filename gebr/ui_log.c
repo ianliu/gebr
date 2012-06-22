@@ -214,6 +214,20 @@ on_maestro_error(GebrMaestroServer *maestro,
 }
 
 static void
+on_gvfs_mount(GebrMaestroServer *maestro,
+              GebrMountStatus status,
+              struct ui_log *ui_log)
+{
+	if (status == STATUS_MOUNT_OK) {
+		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-ok", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing enabled"));
+	} else if (status == STATUS_MOUNT_NOK) {
+		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
+	}
+}
+
+static void
 on_state_change(GebrMaestroServer *maestro,
                 struct ui_log *ui_log)
 {
@@ -231,17 +245,6 @@ on_state_change(GebrMaestroServer *maestro,
 			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> without connected nodes"), addr);
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
 			g_free(text);
-		}
-
-		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
-		if (prefix) {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-ok", GTK_ICON_SIZE_LARGE_TOOLBAR);
-			gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing enabled"));
-
-			g_free(prefix);
-		} else {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
-			gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
 		}
 	} else {
 		const gchar *error_msg;
@@ -281,4 +284,7 @@ gebr_log_update_maestro_info_signal(struct ui_log *ui_log,
 
 	g_signal_connect(maestro, "maestro-error",
 	                 G_CALLBACK(on_maestro_error), ui_log);
+
+	g_signal_connect(maestro, "gvfs-mount",
+		                 G_CALLBACK(on_gvfs_mount), ui_log);
 }
