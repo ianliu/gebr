@@ -379,7 +379,7 @@ gebr_post_config(gboolean has_config)
 
 	menu_list_populate();
 	if (!has_config)
-		preferences_setup_ui(TRUE, TRUE, TRUE);
+		preferences_setup_ui(TRUE, TRUE, TRUE, -1);
 	else {
 		gebr.restore_selection = FALSE;
 		gebr.populate_list = FALSE;
@@ -391,7 +391,7 @@ gebr_post_config(gboolean has_config)
 			                                gebr.config.maestro_address->str);
 			gebr_config_save(FALSE);
 		} else {
-			preferences_setup_ui(TRUE, TRUE, FALSE);
+			preferences_setup_ui(TRUE, TRUE, FALSE, -1);
 		}
 	}
 }

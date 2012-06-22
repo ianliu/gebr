@@ -40,16 +40,6 @@ enum {
 	MAESTRO_DEFAULT_N_COLUMN
 };
 
-enum {
-	CANCEL_PAGE,
-	INITIAL_PAGE,
-	MAESTRO_INFO_PAGE,
-	MAESTRO_PAGE,
-	SERVERS_INFO_PAGE,
-	SERVERS_PAGE,
-	GVFS_PAGE,
-};
-
 typedef enum {
 	WIZARD_STATUS_WITHOUT_PREFERENCES,
 	WIZARD_STATUS_WITHOUT_MAESTRO,
@@ -1032,12 +1022,19 @@ on_preferences_button_clicked (GtkButton *button, gpointer pointer)
 /**
  * Assembly preference window.
  *
+ * Parameters:
+ * @first_run: %TRUE if want to run preferences wizard for the first time
+ * @wizard_run: %TRUE to run connections wizard, or %FALSE to create only preferences
+ * @insert_preferences: %TRUE to include preferences tab on connections wizard
+ * @page: A @GebrUiPreferencesPage with one of the options pages, or -1 to use default
+ *
  * \return The structure containing relevant data. It will be automatically freed when the dialog closes.
  */
 struct ui_preferences *
 preferences_setup_ui(gboolean first_run,
                      gboolean wizard_run,
-                     gboolean insert_preferences)
+                     gboolean insert_preferences,
+                     GebrUiPreferencesPage page)
 {
 	struct ui_preferences *ui_preferences;
 
@@ -1188,11 +1185,17 @@ preferences_setup_ui(gboolean first_run,
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);
 
-		if (!first_run && wizard_run && !insert_preferences) {
-			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
-			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
+		if (page != -1) {
+			GtkWidget *curr_page = gtk_assistant_get_nth_page(GTK_ASSISTANT(assistant), page);
+			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), page);
+			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), curr_page, GTK_ASSISTANT_PAGE_INTRO);
 		} else {
-			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), INITIAL_PAGE);
+			if (!first_run && wizard_run && !insert_preferences) {
+				gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
+				gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
+			} else {
+				gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), INITIAL_PAGE);
+			}
 		}
 	}
 	else {

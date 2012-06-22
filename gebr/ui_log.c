@@ -41,6 +41,45 @@
  */
 
 /*
+ * Section: Private
+ * Private functions.
+ */
+
+static gboolean
+on_maestro_press_event(GtkWidget      *widget,
+                       GdkEventButton *event)
+{
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
+		preferences_setup_ui(FALSE, TRUE, FALSE, MAESTRO_PAGE);
+	else if (!gebr_maestro_server_has_servers(maestro, TRUE))
+		preferences_setup_ui(FALSE, TRUE, FALSE, SERVERS_PAGE);
+	else
+		return FALSE;
+
+	return TRUE;
+}
+
+static gboolean
+on_remote_browse_press_event(GtkWidget      *widget,
+                             GdkEventButton *event)
+{
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	if (on_maestro_press_event(widget, event))
+		return TRUE;
+
+	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+ 	if (!prefix) {
+		preferences_setup_ui(FALSE, TRUE, FALSE, GVFS_PAGE);
+		g_free(prefix);
+ 	}
+
+	return TRUE;
+}
+
+/*
  * Function: log_setup_ui
  * Assembly the job control page.
  *
@@ -96,11 +135,19 @@ struct ui_log *log_setup_ui(void)
 	 */
 	GtkWidget *internal_box = gtk_hbox_new(FALSE, 5);
 
+	GtkWidget *event_maestro = gtk_event_box_new();
 	ui_log->maestro_icon = gtk_image_new();
-	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->maestro_icon, FALSE, FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(event_maestro), ui_log->maestro_icon);
+	g_signal_connect(event_maestro, "button-press-event",
+	                 G_CALLBACK(on_maestro_press_event), NULL);
+	gtk_box_pack_start(GTK_BOX(internal_box), event_maestro, FALSE, FALSE, 5);
 
+	GtkWidget *event_browse = gtk_event_box_new();
 	ui_log->remote_browse = gtk_image_new();
-	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->remote_browse, FALSE, FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(event_browse), ui_log->remote_browse);
+	g_signal_connect(event_browse, "button-press-event",
+	                 G_CALLBACK(on_remote_browse_press_event), NULL);
+	gtk_box_pack_start(GTK_BOX(internal_box), event_browse, FALSE, FALSE, 5);
 
 	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));

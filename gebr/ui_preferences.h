@@ -51,9 +51,20 @@ struct ui_preferences {
 	GtkCellRenderer *renderer_chooser;
 };
 
+typedef enum {
+	CANCEL_PAGE,
+	INITIAL_PAGE,
+	MAESTRO_INFO_PAGE,
+	MAESTRO_PAGE,
+	SERVERS_INFO_PAGE,
+	SERVERS_PAGE,
+	GVFS_PAGE,
+} GebrUiPreferencesPage;
+
 struct ui_preferences *preferences_setup_ui(gboolean first_run,
                                             gboolean wizard_run,
-                                            gboolean insert_preferences);
+                                            gboolean insert_preferences,
+                                            GebrUiPreferencesPage page);
 
 G_END_DECLS
 #endif				//__UI_PREFERENCES_H
