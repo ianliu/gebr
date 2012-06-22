@@ -128,6 +128,7 @@ on_assistant_cancel(GtkAssistant *assistant,
 		up->cancel_assistant = FALSE;
 		gtk_widget_destroy(GTK_WIDGET(assistant));
 	}
+	up->tried_to_mount_gvfs = FALSE;
 }
 
 static void
@@ -159,6 +160,7 @@ on_assistant_close(GtkAssistant *assistant,
 		up->cancel_assistant = TRUE;
 		gtk_assistant_set_current_page(assistant, CANCEL_PAGE);
 	}
+	up->tried_to_mount_gvfs = FALSE;
 }
 
 static void
@@ -514,14 +516,21 @@ set_status_for_mount(GebrMaestroServer *maestro,
 	if (status == STATUS_MOUNT_OK) {
 		first_time = FALSE;
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
+		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browsing is enabled!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, FALSE);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);
 	}
 	else if (status == STATUS_MOUNT_NOK) {
-		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browsing is disabled!"));
+		if (!up->tried_to_mount_gvfs) {
+			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
+			gtk_label_set_text(GTK_LABEL(status_label), _("Remote browsing is disabled!"));
+			up->tried_to_mount_gvfs = TRUE;
+		}
+		else {
+			gtk_label_set_text(GTK_LABEL(status_label), _("Failed to enable remote browsing!"));
+			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
+		}
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, TRUE);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);
@@ -549,11 +558,6 @@ on_mount_gvfs_clicked(GtkButton *button,
                       struct ui_preferences *up)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-
-	if (gebr_maestro_server_has_connected_daemon(maestro)) {
-		set_status_for_mount(maestro, STATUS_MOUNT_OK, up);
-		return;
-	}
 
 	GtkTreeIter iter;
 	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
@@ -595,6 +599,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		}
 
 		up->cancel_assistant = FALSE;
+		up->tried_to_mount_gvfs = FALSE;
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 		gtk_widget_show(up->back_button);
@@ -1041,6 +1046,7 @@ preferences_setup_ui(gboolean first_run,
 	ui_preferences->cancel_assistant = FALSE;
 	ui_preferences->maestro_addr = NULL;
 	ui_preferences->insert_preferences = insert_preferences;
+	ui_preferences->tried_to_mount_gvfs = FALSE;
 
 	/* Load pages from Glade */
 	GtkBuilder *builder = gtk_builder_new();

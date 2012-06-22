@@ -30,6 +30,7 @@ struct ui_preferences {
 	gboolean cancel_assistant;
 	gboolean first_run;
 	gboolean insert_preferences;
+	gboolean tried_to_mount_gvfs;
 
 	gint prev_page;
 	GtkWidget *back_button;
