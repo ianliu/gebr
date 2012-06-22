@@ -1460,21 +1460,21 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 		date = g_strdup_printf("%s %s, %s  %s:%s %s", iso_date_field[2], iso_date_field[1], iso_date_field[3],
 				time_field[0], time_field[1], iso_date_field[5]);
-		comment = g_strescape(unescaped_comment, NULL);
+		comment = g_markup_printf_escaped("%s", unescaped_comment);
 			
 		if (is_head) {
 			format_node = g_strdup_printf(
 					"%s [ label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
 					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s*</font></td>"
 					"</tr><tr><td align=\"center\">%s</td></tr></table>>, shape = note, color = \"#000080\","
-					"fontsize = 10]",
+					"fontsize = 10]\n",
 					head, comment, _("Current"));
 		} else {
 			format_node = g_strdup_printf(
 					"%s [ label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
 					"<tr><td bgcolor=\"#000040\" align=\"center\"><font color=\"white\">%s</font></td></tr>"
 					"<tr><td align=\"center\">%s</td></tr></table>>, shape = note,"
-					"fontsize = 10]",
+					"fontsize = 10]\n",
 					(gchar*)id,
 					comment,
 					date);
