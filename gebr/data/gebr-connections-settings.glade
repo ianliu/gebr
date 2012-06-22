@@ -720,6 +720,7 @@ To take advantage of those features, some set up must be done. This assistant wi
             </child>
           </object>
           <packing>
+            <property name="fill">False</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -783,65 +784,65 @@ Your login credentials may be asked to be able to browse the remote file system.
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="padding">5</property>
             <property name="position">1</property>
           </packing>
         </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkVBox" id="mount_status">
-        <property name="visible">True</property>
-        <property name="border_width">20</property>
-        <property name="spacing">15</property>
         <child>
-          <object class="GtkAlignment" id="status_container1">
+          <object class="GtkVBox" id="mount_status">
             <property name="visible">True</property>
-            <property name="yalign">0</property>
-            <property name="yscale">0</property>
+            <property name="border_width">20</property>
+            <property name="spacing">15</property>
             <child>
-              <object class="GtkHBox" id="hbox6">
+              <object class="GtkAlignment" id="status_container1">
+                <property name="visible">True</property>
+                <property name="yalign">0</property>
+                <property name="yscale">0</property>
                 <child>
-                  <object class="GtkImage" id="mount_img">
-                    <property name="visible">True</property>
-                    <property name="xalign">1</property>
-                    <property name="stock">gtk-ok</property>
-                    <property name="icon-size">6</property>
+                  <object class="GtkHBox" id="hbox6">
+                    <child>
+                      <object class="GtkImage" id="mount_img">
+                        <property name="visible">True</property>
+                        <property name="xalign">1</property>
+                        <property name="stock">gtk-ok</property>
+                        <property name="icon-size">6</property>
+                      </object>
+                      <packing>
+                        <property name="padding">5</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="mount_label">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Success</property>
+                        <property name="wrap">True</property>
+                        <property name="wrap_mode">word-char</property>
+                      </object>
+                      <packing>
+                        <property name="padding">5</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
-                  <packing>
-                    <property name="padding">5</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="mount_label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Success</property>
-                    <property name="wrap">True</property>
-                    <property name="wrap_mode">word-char</property>
-                  </object>
-                  <packing>
-                    <property name="padding">5</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
             </child>
           </object>
           <packing>
-            <property name="position">0</property>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
       <packing>
-        <property name="expand">False</property>
         <property name="fill">False</property>
-        <property name="position">1</property>
+        <property name="position">0</property>
       </packing>
     </child>
   </object>
