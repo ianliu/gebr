@@ -10,9 +10,9 @@ Group: Application/Misc
 URL: http://www.gebrproject.com
 Packager: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
 Source: %{name}-%{version}.tar.gz
-BuildRequires: glib2-devel >= 2.12.0
+BuildRequires: glib2-devel >= 2.22.0
 BuildRequires: gdome2-devel >= 0.8.0
-BuildRequires: WebKit-gtk-devel >= 1.0
+BuildRequires: WebKit-gtk-devel >= 1.0.1
 BuildRequires: libtidy-devel intltool docbook-xsl libxslt gtk-doc
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 
@@ -24,6 +24,7 @@ This package provides several tools for working with seismic data.
 ################################################################################
 %package -n libgebr
 Requires: gdome2 WebKit-gtk
+Conflicts: WebKit-gtk = 1.2.6
 Group: System Environment/Libraries
 Summary: GeBR library collection
 
