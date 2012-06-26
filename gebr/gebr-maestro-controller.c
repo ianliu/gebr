@@ -1816,7 +1816,8 @@ on_daemon_error(GebrMaestroServer *maestro,
 		message = NULL;
 	} else if (g_strcmp0(error_type, "error:nfs") == 0) {
 		message = _("This node has a different NFS");
-	} else if (g_strcmp0(error_type, "error:id") == 0) {
+	} else if (g_strcmp0(error_type, "error:id") == 0 ||
+		   g_strcmp0(error_type, "error:connection-stolen-self") == 0) {
 		message = _("Node already added");
 		second = g_strdup_printf(_("The node %s was already added in"
 					   " this maestro. It will be"

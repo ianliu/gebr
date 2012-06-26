@@ -31,6 +31,7 @@ struct _GebrmDaemonPriv {
 	gboolean is_initialized;
 	gboolean is_disconnecting;
 	gboolean is_canceled;
+	gboolean reconnnect;
 
 	guint timeout;
 
@@ -1044,6 +1045,19 @@ gboolean
 gebrm_daemon_get_disconnecting(GebrmDaemon *daemon)
 {
 	return daemon->priv->is_disconnecting;
+}
+
+void
+gebrm_daemon_set_reconnect(GebrmDaemon *daemon,
+			       gboolean reconnect)
+{
+	daemon->priv->reconnnect = reconnect;
+}
+
+gboolean
+gebrm_daemon_get_reconnect(GebrmDaemon *daemon)
+{
+	return daemon->priv->reconnnect;
 }
 
 static void

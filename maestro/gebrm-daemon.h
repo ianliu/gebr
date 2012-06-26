@@ -202,6 +202,10 @@ void gebrm_daemon_set_disconnecting(GebrmDaemon *daemon,
 
 gboolean gebrm_daemon_get_disconnecting(GebrmDaemon *daemon);
 
+void gebrm_daemon_set_reconnect(GebrmDaemon *daemon, gboolean reconnect);
+
+gboolean gebrm_daemon_get_reconnect(GebrmDaemon *daemon);
+
 const gchar *gebrm_daemon_get_home_dir(GebrmDaemon *daemon);
 
 void gebrm_daemon_set_mpi_flavors(GebrmDaemon *daemon, gchar *flavors);
