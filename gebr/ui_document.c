@@ -266,6 +266,7 @@ on_document_help_button_clicked (GtkButton *button, gpointer doc_type_pointer)
 		section = g_strdup("projects_lines_create_projects");
 		break;
 	default:
+		section = NULL;
 		g_warn_if_reached();
 	}
 
