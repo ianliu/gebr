@@ -116,6 +116,18 @@ static gboolean gebr_geoxml_document_check_version(GebrGeoXmlDocument * document
  */
 static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagname, const gchar * dtd_filename);
 
+/**
+ * \internal
+ *
+ * Create header of document type to XML structure with
+ * @name and @version passed to method.
+ *
+ * Returns: GdomeDocumentType to create a new GdomeDocument
+ */
+GdomeDocumentType *gebr_geoxml_document_insert_header(GdomeDOMImplementation *dom_implementation,
+                                                      const gchar *name,
+                                                      const gchar *version);
+
 void gebr_geoxml_init(void)
 {
 	GdomeDOMString *string = gdome_str_mkref("gebr-geoxml-clipboard");
@@ -245,9 +257,6 @@ static int
 __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				    GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
-	if (gdome_doc_doctype(*document, &exception) != NULL)
-		return GEBR_GEOXML_RETV_DTD_SPECIFIED;
-
 	gchar *version;
 
 	/* If there is no version attribute, the document is invalid */
@@ -290,7 +299,9 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	gdome_di_saveDocToMemoryEnc(dom_implementation, *document, &src, ENCODING, GDOME_SAVE_STANDARD, &exception);
 	g_string_assign(source, src);
 	g_free(src);
-	gebr_geoxml_document_fix_header(source, tagname, dtd_filename);
+
+	if (gdome_doc_doctype(*document, &exception) == NULL)
+		gebr_geoxml_document_fix_header(source, tagname, dtd_filename);
 
 	/* Based on code by Daniel Veillard
 	 * References:
@@ -1177,8 +1188,11 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
 	GdomeElement *element;
 	GdomeDOMString *str;
 
+	GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, name, version);
+
 	str = gdome_str_mkref(name);
-	document = gdome_di_createDocument(dom_implementation, NULL, str, NULL, &exception);
+	document = gdome_di_createDocument(dom_implementation, NULL, str, doctype, &exception);
+
 	__gebr_geoxml_document_new_data((GebrGeoXmlDocument *)document, "");
 	gdome_str_unref(str);
 
@@ -1406,13 +1420,9 @@ int gebr_geoxml_document_to_string(GebrGeoXmlDocument * document, gchar ** xml_s
 		return FALSE;
 
 	GdomeBoolean ret;
-	GdomeDocument * clone;
 
-	/* clone to remove DOCTYPE */
-	clone = __gebr_geoxml_document_clone_doc((GdomeDocument*)document, NULL);
-	ret = gdome_di_saveDocToMemoryEnc(dom_implementation, clone, xml_string, ENCODING,
+	ret = gdome_di_saveDocToMemoryEnc(dom_implementation, GDOME_DOC(document), xml_string, ENCODING,
 					  GDOME_SAVE_LIBXML_INDENT, &exception);
-	gdome_doc_unref(clone, &exception);
 
 	return ret ? GEBR_GEOXML_RETV_SUCCESS : GEBR_GEOXML_RETV_NO_MEMORY;
 }
@@ -1740,6 +1750,34 @@ static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagn
 	g_string_erase(source, 0, c + 1);
 	g_string_prepend(source, doctype);
 	g_free(doctype);
+}
+
+GdomeDocumentType *
+gebr_geoxml_document_insert_header(GdomeDOMImplementation *dom_implementation,
+                                   const gchar *name,
+                                   const gchar *version)
+{
+	GdomeDOMString *docname, *publicid, *sysid;
+
+	docname = gdome_str_mkref(name);
+
+	gchar *upper_name = g_utf8_strup(name, -1);
+	gchar *pid = g_strdup_printf("-//GEBR//DTD %s %s//EN", upper_name, version);
+	publicid = gdome_str_mkref((const gchar*) pid);
+
+	gchar *system = g_strdup_printf("http://gebr.googlecode.com/hg/libgebr/geoxml/data/%s-%s.dtd", name, version);
+	sysid = gdome_str_mkref((const gchar*) system);
+
+	GdomeDocumentType *doctype = gdome_di_createDocumentType(dom_implementation, docname, publicid, sysid, &exception);
+
+	g_free(pid);
+	g_free(system);
+	g_free(upper_name);
+	gdome_str_unref(docname);
+	gdome_str_unref(publicid);
+	gdome_str_unref(sysid);
+
+	return doctype;
 }
 
 void
