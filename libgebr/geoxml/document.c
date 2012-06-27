@@ -131,7 +131,7 @@ GdomeDocumentType *gebr_geoxml_document_insert_header(GdomeDOMImplementation *do
 
 void gebr_geoxml_init(void)
 {
-	//gebr_geoxml_create_catalog(GEBR_GEOXML_DTD_DIR);
+	gebr_geoxml_create_catalog(GEBR_GEOXML_DTD_DIR);
 
 	GdomeDOMString *string = gdome_str_mkref("gebr-geoxml-clipboard");
 	dom_implementation = gdome_di_mkref();
