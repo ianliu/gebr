@@ -209,6 +209,7 @@ send_groups_definitions(GebrCommProtocolSocket *client, GebrmDaemon *daemon)
 	gebr_comm_protocol_socket_oldmsg_send(client, FALSE,
 					      gebr_comm_protocol_defs.agrp_def, 2,
 					      server, tags);
+}
 
 static GebrmDaemon *
 find_daemon_by_id(GebrmApp *app, const gchar *id)
