@@ -54,6 +54,7 @@ int main(int argc, char **argv, char **env)
 	gdk_threads_init();
 
 	gebr_libinit(GETTEXT_PACKAGE);
+
 	gebr_geoxml_init();
 
 	context = g_option_context_new(_(" - GeBR, a seismic processing environment"));

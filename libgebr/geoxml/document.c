@@ -32,6 +32,7 @@
 #include <glib/gi18n-lib.h>
 #include <gdome.h>
 #include <libxml/parser.h>
+#include <libxml/catalog.h>
 
 #if HAVE_TIDY_TIDY_H
 # include <tidy/tidy.h>
@@ -130,6 +131,8 @@ GdomeDocumentType *gebr_geoxml_document_insert_header(GdomeDOMImplementation *do
 
 void gebr_geoxml_init(void)
 {
+	//gebr_geoxml_create_catalog(GEBR_GEOXML_DTD_DIR);
+
 	GdomeDOMString *string = gdome_str_mkref("gebr-geoxml-clipboard");
 	dom_implementation = gdome_di_mkref();
 	clipboard_document = gdome_di_createDocument(dom_implementation, NULL,
@@ -1983,4 +1986,78 @@ gebr_geoxml_document_ref(GebrGeoXmlDocument *self)
 void gebr_geoxml_document_unref(GebrGeoXmlDocument *self)
 {
 	gdome_doc_unref((GdomeDocument*)self, &exception);
+}
+
+void
+gebr_geoxml_initialize_catalog(void)
+{
+	xmlInitializeCatalog();
+}
+
+gboolean
+gebr_geoxml_create_dtd_entry_based_on_filename(const gchar *filename,
+					       gchar **dtd_entryname)
+{
+	gchar **fields = g_strsplit(filename, "-", -1);
+	if (!fields)
+		return FALSE;
+	gchar **other_fields = g_strsplit(fields[1], ".", -1);
+	if (!other_fields)
+		return FALSE;
+	GString *type = g_string_new(fields[0]);
+	type = g_string_ascii_up(type);
+	gchar *version = g_strdup_printf("%s.%s.%s",
+					 other_fields[0],
+					 other_fields[1],
+					 other_fields[2]);
+
+	if (dtd_entryname)
+		*dtd_entryname = g_strdup_printf("-//GEBR//DTD %s %s//EN", type->str, version);
+
+	g_free(version);
+	g_string_free(type, TRUE);
+	g_strfreev(other_fields);
+	g_strfreev(fields);
+
+	return TRUE;
+}
+
+gboolean
+gebr_geoxml_create_catalog(const gchar *directory)
+{
+	GDir *dir;
+	const gchar *filename;
+	GError *error;
+
+	dir = g_dir_open(directory, 0, &error);
+	xmlInitializeCatalog();
+
+	if (dir != NULL) {
+		while ((filename  = g_dir_read_name (dir)) != NULL) {
+			if (!g_strrstr(filename, "dtd")) {
+				continue;
+			} else {
+				gchar *dtd_entryname = NULL;
+				gchar *complete_filename = g_build_filename(directory, filename, NULL);
+
+				gebr_geoxml_create_dtd_entry_based_on_filename(filename,
+									       &dtd_entryname);
+				gint succ = xmlCatalogAdd((xmlChar*)"public",
+							  (xmlChar*)dtd_entryname,
+							  (xmlChar*)complete_filename);
+
+				g_free(dtd_entryname);
+				g_free(complete_filename);
+
+				if (succ == -1)
+					g_warn_if_reached();
+			}
+		}
+		g_dir_close(dir);
+		return TRUE;
+	} else {
+		g_warn_if_reached();
+		return FALSE;
+	}
+
 }
