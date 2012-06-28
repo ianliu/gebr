@@ -1005,6 +1005,16 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	/* 0.3.9 to 0.4.0 */
 	if (strcmp(version, "0.4.0") < 0) {
 		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+
+			GdomeDocument *aux = *document;
+			gdome_doc_ref(aux, &exception);
+			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "flow", GEBR_GEOXML_FLOW_VERSION);
+			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
+
+			gdome_doc_unref(aux, &exception);
+
+			gdome_el_unref(root_element, &exception);
+			root_element = gebr_geoxml_document_root_element(*document);
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.4.0");
 
 			GdomeElement *before = __gebr_geoxml_get_first_element(root_element, "date");
@@ -2004,18 +2014,19 @@ gebr_geoxml_create_dtd_entry_based_on_filename(const gchar *filename,
 	gchar **other_fields = g_strsplit(fields[1], ".", -1);
 	if (!other_fields)
 		return FALSE;
-	GString *type = g_string_new(fields[0]);
-	type = g_string_ascii_up(type);
+	GString *type_str = g_string_new(fields[0]);
+	gchar *type = g_utf8_strup(type_str->str, -1);
 	gchar *version = g_strdup_printf("%s.%s.%s",
 					 other_fields[0],
 					 other_fields[1],
 					 other_fields[2]);
 
 	if (dtd_entryname)
-		*dtd_entryname = g_strdup_printf("-//GEBR//DTD %s %s//EN", type->str, version);
+		*dtd_entryname = g_strdup_printf("-//GEBR//DTD %s %s//EN", type, version);
 
 	g_free(version);
-	g_string_free(type, TRUE);
+	g_free(type);
+	g_string_free(type_str, TRUE);
 	g_strfreev(other_fields);
 	g_strfreev(fields);
 
