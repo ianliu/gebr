@@ -522,6 +522,8 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 		GtkTreeModel *new_model = copy_model_for_groups(model);
 
 		GtkWidget *view = gtk_tree_view_new_with_model(new_model);
+		gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (view)),
+		                             GTK_SELECTION_MULTIPLE);
 
 		GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),

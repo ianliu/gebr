@@ -750,7 +750,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	gebr_job_get_resources(job, &nprocs, &niceness);
 
 	const gchar *maddr = gebr_job_get_maestro_address(job);
-	if (!nprocs || !niceness)
+	if ((!nprocs || !niceness) || (!*nprocs || !*niceness))
 		g_string_printf(resources, _("Waiting for nodes details"));
 	else {
 		const gchar *type_str = gebr_job_get_server_group_type(job);
