@@ -1837,6 +1837,23 @@ on_daemon_error(GebrMaestroServer *maestro,
 
 	if (show_dialog) {
 		gdk_threads_enter();
+		GebrDaemonServer *daemon;
+		gebr_gui_gtk_tree_model_foreach(iter, model) {
+			gtk_tree_model_get(model, &iter,
+			                   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+
+			if (!daemon)
+				continue;
+
+			if (g_strcmp0(addr, gebr_daemon_server_get_address(daemon)) == 0) {
+				guint timeout = gebr_daemon_server_get_timeout(daemon);
+				if (timeout != -1) {
+					if (g_source_remove(timeout))
+						gebr_daemon_server_set_timeout(daemon, -1);
+				}
+			}
+		}
+
 		gebr_gui_message_dialog(GTK_MESSAGE_WARNING, GTK_BUTTONS_OK,
 					message, second);
 		gdk_threads_leave();
