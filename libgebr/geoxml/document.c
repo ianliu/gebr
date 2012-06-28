@@ -683,6 +683,13 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		} break;
 
 		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:	{
+			GdomeDocument *aux = *document;
+			gdome_doc_ref(aux, &exception);
+			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "line", GEBR_GEOXML_FLOW_VERSION);
+			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
+
+			gdome_doc_unref(aux, &exception);
+			root_element = gebr_geoxml_document_root_element(*document);
 			GHashTable * keys_to_canonized = NULL;
 
 			gebr_geoxml_document_canonize_dict_parameters(
@@ -813,6 +820,15 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.6");
 
+			GdomeDocument *aux = *document;
+			gdome_doc_ref(aux, &exception);
+			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "line", GEBR_GEOXML_FLOW_VERSION);
+			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
+
+			gdome_doc_unref(aux, &exception);
+
+			gdome_el_unref(root_element, &exception);
+			root_element = gebr_geoxml_document_root_element(*document);
 			GdomeElement *first_el = __gebr_geoxml_get_first_element(root_element, "path");
 			gchar *base;
 
