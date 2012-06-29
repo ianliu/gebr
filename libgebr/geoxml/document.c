@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <fcntl.h>
 
 #include <glib/gstdio.h>
 #include <glib/gi18n-lib.h>
@@ -100,6 +101,9 @@ GdomeDocument *clipboard_document = NULL;
 
 static const gchar *dtd_directory = GEBR_GEOXML_DTD_DIR;
 
+static gint xml_error_fd;
+static gchar *xml_err_path;
+
 /**
  * \internal
  * Checks if \p version has the form '%d.%d.%d', ie three numbers separated by a dot.
@@ -115,7 +119,8 @@ static gboolean gebr_geoxml_document_check_version(GebrGeoXmlDocument * document
 /**
  * \internal
  */
-static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagname, const gchar * dtd_filename);
+static gboolean gebr_geoxml_document_fix_header(const gchar *filename,
+                                                GString *contents);
 
 /**
  * \internal
@@ -129,9 +134,18 @@ GdomeDocumentType *gebr_geoxml_document_insert_header(GdomeDOMImplementation *do
                                                       const gchar *name,
                                                       const gchar *version);
 
+static void
+gebr_geoxml_create_xml_error_file(void)
+{
+	xml_err_path = g_build_filename(g_get_home_dir(), ".gebr", "tmp", "validate-xml.err", NULL);
+	xml_error_fd = open(xml_err_path, O_CREAT | O_RDWR, 0777);
+}
+
 void gebr_geoxml_init(void)
 {
 	gebr_geoxml_create_catalog(GEBR_GEOXML_DTD_DIR);
+
+	gebr_geoxml_create_xml_error_file();
 
 	GdomeDOMString *string = gdome_str_mkref("gebr-geoxml-clipboard");
 	dom_implementation = gdome_di_mkref();
@@ -145,6 +159,10 @@ void gebr_geoxml_finalize(void)
 	gdome_di_unref(dom_implementation, &exception);
 	gdome_doc_unref(clipboard_document, &exception);
 	clipboard_document = NULL;
+
+	g_unlink(xml_err_path);
+	g_free(xml_err_path);
+	close(xml_error_fd);
 }
 
 static gchar *
@@ -276,71 +294,9 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	}
 
 	gint ret;
-	gchar tagname[MAX_TAGNAME_SIZE]; // This will hold one of these: "flow", "line" or "project"
 
-	GString *source = g_string_new(NULL);
-	gchar *dtd_filename = NULL;
 	GdomeElement *root_element;
-
 	root_element = gebr_geoxml_document_root_element(*document);
-	GdomeDOMString * root_name = gdome_el_nodeName(root_element, &exception);
-	strncpy(tagname, root_name->str, MAX_TAGNAME_SIZE);
-	tagname[MAX_TAGNAME_SIZE - 1] = '\0';
-	gdome_str_unref(root_name);
-
-	/* Find the DTD spec file. If the file doesn't exists, it may mean that this document is from newer version. */
-	dtd_filename = g_strdup_printf("%s/%s-%s.dtd", dtd_directory, tagname, version);
-	if (g_file_test(dtd_filename, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
-	    || g_access(dtd_filename, R_OK) < 0) {
-		ret = GEBR_GEOXML_RETV_CANT_ACCESS_DTD;
-		goto free_source_dtd_root_version;
-	}
-
-	/* Inserts the document type into the xml so we can validate and specify the ID attributes and use
-	 * gdome_doc_getElementById. */
-	gchar *src;
-	gdome_di_saveDocToMemoryEnc(dom_implementation, *document, &src, ENCODING, GDOME_SAVE_STANDARD, &exception);
-	g_string_assign(source, src);
-	g_free(src);
-
-	if (gdome_doc_doctype(*document, &exception) == NULL)
-		gebr_geoxml_document_fix_header(source, tagname, dtd_filename);
-
-	/* Based on code by Daniel Veillard
-	 * References:
-	 *   http://xmlsoft.org/examples/index.html#parse2.c
-	 *   http://xmlsoft.org/examples/parse2.c
-	 */
-	xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
-	xmlDocPtr doc = xmlCtxtReadMemory(ctxt, source->str, source->len, NULL, NULL,
-					  XML_PARSE_NOBLANKS | XML_PARSE_DTDATTR |        /* default DTD attributes */
-					  XML_PARSE_NOENT |                               /* substitute entities */
-					  XML_PARSE_DTDVALID);
-	if (doc == NULL) {
-		xmlFreeParserCtxt(ctxt);
-		ret = GEBR_GEOXML_RETV_INVALID_DOCUMENT;
-		goto free_source_dtd_root_version;
-	} else {
-		xmlFreeDoc(doc);
-		if (!ctxt->valid) {
-			ret = GEBR_GEOXML_RETV_INVALID_DOCUMENT;
-			xmlFreeParserCtxt(ctxt);
-			goto free_source_dtd_root_version;
-		}
-		xmlFreeParserCtxt(ctxt);
-	}
-
-	GdomeDocument *tmp_doc;
-	tmp_doc = gdome_di_createDocFromMemory(dom_implementation, source->str, GDOME_LOAD_PARSING, &exception);
-
-	if (tmp_doc == NULL) {
-		ret = GEBR_GEOXML_RETV_NO_MEMORY;
-		goto free_source_dtd_root_version;
-	}
-	gdome_el_unref(root_element, &exception);
-	gdome_doc_unref(*document, &exception);
-	*document = tmp_doc;
-	root_element = gebr_geoxml_document_root_element(tmp_doc);
 
 	/*
 	 * Success, now change to last version
@@ -1149,30 +1105,110 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 	ret = GEBR_GEOXML_RETV_SUCCESS;
 
-free_source_dtd_root_version:
 	g_free(version);
-	g_free (dtd_filename);
-	g_string_free (source, TRUE);
 	gdome_el_unref (root_element, &exception);
 
 	return ret;
 }
 
+static gboolean
+gebr_geoxml_document_fix_header(const gchar *filename,
+                                GString *contents)
+{
+	gchar *error;
+
+	if (gebr_gzfile_get_contents(filename, contents, &error)) {
+		gchar *find = g_strstr_len(contents->str, 100, "<");
+		if (!find)
+			return FALSE;
+
+		while (1) {
+			if (find[1] == '?') {
+				find = g_strstr_len(find+2, 100, "<");
+				continue;
+			} else if (find[1] == '!') {
+				return FALSE;
+			} else {
+				gchar *end_tag = g_strstr_len(find, 10, " ");
+				gchar *tagname = g_strndup(find+1, end_tag - (find+1));
+
+				gchar *find_version = g_strstr_len(find, 20, "version=");
+				gchar *end_version = g_strstr_len(find_version+9, 10, "\"");
+				gchar *version = g_strndup(find_version+9, end_version - (find_version + 9));
+
+				if (!*version)
+					return FALSE;
+
+				gchar *upper_name = g_utf8_strup(tagname, -1);
+				gchar *doctype = g_strdup_printf("<!DOCTYPE %s PUBLIC \"-//GEBR//DTD %s %s//EN\" "
+								 "\"http://gebr.googlecode.com/hg/libgebr/geoxml/data/%s-%s.dtd\">\n",
+								 tagname, upper_name, version, tagname, version);
+
+				g_string_insert(contents, (find - contents->str), doctype);
+				g_free(upper_name);
+				g_free(doctype);
+
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
 /**
  * \internal
  */
-static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * src, createDoc_func func,
+static int __gebr_geoxml_document_load_buffer(GebrGeoXmlDocument ** document, const gchar *xml)
+{
+	GdomeDocument *doc;
+
+	/* load */
+	doc = gdome_di_createDocFromMemory(dom_implementation, (gchar *) xml, GDOME_LOAD_PARSING, &exception);
+
+	*document = (GebrGeoXmlDocument *) doc;
+	__gebr_geoxml_document_new_data(*document, "");
+	return GEBR_GEOXML_RETV_SUCCESS;
+}
+
+static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar *path,
 				       gboolean validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
 	GdomeDocument *doc;
 	int ret;
 
+	//TODO: Try using file on memory to get XML error
+	/* Save STDERR file descriptor to restore */
+	int stderr_fd = dup(STDERR_FILENO);
+
+	/* Change STDERR to temporary file for read error after validating XML */
+	dup2(xml_error_fd, STDERR_FILENO);
+
+	gboolean old_document;
+	GString *contents = g_string_new(NULL);
+
+	old_document = gebr_geoxml_document_fix_header(path, contents);
+
 	/* load */
-	doc = func(dom_implementation, (gchar *) src, GDOME_LOAD_PARSING, &exception);
-	if (doc == NULL) {
+	doc = gdome_di_createDocFromMemory(dom_implementation, (gchar *) contents->str, GDOME_LOAD_VALIDATING, &exception);
+
+	g_string_free(contents, TRUE);
+
+	/* Get the error on file */
+	gchar *error_xml;
+	g_file_get_contents(xml_err_path, &error_xml, NULL, NULL);
+
+	/* Remove file and close FD, and re-open STDERR */
+	dup2(stderr_fd ,STDERR_FILENO);
+	close(stderr_fd);
+
+	if (strlen(error_xml) > 0) {
 		ret = GEBR_GEOXML_RETV_INVALID_DOCUMENT;
+		g_debug("======> XML ERROR: '%s'", error_xml);
+		g_free(error_xml);
+		g_file_set_contents(xml_err_path, "", -1, NULL);
 		goto err;
 	}
+	g_free(error_xml);
 
 	if (validate) {
 		ret = __gebr_geoxml_document_validate_doc(&doc, discard_menu_ref);
@@ -1260,7 +1296,7 @@ int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path
 		return ret;
 	}
 
-	ret = __gebr_geoxml_document_load(document, path, (createDoc_func)gdome_di_createDocFromURI, validate,
+	ret = __gebr_geoxml_document_load(document, path, validate,
 					  discard_menu_ref);
 	if (ret)
 		return ret;
@@ -1274,7 +1310,7 @@ int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path
 
 int gebr_geoxml_document_load_buffer(GebrGeoXmlDocument ** document, const gchar * xml)
 {
-	return __gebr_geoxml_document_load(document, xml, (createDoc_func)gdome_di_createDocFromMemory, TRUE, NULL);
+	return __gebr_geoxml_document_load_buffer(document, xml);
 }
 
 void gebr_geoxml_document_free(GebrGeoXmlDocument * document)
@@ -1764,21 +1800,6 @@ static gboolean gebr_geoxml_document_check_version(GebrGeoXmlDocument * document
 	return major2 < major1
 		|| (major2 == major1 && minor2 < minor1)
 		|| (major2 == major1 && minor2 == minor1 && micro2 < micro1) ? FALSE : TRUE;
-}
-
-static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagname, const gchar * dtd_filename)
-{
-	gssize c = 0;
-	gchar * doctype;
-
-	while (source->str[c] != '>')
-		c++;
-
-	doctype = g_strdup_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
-				  "<!DOCTYPE %s SYSTEM \"%s\">", tagname, dtd_filename);
-	g_string_erase(source, 0, c + 1);
-	g_string_prepend(source, doctype);
-	g_free(doctype);
 }
 
 GdomeDocumentType *
