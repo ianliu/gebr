@@ -22,6 +22,7 @@
 # include <config.h>
 #endif
 
+#include <zlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <math.h>
@@ -1459,4 +1460,59 @@ gebr_double_list_to_list(GList *double_list)
 	
 	}
 	return single_list;
+}
+
+gboolean
+gebr_gzfile_get_contents(const gchar *filename,
+                         GString *contents,
+                         gchar **error)
+{
+	g_return_val_if_fail(contents != NULL, FALSE);
+
+	gzFile docgz;
+
+	docgz = gzopen(filename, "r");
+
+	if (docgz == NULL) {
+		gzclose(docgz);
+		return FALSE;
+	}
+
+	guint length = 4096;
+
+	gchar buffer[length];
+	gint bytes;
+
+	while (1) {
+		bytes = gzread(docgz, buffer, length);
+
+		if (bytes < length) {
+			if (gzeof(docgz)) {
+				g_string_append_len(contents, buffer, bytes);
+				break;
+			}
+			else {
+				gint err;
+				const gchar *error_string;
+				error_string = gzerror(docgz, &err);
+				if (err) {
+					if (error)
+						*error = g_strdup(error_string);
+
+					gzclose(docgz);
+
+					return FALSE;
+				}
+			}
+		}
+		g_string_append_len(contents, buffer, bytes);
+	}
+
+	g_string_append_c(contents, '\0');
+	if (error)
+		*error = NULL;
+
+	gzclose(docgz);
+
+	return TRUE;
 }
