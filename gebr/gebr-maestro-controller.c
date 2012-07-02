@@ -946,6 +946,9 @@ update_spinner(gpointer user_data)
 {
 	ProgressData *data = user_data;
 
+	if (!G_IS_OBJECT(data->cell))
+		return FALSE;
+
 	gint p;
 	g_object_get(data->cell, "pulse", &p, NULL);
 
@@ -1848,7 +1851,9 @@ on_daemon_error(GebrMaestroServer *maestro,
 			if (g_strcmp0(addr, gebr_daemon_server_get_address(daemon)) == 0) {
 				guint timeout = gebr_daemon_server_get_timeout(daemon);
 				if (timeout != -1) {
+					g_debug("REMOVE TIMEOUT FROM %s", addr);
 					if (g_source_remove(timeout))
+						g_debug("REMOVE MESMO TIMEOUT FROM %s", addr);
 						gebr_daemon_server_set_timeout(daemon, -1);
 				}
 			}
