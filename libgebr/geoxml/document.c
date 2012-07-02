@@ -641,7 +641,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:	{
 			GdomeDocument *aux = *document;
 			gdome_doc_ref(aux, &exception);
-			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "line", GEBR_GEOXML_FLOW_VERSION);
+			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "project", GEBR_GEOXML_PROJECT_VERSION);
 			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
 
 			gdome_doc_unref(aux, &exception);
@@ -778,7 +778,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 			GdomeDocument *aux = *document;
 			gdome_doc_ref(aux, &exception);
-			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "line", GEBR_GEOXML_FLOW_VERSION);
+			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "line", GEBR_GEOXML_LINE_VERSION);
 			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
 
 			gdome_doc_unref(aux, &exception);
@@ -1184,7 +1184,7 @@ static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gch
 	dup2(xml_error_fd, STDERR_FILENO);
 
 	gboolean old_document;
-	GString *contents = g_string_new(NULL);
+	GString *contents = g_string_sized_new(1024*50);
 
 	old_document = gebr_geoxml_document_fix_header(path, contents);
 
@@ -1201,7 +1201,7 @@ static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gch
 	dup2(stderr_fd ,STDERR_FILENO);
 	close(stderr_fd);
 
-	if (strlen(error_xml) > 0) {
+	if (error_xml && strlen(error_xml) > 0) {
 		ret = GEBR_GEOXML_RETV_INVALID_DOCUMENT;
 		g_debug("======> XML ERROR: '%s'", error_xml);
 		g_free(error_xml);
@@ -1333,8 +1333,10 @@ GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)
 	if (source == NULL)
 		return NULL;
 
+	GdomeDocumentType *doctype = gdome_doc_doctype(GDOME_DOC(source), &exception);
+
 	data = _gebr_geoxml_document_get_data(source);
-	document = (GebrGeoXmlDocument*)__gebr_geoxml_document_clone_doc((GdomeDocument*)source, NULL);
+	document = (GebrGeoXmlDocument*)__gebr_geoxml_document_clone_doc((GdomeDocument*)source, doctype);
 	__gebr_geoxml_document_new_data(document, data->filename->str);
 
 	return document;
