@@ -1100,7 +1100,12 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow)
 	input = gebr_geoxml_flow_io_get_input (flow);
 	output = gebr_geoxml_flow_io_get_output (flow);
 	error = gebr_geoxml_flow_io_get_error (flow);
-        
+
+	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+	input = gebr_resolve_relative_path(input, paths);
+	output = gebr_resolve_relative_path(output, paths);
+	error = gebr_resolve_relative_path(error, paths);
+
 	dump = g_string_new(NULL);
 
 	g_string_append_printf(dump,
