@@ -87,6 +87,7 @@ libgebr/comm/tests/test-uri
 libgebr/geoxml-utils/gebr-geoxml-flow-dump
 libgebr/geoxml-utils/gebr-geoxml-menu-diff
 libgebr/geoxml-utils/gebr-geoxml-menu-edit
+libgebr/geoxml-utils/gebr-geoxml-menu-indices
 libgebr/geoxml-utils/gebr-geoxml-menu-query
 libgebr/geoxml-utils/gebr-geoxml-upgrade
 libgebr/geoxml-utils/gebr-geoxml-validate
