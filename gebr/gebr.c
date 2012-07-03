@@ -128,10 +128,9 @@ gebr_init(gboolean has_config)
 	gtk_adjustment_value_changed(gebr.flow_exec_adjustment);
 
 	/* check for a menu list change */
-	if (menu_refresh_needed() == TRUE) {
-		menu_list_create_index();
+	//TODO: DO IT!
+//	if (menu_refresh_needed() == TRUE)
 		menu_list_populate();
-	}
 }
 
 gboolean gebr_quit(gboolean save_config)
@@ -399,7 +398,6 @@ gebr_post_config(gboolean has_config)
 
 void gebr_config_apply(void)
 {
-	menu_list_create_index();
 	menu_list_populate();
 }
 

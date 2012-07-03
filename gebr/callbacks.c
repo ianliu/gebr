@@ -332,7 +332,6 @@ void on_flow_component_properties_activate(void)
 
 void on_flow_component_refresh_activate(void)
 {
-	menu_list_create_index();
 	menu_list_populate();
 }
 

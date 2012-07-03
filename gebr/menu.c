@@ -61,8 +61,10 @@ static const gchar * directory_list_demos[] = {
  */
 
 static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_file, GKeyFile * category_key_file);
-static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive);
 
+//static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive);
+
+void __menu_list_populate(const gchar *index_menu, const gchar *index_category, GHashTable *categories_hash);
 /*
  * Public functions
  */
@@ -107,84 +109,146 @@ GebrGeoXmlFlow *menu_load_path(const gchar * path)
 	return flow;
 }
 
-gboolean menu_refresh_needed(void)
+//gboolean menu_refresh_needed(void)
+//{
+//	gboolean needed;
+//	GString *index_path;
+//
+//	gchar *home_menu_dir;
+//	GString *menudir_path;
+//	struct stat _stat;
+//	time_t index_time;
+//
+//	needed = FALSE;
+//	index_path = g_string_new(NULL);
+//	menudir_path = g_string_new(NULL);
+//	home_menu_dir = g_strconcat(g_get_home_dir(), "/.gebr/gebr/menus", NULL);
+//
+//	/* index path string */
+//	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
+//	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
+//		goto out;
+//
+//	/* Time for index */
+//	stat(index_path->str, &_stat);
+//	index_time = _stat.st_mtime;
+//
+//	/* Times for all menus */
+//	if (menu_compare_times(gebr.config.usermenus->str, index_time, FALSE)
+//	    || menu_compare_times(home_menu_dir, index_time, FALSE)) {
+//		needed = TRUE;
+//		goto out;
+//	}
+//
+//	for (gint i = 0; directory_list[i]; i++) {
+//		if (menu_compare_times(directory_list[i], index_time, FALSE)) {
+//			needed = TRUE;
+//			goto out;
+//		}
+//	}
+//
+//out:
+//	g_string_free(index_path, TRUE);
+//	g_string_free(menudir_path, TRUE);
+//	g_free(home_menu_dir);
+//
+//	return needed;
+//}
+
+gboolean
+menu_path_verify_index(const gchar *path,
+                       gchar **menu_idx,
+                       gchar **cat_idx)
 {
-	gboolean needed;
-	GString *index_path;
+	gchar *filename_menu = g_build_filename(path, "menus.idx2", NULL);
+	gchar *filename_cat = g_build_filename(path, "categories.idx2", NULL);
 
-	gchar *home_menu_dir;
-	GString *menudir_path;
-	struct stat _stat;
-	time_t index_time;
-
-	needed = FALSE;
-	index_path = g_string_new(NULL);
-	menudir_path = g_string_new(NULL);
-	home_menu_dir = g_strconcat(g_get_home_dir(), "/.gebr/gebr/menus", NULL);
-
-	/* index path string */
-	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
-	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
-		goto out;
-
-	/* Time for index */
-	stat(index_path->str, &_stat);
-	index_time = _stat.st_mtime;
-
-	/* Times for all menus */
-	if (menu_compare_times(gebr.config.usermenus->str, index_time, FALSE)
-	    || menu_compare_times(home_menu_dir, index_time, FALSE)) {
-		needed = TRUE;
-		goto out;
+	if (g_file_test(filename_menu, G_FILE_TEST_EXISTS) &&
+	    g_file_test(filename_cat, G_FILE_TEST_EXISTS)) {
+		if (menu_idx)
+			*menu_idx = g_strdup(filename_menu);
+		if (cat_idx)
+			*cat_idx = g_strdup(filename_cat);
+		return TRUE;
 	}
 
+	g_free(filename_menu);
+	g_free(filename_cat);
+	return FALSE;
+}
+
+void
+menu_list_populate(void)
+{
+	gchar *index_menu;
+	gchar *index_category;
+	gchar *filename;
+
+	GHashTable *categories_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)gtk_tree_iter_free);
+	gtk_tree_store_clear(gebr.ui_flow_edition->menu_store);
+
 	for (gint i = 0; directory_list[i]; i++) {
-		if (menu_compare_times(directory_list[i], index_time, FALSE)) {
-			needed = TRUE;
-			goto out;
+		if (i > 0 && gebr_realpath_equal (directory_list[i], directory_list[0]))
+			continue;
+
+		const gchar *directory = directory_list[i];
+		gebr_directory_foreach_file(filename, directory) {
+			gchar *path = g_build_filename(directory, filename, NULL);
+			if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
+				if (!menu_path_verify_index(path, &index_menu, &index_category)) {
+					if (!menu_list_create_index(path, &index_menu, &index_category, FALSE)) {
+						g_warning("Could not create index for %s", path);
+						continue;
+					}
+				}
+				__menu_list_populate(index_menu, index_category, categories_hash);
+				g_free(index_menu);
+				g_free(index_category);
+			}
+			g_free(path);
 		}
 	}
 
-out:
-	g_string_free(index_path, TRUE);
-	g_string_free(menudir_path, TRUE);
-	g_free(home_menu_dir);
+	/* Scan debr installed menus and create index */
+	GString *path = g_string_new(NULL);
+	g_string_printf(path, "%s/.gebr/gebr/menus", g_get_home_dir());
 
-	return needed;
+	menu_list_create_index(path->str, &index_menu, &index_category, TRUE);
+	__menu_list_populate(index_menu, index_category, categories_hash);
+
+	g_free(index_menu);
+	g_free(index_category);
+	g_string_free(path, TRUE);
+
+	/* Scan user's folder and create index */
+	menu_list_create_index(gebr.config.usermenus->str, &index_menu, &index_category, TRUE);
+	__menu_list_populate(index_menu, index_category, categories_hash);
+
+	g_free(index_menu);
+	g_free(index_category);
+	g_hash_table_unref(categories_hash);
 }
 
-void menu_list_populate(void)
+void __menu_list_populate(const gchar *index_menu,
+                          const gchar *index_category,
+                          GHashTable *categories_hash)
 {
 	GKeyFile *menu_key_file;
 	GKeyFile *category_key_file;
-	GString *categories_path;
-	GString *menus_path;
 	gchar **category_list;
 	gsize category_list_length;
 	GtkTreeIter iter;
 	GtkTreeIter child;
 
-	categories_path = g_string_new(NULL);
-	menus_path = g_string_new(NULL);
 	menu_key_file = g_key_file_new();
 	category_key_file = g_key_file_new();
 
-	gtk_tree_store_clear(gebr.ui_flow_edition->menu_store);
-
-	g_string_printf(categories_path, "%s/.gebr/gebr/categories.idx2", g_get_home_dir());
-	g_string_printf(menus_path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
-	if (!g_file_test(categories_path->str, G_FILE_TEST_EXISTS) ||
-	    !g_file_test(menus_path->str, G_FILE_TEST_EXISTS)) {
-		menu_list_create_index();
-	}
-
-	if (!g_key_file_load_from_file(category_key_file, categories_path->str, G_KEY_FILE_NONE, NULL))
+	if (!g_key_file_load_from_file(category_key_file, index_category , G_KEY_FILE_NONE, NULL))
 		goto out;
 
-	if (!g_key_file_load_from_file(menu_key_file, menus_path->str, G_KEY_FILE_NONE, NULL))
+	if (!g_key_file_load_from_file(menu_key_file, index_menu, G_KEY_FILE_NONE, NULL))
 		goto out;
 
-	GHashTable *categories_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)gtk_tree_iter_free);
 	/**
 	 * \internal
 	 */
@@ -245,17 +309,16 @@ void menu_list_populate(void)
 		g_strfreev(menus_list);
 	}
 	g_strfreev(category_list);
-	g_hash_table_unref(categories_hash);
 
 out:	g_key_file_free(menu_key_file);
 	g_key_file_free(category_key_file);
-	g_string_free(categories_path, TRUE);
-	g_string_free(menus_path, TRUE);
 }
 
-gboolean menu_list_create_index(void)
+gboolean menu_list_create_index(const gchar *path,
+                                gchar **index_menu,
+                                gchar **index_category,
+                                gboolean use_default)
 {
-	GString *path;
 	GKeyFile *menu_key_file;
 	GKeyFile *category_key_file;
 	FILE *menu_fp;
@@ -265,25 +328,49 @@ gboolean menu_list_create_index(void)
 	gsize key_file_length;
 
 	ret = TRUE;
-	path = g_string_new(NULL);
+
+	gchar *imenu, *icat;
+
+	if (use_default) {
+		imenu = g_build_filename(path, "menus.idx2", NULL);
+		if (index_menu)
+			*index_menu = g_strdup(imenu);
+
+		icat = g_build_filename(path, "categories.idx2", NULL);
+		if (index_category)
+			*index_category = g_strdup(icat);
+	} else {
+		GString *menu_name = g_string_new(path);
+		gebr_g_string_replace(menu_name, "/", "_");
+		gchar *mname = g_strdup_printf("%s_menus.idx2", menu_name->str);
+		imenu = g_build_filename(g_get_home_dir(), ".gebr", "gebr", mname, NULL);
+		if (index_menu)
+			*index_menu = g_strdup(imenu);
+		g_free(mname);
+		g_string_free(menu_name, FALSE);
+
+		GString *cat_name = g_string_new(path);
+		gebr_g_string_replace(cat_name, "/", "_");
+		gchar *cname = g_strdup_printf("%s_categories.idx2", cat_name->str);
+		icat = g_build_filename(g_get_home_dir(), ".gebr", "gebr", cname, NULL);
+		if (index_category)
+			*index_category = g_strdup(icat);
+		g_free(cname);
+		g_string_free(cat_name, FALSE);
+	}
+
 	menu_key_file = g_key_file_new();
 	category_key_file = g_key_file_new();
 
-	// Verify duplicates in directory_list
-	g_string_printf(path, "%s/.gebr/gebr/menus", g_get_home_dir());
-	menu_scan_directory(gebr.config.usermenus->str, menu_key_file, category_key_file);
-	menu_scan_directory(path->str, menu_key_file, category_key_file);
-	menu_scan_directory(directory_list[0], menu_key_file, category_key_file);
-	for (int i = 1; directory_list[i]; i++)
-		if (!gebr_realpath_equal (directory_list[i], directory_list[0]))
-			menu_scan_directory(directory_list[i], menu_key_file, category_key_file);
+	menu_scan_directory(path, menu_key_file, category_key_file);
 
-	g_string_printf(path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
-	if ((menu_fp = fopen(path->str, "w")) == NULL) {
+	/* Create menu index for @path */
+	if ((menu_fp = fopen(imenu, "w")) == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write Menus' index."));
 		ret = FALSE;
 		goto out;
 	}
+	g_free(imenu);
 
 	key_file_data = g_key_file_to_data(menu_key_file, &key_file_length, NULL);
 	fwrite(key_file_data, sizeof(gchar), key_file_length, menu_fp);
@@ -291,12 +378,13 @@ gboolean menu_list_create_index(void)
 
 	fclose(menu_fp);
 	
-	g_string_printf(path, "%s/.gebr/gebr/categories.idx2", g_get_home_dir());
-	if ((category_fp = fopen(path->str, "w")) == NULL) {
+	/* Create category index for @path */
+	if ((category_fp = fopen(icat, "w")) == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write Menus' index."));
 		ret = FALSE;
 		goto out;
 	}
+	g_free(icat);
 	
 	key_file_data = g_key_file_to_data(category_key_file, &key_file_length, NULL);
 	fwrite(key_file_data, sizeof(gchar), key_file_length, category_fp);
@@ -304,9 +392,9 @@ gboolean menu_list_create_index(void)
 
 	fclose(category_fp);
 
- out:	g_string_free(path, TRUE);
-	g_key_file_free(menu_key_file);
-	g_key_file_free(category_key_file);
+ out:
+	 g_key_file_free(menu_key_file);
+	 g_key_file_free(category_key_file);
 
 	return ret;
 }
@@ -326,40 +414,40 @@ const gchar ** menu_get_global_directories(void)
  * was changed.
  * \return TRUE if refresh is needed, ie, \p directory time is greater than \p index_time.
  */
-static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive)
-{
-	gchar *filename;
-	GString *path;
-	gboolean refresh_needed;
-	struct stat info;
-
-	stat(directory, &info);
-	if (index_time < info.st_mtime)
-		return TRUE;
-
-	refresh_needed = FALSE;
-	path = g_string_new(NULL);
-	gebr_directory_foreach_file(filename, directory) {
-		g_string_printf(path, "%s/%s", directory, filename);
-		if (recursive && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
-			if (menu_compare_times(path->str, index_time, TRUE)) {
-				refresh_needed = TRUE;
-				goto out;
-			}
-		}
-		if (fnmatch("*.mnu", filename, 1))
-			continue;
-
-		stat(path->str, &info);
-		if (index_time < info.st_mtime) {
-			refresh_needed = TRUE;
-			goto out;
-		}
-	}
-
- out:	g_string_free(path, TRUE);
-	return refresh_needed;
-}
+//static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive)
+//{
+//	gchar *filename;
+//	GString *path;
+//	gboolean refresh_needed;
+//	struct stat info;
+//
+//	stat(directory, &info);
+//	if (index_time < info.st_mtime)
+//		return TRUE;
+//
+//	refresh_needed = FALSE;
+//	path = g_string_new(NULL);
+//	gebr_directory_foreach_file(filename, directory) {
+//		g_string_printf(path, "%s/%s", directory, filename);
+//		if (recursive && g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+//			if (menu_compare_times(path->str, index_time, TRUE)) {
+//				refresh_needed = TRUE;
+//				goto out;
+//			}
+//		}
+//		if (fnmatch("*.mnu", filename, 1))
+//			continue;
+//
+//		stat(path->str, &info);
+//		if (index_time < info.st_mtime) {
+//			refresh_needed = TRUE;
+//			goto out;
+//		}
+//	}
+//
+// out:	g_string_free(path, TRUE);
+//	return refresh_needed;
+//}
 
 /**
  * \internal
