@@ -1183,10 +1183,9 @@ static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gch
 	/* Change STDERR to temporary file for read error after validating XML */
 	dup2(xml_error_fd, STDERR_FILENO);
 
-	gboolean old_document;
-	GString *contents = g_string_sized_new(1024*50);
+	GString *contents = g_string_new(NULL);
 
-	old_document = gebr_geoxml_document_fix_header(path, contents);
+	gebr_geoxml_document_fix_header(path, contents);
 
 	/* load */
 	doc = gdome_di_createDocFromMemory(dom_implementation, (gchar *) contents->str, GDOME_LOAD_VALIDATING, &exception);

@@ -477,7 +477,6 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 		return FALSE;
 
 	gchar *revision_help;
-	gchar *flow_help;
 	GebrGeoXmlDocument *revision_flow;
 	GebrGeoXmlSequence *first_revision;
 	GdomeElement *child;
@@ -492,7 +491,6 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	gchar *id;
 	gebr_geoxml_flow_get_revision_data(revision, NULL, NULL, NULL, &id);
 
-	flow_help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
 	revision_help = gebr_geoxml_document_get_help (revision_flow);
 
 	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
