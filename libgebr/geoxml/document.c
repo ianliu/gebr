@@ -1332,7 +1332,18 @@ GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)
 	if (source == NULL)
 		return NULL;
 
-	GdomeDocumentType *doctype = gdome_doc_doctype(GDOME_DOC(source), &exception);
+	GdomeDocumentType *old_doctype = gdome_doc_doctype(GDOME_DOC(source), &exception);
+	GdomeDOMString *name = gdome_dt_name(old_doctype, &exception);
+	GdomeDOMString *publicId = gdome_dt_publicId(old_doctype, &exception);
+	GdomeDOMString *systemId = gdome_dt_systemId(old_doctype, &exception);
+
+	GdomeDocumentType *doctype = gdome_di_createDocumentType(dom_implementation,
+	                                                         name, publicId, systemId,
+	                                                         &exception);
+
+	gdome_str_unref(name);
+	gdome_str_unref(publicId);
+	gdome_str_unref(systemId);
 
 	data = _gebr_geoxml_document_get_data(source);
 	document = (GebrGeoXmlDocument*)__gebr_geoxml_document_clone_doc((GdomeDocument*)source, doctype);
