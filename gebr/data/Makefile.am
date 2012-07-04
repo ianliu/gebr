@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-gebrmenudir = $(datadir)/gebr/menus/
+gebrmenudir = $(datadir)/gebr/menus/Default
 gebrmenu_DATA = grace.mnu sleep.mnu forloop.mnu
 
 desktopdir = $(datadir)/applications
@@ -40,3 +40,6 @@ gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 
 EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA)
 CLEANFILES = $(desktop_DATA)
+
+install-data-hook:
+	gebr-geoxml-menu-indices $(gebrmenudir) $(gebrmenudir)/menus.idx2   $(gebrmenudir)/categories.idx2
