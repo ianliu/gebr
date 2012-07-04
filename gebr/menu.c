@@ -44,8 +44,8 @@
  */
 static const gchar * directory_list[] = {
 	GEBR_SYS_MENUS_DIR,
-//	"/usr/share/gebr/menus",
-//	"/usr/local/share/gebr/menus",
+	"/usr/share/gebr/menus",
+	"/usr/local/share/gebr/menus",
 	NULL
 };
 
@@ -109,66 +109,20 @@ GebrGeoXmlFlow *menu_load_path(const gchar * path)
 	return flow;
 }
 
-//gboolean menu_refresh_needed(void)
-//{
-//	gboolean needed;
-//	GString *index_path;
-//
-//	gchar *home_menu_dir;
-//	GString *menudir_path;
-//	struct stat _stat;
-//	time_t index_time;
-//
-//	needed = FALSE;
-//	index_path = g_string_new(NULL);
-//	menudir_path = g_string_new(NULL);
-//	home_menu_dir = g_strconcat(g_get_home_dir(), "/.gebr/gebr/menus", NULL);
-//
-//	/* index path string */
-//	g_string_printf(index_path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
-//	if (g_access(index_path->str, F_OK | R_OK) && menu_list_create_index() == FALSE)
-//		goto out;
-//
-//	/* Time for index */
-//	stat(index_path->str, &_stat);
-//	index_time = _stat.st_mtime;
-//
-//	/* Times for all menus */
-//	if (menu_compare_times(gebr.config.usermenus->str, index_time, FALSE)
-//	    || menu_compare_times(home_menu_dir, index_time, FALSE)) {
-//		needed = TRUE;
-//		goto out;
-//	}
-//
-//	for (gint i = 0; directory_list[i]; i++) {
-//		if (menu_compare_times(directory_list[i], index_time, FALSE)) {
-//			needed = TRUE;
-//			goto out;
-//		}
-//	}
-//
-//out:
-//	g_string_free(index_path, TRUE);
-//	g_string_free(menudir_path, TRUE);
-//	g_free(home_menu_dir);
-//
-//	return needed;
-//}
-
-gboolean
-menu_path_verify_index(const gchar *path,
-                       gchar **menu_idx,
-                       gchar **cat_idx)
+static gboolean
+menu_path_has_index(const gchar *path,
+		    gchar **index_menu,
+		    gchar **index_category)
 {
 	gchar *filename_menu = g_build_filename(path, "menus.idx2", NULL);
 	gchar *filename_cat = g_build_filename(path, "categories.idx2", NULL);
 
 	if (g_file_test(filename_menu, G_FILE_TEST_EXISTS) &&
 	    g_file_test(filename_cat, G_FILE_TEST_EXISTS)) {
-		if (menu_idx)
-			*menu_idx = g_strdup(filename_menu);
-		if (cat_idx)
-			*cat_idx = g_strdup(filename_cat);
+		if (index_menu)
+			*index_menu = g_strdup(filename_menu);
+		if (index_category)
+			*index_category = g_strdup(filename_cat);
 		return TRUE;
 	}
 
@@ -177,8 +131,11 @@ menu_path_verify_index(const gchar *path,
 	return FALSE;
 }
 
-gboolean
-menu_path_verify_need_of_system_index_update(const gchar *path, const gchar *local_folder)
+static gboolean
+menu_path_internal_index_is_valid(const gchar *path,
+				  const gchar *local_folder,
+				  gchar **index_menu,
+				  gchar **index_category)
 {
 	gboolean need = FALSE;
 	GString *filename_menu = g_string_new(path);
@@ -197,7 +154,6 @@ menu_path_verify_need_of_system_index_update(const gchar *path, const gchar *loc
 	local_filename_menu = g_build_filename(local_folder, filename_menu->str, NULL);
 	local_filename_cat = g_build_filename(local_folder, filename_cat->str, NULL);
 
-
 	struct stat menu_info, categ_info;
 
 	g_stat(local_filename_menu, &menu_info);
@@ -209,11 +165,15 @@ menu_path_verify_need_of_system_index_update(const gchar *path, const gchar *loc
 	if (!file_exists || (file_exists && need_update))
 			need = TRUE;
 
-//	g_debug("On '%s', line '%d', input_path:'%s', localfolder:'%s',\n local_filename_menu:'%s', local_filename_categ:'%s',\n file_exists:%s, need_update:%s, refresh_system:%s", __FILE__, __LINE__, path, local_folder, local_filename_menu, local_filename_cat, file_exists?"YES":"NO", need_update?"YES":"NO",need?"YES":"NO");
-	g_free(local_filename_menu);
-	g_free(local_filename_cat);
 	g_string_free(filename_menu, TRUE);
 	g_string_free(filename_cat, TRUE);
+
+	if (!need) {
+		if (index_menu)
+			*index_menu = local_filename_menu;
+		if (index_category)
+			*index_category = local_filename_cat;
+	}
 
 	return need;
 }
@@ -237,11 +197,12 @@ menu_list_populate(void)
 		gebr_directory_foreach_file(filename, directory) {
 			gchar *path = g_build_filename(directory, filename, NULL);
 			if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
-				if (!menu_path_verify_index(path, &index_menu, &index_category) &&
-				    menu_path_verify_need_of_system_index_update(path, gebr_home)) {
-					if (!menu_list_create_index(path, &index_menu, &index_category, FALSE)) {
-						g_warning("Could not create index for %s", path);
-						continue;
+				if (!menu_path_has_index(path, &index_menu, &index_category)) {
+					if (menu_path_internal_index_is_valid(path, gebr_home, &index_menu, &index_category)) {
+						if (!menu_list_create_index(path, &index_menu, &index_category, FALSE)) {
+							g_warning("Could not create index for %s", path);
+							continue;
+						}
 					}
 				}
 				__menu_list_populate(index_menu, index_category, categories_hash);
@@ -251,6 +212,8 @@ menu_list_populate(void)
 			g_free(path);
 		}
 	}
+
+	g_free(gebr_home);
 
 	/* Scan debr installed menus and create index */
 	GString *path = g_string_new(NULL);
