@@ -1,3 +1,18 @@
+gebrproject (0.18.1) lucid; urgency=low
+
+  * Improved maestro and remote browsing feedback in GeBR's main window.
+  * Improved feedback at maestro and node connections with a spinning wheel.
+  * Borrow idle nodes of another maestro. (#1130)
+  * Fixed maestro and daemon connection when bashrc is verbose. (#1113)
+  * Fixed wrong warning on program's parameters list edition. (#1020) (#1197) (#1211)
+  * Fixed Line directory paths when a report is created.
+  * Fixed treatment of empty values in program's parameters list.(#1202)
+  * Applied validation to email at Project, Line and Flow's properties. (#1210)
+  * Changed inheritance of Documents’ owners: Flow inherit from Line and Line inherit from Project. (#1100)
+  * Other fixes and cosmetic improvements.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Wed, 04 Jul 2012 17:10:23 -0300
+
 gebrproject (0.18.0) lucid; urgency=low
 
   * GeBR configuration assistent (#1128);

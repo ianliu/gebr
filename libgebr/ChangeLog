@@ -1,3 +1,110 @@
+2012-07-02  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed group icon include in makefile.
+
+2012-06-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong tooltip of range of values
+
+2012-06-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing wrong warning when edit list is clicked. (Fixes issue 1211)
+
+2012-06-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixes build on Fedora 17.
+
+2012-06-15  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing tooltip of parameter iter on Loop window. (Fixes issue 1200)
+
+2012-06-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing wrong warning at expanded list edition. (Fixes issue 1197)
+
+2012-06-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add treatment on gebr_comm_ssh_parse_output to find port of old
+	gebrm/gebrd
+
+2012-06-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve parse of maestro and daemon port using token to protec gebr
+	port
+
+2012-06-12  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Changes of server/machines/daemon to nodes
+
+2012-06-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method gebr_geoxml_flow_get_first_mpi_program to consider only
+	configured programs (Fixes issue 1199)
+	* Add help button of File Chooser
+
+2012-06-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update translations of interface
+
+2012-06-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add Help menu to 'View/Edit Report' interfaces
+
+2012-06-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Replace the Groups icon in Maestro/WorkingMachines interface
+	* Update PO files to accomodate the replacement of 'server' by
+	'working machine'
+
+2012-06-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing wrong warning at expanded list edition. (Fixes issue 1020)
+
+2012-06-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Replace every ocurrence of Server to WorkingMachines and of GêBR-
+	Maestro to Maestro
+
+2012-06-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add Help buttons to Document Properties, Filechoosers and
+	Preferences
+
+2012-05-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove exoteric code to emit "cursor-changed" on method
+	__gtk_tree_view_on_button_pressed (Fix open file chooser with
+	context menu on FlowEditor)
+
+2012-05-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Pull documentations fixes from branch default
+	* Remove unused images in English doc and fix Makefile.am of common-
+	images folder
+
+2012-05-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Relativising of paths after to close the filechooser at parameters
+	window
+
+2012-05-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add folder icon to browsing on files out of entry in FlowEdition tab
+
+2012-05-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor function of Help calling and include Help buttons in
+	maestro controller and in creation/edition of line paths
+
+2012-05-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add maestro and remote browse on status bar of GeBR (Fixes issue
+	1136)
+
+2012-05-24  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.18.0: The wizards came to stay
+
 2012-05-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.17.14: Documentation further improvements
