@@ -626,7 +626,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		break;
 	}
 	case GEBR_GEOXML_OBJECT_TYPE_PROJECT:
-		html = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (object));
+		html = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
 		gebr_gui_html_viewer_window_show_html (GEBR_GUI_HTML_VIEWER_WINDOW (window), html);
 		g_free(html);
 		break;
