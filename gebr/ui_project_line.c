@@ -2010,17 +2010,23 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		for (gint i = 0; paths[i]; i++) {
 			if (!g_strcmp0(paths[i][1], "HOME")) {
-				g_string_append_printf(dump, "   <li>%s</li>\n", paths[i][0]);
+				g_string_append_printf(dump, "<table><tr><td>&#60;HOME&#62;:   </td><td>%s\n</td></tr>", paths[i][0]);
 				continue;
 			}
 			if (!*paths[i][0]) {
 				continue;
 			}
+			if (!g_strcmp0(paths[i][1], "BASE")) {
+				g_string_append_printf(buf, "<tr><td>&#60;BASE&#62;:   </td><td>&#60;HOME&#62;%s\n</td></tr>", paths[i][0]);
+				continue;
+			}
 			gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);
-			g_string_append_printf(buf, "   <li>%s</li>\n", resolved);
+			gchar *end = g_strrstr(resolved,"/");
+			g_string_append_printf(buf, "<tr><td>&#60;%s&#62;:   </td><td>&#60;BASE&#62;%s\n</td></tr>", paths[i][1], end);
 			g_free(resolved);
 		}
 		g_string_append(dump, buf->str);
+		g_string_append(dump, "</table>");
 		g_string_append(dump, "</ul>\n");
 
 		g_string_free(buf, TRUE);
