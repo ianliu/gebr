@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/geoxml/geoxml.h>
+#include "libgebr/comm/gebr-comm-process.h"
 
 G_BEGIN_DECLS
 
@@ -69,6 +70,8 @@ typedef struct {
 	GtkWidget *revpage_warn;
 	GtkWidget *rev_view;
 	GtkTreeStore *rev_store;
+	gboolean update_graph;
+	GebrCommProcess *graph_process;
 
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;

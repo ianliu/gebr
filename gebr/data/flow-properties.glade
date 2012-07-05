@@ -323,9 +323,11 @@
                         <property name="visible">True</property>
                         <property name="resize_mode">queue</property>
                         <child>
-                          <object class="GtkImage" id="rev_image">
+                          <object class="GtkVBox" id="graph_box">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-missing-image</property>
+                            <child>
+                              <placeholder/>
+                            </child>
                           </object>
                         </child>
                       </object>

@@ -636,6 +636,8 @@ gboolean flow_revision_save(void)
 
 	gtk_widget_show_all(dialog);
 
+	gebr.ui_flow_browse->update_graph = TRUE;
+
 	gint response;
 	while (1) {
 		response = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -718,6 +720,8 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 
 	g_free(id);
 
+	gebr.ui_flow_browse->update_graph = TRUE;
+
 	return result;
 }
 
@@ -780,40 +784,14 @@ gebr_flow_revisions_hash_free(GHashTable *revision)
 gboolean
 gebr_flow_revisions_create_graph(GebrGeoXmlFlow *flow,
                                  GHashTable *revs,
-                                 gchar **png_filename)
+                                 gchar **dot_file)
 {
-	GError *error = NULL;
-	gchar *dotfile = g_build_filename(g_get_home_dir(), ".gebr", "gebr", "data", "tmp.dot", NULL);
-	gchar *filename = g_strdup_printf("%s.png", gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
-	gchar *pngfile = g_build_filename(g_get_home_dir(), ".gebr", "gebr", "data", filename, NULL);
-
 	gchar *dot_content = gebr_geoxml_flow_create_dot_code(flow, revs);
-	g_file_set_contents(dotfile, dot_content, -1, &error);
-	if (error)
-		g_warn_if_reached();
 
-
-
-	gchar *cmd_line = g_strdup_printf("bash -c \"dot -Tpng %s > %s\"; rm %s",
-	                                  dotfile, pngfile, dotfile);
-	gint exit;
-
-	g_debug("=====> CMD_LINE: %s", cmd_line);
-
-	if (!g_spawn_command_line_sync(cmd_line, NULL, NULL, &exit, &error))
-		return FALSE;
-
-	if (error)
-		return FALSE;
-
-	if (png_filename)
-		*png_filename = g_strdup(pngfile);
+	if (dot_file)
+		*dot_file = g_strdup(dot_content);
 
 	g_free(dot_content);
-	g_free(cmd_line);
-	g_free(filename);
-	g_free(dotfile);
-	g_free(pngfile);
 
 	return TRUE;
 }

@@ -1435,7 +1435,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 	valuelist = gebr_double_list_to_list(valuelist_aux);
 
-	graph =  g_string_append(graph, ("digraph {\ngraph [bgcolor=transparent]\n"));
+	graph =  g_string_append(graph, ("digraph { graph [bgcolor=white]"));
 
 	void print_format(GebrGeoXmlFlow *flow, gchar *id, GString *graph, gboolean is_head) {
 		GebrGeoXmlSequence *revision = NULL;
@@ -1462,17 +1462,18 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 			
 		if (is_head) {
 			format_node = g_strdup_printf(
-					"%s [ label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
+					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
 					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s*</font></td>"
 					"</tr><tr><td align=\"center\">%s</td></tr></table>>, shape = note, color = \"#000080\","
-					"fontsize = 10]\n",
-					head, comment, _("Current"));
+					"fontsize = 10]",
+					head, head, comment, _("Current"));
 		} else {
 			format_node = g_strdup_printf(
-					"%s [ label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
+					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
 					"<tr><td bgcolor=\"#000040\" align=\"center\"><font color=\"white\">%s</font></td></tr>"
 					"<tr><td align=\"center\">%s</td></tr></table>>, shape = note,"
-					"fontsize = 10]\n",
+					"fontsize = 10]",
+					(gchar*)id,
 					(gchar*)id,
 					comment,
 					date);
@@ -1500,11 +1501,11 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 	gchar *parent_id = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(flow));
 	print_format(flow, parent_id, graph, TRUE);
-	g_string_append_printf(graph, "%s->%s[style=filled] \n", parent_id, head);
+	g_string_append_printf(graph, "%s->%s[style=filled]", parent_id, head);
 
 	void print_edges(gchar *key, GList *value, GString *text) {
 		for (GList *child = value; child; child = child->next) {
-			g_string_append_printf(text, "%s->%s[style=filled] \n",
+			g_string_append_printf(text, "%s->%s[style=filled]",
 					       key, (gchar*)child->data);
 		}
 	}

@@ -21,6 +21,12 @@ gebrmenu_DATA = grace.mnu sleep.mnu forloop.mnu
 desktopdir = $(datadir)/applications
 desktop_DATA = gebr.desktop
 
+pydir = $(datadir)/gebr/python
+python_DATA = \
+	gebr-dot-graph.py \
+	xdot.py \
+	$(NULL)
+
 gladedir = $(datadir)/gebr/glade
 glade_DATA = \
 	gebr-job-control.glade \

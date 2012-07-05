@@ -105,7 +105,6 @@ on_revisions_focus_out(GtkWidget     *widget,
 {
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
 	return FALSE;
-
 }
 
 GebrUiFlowBrowse *flow_browse_setup_ui()
@@ -125,7 +124,9 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/* alloc */
 	ui_flow_browse = g_new(GebrUiFlowBrowse, 1);
 
-	/* Create flow browse page */
+	/*
+	 * Create flow browse page
+	 */
 	page = gtk_vbox_new(FALSE, 0);
 	ui_flow_browse->widget = page;
 	hpanel = gtk_hpaned_new();
@@ -308,7 +309,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	gtk_box_pack_start(GTK_BOX(revpage), ui_flow_browse->rev_main, TRUE, TRUE, 0);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window_rev), revpage);
-
 
 	/**
 	 * Create Notebook
@@ -563,23 +563,86 @@ flow_browse_create_revisions_model(GebrGeoXmlFlow *flow,
 //	gebr_flow_revisions_hash_free(revs);
 }
 
+
+static void
+graph_process_read_stderr(GebrCommProcess * process, GebrGeoXmlFlow *flow)
+{
+	GString *output;
+	output = gebr_comm_process_read_stderr_string_all(process);
+
+	g_debug("====> ID OF REVISION: %s", output->str);
+
+	g_string_free(output, TRUE);
+}
+
+static void
+graph_process_finished(GebrCommProcess *process)
+{
+	gebr_comm_process_free(process);
+}
+
 static void
 flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
                                 GebrUiFlowBrowse *fb)
 {
 	GHashTable *revs = gebr_flow_revisions_hash_create(flow);
-	gchar *png_filename;
 
-	if (gebr_flow_revisions_create_graph(flow, revs, &png_filename)) {
-		GtkImage *image = GTK_IMAGE(gtk_builder_get_object(fb->info.builder_flow, "rev_image"));
-		gtk_image_set_from_file(image, png_filename);
+	if (fb->update_graph) {
+		gchar *dotfile;
+		if (gebr_flow_revisions_create_graph(flow, revs, &dotfile)) {
+			fb->update_graph = FALSE;
+			GString *file = g_string_new(dotfile);
+
+			if (gebr_comm_process_write_stdin_string(fb->graph_process, file) == 0)
+				g_debug("Can't create dotfile.");
+
+			g_string_free(file, TRUE);
+		}
+		g_free(dotfile);
 	}
-
-	g_free(png_filename);
 
 //	gebr_flow_revisions_hash_free(revs);
 }
 
+static void
+gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
+{
+	if (fb->graph_process)
+		return;
+
+	/*
+	 * Graph methods
+	 */
+
+	fb->update_graph = TRUE;
+	fb->graph_process = gebr_comm_process_new();
+
+	GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(fb->info.builder_flow, "graph_box"));
+
+	GtkWidget *socket = gtk_socket_new();
+	gtk_box_pack_start(GTK_BOX(box), socket, TRUE, TRUE, 5);
+	GdkNativeWindow socket_id = gtk_socket_get_id(GTK_SOCKET(socket));
+
+	g_debug("SOCKET ID %d", socket_id);
+
+	gchar *cmd_line = g_strdup_printf("python %s/data/gebr-dot-graph.py %s", socket_id);
+	GString *cmd = g_string_new(cmd_line);
+
+	g_signal_connect(fb->graph_process, "ready-read-stderr", G_CALLBACK(graph_process_read_stderr), gebr.flow);
+	g_signal_connect(fb->graph_process, "finished", G_CALLBACK(graph_process_finished), NULL);
+
+	if (!gebr_comm_process_start(fb->graph_process, cmd))
+		g_debug("FAIL");
+
+	gtk_widget_show_all(socket);
+
+	g_free(cmd_line);
+	g_string_free(cmd, TRUE);
+
+	/*
+	 * End graph methods
+	 */
+}
 
 /**
  * \internal
@@ -593,6 +656,8 @@ static void flow_browse_load(void)
 	gchar *title;
 
 	GebrGeoXmlSequence *revision;
+
+	gebr_flow_browse_create_graph(gebr.ui_flow_browse);
 
 	flow_free();
 
@@ -630,6 +695,7 @@ static void flow_browse_load(void)
 		flow_browse_create_revisions_model(gebr.flow,
 		                                   gebr.ui_flow_browse);
 
+		gebr.ui_flow_browse->update_graph = TRUE;
 		flow_browse_add_revisions_graph(gebr.flow,
 		                                gebr.ui_flow_browse);
 	} else {
@@ -732,6 +798,8 @@ gebr_flow_browse_revision_revert(GtkTreePath *path,
 	gboolean report_merged = FALSE;
 	GtkTreeIter iter;
 	GebrGeoXmlRevision *revision;
+
+	gebr.ui_flow_browse->update_graph = TRUE;
 
 	gchar *path_str = gtk_tree_path_to_string(path);
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(fb->rev_store), &iter, path_str);
