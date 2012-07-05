@@ -347,17 +347,22 @@ static void on_include_revisions_report_activate(GtkToggleAction *action, GebrGu
 	GtkAction *action_param_table;
 	GtkUIManager *manager;
 	const gchar *path_param_table;
+	GebrGeoXmlObjectType type;
 
 	object = g_object_get_data (G_OBJECT (window), HTML_WINDOW_OBJECT);
 	flag = gtk_toggle_action_get_active (action);
-	gebr.config.detailed_line_include_revisions_report = flag;
-
 	manager = gebr_gui_html_viewer_window_get_ui_manager (window);
-
 	path_param_table = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/ParameterTableMenu";
 	action_param_table = gtk_ui_manager_get_action(manager, path_param_table);
-	gtk_action_set_sensitive(action_param_table, gebr.config.detailed_line_include_revisions_report);
-
+	type = gebr_geoxml_object_get_type (object);
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW){
+		gebr.config.detailed_flow_include_revisions_report = flag;
+		gtk_action_set_sensitive(action_param_table, gebr.config.detailed_flow_include_revisions_report);
+	}
+	else {
+		gebr.config.detailed_line_include_revisions_report = flag;
+		gtk_action_set_sensitive(action_param_table, gebr.config.detailed_line_include_revisions_report);
+	}
 	report = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
 	gebr_gui_html_viewer_window_show_html (window, report);
 	g_free (report);
@@ -582,17 +587,16 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 			g_free (name);
 		}
 
-		if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
-			const gchar *name;
-			const gchar *path;
-			const gchar *path_param_table;
+		const gchar *name;
+		const gchar *path;
+		path = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/IncludeCommentAction";
+		name = "IncludeRevisionsReportAction";
+		gtk_ui_manager_add_ui (manager, merge_id, path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
 
-			path = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/IncludeCommentAction";
-			name = "IncludeRevisionsReportAction";
-			gtk_ui_manager_add_ui (manager, merge_id, path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+		if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
+			const gchar *path_param_table;
 			name = "IncludeFlowsReportAction";
 			gtk_ui_manager_add_ui (manager, merge_id, path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
-
 			action = gtk_action_group_get_action (group, "IncludeCommentAction");
 			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), gebr.config.detailed_line_include_report);
 			action = gtk_action_group_get_action (group, "IncludeFlowsReportAction");
@@ -609,6 +613,8 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 			action = gtk_action_group_get_action (group, "IncludeCommentAction");
 			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), gebr.config.detailed_flow_include_report);
+			action = gtk_action_group_get_action (group, "IncludeRevisionsReportAction");
+			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), gebr.config.detailed_flow_include_revisions_report);
 			action = gtk_action_group_get_action (group, "NoTableAction");
 			gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), gebr.config.detailed_flow_parameter_table);
 		}

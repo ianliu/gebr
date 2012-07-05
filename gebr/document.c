@@ -692,7 +692,6 @@ gchar *gebr_document_report_get_styles_css(gchar *report,GString *css)
 
 void gebr_document_create_section(GString *destiny, gchar *source, gchar *class_name)
 {
-
 	g_string_append_printf(destiny,"<div class='%s'>%s</div>\n ",class_name,source);
 }
 
@@ -772,14 +771,11 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 	inner_body = gebr_document_report_get_inner_body(report);
 
 	if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
-
 		styles = gebr_document_report_get_styles_css(report, gebr.config.detailed_line_css);
-
 		header = gebr_line_generate_header(document);
 
 		if (gebr.config.detailed_line_include_report && inner_body)
 			gebr_document_create_section(content, inner_body, "content");
-
 
 		if (gebr.config.detailed_line_include_flow_report) {
 			gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(document), &line_flow, 0);
@@ -787,9 +783,8 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 			for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
 				GebrGeoXmlFlow *flow;
 				gboolean include_table;
-				const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
-
 				include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
+				const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
 				document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
 				gebr_validator_set_document(gebr.validator,(GebrGeoXmlDocument**)(&flow), GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
 				gchar * flow_cont = gebr_flow_get_detailed_report(flow, include_table, FALSE, NULL, NULL);
@@ -805,11 +800,14 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 		}
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 		styles = gebr_document_report_get_styles_css(report, gebr.config.detailed_flow_css);
-
 		header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document), TRUE, NULL, NULL);
+		gboolean include_table = gebr.config.detailed_flow_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 
 		if (gebr.config.detailed_flow_include_report && inner_body)
 			gebr_document_create_section(content, inner_body, "gebr-geoxml-flow");
+
+		if (gebr.config.detailed_flow_include_revisions_report)
+			gebr_document_include_flow_revision (GEBR_GEOXML_FLOW(document),content,include_table);
 
 		gchar * table = gebr_document_flow_append_dicts_and_params(document);
 		if (!table)
