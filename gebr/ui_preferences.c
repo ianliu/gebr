@@ -353,10 +353,12 @@ create_view_for_servers(struct ui_preferences *up)
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_min_width(col, 100);
 
+#if !GTK_CHECK_VERSION(2,20,0)
 	renderer = gtk_cell_renderer_spinner_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_progress_func,
 	                                        NULL, NULL);
+#endif
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);

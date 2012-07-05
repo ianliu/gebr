@@ -184,7 +184,7 @@ finish_group_creation(GtkWidget *widget,
 
 	GtkWidget *box = gtk_hbox_new(FALSE, 5);
 
-#if GTK_CHECK_VERSION(2,20,0)
+#if !GTK_CHECK_VERSION(2,20,0)
 	GtkWidget *spinner = gtk_spinner_new();
 	gtk_box_pack_start(GTK_BOX(box), spinner, FALSE, TRUE, 0);
 	gtk_spinner_start(GTK_SPINNER(spinner));
@@ -941,6 +941,7 @@ typedef struct progressData {
 	GtkTreeModel *model;
 } ProgressData;
 
+#if !GTK_CHECK_VERSION(2,20,0)
 gboolean
 update_spinner(gpointer user_data)
 {
@@ -1020,6 +1021,7 @@ gebr_maestro_controller_daemon_server_progress_func(GtkTreeViewColumn *tree_colu
 		}
 	}
 }
+#endif
 
 void
 gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column,
@@ -1432,6 +1434,8 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	/*
 	 * Maestro combobox
 	 */
+
+#if !GTK_CHECK_VERSION(2,20,0)
 	GtkBox *maestro_box = GTK_BOX(gtk_builder_get_object(self->priv->builder, "maestro_box"));
 
 	/* Create Spinner */
@@ -1440,6 +1444,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_widget_set_size_request(self->priv->spinner, 22, 22);
 	gtk_box_reorder_child(maestro_box, self->priv->spinner, 0);
 	gtk_widget_show_all(GTK_WIDGET(maestro_box));
+#endif
 
 	GebrMaestroServer *maestro = self->priv->maestro;
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
@@ -1503,10 +1508,12 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_tree_view_column_set_title(col, _("Address"));
 	gtk_tree_view_column_set_min_width(col, 100);
 
+#if !GTK_CHECK_VERSION(2,20,0)
 	renderer = gtk_cell_renderer_spinner_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_progress_func,
 	                                        NULL, NULL);
+#endif
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
@@ -1771,11 +1778,7 @@ on_maestro_error(GebrMaestroServer *maestro,
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 
 	if (state == SERVER_STATE_DISCONNECTED) {
-		gebr_maestro_server_reset_daemons_timeout(maestro);
-
 		gtk_widget_show(GTK_WIDGET(status_image));
-		gtk_widget_hide(mc->priv->spinner);
-		gtk_spinner_start(GTK_SPINNER(mc->priv->spinner));
 
 		if (!message) {
 			gtk_image_set_from_stock(status_image, GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
@@ -1786,17 +1789,31 @@ on_maestro_error(GebrMaestroServer *maestro,
 		}
 	} else if (state == SERVER_STATE_LOGGED) {
 		gtk_widget_show(GTK_WIDGET(status_image));
-		gtk_widget_hide(mc->priv->spinner);
-		gtk_spinner_stop(GTK_SPINNER(mc->priv->spinner));
-
 		gtk_image_set_from_stock(status_image, GTK_STOCK_CONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
 		gtk_widget_set_tooltip_text(GTK_WIDGET(status_image), _("Connected"));
 	}
 	else {
 		gtk_widget_hide(GTK_WIDGET(status_image));
+	}
+
+#if !GTK_CHECK_VERSION(2,20,0)
+/*
+ * Update spinner
+ */
+	if (state == SERVER_STATE_DISCONNECTED) {
+		gebr_maestro_server_reset_daemons_timeout(maestro);
+		gtk_widget_hide(mc->priv->spinner);
+		gtk_spinner_start(GTK_SPINNER(mc->priv->spinner));
+	}
+	else if (state == SERVER_STATE_LOGGED) {
+		gtk_widget_hide(mc->priv->spinner);
+		gtk_spinner_stop(GTK_SPINNER(mc->priv->spinner));
+	}
+	else {
 		gtk_widget_show(mc->priv->spinner);
 		gtk_widget_set_tooltip_text(mc->priv->spinner, _("Connecting"));
 	}
+#endif
 
 	if (message)
 		g_free(message);
@@ -1851,9 +1868,7 @@ on_daemon_error(GebrMaestroServer *maestro,
 			if (g_strcmp0(addr, gebr_daemon_server_get_address(daemon)) == 0) {
 				guint timeout = gebr_daemon_server_get_timeout(daemon);
 				if (timeout != -1) {
-					g_debug("REMOVE TIMEOUT FROM %s", addr);
 					if (g_source_remove(timeout))
-						g_debug("REMOVE MESMO TIMEOUT FROM %s", addr);
 						gebr_daemon_server_set_timeout(daemon, -1);
 				}
 			}
