@@ -184,7 +184,7 @@ finish_group_creation(GtkWidget *widget,
 
 	GtkWidget *box = gtk_hbox_new(FALSE, 5);
 
-#if !GTK_CHECK_VERSION(2,20,0)
+#if GTK_CHECK_VERSION(2,20,0)
 	GtkWidget *spinner = gtk_spinner_new();
 	gtk_box_pack_start(GTK_BOX(box), spinner, FALSE, TRUE, 0);
 	gtk_spinner_start(GTK_SPINNER(spinner));
@@ -941,7 +941,7 @@ typedef struct progressData {
 	GtkTreeModel *model;
 } ProgressData;
 
-#if !GTK_CHECK_VERSION(2,20,0)
+#if GTK_CHECK_VERSION(2,20,0)
 gboolean
 update_spinner(gpointer user_data)
 {
@@ -1435,7 +1435,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	 * Maestro combobox
 	 */
 
-#if !GTK_CHECK_VERSION(2,20,0)
+#if GTK_CHECK_VERSION(2,20,0)
 	GtkBox *maestro_box = GTK_BOX(gtk_builder_get_object(self->priv->builder, "maestro_box"));
 
 	/* Create Spinner */
@@ -1508,7 +1508,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_tree_view_column_set_title(col, _("Address"));
 	gtk_tree_view_column_set_min_width(col, 100);
 
-#if !GTK_CHECK_VERSION(2,20,0)
+#if GTK_CHECK_VERSION(2,20,0)
 	renderer = gtk_cell_renderer_spinner_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_progress_func,
@@ -1796,7 +1796,7 @@ on_maestro_error(GebrMaestroServer *maestro,
 		gtk_widget_hide(GTK_WIDGET(status_image));
 	}
 
-#if !GTK_CHECK_VERSION(2,20,0)
+#if GTK_CHECK_VERSION(2,20,0)
 /*
  * Update spinner
  */
