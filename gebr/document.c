@@ -678,7 +678,8 @@ gchar * gebr_document_report_get_inner_body(const gchar * report)
 	return inner_body;
 }
 
-gchar *gebr_document_report_get_styles_css(gchar *report,GString *css){
+gchar *gebr_document_report_get_styles_css(gchar *report,GString *css)
+{
 	gchar * styles = "";
 	if (css->len != 0)
 		styles = g_strdup_printf ("<link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/%s\" />",
@@ -689,12 +690,14 @@ gchar *gebr_document_report_get_styles_css(gchar *report,GString *css){
 	return styles;
 }
 
-void gebr_document_create_section(GString *destiny, gchar *source, gchar *class_name){
+void gebr_document_create_section(GString *destiny, gchar *source, gchar *class_name)
+{
 
 	g_string_append_printf(destiny,"<div class='%s'>%s</div>\n ",class_name,source);
 }
 
-gchar * gebr_document_flow_append_dicts_and_params(GebrGeoXmlDocument *document){
+gchar * gebr_document_flow_append_dicts_and_params(GebrGeoXmlDocument *document)
+{
 	gchar * params;
 	gchar *flow_dict, *line_dict, *proj_dict;
 	gchar * concat;
@@ -715,6 +718,35 @@ gchar * gebr_document_flow_append_dicts_and_params(GebrGeoXmlDocument *document)
 	g_free (line_dict);
 	g_free (flow_dict);
 	return concat;
+}
+
+void gebr_document_include_flow_revision (GebrGeoXmlFlow *flow, GString * content, gboolean include_table)
+{
+	GebrGeoXmlSequence *seq;
+	gebr_geoxml_flow_get_revision(flow, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		gchar *rev_xml;
+		gchar *comment;
+		gchar *date;
+		GebrGeoXmlDocument *revdoc;
+
+		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &rev_xml, &date, &comment, NULL);
+
+		if (gebr_geoxml_document_load_buffer(&revdoc, rev_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+			g_free(rev_xml);
+			g_free(comment);
+			g_free(date);
+			g_warn_if_reached();
+		}
+
+		gchar * rev_cont = gebr_flow_get_detailed_report(GEBR_GEOXML_FLOW(revdoc), include_table, FALSE, comment, date);
+		gebr_document_create_section(content, rev_cont, "gebr-geoxml-flow");
+
+		g_free(rev_xml);
+		g_free(comment);
+		g_free(date);
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(revdoc));
+	}
 }
 
 gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
@@ -763,33 +795,8 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 				gchar * flow_cont = gebr_flow_get_detailed_report(flow, include_table, FALSE, NULL, NULL);
 				g_string_append(content, flow_cont);
 
-				if (gebr.config.detailed_line_include_revisions_report) {
-					GebrGeoXmlSequence *seq;
-					gebr_geoxml_flow_get_revision(flow, &seq, 0);
-					for (; seq; gebr_geoxml_sequence_next(&seq)) {
-						gchar *rev_xml;
-						gchar *comment;
-						gchar *date;
-						GebrGeoXmlDocument *revdoc;
-
-						gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &rev_xml, &date, &comment, NULL);
-
-						if (gebr_geoxml_document_load_buffer(&revdoc, rev_xml) != GEBR_GEOXML_RETV_SUCCESS) {
-							g_free(rev_xml);
-							g_free(comment);
-							g_free(date);
-							g_warn_if_reached();
-						}
-
-						gchar * rev_cont = gebr_flow_get_detailed_report(GEBR_GEOXML_FLOW(revdoc), include_table, FALSE, comment, date);
-						gebr_document_create_section(content, rev_cont, "gebr-geoxml-flow");
-
-						g_free(rev_xml);
-						g_free(comment);
-						g_free(date);
-						gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(revdoc));
-					}
-				}
+				if (gebr.config.detailed_line_include_revisions_report)
+					gebr_document_include_flow_revision (flow,content,include_table);
 
 				g_free(flow_cont);
 				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
