@@ -80,7 +80,7 @@ print_usage()
 
 GEBR_REPO=http://gebr.googlecode.com/files/
 MENU_REPO=http://gebr-menus.googlecode.com/files/
-GEBR_VERSION=${GEBR_VERSION-0.18.0}
+GEBR_VERSION=${GEBR_VERSION-0.18.1}
 GEBR_MENUS="gebr-menus-su-0.6.2 gebr-menus-shtools-0.2.2"
 
 SCRIPT_NAME=`basename $0`
@@ -496,7 +496,7 @@ EOF
 	&& cd gebrproject-$GEBR_VERSION
 # Check for version 0.11.0 or greater
 if [ -d rpm ]; then
-	./configure --prefix=$PREFIX_DIR $GEBR_CONFIG_FLAGS $DEBUG CFLAGS=-I/opt/gebrproject/include LIBS=-L/opt/gebrproject/lib \
+	./configure --prefix=$PREFIX_DIR $GEBR_CONFIG_FLAGS $DEBUG CFLAGS="-I/opt/gebrproject/include -Wno-error" LIBS=-L/opt/gebrproject/lib \
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 else
 	for dir in libgebr gebrd gebr debr; do
