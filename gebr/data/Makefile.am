@@ -21,7 +21,7 @@ gebrmenu_DATA = grace.mnu sleep.mnu forloop.mnu
 desktopdir = $(datadir)/applications
 desktop_DATA = gebr.desktop
 
-pydir = $(datadir)/gebr/python
+pythondir = $(datadir)/gebr/python
 python_DATA = \
 	gebr-dot-graph.py \
 	xdot.py \
@@ -44,7 +44,7 @@ glade_DATA = \
 gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 	LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@
 
-EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA)
+EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA) $(python_DATA)
 CLEANFILES = $(desktop_DATA)
 
 install-data-hook:
