@@ -625,7 +625,7 @@ gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
 
 	g_debug("SOCKET ID %d", socket_id);
 
-	gchar *cmd_line = g_strdup_printf("python %s/data/gebr-dot-graph.py %s", socket_id);
+	gchar *cmd_line = g_strdup_printf("python %s/gebr-xdot-graph.py %d", GEBR_PYTHON_DIR, socket_id);
 	GString *cmd = g_string_new(cmd_line);
 
 	g_signal_connect(fb->graph_process, "ready-read-stderr", G_CALLBACK(graph_process_read_stderr), gebr.flow);

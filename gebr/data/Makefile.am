@@ -23,7 +23,7 @@ desktop_DATA = gebr.desktop
 
 pythondir = $(datadir)/gebr/python
 python_DATA = \
-	gebr-dot-graph.py \
+	gebr-xdot-graph.py \
 	xdot.py \
 	$(NULL)
 
