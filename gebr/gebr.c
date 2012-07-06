@@ -158,6 +158,8 @@ gboolean gebr_quit(gboolean save_config)
 	flow_free();
 	project_line_free();
 
+	gebr_comm_process_kill(gebr.ui_flow_browse->graph_process);
+
 	/* free config stuff */
 	g_key_file_free(gebr.config.key_file);
 	g_string_free(gebr.config.path, TRUE);
