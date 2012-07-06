@@ -271,7 +271,7 @@ function fetchpackage {
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # libpng-1.2.44.tar.gz
-	fetchpackage ftp://ftp.simplesystems.org/pub/libpng/png/src/history/libpng-1.2.44.tar.gz \
+	fetchpackage ftp://ftp.simplesystems.org/pub/libpng/png/src/history/libpng12/libpng-1.2.44.tar.gz \
 	&& (cd libpng-1.2.44 2> /dev/null || (tar xzf libpng-1.2.44.tar.gz \
 	&& cd libpng-1.2.44 \
 	&& ./configure --prefix=$PREFIX_DIR)) \
