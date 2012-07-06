@@ -159,7 +159,8 @@ menu_path_internal_index_is_valid(const gchar *path,
 	g_stat(local_filename_menu, &menu_info);
 	g_stat(local_filename_cat, &categ_info);
 
-	gboolean file_exists = g_file_test(local_filename_menu, G_FILE_TEST_EXISTS) && g_file_test(local_filename_cat, G_FILE_TEST_EXISTS);
+	gboolean file_exists = g_file_test(local_filename_menu, G_FILE_TEST_EXISTS) &&
+		g_file_test(local_filename_cat, G_FILE_TEST_EXISTS);
 	gboolean need_update = menu_compare_times(path, menu_info.st_mtime, TRUE) || menu_compare_times(path, categ_info.st_mtime, TRUE);
 
 	if (!file_exists || (file_exists && need_update))
@@ -213,7 +214,6 @@ menu_list_populate(void)
 		}
 	}
 
-	g_free(gebr_home);
 
 	/* Scan debr installed menus and create index */
 	GString *path = g_string_new(NULL);
@@ -227,11 +227,16 @@ menu_list_populate(void)
 	g_string_free(path, TRUE);
 
 	/* Scan user's folder and create index */
-	menu_list_create_index(gebr.config.usermenus->str, &index_menu, &index_category, TRUE);
-	__menu_list_populate(index_menu, index_category, categories_hash);
 
-	g_free(index_menu);
-	g_free(index_category);
+	if (menu_path_internal_index_is_valid(gebr.config.usermenus->str, gebr_home, &index_menu, &index_category)) {
+		menu_list_create_index(gebr.config.usermenus->str, &index_menu, &index_category, FALSE);
+		__menu_list_populate(index_menu, index_category, categories_hash);
+		g_debug("********** CREATING usermenu's index:'%s', usermenus's directory: '%s' ", index_menu, gebr.config.usermenus->str);
+		g_free(index_menu);
+		g_free(index_category);
+	}
+
+	g_free(gebr_home);
 	g_hash_table_unref(categories_hash);
 }
 
