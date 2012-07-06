@@ -266,6 +266,7 @@ on_document_help_button_clicked (GtkButton *button, gpointer doc_type_pointer)
 		section = g_strdup("projects_lines_create_projects");
 		break;
 	default:
+		section = NULL;
 		g_warn_if_reached();
 	}
 
@@ -386,6 +387,9 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
+
+	on_changed_validate_email (email, data->ok_button);
+	g_signal_connect(email, "changed", G_CALLBACK(on_changed_validate_email), data->ok_button);
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
@@ -2228,4 +2232,36 @@ static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
 static void on_dict_edit_change_selection(GtkTreeSelection *selection, struct dict_edit_data *data)
 {
 	gebr_dict_update_wizard(data);
+}
+
+void on_changed_validate_email(GtkEntry *entry, GtkWidget *widget)
+{
+	const gchar *email = gtk_entry_get_text(GTK_ENTRY(entry));
+
+	gboolean error = FALSE;
+
+	if (!*email) {
+		error = TRUE;
+	} else {
+		error = !gebr_validate_check_is_email(email);
+	}
+	validate_entry(GTK_ENTRY(entry), error, _("Invalid email"), _("Your email address"));
+	gtk_widget_set_sensitive(widget, !error);
+}
+
+void
+validate_entry(GtkEntry *entry,
+	       gboolean error,
+	       const gchar *err_text,
+	       const gchar *clean_text)
+{
+	if (!error) {
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(entry), clean_text);
+	} else {
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, err_text);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(entry), err_text);
+	}
 }

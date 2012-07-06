@@ -1036,6 +1036,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 				g_free(enum_value);
 			}
 			gchar *label = gebr_geoxml_parameter_get_label(parameter);
+			str_value->str = g_markup_printf_escaped("%s",str_value->str);
 			g_string_append_printf(dump, "<tr>\n  <td class=\"%slabel\">%s</td>\n  <td class=\"value\">%s</td>\n</tr>\n",
 					       (in_group?"group-":""), label, str_value->str);
 			g_free(label);
@@ -1222,6 +1223,15 @@ gchar *gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean hea
 		type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(sequence));
 		comment = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(sequence));
 
+		gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+		gchar *mount_point;
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+		if (maestro)
+			mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+		else
+			mount_point = NULL;
+		value = gebr_relativise_path(value,mount_point,paths);
+		value = g_markup_printf_escaped("%s",value);
 		gebr_validator_evaluate_param(gebr.validator, GEBR_GEOXML_PARAMETER(sequence), &eval, &error);
 
 		g_string_append_printf(dump, "<tr >\n  <td class=\"%2$sgroup-label\">%1$s</td>\n  <td class=\"%2$svalue\">%3$s</td>\n"
@@ -1264,7 +1274,11 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow)
 	input = gebr_geoxml_flow_io_get_input (flow);
 	output = gebr_geoxml_flow_io_get_output (flow);
 	error = gebr_geoxml_flow_io_get_error (flow);
-        
+
+	input = g_markup_printf_escaped("%s",input);
+	output = g_markup_printf_escaped("%s",output);
+	error = g_markup_printf_escaped("%s",error);
+
 	dump = g_string_new(NULL);
 
 	g_string_append_printf(dump,

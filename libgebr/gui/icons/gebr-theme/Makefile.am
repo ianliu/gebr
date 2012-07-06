@@ -109,7 +109,7 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/view-refresh.png	\
 	16x16/stock/view-sort-ascending.png	\
 	16x16/stock/view-sort-descending.png	\
-	16x16/stock/window-close.png
+	16x16/stock/window-close.png	\
 	16x16/stock/group.png
 
 libgebr_gui_icons22x22stockdir = $(datadir)/libgebr/icons/gebr-theme/22x22/stock
@@ -297,7 +297,7 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/view-refresh.png	\
 	48x48/stock/view-sort-ascending.png	\
 	48x48/stock/view-sort-descending.png	\
-	48x48/stock/window-close.png
+	48x48/stock/window-close.png	\
 	48x48/stock/group.png
 
 libgebr_gui_iconsscalablestockdir = $(datadir)/libgebr/icons/gebr-theme/scalable/stock

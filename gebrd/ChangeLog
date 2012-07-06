@@ -1,3 +1,40 @@
+2012-06-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making empty value visible in command line. (Fixes issue 1202)
+
+2012-06-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve parse of maestro and daemon port using token to protec gebr
+	port
+
+2012-06-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update translations of interface
+
+2012-06-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix order of servers on daemon to execute MPI program (Fixes issue
+	1145)
+
+2012-06-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix timeout in non-responsive servers, and in coopt of idle servers
+	on maestro
+
+2012-06-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix auto connection on idle server from another maestro. (Fixes
+	issue 1130)
+
+2012-05-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disconnect idle server when change maestro which used it, or give
+	error if not idle
+
+2012-05-24  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.18.0: The wizards came to stay
+
 2012-05-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.17.14: Documentation further improvements

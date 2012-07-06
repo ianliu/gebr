@@ -408,6 +408,7 @@ static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget
 {
 	gebr_gui_parameter_widget_sync_non_list(parameter_widget);
 	gebr_gui_parameter_widget_report_change(parameter_widget);
+	gebr_gui_parameter_widget_validate(parameter_widget);
 }
 
 /*
@@ -479,6 +480,7 @@ static void __on_edit_list_toggled(GtkToggleButton * toggle_button, struct gebr_
 	} else if (parameter_widget->parameter_type != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
 		gtk_widget_hide(GTK_WIDGET(parameter_widget->gebr_gui_value_sequence_edit));
 
+	gebr_gui_parameter_widget_validate(parameter_widget);
 	gtk_widget_set_sensitive(parameter_widget->list_value_widget, !toggled);
 }
 
@@ -522,7 +524,7 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit *gebr_gui_va
 
 	__parameter_list_value_widget_update(self);
 	gebr_gui_parameter_widget_set_non_list_widget_value(self, "");
-
+	gebr_gui_parameter_widget_validate(self);
 	g_string_free(value, TRUE);
 }
 
@@ -627,11 +629,10 @@ gebr_gui_parameter_set_min_max(GtkEntry *entry, struct gebr_gui_parameter_widget
 
 static void __on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
 {
-	gebr_gui_parameter_widget_validate(parameter_widget);
-
 	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 			parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
 		gebr_gui_parameter_set_min_max(entry, parameter_widget);
+	gebr_gui_parameter_widget_validate(parameter_widget);
 }
 
 static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,

@@ -40,16 +40,6 @@ enum {
 	MAESTRO_DEFAULT_N_COLUMN
 };
 
-enum {
-	CANCEL_PAGE,
-	INITIAL_PAGE,
-	MAESTRO_INFO_PAGE,
-	MAESTRO_PAGE,
-	SERVERS_INFO_PAGE,
-	SERVERS_PAGE,
-	GVFS_PAGE,
-};
-
 typedef enum {
 	WIZARD_STATUS_WITHOUT_PREFERENCES,
 	WIZARD_STATUS_WITHOUT_MAESTRO,
@@ -128,6 +118,7 @@ on_assistant_cancel(GtkAssistant *assistant,
 		up->cancel_assistant = FALSE;
 		gtk_widget_destroy(GTK_WIDGET(assistant));
 	}
+	up->tried_to_mount_gvfs = FALSE;
 }
 
 static void
@@ -159,6 +150,7 @@ on_assistant_close(GtkAssistant *assistant,
 		up->cancel_assistant = TRUE;
 		gtk_assistant_set_current_page(assistant, CANCEL_PAGE);
 	}
+	up->tried_to_mount_gvfs = FALSE;
 }
 
 static void
@@ -361,10 +353,12 @@ create_view_for_servers(struct ui_preferences *up)
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_min_width(col, 100);
 
+#if GTK_CHECK_VERSION(2,20,0)
 	renderer = gtk_cell_renderer_spinner_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_maestro_controller_daemon_server_progress_func,
 	                                        NULL, NULL);
+#endif
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
@@ -514,14 +508,21 @@ set_status_for_mount(GebrMaestroServer *maestro,
 	if (status == STATUS_MOUNT_OK) {
 		first_time = FALSE;
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
+		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browsing is enabled!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, FALSE);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);
 	}
 	else if (status == STATUS_MOUNT_NOK) {
-		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browsing is disabled!"));
+		if (!up->tried_to_mount_gvfs) {
+			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
+			gtk_label_set_text(GTK_LABEL(status_label), _("Remote browsing is disabled!"));
+			up->tried_to_mount_gvfs = TRUE;
+		}
+		else {
+			gtk_label_set_text(GTK_LABEL(status_label), _("Failed to enable remote browsing!"));
+			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
+		}
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, TRUE);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);
@@ -549,11 +550,6 @@ on_mount_gvfs_clicked(GtkButton *button,
                       struct ui_preferences *up)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-
-	if (gebr_maestro_server_has_connected_daemon(maestro)) {
-		set_status_for_mount(maestro, STATUS_MOUNT_OK, up);
-		return;
-	}
 
 	GtkTreeIter iter;
 	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
@@ -595,6 +591,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		}
 
 		up->cancel_assistant = FALSE;
+		up->tried_to_mount_gvfs = FALSE;
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 		gtk_widget_show(up->back_button);
@@ -1027,12 +1024,19 @@ on_preferences_button_clicked (GtkButton *button, gpointer pointer)
 /**
  * Assembly preference window.
  *
+ * Parameters:
+ * @first_run: %TRUE if want to run preferences wizard for the first time
+ * @wizard_run: %TRUE to run connections wizard, or %FALSE to create only preferences
+ * @insert_preferences: %TRUE to include preferences tab on connections wizard
+ * @page: A @GebrUiPreferencesPage with one of the options pages, or -1 to use default
+ *
  * \return The structure containing relevant data. It will be automatically freed when the dialog closes.
  */
 struct ui_preferences *
 preferences_setup_ui(gboolean first_run,
                      gboolean wizard_run,
-                     gboolean insert_preferences)
+                     gboolean insert_preferences,
+                     GebrUiPreferencesPage page)
 {
 	struct ui_preferences *ui_preferences;
 
@@ -1041,6 +1045,7 @@ preferences_setup_ui(gboolean first_run,
 	ui_preferences->cancel_assistant = FALSE;
 	ui_preferences->maestro_addr = NULL;
 	ui_preferences->insert_preferences = insert_preferences;
+	ui_preferences->tried_to_mount_gvfs = FALSE;
 
 	/* Load pages from Glade */
 	GtkBuilder *builder = gtk_builder_new();
@@ -1182,11 +1187,17 @@ preferences_setup_ui(gboolean first_run,
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);
 
-		if (!first_run && wizard_run && !insert_preferences) {
-			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
-			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
+		if (page != -1) {
+			GtkWidget *curr_page = gtk_assistant_get_nth_page(GTK_ASSISTANT(assistant), page);
+			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), page);
+			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), curr_page, GTK_ASSISTANT_PAGE_INTRO);
 		} else {
-			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), INITIAL_PAGE);
+			if (!first_run && wizard_run && !insert_preferences) {
+				gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
+				gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
+			} else {
+				gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), INITIAL_PAGE);
+			}
 		}
 	}
 	else {

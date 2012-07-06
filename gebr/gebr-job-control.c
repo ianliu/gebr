@@ -771,7 +771,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 						   "distributed on <b>%d</b> node(s).\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
 						  total_procs, type == MAESTRO_SERVER_TYPE_DAEMON? _("node") : _("group"), groups,
-						  g_strcmp0(niceness, "0")? _("using the nodes idle time, ") : "",
+						  g_strcmp0(niceness, "0")? _("using the nodes idle time,\n") : "",
 						  n_servers);
 		g_string_append(resources, markup);
 
@@ -1321,6 +1321,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	}
 
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
+	GString *msg_final = g_string_new("");
 
 	const gchar *maddr = gebr_job_get_maestro_address(job);
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
@@ -1330,8 +1331,13 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	if (!g_strcmp0(msg, "127.0.0.1"))
 		msg = g_strdup(maddr); 
 
-
-	gtk_label_set_markup (job_group, msg);
+	g_string_append(msg_final, msg);
+	if(g_utf8_strlen(msg, 16) > 15) {
+		g_string_erase(msg_final, 13, -1);
+		g_string_append(msg_final,"...");
+	}
+	gtk_label_set_markup(job_group, g_string_free(msg_final,FALSE));
+	gtk_widget_set_tooltip_text(GTK_WIDGET(job_group), msg);
 
 	gdouble speed = gebr_job_get_exec_speed(job);
 	const gchar *icon = gebr_interface_get_speed_icon(gebr_interface_calculate_slider_from_speed(speed));

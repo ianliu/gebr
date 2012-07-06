@@ -1390,7 +1390,7 @@ gebr_validator_validate_control_parameter(GebrValidator *self,
 			g_set_error(error,
 			            GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_SYNTAX,
-			            _("Accepts only integer values"));
+			            _("Accepts only integer values from 0 to 2147483647"));
 			g_free(result);
 			return FALSE;
 		}

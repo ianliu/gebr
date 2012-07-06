@@ -867,30 +867,28 @@ job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * parameter, GebrGeoXmlPr
 			value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
 			strip = g_strstrip(g_strdup(value));
 
-			if (*strip) {
-				gchar *result;
-				gchar *escaped;
-				GError *error = NULL;
+			gchar *result;
+			gchar *escaped;
+			GError *error = NULL;
 
-				gebr_validator_evaluate_interval(gebrd_get_validator(gebrd), strip, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
+			gebr_validator_evaluate_interval(gebrd_get_validator(gebrd), strip, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
 
-				if (!error) {
-					escaped = escape_quote_and_slash(result);
-					if (!first)
-						g_string_append(cmd, separator);
-					g_string_append_printf (cmd, "%s", result);
-					g_free (escaped);
-					g_free (result);
-					g_free (strip);
-				} else {
-					job_issue(job, error->message);
-					g_error_free(error);
-					g_free (strip);
-					return FALSE;
-				}
-				if (first)
-					first = FALSE;
+			if (!error) {
+				escaped = escape_quote_and_slash(result);
+				if (!first)
+					g_string_append(cmd, separator);
+				g_string_append_printf (cmd, "%s", result);
+				g_free (escaped);
+				g_free (result);
+				g_free (strip);
+			} else {
+				job_issue(job, error->message);
+				g_error_free(error);
+				g_free (strip);
+				return FALSE;
 			}
+			if (first)
+				first = FALSE;
 			gebr_geoxml_sequence_next(&seq);
 		}
 
@@ -936,51 +934,49 @@ job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * parameter, GebrGeoXmlPr
 		while(seq) {
 			value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
 			strip = g_strstrip(g_strdup(value));
-	
-			if (*strip) {
-				g_ascii_strtod(strip, &end_str);
-				if(*end_str) {
-					gchar *escaped = replace_quotes(gebr_geoxml_parameter_get_label (parameter));
 
-					if (type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
-						const gchar *digits;
-						gebr_geoxml_program_parameter_get_range_properties(program_parameter, NULL, NULL, NULL, &digits);
-						if (g_strcmp0(digits, "0") == 0)
-							temp = g_strdup_printf("round(%s)", strip);
-						else
-							temp = g_strdup(strip);
-					} else if (type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+			g_ascii_strtod(strip, &end_str);
+			if(*end_str) {
+				gchar *escaped = replace_quotes(gebr_geoxml_parameter_get_label (parameter));
+
+				if (type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
+					const gchar *digits;
+					gebr_geoxml_program_parameter_get_range_properties(program_parameter, NULL, NULL, NULL, &digits);
+					if (g_strcmp0(digits, "0") == 0)
 						temp = g_strdup_printf("round(%s)", strip);
 					else
 						temp = g_strdup(strip);
+				} else if (type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+					temp = g_strdup_printf("round(%s)", strip);
+				else
+					temp = g_strdup(strip);
 
-					if (*vmin && *vmax)
-						g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, vmin, temp,
-									job->expr_count + job->n_vars, escaped);
-					else if(*vmin)
-						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmin, temp,
-									job->expr_count + job->n_vars, escaped);
-					else if(*vmax)
-						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, temp,
-									job->expr_count + job->n_vars, escaped);
-					else
-						g_string_append_printf (expr_buf, "\t\t%s # V[%"G_GSIZE_FORMAT"]: %s\n", temp,
-									job->expr_count + job->n_vars, escaped);
+				if (*vmin && *vmax)
+					g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, vmin, temp,
+					                        job->expr_count + job->n_vars, escaped);
+				else if(*vmin)
+					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmin, temp,
+					                        job->expr_count + job->n_vars, escaped);
+				else if(*vmax)
+					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, temp,
+					                        job->expr_count + job->n_vars, escaped);
+				else
+					g_string_append_printf (expr_buf, "\t\t%s # V[%"G_GSIZE_FORMAT"]: %s\n", temp,
+					                        job->expr_count + job->n_vars, escaped);
 
-					if(!first)
-						g_string_append(cmd, separator);
-					g_string_append_printf (cmd, "${V[%"G_GSIZE_FORMAT"]}", job->expr_count + job->n_vars);
-					job->expr_count++;
-					g_free(temp);
-					g_free(escaped);
-				} else  {
-					if(!first)
-						g_string_append(cmd, separator);
-					g_string_append_printf (cmd, "%s", strip);
-				}
-				if (first)
-					first = FALSE;
+				if(!first)
+					g_string_append(cmd, separator);
+				g_string_append_printf (cmd, "${V[%"G_GSIZE_FORMAT"]}", job->expr_count + job->n_vars);
+				job->expr_count++;
+				g_free(temp);
+				g_free(escaped);
+			} else  {
+				if(!first)
+					g_string_append(cmd, separator);
+				g_string_append_printf (cmd, "%s", strip);
 			}
+			if (first)
+				first = FALSE;
 			g_free(strip);
 			gebr_geoxml_sequence_next(&seq);
 		}

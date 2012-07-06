@@ -1,3 +1,220 @@
+2012-07-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Solving problem when resolve relative paths in generation of report.
+
+2012-07-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Resolving relative paths when view report is created.
+
+2012-07-02  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* If a invalid node is connected to the maestro, this function is not
+	called again
+
+2012-06-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove timeout of progress connection after remove duplicate servers
+	on maestro/node dialog
+
+2012-06-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix duplicate servers on same maestro
+
+2012-06-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong tooltip of range of values
+	* Fix warning of unitialized variable in ui_document.c
+
+2012-06-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change connections wizard to receive page to open, and add signals
+	on status bar when maestro or remote browse are unconfigured.
+	* Update mount status when unmount gvfs
+	* Improve (again) on remote browse tab
+
+2012-06-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show feedback about attemps to mount gvfs.
+
+2012-06-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve tab of remote browse on Cconnections wizard
+
+2012-06-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update gvfs mount on status bar with signal
+
+2012-06-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show complete maestro/server/group name through tooltip in details.
+	(Fixes issue 1207)
+	* Fixing translation mismatches. (Fixes issue 1204) (Fixes issue
+	1208)
+	* Fixing last commit, removing commented line unused.
+	* Validating email at project,line and flow's properties. (Fixes issue
+	1210)
+
+2012-06-15  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating sensitiveness of speed slider. (Fixes issue 1198)
+
+2012-06-14  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Replaces network icon by group icon.
+
+2012-06-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update po files
+
+2012-06-12  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Changes of server/machines/daemon to nodes
+
+2012-06-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove Help icon from Maestro/Nodes ui
+	* Fix some Gtk-Criticals
+
+2012-06-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update speed slider when add a new program and click ok on
+	parameters dialog
+
+2012-06-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Replace Help button of documents (projects/lines/flows)
+	* Replace Help button in PasswordRequest dialog
+
+2012-06-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add help button on save revision flows
+
+2012-06-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Replace Help button in Dictionary ui
+
+2012-06-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add help button on GêBR preferences
+
+2012-06-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add Help button on Maestro Dialog
+	* Change size of icons on status_bar (ui_log) of GeBR
+	* Show empty information of memory and clock of server when connecting
+	* Remove maestro label from log, and improve tooltips
+	* Fix recursive call of method gebr_flow_modify_paths with parameter
+	data against NULL
+
+2012-06-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update translations of interface
+
+2012-06-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add spinner column on servers tree view in connections wizard
+
+2012-06-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add Help menu to 'View/Edit Report' interfaces
+
+2012-06-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix sensitiveness of execution button and improve message when try
+	to execute a flow without connected servers
+
+2012-06-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Added Spinner when maestro and daemons are connecting to improve
+	feedback for user, on Maestro/Workers dialog
+
+2012-06-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Replace the Groups icon in Maestro/WorkingMachines interface
+	* Update PO files to accomodate the replacement of 'server' by
+	'working machine'
+
+2012-06-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix sensitiveness of execution widgets when delete program
+
+2012-06-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Replace every ocurrence of Server to WorkingMachines and of GêBR-
+	Maestro to Maestro
+	* Add Help button to the dialog of Save Flow' state
+	* Add Help button in GeBr dictionary
+
+2012-06-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Disabling search on left side of Flow Edition tab. (Fixes issue
+	1126)
+
+2012-06-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Comment Change calls of method
+	GebrMaestroServer::has_connected_daemons to
+	GebrMaestroServer::has_servers to update status bar on connections
+	wizard (Fixes issue 1189)
+	* Fix sensitiveness of execution widgets and tooltips in many cases on
+	methods FlowEdition_set_run_widgets_sensitiveness and update_toolbar
+
+2012-06-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add Help buttons to Document Properties, Filechoosers and
+	Preferences
+
+2012-06-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Comment Add on list only servers with work percentage greater than
+	zero on method gebr_job_get_servers (Fixes issue 1145)
+
+2012-05-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Comment Fix restore to correct last tab selected when open gebr
+	(Fixes issue 1138)
+
+2012-05-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix update of widgets and status when maestro has no connected
+	daemons
+
+2012-05-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disconnect idle server when change maestro which used it, or give
+	error if not idle
+
+2012-05-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Keeping date of last modifying when a flow is saved (Fixes issue
+	812)
+	* Reset filter on Job Control when maestro state change (Fixes issue
+	1111)
+	* Changing Document owners: Flow inherit Line and Line inherit
+	Project. (Fixes issue 1100 )
+
+2012-05-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Pull documentations fixes from branch default
+
+2012-05-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add folder icon to browsing on files out of entry in FlowEdition tab
+
+2012-05-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor function of Help calling and include Help buttons in
+	maestro controller and in creation/edition of line paths
+
+2012-05-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add maestro and remote browse on status bar of GeBR (Fixes issue
+	1136)
+
+2012-05-24  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.18.0: The wizards came to stay
+
 2012-05-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Fixing links to #additional_features_maestro_servers_configuration

@@ -1,3 +1,39 @@
+2012-06-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compilation error add on last commit
+
+2012-06-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix duplicate servers on same maestro
+
+2012-06-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve parse of maestro and daemon port using token to protec gebr
+	port
+
+2012-06-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Show empty information of memory and clock of server when connecting
+
+2012-06-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix timeout in non-responsive servers, and in coopt of idle servers
+	on maestro
+
+2012-06-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* If maestro already has connected daemons, set variable connect_all
+	to FALSE.
+
+2012-05-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disconnect idle server when change maestro which used it, or give
+	error if not idle
+
+2012-05-24  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.18.0: The wizards came to stay
+
 2012-05-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.17.14: Documentation further improvements

@@ -1984,6 +1984,7 @@ void flow_program_check_sensitiveness (void)
 		gebr_geoxml_object_unref(first_program);
 		gebr_geoxml_object_unref(last_program);
 	}
+	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 }
 
 static void
