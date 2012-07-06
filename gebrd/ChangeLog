@@ -1,3 +1,7 @@
+2012-07-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.18.1: Issue tracker cleanup
+
 2012-06-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Making empty value visible in command line. (Fixes issue 1202)

@@ -6,6 +6,18 @@
 
 	* Fix duplicate servers on same maestro
 
+2012-07-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.18.1: Issue tracker cleanup
+
+2012-06-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compilation error add on last commit
+
+2012-06-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix duplicate servers on same maestro
+
 2012-06-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Improve parse of maestro and daemon port using token to protec gebr

@@ -1,3 +1,239 @@
+2012-07-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with xdot, flow revision visualization using xdot and pygtk
+
+2012-07-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add all actions on graph and remove TreeStore from revisions tab
+	* Create treatment to double-click and create menu with rigth button
+	* Change xdot.py to emit new signal activate with double-click, and
+	rigth button
+
+2012-07-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Merge xml-catalog. Optimizes menu indices generation.
+	* Make treatment to not create usermenus just when necessary
+
+2012-07-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge issue tracker cleanup and fixes from 0.18.1
+
+2012-07-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create initial interation on revisions graph
+
+2012-07-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix name of python program in calls of Gebr
+	* Fix makefile to use python files
+	* Create interactive graph using xdot python
+
+2012-07-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include default menus (loop, sleep and grace) on Default directory,
+	and create index for them
+
+2012-07-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segmentation fault on update of indices
+	* Add method to update system menus just when necessary
+
+2012-07-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change methods to create_index and populate_menu to check already
+	exists index
+	* Fix method gebr_geoxml_document_clone to use correct doctype
+
+2012-07-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add detached method (in libgebr/geoxml-utils/menu-indices) to create
+	menu/categories indices
+	* Remove unused variables to prevent compilations warnings
+
+2012-07-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some problems when upgrade DTD of project and line, and export
+	line (in gebr_geoxml_document_clone)
+
+2012-06-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement on methos to document_load, split in two and remove lots
+	of legacy code
+	* Add method gebr_gzfile_get_contents
+
+2012-06-28  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix inconsistent pie on queue job
+
+2012-06-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make the same treatment of insertion of DOCTYPE to lines and
+	projects
+	* Handle upgrade of DTD with insertion of DOCTYPE
+
+2012-06-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Uncomment lines of addition of catalog
+	* Add catalog in the start of gebr
+
+2012-06-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add method to insert header when create new documents, and change
+	method document_to_string to keep DOCTYPE on xml
+
+2012-06-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compilation error add on last commit
+
+2012-06-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix duplicate servers on same maestro
+
+2012-06-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix escaping in RevisionsGraph
+	* Added tag 0.19.1 for changeset 8f3a5f84fed0
+	* Sprint 58 review
+	* Add revision label to flows-properties glade
+
+2012-06-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove graph of flows (png files) when delete a Line
+
+2012-06-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add option to add Flow's revisions on Line's report, and fix help of
+	each revision.
+
+2012-06-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change layout of RevisionsGraph
+
+2012-06-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on flow_revision_remove and add method
+	flow_delete_graph_file to remove .png file when remove flow
+
+2012-06-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Escape strings in the RevisionsGraph
+
+2012-06-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update revisions tab when delete a flow
+
+2012-06-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix upgrade of flows DTD
+	* Add Head to the RevisionsGraph
+
+2012-06-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove menu of revision from toolbar, and improve graph and treeview
+	for revisions.
+	* Add context menu on revision view and change interface for tab
+
+2012-06-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix escaping of labels from ReviewsGraph
+	* Fix gebr_geoxml_flow_create_dot_code to print Comments, instead of
+	ID
+
+2012-06-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create model and image of graph in Revisions tab
+
+2012-06-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add unitary test for gebr_double_list_to_list
+
+2012-06-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change method of creating the .dot file to the appropriate format of
+	input
+	* Create method to get root ID of tree of revisions
+
+2012-06-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new unitary test for gebr_geoxml_flow_create_dot_code.
+	* Creating function to generate the graph dot code from hashtable
+
+2012-06-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new tab of revision on FlowBrowse
+	* Add methods GebrGeoXmlFlow::get_parent_revision and
+	get_revision_index_by_id
+
+2012-06-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method flow_revision_remove, and consider parents/childrens
+	when remove a revision
+
+2012-06-14  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Replaces network icon by group icon.
+
+2012-06-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set new parent_id on flow after revert to revision
+	* Add upgrade of flow to 0.4.0 on validate doc
+	* Improve method gebr_create_id_with_current_time to use micro seconds
+	* Update revision document on configure.ac and insert parent element
+	on new flow
+
+2012-06-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set ID and parentID to xml to handle flows revisions
+
+2012-06-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add methods to set/get parent_id for flow and set/get id for
+	revisions of flow
+	* Add new DTD for flow
+	* Merge branch 0.18 on default, and change version to 0.19.0
+
+2012-05-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove unused images in English doc and fix Makefile.am of common-
+	images folder
+
+2012-05-30  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* Apply changes to English documentation
+
+2012-05-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor function of Help calling and include Help buttons in
+	maestro controller and in creation/edition of line paths
+
+2012-05-29  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* improving the documentation (grammatical mistakes, you->the user;
+	we-> the GêBR)
+
+2012-07-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.18.1 for changeset c0c70af1b18b
+
+2012-07-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added centos build dependencies.
+	* Fixed png library url on centos install script.
+
+2012-07-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing compilation problem in CentOS.
+
+2012-07-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix condition to check Gtk version (last commit gone with opposite
+	logic)
+	* Include protect for GTK version to use GtkSpinner
+
+2012-07-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.18.1: Issue tracker cleanup
+
 2012-07-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Solving problem when resolve relative paths in generation of report.

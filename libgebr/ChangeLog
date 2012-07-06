@@ -1,3 +1,131 @@
+2012-07-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add all actions on graph and remove TreeStore from revisions tab
+
+2012-07-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create interactive graph using xdot python
+
+2012-07-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method gebr_geoxml_document_clone to use correct doctype
+
+2012-07-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add detached method (in libgebr/geoxml-utils/menu-indices) to create
+	menu/categories indices
+	* Remove unused variables to prevent compilations warnings
+
+2012-07-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some problems when upgrade DTD of project and line, and export
+	line (in gebr_geoxml_document_clone)
+
+2012-06-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement on methos to document_load, split in two and remove lots
+	of legacy code
+	* Add method gebr_gzfile_get_contents
+
+2012-06-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make the same treatment of insertion of DOCTYPE to lines and
+	projects
+	* Handle upgrade of DTD with insertion of DOCTYPE
+
+2012-06-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Uncomment lines of addition of catalog
+	* Add catalog in the start of gebr
+
+2012-06-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add method to insert header when create new documents, and change
+	method document_to_string to keep DOCTYPE on xml
+
+2012-06-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix escaping in RevisionsGraph
+
+2012-06-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add option to add Flow's revisions on Line's report, and fix help of
+	each revision.
+
+2012-06-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change layout of RevisionsGraph
+	* Escape strings in the RevisionsGraph
+	* Fix upgrade of flows DTD
+	* Add Head to the RevisionsGraph
+
+2012-06-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove menu of revision from toolbar, and improve graph and treeview
+	for revisions.
+
+2012-06-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix escaping of labels from ReviewsGraph
+	* Fix gebr_geoxml_flow_create_dot_code to print Comments, instead of
+	ID
+
+2012-06-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create model and image of graph in Revisions tab
+
+2012-06-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add unitary test for gebr_double_list_to_list
+
+2012-06-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change method of creating the .dot file to the appropriate format of
+	input
+	* Create method to get root ID of tree of revisions
+
+2012-06-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new unitary test for gebr_geoxml_flow_create_dot_code.
+	* Creating function to generate the graph dot code from hashtable
+
+2012-06-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add methods GebrGeoXmlFlow::get_parent_revision and
+	get_revision_index_by_id
+
+2012-06-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set new parent_id on flow after revert to revision
+	* Add upgrade of flow to 0.4.0 on validate doc
+	* Improve method gebr_create_id_with_current_time to use micro seconds
+	* Update revision document on configure.ac and insert parent element
+	on new flow
+
+2012-06-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set ID and parentID to xml to handle flows revisions
+
+2012-06-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add methods to set/get parent_id for flow and set/get id for
+	revisions of flow
+	* Add new DTD for flow
+
+2012-05-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove unused images in English doc and fix Makefile.am of common-
+	images folder
+
+2012-05-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor function of Help calling and include Help buttons in
+	maestro controller and in creation/edition of line paths
+
+2012-07-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.18.1: Issue tracker cleanup
+
 2012-07-02  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Fixed group icon include in makefile.

@@ -1,3 +1,12 @@
+gebrproject (0.19.2) lucid; urgency=low
+
+  * Merged fixes and features from 0.18.1.
+  * Uses xml catalog to keep doctype in gebr's document.
+  * Speed up GeBR startup building menu index at compile time.
+  * Draw flow's revision graph using xdot.py.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Fri, 06 Jul 2012 17:01:35 -0300
+
 gebrproject (0.18.1) lucid; urgency=low
 
   * Improved maestro and remote browsing feedback in GeBR's main window.
