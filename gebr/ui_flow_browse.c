@@ -565,12 +565,31 @@ flow_browse_create_revisions_model(GebrGeoXmlFlow *flow,
 
 
 static void
-graph_process_read_stderr(GebrCommProcess * process, GebrGeoXmlFlow *flow)
+graph_process_read_stderr(GebrCommProcess * process)
 {
 	GString *output;
 	output = gebr_comm_process_read_stderr_string_all(process);
 
 	g_debug("====> ID OF REVISION: %s", output->str);
+
+	gboolean report_merged;
+	GebrGeoXmlRevision *revision = gebr_geoxml_flow_get_revision_by_id(gebr.flow, output->str);
+
+	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision, &report_merged)) {
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state"));
+		return;
+	}
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
+
+	if (report_merged)
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state and merged reports"));
+	else
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state."));
+
+	flow_browse_load();
+	gebr_validator_force_update(gebr.validator);
+	flow_browse_info_update();
 
 	g_string_free(output, TRUE);
 }
@@ -628,7 +647,7 @@ gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
 	gchar *cmd_line = g_strdup_printf("python %s/gebr-xdot-graph.py %d", GEBR_PYTHON_DIR, socket_id);
 	GString *cmd = g_string_new(cmd_line);
 
-	g_signal_connect(fb->graph_process, "ready-read-stderr", G_CALLBACK(graph_process_read_stderr), gebr.flow);
+	g_signal_connect(fb->graph_process, "ready-read-stderr", G_CALLBACK(graph_process_read_stderr), NULL);
 	g_signal_connect(fb->graph_process, "finished", G_CALLBACK(graph_process_finished), NULL);
 
 	if (!gebr_comm_process_start(fb->graph_process, cmd))
