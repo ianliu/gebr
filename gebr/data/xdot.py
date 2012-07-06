@@ -1339,7 +1339,7 @@ class NullAction(DragAction):
             item = dot_widget.get_jump(x, y)
         if item is not None:
             dot_widget.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.HAND2))
-            dot_widget.set_highlight(item.highlight)
+            dot_widget.set_highlight(None)
         else:
             dot_widget.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.ARROW))
             dot_widget.set_highlight(None)
@@ -1408,8 +1408,9 @@ class DotWidget(gtk.DrawingArea):
 
     __gsignals__ = {
         'expose-event': 'override',
-        'clicked' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event))
-    }
+        'clicked' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event)),
+        'activate' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event))   
+        }
 
     filter = 'dot'
 
@@ -1667,15 +1668,32 @@ class DotWidget(gtk.DrawingArea):
         return NullAction
 
     def on_area_button_press(self, area, event):
-        self.animation.stop()
-        self.drag_action.abort()
-        action_type = self.get_drag_action(event)
-        self.drag_action = action_type(self)
-        self.drag_action.on_button_press(event)
-        self.presstime = time.time()
-        self.pressx = event.x
-        self.pressy = event.y
-        return False
+        if event.type == gtk.gdk._2BUTTON_PRESS:
+            self.drag_action.on_button_release(event)
+            self.drag_action = NullAction(self)
+            if event.button == 1:
+                x, y = int(event.x), int(event.y)
+                url = self.get_url(x, y)
+                if url is not None:
+                    self.emit('activate', unicode(url.url), event)
+                else:
+                    jump = self.get_jump(x, y)
+                    if jump is not None:
+                        self.animate_to(jump.x, jump.y)
+                return True
+            if event.button == 1 or event.button == 2 and event.button == 3:
+                return True
+            return False
+        else:
+            self.animation.stop()
+            self.drag_action.abort()
+            action_type = self.get_drag_action(event)
+            self.drag_action = action_type(self)
+            self.drag_action.on_button_press(event)
+            self.presstime = time.time()
+            self.pressx = event.x
+            self.pressy = event.y
+            return False
 
     def is_click(self, event, click_fuzz=4, click_timeout=1.0):
         assert event.type == gtk.gdk.BUTTON_RELEASE
@@ -1692,7 +1710,7 @@ class DotWidget(gtk.DrawingArea):
     def on_area_button_release(self, area, event):
         self.drag_action.on_button_release(event)
         self.drag_action = NullAction(self)
-        if event.button == 1 and self.is_click(event):
+        if event.button == 3 and self.is_click(event):
             x, y = int(event.x), int(event.y)
             url = self.get_url(x, y)
             if url is not None:
@@ -1703,7 +1721,7 @@ class DotWidget(gtk.DrawingArea):
                     self.animate_to(jump.x, jump.y)
 
             return True
-        if event.button == 1 or event.button == 2:
+        if event.button == 1 or event.button == 2 and event.button == 3:
             return True
         return False
 
