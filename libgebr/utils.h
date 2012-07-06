@@ -368,6 +368,20 @@ gchar *gebr_create_id_with_current_time();
  */
 GList *gebr_double_list_to_list(GList *double_list);
 
+/**
+ * Get contents of compressed gz file
+ *
+ * gebr_gzfile_get_contents:
+ * @filename: The name of gzipped file
+ * @contents: a GString to fill the contents of file
+ * @error: an error message or NULL
+ *
+ * Returns: %FALSE if have some error, %TRUE otherwise
+ */
+gboolean gebr_gzfile_get_contents(const gchar *filename,
+                                  GString *contents,
+                                  gchar **error);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

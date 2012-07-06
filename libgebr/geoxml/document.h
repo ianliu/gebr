@@ -445,6 +445,10 @@ GebrGeoXmlDocument *gebr_geoxml_document_ref(GebrGeoXmlDocument *self);
 
 void gebr_geoxml_document_unref(GebrGeoXmlDocument *self);
 
+void gebr_geoxml_initialize_catalog(void);
+
+gboolean gebr_geoxml_create_catalog(const gchar *directory);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_DOCUMENT_H

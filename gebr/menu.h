@@ -59,7 +59,10 @@ void menu_list_populate(void);
  *
  * \return TRUE if successfully scanned all directories.
  */
-gboolean menu_list_create_index(void);
+gboolean menu_list_create_index(const gchar *path,
+                                gchar **index_menu,
+                                gchar **index_category,
+                                gboolean use_default);
 
 /*
  *

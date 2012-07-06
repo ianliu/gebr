@@ -22,6 +22,7 @@ bin_PROGRAMS = 			\
 	gebr-geoxml-menu-query	\
 	gebr-geoxml-upgrade	\
 	gebr-geoxml-validate	\
+	gebr-geoxml-menu-indices	\
 	$(NULL)
 
 AM_CFLAGS = $(COMMON_CFLAGS)
@@ -46,6 +47,7 @@ gebr_geoxml_menu_edit_SOURCES  = menu-edit.c
 gebr_geoxml_menu_query_SOURCES = menu-query.c
 gebr_geoxml_upgrade_SOURCES    = upgrade.c
 gebr_geoxml_validate_SOURCES   = validate.c
+gebr_geoxml_menu_indices_SOURCES   = menu-indices.c
 
 gebr_geoxml_flow_dump_LDADD  = $(utils_ldadd)
 gebr_geoxml_menu_diff_LDADD  = $(utils_ldadd)
@@ -53,3 +55,5 @@ gebr_geoxml_menu_edit_LDADD  = $(utils_ldadd)
 gebr_geoxml_menu_query_LDADD = $(utils_ldadd)
 gebr_geoxml_upgrade_LDADD    = $(utils_ldadd)
 gebr_geoxml_validate_LDADD   = $(utils_ldadd)
+gebr_geoxml_menu_indices_LDADD   = $(utils_ldadd)
+
