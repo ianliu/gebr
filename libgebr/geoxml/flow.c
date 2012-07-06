@@ -668,7 +668,7 @@ gebr_geoxml_flow_get_revision_index_by_id(GebrGeoXmlFlow *flow,
 
 GebrGeoXmlRevision *
 gebr_geoxml_flow_get_revision_by_id(GebrGeoXmlFlow *flow,
-                                    gchar *id)
+                                    const gchar *id)
 {
 	GebrGeoXmlRevision *revision = NULL;
 	gboolean find_rev = FALSE;

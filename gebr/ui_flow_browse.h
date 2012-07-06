@@ -42,17 +42,6 @@ enum {
 	FB_N_COLUMN
 };
 
-/*
- * Revision fields
- */
-enum {
-	REV_COMMENT = 0,
-	REV_DATE,
-	REV_XMLPOINTER,
-	REV_ACTIVE,
-	REV_N_COLUMN
-};
-
 /**
  */
 typedef struct {
@@ -68,8 +57,6 @@ typedef struct {
 	GtkWidget *rev_main;
 	GtkWidget *revpage_main;
 	GtkWidget *revpage_warn;
-	GtkWidget *rev_view;
-	GtkTreeStore *rev_store;
 	gboolean update_graph;
 	GebrCommProcess *graph_process;
 
