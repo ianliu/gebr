@@ -741,6 +741,10 @@ gebr_flow_revisions_hash_create(GebrGeoXmlFlow *flow)
 
 		gebr_geoxml_flow_get_revision_data(rev, &flow_xml, NULL, NULL, &id);
 
+		//Insert itself in the list as a key
+		if (!g_hash_table_lookup(hash, id))
+			g_hash_table_insert(hash, g_strdup(id), NULL);
+
 		if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
 			g_free(flow_xml);
 			g_free(id);
