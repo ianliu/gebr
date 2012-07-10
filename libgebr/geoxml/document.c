@@ -992,8 +992,6 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			GdomeElement *before = __gebr_geoxml_get_first_element(root_element, "date");
 			GdomeElement *parent = __gebr_geoxml_insert_new_element(root_element, "parent", before);
 
-			gchar *parent_id = NULL;
-			gchar *last_date = NULL;
 			gchar *flow_xml;
 			GebrGeoXmlDocument *revdoc;
 
@@ -1001,73 +999,29 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			gebr_geoxml_flow_get_revision(GEBR_GEOXML_FLOW(*document), &seq, 0);
 
 			for (; seq; gebr_geoxml_sequence_next(&seq)) {
-				gchar *date;
 				gchar *id;
-
 				id = gebr_create_id_with_current_time();
 
-				gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), NULL, &date, NULL, NULL);
-
-				/* Find the most recent revision to be the parent of *document */
-				gboolean set_id = FALSE;
-				if (!last_date) {
-					last_date = g_strdup(date);
-					set_id = TRUE;
-				} else {
-					GTimeVal current;
-					GTimeVal last;
-					g_time_val_from_iso8601(date, &current);
-					g_time_val_from_iso8601(last_date, &last);
-					if (current.tv_sec < last.tv_sec) {
-						g_free(last_date);
-						last_date = g_strdup(date);
-						set_id = TRUE;
-					}
-				}
-
-				if (set_id) {
-					if (parent_id)
-						g_free(parent_id);
-					parent_id = g_strdup(id);
-				}
-
-				gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(seq), NULL, NULL, NULL, id);
-
-				g_free(date);
-				g_free(id);
-			}
-
-			gebr_geoxml_flow_get_revision(GEBR_GEOXML_FLOW(*document), &seq, 0);
-
-			for (; seq; gebr_geoxml_sequence_next(&seq)) {
-				gchar *id;
-				gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &flow_xml, NULL, NULL, &id);
-
-				if (g_strcmp0(id, parent_id) == 0)
-					continue;
+				gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &flow_xml, NULL, NULL, NULL);
 
 				if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
 					g_free(flow_xml);
 					continue;
 				}
-
 				g_free(flow_xml);
 
-				gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(revdoc), parent_id);
+				gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(revdoc), "");
 				gebr_geoxml_document_to_string(revdoc, &flow_xml);
-				gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(seq), flow_xml, NULL, NULL, NULL);
+
+				gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(seq), flow_xml, NULL, NULL, id);
 
 				gebr_geoxml_document_free(revdoc);
 				g_free(flow_xml);
 				g_free(id);
 			}
 
-			if (!parent_id)
-				parent_id = g_strdup("");
+			gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(*document), "");
 
-			gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(*document), parent_id);
-
-			g_free(parent_id);
 			gdome_el_unref(parent, &exception);
 			gdome_el_unref(before, &exception);
 		}
@@ -1127,6 +1081,10 @@ gebr_geoxml_document_fix_header(const gchar *filename,
 				find = g_strstr_len(find+2, 100, "<");
 				continue;
 			} else if (find[1] == '!') {
+				if (find[2] == '[') {
+					find = g_strstr_len(find+2, 100, "<");
+					continue;
+				}
 				return FALSE;
 			} else {
 				gchar *end_tag = g_strstr_len(find, 10, " ");
@@ -1161,9 +1119,16 @@ gebr_geoxml_document_fix_header(const gchar *filename,
 static int __gebr_geoxml_document_load_buffer(GebrGeoXmlDocument ** document, const gchar *xml)
 {
 	GdomeDocument *doc;
+	gboolean ret;
 
 	/* load */
 	doc = gdome_di_createDocFromMemory(dom_implementation, (gchar *) xml, GDOME_LOAD_PARSING, &exception);
+
+	ret = __gebr_geoxml_document_validate_doc(&doc, NULL);
+	if (ret != GEBR_GEOXML_RETV_SUCCESS) {
+		gdome_doc_unref((GdomeDocument *) doc, &exception);
+		return ret;
+	}
 
 	*document = (GebrGeoXmlDocument *) doc;
 	__gebr_geoxml_document_new_data(*document, "");

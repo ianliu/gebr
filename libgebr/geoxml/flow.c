@@ -1442,27 +1442,39 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		gchar *iso_date = NULL;
 		gchar **time_field = NULL;
 		gchar **iso_date_field;
-		gulong int_id = gebr_geoxml_flow_get_revision_index_by_id(flow, (gchar *)id);
-		gint status =  gebr_geoxml_flow_get_revision(flow, &revision, int_id);
+		gboolean has_id;
 
-		if (status != GEBR_GEOXML_RETV_SUCCESS)
-			g_warn_if_reached();
+		if (id && *id) {
+			has_id = TRUE;
+			gulong int_id = gebr_geoxml_flow_get_revision_index_by_id(flow, (gchar *)id);
+			gint status =  gebr_geoxml_flow_get_revision(flow, &revision, int_id);
 
-		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
-		iso_date_field = g_strsplit(iso_date, " ", -1);
-		time_field = g_strsplit(iso_date_field[4], ":", -1);
+			if (status != GEBR_GEOXML_RETV_SUCCESS)
+				g_warn_if_reached();
 
-		date = g_strdup_printf("%s %s, %s  %s:%s %s", iso_date_field[2], iso_date_field[1], iso_date_field[3],
-				time_field[0], time_field[1], iso_date_field[5]);
-		comment = g_markup_printf_escaped("%s", unescaped_comment);
+			gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
+			iso_date_field = g_strsplit(iso_date, " ", -1);
+			time_field = g_strsplit(iso_date_field[4], ":", -1);
+
+			date = g_strdup_printf("%s %s, %s  %s:%s %s", iso_date_field[2], iso_date_field[1], iso_date_field[3],
+					time_field[0], time_field[1], iso_date_field[5]);
+			comment = g_markup_printf_escaped("%s", unescaped_comment);
+		} else {
+			has_id = FALSE;
+			date = g_strdup("--");
+			comment = g_strdup_printf("--");
+		}
+
 			
 		if (is_head) {
+			gchar *new_comment = g_strdup_printf("%s%s", comment, has_id? " (modified)" : "");
 			format_node = g_strdup_printf(
 					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
-					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s (modified)</font></td>"
+					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s</font></td>"
 					"</tr><tr><td align=\"center\">%s</td></tr></table>>, shape = note, color = \"#000080\","
 					"fontsize = 10]",
-					head, head, comment, _("Now"));
+					head, head, new_comment, _("Now"));
+			g_free(new_comment);
 		} else {
 			format_node = g_strdup_printf(
 					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
@@ -1477,14 +1489,16 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 		graph =  g_string_append(graph, format_node);
 
-		g_free(format_node);
-		g_free(unescaped_comment);
+		if (has_id) {
+			g_free(format_node);
+			g_free(unescaped_comment);
+			g_free(iso_date);
+			g_strfreev(iso_date_field);
+			g_strfreev(time_field);
+			gebr_geoxml_object_unref(revision);
+		}
 		g_free(comment);
-		g_free(iso_date);
 		g_free(date);
-		g_strfreev(iso_date_field);
-		g_strfreev(time_field);
-		gebr_geoxml_object_unref(revision);
 	}
 
 	//Print formats 
@@ -1493,9 +1507,9 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 	}
 
 	gchar *parent_id = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(flow));
-	print_format(flow, parent_id, graph, FALSE);
 	print_format(flow, parent_id, graph, TRUE);
-	g_string_append_printf(graph, "%s->%s[style=filled]", parent_id, head);
+	if (parent_id && *parent_id)
+		g_string_append_printf(graph, "%s->%s[style=filled]", parent_id, head);
 
 	void print_edges(gchar *key, GList *value, GString *text) {
 		for (GList *child = value; child; child = child->next) {
