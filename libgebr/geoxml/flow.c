@@ -1427,15 +1427,11 @@ gebr_geoxml_flow_is_single_core(GebrGeoXmlFlow *flow,
 gchar *
 gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 {
-        GList *valuelist_aux = g_hash_table_get_values(hash);
-	GList *valuelist;
         GString *graph = g_string_new("");
-	gchar *root_id = NULL;
 	const gchar *head = "head";
 
-	valuelist = gebr_double_list_to_list(valuelist_aux);
-
 	graph =  g_string_append(graph, ("digraph { graph [bgcolor=white]"));
+	GList *parents = g_hash_table_get_keys(hash);
 
 	void print_format(GebrGeoXmlFlow *flow, gchar *id, GString *graph, gboolean is_head) {
 		GebrGeoXmlSequence *revision = NULL;
@@ -1491,15 +1487,13 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		gebr_geoxml_object_unref(revision);
 	}
 
-
 	//Print formats 
-	for (GList *child = valuelist; child; child = child->next) {
-		print_format(flow, child->data, graph, FALSE);
+	for (GList *parent = parents; parent; parent = parent->next) {
+		print_format(flow, parent->data, graph, FALSE);
 	}
-	root_id = gebr_geoxml_flow_revisions_get_root_id(hash);
-	print_format(flow, root_id, graph, FALSE);
 
 	gchar *parent_id = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(flow));
+	print_format(flow, parent_id, graph, FALSE);
 	print_format(flow, parent_id, graph, TRUE);
 	g_string_append_printf(graph, "%s->%s[style=filled]", parent_id, head);
 
@@ -1514,6 +1508,8 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
         graph =  g_string_append(graph, ("}\n"));
 
 	g_free(parent_id);
+	g_list_free(parents);
+
 
         return g_string_free(graph, FALSE);
 }
