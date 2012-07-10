@@ -771,9 +771,12 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 	if (gebr_gui_confirm_action_dialog(_("Backup current state?"),
 	                                   _("You are about to revert to a previous state. "
 	                                		   "The current Flow will be lost after this action. "
-	                                		   "Do you want to save the current Flow's state?")))
-		if (!flow_revision_save())
+	                                		   "Do you want to save the current Flow's state?"))) {
+		if (!flow_revision_save()) {
+			gdk_threads_leave();
 			return;
+		}
+	}
 	gdk_threads_leave();
 
 	gboolean report_merged;
