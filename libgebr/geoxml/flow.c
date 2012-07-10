@@ -1439,6 +1439,8 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 	void print_format(GebrGeoXmlFlow *flow, gchar *id, GString *graph, gboolean is_head) {
 		GebrGeoXmlSequence *revision = NULL;
+		gint fontsize = 10;
+		GString *final_comment = g_string_new("");
 		gchar *comment = NULL;
 		gchar *unescaped_comment = NULL;
 		gchar *format_node = NULL;
@@ -1459,6 +1461,14 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		date = g_strdup_printf("%s %s, %s  %s:%s %s", iso_date_field[2], iso_date_field[1], iso_date_field[3],
 				time_field[0], time_field[1], iso_date_field[5]);
 		comment = g_markup_printf_escaped("%s", unescaped_comment);
+
+		g_string_append(final_comment, comment);
+		if(g_utf8_strlen(comment, 21) > 20) {
+			g_string_erase(final_comment, 18, -1);
+			g_string_append(final_comment,"...");
+		} else if(g_utf8_strlen(comment, 21) > 15) {
+			fontsize = 9;
+		}
 			
 		if (is_head) {
 			format_node = g_strdup_printf(
@@ -1466,21 +1476,23 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s (modified)</font></td>"
 					"</tr><tr><td align=\"center\">%s</td></tr></table>>, shape = note, color = \"#000080\","
 					"fontsize = 10]",
-					head, head, comment, _("Now"));
+					head, head, final_comment->str, _("Now"));
 		} else {
 			format_node = g_strdup_printf(
 					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
 					"<tr><td bgcolor=\"#000040\" align=\"center\"><font color=\"white\">%s</font></td></tr>"
 					"<tr><td align=\"center\">%s</td></tr></table>>, shape = note,"
-					"fontsize = 10]",
+					"fontsize = %d]",
 					(gchar*)id,
 					(gchar*)id,
-					comment,
-					date);
+					final_comment->str,
+					date,
+					fontsize);
 		}
 
 		graph =  g_string_append(graph, format_node);
 
+		g_string_free(final_comment, TRUE);
 		g_free(format_node);
 		g_free(unescaped_comment);
 		g_free(comment);
@@ -1490,7 +1502,6 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		g_strfreev(time_field);
 		gebr_geoxml_object_unref(revision);
 	}
-
 
 	//Print formats 
 	for (GList *child = valuelist; child; child = child->next) {
