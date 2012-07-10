@@ -1463,10 +1463,10 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		if (is_head) {
 			format_node = g_strdup_printf(
 					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
-					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s*</font></td>"
+					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s (modified)</font></td>"
 					"</tr><tr><td align=\"center\">%s</td></tr></table>>, shape = note, color = \"#000080\","
 					"fontsize = 10]",
-					head, head, comment, _("Current"));
+					head, head, comment, _("Now"));
 		} else {
 			format_node = g_strdup_printf(
 					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
