@@ -69,6 +69,8 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/* alloc */
 	ui_flow_browse = g_new(GebrUiFlowBrowse, 1);
 
+	ui_flow_browse->graph_process = NULL;
+
 	/*
 	 * Create flow browse page
 	 */
