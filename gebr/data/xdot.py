@@ -67,8 +67,7 @@ class Pen:
 
     def highlighted(self):
         pen = self.copy()
-        pen.color = (1, 0, 0, 1)
-        pen.fillcolor = (1, .8, .8, 1)
+        pen.color = (0, 0, 1, 0.8)
         return pen
 
 
@@ -174,7 +173,7 @@ class TextShape(Shape):
 
         cr.save()
         cr.scale(f, f)
-        cr.set_source_rgba(*self.select_pen(highlight).color)
+        cr.set_source_rgba(*self.pen.color)
         cr.show_layout(layout)
         cr.restore()
 
@@ -1339,7 +1338,7 @@ class NullAction(DragAction):
             item = dot_widget.get_jump(x, y)
         if item is not None:
             dot_widget.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.HAND2))
-            dot_widget.set_highlight(None)
+            dot_widget.set_highlight(item.highlight)
         else:
             dot_widget.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.ARROW))
             dot_widget.set_highlight(None)
@@ -1598,7 +1597,7 @@ class DotWidget(gtk.DrawingArea):
         self.zoom_to_fit_on_resize = True
 
     ZOOM_INCREMENT = 1.25
-    ZOOM_TO_FIT_MARGIN = 12
+    ZOOM_TO_FIT_MARGIN = 64
 
     def on_zoom_in(self, action):
         self.zoom_image(self.zoom_ratio * self.ZOOM_INCREMENT)
