@@ -468,7 +468,11 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 			const gchar *value = gtk_entry_get_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(gebr_gui_parameter_widget->value_widget)->entry));
 
 			gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
-			gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_gui_parameter_widget->info);
+			gchar *mount_point;
+			if (gebr_gui_parameter_widget->info)
+				mount_point = gebr_maestro_info_get_home_mount_point(gebr_gui_parameter_widget->info);
+			else
+				mount_point = NULL;
 			gchar *path = gebr_relativise_path(value, mount_point, paths);
 
 			gtk_entry_set_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(gebr_gui_parameter_widget->value_widget)->entry), path);
