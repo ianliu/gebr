@@ -735,7 +735,9 @@ job_control_fill_servers_info(GebrJobControl *jc)
 {
 	GebrJob *job = get_selected_job(jc);
 	GString *resources = g_string_new(NULL);
+	GString *bold_resources = g_string_new("");
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
+	GtkLabel *bold_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "label6"));
 	const gchar *nprocs;
 	const gchar *niceness;
 	gint n_servers, i;
@@ -750,15 +752,15 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	gebr_job_get_resources(job, &nprocs, &niceness);
 
 	const gchar *maddr = gebr_job_get_maestro_address(job);
-	if ((!nprocs || !niceness) || (!*nprocs || !*niceness))
-		g_string_printf(resources, _("Waiting for nodes details"));
-	else {
+	if ((!nprocs || !niceness) || (!*nprocs || !*niceness)) {
+		g_string_printf(bold_resources, _("This flow is queued and \nhas not been executed."));
+	} else {
 		const gchar *type_str = gebr_job_get_server_group_type(job);
 		const gchar *groups = gebr_job_get_server_group(job);
 		GebrMaestroServerGroupType type = gebr_maestro_server_group_str_to_enum(type_str);
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
-
+		g_string_printf(bold_resources, _("<b>Process distribution among working nodes</b>"));
 		gchar *markup;
 
 		if (type == MAESTRO_SERVER_TYPE_GROUP)
@@ -767,11 +769,10 @@ job_control_fill_servers_info(GebrJobControl *jc)
 
 		markup = g_markup_printf_escaped(_("Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
 						   "Executed on total <b>%d</b> processes on %s <b>%s</b>,\n"
-						   "%s"
-						   "distributed on <b>%d</b> node(s).\n"),
+						   "%sdistributed on <b>%d</b> node(s).\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
 						  total_procs, type == MAESTRO_SERVER_TYPE_DAEMON? _("node") : _("group"), groups,
-						  g_strcmp0(niceness, "0")? _("using the nodes idle time,\n") : "",
+						  g_strcmp0(niceness, "0")? _("using the nodes idle time, ") : "",
 						  n_servers);
 		g_string_append(resources, markup);
 
@@ -786,7 +787,8 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		g_free(markup);
 	}
 	gtk_label_set_markup (res_label, resources->str);
-
+	gtk_label_set_markup (bold_label, bold_resources->str);
+	g_string_free(bold_resources, TRUE);
 	g_string_free(resources, TRUE);
 
 	guint *values = g_new(guint, n_servers);
