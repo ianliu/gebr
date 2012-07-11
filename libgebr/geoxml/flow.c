@@ -1497,12 +1497,12 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 		g_string_append(final_comment, comment);
 		if(g_utf8_strlen(comment, 21) > 20) {
-			g_string_erase(final_comment, 18, -1);
-			g_string_append(final_comment,"...");
+			g_string_insert(final_comment, 21, "<br/>");
+			fontsize = 8;
 		} else if(g_utf8_strlen(comment, 21) > 15) {
 			fontsize = 9;
 		}
-			
+
 		if (is_head) {
 			gchar *new_comment = g_strdup_printf("%s%s", final_comment->str, has_id? " (modified)" : "");
 			format_node = g_strdup_printf(
