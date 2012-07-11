@@ -578,6 +578,31 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow,
 	return revision;
 }
 
+void gebr_geoxml_flow_revision_update(GebrGeoXmlFlow *flow,
+				      const gchar *flow_xml,
+				      const gchar *date,
+				      const gchar *comment,
+				      const gchar *id)
+{
+	GebrGeoXmlRevision *revision = NULL;
+	gboolean find_rev = FALSE;
+	GebrGeoXmlSequence *seq;
+	gebr_geoxml_flow_get_revision(flow, &seq, 0);
+
+	for (; !find_rev && seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlRevision *rev = GEBR_GEOXML_REVISION(seq);
+		gchar *rev_id;
+		gebr_geoxml_flow_get_revision_data(rev, NULL, NULL, NULL, &rev_id);
+		if (g_strcmp0(rev_id, id) == 0) {
+			find_rev = TRUE;
+			revision = rev;
+			gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(revision));
+		}
+		g_free(rev_id);
+	}
+
+}
+
 void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision,
                                         const gchar * flow,
                                         const gchar * date,
@@ -1455,6 +1480,8 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 				g_warn_if_reached();
 
 			gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
+			if (!unescaped_comment || !*unescaped_comment)
+				unescaped_comment = g_strdup_printf(_("- - - -"));
 			iso_date_field = g_strsplit(iso_date, " ", -1);
 			time_field = g_strsplit(iso_date_field[4], ":", -1);
 

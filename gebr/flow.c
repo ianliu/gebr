@@ -687,26 +687,38 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
                      GHashTable *hash)
 {
 	gboolean result;
-	GList *children = g_hash_table_lookup(hash, id_remove);
 
 	gchar *id;
 	GebrGeoXmlSequence *seq;
+	gchar *parent_id = NULL;
 
 	gboolean removed = FALSE;
 	gebr_geoxml_flow_get_revision(flow, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
-		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), NULL, NULL, NULL, &id);
+		gchar *xml;
+		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &xml, NULL, NULL, &id);
 		if (!g_strcmp0(id, id_remove)) {
-			gebr_geoxml_sequence_remove(seq);
+			GebrGeoXmlDocument *doc;
+			if (gebr_geoxml_document_load_buffer(&doc, xml) != GEBR_GEOXML_RETV_SUCCESS)
+				g_warn_if_reached();
+
+			parent_id = gebr_geoxml_document_get_parent_id(doc);
+
 			removed = TRUE;
+			gebr_geoxml_sequence_remove(seq);
+
+			gebr_geoxml_document_free(doc);
+			g_free(xml);
 			break;
 		}
+		g_free(xml);
 	}
 
-	g_warn_if_fail(removed == TRUE);
+	g_return_val_if_fail(removed == TRUE, FALSE);
 
+	GList *children = g_hash_table_lookup(hash, id_remove);
 	if (!children) {
-		gboolean has_head = (g_strcmp0(parent_head, id) == 0);
+		gboolean has_head = (g_strcmp0(parent_head, id_remove) == 0);
 		g_free(id);
 		return has_head;
 	}
@@ -714,12 +726,33 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 	if (!g_strcmp0(id_remove, parent_head))
 		result = TRUE;
 
-	for (GList *i = children; i; i = i->next)
-		result = (flow_revision_remove(flow, i->data,
-		                               parent_head, hash) || result);
+	for (GList *i = children; i; i = i->next) {
+		//Change children's father in XML
+		gchar *flow_xml = NULL;
+		GebrGeoXmlDocument *doc_rev;
+		GebrGeoXmlRevision *rev = gebr_geoxml_flow_get_revision_by_id(flow, i->data);
+		gebr_geoxml_flow_get_revision_data(rev, &flow_xml, NULL, NULL, NULL);
 
+		if (gebr_geoxml_document_load_buffer(&doc_rev, flow_xml) != GEBR_GEOXML_RETV_SUCCESS)
+			g_warn_if_reached();
+		g_free(flow_xml);
+
+		gebr_geoxml_document_set_parent_id(doc_rev, parent_id);
+		gebr_geoxml_document_to_string(doc_rev, &flow_xml);
+		gebr_geoxml_flow_set_revision_data(rev, flow_xml, NULL, NULL, NULL);
+
+		gebr_geoxml_document_free(doc_rev);
+		g_free(flow_xml);
+	}
+
+	GList *parent_children = g_hash_table_lookup(hash, parent_id);
+	parent_children = g_list_remove(parent_children, id_remove);
+
+	parent_children = g_list_concat(parent_children, g_list_copy(children));
+	g_hash_table_insert(hash, parent_id, parent_children);
+
+	g_hash_table_remove(hash, id_remove);
 	g_free(id);
-
 	gebr.ui_flow_browse->update_graph = TRUE;
 
 	return result;
