@@ -1506,11 +1506,10 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		if (is_head) {
 			gchar *new_comment = g_strdup_printf("%s%s", final_comment->str, has_id? " (modified)" : "");
 			format_node = g_strdup_printf(
-					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
-					"<tr><td bgcolor=\"#000080\" align=\"center\"><font color=\"white\">%s</font></td>"
-					"</tr><tr><td align=\"center\">%s</td></tr></table>>, shape = note, color = \"#000080\","
+					"%s [URL=\"%s\" label = \"Now\","
+					"shape = ellipse, color = \"#000080\","
 					"fontsize = 10]",
-					head, head, new_comment, _("Now"));
+					head, head);
 			g_free(new_comment);
 		} else {
 			format_node = g_strdup_printf(
