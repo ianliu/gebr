@@ -235,7 +235,8 @@ on_title_entry_changed(GtkEntry *entry,
 }
 
 static void
-on_paths_button_clicked (GtkButton *button, gpointer pointer)
+on_paths_button_clicked (GtkButton *button,
+			 gpointer pointer)
 {
 	const gchar *section = "projects_lines_line_paths";
 	gchar *error;
@@ -250,7 +251,8 @@ on_paths_button_clicked (GtkButton *button, gpointer pointer)
 
 
 static void
-on_document_help_button_clicked (GtkButton *button, gpointer doc_type_pointer)
+on_document_help_button_clicked (GtkButton *button,
+				 gpointer doc_type_pointer)
 {
 	GebrGeoXmlDocumentType doc_type = (GebrGeoXmlDocumentType)(GPOINTER_TO_INT(doc_type_pointer));
 	gchar *section = NULL;

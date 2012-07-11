@@ -591,7 +591,23 @@ on_response_event(GtkDialog *dialog,
 		}
 	}
 }
+void
+on_comment_changed(GtkEntry *entry,
+		   GtkWidget *dialog)
+{
+	const gchar *text = gtk_entry_get_text(entry);
+	const gchar *err_tooltip = _("Insert a description to your revision.");
 
+	if (!*text) {
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, err_tooltip);
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, FALSE);
+	} else {
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, TRUE);
+	}
+
+}
 gboolean flow_revision_save(void)
 {
 	GtkWidget *dialog;
@@ -634,6 +650,11 @@ gboolean flow_revision_save(void)
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
 	g_signal_connect(dialog, "response", G_CALLBACK(on_response_event), NULL);
 
+	const gchar *comm = _("Insert a description of your revision.");
+	gtk_widget_set_tooltip_text(GTK_WIDGET(entry), comm);
+
+	on_comment_changed(GTK_ENTRY(entry), dialog);
+	g_signal_connect(GTK_ENTRY(entry), "changed", G_CALLBACK(on_comment_changed), (gpointer)dialog);
 	gtk_widget_show_all(dialog);
 
 	gebr.ui_flow_browse->update_graph = TRUE;
