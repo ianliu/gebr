@@ -26,10 +26,12 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
+#include <libgebr/date.h>
 #include <libgebr/json/json-glib.h>
 #include <libgebr/comm/gebr-comm-protocol.h>
 
 #include "gebrd.h"
+#include "gebrd-job.h"
 #include "gebrd-server.h"
 #include "gebrd-client.h"
 #include "gebrd-sysinfo.h"
@@ -235,6 +237,11 @@ void gebrd_init(void)
 void gebrd_quit(void)
 {
 	gebrd_message(GEBR_LOG_END, _("Server quit."));
+	for (GList *i = gebrd->user->jobs; i; i = i->next) {
+		GebrdJob *task = i->data;
+		job_status_notify(task, JOB_STATUS_FAILED, gebr_iso_date());
+		job_free(task);
+	}
 	g_list_foreach(gebrd->mpi_flavors, (GFunc)gebrd_mpi_config_free, NULL);
 	g_list_free(gebrd->mpi_flavors);
 	server_quit();

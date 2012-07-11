@@ -19,8 +19,6 @@
  */
 
 #include <config.h>
-#include "gebrm-app.h"
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -113,7 +111,6 @@ gebrm_remove_lock_and_quit(int sig)
 {
 	g_unlink(gebrm_app_get_lock_file());
 	g_unlink(gebrm_app_get_version_file());
-	//g_debug("On '%s', line '%d', version_file:'%s' ", __FILE__, __LINE__, gebrm_app_get_version_file());
 	exit(0);
 }
 

@@ -536,7 +536,8 @@ void job_status_notify(GebrdJob *job, GebrCommJobStatus status, const gchar *_pa
 
 	/* warn all clients of the new status */
 	struct client *client = gebrd_user_get_connection(gebrd->user);
-	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+
+	gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
 					      gebr_comm_protocol_defs.sta_def, 5,
 					      job->parent.jid->str, status_enum_to_string(status),
 					      parameter, job->parent.run_id->str, job->frac->str);
