@@ -1,5 +1,11 @@
 * { font-family: sans-serif, verdana, arial, helvetica; }
 
+.book {
+	margin: 0 auto;
+	width: 950px;
+	text-align: left;
+}
+
 .guilabel { font-variant:small-caps; }
 
 body { margin: 25px; }
