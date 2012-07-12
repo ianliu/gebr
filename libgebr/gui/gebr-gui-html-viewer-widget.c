@@ -206,10 +206,15 @@ static void create_generate_links_index_function(JSContextRef context)
 static void generate_links_index(JSContextRef context, const gchar * links, gboolean is_programs_help)
 {
 	gchar * script;
-	const gchar * program;
 
-	program = is_programs_help? "true":"false";
-	script = g_strdup_printf("generateNavigationIndex(); GenerateLinksIndex(%s,%s);", links, program);
+	if (links) {
+		const gchar * program;
+		program = is_programs_help? "true":"false";
+		script = g_strdup_printf("generateNavigationIndex(); GenerateLinksIndex(%s,%s);", links, program);
+	} else {
+		script = g_strdup("generateNavigationIndex();");
+	}
+
 	gebr_js_evaluate(context, script);
 	g_free(script);
 }
@@ -244,6 +249,8 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 			help = gebr_geoxml_document_get_help (menu);
 			if(strlen(help) > 0)
 				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
+			else
+				generate_links_index(context, NULL, TRUE);
 			g_free (help);
 		} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 			GString * list;
@@ -263,8 +270,13 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 			g_string_append(list, "]");
 			if(strcmp(list->str,"[]") != 0)
 				generate_links_index(context, list->str, FALSE);
+			else
+				generate_links_index(context, NULL, FALSE);
 			g_string_free(list, TRUE);
 		}
+	} else {
+		create_generate_links_index_function(context);
+		generate_links_index(context, NULL, FALSE);
 	}
 
 	title = js_get_document_title(context);
