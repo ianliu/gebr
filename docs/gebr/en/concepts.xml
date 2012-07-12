@@ -110,12 +110,12 @@
       <title>Add header flows</title>
       <mediaobject>
 	<imageobject>
-            <imagedata fileref="../images/menu.png" />
+            <imagedata fileref="../images/menu.png" contentwidth="506px" contentdepth="93px" />
         </imageobject>
       </mediaobject>
       <mediaobject>
 	<imageobject>
-            <imagedata fileref="../images/menu2.png" />
+            <imagedata fileref="../images/menu2.png" contentwidth="504px" contentdepth="93px" />
           </imageobject>
       </mediaobject>
       <caption>A common flow to add header to a raw data is built by
@@ -201,7 +201,7 @@
       <title>Communication layout between GêBR players</title>
       <mediaobject>
 	<imageobject>
-          <imagedata fileref="../images/gebr-connections.png" />
+          <imagedata fileref="../images/gebr-connections.png" contentwidth="669px" contentdepth="272px" />
         </imageobject>
       </mediaobject>
       <caption>GêBR has no direct access to nodes. All
@@ -257,7 +257,7 @@
 	<mediaobject>
           <caption>GêBR tabs.</caption>
           <imageobject>
-            <imagedata fileref="../images/GeBR_tabs.png"/>
+            <imagedata fileref="../images/GeBR_tabs.png" contentwidth="706px" contentdepth="456px" />
           </imageobject>
 	</mediaobject>
       </figure>
@@ -309,7 +309,7 @@
       <mediaobject>
         <caption>GêBR's menus bar</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_menubar.png"/>
+          <imagedata fileref="../images/GeBR_menubar.png" contentwidth="706px" contentdepth="456px" />
         </imageobject>
       </mediaobject>
     </figure>

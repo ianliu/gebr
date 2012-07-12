@@ -10,7 +10,7 @@
   </itemizedlist>
   <inlinemediaobject>
     <imageobject>
-      <imagedata fileref="../images/gebr-logo.png" />
+      <imagedata fileref="../images/gebr-logo.png"  contentwidth="300px" contentdepth="172px" />
     </imageobject>
   </inlinemediaobject>
 </acknowledgements>

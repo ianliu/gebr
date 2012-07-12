@@ -92,7 +92,7 @@
           is allowed to communicate to that Maestro. Otherwise, it
           requests for the user's password.</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_public_key_diagram.png" />
+          <imagedata fileref="../images/GeBR_public_key_diagram.png"  contentwidth="887px" contentdepth="271px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -128,7 +128,7 @@
       <title>Remote browsing of files</title>
       <mediaobject>
 	<imageobject>
-	  <imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png" />
+	  <imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png"  contentwidth="813px" contentdepth="714px" />
 	</imageobject>
       </mediaobject>
       <caption>Example of remote browsing for an output file. Note the
@@ -181,7 +181,7 @@
 
     <figure>
       <title>Execution speed</title>
-      <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
+      <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png"  contentwidth="733px" contentdepth="481px" />
       <caption>
 	GêBR offers the possibility to adjust the execution
 	settings. Through the slider, it is possible  instruct to
@@ -215,7 +215,7 @@
 
     <figure>
       <title>Priority of Execution</title>
-      <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
+      <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png"  contentwidth="817px" contentdepth="490px" />
       <caption>
 	GêBR offers two possibilities of priority of execution: Low
 	and High Priority.
@@ -304,7 +304,7 @@
           <title>Dictionary of variables</title>
           <mediaobject>
             <imageobject>
-              <imagedata fileref="../images/GeBR_dictionary_variables_example.png" />
+              <imagedata fileref="../images/GeBR_dictionary_variables_example.png"  contentwidth="637px" contentdepth="441px" />
             </imageobject>
           </mediaobject>
           <caption>A variable with a value may be used with different
@@ -455,7 +455,7 @@
         <title>Usage of iter variable</title>
         <mediaobject>
           <imageobject>
-            <imagedata fileref="../images/GeBR_flow_editor_loop_output.png" />
+            <imagedata fileref="../images/GeBR_flow_editor_loop_output.png"  contentwidth="733px" contentdepth="505px" />
           </imageobject>
         </mediaobject>
         <caption>This Flow with a Loop program and number of loops
@@ -509,7 +509,7 @@
 
     <figure>
       <title>Indication of MPI availability</title>
-      <imagedata fileref="../images/GeBR_servers_mpi.png" />
+      <imagedata fileref="../images/GeBR_servers_mpi.png"  contentwidth="633px" contentdepth="459px" />
       <caption>The second column indicates the types (flavors) of MPI
 	available in the nodes.</caption>
     </figure>
@@ -523,7 +523,7 @@
 
     <figure>
       <title>MPI settings</title>
-      <imagedata fileref="../images/GeBR_programs_mpi_parameters.png" />
+      <imagedata fileref="../images/GeBR_programs_mpi_parameters.png"  contentwidth="473px" contentdepth="352px" />
       <caption>Double clicking over an MPI program the user can set
 	the <emphasis>number of process</emphasis> parameter of
 	MPI.</caption>
@@ -547,7 +547,7 @@
           execution log, which displays information on all of GêBR
           processes.</caption>
         <imageobject>
-          <imagedata fileref="../images/janela_log_execucao.png" />
+          <imagedata fileref="../images/janela_log_execucao.png"  contentwidth="734px" contentdepth="571px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -584,7 +584,7 @@
       <mediaobject>
         <caption>Screenshot of the Samples Menu.</caption>
         <imageobject>
-          <imagedata fileref="../images/samples_en.png" />
+          <imagedata fileref="../images/samples_en.png"  contentwidth="733px" contentdepth="526px" />
         </imageobject>
       </mediaobject>
     </figure>

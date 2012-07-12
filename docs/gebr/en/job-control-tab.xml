@@ -32,7 +32,7 @@
       <mediaobject>
         <caption>Toolbar of Job Control</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_jc_toolbar.png" />
+          <imagedata fileref="../images/GeBR_jc_toolbar.png"  contentwidth="733px" contentdepth="534px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -165,7 +165,7 @@
       <title>Job Control left panel</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="../images/GeBR_jc_left_pane.png" />
+          <imagedata fileref="../images/GeBR_jc_left_pane.png"  contentwidth="733px" contentdepth="534px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -198,7 +198,7 @@
       <title>Job Control Right Panel</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="../images/GeBR_jc_more_details.png" />
+          <imagedata fileref="../images/GeBR_jc_more_details.png"  contentwidth="733px" contentdepth="633px" />
         </imageobject>
       </mediaobject>
       <caption> Job information. The user can consult detailed information
@@ -217,7 +217,7 @@
     <title>Jobs outputs</title>
     <mediaobject>
       <imageobject>
-        <imagedata fileref="../images/GeBR_jc_output.png" />
+        <imagedata fileref="../images/GeBR_jc_output.png"  contentwidth="733px" contentdepth="525px" />
       </imageobject>
     </mediaobject>
     <caption>Screenshot of the outputs of a job.</caption>

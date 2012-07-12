@@ -326,7 +326,7 @@
               </inlinemediaobject>
           </guiicon>.</caption>
           <imageobject>
-            <imagedata fileref="../images/GeBR_flow_browser.png" />
+            <imagedata fileref="../images/GeBR_flow_browser.png"  contentwidth="733px" contentdepth="485px" />
           </imageobject>
         </mediaobject>
     </figure></para>

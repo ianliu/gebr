@@ -20,7 +20,7 @@
         <caption>Screenshot of the <guilabel>Projects and
             Lines</guilabel> tab.</caption>
         <imageobject>
-          <imagedata fileref="../images/janela_principal_1.png" />
+          <imagedata fileref="../images/janela_principal_1.png"  contentwidth="706px" contentdepth="426px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -77,7 +77,7 @@
         <caption>In the Project's properties dialog box, the user can edit
           the Title, Description, Author and Email.</caption>
         <imageobject>
-          <imagedata fileref="../images/janela_properties_project.png" />
+          <imagedata fileref="../images/janela_properties_project.png"  contentwidth="387px" contentdepth="215px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -312,7 +312,7 @@
       <caption>Options available when the user wants to edit/run a Line
       associated to a disconnected Maestro.</caption>
       <imageobject>
-	<imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png" />
+	<imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png"  contentwidth="327px" contentdepth="287px" />
       </imageobject>
     </mediaobject>
     </figure>
@@ -438,7 +438,7 @@
       <mediaobject>
 	<caption>The comment editor window.</caption>
 	<imageobject>
-	  <imagedata fileref="../images/janela_comentarios_de_linha.png" />
+	  <imagedata fileref="../images/janela_comentarios_de_linha.png"  contentwidth="835px" contentdepth="315px" />
 	</imageobject>
       </mediaobject>
     </figure>
@@ -492,7 +492,7 @@
 	  parameter table and choose from a few pre-defined styles for
 	  the report.</caption>
 	<imageobject>
-	  <imagedata fileref="../images/janela_visualizar_relatorio.png" />
+	  <imagedata fileref="../images/janela_visualizar_relatorio.png"  contentwidth="626px" contentdepth="423px" />
 	</imageobject>
       </mediaobject>
     </figure>

@@ -120,7 +120,7 @@
               which will appear in the Flow sequence box on the left
               side of the main window.</caption>
             <imageobject>
-              <imagedata fileref="../images/GeBR_flow_browser_flow_assembling.png" />
+              <imagedata fileref="../images/GeBR_flow_browser_flow_assembling.png"  contentwidth="733px" contentdepth="428px" />
             </imageobject>
           </mediaobject>
         </figure>
@@ -151,7 +151,7 @@
             <caption>To enable a program, select the Configured
             option.</caption>
             <imageobject>
-              <imagedata fileref="../images/GeBR_flow_browser_flow_assembling_02.png" />
+              <imagedata fileref="../images/GeBR_flow_browser_flow_assembling_02.png"  contentwidth="733px" contentdepth="588px" />
             </imageobject>
           </mediaobject>
         </figure>
@@ -406,7 +406,7 @@
           the user can edit the input, output and log files for this Flow
           sequence.</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_flow_editor_input_file.png" />
+          <imagedata fileref="../images/GeBR_flow_editor_input_file.png"  contentwidth="733px" contentdepth="485px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -446,7 +446,7 @@
           Autocomplete feature in the Input file of a Flow.
         </caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_flow_editor_autocomplete.png" />
+          <imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"  contentwidth="919px" contentdepth="638px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -521,7 +521,7 @@
           can choose after which flow it will be executed.
         </caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_flow_editor_queue.png" />
+          <imagedata fileref="../images/GeBR_flow_editor_queue.png"  contentwidth="733px" contentdepth="485px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -560,7 +560,7 @@
       <caption>Screenshot of program <emphasis>Loop</emphasis>, added
       to a Flow and properly configured.</caption>
       <imageobject>
-        <imagedata fileref="../images/GeBR_flow_editor_loop.png" />
+        <imagedata fileref="../images/GeBR_flow_editor_loop.png"  contentwidth="793px" contentdepth="537px" />
       </imageobject>
     </mediaobject>
     </figure>
@@ -580,7 +580,7 @@
         of <emphasis>Loop</emphasis> program, with a simple example of
         parameters setting.</caption>
       <imageobject>
-        <imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png" />
+        <imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png"  contentwidth="468px" contentdepth="387px" />
       </imageobject>
     </mediaobject>
     </figure>
