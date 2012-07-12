@@ -1156,7 +1156,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	gint pos;
 	gchar * var;
 	gchar * word;
-	gint ini;
+	gint ini, end;
 	CompletionType comp_type;
 	GebrGeoXmlParameterType type = GPOINTER_TO_INT(data);
 
@@ -1164,22 +1164,64 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	text = gtk_entry_get_text(GTK_ENTRY(entry));
 	pos = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
 	ini = pos;
+	end = pos;
 	gtk_tree_model_get(model, iter, 0, &var, 3, &comp_type, -1);
 	word = gebr_str_word_before_pos(text, &ini);
 
-	if (!word)
+	if (!word) {
 		ini = pos;
-	else if (ini - 1 >= 0 && (text[ini-1] == '[' || text[ini-1] == '<'))
-		ini--;
+		if (text[ini] == '[' && text[ini+1] == ']')
+			end = pos + 1;
+		else if (text[ini] == '<' && text[ini+1] == '>')
+			end = pos + 2;
+		else
+			end = pos;
+	} else {
+		if (ini - 1 >= 0 && (text[ini-1] == '[' || text[ini-1] == '<')) {
+			ini--;
+		} else {
+			for (gint i = pos; text[i]; i--) {
+				if (text[i] == '[' ||
+				    text[i] == '<' ) {
+					ini = i;
+					break;
+				}
+				if (text[i] == ']' ||
+				    text[i] == '>' ) {
+					ini = i + 1;
+					break;
+				}
+			}
+		}
+		for (gint i = ini+1; text[i]; i++) {
+			if (text[i] == ' ') {
+				end = i - 1;
+				break;
+			}
+			if (text[i] == '[' ||
+			    text[i] == '<' ) {
+				end = i - 1;
+				break;
+			}
+			if (text[i] == ']') {
+				end = i;
+				break;
+			}
+			if (text[i] == '>') {
+				end = i + 1;
+				break;
+			}
+		}
+	}
 
-	if (ini <= pos)
-		gtk_editable_delete_text(GTK_EDITABLE(entry), ini, pos + 1);
+	if (ini <= end)
+		gtk_editable_delete_text(GTK_EDITABLE(entry), ini, end+1);
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
 	    type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 	    type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
 		gtk_editable_insert_text(GTK_EDITABLE(entry), var, -1, &ini);
-		gtk_editable_set_position(GTK_EDITABLE(entry), ini + strlen(var));
+		gtk_editable_set_position(GTK_EDITABLE(entry), ini);
 	}
 	else if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING || 
 		 type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
@@ -1199,7 +1241,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 		}
 		g_string_printf(value, "%s%s%s%s", tmp1, var, tmp2, bar);
 		gtk_editable_insert_text(GTK_EDITABLE(entry), value->str, -1, &ini);
-		gtk_editable_set_position(GTK_EDITABLE(entry), ini + value->len);
+		gtk_editable_set_position(GTK_EDITABLE(entry), ini);
 		g_string_free(value, TRUE);
 	}
 	g_free(word);
