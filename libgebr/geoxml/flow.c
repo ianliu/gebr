@@ -1495,11 +1495,19 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		}
 
 
+		size_t comment_size = strlen(comment);
 		g_string_append(final_comment, comment);
-		if(g_utf8_strlen(comment, 21) > 20) {
-			g_string_insert(final_comment, 21, "<br/>");
+
+		if(comment_size > 20) {
+			gchar *last_space;
+			last_space = g_strrstr_len(comment, 21, " ");
+			g_string_insert(final_comment, (last_space - comment), "<br/>");
+			if(comment_size > 40) {
+				last_space = g_strrstr_len(comment, 40, " ");
+				g_string_insert(final_comment, (last_space - comment) + 5, "<br/>");
+			}
 			fontsize = 8;
-		} else if(g_utf8_strlen(comment, 21) > 15) {
+		} else if(comment_size > 15) {
 			fontsize = 9;
 		}
 

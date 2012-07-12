@@ -603,8 +603,8 @@ on_comment_changed(GtkEntry *entry,
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_entry_set_icon_tooltip_markup(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, err_tooltip);
 		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, FALSE);
-	} else if (strlen(text) > 40) {
-		err_tooltip = _("The description accepts only 40 characters");
+	} else if (strlen(text) > 60) {
+		err_tooltip = _("The description accepts only 60 characters");
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_entry_set_icon_tooltip_markup(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, err_tooltip);
 		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, FALSE);
@@ -651,6 +651,7 @@ gboolean flow_revision_save(void)
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+	gtk_entry_set_max_length(GTK_ENTRY(entry), 60);
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
 	g_signal_connect(dialog, "response", G_CALLBACK(on_response_event), NULL);
