@@ -1,17 +1,18 @@
 import pygtk
 import sys, gtk, glib
 import xdot
+import gettext
 
 class MyDotWindow(xdot.DotWindow):
-
     def __init__(self):
         xdot.DotWindow.__init__(self)
         self.widget.connect('clicked', self.on_url_clicked)
         self.widget.connect('activate', self.on_url_activate)
 
         Wid = 0L
-        if len(sys.argv) == 2:
+        if len(sys.argv) == 3:
             Wid = long(sys.argv[1])
+            locale_dir = str(sys.argv[2])
 
         self.plug = gtk.Plug(Wid)
 
@@ -22,6 +23,8 @@ class MyDotWindow(xdot.DotWindow):
         self.plug.show_all()
 
         self.window.destroy()
+        
+        gettext.install("gebr", locale_dir)
 
     def on_revert_clicked(self, widget, url):
         revert_str = "revert:"+url
@@ -38,11 +41,11 @@ class MyDotWindow(xdot.DotWindow):
             return False
         self.menu = gtk.Menu()
         self.menu.popup(None, None, None, event.button, event.time, url)
-        revert = gtk.MenuItem("Revert")
+        revert = gtk.MenuItem(_("Revert"))
         revert.connect("activate", self.on_revert_clicked, url)
         revert.show()
         self.menu.append(revert)
-        delete = gtk.MenuItem("Delete")
+        delete = gtk.MenuItem(_("Delete"))
         delete.connect("activate", self.on_delete_clicked, url)
         delete.show()
         self.menu.append(delete)

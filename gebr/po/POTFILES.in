@@ -9,6 +9,7 @@ data/gebr.desktop.in.in
 data/line-properties.glade
 data/mpi-parameters-help.glade
 data/project-properties.glade
+data/gebr-xdot-graph.py
 document.c
 flow.c
 gebr-daemon-server.c

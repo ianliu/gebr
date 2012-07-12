@@ -599,12 +599,12 @@ on_comment_changed(GtkEntry *entry,
 	const gchar *err_tooltip;
 
 	if (!*text) {
-		err_tooltip = _("Insert a description to your revision.");
+		err_tooltip = _("Insert a description to your snapshot.");
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_entry_set_icon_tooltip_markup(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, err_tooltip);
 		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, FALSE);
 	} else if (strlen(text) > 60) {
-		err_tooltip = _("The description accepts only 60 characters");
+		err_tooltip = _("The description accepts up to 60 characters");
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_entry_set_icon_tooltip_markup(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, err_tooltip);
 		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, FALSE);
@@ -656,7 +656,7 @@ gboolean flow_revision_save(void)
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
 	g_signal_connect(dialog, "response", G_CALLBACK(on_response_event), NULL);
 
-	const gchar *comm = _("Insert a description of your revision.");
+	const gchar *comm = _("Insert a description of your snapshot.");
 	gtk_widget_set_tooltip_text(GTK_WIDGET(entry), comm);
 
 	on_comment_changed(GTK_ENTRY(entry), dialog);

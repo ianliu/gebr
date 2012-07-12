@@ -230,7 +230,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_TOP);
 
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrolled_window_info, gtk_label_new(_("Details")));
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrolled_window_rev, gtk_label_new(_("Revisions")));
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrolled_window_rev, gtk_label_new(_("Snapshots")));
 
 	gtk_paned_pack2(GTK_PANED(hpanel), notebook, TRUE, FALSE);
 
@@ -302,9 +302,9 @@ void flow_browse_info_update(void)
                 gchar *comment;
 
                 if (gebr_geoxml_flow_get_parent_revision(gebr.flow, &date, &comment, NULL))
-                	str_tmp = g_markup_printf_escaped(_("<b>Revision of origin:</b>  %s <span size='small'>(saved in %s)</span>"), comment, date);
+                	str_tmp = g_markup_printf_escaped(_("<b>Snapshot of origin:</b>  %s <span size='small'>(saved in %s)</span>"), comment, date);
                 else
-                	str_tmp = g_strdup(_("This Flow has never had its state saved"));
+                	str_tmp = g_strdup(_("This Flow has no snapshots"));
 
                 gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.rev_num), str_tmp);
                 g_free(str_tmp);
@@ -419,6 +419,8 @@ graph_process_read_stderr(GebrCommProcess * process)
 	GString *output;
 	output = gebr_comm_process_read_stderr_string_all(process);
 
+	g_debug("ERROR OF PYTHON: %s", output->str);
+
 	gchar **action = g_strsplit(output->str, ":", -1);
 
 	if (!g_strcmp0(action[1], "head")) {
@@ -488,7 +490,7 @@ gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
 
 	g_debug("SOCKET ID %d", socket_id);
 
-	gchar *cmd_line = g_strdup_printf("python %s/gebr-xdot-graph.py %d", GEBR_PYTHON_DIR, socket_id);
+	gchar *cmd_line = g_strdup_printf("python %s/gebr-xdot-graph.py %d %s", GEBR_PYTHON_DIR, socket_id, PACKAGE_LOCALE_DIR);
 	GString *cmd = g_string_new(cmd_line);
 
 	g_signal_connect(fb->graph_process, "ready-read-stderr", G_CALLBACK(graph_process_read_stderr), NULL);
@@ -646,7 +648,7 @@ gebr_flow_browse_revision_delete(const gchar *rev_id)
 	gboolean response;
 
 	gdk_threads_enter();
-	response = gebr_gui_confirm_action_dialog(_("Remove this revision permanently?"),
+	response = gebr_gui_confirm_action_dialog(_("Remove this snapshot permanently?"),
 	                                          _("If you choose to remove this revision "
 	                                        		  "you will not be able to recover it later."));
 	gdk_threads_leave();
