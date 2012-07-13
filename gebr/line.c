@@ -366,7 +366,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
 		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
 		gchar *path = g_build_filename("<HOME>", "GeBR", line_key, NULL);
-		GObject *label;
 
 		const gchar *entr_text = gtk_entry_get_text(GTK_ENTRY(entry_base));
 		if (!entr_text || !entr_text[0])

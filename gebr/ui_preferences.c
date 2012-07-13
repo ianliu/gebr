@@ -1099,7 +1099,6 @@ preferences_setup_ui(gboolean first_run,
 			gchar *intro_label_version_text = g_strdup_printf(_("It's the first time you use GêBR %s."), gebr_version());
 			gtk_label_set_markup(GTK_LABEL(intro_label_version), intro_label_version_text);
 			g_free(intro_label_version_text);
-			GtkWidget *intro_label2  = GTK_WIDGET(gtk_builder_get_object(builder, "intro_label2"));
 		}
 
 		// MAESTRO_INFO_PAGE
