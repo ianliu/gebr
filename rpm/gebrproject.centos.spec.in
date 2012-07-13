@@ -25,7 +25,7 @@ BuildRequires: gcc-c++ xorg-x11-proto-devel xorg-x11-xtrans-devel
 BuildRequires: yum
 BuildRoot: /var/tmp/gebrproject-%{version}-%{release}
 Summary: Seismic processing environment
-Requires: openssh, xz
+Requires: openssh, xz, bc, pygtk2
 %description
 GêBR is a simple graphical interface which facilitates geophysical data processing. 
 GêBR is not a package for processing, rather it is designed to integrate a large 

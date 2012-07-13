@@ -23,7 +23,7 @@ This package provides several tools for working with seismic data.
 #### Libgebr Package
 ################################################################################
 %package -n libgebr
-Requires: gdome2 WebKit-gtk
+Requires: gdome2 WebKit-gtk pygtk2
 Conflicts: WebKit-gtk = 1.2.6
 Group: System Environment/Libraries
 Summary: GeBR library collection
