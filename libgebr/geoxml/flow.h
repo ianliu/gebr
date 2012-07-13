@@ -329,11 +329,9 @@ gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
  *
  * If \p flow or \p revision is NULL nothing is done, and returns FALSE.
  * If it fails because the revision could not be loaded, returns FALSE.
- * If exists reports on the revisions, the selected one was merged with the 
- * current report and deleted from the revision
  * On success, return TRUE.
  */
-gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision, gboolean * report_merged);
+gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision);
 
 /**
  * Creates a new revision with the current time append to the list of revisions

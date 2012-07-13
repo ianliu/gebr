@@ -471,7 +471,7 @@ gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow)
 	return retval;	
 }
 
-gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision, gboolean * report_merged)
+gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision)
 {
 	if (flow == NULL || revision == NULL)
 		return FALSE;
@@ -480,8 +480,6 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	GebrGeoXmlDocument *revision_flow;
 	GebrGeoXmlSequence *first_revision;
 	GdomeElement *child;
-	if(report_merged)
-		*report_merged = FALSE;
 
 	/* load document validating it */
 	if (gebr_geoxml_document_load_buffer(&revision_flow,

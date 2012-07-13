@@ -116,18 +116,6 @@ void flow_free(void)
 	flow_browse_info_update();
 }
 
-static void
-flow_delete_graph_file(gchar *filename)
-{
-	GString *path;
-
-	path = document_get_path(filename);
-	path = g_string_append(path, ".png");
-	g_unlink(path->str);
-
-	g_string_free(path, TRUE);
-}
-
 void flow_delete(gboolean confirm)
 {
 	gpointer document;
@@ -176,7 +164,6 @@ void flow_delete(gboolean confirm)
 		flow_free();
 
 		document_delete(filename);
-		flow_delete_graph_file(filename);
 
 		g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
 
@@ -630,7 +617,7 @@ gboolean flow_revision_save(void)
 	if (!flow_browse_get_selected(&iter, TRUE))
 		return FALSE;
 
-	dialog = gtk_dialog_new_with_buttons(_("Save selected Flows?"),
+	dialog = gtk_dialog_new_with_buttons(_("Take snapshot of the selected Flow?"),
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -645,7 +632,7 @@ gboolean flow_revision_save(void)
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align), vbox);
 
-	label = gtk_label_new(_("Write a description about this version of the selected Flows:"));
+	label = gtk_label_new(_("Write a description about snapshot of the selected Flow:"));
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	entry = gtk_entry_new();

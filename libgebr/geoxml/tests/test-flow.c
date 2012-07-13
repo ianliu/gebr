@@ -479,20 +479,20 @@ void test_gebr_geoxml_flow_change_to_revision(void){
 	GebrGeoXmlRevision *revision = NULL;
 	gboolean boole;
 
-	boole = gebr_geoxml_flow_change_to_revision(NULL, revision, NULL);
+	boole = gebr_geoxml_flow_change_to_revision(NULL, revision);
 	g_assert(boole == FALSE);
 
 	flow = gebr_geoxml_flow_new();
-	boole = gebr_geoxml_flow_change_to_revision(flow, NULL, NULL);
+	boole = gebr_geoxml_flow_change_to_revision(flow, NULL);
 	g_assert(boole == FALSE);
 
 	revision = gebr_geoxml_flow_append_revision(flow, "asdf");
-	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	boole = gebr_geoxml_flow_change_to_revision(flow, revision);
 	gebr_geoxml_object_unref(revision);
 	g_assert(boole == TRUE);
 
 	revision = gebr_geoxml_flow_append_revision(flow, "kakarotto");
-	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	boole = gebr_geoxml_flow_change_to_revision(flow, revision);
 	gebr_geoxml_object_unref(revision);
 	g_assert(boole == TRUE);
 

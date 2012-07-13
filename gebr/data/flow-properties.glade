@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <!-- interface-requires gtk+ 2.0 -->
+  <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkVBox" id="main">
     <property name="visible">True</property>
@@ -12,7 +12,7 @@
         <child>
           <object class="GtkLabel" id="label_title">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;span size='xx-large'&gt;T&#xED;tulo do Fluxo&lt;/span&gt;</property>
+            <property name="label">&lt;span size='xx-large'&gt;#Flow Title&lt;/span&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -33,7 +33,7 @@
         <property name="visible">True</property>
         <property name="xalign">0</property>
         <property name="xpad">5</property>
-        <property name="label" translatable="yes">&lt;span size='large' style='italic'&gt;Descri&#xE7;&#xE3;o do fluxo de processamento&lt;/span&gt;</property>
+        <property name="label">&lt;span size='large' style='italic'&gt;#Description of Flow&lt;/span&gt;</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -46,7 +46,7 @@
       <object class="GtkLabel" id="desc_revision">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">Este fluxo nunca foi salvo</property>
+        <property name="label">#This flow was never saved</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -124,7 +124,7 @@
       <object class="GtkLabel" id="lastrun_label">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">Last execution in &lt;b&gt;date&lt;/b&gt; at &lt;b&gt;maestro or node&lt;/b&gt;</property>
+        <property name="label">#Last execution in &lt;b&gt;date&lt;/b&gt; at &lt;b&gt;maestro or node&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -272,8 +272,7 @@
             <property name="visible">True</property>
             <property name="xalign">0</property>
             <property name="ypad">3</property>
-            <property name="label" translatable="yes">&lt;span size='large'&gt;&lt;i&gt;Through snapshots, G&#xEA;BR can save remarkable states of a flow.&lt;/i&gt;&lt;/span&gt;</property>
-            <property name="use_markup">True</property>
+            <property name="label" translatable="yes">Through snapshots, GêBR can save remarkable states of a flow.</property>
           </object>
           <packing>
             <property name="expand">False</property>

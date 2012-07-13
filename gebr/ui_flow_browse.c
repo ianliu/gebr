@@ -302,7 +302,7 @@ void flow_browse_info_update(void)
                 gchar *comment;
 
                 if (gebr_geoxml_flow_get_parent_revision(gebr.flow, &date, &comment, NULL))
-                	str_tmp = g_markup_printf_escaped(_("<b>Snapshot of origin:</b>  %s <span size='small'>(saved in %s)</span>"), comment, date);
+                	str_tmp = g_markup_printf_escaped(_("<b>Snapshot of origin:</b>  %s <span size='small'>(taken in %s)</span>"), comment, date);
                 else
                 	str_tmp = g_strdup(_("This Flow has no snapshots"));
 
@@ -317,15 +317,27 @@ void flow_browse_info_update(void)
         if (!last_run || !*last_run) {
         	last_text = g_strdup(_("This flow was never executed"));
         } else {
+        	gchar *local;
         	gchar *group;
-        	gebr_geoxml_flow_server_get_group(gebr.flow, NULL, &group);
-        	if (group && !*group) {
-        		g_free(group);
-        		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-        		group = g_strdup_printf("Maestro %s", gebr_maestro_server_get_address(maestro));
+        	gchar *type;
+        	gebr_geoxml_flow_server_get_group(gebr.flow, &type, &local);
+        	if (local) {
+        		if (!g_strcmp0(type, "group")) {
+        			if (!*local) {
+        				GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+        				group = g_strdup_printf("Maestro %s", gebr_maestro_server_get_address(maestro));
+        			} else {
+        				group = g_strdup_printf(_("group %s"), local);
+        			}
+        		} else if (!g_strcmp0(type, "daemon")) {
+        			group = g_strdup_printf(_("node %s"), local);
+        		}
+        	} else {
+        		group = g_strdup("");
         	}
+        	g_free(local);
 
-        	last_text = g_markup_printf_escaped("Last execution in %s at <b>%s</b>", gebr_localized_date(last_run), group);
+        	last_text = g_markup_printf_escaped(_("Last execution in %s at <b>%s</b>"), gebr_localized_date(last_run), group);
 
         	g_free(group);
         }
@@ -649,8 +661,8 @@ gebr_flow_browse_revision_delete(const gchar *rev_id)
 
 	gdk_threads_enter();
 	response = gebr_gui_confirm_action_dialog(_("Remove this snapshot permanently?"),
-	                                          _("If you choose to remove this revision "
-	                                        		  "you will not be able to recover it later."));
+	                                          _("If you choose to remove this snapshot "
+	                                            "you will not be able to recover it later."));
 	gdk_threads_leave();
 
 	if (response) {
@@ -770,10 +782,10 @@ static void
 gebr_flow_browse_revision_revert(const gchar *rev_id)
 {
 	gdk_threads_enter();
-	if (gebr_gui_confirm_action_dialog(_("Backup current state?"),
-	                                   _("You are about to revert to a previous state. "
-	                                		   "The current Flow will be lost after this action. "
-	                                		   "Do you want to save the current Flow's state?"))) {
+	if (gebr_gui_confirm_action_dialog(_("Backup current Flow?"),
+	                                   _("You are about to revert to a previous snapshot. "
+	                                     "The current Flow will be lost after this action. "
+	                                     "Do you want to take a snapshot of the current Flow?"))) {
 		if (!flow_revision_save()) {
 			gdk_threads_leave();
 			return;
@@ -781,20 +793,14 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 	}
 	gdk_threads_leave();
 
-	gboolean report_merged;
 	GebrGeoXmlRevision *revision = gebr_geoxml_flow_get_revision_by_id(gebr.flow, rev_id);
 
-	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision, &report_merged)) {
+	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision)) {
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to snapshot with ID %s"), rev_id);
 		return;
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
-
-	if (report_merged)
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state and merged reports"));
-	else
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state."));
 
 	flow_browse_load();
 	gebr_validator_force_update(gebr.validator);
