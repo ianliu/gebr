@@ -793,7 +793,7 @@ To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&
     <child>
       <object class="GtkLabel" id="label_hierarchy_1">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">GêBR will create some directories to organize the files 
+        <property name="label">#GêBR will create some directories to organize the files 
 created during the data processing.
 These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</property>
         <property name="use_markup">True</property>
