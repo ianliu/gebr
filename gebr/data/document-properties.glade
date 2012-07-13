@@ -78,7 +78,7 @@
     <child>
       <object class="GtkLabel" id="info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">A &lt;b&gt;Line&lt;/b&gt; is a way to organize Flows and it is associated to the Maestro in which its flows are going to be executed.</property>
+        <property name="label">#Description of lines</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>

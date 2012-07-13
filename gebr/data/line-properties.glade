@@ -300,7 +300,7 @@
         <property name="xalign">1</property>
         <child>
           <object class="GtkLinkButton" id="linkbutton_email">
-            <property name="label" translatable="yes">Paj&#xE9; da Vila &lt;paje@tribo.com&gt;</property>
+            <property name="label">#Paj&#xE9; da Vila &lt;paje@tribo.com&gt;</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>

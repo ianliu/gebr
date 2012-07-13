@@ -1100,14 +1100,6 @@ preferences_setup_ui(gboolean first_run,
 			gtk_label_set_markup(GTK_LABEL(intro_label_version), intro_label_version_text);
 			g_free(intro_label_version_text);
 			GtkWidget *intro_label2  = GTK_WIDGET(gtk_builder_get_object(builder, "intro_label2"));
-			gchar *intro_label2_text = g_strdup_printf(_("In this version, GêBR introduces new features that will speed up your "
-								"processing flows, like automatic selection of the fastest node available "
-								"and split of processing job among nodes.\n\n"
-								"These is possible due to a new player, called Maestro.\n\n"
-								"To take advantage of those features, some set up must be done. This "
-								"assistant will guide you through this process.\n"));
-			gtk_label_set_markup(GTK_LABEL(intro_label2), intro_label2_text);
-			g_free(intro_label2_text);
 		}
 
 		// MAESTRO_INFO_PAGE
@@ -1147,34 +1139,6 @@ preferences_setup_ui(gboolean first_run,
 
 		ui_preferences->dialog = assistant;
 
-		GtkWidget *maestro_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "maestro_info_label"));
-		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<i>Maestro</i> is in between GêBR and the working nodes. "
-                                                                      "It receives all requests for flow execution and dispatches them "
-                                                                      "to groups of nodes .\n\n"
-                                                                      "Without interference, Maestro collects information about the "
-                                                                      "state of each node and ranks them according to their "
-                                                                      "capabilities and available resources at time. Therefore, Maestro "
-                                                                      "can take smart decisions about which nodes are best suited to "
-                                                                      "run a processing flow."));
-
-		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
-		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs to establish a connection to a Maestro to send "
-                                                                  "jobs and receive outputs.\n\nAll data exchange between Maestro and "
-                                                                  "the working nodes is performed throughc <i>encrypted channels</i>. Such channels "
-                                                                  "are established using SSH protocol, which is a standard way to "
-                                                                  "access remote machines with reasonable level of security.\n\n"
-                                                                  "To establish the connections, SSH may request your "
-                                                                  "login password.\n\n"
-                                                                  "<small><i>This connection process can be extremely simplified "
-                                                                  "using an alternative authetication method based on public keys. "
-                                                                  "The adoption of this method may be done at any time, through a "
-                                                                  "checkbox, whenever your password is requested.</i></small>"));
-
-		GtkWidget *mount_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "mount_info_label"));
-		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Every processing flow in GêBR runs on nodes, which may "
-                                                                    "be elsewhere. <i>Remote browsing</i> is a feature that allows "
-                                                                    "the user to see the files generated on the nodes.\n\n"
-                                                                    "To enable this feature your login password may be asked."));
 		/* Set Preferences Page */
 		set_preferences_page(builder, ui_preferences);
 

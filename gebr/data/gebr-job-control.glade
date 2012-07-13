@@ -437,7 +437,7 @@
           <object class="GtkLabel" id="empty_job_selection_label">
             <property name="visible">True</property>
             <property name="sensitive">False</property>
-            <property name="label">Please, select a job at the list on the left</property>
+            <property name="label">#Please, select a job at the list on the left</property>
           </object>
           <packing>
             <property name="position">2</property>

@@ -361,16 +361,6 @@ on_assistant_prepare(GtkAssistant *assistant,
                                                                   "processing flows."), maestro_addr);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
-	} else if (page == 2) {
-		GObject *paths_label= gtk_builder_get_object(data->builder, "paths_label");
-		gchar *paths_label_text= g_markup_printf_escaped(_("To better manage all files read or created during the processing of a data, "
-								"GêBR defines a directory structure to store them.\n\n"
-								"This structure is defined by a top directory, known as BASE, and few other "
-								"nested standard directories.\n\n"
-								"Although it is not mandatory to adhere to this structure, it is highly "
-								"recommended to do so."));
-		gtk_label_set_markup(GTK_LABEL(paths_label), paths_label_text);
-		g_free(paths_label_text);
 	}
 	else if (page == 3) {
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
@@ -385,17 +375,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 		GtkWidget *paths_help_button = GTK_WIDGET(gtk_builder_get_object(data->builder, "paths_help_button"));
 		g_signal_connect(GTK_BUTTON(paths_help_button), "clicked", G_CALLBACK(on_paths_button_clicked), NULL);
 
-		gchar *text_maestro = g_markup_printf_escaped(_("<small>Remember that the processing takes "
-                                                                "place at the nodes. So, the "
-                                                                "structure which is about to be defined here will "
-                                                                "be created there.\n\nTo be able to browse "
-                                                                "files in these directories, the features of"
-								"<i>remote browsing</i> must be enabled in the "
-                                                                "Maestro %s.</small>"), maestro_addr);
-		label = gtk_builder_get_object(data->builder, "label6");
-		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
-
-		g_free(text_maestro);
 		g_free(line_key);
 		g_free(path);
 	}

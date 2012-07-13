@@ -13,9 +13,13 @@
         <child>
           <object class="GtkLabel" id="pwd_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">GêBR needs a &lt;b&gt;connection&lt;/b&gt; to a Maestro to send jobs and receive outputs. For security reasons an encrypted connection is made using SSH protocol. 
+            <property name="label" translatable="yes">GêBR needs to establish a connection to a Maestro to send jobs and receive outputs.
 
-Your login password may be asked to stablish the connection.</property>
+All data exchange between Maestro and the working nodes is performed throughc &lt;i&gt;encrypted channels&lt;/i&gt;. Such channels are established using SSH protocol, which is a standard way to access remote machines with reasonable level of security.
+
+To establish the connections, SSH may request your login password.
+
+&lt;small&gt;&lt;i&gt;This connection process can be extremely simplified using an alternative authetication method based on public keys. The adoption of this method may be done at any time, through a checkbox, whenever your password is requested.&lt;/i&gt;&lt;/small&gt;</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -231,7 +235,7 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one &lt;i&gt;connected working nodes&lt;/i&gt; to run processing flows. You must either connect to new working node or connect to all of them alredy registred below.</property>
+        <property name="label">#Maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one &lt;i&gt;connected working nodes&lt;/i&gt; to run processing flows. You must either connect to new working node or connect to all of them alredy registred below.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -688,7 +692,7 @@ Without interference, Maestro collects information about the state of each node 
                 <property name="xalign">0</property>
                 <property name="yalign">0</property>
                 <property name="ypad">10</property>
-                <property name="label">It's the first time you use this version of GêBR.</property>
+                <property name="label">#It's the first time you use this version of GêBR.</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -743,9 +747,9 @@ To take advantage of those features, some set up must be done. This assistant wi
         <child>
           <object class="GtkLabel" id="mount_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Remote browsing allows a user on a client computer to access files over a network in a manner similar to how local storage is accessed. GêBR uses the remote browsing to organize the files created during the data processing.
+            <property name="label" translatable="yes">Every processing flow in GêBR runs on nodes, which may be elsewhere. &lt;i&gt;Remote browsing&lt;/i&gt; is a feature that allows the user to see the files generated on the nodes.
 
-Your login credentials may be asked to be able to browse the remote file system.</property>
+To enable this feature your login password may be asked.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
