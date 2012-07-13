@@ -92,7 +92,7 @@
         <child>
           <object class="GtkLabel" id="created_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">label</property>
+            <property name="label">#label</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -103,7 +103,7 @@
         <child>
           <object class="GtkLabel" id="modified_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">label</property>
+            <property name="label">#label</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -184,7 +184,7 @@
         <child>
           <object class="GtkLabel" id="input_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">label</property>
+            <property name="label">#label</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -195,7 +195,7 @@
         <child>
           <object class="GtkLabel" id="output_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">label</property>
+            <property name="label">#label</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -208,7 +208,7 @@
         <child>
           <object class="GtkLabel" id="log_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">label</property>
+            <property name="label">#label</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -233,7 +233,7 @@
         <property name="xalign">1</property>
         <child>
           <object class="GtkLinkButton" id="linkbutton_email">
-            <property name="label" translatable="yes">Ian Liu Rodrigues &lt;ian.liu@gebrproject.com&gt;</property>
+            <property name="label">#Ian Liu Rodrigues &lt;ian.liu@gebrproject.com</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>

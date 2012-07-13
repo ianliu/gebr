@@ -46,7 +46,7 @@
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="xpad">10</property>
-                <property name="label" translatable="yes">&lt;span size='xx-large'&gt;"Bacia da Amaz&#xF4;nia"&lt;/span&gt;</property>
+                <property name="label">&lt;span size='xx-large'&gt;#Line Title&lt;/span&gt;</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -60,7 +60,7 @@
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="xpad">10</property>
-                <property name="label" translatable="yes">&lt;span size='large' style='italic'&gt;Processamento de dados da bacia da Amaz&#xF4;nia&lt;/span&gt;</property>
+                <property name="label">&lt;span size='large' style='italic'&gt;#Line Description&lt;/span&gt;</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -74,7 +74,7 @@
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="xpad">10</property>
-                <property name="label" translatable="yes">on Maestro &lt;b&gt;dell2&lt;/b&gt;</property>
+                <property name="label">#on Maestro &lt;b&gt;dell2&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -165,7 +165,7 @@
                       <object class="GtkLabel" id="label_home">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">/home</property>
+                        <property name="label">#/home</property>
                         <property name="selectable">True</property>
                       </object>
                       <packing>
@@ -177,7 +177,7 @@
                       <object class="GtkLabel" id="label_base">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">/home/foo/liu/GeBR/Project1/Bacia da Amazonia</property>
+                        <property name="label">#/home/foo/liu/GeBR/Project1/Bacia da Amazonia</property>
                         <property name="selectable">True</property>
                       </object>
                       <packing>
@@ -189,7 +189,7 @@
                       <object class="GtkLabel" id="label_import">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">/home/liu</property>
+                        <property name="label">#/home/liu</property>
                         <property name="selectable">True</property>
                       </object>
                       <packing>
@@ -257,7 +257,7 @@
           <object class="GtkLabel" id="label_changed">
             <property name="visible">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">Ter 20 Dez 2011 00:36:58 BRST</property>
+            <property name="label">#Ter 20 Dez 2011 00:36:58 BRST</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -267,7 +267,7 @@
           <object class="GtkLabel" id="label_created">
             <property name="visible">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">Ter 20 Dez 2011 00:36:58 BRST</property>
+            <property name="label">#Ter 20 Dez 2011 00:36:58 BRST</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -286,7 +286,7 @@
         <property name="visible">True</property>
         <property name="xalign">0</property>
         <property name="xpad">5</property>
-        <property name="label" translatable="yes">4</property>
+        <property name="label">#Number of flows</property>
       </object>
       <packing>
         <property name="position">3</property>

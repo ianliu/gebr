@@ -12,7 +12,7 @@
         <child>
           <object class="GtkLabel" id="label_summary">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;span size='large'&gt;Creating directories...&lt;/span&gt;</property>
+            <property name="label">#&lt;span size='large'&gt;Creating directories...&lt;/span&gt;</property>
             <property name="use_markup">True</property>
           </object>
         </child>
@@ -58,7 +58,7 @@
             <child>
               <object class="GtkLabel" id="label_status">
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">Success!</property>
+                <property name="label">#Success!</property>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -229,7 +229,7 @@
     <child>
       <object class="GtkLabel" id="paths_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">To better manage all files read or created during the processing of a data, G&#xEA;BR defines a directory structure to store them.
+        <property name="label" translatable="yes">To better manage all files read or created during the processing of a data, GêBR defines a directory structure to store them.
 
 This structure is defined by a top directory, known as BASE, and few other nested standard directories.
 
@@ -793,7 +793,7 @@ To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&
     <child>
       <object class="GtkLabel" id="label_hierarchy_1">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">G&#xEA;BR will create some directories to organize the files 
+        <property name="label" translatable="yes">GêBR will create some directories to organize the files 
 created during the data processing.
 These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</property>
         <property name="use_markup">True</property>
@@ -808,7 +808,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
     <child>
       <object class="GtkLabel" id="label_hierarchy_2">
         <property name="visible">True</property>
-        <property name="label">&lt;b&gt;&amp;lt;BASE&amp;gt;&lt;/b&gt;: /home/Xxx/GeBR/bla</property>
+        <property name="label">#&lt;b&gt;&amp;lt;BASE&amp;gt;&lt;/b&gt;: /home/Xxx/GeBR/bla</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -1319,7 +1319,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       <object class="GtkLabel" id="label_rev_title">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">label</property>
+        <property name="label">#label</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
       </object>
@@ -1333,7 +1333,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       <object class="GtkLabel" id="label_rev_description">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">label</property>
+        <property name="label">#label</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
       </object>
@@ -1349,7 +1349,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       <object class="GtkLabel" id="label_rev_author">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">label</property>
+        <property name="label">#label</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
       </object>
@@ -1365,7 +1365,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       <object class="GtkLabel" id="label_rev_email">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">label</property>
+        <property name="label">#label</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
       </object>
@@ -1381,7 +1381,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       <object class="GtkLabel" id="label_rev_maestro">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">label</property>
+        <property name="label">#label</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
       </object>
@@ -1397,7 +1397,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       <object class="GtkLabel" id="label_rev_base">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">label</property>
+        <property name="label">#label</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
       </object>
@@ -1413,7 +1413,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       <object class="GtkLabel" id="label_rev_import">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="label" translatable="yes">label</property>
+        <property name="label">#label</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
       </object>

@@ -48,7 +48,7 @@
                     <property name="width_request">500</property>
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label" translatable="yes">These parameters are used to execute MPI programs. Depending on the program, a different MPI implementation might be used. For now, G&#xEA;BR supports Open MPI and MPICH 2.</property>
+                    <property name="label" translatable="yes">These parameters are used to execute MPI programs. Depending on the program, a different MPI implementation might be used. For now, GêBR supports Open MPI and MPICH 2.</property>
                     <property name="justify">fill</property>
                     <property name="wrap">True</property>
                   </object>
