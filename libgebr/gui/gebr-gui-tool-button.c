@@ -51,6 +51,10 @@ gebr_gui_tool_button_toggled(GtkToggleButton *toggle)
 	gint dx = x + a.x;
 	gint dy = y + a.y + a.height;
 
+	/*Show and hide popup widget to get the updated dimensions*/
+	gtk_widget_show(button->priv->popup);
+	gtk_widget_hide(button->priv->popup);
+
 	GtkRequisition req;
 	GtkWidget *child = gtk_bin_get_child(GTK_BIN(button->priv->popup));
 
