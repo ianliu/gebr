@@ -254,31 +254,17 @@
       <object class="GtkVBox" id="revisions_main">
         <property name="visible">True</property>
         <child>
-          <object class="GtkLabel" id="rev_title">
+          <object class="GtkLabel" id="rev_descrip">
             <property name="visible">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">&lt;span size='x-large'&gt;Snapshots&lt;/span&gt;</property>
-            <property name="use_markup">True</property>
+            <property name="ypad">3</property>
+            <property name="label" translatable="yes">G&#xEA;BR can save remarkable states of a flow through snapshots.</property>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="padding">5</property>
             <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="rev_descrip">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="ypad">3</property>
-            <property name="label" translatable="yes">Through snapshots, GêBR can save remarkable states of a flow.</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="padding">5</property>
-            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -301,7 +287,7 @@
           </object>
           <packing>
             <property name="padding">5</property>
-            <property name="position">2</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>
@@ -315,7 +301,11 @@
           <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
             <property name="sensitive">False</property>
-            <property name="label" translatable="yes">There are no snapshots</property>
+            <property name="label" translatable="yes">There are no snapshots.
+
+A snapshot stores the settings of your flow so you can restore it at any moment. To take a snapshot, just click on the camera icon and give a non-empty description.</property>
+            <property name="use_markup">True</property>
+            <property name="wrap">True</property>
           </object>
           <packing>
             <property name="position">0</property>
