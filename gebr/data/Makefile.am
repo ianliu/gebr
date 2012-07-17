@@ -15,19 +15,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-gebrmenudir = $(datadir)/gebr/menus/Default
+gebrmenudir = $(DISTDIR)$(datadir)/gebr/menus/Default
 gebrmenu_DATA = grace.mnu sleep.mnu forloop.mnu
 
-desktopdir = $(datadir)/applications
+desktopdir = $(DISTDIR)$(datadir)/applications
 desktop_DATA = gebr.desktop
 
-pythondir = $(datadir)/gebr/python
+pythondir = $(DISTDIR)$(datadir)/gebr/python
 python_DATA = \
 	gebr-xdot-graph.py \
 	xdot.py \
 	$(NULL)
 
-gladedir = $(datadir)/gebr/glade
+gladedir = $(DISTDIR)$(datadir)/gebr/glade
 glade_DATA = \
 	gebr-job-control.glade \
 	gebr-maestro-dialog.glade \
@@ -45,7 +45,9 @@ gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 	LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@
 
 EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA) $(python_DATA)
-CLEANFILES = $(desktop_DATA)
 
 install-data-hook:
 	gebr-geoxml-menu-indices $(gebrmenudir) $(gebrmenudir)/menus.idx2   $(gebrmenudir)/categories.idx2
+	
+uninstall-hook:
+	( cd $(gebrmenudir) && rm -f *.idx2 )
