@@ -45,6 +45,7 @@ gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 	LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@
 
 EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA) $(python_DATA)
+CLEANFILES = gebr.desktop
 
 install-data-hook:
 	gebr-geoxml-menu-indices $(gebrmenudir) $(gebrmenudir)/menus.idx2   $(gebrmenudir)/categories.idx2
