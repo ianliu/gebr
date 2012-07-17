@@ -781,17 +781,33 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
 static void
 gebr_flow_browse_revision_revert(const gchar *rev_id)
 {
+	const gchar *title = _("Backup current Flow?");
+	const gchar *msg = _("You are about to revert to a previous snapshot. "
+			     "The current Flow will be lost after this action. "
+			     "Do you want to take a snapshot of the current Flow?");
+
 	gdk_threads_enter();
-	if (gebr_gui_confirm_action_dialog(_("Backup current Flow?"),
-	                                   _("You are about to revert to a previous snapshot. "
-	                                     "The current Flow will be lost after this action. "
-	                                     "Do you want to take a snapshot of the current Flow?"))) {
-		if (!flow_revision_save()) {
-			gdk_threads_leave();
-			return;
-		}
+	GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL,
+						    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+						    GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, "<span font_weight='bold' size='large'>%s</span>",
+						    title ? title : "");
+	gtk_window_set_title(GTK_WINDOW(dialog), title);
+	gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Yes"), GTK_RESPONSE_YES);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), _("No"), GTK_RESPONSE_NO);
+	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Cancel"), GTK_RESPONSE_CANCEL);
+
+	gint ret = gtk_dialog_run(GTK_DIALOG(dialog));
+	if (ret == GTK_RESPONSE_YES) {
+		flow_revision_save();
+	} else if (ret == GTK_RESPONSE_CANCEL){
+		gdk_threads_leave();
+		gtk_widget_destroy(dialog);
+		return;
 	}
+
 	gdk_threads_leave();
+	gtk_widget_destroy(dialog);
 
 	GebrGeoXmlRevision *revision = gebr_geoxml_flow_get_revision_by_id(gebr.flow, rev_id);
 
