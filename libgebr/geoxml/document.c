@@ -2052,9 +2052,8 @@ gebr_geoxml_create_catalog(const gchar *directory)
 {
 	GDir *dir;
 	const gchar *filename;
-	GError *error;
 
-	dir = g_dir_open(directory, 0, &error);
+	dir = g_dir_open(directory, 0, NULL);
 	xmlInitializeCatalog();
 
 	if (dir != NULL) {
@@ -2080,9 +2079,6 @@ gebr_geoxml_create_catalog(const gchar *directory)
 		}
 		g_dir_close(dir);
 		return TRUE;
-	} else {
-		g_warn_if_reached();
-		return FALSE;
 	}
-
+	return FALSE;
 }
