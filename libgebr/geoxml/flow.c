@@ -1479,7 +1479,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 			gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
 			if (!unescaped_comment || !*unescaped_comment)
-				unescaped_comment = g_strdup_printf(_("- - - -"));
+				unescaped_comment = g_strdup_printf(("- - - -"));
 			iso_date_field = g_strsplit(iso_date, " ", -1);
 			time_field = g_strsplit(iso_date_field[4], ":", -1);
 
@@ -1511,11 +1511,12 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 
 		if (is_head) {
 			gchar *new_comment = g_strdup_printf("%s%s", final_comment->str, has_id? " (modified)" : "");
+			const gchar *now = _("Now");
 			format_node = g_strdup_printf(
-					"%s [URL=\"%s\" label = \"Now\","
+					"%s [URL=\"%s\" label = \"%s\","
 					"shape = ellipse, color = \"#000080\","
 					"fontsize = 10]",
-					head, head);
+					head, head, now);
 			g_free(new_comment);
 		} else {
 			format_node = g_strdup_printf(
