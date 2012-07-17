@@ -16,6 +16,7 @@
  */
 
 #include <glib.h>
+#include <glib/gstdio.h>
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -24,6 +25,7 @@
 #include "line.h"
 #include "value_sequence.h"
 #include "document.h"
+#include "utils.h"
 
 void test_gebr_geoxml_line_get_flows_number(void)
 {
@@ -171,6 +173,111 @@ void test_gebr_geoxml_line_create_key(void)
 	g_free(key);
 }
 
+static void
+test_gebr_relativise_path(void)
+{
+	const gchar *home = g_get_home_dir();
+	gchar *BASE = g_build_filename(home, "fooliu", NULL);
+	gchar *DATA = g_build_filename(home, "fooliu", "data", NULL);
+	gchar *DATA1 = g_build_filename(home, "fooliu", "data1", NULL);
+
+	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	gebr_geoxml_line_append_path(line, "HOME", home);
+	gebr_geoxml_line_append_path(line, "BASE", BASE);
+	gebr_geoxml_line_append_path(line, "DATA", DATA);
+	gebr_geoxml_line_append_path(line, "DATA1", DATA1);
+	gebr_geoxml_line_set_import_path(line, "/tmp/foo");
+
+	gchar *** paths = gebr_geoxml_line_get_paths(line);
+
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("<HOME>", "fooliu", NULL), "", paths), ==, "<BASE>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("<HOME>", "fooliu", "data", NULL), "", paths), ==, "<DATA>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("<HOME>", "fooliu", "data", "boo", NULL), "", paths), ==, "<DATA>/boo");
+
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("/", "tmp", "foo", NULL), "", paths), ==, "<IMPORT>");
+
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(BASE, NULL), "", paths), ==, "<BASE>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(DATA, NULL), "", paths), ==, "<DATA>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(DATA, "boo", NULL), "", paths), ==, "<DATA>/boo");
+
+	gchar *PRE = g_build_filename(home, ".gvfs", "sftp on dell2", NULL);
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, NULL), PRE, paths), ==, "<BASE>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, "data", NULL), PRE, paths), ==, "<DATA>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, "data", "boo", NULL), PRE, paths), ==, "<DATA>/boo");
+
+	gchar *PRE2 = g_build_filename("<HOME>", ".gvfs", "sftp on dell2", NULL);
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE2, BASE, NULL), PRE, paths), ==, "<BASE>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE2, BASE, "data", NULL), PRE, paths), ==, "<DATA>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE2, BASE, "data", "boo", NULL), PRE, paths), ==, "<DATA>/boo");
+}
+
+static void
+test_gebr_resolve_relative_path(void)
+{
+	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	gebr_geoxml_line_append_path(line, "BASE", "/home/foo/liu");
+	gebr_geoxml_line_append_path(line, "DATA", "/home/foo/liu/data");
+	gebr_geoxml_line_append_path(line, "BOO", "/home/foo/liu/boo");
+
+	gchar *** paths = gebr_geoxml_line_get_paths(line);
+
+	g_assert_cmpstr(gebr_resolve_relative_path("foo/<BASE>", paths), ==, "foo/<BASE>");
+	g_assert_cmpstr(gebr_resolve_relative_path("<BASE>/foo", paths), ==, "/home/foo/liu/foo");
+	g_assert_cmpstr(gebr_resolve_relative_path("<DATA>/foo", paths), ==, "/home/foo/liu/data/foo");
+	g_assert_cmpstr(gebr_resolve_relative_path("/usr/foo", paths), ==, "/usr/foo");
+}
+
+static void
+test_gebr_gtk_bookmarks_add_paths(void)
+{
+	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	gebr_geoxml_line_append_path(line, "BASE", "/home/foo/liu");
+	gebr_geoxml_line_append_path(line, "DATA", "/home/foo/liu/data");
+	gebr_geoxml_line_append_path(line, "BOOO", "/home/foo/liu/boo");
+	gebr_geoxml_line_append_path(line, "SPACE", "/home/foo/liu/space foo");
+	gebr_geoxml_line_append_path(line, "EMPTY", "");
+
+	gchar *** paths = gebr_geoxml_line_get_paths(line);
+
+	gchar *contents;
+	const gchar *file = "/tmp/bookmarks";
+	g_unlink(file);
+
+	gebr_gtk_bookmarks_add_paths(file, "", paths);
+	g_assert(g_file_get_contents(file, &contents, NULL, NULL));
+	g_assert_cmpstr(contents, ==,
+			"/home/foo/liu BASE (GeBR)\n"
+			"/home/foo/liu/data DATA (GeBR)\n"
+			"/home/foo/liu/boo BOOO (GeBR)\n"
+			"/home/foo/liu/space\%20foo SPACE (GeBR)\n");
+
+	g_unlink(file);
+}
+
+static void
+test_gebr_gtk_bookmarks_remove_paths(void)
+{
+	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	gebr_geoxml_line_append_path(line, "BASE", "/home/foo/liu");
+	gebr_geoxml_line_append_path(line, "DATA", "/home/foo/liu/data");
+	gebr_geoxml_line_append_path(line, "BOOO", "/home/foo/liu/boo");
+	gebr_geoxml_line_append_path(line, "SPACE", "/home/foo/liu/space foo");
+
+	gchar *** paths = gebr_geoxml_line_get_paths(line);
+
+	gchar *contents;
+	const gchar *file = "/tmp/bookmarks";
+	g_unlink(file);
+
+	gebr_gtk_bookmarks_add_paths(file, "", paths);
+	gebr_gtk_bookmarks_remove_paths(file, paths);
+
+	g_assert(g_file_get_contents(file, &contents, NULL, NULL));
+	g_assert_cmpstr(contents, ==, "");
+
+	g_unlink(file);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -185,6 +292,10 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/line/get_paths",test_gebr_geoxml_line_get_path);
 	g_test_add_func("/libgebr/geoxml/line/get_group",test_gebr_geoxml_line_get_group);
 	g_test_add_func("/libgebr/geoxml/line/create_key",test_gebr_geoxml_line_create_key);
+	g_test_add_func("/libgebr/geoxml/line/gebr_relativise_path", test_gebr_relativise_path);
+	g_test_add_func("/libgebr/geoxml/line/gebr_resolve_relative_path", test_gebr_resolve_relative_path);
+	g_test_add_func("/libgebr/geoxml/line/gebr_gtk_bookmarks_add_paths", test_gebr_gtk_bookmarks_add_paths);
+	g_test_add_func("/libgebr/geoxml/line/gebr_gtk_bookmarks_remove_paths", test_gebr_gtk_bookmarks_remove_paths);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();
