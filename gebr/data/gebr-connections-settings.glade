@@ -15,7 +15,7 @@
             <property name="visible">True</property>
             <property name="label" translatable="yes">GêBR needs to establish a connection to a Maestro to send jobs and receive outputs.
 
-All data exchange between Maestro and the working nodes is performed throughc &lt;i&gt;encrypted channels&lt;/i&gt;. Such channels are established using SSH protocol, which is a standard way to access remote machines with reasonable level of security.
+All data exchange between Maestro and the working nodes is performed through &lt;i&gt;encrypted channels&lt;/i&gt;. Such channels are established using SSH protocol, which is a standard way to access remote machines with reasonable level of security.
 
 To establish the connections, SSH may request your login password.
 

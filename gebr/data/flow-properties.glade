@@ -258,7 +258,7 @@
             <property name="visible">True</property>
             <property name="xalign">0</property>
             <property name="ypad">3</property>
-            <property name="label" translatable="yes">G&#xEA;BR can save remarkable states of a flow through snapshots.</property>
+            <property name="label" translatable="yes">GêBR can save remarkable states of a flow through snapshots.</property>
           </object>
           <packing>
             <property name="expand">False</property>
