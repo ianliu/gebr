@@ -354,15 +354,13 @@ static void on_include_revisions_report_activate(GtkToggleAction *action, GebrGu
 	manager = gebr_gui_html_viewer_window_get_ui_manager (window);
 	path_param_table = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/ParameterTableMenu";
 	action_param_table = gtk_ui_manager_get_action(manager, path_param_table);
+
 	type = gebr_geoxml_object_get_type (object);
-	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW){
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
 		gebr.config.detailed_flow_include_revisions_report = flag;
-		gtk_action_set_sensitive(action_param_table, gebr.config.detailed_flow_include_revisions_report);
-	}
-	else {
+	else
 		gebr.config.detailed_line_include_revisions_report = flag;
-		gtk_action_set_sensitive(action_param_table, gebr.config.detailed_line_include_revisions_report);
-	}
+
 	report = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
 	gebr_gui_html_viewer_window_show_html (window, report);
 	g_free (report);
@@ -729,25 +727,47 @@ static void on_save_activate(GtkAction * action, GebrGuiHelpEditWidget * self)
 	gebr_gui_help_edit_widget_commit_changes(self);
 }
 
+gchar *gebr_generate_content_report(const gchar * scope,
+                                    const gchar * header,
+                                    const gchar * body)
+{
+	gchar *content = g_strdup_printf("  <div class=\"%s\">\n"
+					 "    <div class=\"header\">\n"
+					 "      %s\n"
+					 "    </div>\n"
+					 "    <div class=\"body\">\n"
+					 "      %s\n"
+					 "    </div>\n"
+					 "  </div>\n",
+					 scope, header, body);
+
+	return content;
+}
+
 gchar * gebr_generate_report(const gchar * title,
 			     const gchar * styles,
+			     const gchar * scope,
 			     const gchar * header,
-			     const gchar * table)
+			     const gchar * body)
 {
-	static gchar * html = ""
-		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" "
-		"\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
-		"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
-		"<head>\n"
-		"  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
-		"  <title>%s</title>\n"
-		"  %s\n"
-		"</head>\n"
-		"<body>\n"
-		"<div class=\"header\">%s</div>\n"
-		"%s\n"
-		"</body>\n"
-		"</html>";
+	gchar *content = gebr_generate_content_report(scope, header, body);
 
-	return g_strdup_printf(html, title, styles, header, table);
+	gchar *html = g_strdup_printf(""
+				      "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" "
+				      "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+				      "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+				      "<head>\n"
+				      "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
+				      "  <title>%s</title>\n"
+				      "  %s"
+				      "</head>\n"
+				      "<body>\n"
+				      "  %s"
+				      "</body>\n"
+				      "</html>",
+				      title, styles, content);
+
+	g_free(content);
+
+	return html;
 }

@@ -690,67 +690,384 @@ gchar *gebr_document_report_get_styles_css(gchar *report,GString *css)
 	return styles;
 }
 
-void gebr_document_create_section(GString *destiny, gchar *source, gchar *class_name)
+void gebr_document_create_section(GString *destiny,
+                                  const gchar *source,
+                                  const gchar *class_name)
 {
-	g_string_append_printf(destiny,"<div class='%s'>%s</div>\n ",class_name,source);
+	g_string_append_printf(destiny, "<div class=\"%s\">%s</div>\n ", class_name, source);
 }
 
-gchar * gebr_document_flow_append_dicts_and_params(GebrGeoXmlDocument *document)
+gchar * gebr_document_generate_header(GebrGeoXmlDocument * document)
 {
-	gchar * params;
-	gchar *flow_dict, *line_dict, *proj_dict;
-	gchar * concat;
-	if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_NO_TABLE) {
-		params = g_strdup("");
-		proj_dict = g_strdup("");
-		line_dict = g_strdup("");
-		flow_dict = g_strdup("");
-	} else {
-		params = gebr_flow_generate_parameter_value_table (GEBR_GEOXML_FLOW (document));
-		proj_dict = gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE);
-		line_dict = gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.line), FALSE, FALSE);
-		flow_dict = gebr_generate_variables_value_table(document, FALSE, TRUE);
-		concat = g_strconcat(proj_dict, line_dict, flow_dict, params, NULL);
+	GString * dump;
+	GebrGeoXmlDocumentType type;
+
+	type = gebr_geoxml_document_get_type (document);
+
+	dump = g_string_new(NULL);
+
+	/* Title and Description of Document */
+	gchar *title = gebr_geoxml_document_get_title(document);
+	gchar *description = gebr_geoxml_document_get_description(document);
+	g_string_printf(dump,
+			"<div class=\"title\">%s</div>\n"
+			"<div class=\"description\">%s</div>\n",
+			title, description);
+	g_free(title);
+	g_free(description);
+
+	/* Credits */
+	gchar *author = gebr_geoxml_document_get_author(document);
+	gchar *email = gebr_geoxml_document_get_email(document);
+	g_string_append_printf(dump,
+			       "<div class=\"credits\">\n"
+			       "  <span class=\"author\">%s</span>\n"
+	                       "  <span class=\"email\">%s</span>\n"
+	                       "</div>\n",
+			       author, email);
+	g_free(author);
+	g_free(email);
+
+
+	/* Date when generate this report */
+	const gchar *date = gebr_localized_date(gebr_iso_date());
+	g_string_append_printf(dump,
+	                       "<div class=\"date\">%s</div>\n",
+	                       date);
+
+	/* If Document is Line, include Maestro on header */
+	if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+		gchar *maestro = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
+		g_string_append_printf(dump,
+		                       "<div class=\"maestro\">%s</div>\n",
+		                       maestro);
+		g_free(maestro);
 	}
-	g_free (params);
-	g_free (proj_dict);
-	g_free (line_dict);
-	g_free (flow_dict);
-	return concat;
+
+	return g_string_free(dump, FALSE);
 }
 
-void gebr_document_include_flow_revision (GebrGeoXmlFlow *flow, GString * content, gboolean include_table)
+static void
+gebr_document_generate_project_index_content(GebrGeoXmlDocument *document,
+                                             GString *index_content)
 {
-	GebrGeoXmlSequence *seq;
-	gebr_geoxml_flow_get_revision(flow, &seq, 0);
-	for (; seq; gebr_geoxml_sequence_next(&seq)) {
-		gchar *rev_xml;
-		gchar *comment;
-		gchar *date;
-		GebrGeoXmlDocument *revdoc;
+	GebrGeoXmlSequence *lines;
 
-		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &rev_xml, &date, &comment, NULL);
+	gebr_geoxml_project_get_line(GEBR_GEOXML_PROJECT(document), &lines, 0);
+	while (lines) {
+		const gchar *lname;
+		GebrGeoXmlDocument *line;
 
-		if (gebr_geoxml_document_load_buffer(&revdoc, rev_xml) != GEBR_GEOXML_RETV_SUCCESS) {
-			g_free(rev_xml);
-			g_free(comment);
-			g_free(date);
-			g_warn_if_reached();
+		lname = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(lines));
+		document_load(&line, lname, FALSE);
+
+		gchar *title = gebr_geoxml_document_get_title(line);
+		gchar *description = gebr_geoxml_document_get_description(line);
+		g_string_append_printf (index_content,
+		                        "      <li>\n"
+		                        "        <span class=\"title\">%s</span> - \n"
+		                        "        <span class=\"description\">%s</span>\n"
+		                        "      </li>\n",
+		                        title, description);
+		g_free(title);
+		g_free(description);
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
+		gebr_geoxml_sequence_next (&lines);
+	}
+}
+
+static void
+gebr_document_generate_line_index_content(GebrGeoXmlDocument *document,
+                                          GString *index_content)
+{
+	GebrGeoXmlSequence *flows;
+
+	gebr_geoxml_line_get_flow (GEBR_GEOXML_LINE (document), &flows, 0);
+	while (flows) {
+		const gchar *fname;
+		GebrGeoXmlDocument *flow;
+
+		fname = gebr_geoxml_line_get_flow_source (GEBR_GEOXML_LINE_FLOW (flows));
+		document_load(&flow, fname, FALSE);
+
+		gchar *title = gebr_geoxml_document_get_title(flow);
+		gchar *description = gebr_geoxml_document_get_description(flow);
+		g_string_append_printf (index_content,
+		                        "      <li>\n"
+		                        "        <span class=\"title\">%s</span> - \n"
+		                        "        <span class=\"description\">%s</span>\n"
+		                        "      </li>\n",
+		                        title, description);
+		g_free(title);
+		g_free(description);
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+		gebr_geoxml_sequence_next (&flows);
+	}
+}
+
+static void
+gebr_document_generate_line_paths(GebrGeoXmlDocument *document,
+                                  GString *content)
+{
+	GebrGeoXmlLine *line = GEBR_GEOXML_LINE(document);
+
+	if (gebr_geoxml_line_get_paths_number(line) > 0) {
+		// Comment for translators: HTML header for detailed report
+		g_string_append_printf(content,
+		                       "<div class=\"paths\">\n"
+		                       "  <table>\n"
+		                       "    <caption>%s</caption>\n"
+		                       "    <tbody>\n",
+		                       _("Line paths:"));
+
+		GString *buf = g_string_new(NULL);
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
+		for (gint i = 0; paths[i]; i++) {
+			if (!*paths[i][0])
+				continue;
+
+			if (!g_strcmp0(paths[i][1], "HOME")) {
+				g_string_append_printf(content,
+				                       "   <tr>\n"
+				                       "     <td class=\"type\">&lt;%s&gt;</td>\n"
+				                       "     <td class=\"value\">%s</td>\n"
+				                       "   </tr>\n",
+				                       paths[i][1], paths[i][0]);
+				continue;
+			}
+
+			gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);
+			g_string_append_printf(buf,
+			                       "   <tr>"
+			                       "     <td class=\"type\">&lt;%s&gt;</td>\n"
+			                       "     <td class=\"value\">%s</td>\n"
+			                       "   </tr>",
+			                       paths[i][1], resolved);
+			g_free(resolved);
 		}
+		g_string_append(content, buf->str);
+		g_string_append(content,
+		                "    </tbody>\n"
+				"  </table>\n"
+		                "</div>\n");
 
-		gchar * rev_cont = gebr_flow_get_detailed_report(GEBR_GEOXML_FLOW(revdoc), include_table, FALSE, comment, date);
-		gebr_document_create_section(content, rev_cont, "gebr-geoxml-flow");
-
-		g_free(rev_xml);
-		g_free(comment);
-		g_free(date);
-		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(revdoc));
+		g_string_free(buf, TRUE);
+		gebr_pairstrfreev(paths);
 	}
+}
+
+static void
+gebr_document_generate_flow_index_content(GebrGeoXmlDocument *document,
+                                          GString *index_content)
+{
+	GebrGeoXmlSequence *program;
+
+	gebr_geoxml_flow_get_program (GEBR_GEOXML_FLOW(document), &program, 0);
+	while (program) {
+		GebrGeoXmlProgram * prog;
+		GebrGeoXmlProgramStatus status;
+		gchar *title;
+		gchar *description;
+
+		prog = GEBR_GEOXML_PROGRAM (program);
+		status = gebr_geoxml_program_get_status (prog);
+		title = gebr_geoxml_program_get_title (prog);
+		description = gebr_geoxml_program_get_description(prog);
+
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			g_string_append_printf(index_content,
+			                       "      <li>\n"
+			                       "        <span class=\"title\">%s</span> - \n"
+			                       "        <span class=\"description\">%s</span>\n"
+			                       "      </li>\n",
+			                       title, description);
+
+		g_free(title);
+		g_free(description);
+		gebr_geoxml_sequence_next (&program);
+	}
+}
+
+void
+gebr_document_generate_index(GebrGeoXmlDocument *document,
+                             GString *content,
+                             GebrGeoXmlDocumentType type)
+{
+	gchar *description;
+	GString *index_content = g_string_new(NULL);
+
+	if (type == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
+		description = g_strdup("Project composed by the Line(s):");
+		gebr_document_generate_project_index_content(document, index_content);
+	}
+	else if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+		description = g_strdup("Line composed by the Flow(s):");
+		gebr_document_generate_line_index_content(document, index_content);
+	}
+	else if (type == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+		description = g_strdup("Flow composed by the Program(s):");
+		gebr_document_generate_flow_index_content(document, index_content);
+	}
+	else {
+		g_warn_if_reached();
+	}
+
+	g_string_append_printf(content,
+	                       "<div class=\"index\">\n"
+	                       "  %s\n"
+	                       "  <ul>\n"
+	                       "    %s\n"
+	                       "  </ul>\n"
+	                       "</div>\n",
+	                       description, index_content->str);
+
+	g_free(description);
+	g_string_free(index_content, TRUE);
+}
+
+static void
+gebr_document_generate_project_tables_content(GebrGeoXmlDocument *document,
+                                              GString *tables_content)
+{
+	/* Variables table */
+	gebr_generate_variables_value_table(document, TRUE, TRUE, tables_content, _("Project"));
+}
+
+static void
+gebr_document_generate_line_tables_content(GebrGeoXmlDocument *document,
+                                           GString *tables_content)
+{
+	/* Variables table */
+	gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE, tables_content, _("Project"));
+	gebr_generate_variables_value_table(document, FALSE, TRUE, tables_content, _("Line"));
+}
+
+static void
+gebr_document_generate_flow_tables_content(GebrGeoXmlDocument *document,
+                                           GString *tables_content)
+{
+	/* Variables table */
+	gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE, tables_content, _("Project"));
+	gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.line), FALSE, FALSE, tables_content, _("Line"));
+	gebr_generate_variables_value_table(document, FALSE, TRUE, tables_content, _("Flow"));
+
+	/* I/O table */
+	gebr_flow_generate_io_table(GEBR_GEOXML_FLOW(document), tables_content);
+
+	/* Parameters table */
+	gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW (document), tables_content);
+}
+
+static void
+gebr_document_generate_tables(GebrGeoXmlDocument *document,
+                              GString *content,
+                              GebrGeoXmlDocumentType type)
+{
+	GString *tables_content = g_string_new(NULL);
+
+	if (type == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
+		gebr_document_generate_project_tables_content(document, tables_content);
+
+	else if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
+		gebr_document_generate_line_tables_content(document, tables_content);
+
+	else if (type == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
+		gebr_document_generate_flow_tables_content(document, tables_content);
+
+	else
+		g_warn_if_reached();
+
+	g_string_append_printf(content,
+	                       "<div class=\"tables\">\n"
+	                       "  %s\n"
+	                       "</div>\n",
+	                       tables_content->str);
+
+	g_string_free(tables_content, TRUE);
+}
+
+static void
+gebr_document_generate_flow_content(GebrGeoXmlDocument *document,
+                                    GString *content,
+                                    const gchar *inner_body,
+                                    gboolean include_table)
+{
+	if (gebr.config.detailed_flow_include_report && inner_body)
+		gebr_document_create_section(content, inner_body, "comments");
+
+	gebr_document_generate_index(document, content, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+
+	if (include_table)
+		gebr_document_generate_tables(document, content, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+}
+
+static void
+gebr_document_generate_internal_flow(GebrGeoXmlDocument *document,
+                                     GString *content)
+{
+	GebrGeoXmlSequence *line_flow;
+
+	gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(document), &line_flow, 0);
+
+	g_string_append(content,
+	                "      <div class=\"contents\">\n");
+
+	for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
+		GebrGeoXmlFlow *flow;
+		gboolean include_table;
+
+		include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
+
+		const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
+		document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
+		gebr_validator_set_document(gebr.validator,(GebrGeoXmlDocument**)(&flow), GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
+
+		gchar *report = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(flow));
+		gchar *flow_inner_body = gebr_document_report_get_inner_body(report);
+
+		GString *flow_content = g_string_new(NULL);
+		gchar *header = gebr_document_generate_header(GEBR_GEOXML_DOCUMENT(flow));
+		gebr_document_generate_flow_content(GEBR_GEOXML_DOCUMENT(flow), flow_content, flow_inner_body, include_table);
+
+		gchar *internal_html = gebr_generate_content_report("flow", header, flow_content->str);
+
+		g_string_append_printf(content,
+		                       "        %s",
+		                       internal_html);
+
+		g_free(flow_inner_body);
+		g_free(report);
+		g_free(internal_html);
+		g_string_free(flow_content, TRUE);
+
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+	}
+	g_string_append(content,
+	                "      </div>\n");
+
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**)(&gebr.flow), GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
+}
+
+static void
+gebr_document_generate_line_content(GebrGeoXmlDocument *document,
+                                    GString *content,
+                                    const gchar *inner_body)
+{
+	if (gebr.config.detailed_line_include_report && inner_body)
+		gebr_document_create_section(content, inner_body, "comments");
+
+	gebr_document_generate_index(document, content, GEBR_GEOXML_DOCUMENT_TYPE_LINE);
+
+	gebr_document_generate_line_paths(document, content);
+
+	gebr_document_generate_tables(document, content, GEBR_GEOXML_DOCUMENT_TYPE_LINE);
+
+	if (gebr.config.detailed_line_include_flow_report)
+		gebr_document_generate_internal_flow(document, content);
 }
 
 gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 {
-	GebrGeoXmlSequence *line_flow;
 	GebrGeoXmlObjectType type;
 	gchar * title;
 	gchar * report;
@@ -758,6 +1075,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 	gchar * inner_body = "";
 	gchar * styles = "";
 	gchar * header = "";
+	gchar *scope;
 	GString * content;
 
 	content = g_string_new (NULL);
@@ -769,52 +1087,29 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 	title = gebr_geoxml_document_get_title(document);
 	report = gebr_geoxml_document_get_help(document);
 	inner_body = gebr_document_report_get_inner_body(report);
+	header = gebr_document_generate_header(document);
 
 	if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
+		scope = g_strdup(_("line"));
+
 		styles = gebr_document_report_get_styles_css(report, gebr.config.detailed_line_css);
-		header = gebr_line_generate_header(document);
 
-		if (gebr.config.detailed_line_include_report && inner_body)
-			gebr_document_create_section(content, inner_body, "content");
+		gebr_document_generate_line_content(document, content, inner_body);
 
-		if (gebr.config.detailed_line_include_flow_report) {
-			gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(document), &line_flow, 0);
-
-			for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
-				GebrGeoXmlFlow *flow;
-				gboolean include_table;
-				include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
-				const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
-				document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
-				gebr_validator_set_document(gebr.validator,(GebrGeoXmlDocument**)(&flow), GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
-				gchar * flow_cont = gebr_flow_get_detailed_report(flow, include_table, FALSE, NULL, NULL);
-				g_string_append(content, flow_cont);
-
-				if (gebr.config.detailed_line_include_revisions_report)
-					gebr_document_include_flow_revision (flow,content,include_table);
-
-				g_free(flow_cont);
-				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
-			}
-			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**)(&gebr.flow), GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
-		}
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
+		scope = g_strdup(_("flow"));
+
 		styles = gebr_document_report_get_styles_css(report, gebr.config.detailed_flow_css);
-		header = gebr_flow_generate_header(GEBR_GEOXML_FLOW(document), TRUE, NULL, NULL);
+
 		gboolean include_table = gebr.config.detailed_flow_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 
-		if (gebr.config.detailed_flow_include_report && inner_body)
-			gebr_document_create_section(content, inner_body, "gebr-geoxml-flow");
+		gebr_document_generate_flow_content(document, content, inner_body, include_table);
 
-		if (gebr.config.detailed_flow_include_revisions_report)
-			gebr_document_include_flow_revision (GEBR_GEOXML_FLOW(document),content,include_table);
-
-		gchar * table = gebr_document_flow_append_dicts_and_params(document);
-		if (!table)
-			gebr_document_create_section(content, table, "gebr-geoxml-flow");
-
+//		if (gebr.config.detailed_flow_include_revisions_report)
+//			gebr_document_include_flow_revision (GEBR_GEOXML_FLOW(document),content,include_table);
 
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_PROJECT) {
+		scope = g_strdup(_("project"));
 		g_free (inner_body);
 		return report;
 	} else {
@@ -823,7 +1118,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 		g_return_val_if_reached (NULL);
 	}
 
-	detailed_html = gebr_generate_report(title, styles, header, content->str);
+	detailed_html = gebr_generate_report(title, styles, scope, header, content->str);
 
 	g_free(header);
 	g_free(styles);
@@ -831,9 +1126,39 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 	g_string_free(content, TRUE);
 	g_free (report);
 	g_free(title);
+	g_free(scope);
 
 	return detailed_html;
 }
+
+//void gebr_document_include_flow_revision (GebrGeoXmlFlow *flow, GString * content, gboolean include_table)
+//{
+//	GebrGeoXmlSequence *seq;
+//	gebr_geoxml_flow_get_revision(flow, &seq, 0);
+//	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+//		gchar *rev_xml;
+//		gchar *comment;
+//		gchar *date;
+//		GebrGeoXmlDocument *revdoc;
+//
+//		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &rev_xml, &date, &comment, NULL);
+//
+//		if (gebr_geoxml_document_load_buffer(&revdoc, rev_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+//			g_free(rev_xml);
+//			g_free(comment);
+//			g_free(date);
+//			g_warn_if_reached();
+//		}
+//
+//		gchar * rev_cont = gebr_flow_get_detailed_report(GEBR_GEOXML_FLOW(revdoc), include_table, FALSE, comment, date);
+//		gebr_document_create_section(content, rev_cont, "gebr-geoxml-flow");
+//
+//		g_free(rev_xml);
+//		g_free(comment);
+//		g_free(date);
+//		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(revdoc));
+//	}
+//}
 
 gchar * gebr_document_get_css_header_field (const gchar * filename, const gchar * field)
 {

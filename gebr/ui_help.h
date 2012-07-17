@@ -52,10 +52,23 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu);
 void gebr_help_edit_document(GebrGeoXmlDocument * document);
 
 /**
+ * gebr_generate_content_report:
+ *
+ * Returns: a newly allocated string containing the content of generated report.
+ */
+gchar *gebr_generate_content_report(const gchar * scope,
+                                    const gchar * header,
+                                    const gchar * body);
+
+/**
  * gebr_generate_report:
  * Returns: a newly allocated string containing the generated report.
  */
-gchar * gebr_generate_report(const gchar * title, const gchar * styles, const gchar * header, const gchar * table);
+gchar * gebr_generate_report(const gchar * title,
+                             const gchar * styles,
+                             const gchar * scope,
+                             const gchar * header,
+                             const gchar * table);
 
 /**
  * Set \p help on XML and enable/disable "View help" accordingly

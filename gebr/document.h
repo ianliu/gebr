@@ -176,6 +176,15 @@ gchar * gebr_document_report_get_styles_string(const gchar * report);
  */
 gchar * gebr_document_report_get_inner_body(const gchar * report);
 
+
+/**
+ * gebr_document_generate_report:
+ * @document:
+ *
+ * Returns: a newly allocated string containing the header for document
+ */
+gchar * gebr_document_generate_header(GebrGeoXmlDocument * document);
+
 /**
  * gebr_document_generate_report:
  * @document:

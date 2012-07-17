@@ -125,26 +125,42 @@ void flow_program_copy(void);
 void flow_program_paste(void);
 
 /**
+ * gebr_flow_generate_io_table:
+ * @flow: a #GebrGeoXmlFlow
+ * @tables_content: A #GString to append content
+ *
+ * Creates a string containing a HTML table for I/O of @flow.
+ *
+ */
+void gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
+                                 GString *tables_content);
+/**
  * gebr_flow_generate_parameter_value_table:
  * @flow: a #GebrGeoXmlFlow
+ * @tables_content: A #GString to append content
  *
  * Creates a string containing a HTML table for the programs of @flow.
  *
- * Returns: a newly allocated string containing HTML markup.
  */
-gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow);
+void gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
+                                              GString *tables_content);
 
 /**
  * gebr_flow_generate_variables_value_table:
  * @doc: a #GebrGeoXmlDocument
- * @header: Pass %TRUE for include header, %FALSE otherwise
+ * @insert_header: Pass %TRUE for include header, %FALSE otherwise
  * @close: Pass %TRUE for close table of header, %FALSE otherwise
+ * @tables_content: a #GString to append content
+ * @scope: a string with title of scope to include variables
  *
  * Creates a string containing a HTML table for the variables on dictionary of @doc.
  *
- * Returns: a newly allocated string containing HTML markup.
  */
-gchar * gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean header, gboolean close);
+void gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
+                                         gboolean insert_header,
+                                         gboolean close,
+                                         GString *tables_content,
+                                         const gchar *scope);
 
 /**
  * gebr_flow_generate_header:

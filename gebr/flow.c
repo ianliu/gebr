@@ -983,7 +983,8 @@ void flow_program_paste(void)
 	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
 }
 
-static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group)
+static void append_parameter_row(GebrGeoXmlParameter * parameter,
+                                 GString * dump)
 {
 	gint i, n_instances;
 	GebrGeoXmlSequence * param;
@@ -1036,8 +1037,12 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 				g_free(enum_value);
 			}
 			gchar *label = gebr_geoxml_parameter_get_label(parameter);
-			g_string_append_printf(dump, "<tr>\n  <td class=\"%slabel\">%s</td>\n  <td class=\"value\">%s</td>\n</tr>\n",
-					       (in_group?"group-":""), label, str_value->str);
+			g_string_append_printf(dump,
+			                       "      <tr class=\"param\">\n  "
+			                       "        <td class=\"label\">%s</td>\n"
+			                       "        <td class=\"value\">%s</td>\n"
+			                       "      </tr>\n",
+					       label, str_value->str);
 			g_free(label);
 		}
 		g_string_free(str_value, TRUE);
@@ -1045,7 +1050,11 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 	} else {
 		GString * previous_table = g_string_new(dump->str);
 		gchar *label = gebr_geoxml_parameter_get_label(parameter);
-		g_string_append_printf(dump, "<tr class='parameter-group'>\n  <td colspan='2'>%s</td>\n</tr>\n", label);
+		g_string_append_printf(dump,
+		                       "      <tr class=\"group\">\n  "
+		                       "        <td class=\"label\" colspan=\"2\">%s</td>\n"
+		                       "      </tr>\n",
+		                       label);
 		g_free(label);
 		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 		n_instances = gebr_geoxml_parameter_group_get_instances_number(GEBR_GEOXML_PARAMETER_GROUP(parameter));
@@ -1056,7 +1065,10 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 		while (instance) {
 			GString * instance_table = g_string_new(dump->str);
 			if (n_instances > 1)
-				g_string_append_printf(dump, "<tr class='group-instance'>\n  <td colspan='2'>%s %d</td>\n</tr>\n",
+				g_string_append_printf(dump,
+				                       "      <tr class=\"group\">\n  "
+				                       "        <td class=\"label\" colspan=\"2\">%s %d</td>\n"
+				                       "      </tr>\n",
 						       _("Instance"), i++);
 			parameters = GEBR_GEOXML_PARAMETERS(instance);
 			gebr_geoxml_parameters_get_parameter(parameters, &param, 0);
@@ -1064,7 +1076,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 			GString * inner_table = g_string_new(dump->str);
 
 			while (param) {
-				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, TRUE);
+				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump);
 				gebr_geoxml_sequence_next(&param);
 			}
 			/*If there are no parameters returned by the dialog choice...*/
@@ -1087,81 +1099,80 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 	}
 }
 
-static gchar *
-gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program)
+static void
+gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
+                                             GString *tables_content)
 {
-	GString * table;
 	GebrGeoXmlParameters *parameters;
 	GebrGeoXmlSequence *sequence;
-
-	table = g_string_new ("");
-	parameters = gebr_geoxml_program_get_parameters (program);
-	gebr_geoxml_parameters_get_parameter (parameters, &sequence, 0);
-	gebr_geoxml_object_unref(parameters);
 
 	gchar *title = gebr_geoxml_program_get_title (program);
 	gchar *translated = g_strdup_printf (_("Parameters for the Program \"%s\""), title);
 	g_free(title);
 	
-	if (sequence == NULL) {
-		g_string_append_printf(table,
-				       "<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-				       "<caption>%s</caption>\n"
-				       "<tbody>\n"
-				       "<tr><td>this program has no parameters.</td></tr>\n",
-				       translated);
-	} else {
-		g_string_append_printf (table,
-					"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-					"<caption>%s</caption>\n"
-					"<thead>\n<tr>\n"
-					"  <td>%s</td><td>%s</td>\n"
-					"</tr>\n</thead>\n"
-					"<tbody>\n",
-					translated, _("Parameter"), _("Value"));
+	g_string_append_printf(tables_content,
+	                       "  <table class=\"program\">\n"
+	                       "    <caption>%s</caption>\n"
+	                       "    <tbody>\n",
+	                       translated);
+	g_free (translated);
 
-		GString * initial_table = g_string_new(table->str);
+	parameters = gebr_geoxml_program_get_parameters (program);
+	gebr_geoxml_parameters_get_parameter (parameters, &sequence, 0);
+	gebr_geoxml_object_unref(parameters);
+
+	if (sequence == NULL) {
+		g_string_append(tables_content,
+		                "      <tr>\n"
+		                "        <td>this program has no parameters.</td>\n"
+		                "      </tr>\n");
+	} else {
+		g_string_append_printf(tables_content,
+		                       "      <tr>\n"
+		                       "        <td>%s</td>\n"
+		                       "        <td>%s</td>\n"
+		                       "      </tr>\n",
+		                       _("Parameter"), _("Value"));
+
+		GString * initial_table = g_string_new(tables_content->str);
+
 		while (sequence) {
-			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE);
+			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), tables_content);
 			gebr_geoxml_sequence_next (&sequence);
 		}
 
-		if (g_string_equal(initial_table, table)) {
+		if (g_string_equal(initial_table, tables_content)) {
 			switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 			case NOTEBOOK_PAGE_PROJECT_LINE:
 				if (gebr.config.detailed_line_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED)
-					g_string_printf(table,
-							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-							"<caption>%s</caption>\n"
-							"<tbody>\n"
-							"<tr><td>This program has only default parameters</td></tr>\n",
-							translated);
+					g_string_append_printf(tables_content,
+					                       "      <tr>\n"
+					                       "        <td colspan=\"2\">%s</td>\n"
+					                       "      </tr>\n",
+					                       _("This program has only default parameters"));
 
 				else if (gebr.config.detailed_line_parameter_table == GEBR_PARAM_TABLE_ONLY_FILLED)
-					g_string_printf(table,
-							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-							"<caption>%s</caption>\n"
-							"<tbody>\n"
-							"<tr><td>This program has only empty parameters</td></tr>\n",
-							translated);
+					g_string_append_printf(tables_content,
+					                       "      <tr>\n"
+					                       "        <td colspan=\"2\">%s</td>\n"
+					                       "      </tr>\n",
+					                       _("This program has only empty parameters"));
 
 				break;
 			case NOTEBOOK_PAGE_FLOW_BROWSE:
 				if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED)
-					g_string_printf(table,
-							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-							"<caption>%s</caption>\n"
-							"<tbody>\n"
-							"<tr><td>This program has only default parameters</td></tr>\n",
-							translated);
+					g_string_append_printf(tables_content,
+					                       "      <tr>\n"
+					                       "        <td colspan=\"2\">%s</td>\n"
+					                       "      </tr>\n",
+					                       _("This program has only default parameters"));
 
 				else if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_ONLY_FILLED)
-					g_string_printf(table,
-							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
-							"<caption>%s</caption>\n"
-							"<tbody>\n"
-							"<tr><td>This program has only empty parameters</td></tr>\n",
-							translated);
+					g_string_append_printf(tables_content,
+					                       "      <tr>\n"
+					                       "        <td colspan=\"2\">%s</td>\n"
+					                       "      </tr>\n",
+					                       _("This program has only empty parameters"));
 				break;
 			default:
 				g_warn_if_reached ();
@@ -1172,66 +1183,96 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program)
 		} 
 	}
 
-	g_free (translated);
-
-	g_string_append_printf (table, "</tbody>\n</table>\n");
-	return g_string_free (table, FALSE);
+	g_string_append_printf (tables_content,
+	                        "    </tbody>\n"
+	                        "  </table>\n");
 }
 
-gchar *gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean header, gboolean close)
+static void
+gebr_generate_variables_header_table(GString *tables_content,
+                                     gboolean insert_header,
+                                     const gchar *scope)
 {
-	GString *dump;
-	gchar *name;
-	gchar *value;
-	gchar *comment;
-	gchar *eval;
+	if (insert_header)
+		g_string_append_printf(tables_content,
+		                       "  <table class=\"variables\">\n"
+		                       "    <caption>%s</caption>\n"
+		                       "    <thead>\n"
+		                       "      <tr>\n"
+		                       "        <td>%s</td>\n"
+		                       "        <td>%s</td>\n"
+		                       "        <td>%s</td>\n"
+		                       "        <td>%s</td>\n"
+		                       "      </tr>\n"
+		                       "    </thead>\n"
+		                       "    <tbody>\n",
+		                       _("Variables"), _("Keyword"), _("Value"),_("Result"), _("Comment"));
+
+
+	g_string_append_printf(tables_content,
+	                       "      <tr class=\"scope\">\n"
+	                       "        <td colspan=\"4\">%s</td>\n"
+	                       "      </tr>\n",
+	                       scope);
+}
+
+void
+gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
+                                    gboolean insert_header,
+                                    gboolean close,
+                                    GString *tables_content,
+                                    const gchar *scope)
+{
+	gebr_generate_variables_header_table(tables_content, insert_header, scope);
+
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlSequence *sequence;
 	GebrGeoXmlParameterType type;
-	GebrGeoXmlDocumentType scope;
-	GError *error = NULL;
+
+	gchar *name;
+	gchar *value;
+	gchar *comment;
+	gchar *eval, *result;
+	gchar *var_type;
 	gboolean have_vars = FALSE;
-
-	dump = g_string_new(NULL);
-
-	scope = gebr_geoxml_document_get_type(doc);
+	GError *error = NULL;
 
 	params = gebr_geoxml_document_get_dict_parameters(doc);
 	gebr_geoxml_parameters_get_parameter(params, &sequence, 0);
 	gebr_geoxml_object_unref(params);
-
-	if (header)
-		g_string_append_printf (dump,
-		                        "\n<div class=\"gebr-flow-dump\">\n"
-		                        "<table class=\"gebr-variables-table\" summary=\"Variable table\">\n"
-		                        "<caption>%s</caption>\n"
-		                        "<thead>\n<tr>\n"
-		                        "  <td>%s</td><td>%s</td><td>%s</td><td>%s</td>\n"
-		                        "</tr>\n</thead>\n"
-		                        "<tbody>\n",
-		                        _("Variables"), _("Keyword"), _("Value"),_("Result"), _("Comment"));
-
-	g_string_append_printf(dump, "<tr class=\"variables-group\">\n  <td colspan='4'>%s</td>\n</tr>\n",
-	                       scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW? _("Flow") :
-	                       scope == GEBR_GEOXML_DOCUMENT_TYPE_LINE? _("Line") : _("Project"));
-
 	while (sequence) {
 		have_vars = TRUE;
 		name = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(sequence));
 		value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(sequence), FALSE);
-		type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(sequence));
 		comment = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(sequence));
 
 		gebr_validator_evaluate_param(gebr.validator, GEBR_GEOXML_PARAMETER(sequence), &eval, &error);
 
-		g_string_append_printf(dump, "<tr >\n  <td class=\"%2$sgroup-label\">%1$s</td>\n  <td class=\"%2$svalue\">%3$s</td>\n"
-		                       "<td class=\"%2$svalue\">%4$s</td>\n<td class=\"%2$svalue\">%5$s</td>\n</tr>\n",
-		                       name, (error? "error-" : (type == GEBR_GEOXML_PARAMETER_TYPE_STRING? "string-" : "numeric-")), value,
-		                       (error? error->message : eval), comment);
+		if (!error) {
+			result = g_strdup(eval);
+			type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(sequence));
+			if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
+				var_type = g_strdup("string");
+			else
+				var_type = g_strdup("numeric");
+		} else {
+			result = g_strdup(error->message);
+			var_type = g_strdup("error");
+		}
+
+		g_string_append_printf(tables_content,
+		                       "      <tr class=\"scope-content\" class=\"%s\">"
+		                       "        <td>%s</td>\n"
+		                       "        <td>%s</td>\n"
+		                       "        <td>%s</td>\n"
+		                       "        <td>%s</td>\n"
+		                       "      </tr>\n",
+		                       var_type, name, value, result, comment);
 
 		g_free(name);
 		g_free(value);
 		g_free(comment);
+		g_free(result);
 
 		if (error)
 			g_clear_error(&error);
@@ -1244,45 +1285,66 @@ gchar *gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean hea
 		g_error_free(error);
 
 	if(!have_vars)
-		g_string_append_printf(dump, "<tr >\n  <td class=\"group-label\" colspan='4'>%s</td>\n</tr>\n",_("There are no variables in this scope"));
+		g_string_append_printf(tables_content,
+		                       "      <tr class=\"scope-content\">\n"
+		                       "        <td colspan='4'>%s</td>\n"
+		                       "      </tr>\n",
+		                       _("There are no variables in this scope"));
 
 	if (close)
-		g_string_append (dump, "</tbody>\n</table>\n");
-
-	return g_string_free(dump, FALSE);
-
+		g_string_append (tables_content,
+		                 "    </tbody>\n"
+		                 "  </table>\n");
 }
 
-gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow)
-{ // OK
-	GString * dump;
+void
+gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
+                            GString *tables_content)
+{
 	gchar * input;
 	gchar * output;
 	gchar * error;
-	GebrGeoXmlSequence * sequence;
 
 	input = gebr_geoxml_flow_io_get_input (flow);
 	output = gebr_geoxml_flow_io_get_output (flow);
 	error = gebr_geoxml_flow_io_get_error (flow);
-        
-	dump = g_string_new(NULL);
 
-	g_string_append_printf(dump,
-			       "<div class=\"gebr-flow-dump\">\n"
-			       "<table class=\"gebr-io-table\" summary=\"I/O table\">\n"
-                               "<caption>%s</caption>\n"
-			       "<tr><td>%s</td><td>%s</td></tr>\n"
-			       "<tr><td>%s</td><td>%s</td></tr>\n"
-			       "<tr><td>%s</td><td>%s</td></tr>\n"
-			       "</table>\n",
-                               _("I/O table"),
-			       _("Input"), strlen (input) > 0? input : _("(none)"),
-			       _("Output"), strlen (output) > 0? output : _("(none)"),
-			       _("Error"), strlen (error) > 0? error : _("(none)"));
+	g_string_append_printf(tables_content,
+	                       "  <table class=\"io\">\n"
+	                       "    <caption>%s</caption>\n"
+	                       "    <tbody>\n"
+	                       "      <tr>\n"
+	                       "        <td class=\"type\">%s</td>\n"
+	                       "        <td class=\"value\">%s</td>\n"
+	                       "      </tr>\n"
+	                       "      <tr>\n"
+	                       "        <td class=\"type\">%s</td>\n"
+	                       "        <td class=\"value\">%s</td>\n"
+	                       "      </tr>\n"
+	                       "      <tr>\n"
+	                       "        <td class=\"type\">%s</td>\n"
+	                       "        <td class=\"value\">%s</td>\n"
+	                       "      </tr>\n"
+	                       "    </tbody>\n"
+	                       "  </table>\n",
+	                       _("I/O table"),
+	                       _("Input"), strlen (input) > 0? input : _("(none)"),
+	                       _("Output"), strlen (output) > 0? output : _("(none)"),
+	                       _("Error"), strlen (error) > 0? error : _("(none)"));
 
 	g_free(input);
 	g_free(output);
 	g_free(error);
+}
+
+void
+gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
+                                         GString *tables_content)
+{
+	GebrGeoXmlSequence * sequence;
+
+	g_string_append(tables_content,
+	                "<div class=\"programs\">\n");
 
 	gebr_geoxml_flow_get_program(flow, &sequence, 0);
 	while (sequence) {
@@ -1292,128 +1354,14 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow)
 		prog = GEBR_GEOXML_PROGRAM (sequence);
 		status = gebr_geoxml_program_get_status (prog);
 
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
-			gchar * table;
-			table = gebr_program_generate_parameter_value_table(prog);
-			g_string_append (dump, table);
-			g_free (table);
-		}
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			gebr_program_generate_parameter_value_table(prog, tables_content);
+
 		gebr_geoxml_sequence_next(&sequence);
 	}
 
-	g_string_append (dump, "</div>\n</div>\n");
-	return g_string_free(dump, FALSE);
-}
-
-gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow,
-                                  gboolean include_date,
-                                  gchar *rev_comment,
-                                  gchar *rev_date)
-{
-	gchar *date;
-	GString *dump;
-	GebrGeoXmlSequence * program;
-	gchar *title;
-	gchar *description;
-	gchar *author;
-	gchar *email;
-
-	dump = g_string_new(NULL);
-	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
-	description = gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(flow));
-	if (rev_comment && rev_date)
-		g_string_printf(dump,
-		                "<h1>%s</h1> "
-		                "<div class='gebr-flow-revision'>"
-		                "	<span class='title'>Revision: %s </span>"
-		                "	<span class='date'>(%s)</span>"
-		                "</div>\n"
-		                "<h2>%s</h2>\n",
-		                title, rev_comment, rev_date, description);
-	else
-		g_string_printf(dump,
-		                "<h1>%s</h1>\n"
-		                "<h2>%s</h2>\n",
-		                title, description);
-	g_free(title);
-	g_free(description);
-
-	if (include_date)
-		date = g_strdup_printf (", <span class=\"gebr-date\">%s</span>",
-					gebr_localized_date(gebr_iso_date()));
-	else
-		date = NULL;
-
-	author = gebr_geoxml_document_get_author(GEBR_GEOXML_DOC(flow));
-	email = gebr_geoxml_document_get_email(GEBR_GEOXML_DOC(flow));
-	g_string_append_printf (dump,
-				"<p class=\"credits\">%s <span class=\"gebr-author\">%s</span>"
-				" <span class=\"gebr-email\">%s</span>%s</p>\n",
-				_("By"),
-				author,
-				email,
-				date ? date : "");
-	g_free(date);
-	g_free(email);
-	g_free(author);
-
-	g_string_append_printf (dump, "<p>%s</p>\n", _("Flow composed of the program(s):"));
-	g_string_append_printf (dump, "<ul>\n");
-	gebr_geoxml_flow_get_program (flow, &program, 0);
-	while (program) {
-		GebrGeoXmlProgram * prog;
-		GebrGeoXmlProgramStatus status;
-		gchar *title;
-
-		prog = GEBR_GEOXML_PROGRAM (program);
-		status = gebr_geoxml_program_get_status (prog);
-		title = gebr_geoxml_program_get_title (prog);
-
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-			g_string_append_printf (dump, "  <li>%s</li>\n",
-						title);
-
-		g_free(title);
-		gebr_geoxml_sequence_next (&program);
-	}
-	g_string_append_printf(dump, "</ul>\n");
-
-	return g_string_free(dump, FALSE);
-}
-
-gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow,
-                                       gboolean include_table,
-                                       gboolean include_date,
-                                       gchar *rev_comment,
-                                       gchar *rev_date)
-{ // OK
-	gchar * table;
-	gchar * inner;
-	gchar * report;
-	gchar * header;
-	gchar * flow_dict;
-	gchar * help;
-
-	help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
-	inner = gebr_document_report_get_inner_body (help);
-	g_free(help);
-	
-	if (inner == NULL)
-		inner = g_strdup("");
-
-	table = include_table ? gebr_flow_generate_parameter_value_table (flow) : "";
-	flow_dict = include_table ? gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(flow), TRUE, TRUE) : "";
-	header = gebr_flow_generate_header (flow, include_date, rev_comment, rev_date);
-	report = g_strdup_printf ("<div class='gebr-geoxml-flow'>%s%s%s%s</div>\n", header, inner, flow_dict, table);
-
-	if (include_table) {
-		g_free (table);
-		g_free(flow_dict);
-	}
-	g_free (inner);
-	g_free (header);
-
-	return report;
+	g_string_append(tables_content,
+	                "</div>\n");
 }
 
 void
