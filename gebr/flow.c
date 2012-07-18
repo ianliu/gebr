@@ -1228,7 +1228,7 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
 	gchar *translated = g_strdup (_("Parameters"));
 	
 	g_string_append_printf(tables_content,
-	                       "  <table class=\"program\">\n"
+	                       "  <table class=\"parameters\">\n"
 	                       "    <caption>%s</caption>\n"
 	                       "    <thead>\n",
 	                       translated);
@@ -1502,14 +1502,16 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 
 			g_string_append_printf(prog_content,
 			                       "<div class=\"programs\">\n"
-			                       "  <a name=\"%s\"></a>\n"
-			                       "  <div class=\"title\">%s</div>\n"
-			                       "  <div class=\"description\">%s</div>\n",
+			                       "  <div class\"program\">\n"
+			                       "    <a name=\"%s\"></a>\n"
+			                       "    <div class=\"title\">%s</div>\n"
+			                       "    <div class=\"description\">%s</div>\n",
 			                       link, title, description);
 
 			gebr_program_generate_parameter_value_table(prog, prog_content);
 
 			g_string_append(prog_content,
+			                "  </div>\n"
 			                "</div>\n");
 
 			i++;

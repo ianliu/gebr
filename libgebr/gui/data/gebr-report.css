@@ -216,7 +216,7 @@ body {
 	font-weight: bold;
 	padding-bottom: 5px;
 }
-.program {
+.parameters {
 	font-size: 14px;
 	text-align: center;
 	border: 1px solid #dddddd; 
@@ -225,11 +225,11 @@ body {
     margin-right: auto;
     margin-left: auto;
 }
-.program caption {
+.parameters caption {
 	font-weight: bold;
 	font-size: 14px;
 }
-.program td {
+.parameters td {
 	padding: 3px;
 	border-top: solid 1px #dddddd;
     border-bottom: solid 1px #dddddd;
@@ -238,16 +238,16 @@ body {
     padding-left: 15px;
     padding-right: 15px;
 }
-.program thead {
+.parameters thead {
 	background-color: #333333;
     text-align: center;
     color: #fff;
     font-weight: bold;
 }
-.program tbody .group {
+.parameters tbody .group {
 	background-color: #d0d0d0;
 }
-.program tbody .param {
+.parameters tbody .param {
 	color: #333333;
 }
 .snapshot {
