@@ -3,14 +3,21 @@
  * @author: GêBR Core Team
  * @e-mail: gebr-devel@googlegroups.com
  */
+
+/*
+* CSS Geral
+*/
+
+/*
+* CSS Geral
+*/
+
 * {
     font-family: Verdana, sans-serif;
 }
-
 html {
     background-color: #333333;
 }
-
 body {
     padding-right: 30px;
     padding-left: 30px;
@@ -18,45 +25,12 @@ body {
     counter-reset: flow;
 }
 
-.gebr-email:before { content: "<"; }
-.gebr-email:after  { content: ">"; }
-
-p.credits { margin-bottom: 20px;}
-
-.gebr-flows-list {
-    background-color: #ffffff;
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-top: 0px;
- }
-
-.gebr-flows-list ul { list-style-type: decimal; }
-
-.gebr-flows-list .gebr-flow-description { 
-    font-style: italic; 
-    font-size: 11pt;
+.header {
+	margin: 0px
 }
-
-/* Header ---------------------------------------------------------- */
-.header p, .header ul {
-    background-color: #ffffff;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-
-.header ul li{
-    margin-left: 60px;
-    margin-right: 20px;
-}
-
-.header h1 {
-    text-align: right;
+.header .title {
+    font-weight: bold;
+	text-align: right;
     color: #fff;
     padding-top: 40px;
     padding-right: 20px;
@@ -70,8 +44,8 @@ p.credits { margin-bottom: 20px;}
     background-position: 15px;
     font-size: 18pt;
 }
-
-.header h2 { 
+.header .description {
+    color: #666666;
     text-align: right;
     font-size: 14pt;
     font-weight: normal;
@@ -83,12 +57,7 @@ p.credits { margin-bottom: 20px;}
     background-color: #4d6a91;
     color: #fff;
 }
-
-.header .gebr-author {
-    text-decoration: none;
-}
-
-.header p.credits {
+.header .credits {
     background-color: #f7f8e0;
     font-size: 11pt;
     padding-left: 20px;
@@ -96,166 +65,269 @@ p.credits { margin-bottom: 20px;}
     padding-top: 5px;
     padding-bottom: 5px;
     margin-top: 20px;
-    margin-bottom: 20px;
 }
-
-/* Content --------------------------------------------------------- */
-
-.content {
-    background-color: #ffffff;
-    margin-top: 0px;
-    margin-bottom: 5px;
+.header .email:before {
+    content: " - <";
+}
+.header .email:after  {
+    content: ">";
+}
+.header .date  {
+    font-style: italic;
+    background-color: #f7f8e0;
+    font-size: 11pt;
     padding-left: 20px;
     padding-right: 20px;
     padding-top: 5px;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
 }
-
-.content h1 {
-    font-size: 16pt;
+.body .comments , .body .index , .body .variables , .body .paths{
+	background-color: #ffffff;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 5px;
+	padding-bottom: 10px;
+	text-align: justify;
 }
-
-.content h2 {
-    font-size: 14pt;
+.body .comments {
+    font-size: 16px;
+    padding: 10px;
 }
-
-.content p {
-    text-align: justify;
+.body .index {
+    padding: 10px;
+    font-size: 16px;
+    font-style: italic;
 }
-/* Flow dump ------------------------------------------------------- */
-
-.gebr-flow-dump table{
-    font-size: 10pt;
-    border: 1px solid #dddddd;
-    border-collapse: collapse;
-    margin-top: 30px;
+.body .index li {
+    color: #666666;
+    list-style: decimal;
+    margin-left: 60px;
+    margin-right: 20px;
+}
+.body .index .title {
+    color: #333333;
+}
+.body .index .title a {
+    text-decoration: none;
+    color: #000000;
+}
+.body .index .description {
+    color: #333333;
+    font-size: 14px;
+}
+.tables {
+    margin: 0px;
+}
+.body .variables {
+	padding: 10px 10px 10px 10px;
+}
+.body .variables table {
+	font-size: 14px;
+	text-align: center;
+	border: 1px solid #dddddd; 
+	border-collapse: collapse;
+    margin-top: 0px;
     margin-bottom: 20px;
     margin-right: auto;
     margin-left: auto;
 }
-
-.gebr-flow-dump table{
-    font-style: italic;
+.body .variables caption {
+	font-weight: bold;
+	font-size: 16px;
 }
-
-.gebr-flow-dump table.gebr-io-table td {
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.gebr-flow-dump table.gebr-variables-table {
-}
-
-.gebr-flow-dump table.gebr-variables-table thead {
-    background-color: #333333;
-    text-align: center;
-    color: #fff;
-    font-weight: bold;
-}
-
-.gebr-flow-dump table.gebr-variables-table td {
-    border-top: solid 1px #dddddd;
+.body .variables td {
+	padding: 3px;
+	border-top: solid 1px #dddddd;
     border-bottom: solid 1px #dddddd;
     padding-top: 2px;
     padding-bottom: 2px;
     padding-left: 15px;
     padding-right: 15px;
 }
-
-.gebr-flow-dump tr.variables-group td {
-    background-color: #d0d0d0;
-    padding-left: 4px;
-}
-
-.gebr-flow-dump table.gebr-parameter-table {
-}
-
-.gebr-flow-dump table.gebr-parameter-table thead {
-    background-color: #333333;
+.body .variables thead {
+	background-color: #333333;
     text-align: center;
     color: #fff;
     font-weight: bold;
 }
+.body .variables tbody .scope {
+	background-color: #d0d0d0;
+	font-weight: bold;
+}
+.body .variables tbody .scope-content {
+	font-weight: inherit;
+	color: #333333;
+}
+.body .variables tbody .error {
+	background-color: #FFFFE0;
+}
 
-.gebr-flow-dump table.gebr-parameter-table td {
-    border-top: solid 1px #dddddd;
+/* CSS for Line */
+
+.header .maestro {
+	background-color: #f7f8e0;
+    font-size: 11pt;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+.paths {
+	margin: 0px;
+}
+.paths table caption {
+	font-weight: bold;
+	font-size: 16px;
+}
+.paths table tbody {
+	font-size: 14px;
+}
+.paths table td {
+	padding: 3px;
+}
+.paths table .type {
+	font-size: 14px;
+	font-weight: bold;
+}
+.index .subindex {
+	padding: 10px;
+	font-size: 14px;
+	font-style: italic;
+}
+.index .subindex .title {
+	color: #666666;
+}
+.index .subindex .description {
+	color: #666666;
+	font-size: 12px;
+}
+
+/* CSS for Flow */
+
+.io {
+	margin: 10px;
+}
+.io table {
+	font-size: 14px;
+	text-align: center;
+	border: 1px solid #dddddd; 
+	margin-top: 30px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.io caption {
+	font-weight: bold;
+	font-size: 16px;
+}
+.io td {
+	padding: 3px;
+	border-top: solid 1px #dddddd;
     border-bottom: solid 1px #dddddd;
     padding-top: 2px;
     padding-bottom: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
-
-.gebr-flow-dump tr.parameter-group td {
-    background-color: #d0d0d0;
-    padding-left: 4px;
+.io tbody .type {
+	background-color: #eeeeee;
+	font-weight: bold;
 }
-
-.gebr-flow-dump tr.group-instance td {
-    background-color: #dddddd;
-    padding-left: 8px;
+.programs {
+	padding: 10px 0px 10px 0px;
 }
-
-.gebr-flow-dump td.group-label {
-    font-style: italic;
-    padding-right: 20px;
-    padding-left: 20px;
+.programs .title {
+	font-size: 18px;
+	padding: 10px;
+	font-weight: bold;
 }
-
-.gebr-flow-dump td.string-group-label {
-    font-style: italic;
-    padding-right: 20px;
-    padding-left: 20px;
+.programs .title a {
+	text-decoration: none;
+	color: #000000;
 }
-
-.gebr-flow-dump td.numeric-group-label {
-    font-style: italic;
-    padding-right: 20px;
-    padding-left: 20px;
+.programs .description {
+	font-size: 16px;
+	color: #666666;
+	font-weight: bold;
+	padding-bottom: 5px;
 }
-
-.gebr-flow-dump td.error-group-label {
-    background-color: #FFFFE0;
-    font-style: italic;
-    padding-right: 20px;
-    padding-left: 20px;
+.program {
+	font-size: 14px;
+	text-align: center;
+	border: 1px solid #dddddd; 
+	margin-top: 30px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
 }
-
-.gebr-flow-dump * td.label {
-    font-style: italic;
-    padding-right: 20px;
-    padding-left: 4px;
+.program caption {
+	font-weight: bold;
+	font-size: 14px;
 }
-
-.gebr-flow-dump * td.value {
-    font-style: normal;
+.program td {
+	padding: 3px;
+	border-top: solid 1px #dddddd;
+    border-bottom: solid 1px #dddddd;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.program thead {
+	background-color: #333333;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+}
+.program tbody .group {
+	background-color: #d0d0d0;
+}
+.program tbody .param {
+	color: #333333;
+}
+.snapshot {
+	border: 1px solid #aaaaaa;
+	margin-top: 20px;
+}
+/* SubClasses */
+.project .line {
+    border: 1px solid #aaaaaa;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+.project .line .header .title {
+    font-size: 18px;
+}
+.project .line .header .credits {
+	font-size: 11pt;
+    margin-bottom: 20px;
+    margin-top: 0px;
+    padding-top: 0px;
     text-align: right;
-    padding-right: 4px;
+    background: white;
 }
-
-.gebr-flow-dump * td.string-value {
-    font-style: normal;
-    text-align: right;
-    padding-right: 4px;
+.project .line .header .date {
+	display:none;
 }
-
-.gebr-flow-dump * td.numeric-value {
-    font-style: normal;
-    text-align: right;
-    padding-right: 4px;
+.project .line .flow {
+    border: 1px solid #aaaaaa;
+    margin-top: 20px;
+    margin-left: 40px;
 }
-
-.gebr-flow-dump * td.error-value {
-    background-color: #FFFFE0;
-    font-style: normal;
-    text-align: right;
-    padding-right: 4px;
+.project .line .flow .header .title {
+	font-size: 16px;
 }
-
-
-/* Flow ------------------------------------------------------------- */
-
-.gebr-geoxml-flow {
+.project .line .flow .header .description {
+	font-size: 14px;
+}
+.project .line .body {
+	margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+.line .flow {
     text-align: justify;
     background-color: #fff;
     padding-left: 20px;
@@ -263,49 +335,54 @@ p.credits { margin-bottom: 20px;}
     margin-top: 20px;
     padding-bottom: 10px;
 }
-
-.gebr-geoxml-flow h1:before {
-}
-
-.gebr-geoxml-flow h1 {
+.line .flow .header .title {
     margin: 0px;
     padding-top:10px;
     font-size: 14pt;
     color: #336666;
+    font-weight: bold;
+	text-align: left;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    margin-bottom: 0px;
+    background: white;
+    background-image: none
 }
-
-.gebr-geoxml-flow h2 {
-    margin: 0px;
+.line .flow .header .description {
+	margin: 0px;
     font-style : italic;
     font-weight: normal;
     font-size: 12pt;
     color: #336666;
     border-bottom-width: 2pt;
     border-bottom-style: solid;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    color: #336666;
+	text-align: left;
+    background: white;
 }
-
-.gebr-geoxml-flow p.credits {
-    font-size: 11pt;
+.line .flow .header .credits {
+	font-size: 11pt;
     margin-bottom: 20px;
     margin-top: 0px;
+    padding-top: 0px;
     text-align: right;
+    background: white;
 }
-
-.gebr-geoxml-flow .content{
-    padding-left: 0px;
-    padding-right: 0px;
-
+.line .flow .header .date {
+	display:none;
 }
-
-.gebr-flow-revision {
-	margin: 0px;
-    padding-top: 6px;
-    padding-bottom: 2px;
-    color: #336666;
+.line .flow .body {
+	margin-bottom: 10px;
+    padding-bottom: 10px;
 }
-.gebr-flow-revision .title {
-	font-size: 11pt;
-}
-.gebr-flow-revision .date {
-	font-size: 9pt;
+.flow .programs {
+    border: 1px solid #aaaaaa;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
 }

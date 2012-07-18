@@ -131,40 +131,54 @@ void flow_program_copy(void);
 void flow_program_paste(void);
 
 /**
+ * gebr_flow_generate_io_table:
+ * @flow: a #GebrGeoXmlFlow
+ * @tables_content: A #GString to append content
+ *
+ * Creates a string containing a HTML table for I/O of @flow.
+ *
+ */
+void gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
+                                 GString *tables_content);
+/**
  * gebr_flow_generate_parameter_value_table:
  * @flow: a #GebrGeoXmlFlow
+ * @tables_content: A #GString to append content
  *
  * Creates a string containing a HTML table for the programs of @flow.
  *
- * Returns: a newly allocated string containing HTML markup.
  */
-gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow);
+void gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
+                                              GString *prog_content,
+                                              const gchar *index);
 
 /**
  * gebr_flow_generate_variables_value_table:
  * @doc: a #GebrGeoXmlDocument
- * @header: Pass %TRUE for include header, %FALSE otherwise
+ * @insert_header: Pass %TRUE for include header, %FALSE otherwise
  * @close: Pass %TRUE for close table of header, %FALSE otherwise
+ * @tables_content: a #GString to append content
+ * @scope: a string with title of scope to include variables
  *
  * Creates a string containing a HTML table for the variables on dictionary of @doc.
  *
- * Returns: a newly allocated string containing HTML markup.
  */
-gchar * gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean header, gboolean close);
+void gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
+                                         gboolean insert_header,
+                                         gboolean close,
+                                         GString *tables_content,
+                                         const gchar *scope);
 
 /**
- * gebr_flow_generate_header:
- * @flow: a #GebrGeoXmlFlow
- * @include_date: whether to include the date
- * @rev_comment: Revision comment or NULL if doesn't have revision
- * @rev_date: Revision date or NULL if doesn't have revision
+ * gebr_flow_generate_flow_revisions_index:
+ * @flow:
+ * @content:
  *
- * Creates a string containing a HTML description of @flow.
- *
- * Returns: a newly allocated string containing HTML markup.
+ * Concatenate on @content a HTML with revisions content
  */
-gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date,
-                                  gchar *rev_comment, gchar *rev_date);
+void gebr_flow_generate_flow_revisions_index(GebrGeoXmlFlow *flow,
+                                             GString *content,
+                                             const gchar *index);
 
 /**
  * gebr_flow_get_detailed_report:

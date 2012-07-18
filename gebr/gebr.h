@@ -139,6 +139,7 @@ struct gebr {
 		// Configurations for flow report generation
 		GString *detailed_flow_css;
 		gboolean detailed_flow_include_report;
+		gboolean detailed_flow_include_revisions_report;
 		GebrHelpParamTable detailed_flow_parameter_table;
 
 		// Configurations for line report generation
