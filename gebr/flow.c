@@ -1502,7 +1502,7 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 
 			g_string_append_printf(prog_content,
 			                       "<div class=\"programs\">\n"
-			                       "  <div class\"program\">\n"
+			                       "  <div class=\"program\">\n"
 			                       "    <a name=\"%s\"></a>\n"
 			                       "    <div class=\"title\">%s</div>\n"
 			                       "    <div class=\"description\">%s</div>\n",

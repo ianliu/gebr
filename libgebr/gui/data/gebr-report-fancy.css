@@ -26,7 +26,7 @@ body {
 }
 
 .header {
-	margin: 0px
+	margin-bottom: 20px;
 }
 .header .title {
     font-weight: bold;
@@ -118,7 +118,8 @@ body {
     font-size: 14px;
 }
 .tables {
-    margin: 0px;
+    background-color: white;
+    padding-bottom: 5px;
 }
 .body .variables {
 	padding: 10px 10px 10px 10px;
@@ -129,7 +130,7 @@ body {
 	border: 1px solid #dddddd; 
 	border-collapse: collapse;
     margin-top: 0px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     margin-right: auto;
     margin-left: auto;
 }
@@ -173,7 +174,6 @@ body {
     padding-right: 20px;
     padding-top: 5px;
     padding-bottom: 5px;
-    margin-bottom: 20px;
 }
 .paths {
 	margin: 0px;
@@ -208,13 +208,13 @@ body {
 /* CSS for Flow */
 
 .io {
-	margin: 10px;
+	background-color: #ffffff;
 }
 .io table {
 	font-size: 14px;
 	text-align: center;
 	border: 1px solid #dddddd; 
-	margin-top: 30px;
+	margin-top: 0px;
     margin-bottom: 20px;
     margin-right: auto;
     margin-left: auto;
@@ -237,7 +237,9 @@ body {
 	font-weight: bold;
 }
 .programs {
-	padding: 10px 0px 10px 0px;
+	background-color: #ffffff;
+	text-align: justify;
+	padding: 20px 10px 20px 10px;
 }
 .programs .title {
 	font-size: 18px;
@@ -255,6 +257,11 @@ body {
 	padding-bottom: 5px;
 }
 .program {
+	border: 1px solid #dddddd;
+	margin: 20px 10px 20px 10px;
+	padding: 20px 10px 20px 10px;
+}
+.parameters {
 	font-size: 14px;
 	text-align: center;
 	border: 1px solid #dddddd; 
@@ -263,11 +270,11 @@ body {
     margin-right: auto;
     margin-left: auto;
 }
-.program caption {
+.parameters caption {
 	font-weight: bold;
 	font-size: 14px;
 }
-.program td {
+.parameters td {
 	padding: 3px;
 	border-top: solid 1px #dddddd;
     border-bottom: solid 1px #dddddd;
@@ -276,20 +283,20 @@ body {
     padding-left: 15px;
     padding-right: 15px;
 }
-.program thead {
+.parameters thead {
 	background-color: #333333;
     text-align: center;
     color: #fff;
     font-weight: bold;
 }
-.program tbody .group {
+.parameters tbody .group {
 	background-color: #d0d0d0;
 }
-.program tbody .param {
+.parameters tbody .param {
 	color: #333333;
 }
 .snapshot {
-	border: 1px solid #aaaaaa;
+	padding: 10px 0px 10px 0px;
 	margin-top: 20px;
 }
 /* SubClasses */
@@ -375,14 +382,54 @@ body {
 .line .flow .header .date {
 	display:none;
 }
-.line .flow .body {
+.line .flow .index , .line .flow .tables , .line .flow .programs {
 	margin-bottom: 10px;
     padding-bottom: 10px;
 }
-.flow .programs {
-    border: 1px solid #aaaaaa;
-    margin-top: 20px;
-    margin-left: 20px;
-    margin-right: 20px;
+.flow .snapshot {
+	padding: 20px;
+	border: 1px solid #aaaaaa;
+	background-color: white;
+}
+.flow .snapshot .header .title {
+    margin: 0px;
+    padding-top:10px;
+    font-size: 14pt;
+    color: #336666;
+    font-weight: bold;
+	text-align: left;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    margin-bottom: 0px;
+    background: white;
+    background-image: none
+}
+.flow .snapshot .header .description {
+	margin: 0px;
+    font-style : italic;
+    font-weight: normal;
+    font-size: 12pt;
+    color: #336666;
+    border-bottom-width: 2pt;
+    border-bottom-style: solid;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    color: #336666;
+	text-align: left;
+    background: white;
+}
+.flow .snapshot .header .credits{
+	font-size: 11pt;
     margin-bottom: 20px;
+    margin-top: 0px;
+    padding-top: 0px;
+    text-align: right;
+    background: white;
+}
+.flow .body {
+	padding-top: 5px;
+	padding-bottom: 10px;
+	text-align: justify;
 }
