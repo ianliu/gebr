@@ -44,6 +44,7 @@ static void gebr_document_generate_flow_content(GebrGeoXmlDocument *document,
                                                 const gchar *inner_body,
                                                 gboolean include_table,
                                                 gboolean include_snapshots,
+                                                gboolean include_comments,
                                                 const gchar *index);
 
 static GebrGeoXmlDocument *document_cache_check(const gchar *path)
@@ -1040,6 +1041,7 @@ gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
 	gint i = 1;
 	gboolean include_table;
 	gboolean include_snapshots;
+	gboolean include_comments;
 	gboolean has_snapshots = FALSE;
 	GString *snap_content = g_string_new(NULL);
 	gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
@@ -1082,8 +1084,11 @@ gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
 
 		include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 		include_snapshots = gebr.config.detailed_flow_include_revisions_report;
+		include_comments = gebr.config.detailed_flow_include_report;
 
-		gebr_document_generate_flow_content(revdoc, snap_content, snap_inner_body, include_table, include_snapshots, link);
+		gebr_document_generate_flow_content(revdoc, snap_content, snap_inner_body,
+		                                    include_table, include_snapshots,
+		                                    include_comments, link);
 
 		g_string_append(snap_content,
 		                "  </div>");
@@ -1116,6 +1121,7 @@ gebr_document_generate_flow_content(GebrGeoXmlDocument *document,
                                     const gchar *inner_body,
                                     gboolean include_table,
                                     gboolean include_snapshots,
+                                    gboolean include_comments,
                                     const gchar *index)
 {
 	gboolean has_snapshots = (gebr_geoxml_flow_get_revisions_number(GEBR_GEOXML_FLOW(document)) > 0);
@@ -1123,7 +1129,7 @@ gebr_document_generate_flow_content(GebrGeoXmlDocument *document,
 	if (has_snapshots && include_snapshots)
 		gebr_flow_generate_flow_revisions_index(GEBR_GEOXML_FLOW(document), content, index);
 
-	if (gebr.config.detailed_flow_include_report && inner_body)
+	if (include_comments && inner_body)
 		gebr_document_create_section(content, inner_body, "comments");
 
 	gebr_document_generate_index(document, content, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, index);
@@ -1153,9 +1159,11 @@ gebr_document_generate_internal_flow(GebrGeoXmlDocument *document,
 		GebrGeoXmlFlow *flow;
 		gboolean include_table;
 		gboolean include_snapshots;
+		gboolean include_comments;
 
 		include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 		include_snapshots = gebr.config.detailed_line_include_revisions_report;
+		include_comments = gebr.config.detailed_line_include_report;
 
 		const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
 		document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
@@ -1170,7 +1178,7 @@ gebr_document_generate_internal_flow(GebrGeoXmlDocument *document,
 		gchar *header = gebr_document_generate_header(GEBR_GEOXML_DOCUMENT(flow), TRUE, index);
 		gebr_document_generate_flow_content(GEBR_GEOXML_DOCUMENT(flow), flow_content,
 		                                    flow_inner_body, include_table,
-		                                    include_snapshots, index);
+		                                    include_snapshots, include_comments, index);
 
 		gchar *internal_html = gebr_generate_content_report("flow", header, flow_content->str);
 
@@ -1249,8 +1257,11 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 		gboolean include_table = gebr.config.detailed_flow_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 		gboolean include_snapshots = gebr.config.detailed_flow_include_revisions_report;
+		gboolean include_comments = gebr.config.detailed_flow_include_report;
 
-		gebr_document_generate_flow_content(document, content, inner_body, include_table, include_snapshots, NULL);
+		gebr_document_generate_flow_content(document, content, inner_body,
+		                                    include_table, include_snapshots,
+		                                    include_comments, NULL);
 
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_PROJECT) {
 		scope = g_strdup(_("project"));
