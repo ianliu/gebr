@@ -435,17 +435,16 @@ graph_process_read_stderr(GebrCommProcess * process)
 
 	gchar **action = g_strsplit(output->str, ":", -1);
 
-	if (!g_strcmp0(action[1], "head")) {
-		g_string_free(output, TRUE);
-		g_strfreev(action);
-		return;
-	}
-
 	if (!g_strcmp0(action[0], "revert")) {
 		gebr_flow_browse_revision_revert(action[1]);
 	}
 	else if (!g_strcmp0(action[0], "delete")) {
 		gebr_flow_browse_revision_delete(action[1]);
+	}
+	else if (!g_strcmp0(action[0], "snapshot")) {
+		gdk_threads_enter();
+		flow_revision_save();
+		gdk_threads_leave();
 	}
 
 	g_string_free(output, TRUE);

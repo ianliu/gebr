@@ -35,26 +35,38 @@ class MyDotWindow(xdot.DotWindow):
         delete_str = "delete:"+url
         sys.stderr.write(str(delete_str))
         self.menu.destroy()
+        
+    def on_snapshot_clicked(self, widget, url):
+        sys.stderr.write(str("snapshot"))
+        self.menu.destroy()
     
     def on_url_clicked(self, widget, url, event):
-        if url == "head":
-            return False
         self.menu = gtk.Menu()
         self.menu.popup(None, None, None, event.button, event.time, url)
-        revert = gtk.MenuItem(_("Revert"))
-        revert.connect("activate", self.on_revert_clicked, url)
-        revert.show()
-        self.menu.append(revert)
-        delete = gtk.MenuItem(_("Delete"))
-        delete.connect("activate", self.on_delete_clicked, url)
-        delete.show()
-        self.menu.append(delete)
+        if url == "head":
+            snapshot = gtk.MenuItem(_("Take a Snapshot"))
+            snapshot.connect("activate", self.on_snapshot_clicked, url)
+            snapshot.show()
+            self.menu.append(snapshot)
+        else:
+            revert = gtk.MenuItem(_("Revert"))
+            revert.connect("activate", self.on_revert_clicked, url)
+            revert.show()
+            self.menu.append(revert)
+            delete = gtk.MenuItem(_("Delete"))
+            delete.connect("activate", self.on_delete_clicked, url)
+            delete.show()
+            self.menu.append(delete)
+        
         self.menu.show_all()
         return True
 
     def on_url_activate(self, widget, url, event):
-        revert_str = "revert:"+url
-        sys.stderr.write(str(revert_str))
+        if url == "head":
+            sys.stderr.write(str("snapshot"))
+        else:
+            revert_str = "revert:"+url
+            sys.stderr.write(str(revert_str))
         return True
 
     def create_dot_graph(self, fd, condition):
