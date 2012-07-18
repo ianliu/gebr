@@ -240,7 +240,6 @@ void gebrd_quit(void)
 	for (GList *i = gebrd->user->jobs; i; i = i->next) {
 		GebrdJob *task = i->data;
 		job_status_notify(task, JOB_STATUS_FAILED, gebr_iso_date());
-		job_free(task);
 	}
 	g_list_foreach(gebrd->mpi_flavors, (GFunc)gebrd_mpi_config_free, NULL);
 	g_list_free(gebrd->mpi_flavors);
