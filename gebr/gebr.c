@@ -57,6 +57,12 @@ static gchar *gebr_generate_session_id(void);
 
 static gchar *SESSIONID = NULL;
 
+static void
+gebr_force_quit(int sig)
+{
+	gebr_quit(TRUE);
+}
+
 /**
  * gebr_init:
  *
@@ -68,6 +74,17 @@ gebr_init(gboolean has_config)
 {
 	SESSIONID = gebr_generate_session_id();
 	g_debug("Session id: %s", SESSIONID);
+
+	struct sigaction sa;
+	sa.sa_handler = gebr_force_quit;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	if (sigaction(SIGTERM, &sa, NULL)
+			|| sigaction(SIGINT, &sa, NULL)
+			|| sigaction(SIGQUIT, &sa, NULL)
+			|| sigaction(SIGSEGV, &sa, NULL))
+		perror("sigaction");
 
 	gebr.project_line = NULL;
 	gebr.project = NULL;
