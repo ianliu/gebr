@@ -8,6 +8,10 @@
 * CSS Geral
 */
 
+/*
+* CSS Geral
+*/
+
 * {
 	font-family: sans-serif;
 }
@@ -16,6 +20,8 @@ body {
 	text-align: left;
 	border-left: 1px solid #aaaaaa;
 	border-right: 1px solid #aaaaaa;
+	margin-right: auto;
+    margin-left: auto;
 }
 .header {
 	margin: 10px;
@@ -24,6 +30,10 @@ body {
 	font-size: 20px;
 	padding: 10px;
 	font-weight: bold;
+}
+.header .title a {
+	text-decoration: none;
+	color: #000000;
 }
 .header .description {
 	font-size: 16px;
@@ -35,9 +45,16 @@ body {
 	font-size: 14px;
 	color: #777777;
 }
+.header .email:before { 
+	content: " - <"; 
+}
+.header .email:after  { 
+	content: ">"; 
+}
 .header .date  {
 	font-size: 14px;
 	font-style: italic;
+	padding: 5px 0px 5px 0px;
 }
 .body {
 	margin: 10px;
@@ -58,6 +75,10 @@ body {
 .body .index .title {
 	color: #333333;
 }
+.body .index .title a {
+	text-decoration: none;
+	color: #000000;
+}
 .body .index .description {
 	color: #333333;
 	font-size: 14px;
@@ -67,9 +88,17 @@ body {
 	margin: 10px;
 }
 .body .variables {
+	padding: 10px 0px 10px 0px;
+}
+.body .variables table {
 	font-size: 14px;
 	text-align: center;
 	border: 1px solid #dddddd; 
+	border-collapse: collapse;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
 }
 .body .variables caption {
 	font-weight: bold;
@@ -77,18 +106,29 @@ body {
 }
 .body .variables td {
 	padding: 3px;
+	border-top: solid 1px #dddddd;
+    border-bottom: solid 1px #dddddd;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .body .variables thead {
-	background-color: #999999;
-	font-weight: bold;
+	background-color: #333333;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
 }
 .body .variables tbody .scope {
-	background-color: #f1f1f1;
+	background-color: #d0d0d0;
 	font-weight: bold;
 }
 .body .variables tbody .scope-content {
 	font-weight: inherit;
 	color: #333333;
+}
+.body .variables tbody .error {
+	background-color: #FFFFE0;
 }
 
 /* CSS for Line */
@@ -131,9 +171,15 @@ body {
 
 .io {
 	margin: 10px;
+}
+.io table {
 	font-size: 14px;
 	text-align: center;
 	border: 1px solid #dddddd; 
+	margin-top: 30px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
 }
 .io caption {
 	font-weight: bold;
@@ -141,19 +187,43 @@ body {
 }
 .io td {
 	padding: 3px;
+	border-top: solid 1px #dddddd;
+    border-bottom: solid 1px #dddddd;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
-.io .type {
-	background-color: #f1f1f1;
+.io tbody .type {
+	background-color: #eeeeee;
 	font-weight: bold;
 }
 .programs {
-	margin: 10px;
+	padding: 10px 0px 10px 0px;
+}
+.programs .title {
+	font-size: 18px;
+	padding: 10px;
+	font-weight: bold;
+}
+.programs .title a {
+	text-decoration: none;
+	color: #000000;
+}
+.programs .description {
+	font-size: 16px;
+	color: #666666;
+	font-weight: bold;
+	padding-bottom: 5px;
 }
 .program {
-	margin: 10px;
 	font-size: 14px;
 	text-align: center;
 	border: 1px solid #dddddd; 
+	margin-top: 30px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
 }
 .program caption {
 	font-weight: bold;
@@ -161,13 +231,21 @@ body {
 }
 .program td {
 	padding: 3px;
+	border-top: solid 1px #dddddd;
+    border-bottom: solid 1px #dddddd;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .program thead {
-	background-color: #999999;
-	font-weight: bold;
+	background-color: #333333;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
 }
 .program tbody .group {
-	background-color: #f2f2f2;
+	background-color: #d0d0d0;
 }
 .program tbody .param {
 	color: #333333;
@@ -186,6 +264,11 @@ body {
 	margin-left: 40px;
 }
 .line .flow {
+	border: 1px solid #aaaaaa;
+	margin-top: 20px;
+	margin-left: 20px;
+}
+.flow .programs {
 	border: 1px solid #aaaaaa;
 	margin-top: 20px;
 	margin-left: 20px;

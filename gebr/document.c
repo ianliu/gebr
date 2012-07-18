@@ -697,7 +697,8 @@ void gebr_document_create_section(GString *destiny,
 	g_string_append_printf(destiny, "<div class=\"%s\">%s</div>\n ", class_name, source);
 }
 
-gchar * gebr_document_generate_header(GebrGeoXmlDocument * document)
+gchar * gebr_document_generate_header(GebrGeoXmlDocument * document,
+                                      gboolean is_internal)
 {
 	GString * dump;
 	GebrGeoXmlDocumentType type;
@@ -708,13 +709,17 @@ gchar * gebr_document_generate_header(GebrGeoXmlDocument * document)
 
 	/* Title and Description of Document */
 	gchar *title = gebr_geoxml_document_get_title(document);
+	gchar *link = g_strdup(title);
+	link = g_strdelimit(link, " ", '_');
 	gchar *description = gebr_geoxml_document_get_description(document);
 	g_string_printf(dump,
+	                "<a name=\"%s\"></a>\n"
 			"<div class=\"title\">%s</div>\n"
 			"<div class=\"description\">%s</div>\n",
-			title, description);
+			is_internal? link : "", title, description);
 	g_free(title);
 	g_free(description);
+	g_free(link);
 
 	/* Credits */
 	gchar *author = gebr_geoxml_document_get_author(document);
@@ -732,14 +737,16 @@ gchar * gebr_document_generate_header(GebrGeoXmlDocument * document)
 	/* Date when generate this report */
 	const gchar *date = gebr_localized_date(gebr_iso_date());
 	g_string_append_printf(dump,
-	                       "<div class=\"date\">%s</div>\n",
+	                       "<div class=\"date\">%s%s</div>\n",
+	                       _("Report generate at "),
 	                       date);
 
 	/* If Document is Line, include Maestro on header */
 	if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		gchar *maestro = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 		g_string_append_printf(dump,
-		                       "<div class=\"maestro\">%s</div>\n",
+		                       "<div class=\"maestro\">%s%s</div>\n",
+		                       _("This line belongs to Maestro "),
 		                       maestro);
 		g_free(maestro);
 	}
@@ -762,15 +769,18 @@ gebr_document_generate_project_index_content(GebrGeoXmlDocument *document,
 		document_load(&line, lname, FALSE);
 
 		gchar *title = gebr_geoxml_document_get_title(line);
+		gchar *link = g_strdup(title);
+		link = g_strdelimit(link, " ", '_');
 		gchar *description = gebr_geoxml_document_get_description(line);
 		g_string_append_printf (index_content,
 		                        "      <li>\n"
-		                        "        <span class=\"title\">%s</span> - \n"
+		                        "        <span class=\"title\"><a href=\"#%s\">%s</a></span> - \n"
 		                        "        <span class=\"description\">%s</span>\n"
 		                        "      </li>\n",
-		                        title, description);
+		                        link, title, description);
 		g_free(title);
 		g_free(description);
+		g_free(link);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
 		gebr_geoxml_sequence_next (&lines);
 	}
@@ -791,15 +801,18 @@ gebr_document_generate_line_index_content(GebrGeoXmlDocument *document,
 		document_load(&flow, fname, FALSE);
 
 		gchar *title = gebr_geoxml_document_get_title(flow);
+		gchar *link = g_strdup(title);
+		link = g_strdelimit(link, " ", '_');
 		gchar *description = gebr_geoxml_document_get_description(flow);
 		g_string_append_printf (index_content,
 		                        "      <li>\n"
-		                        "        <span class=\"title\">%s</span> - \n"
+		                        "        <span class=\"title\"><a href=\"#%s\">%s</a></span> - \n"
 		                        "        <span class=\"description\">%s</span>\n"
 		                        "      </li>\n",
-		                        title, description);
+		                        link, title, description);
 		g_free(title);
 		g_free(description);
+		g_free(link);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		gebr_geoxml_sequence_next (&flows);
 	}
@@ -860,6 +873,7 @@ static void
 gebr_document_generate_flow_index_content(GebrGeoXmlDocument *document,
                                           GString *index_content)
 {
+	gchar *flow_title = gebr_geoxml_document_get_title(document);
 	GebrGeoXmlSequence *program;
 
 	gebr_geoxml_flow_get_program (GEBR_GEOXML_FLOW(document), &program, 0);
@@ -874,18 +888,23 @@ gebr_document_generate_flow_index_content(GebrGeoXmlDocument *document,
 		title = gebr_geoxml_program_get_title (prog);
 		description = gebr_geoxml_program_get_description(prog);
 
+		gchar *link = g_strdup_printf("%s_%s", flow_title, title);
+		link = g_strdelimit(link, " ", '_');
+
 		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 			g_string_append_printf(index_content,
 			                       "      <li>\n"
-			                       "        <span class=\"title\">%s</span> - \n"
+			                       "        <span class=\"title\"><a href=\"#%s\">%s</a></span> - \n"
 			                       "        <span class=\"description\">%s</span>\n"
 			                       "      </li>\n",
-			                       title, description);
+			                       link, title, description);
 
 		g_free(title);
 		g_free(description);
+		g_free(link);
 		gebr_geoxml_sequence_next (&program);
 	}
+	g_free(flow_title);
 }
 
 void
@@ -953,9 +972,13 @@ gebr_document_generate_flow_tables_content(GebrGeoXmlDocument *document,
 
 	/* I/O table */
 	gebr_flow_generate_io_table(GEBR_GEOXML_FLOW(document), tables_content);
+}
 
-	/* Parameters table */
-	gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW (document), tables_content);
+static void
+gebr_document_generate_flow_programs(GebrGeoXmlDocument *document,
+                                     GString *content)
+{
+	gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW (document), content);
 }
 
 static void
@@ -997,8 +1020,10 @@ gebr_document_generate_flow_content(GebrGeoXmlDocument *document,
 
 	gebr_document_generate_index(document, content, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
-	if (include_table)
+	if (include_table) {
 		gebr_document_generate_tables(document, content, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+		gebr_document_generate_flow_programs(document, content);
+	}
 }
 
 static void
@@ -1026,7 +1051,7 @@ gebr_document_generate_internal_flow(GebrGeoXmlDocument *document,
 		gchar *flow_inner_body = gebr_document_report_get_inner_body(report);
 
 		GString *flow_content = g_string_new(NULL);
-		gchar *header = gebr_document_generate_header(GEBR_GEOXML_DOCUMENT(flow));
+		gchar *header = gebr_document_generate_header(GEBR_GEOXML_DOCUMENT(flow), TRUE);
 		gebr_document_generate_flow_content(GEBR_GEOXML_DOCUMENT(flow), flow_content, flow_inner_body, include_table);
 
 		gchar *internal_html = gebr_generate_content_report("flow", header, flow_content->str);
@@ -1087,7 +1112,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 	title = gebr_geoxml_document_get_title(document);
 	report = gebr_geoxml_document_get_help(document);
 	inner_body = gebr_document_report_get_inner_body(report);
-	header = gebr_document_generate_header(document);
+	header = gebr_document_generate_header(document, FALSE);
 
 	if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
 		scope = g_strdup(_("line"));

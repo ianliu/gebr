@@ -1106,14 +1106,12 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
 	GebrGeoXmlParameters *parameters;
 	GebrGeoXmlSequence *sequence;
 
-	gchar *title = gebr_geoxml_program_get_title (program);
-	gchar *translated = g_strdup_printf (_("Parameters for the Program \"%s\""), title);
-	g_free(title);
+	gchar *translated = g_strdup (_("Parameters"));
 	
 	g_string_append_printf(tables_content,
 	                       "  <table class=\"program\">\n"
 	                       "    <caption>%s</caption>\n"
-	                       "    <tbody>\n",
+	                       "    <thead>\n",
 	                       translated);
 	g_free (translated);
 
@@ -1131,7 +1129,9 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
 		                       "      <tr>\n"
 		                       "        <td>%s</td>\n"
 		                       "        <td>%s</td>\n"
-		                       "      </tr>\n",
+		                       "      </tr>\n"
+		                       "    </thead>"
+		                       "    <tbody>",
 		                       _("Parameter"), _("Value"));
 
 		GString * initial_table = g_string_new(tables_content->str);
@@ -1195,17 +1195,18 @@ gebr_generate_variables_header_table(GString *tables_content,
 {
 	if (insert_header)
 		g_string_append_printf(tables_content,
-		                       "  <table class=\"variables\">\n"
-		                       "    <caption>%s</caption>\n"
-		                       "    <thead>\n"
-		                       "      <tr>\n"
-		                       "        <td>%s</td>\n"
-		                       "        <td>%s</td>\n"
-		                       "        <td>%s</td>\n"
-		                       "        <td>%s</td>\n"
-		                       "      </tr>\n"
-		                       "    </thead>\n"
-		                       "    <tbody>\n",
+		                       "  <div class=\"variables\">\n"
+		                       "    <table>\n"
+		                       "      <caption>%s</caption>\n"
+		                       "      <thead>\n"
+		                       "        <tr>\n"
+		                       "          <td>%s</td>\n"
+		                       "          <td>%s</td>\n"
+		                       "          <td>%s</td>\n"
+		                       "          <td>%s</td>\n"
+		                       "        </tr>\n"
+		                       "      </thead>\n"
+		                       "      <tbody>\n",
 		                       _("Variables"), _("Keyword"), _("Value"),_("Result"), _("Comment"));
 
 
@@ -1261,7 +1262,7 @@ gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
 		}
 
 		g_string_append_printf(tables_content,
-		                       "      <tr class=\"scope-content\" class=\"%s\">"
+		                       "      <tr class=\"scope-content %s\">"
 		                       "        <td>%s</td>\n"
 		                       "        <td>%s</td>\n"
 		                       "        <td>%s</td>\n"
@@ -1293,8 +1294,9 @@ gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
 
 	if (close)
 		g_string_append (tables_content,
-		                 "    </tbody>\n"
-		                 "  </table>\n");
+		                 "      </tbody>\n"
+		                 "    </table>\n"
+		                 "  </div>\n");
 }
 
 void
@@ -1310,23 +1312,25 @@ gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
 	error = gebr_geoxml_flow_io_get_error (flow);
 
 	g_string_append_printf(tables_content,
-	                       "  <table class=\"io\">\n"
-	                       "    <caption>%s</caption>\n"
-	                       "    <tbody>\n"
-	                       "      <tr>\n"
-	                       "        <td class=\"type\">%s</td>\n"
-	                       "        <td class=\"value\">%s</td>\n"
-	                       "      </tr>\n"
-	                       "      <tr>\n"
-	                       "        <td class=\"type\">%s</td>\n"
-	                       "        <td class=\"value\">%s</td>\n"
-	                       "      </tr>\n"
-	                       "      <tr>\n"
-	                       "        <td class=\"type\">%s</td>\n"
-	                       "        <td class=\"value\">%s</td>\n"
-	                       "      </tr>\n"
-	                       "    </tbody>\n"
-	                       "  </table>\n",
+	                       "  <div class=\"io\">\n"
+	                       "    <table>\n"
+	                       "      <caption>%s</caption>\n"
+	                       "      <tbody>\n"
+	                       "        <tr>\n"
+	                       "          <td class=\"type\">%s</td>\n"
+	                       "          <td class=\"value\">%s</td>\n"
+	                       "        </tr>\n"
+	                       "        <tr>\n"
+	                       "          <td class=\"type\">%s</td>\n"
+	                       "          <td class=\"value\">%s</td>\n"
+	                       "        </tr>\n"
+	                       "        <tr>\n"
+	                       "          <td class=\"type\">%s</td>\n"
+	                       "          <td class=\"value\">%s</td>\n"
+	                       "        </tr>\n"
+	                       "      </tbody>\n"
+	                       "    </table>\n"
+	                       "  </div>\n",
 	                       _("I/O table"),
 	                       _("Input"), strlen (input) > 0? input : _("(none)"),
 	                       _("Output"), strlen (output) > 0? output : _("(none)"),
@@ -1339,12 +1343,10 @@ gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
 
 void
 gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
-                                         GString *tables_content)
+                                         GString *prog_content)
 {
+	gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 	GebrGeoXmlSequence * sequence;
-
-	g_string_append(tables_content,
-	                "<div class=\"programs\">\n");
 
 	gebr_geoxml_flow_get_program(flow, &sequence, 0);
 	while (sequence) {
@@ -1354,14 +1356,33 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 		prog = GEBR_GEOXML_PROGRAM (sequence);
 		status = gebr_geoxml_program_get_status (prog);
 
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-			gebr_program_generate_parameter_value_table(prog, tables_content);
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+			gchar *title = gebr_geoxml_program_get_title(prog);
+			gchar *description = gebr_geoxml_program_get_description(prog);
+
+			gchar *link = g_strdup_printf("%s_%s", flow_title, title);
+			link = g_strdelimit(link, " ", '_');
+
+			g_string_append_printf(prog_content,
+			                       "<div class=\"programs\">\n"
+			                       "  <a name=\"%s\"></a>\n"
+			                       "  <div class=\"title\">%s</div>\n"
+			                       "  <div class=\"description\">%s</div>\n",
+			                       link, title, description);
+
+			gebr_program_generate_parameter_value_table(prog, prog_content);
+
+			g_string_append(prog_content,
+			                "</div>\n");
+
+			g_free(title);
+			g_free(description);
+			g_free(link);
+		}
 
 		gebr_geoxml_sequence_next(&sequence);
 	}
-
-	g_string_append(tables_content,
-	                "</div>\n");
+	g_free(flow_title);
 }
 
 void
