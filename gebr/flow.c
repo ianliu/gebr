@@ -983,6 +983,80 @@ void flow_program_paste(void)
 	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
 }
 
+void
+gebr_flow_set_toolbar_sensitive(void)
+{
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+
+	gboolean sensitive = TRUE;
+	gboolean sensitive_exec_slider;
+	gboolean maestro_disconnected = FALSE;
+	gboolean no_line_selected = FALSE;
+
+	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED) {
+		sensitive = FALSE;
+		maestro_disconnected = TRUE;
+	}
+
+	if (!gebr.line) {
+		sensitive = FALSE;
+		no_line_selected = TRUE;
+	}
+
+	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
+		sensitive_exec_slider = FALSE;
+	else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+		sensitive_exec_slider = FALSE;
+	else
+		sensitive_exec_slider = sensitive;
+
+
+	// Set sensitive for page Flows
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_new"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"), sensitive_exec_slider);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_parallel"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive);
+	gtk_widget_set_sensitive(gebr.ui_flow_browse->speed_button, sensitive_exec_slider);
+
+	if (sensitive) {
+		gtk_widget_show(gebr.ui_flow_browse->info_window);
+		gtk_widget_show(gebr.ui_flow_browse->rev_main);
+		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
+	} else {
+		if (no_line_selected)
+			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
+		else if (maestro_disconnected)
+			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
+			                   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
+			                     "Try changing its maestro or connecting it."));
+
+		gtk_widget_show(gebr.ui_flow_browse->warn_window);
+		gtk_widget_hide(gebr.ui_flow_browse->rev_main);
+		gtk_widget_hide(gebr.ui_flow_browse->info_window);
+	}
+
+	// Set sensitive for page Flow Editor
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_delete"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_properties"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_refresh"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_copy"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_paste"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_top"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_bottom"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"), sensitive_exec_slider);
+	gtk_widget_set_sensitive(gebr.ui_flow_edition->speed_button, sensitive_exec_slider);
+}
+
 static void append_parameter_row(GebrGeoXmlParameter * parameter,
                                  GString * dump)
 {
@@ -1343,8 +1417,11 @@ gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
 
 void
 gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
-                                         GString *prog_content)
+                                         GString *prog_content,
+                                         const gchar *index)
 {
+	gboolean has_index = (index != NULL);
+	gint i = 1;
 	gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 	GebrGeoXmlSequence * sequence;
 
@@ -1360,8 +1437,10 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 			gchar *title = gebr_geoxml_program_get_title(prog);
 			gchar *description = gebr_geoxml_program_get_description(prog);
 
-			gchar *link = g_strdup_printf("%s_%s", flow_title, title);
-			link = g_strdelimit(link, " ", '_');
+			gchar *link = g_strdup_printf("%s%s%d",
+			                              has_index? index : "",
+	                        		      has_index? "." : "",
+                       				      i);
 
 			g_string_append_printf(prog_content,
 			                       "<div class=\"programs\">\n"
@@ -1375,6 +1454,8 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 			g_string_append(prog_content,
 			                "</div>\n");
 
+			i++;
+
 			g_free(title);
 			g_free(description);
 			g_free(link);
@@ -1386,75 +1467,57 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 }
 
 void
-gebr_flow_set_toolbar_sensitive(void)
+gebr_flow_generate_flow_revisions_index(GebrGeoXmlFlow *flow,
+                                        GString *content,
+                                        const gchar *index)
 {
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gboolean has_index = (index != NULL);
+	gint i = 1;
+	gboolean has_snapshots = FALSE;
+	GString *snapshots = g_string_new(NULL);
+	gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 
-	gboolean sensitive = TRUE;
-	gboolean sensitive_exec_slider;
-	gboolean maestro_disconnected = FALSE;
-	gboolean no_line_selected = FALSE;
+	GebrGeoXmlSequence *seq;
+	gebr_geoxml_flow_get_revision(flow, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		has_snapshots = TRUE;
+		gchar *comment;
+		gchar *date;
 
-	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED) {
-		sensitive = FALSE;
-		maestro_disconnected = TRUE;
+		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), NULL, &date, &comment, NULL);
+
+		gchar *link = g_strdup_printf("%s%s%s%d",
+		                              has_index? "snap" : "",
+		                              has_index? index : "",
+		                              has_index? "." : "",
+		                              i);
+
+		g_string_append_printf(snapshots,
+		                       "      <li>\n"
+		                       "        <span class=\"title\"><a href=\"#%s\">%s</a></span> - \n"
+		                       "        <span class=\"description\">%s</span>\n"
+		                       "      </li>\n",
+		                       link, comment, date);
+
+		i++;
+
+
+		g_free(comment);
+		g_free(date);
+		g_free(link);
 	}
 
-	if (!gebr.line) {
-		sensitive = FALSE;
-		no_line_selected = TRUE;
-	}
+	if (has_snapshots)
+		g_string_append_printf(content,
+		                       "<div class=\"index\">\n"
+		                       "  %s\n"
+		                       "  <ul>\n"
+		                       "    %s\n"
+		                       "  </ul>\n"
+		                       "</div>\n",
+		                       _("Snapshots of this Flow"),
+		                       snapshots->str);
 
-	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
-		sensitive_exec_slider = FALSE;
-	else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
-		sensitive_exec_slider = FALSE;
-	else
-		sensitive_exec_slider = sensitive;
-
-
-	// Set sensitive for page Flows
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_new"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_parallel"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive);
-	gtk_widget_set_sensitive(gebr.ui_flow_browse->speed_button, sensitive_exec_slider);
-
-	if (sensitive) {
-		gtk_widget_show(gebr.ui_flow_browse->info_window);
-		gtk_widget_show(gebr.ui_flow_browse->rev_main);
-		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
-	} else {
-		if (no_line_selected)
-			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
-		else if (maestro_disconnected)
-			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
-			                   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
-			                     "Try changing its maestro or connecting it."));
-
-		gtk_widget_show(gebr.ui_flow_browse->warn_window);
-		gtk_widget_hide(gebr.ui_flow_browse->rev_main);
-		gtk_widget_hide(gebr.ui_flow_browse->info_window);
-	}
-
-	// Set sensitive for page Flow Editor
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_delete"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_properties"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_refresh"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_copy"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_paste"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_top"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_bottom"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"), sensitive_exec_slider);
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->speed_button, sensitive_exec_slider);
+	g_string_free(snapshots, TRUE);
+	g_free(flow_title);
 }

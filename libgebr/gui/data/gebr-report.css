@@ -250,6 +250,11 @@ body {
 .program tbody .param {
 	color: #333333;
 }
+.snapshot {
+	border: 1px solid #aaaaaa;
+	margin-top: 20px;
+	padding: 10px;
+}
 
 /* SubClasses */
 

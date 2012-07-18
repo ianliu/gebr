@@ -143,7 +143,8 @@ void gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
  *
  */
 void gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
-                                              GString *tables_content);
+                                              GString *prog_content,
+                                              const gchar *index);
 
 /**
  * gebr_flow_generate_variables_value_table:
@@ -163,18 +164,15 @@ void gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
                                          const gchar *scope);
 
 /**
- * gebr_flow_generate_header:
- * @flow: a #GebrGeoXmlFlow
- * @include_date: whether to include the date
- * @rev_comment: Revision comment or NULL if doesn't have revision
- * @rev_date: Revision date or NULL if doesn't have revision
+ * gebr_flow_generate_flow_revisions_index:
+ * @flow:
+ * @content:
  *
- * Creates a string containing a HTML description of @flow.
- *
- * Returns: a newly allocated string containing HTML markup.
+ * Concatenate on @content a HTML with revisions content
  */
-gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date,
-                                  gchar *rev_comment, gchar *rev_date);
+void gebr_flow_generate_flow_revisions_index(GebrGeoXmlFlow *flow,
+                                             GString *content,
+                                             const gchar *index);
 
 /**
  * gebr_flow_get_detailed_report:

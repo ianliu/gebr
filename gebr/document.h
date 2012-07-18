@@ -184,7 +184,8 @@ gchar * gebr_document_report_get_inner_body(const gchar * report);
  * Returns: a newly allocated string containing the header for document
  */
 gchar * gebr_document_generate_header(GebrGeoXmlDocument * document,
-                                      gboolean is_internal);
+                                      gboolean is_internal,
+                                      const gchar *index);
 
 /**
  * gebr_document_generate_report:
