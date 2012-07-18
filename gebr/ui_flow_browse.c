@@ -93,7 +93,8 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 						   G_TYPE_STRING,	/* Filename */
 						   G_TYPE_POINTER,	/* GebrGeoXmlFlow pointer */
 						   G_TYPE_POINTER,	/* GebrGeoXmlLineFlow pointer */
-						   G_TYPE_POINTER	/* Last queue hash table */);
+						   G_TYPE_STRING,	/* Last snapshot modification*/
+						   G_TYPE_POINTER);	/* Last queue hash table */
 
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->view), TRUE);
@@ -777,19 +778,21 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
 	return GTK_MENU(menu);
 }
 
-static void
-gebr_flow_browse_revision_revert(const gchar *rev_id)
+/*Show dialog just if snapshot_save_default is not set*/
+static gint
+gebr_flow_browse_confirm_revert(void)
 {
 	const gchar *title = _("Backup current Flow?");
 	const gchar *msg = _("You are about to revert to a previous snapshot. "
-			     "The current Flow will be lost after this action. "
+			     "The current settings of this Flow will be lost after this action. "
 			     "Do you want to take a snapshot of the current Flow?");
 
 	gdk_threads_enter();
 	GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL,
-						    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-						    GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, "<span font_weight='bold' size='large'>%s</span>",
-						    title ? title : "");
+							       (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+							       GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
+							       "<span font_weight='bold' size='large'>%s</span>",
+							       title ? title : "");
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 	gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Yes"), GTK_RESPONSE_YES);
@@ -797,18 +800,45 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Cancel"), GTK_RESPONSE_CANCEL);
 
 	gint ret = gtk_dialog_run(GTK_DIALOG(dialog));
-	if (ret == GTK_RESPONSE_YES) {
-		flow_revision_save();
-	} else if (ret == GTK_RESPONSE_CANCEL){
-		gdk_threads_leave();
-		gtk_widget_destroy(dialog);
-		return;
-	}
 
-	gdk_threads_leave();
-	gtk_widget_destroy(dialog);
+ 	gdk_threads_leave();
+ 	gtk_widget_destroy(dialog);
+	return ret;
+}
+
+static void
+gebr_flow_browse_revision_revert(const gchar *rev_id)
+{
+	gint confirm_revert = GTK_RESPONSE_NONE;
+	gboolean confirm_save  = FALSE;
+	gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	gchar *flow_last_modified_date = NULL;
+	gchar *snapshot_last_modified_date = NULL;
+	GtkTreeIter iter;
 
 	GebrGeoXmlRevision *revision = gebr_geoxml_flow_get_revision_by_id(gebr.flow, rev_id);
+
+	gebr_gui_gtk_tree_model_find_by_column(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_TITLE,flow_title);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_SNP_LAST_MODIF, &snapshot_last_modified_date, -1);
+	flow_last_modified_date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(gebr.flow));
+
+	GTimeVal flow_time = gebr_iso_date_to_g_time_val(flow_last_modified_date);
+	GTimeVal snapshot_time;
+	if (snapshot_last_modified_date)
+		snapshot_time = gebr_iso_date_to_g_time_val(snapshot_last_modified_date);
+
+	if (!snapshot_last_modified_date || (snapshot_time.tv_sec < flow_time.tv_sec)) {
+		confirm_revert = gebr_flow_browse_confirm_revert();
+	}
+
+	if (confirm_revert == GTK_RESPONSE_CANCEL) {
+		return;
+	} else if (confirm_revert == GTK_RESPONSE_YES) {
+		confirm_save = flow_revision_save();
+		gdk_threads_leave();
+		if(!confirm_save)
+			return;
+	}
 
 	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision)) {
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
@@ -820,6 +850,12 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 	flow_browse_load();
 	gebr_validator_force_update(gebr.validator);
 	flow_browse_info_update();
+
+	gchar *last_date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	gebr_flow_set_snapshot_last_modify_date(last_date);
+	g_free(snapshot_last_modified_date);
+	g_free(flow_last_modified_date);
+	g_free(last_date);
 }
 
 /**

@@ -69,6 +69,12 @@ void flow_set_paths_to_empty(GebrGeoXmlFlow * flow);
  */
 void flow_program_remove(void);
 
+/*
+ *Set the last snapshot modification date 
+ * */
+void
+gebr_flow_set_snapshot_last_modify_date(const gchar *last_date);
+
 /**
  * Make a revision from current flow.
  * Opens a dialog asking the user for a comment of it.

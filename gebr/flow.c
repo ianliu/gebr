@@ -600,6 +600,18 @@ on_comment_changed(GtkEntry *entry,
 		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, TRUE);
 	}
 }
+
+void
+gebr_flow_set_snapshot_last_modify_date(const gchar *last_date){
+	gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	GtkTreeIter iter;
+
+	gebr_gui_gtk_tree_model_find_by_column(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_TITLE, flow_title);
+	gtk_list_store_set(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter,
+			   FB_SNP_LAST_MODIF, g_strdup(last_date),
+			   -1);
+}
+
 gboolean flow_revision_save(void)
 {
 	GtkWidget *dialog;
@@ -680,13 +692,16 @@ gboolean flow_revision_save(void)
 			gebr_geoxml_flow_get_revision_data(revision, NULL, NULL, NULL, &id);
 			gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(flow), id);
 
-			document_save(flow, FALSE, FALSE);
+			document_save(flow, TRUE, FALSE);
 			flow_browse_reload_selected();
 			ret = TRUE;
 
 			//document_free(flow);
 			g_free (flow_filename);
 		}
+		gchar *last_date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		gebr_flow_set_snapshot_last_modify_date(last_date);
+		g_free(last_date);
 	}
 
 	gtk_widget_destroy(dialog);
