@@ -1077,7 +1077,7 @@ gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
 		                       "      <div class=\"title\">%s</div>\n"
 		                       "      <div class=\"description\">%s%s</div>\n"
 		                       "    </div>\n",
-		                       link, comment, _("Taked at "), date);
+		                       link, comment, _("Snapshot taked at "), date);
 
 		gchar *report = gebr_geoxml_document_get_help(revdoc);
 		gchar *snap_inner_body = gebr_document_report_get_inner_body(report);
