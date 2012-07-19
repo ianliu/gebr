@@ -726,7 +726,7 @@ gchar * gebr_document_generate_header(GebrGeoXmlDocument * document,
 	                "<a name=\"%s\"></a>\n"
 			"<div class=\"title\">%s</div>\n"
 			"<div class=\"description\">%s</div>\n",
-			is_internal? index : "", title, description);
+			is_internal? index : "external", title, description);
 	g_free(title);
 	g_free(description);
 

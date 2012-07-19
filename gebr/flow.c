@@ -1245,7 +1245,12 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
 		g_string_append(tables_content,
 		                "      <tr>\n"
 		                "        <td>this program has no parameters.</td>\n"
-		                "      </tr>\n");
+		                "      </tr>\n"
+		                "    </thead>"
+		                "    <tbody>"
+		                "      <tr>"
+		                "        <td></td>"
+		                "      </tr>");
 	} else {
 		g_string_append_printf(tables_content,
 		                       "      <tr>\n"
