@@ -583,6 +583,18 @@ on_comment_changed(GtkEntry *entry,
 		   GtkWidget *dialog)
 {
 	const gchar *text = gtk_entry_get_text(entry);
+
+	if (*text) {
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, TRUE);
+	}
+}
+
+void
+on_comment_activate(GtkEntry *entry,
+		   GtkWidget *dialog)
+{
+	const gchar *text = gtk_entry_get_text(entry);
 	const gchar *err_tooltip;
 
 	if (!*text) {
@@ -661,22 +673,28 @@ gboolean flow_revision_save(void)
 	const gchar *comm = _("Insert a description of your snapshot.");
 	gtk_widget_set_tooltip_text(GTK_WIDGET(entry), comm);
 
-	on_comment_changed(GTK_ENTRY(entry), dialog);
+	g_signal_connect(GTK_ENTRY(entry), "activate", G_CALLBACK(on_comment_activate), (gpointer)dialog);
 	g_signal_connect(GTK_ENTRY(entry), "changed", G_CALLBACK(on_comment_changed), (gpointer)dialog);
 	gtk_widget_show_all(dialog);
 
 	gebr.ui_flow_browse->update_graph = TRUE;
-
+	const gchar *text;
 	gint response;
 	while (1) {
 		response = gtk_dialog_run(GTK_DIALOG(dialog));
+		if (response == GTK_RESPONSE_OK) {
+			text = gtk_entry_get_text(GTK_ENTRY(entry));
+			if (!*text){
+				on_comment_activate(GTK_ENTRY(entry), dialog);
+				continue;
+			}
+		}
 
 		if (response != GTK_RESPONSE_HELP)
 			break;
 	}
 
 	if (response == GTK_RESPONSE_OK) {
-
 		GebrGeoXmlRevision *revision;
 		gchar *id;
 
