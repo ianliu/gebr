@@ -344,16 +344,10 @@ static void on_include_revisions_report_activate(GtkToggleAction *action, GebrGu
 	gchar *report;
 	gboolean flag;
 	GebrGeoXmlObject *object;
-	GtkAction *action_param_table;
-	GtkUIManager *manager;
-	const gchar *path_param_table;
 	GebrGeoXmlObjectType type;
 
 	object = g_object_get_data (G_OBJECT (window), HTML_WINDOW_OBJECT);
 	flag = gtk_toggle_action_get_active (action);
-	manager = gebr_gui_html_viewer_window_get_ui_manager (window);
-	path_param_table = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/ParameterTableMenu";
-	action_param_table = gtk_ui_manager_get_action(manager, path_param_table);
 
 	type = gebr_geoxml_object_get_type (object);
 	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
