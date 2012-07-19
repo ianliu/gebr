@@ -1035,12 +1035,12 @@ gebr_document_generate_tables(GebrGeoXmlDocument *document,
 void
 gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
                                               GString *content,
-                                              const gchar *index)
+                                              const gchar *index,
+                                              gboolean include_tables,
+                                              gboolean include_snapshots)
 {
 	gboolean has_index = (index != NULL);
 	gint i = 1;
-	gboolean include_table;
-	gboolean include_snapshots;
 	gboolean include_comments;
 	gboolean has_snapshots = FALSE;
 	GString *snap_content = g_string_new(NULL);
@@ -1065,7 +1065,7 @@ gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
 		}
 
 		gchar *link = g_strdup_printf("%s%s%s%d",
-		                              has_index? "snap" : "",
+		                              "snap",
 		                              has_index? index : "",
 		                              has_index? "." : "",
 		                              i);
@@ -1082,12 +1082,10 @@ gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
 		gchar *report = gebr_geoxml_document_get_help(revdoc);
 		gchar *snap_inner_body = gebr_document_report_get_inner_body(report);
 
-		include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
-		include_snapshots = gebr.config.detailed_flow_include_revisions_report;
 		include_comments = gebr.config.detailed_flow_include_report;
 
 		gebr_document_generate_flow_content(revdoc, snap_content, snap_inner_body,
-		                                    include_table, include_snapshots,
+		                                    include_tables, include_snapshots,
 		                                    include_comments, link);
 
 		g_string_append(snap_content,
@@ -1140,7 +1138,7 @@ gebr_document_generate_flow_content(GebrGeoXmlDocument *document,
 	}
 
 	if (has_snapshots && include_snapshots)
-		gebr_document_generate_flow_revisions_content(document, content, index);
+		gebr_document_generate_flow_revisions_content(document, content, index, include_table, include_comments);
 }
 
 static void

@@ -1547,7 +1547,7 @@ gebr_flow_generate_flow_revisions_index(GebrGeoXmlFlow *flow,
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), NULL, &date, &comment, NULL);
 
 		gchar *link = g_strdup_printf("%s%s%s%d",
-		                              has_index? "snap" : "",
+		                              "snap",
 		                              has_index? index : "",
 		                              has_index? "." : "",
 		                              i);
