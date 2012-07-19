@@ -602,11 +602,14 @@ on_comment_changed(GtkEntry *entry,
 }
 
 void
-gebr_flow_set_snapshot_last_modify_date(const gchar *last_date){
-	gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
+gebr_flow_set_snapshot_last_modify_date(const gchar *last_date)
+{
+	const gchar *flow_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	GtkTreeIter iter;
 
-	gebr_gui_gtk_tree_model_find_by_column(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_TITLE, flow_title);
+	gebr_gui_gtk_tree_model_find_by_column(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+	                                       FB_FILENAME, flow_filename);
+
 	gtk_list_store_set(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter,
 			   FB_SNP_LAST_MODIF, g_strdup(last_date),
 			   -1);
