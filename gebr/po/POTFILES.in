@@ -36,3 +36,4 @@ ui_preferences.c
 ui_project_line.c
 data/gebr-connections-settings.glade
 data/connect-maestro-dialog.glade
+data/snapshot-revert.glade

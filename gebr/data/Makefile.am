@@ -38,6 +38,7 @@ glade_DATA = \
 	connect-maestro-dialog.glade \
 	gebr-connections-settings.glade \
 	flow-properties.glade \
+	snapshot-revert.glade\
 	l.png \
 	$(NULL)
 

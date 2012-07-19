@@ -777,32 +777,72 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
 
 	return GTK_MENU(menu);
 }
+void
+on_snapshot_save_clicked (GtkWidget *widget,
+			  GtkWidget *dialog)
+{
+	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_YES);
+}
+
+void
+on_snapshot_discard_changes_clicked(GtkWidget *widget,
+				    GtkWidget *dialog)
+{
+	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_NO);
+}
+
+void
+on_snapshot_cancel(GtkWidget *widget,
+		   GtkWidget *dialog)
+{
+	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CANCEL);
+}
+
+void
+on_snapshot_help_button_clicked(GtkWidget *widget,
+		   GtkWidget *dialog)
+{
+	const gchar *section = "flows_browser_save_state_flow";
+	gchar *error;
+
+	gebr_gui_help_button_clicked(section, &error);
+
+	if (error) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
+		g_free(error);
+	}
+}
 
 /*Show dialog just if snapshot_save_default is not set*/
 static gint
 gebr_flow_browse_confirm_revert(void)
 {
-	const gchar *title = _("Backup current Flow?");
-	const gchar *msg = _("You are about to revert to a previous snapshot. "
-			     "The current settings of this Flow will be lost after this action. "
-			     "Do you want to take a snapshot of the current Flow?");
+	/* Get glade file */
+	GtkBuilder *builder = gtk_builder_new();
+	gtk_builder_add_from_file(builder, GEBR_GLADE_DIR "/snapshot-revert.glade", NULL);
+	GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(builder, "main"));
+
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(gebr.window));
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+
+	GObject *snapshot_button = gtk_builder_get_object(builder, "take_snapshot_button");
+	GObject *discard_button = gtk_builder_get_object(builder, "discard_changes_button");
+	GObject *cancel_button = gtk_builder_get_object(builder, "cancel_button");
+	GObject *help_button = gtk_builder_get_object(builder, "help_button");
+
+	g_signal_connect(snapshot_button, "clicked", G_CALLBACK(on_snapshot_save_clicked), dialog);
+	g_signal_connect(discard_button, "clicked", G_CALLBACK(on_snapshot_discard_changes_clicked), dialog);
+	g_signal_connect(cancel_button, "clicked", G_CALLBACK(on_snapshot_cancel), dialog);
+	g_signal_connect(help_button, "clicked", G_CALLBACK(on_snapshot_help_button_clicked), dialog);
+
+	gtk_widget_show(GTK_WIDGET(dialog));
 
 	gdk_threads_enter();
-	GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL,
-							       (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-							       GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-							       "<span font_weight='bold' size='large'>%s</span>",
-							       title ? title : "");
-	gtk_window_set_title(GTK_WINDOW(dialog), title);
-	gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), msg);
-	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Yes"), GTK_RESPONSE_YES);
-	gtk_dialog_add_button(GTK_DIALOG(dialog), _("No"), GTK_RESPONSE_NO);
-	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Cancel"), GTK_RESPONSE_CANCEL);
-
 	gint ret = gtk_dialog_run(GTK_DIALOG(dialog));
+	gdk_threads_leave();
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+	g_object_unref(builder);
 
- 	gdk_threads_leave();
- 	gtk_widget_destroy(dialog);
 	return ret;
 }
 
