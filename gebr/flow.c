@@ -659,7 +659,7 @@ gboolean flow_revision_save(void)
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align), vbox);
 
-	label = gtk_label_new(_("Write a description about snapshot of the selected Flow:"));
+	label = gtk_label_new(_("Enter a description for the snapshot of the selected Flow:"));
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	entry = gtk_entry_new();
@@ -1601,7 +1601,7 @@ gebr_flow_generate_flow_revisions_index(GebrGeoXmlFlow *flow,
 		                       "    %s\n"
 		                       "  </ul>\n"
 		                       "</div>\n",
-		                       _("Snapshots of this Flow"),
+		                       _("Snapshots of this Flow:"),
 		                       snapshots->str);
 
 	g_string_free(snapshots, TRUE);

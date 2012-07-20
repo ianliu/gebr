@@ -4,7 +4,7 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="main">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">What do you want to do?</property>
+    <property name="title" translatable="yes">Reverting modified Flow</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
@@ -18,7 +18,7 @@
             <child>
               <object class="GtkImage" id="image1">
                 <property name="visible">True</property>
-                <property name="stock">gtk-dialog-question</property>
+                <property name="stock">gtk-revert-to-saved</property>
                 <property name="icon-size">6</property>
               </object>
               <packing>
@@ -31,8 +31,8 @@
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;&lt;span size="large"&gt;You have modifications.
-What do you want to do?&lt;/span&gt;&lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;span size="large"&gt;This Flow has modifications.
+&lt;/span&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -71,7 +71,7 @@ What do you want to do?&lt;/span&gt;&lt;/b&gt;</property>
                   <object class="GtkLabel" id="label_connect_maestro">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Take a snapshot before</property>
+                    <property name="label" translatable="yes">Take a snapshot and proceed</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>
@@ -110,7 +110,7 @@ What do you want to do?&lt;/span&gt;&lt;/b&gt;</property>
                   <object class="GtkLabel" id="label_discard_changes">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label">Discard changes</property>
+                    <property name="label">Proceed discarding modifications</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>

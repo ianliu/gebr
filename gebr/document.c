@@ -747,7 +747,7 @@ gchar * gebr_document_generate_header(GebrGeoXmlDocument * document,
 	const gchar *date = gebr_localized_date(gebr_iso_date());
 	g_string_append_printf(dump,
 	                       "<div class=\"date\">%s%s</div>\n",
-	                       _("Report generate at "),
+	                       _("Report generated at "),
 	                       date);
 
 	/* If Document is Line, include Maestro on header */
@@ -755,7 +755,7 @@ gchar * gebr_document_generate_header(GebrGeoXmlDocument * document,
 		gchar *maestro = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 		g_string_append_printf(dump,
 		                       "<div class=\"maestro\">%s%s</div>\n",
-		                       _("This line belongs to Maestro "),
+		                       _("This line belongs to "),
 		                       maestro);
 		g_free(maestro);
 	}
@@ -946,7 +946,7 @@ gebr_document_generate_index(GebrGeoXmlDocument *document,
 		gebr_document_generate_line_index_content(document, index_content);
 	}
 	else if (type == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
-		description = g_strdup("Flow composed by the Program(s):");
+		description = g_strdup("Flow composed by the program(s):");
 		gebr_document_generate_flow_index_content(document, index_content, index);
 	}
 	else {
@@ -1077,7 +1077,7 @@ gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
 		                       "      <div class=\"title\">%s</div>\n"
 		                       "      <div class=\"description\">%s%s</div>\n"
 		                       "    </div>\n",
-		                       link, comment, _("Snapshot taked at "), date);
+		                       link, comment, _("Snapshot taken on "), date);
 
 		gchar *report = gebr_geoxml_document_get_help(revdoc);
 		gchar *snap_inner_body = gebr_document_report_get_inner_body(report);
