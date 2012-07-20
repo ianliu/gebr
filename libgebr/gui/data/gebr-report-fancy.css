@@ -176,20 +176,32 @@ body {
     padding-bottom: 5px;
 }
 .paths {
-	margin: 0px;
+	background-color: #ffffff;
 }
-.paths table caption {
+.paths table {
+	font-size: 14px;
+	text-align: center;
+	border: 1px solid #dddddd; 
+	margin-top: 0px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.paths caption {
 	font-weight: bold;
 	font-size: 16px;
 }
-.paths table tbody {
-	font-size: 14px;
-}
-.paths table td {
+.paths td {
 	padding: 3px;
+	border-top: solid 1px #dddddd;
+    border-bottom: solid 1px #dddddd;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
-.paths table .type {
-	font-size: 14px;
+.paths tbody .type {
+	background-color: #eeeeee;
 	font-weight: bold;
 }
 .index .subindex {

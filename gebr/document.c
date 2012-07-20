@@ -845,7 +845,7 @@ gebr_document_generate_line_paths(GebrGeoXmlDocument *document,
 		                       "  <table>\n"
 		                       "    <caption>%s</caption>\n"
 		                       "    <tbody>\n",
-		                       _("Line paths:"));
+		                       _("Line paths"));
 
 		GString *buf = g_string_new(NULL);
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
