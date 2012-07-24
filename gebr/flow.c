@@ -749,8 +749,10 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &xml, NULL, NULL, &id);
 		if (!g_strcmp0(id, id_remove)) {
 			GebrGeoXmlDocument *doc;
-			if (gebr_geoxml_document_load_buffer(&doc, xml) != GEBR_GEOXML_RETV_SUCCESS)
+			if (gebr_geoxml_document_load_buffer(&doc, xml) != GEBR_GEOXML_RETV_SUCCESS) {
 				g_warn_if_reached();
+				return FALSE;
+			}
 
 			parent_id = gebr_geoxml_document_get_parent_id(doc);
 
@@ -783,8 +785,10 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 		GebrGeoXmlRevision *rev = gebr_geoxml_flow_get_revision_by_id(flow, i->data);
 		gebr_geoxml_flow_get_revision_data(rev, &flow_xml, NULL, NULL, NULL);
 
-		if (gebr_geoxml_document_load_buffer(&doc_rev, flow_xml) != GEBR_GEOXML_RETV_SUCCESS)
+		if (gebr_geoxml_document_load_buffer(&doc_rev, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
 			g_warn_if_reached();
+			return FALSE;
+		}
 		g_free(flow_xml);
 
 		gebr_geoxml_document_set_parent_id(doc_rev, parent_id);
