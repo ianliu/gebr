@@ -36,7 +36,7 @@
  * Prototypes
  */
 
-static void flow_browse_load(void);
+static void flow_browse_load(gboolean keep_selection);
 
 static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 					 GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
@@ -70,6 +70,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	ui_flow_browse = g_new(GebrUiFlowBrowse, 1);
 
 	ui_flow_browse->graph_process = NULL;
+	ui_flow_browse->select_flows = NULL;
 
 	/*
 	 * Create flow browse page
@@ -111,7 +112,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(ui_flow_browse->view, "row-activated", G_CALLBACK(flow_browse_on_row_activated),
 			 ui_flow_browse);
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
-	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), NULL);
+	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), FALSE);
 	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_speed_slider_sensitiveness), ui_flow_browse);
 
 	renderer = gtk_cell_renderer_text_new();
@@ -413,7 +414,7 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 
 void flow_browse_reload_selected(void)
 {
-	flow_browse_load();
+	flow_browse_load(TRUE);
 }
 
 void flow_browse_select_iter(GtkTreeIter * iter)
@@ -427,7 +428,8 @@ void flow_browse_single_selection(void)
 }
 
 static void
-graph_process_read_stderr(GebrCommProcess * process)
+graph_process_read_stderr(GebrCommProcess * process,
+                          GebrUiFlowBrowse *fb)
 {
 	GString *output;
 	output = gebr_comm_process_read_stderr_string_all(process);
@@ -447,6 +449,26 @@ graph_process_read_stderr(GebrCommProcess * process)
 		flow_revision_save();
 		gdk_threads_leave();
 	}
+	else if (!g_strcmp0(action[0], "select")) {
+		const gchar *id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		GList *find = g_list_find_custom(fb->select_flows, id, (GCompareFunc)g_strcmp0);
+		if (!find)
+			fb->select_flows = g_list_append(fb->select_flows, g_strdup(id));
+	}
+	else if (!g_strcmp0(action[0], "unselect")) {
+		const gchar *id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		GList *find = g_list_find_custom(fb->select_flows, id, (GCompareFunc)g_strcmp0);
+		if (find)
+			fb->select_flows = g_list_remove_link(fb->select_flows, find);
+	}
+	else if (!g_strcmp0(action[0], "run")) {
+		gboolean is_parallel = FALSE;
+
+		if (!g_strcmp0(action[1],"parallel"))
+			is_parallel = TRUE;
+
+		gebr_ui_flow_run_snapshots(gebr.flow, action[2], is_parallel);
+	}
 
 	g_string_free(output, TRUE);
 	g_strfreev(action);
@@ -460,7 +482,8 @@ graph_process_finished(GebrCommProcess *process)
 
 static void
 flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
-                                GebrUiFlowBrowse *fb)
+                                GebrUiFlowBrowse *fb,
+                                gboolean keep_selection)
 {
 	GHashTable *revs = gebr_flow_revisions_hash_create(flow);
 
@@ -469,11 +492,17 @@ flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
 		if (gebr_flow_revisions_create_graph(flow, revs, &dotfile)) {
 			fb->update_graph = FALSE;
 			GString *file = g_string_new(dotfile);
+			gchar *flow_filename = g_strdup(gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
+
+			gchar *command = g_strdup_printf("%s|%s|", flow_filename, keep_selection? "yes" : "no");
+			g_string_prepend(file, command);
 
 			if (gebr_comm_process_write_stdin_string(fb->graph_process, file) == 0)
 				g_debug("Can't create dotfile.");
 
 			g_string_free(file, TRUE);
+			g_free(flow_filename);
+			g_free(command);
 		}
 		g_free(dotfile);
 	}
@@ -505,7 +534,7 @@ gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
 	gchar *cmd_line = g_strdup_printf("python %s/gebr-xdot-graph.py %d %s", GEBR_PYTHON_DIR, socket_id, PACKAGE_LOCALE_DIR);
 	GString *cmd = g_string_new(cmd_line);
 
-	g_signal_connect(fb->graph_process, "ready-read-stderr", G_CALLBACK(graph_process_read_stderr), NULL);
+	g_signal_connect(fb->graph_process, "ready-read-stderr", G_CALLBACK(graph_process_read_stderr), fb);
 	g_signal_connect(fb->graph_process, "finished", G_CALLBACK(graph_process_finished), NULL);
 
 	if (!gebr_comm_process_start(fb->graph_process, cmd))
@@ -525,7 +554,7 @@ gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
  * \internal
  * Load a selected flow from file when selected in "Flow Browser".
  */
-static void flow_browse_load(void)
+static void flow_browse_load(gboolean keep_selection)
 {
 	GtkTreeIter iter;
 
@@ -572,7 +601,8 @@ static void flow_browse_load(void)
 
 		gebr.ui_flow_browse->update_graph = TRUE;
 		flow_browse_add_revisions_graph(gebr.flow,
-		                                gebr.ui_flow_browse);
+		                                gebr.ui_flow_browse,
+		                                keep_selection);
 	} else {
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
@@ -659,48 +689,60 @@ gebr_flow_browse_revision_delete(const gchar *rev_id)
 {
 	gboolean response;
 
+	gchar **snaps = g_strsplit(rev_id, ",", -1);
+
 	gdk_threads_enter();
-	response = gebr_gui_confirm_action_dialog(_("Remove this snapshot permanently?"),
-	                                          _("If you choose to remove this snapshot "
-	                                            "you will not be able to recover it later."));
+	if (!snaps[1])
+		response = gebr_gui_confirm_action_dialog(_("Remove this snapshot permanently?"),
+		                                          _("If you choose to remove this snapshot "
+							    "you will not be able to recover it later."));
+	else
+		response = gebr_gui_confirm_action_dialog(_("Remove snapshots permanently?"),
+		                                          _("If you choose to remove snapshots "
+							    "you will not be able to recover it later."));
 	gdk_threads_leave();
 
 	if (response) {
-		GebrGeoXmlRevision *revision;
+		for (gint i = 0; snaps[i]; i++) {
+			GebrGeoXmlRevision *revision;
 
-		revision = gebr_geoxml_flow_get_revision_by_id(gebr.flow, rev_id);
+			revision = gebr_geoxml_flow_get_revision_by_id(gebr.flow, snaps[i]);
 
-		gchar *id;
-		gchar *flow_xml;
-		GebrGeoXmlDocument *revdoc;
+			if (!revision)
+				continue;
 
-		gebr_geoxml_flow_get_revision_data(revision, &flow_xml, NULL, NULL, &id);
+			gchar *id;
+			gchar *flow_xml;
+			GebrGeoXmlDocument *revdoc;
 
-		if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+			gebr_geoxml_flow_get_revision_data(revision, &flow_xml, NULL, NULL, &id);
+
+			if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+				g_free(flow_xml);
+				g_free(id);
+				return;
+			}
 			g_free(flow_xml);
-			g_free(id);
-			return;
+
+			gchar *parent_id = gebr_geoxml_document_get_parent_id(revdoc);
+			gchar *head_parent = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(gebr.flow));
+
+			gebr_geoxml_document_free(revdoc);
+
+			GHashTable *hash_rev = gebr_flow_revisions_hash_create(gebr.flow);
+
+			gboolean change_head_parent = flow_revision_remove(gebr.flow, id, head_parent, hash_rev);
+
+			if (change_head_parent)
+				gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(gebr.flow), parent_id);
+
+			document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
+			gebr_flow_revisions_hash_free(hash_rev);
 		}
-		g_free(flow_xml);
 
-		gchar *parent_id = gebr_geoxml_document_get_parent_id(revdoc);
-		gchar *head_parent = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(gebr.flow));
-
-		gebr_geoxml_document_free(revdoc);
-
-		GHashTable *hash_rev = gebr_flow_revisions_hash_create(gebr.flow);
-
-		gboolean change_head_parent = flow_revision_remove(gebr.flow, id, head_parent, hash_rev);
-
-		if (change_head_parent)
-			gebr_geoxml_document_set_parent_id(GEBR_GEOXML_DOCUMENT(gebr.flow), parent_id);
-
-		gebr_flow_revisions_hash_free(hash_rev);
-
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
-
-		flow_browse_load();
+		flow_browse_load(FALSE);
 	}
+
 }
 
 /**
@@ -887,7 +929,7 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
-	flow_browse_load();
+	flow_browse_load(TRUE);
 	gebr_validator_force_update(gebr.validator);
 	flow_browse_info_update();
 

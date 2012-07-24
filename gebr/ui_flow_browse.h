@@ -61,6 +61,8 @@ typedef struct {
 	gboolean update_graph;
 	GebrCommProcess *graph_process;
 
+	GList *select_flows;
+
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;
 

@@ -176,6 +176,7 @@ gboolean gebr_quit(gboolean save_config)
 	project_line_free();
 
 	gebr_comm_process_kill(gebr.ui_flow_browse->graph_process);
+	g_list_free(gebr.ui_flow_browse->select_flows);
 
 	/* free config stuff */
 	g_key_file_free(gebr.config.key_file);

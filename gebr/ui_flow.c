@@ -325,7 +325,23 @@ gebr_ui_flow_run(gboolean is_parallel)
 		gtk_tree_model_get_iter(model, &iter, path);
 		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
 
-		g_debug("Running after %s", id);
+		/* Executing snapshots */
+		if(i->next == NULL) {
+			if (gebr_geoxml_flow_get_revisions_number(flow) > 0) {
+				const gchar *filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
+				if (g_list_find_custom(gebr.ui_flow_browse->select_flows, filename, (GCompareFunc)g_strcmp0)) {
+					gchar *str = g_strdup_printf("run|%s\n", is_parallel? "parallel" : "single");
+					GString *action = g_string_new(str);
+
+					if (gebr_comm_process_write_stdin_string(gebr.ui_flow_browse->graph_process, action) == 0)
+						g_debug("Fail to run!");
+
+					g_free(str);
+					g_string_free(action, TRUE);
+					return;
+				}
+			}
+		}
 
 		if (is_parallel)
 			id = run_flow(flow, NULL);
@@ -335,4 +351,42 @@ gebr_ui_flow_run(gboolean is_parallel)
 		if (!id)
 			return;
 	}
+}
+
+void
+gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
+                           const gchar *snapshots,
+                           gboolean is_parallel)
+{
+	GebrGeoXmlRevision *rev;
+	gchar **snaps = g_strsplit(snapshots, ",", -1);
+	const gchar *id = NULL;
+
+	for (gint i = 0; snaps[i]; i++) {
+		GebrGeoXmlDocument *snap_flow;
+		gchar *xml;
+
+		if (!g_strcmp0(snaps[i], "head")) {
+			snap_flow = GEBR_GEOXML_DOCUMENT(flow);
+		} else {
+			rev = gebr_geoxml_flow_get_revision_by_id(flow, snaps[i]);
+			gebr_geoxml_flow_get_revision_data(rev, &xml, NULL, NULL, NULL);
+
+			if (gebr_geoxml_document_load_buffer(&snap_flow, xml) != GEBR_GEOXML_RETV_SUCCESS) {
+				g_warn_if_reached();
+				return;
+			}
+
+			g_free(xml);
+		}
+
+		if (is_parallel)
+			id = run_flow(GEBR_GEOXML_FLOW(snap_flow), NULL);
+		else
+			id = run_flow(GEBR_GEOXML_FLOW(snap_flow), id);
+
+		if (!id)
+			return;
+	}
+	g_strfreev(snaps);
 }

@@ -254,25 +254,29 @@
       <object class="GtkVBox" id="revisions_main">
         <property name="visible">True</property>
         <child>
-          <object class="GtkFrame" id="frame1">
+          <object class="GtkEventBox" id="eventbox1">
             <property name="visible">True</property>
-            <property name="label_xalign">0</property>
-            <property name="shadow_type">in</property>
             <child>
-              <object class="GtkVBox" id="graph_box">
+              <object class="GtkFrame" id="frame1">
                 <property name="visible">True</property>
-                <property name="border_width">5</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">in</property>
                 <child>
+                  <object class="GtkVBox" id="graph_box">
+                    <property name="visible">True</property>
+                    <property name="border_width">5</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                </child>
+                <child type="label_item">
                   <placeholder/>
                 </child>
               </object>
             </child>
-            <child type="label_item">
-              <placeholder/>
-            </child>
           </object>
           <packing>
-            <property name="padding">5</property>
             <property name="position">0</property>
           </packing>
         </child>

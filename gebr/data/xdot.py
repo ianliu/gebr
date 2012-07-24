@@ -376,6 +376,9 @@ class Node(Element):
         self.y2 = y + 0.5*h
 
         self.url = url
+        
+        self.is_selected = False
+        self.choosen = None
 
     def is_inside(self, x, y):
         return self.x1 <= x and x <= self.x2 and self.y1 <= y and y <= self.y2
@@ -445,13 +448,22 @@ class Graph(Shape):
         for edge in self.edges:
             edge.draw(cr, highlight=(edge in highlight_items))
         for node in self.nodes:
-            node.draw(cr, highlight=(node in highlight_items))
+            if (node.choosen is None):
+                node.draw(cr, highlight=(node in highlight_items))
+            else:
+                node.draw(cr, highlight=(node.choosen))
 
     def get_url(self, x, y):
         for node in self.nodes:
             url = node.get_url(x, y)
             if url is not None:
                 return url
+        return None
+    
+    def get_node_by_url(self, url):
+        for node in self.nodes:
+            if url == node.url:
+                return node
         return None
 
     def get_jump(self, x, y):
@@ -1333,12 +1345,16 @@ class NullAction(DragAction):
         else:
             x, y, state = event.x, event.y, event.state
         dot_widget = self.dot_widget
-        item = dot_widget.get_url(x, y)
-        if item is None:
-            item = dot_widget.get_jump(x, y)
-        if item is not None:
+        url = dot_widget.get_url(x, y)
+
+        if url is None:
+            url = dot_widget.get_jump(x, y)
+        if url is not None:
             dot_widget.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.HAND2))
-            dot_widget.set_highlight(item.highlight)
+            if isinstance(url.item, Node): 
+                if url.item.is_selected:
+                    return
+            dot_widget.set_highlight(url.highlight)
         else:
             dot_widget.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.ARROW))
             dot_widget.set_highlight(None)
@@ -1408,7 +1424,9 @@ class DotWidget(gtk.DrawingArea):
     __gsignals__ = {
         'expose-event': 'override',
         'clicked' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event)),
-        'activate' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event))   
+        'activate' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event)),
+        'select' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event)),
+        'unselect-all' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event))
         }
 
     filter = 'dot'
@@ -1706,6 +1724,22 @@ class DotWidget(gtk.DrawingArea):
         return (time.time() < self.presstime + click_timeout
                 and math.hypot(deltax, deltay) < click_fuzz)
 
+
+    def on_area_select_node(self, node, highlight):
+        if not isinstance(node, Node):
+            return
+        node.is_selected = True
+        node.choosen = highlight
+        self.queue_draw()
+    
+    def on_area_unselect_node(self, node):
+        if not isinstance(node, Node):
+            return
+        node.is_selected = False
+        node.choosen = None
+        self.queue_draw()
+        
+
     def on_area_button_release(self, area, event):
         self.drag_action.on_button_release(event)
         self.drag_action = NullAction(self)
@@ -1718,7 +1752,23 @@ class DotWidget(gtk.DrawingArea):
                 jump = self.get_jump(x, y)
                 if jump is not None:
                     self.animate_to(jump.x, jump.y)
+            return True
+        
+        if event.button == 1 and self.is_click(event):
+            x, y = int(event.x), int(event.y)
+            url = self.get_url(x, y)
+            if url is not None and isinstance(url.item, Node):
+                selected = url.item.is_selected
+                if selected:
+                    action = "unselect:"+str(url.url)
+                    self.on_area_unselect_node(url.item)
+                else:
+                    action = "select:"+str(url.url)
+                    self.on_area_select_node(url.item, url.highlight)
 
+                self.emit('select', unicode(action), event)
+            else:
+                self.emit("unselect-all", unicode("all"), event)
             return True
         if event.button == 1 or event.button == 2 and event.button == 3:
             return True

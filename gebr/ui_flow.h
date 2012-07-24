@@ -32,6 +32,10 @@ G_BEGIN_DECLS
  */
 void gebr_ui_flow_run(gboolean is_parallel);
 
+void gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
+                                const gchar *snapshots,
+                                gboolean is_parallel);
+
 void gebr_ui_flow_update_prog_mpi_nprocess(GebrGeoXmlProgram *prog,
                                            GebrMaestroServer *maestro,
                                            gdouble speed,
