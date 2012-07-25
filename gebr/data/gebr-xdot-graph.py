@@ -117,7 +117,7 @@ class MyDotWindow(xdot.DotWindow):
     def on_input_response(self, fd, condition):
         if condition == glib.IO_IN:
            file = fd.readline()
-           info = file.split("|")
+           info = file.split("\b")
            
            if info[0] == "run":
                list_snaps = "run:"+info[1].strip()+":"

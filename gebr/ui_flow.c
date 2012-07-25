@@ -330,7 +330,7 @@ gebr_ui_flow_run(gboolean is_parallel)
 			if (gebr_geoxml_flow_get_revisions_number(flow) > 0) {
 				const gchar *filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
 				if (g_list_find_custom(gebr.ui_flow_browse->select_flows, filename, (GCompareFunc)g_strcmp0)) {
-					gchar *str = g_strdup_printf("run|%s\n", is_parallel? "parallel" : "single");
+					gchar *str = g_strdup_printf("run\b%s\n", is_parallel? "parallel" : "single");
 					GString *action = g_string_new(str);
 
 					if (gebr_comm_process_write_stdin_string(gebr.ui_flow_browse->graph_process, action) == 0)
