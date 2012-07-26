@@ -492,7 +492,6 @@ flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
 		if (gebr_flow_revisions_create_graph(flow, revs, &dotfile)) {
 			fb->update_graph = FALSE;
 			GString *file = g_string_new(dotfile);
-			g_debug("dotfile:'%s'", file->str);
 			gchar *flow_filename = g_strdup(gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 
 			gchar *command = g_strdup_printf("%s\b%s\b", flow_filename, keep_selection? "yes" : "no");

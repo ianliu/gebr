@@ -365,20 +365,32 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 	for (gint i = 0; snaps[i]; i++) {
 		GebrGeoXmlDocument *snap_flow;
 		gchar *xml;
+		gchar *comment = NULL;
 
 		if (!g_strcmp0(snaps[i], "head")) {
 			snap_flow = GEBR_GEOXML_DOCUMENT(flow);
 		} else {
 			rev = gebr_geoxml_flow_get_revision_by_id(flow, snaps[i]);
-			gebr_geoxml_flow_get_revision_data(rev, &xml, NULL, NULL, NULL);
+			gebr_geoxml_flow_get_revision_data(rev, &xml, NULL, &comment, NULL);
 
 			if (gebr_geoxml_document_load_buffer(&snap_flow, xml) != GEBR_GEOXML_RETV_SUCCESS) {
 				g_warn_if_reached();
 				return;
 			}
 
+			const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(snap_flow));
+
+			const gchar *open_title_sep = " (";
+			const gchar *close_title_sep = ")";
+
+			gchar *snapflow_title = g_strconcat(flow_title, open_title_sep, comment, close_title_sep, NULL);
+			gebr_geoxml_document_set_title(GEBR_GEOXML_DOCUMENT(snap_flow), snapflow_title);
+
 			g_free(xml);
+			g_free(snapflow_title);
+			g_free(comment);
 		}
+
 
 		if (is_parallel)
 			id = run_flow(GEBR_GEOXML_FLOW(snap_flow), NULL);
