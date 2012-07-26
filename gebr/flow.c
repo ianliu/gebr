@@ -644,7 +644,21 @@ gboolean flow_revision_save(void)
 	if (!flow_browse_get_selected(&iter, TRUE))
 		return FALSE;
 
-	dialog = gtk_dialog_new_with_buttons(_("Take snapshot of the selected Flow?"),
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gint num_flows = gtk_tree_selection_count_selected_rows(selection);
+
+	const gchar *dialog_title;
+	const gchar *dialog_msg;
+
+	if (num_flows == 1) {
+		dialog_title = _("Take a snapshot of the current Flow?");
+		dialog_msg = _("Enter a description for the snapshot of the current Flow:");
+	} else {
+		dialog_title = _("Take a snapshot of the selected Flows?");
+		dialog_msg = _("Enter a description for the snapshots of the selected Flows:");
+	}
+
+	dialog = gtk_dialog_new_with_buttons(dialog_title,
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -659,7 +673,7 @@ gboolean flow_revision_save(void)
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align), vbox);
 
-	label = gtk_label_new(_("Enter a description for the snapshot of the selected Flow:"));
+	label = gtk_label_new(dialog_msg);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	entry = gtk_entry_new();
