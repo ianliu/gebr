@@ -288,10 +288,10 @@
     <child>
       <object class="GtkVBox" id="revisions_warn">
         <child>
-          <object class="GtkLabel" id="label1">
+          <object class="GtkLabel" id="rev_warn_label">
             <property name="visible">True</property>
             <property name="sensitive">False</property>
-            <property name="label" translatable="yes">There are no snapshots.
+            <property name="label" translatable="yes">#There are no snapshots.
 
 A snapshot stores the settings of your flow so you can restore it at any moment. To take a snapshot, just click on the camera icon and give a non-empty description.</property>
             <property name="use_markup">True</property>
