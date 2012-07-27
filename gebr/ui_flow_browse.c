@@ -213,18 +213,18 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	revpage = gtk_vbox_new(FALSE, 0);
 
-	ui_flow_browse->rev_main = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "main_rev"));
+	GtkWidget *rev_main = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "main_rev"));
 
 	ui_flow_browse->revpage_main = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "revisions_main"));
 
 	ui_flow_browse->revpage_warn = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "revisions_warn"));
 
-	ui_flow_browse->rev_warn_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "rev_warn_label"));
+	ui_flow_browse->revpage_warn_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "rev_warn_label"));
 
 	gtk_widget_show(ui_flow_browse->revpage_main);
 	gtk_widget_hide(ui_flow_browse->revpage_warn);
 
-	gtk_box_pack_start(GTK_BOX(revpage), ui_flow_browse->rev_main, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(revpage), rev_main, TRUE, TRUE, 0);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window_rev), revpage);
 
 	/**
@@ -604,15 +604,22 @@ static void flow_browse_load(gboolean keep_selection)
 		flow_browse_add_revisions_graph(gebr.flow,
 		                                gebr.ui_flow_browse,
 		                                keep_selection);
-	} else if (has_revision && nrows > 1) {
+	} else if (nrows > 1) {
+		gchar *multiple_selection_msg = g_strdup_printf(_("%d Flows selected.\n\n"
+								  "GêBR can take a snapshot\n"
+								  "of the current state for\n"
+								  "each of the selected Flows.\n"
+								  "To do it, just click on the\n"
+								  "camera icon."
+								  ),
+								nrows);
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
+				   multiple_selection_msg);
+		g_free(multiple_selection_msg);
+
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 
-		gchar *multiple_selection_msg = g_strdup_printf(_("%d flows selected."),
-								nrows);
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->rev_warn_label),
-				   multiple_selection_msg);
-		g_free(multiple_selection_msg);
 	} else {
 		const gchar *no_snapshots_msg = _("There are no snapshots.\n"
 						  "A snapshot stores the settings of "
@@ -620,7 +627,7 @@ static void flow_browse_load(gboolean keep_selection)
 						  "moment. To take a snapshot, just click "
 						  "on the camera icon and give a non-empty "
 						  "description.");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->rev_warn_label),
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
 				   no_snapshots_msg);
 
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);

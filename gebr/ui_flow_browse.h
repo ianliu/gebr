@@ -55,10 +55,9 @@ typedef struct {
 
 	GtkWidget *revisions_button;
 
-	GtkWidget *rev_main;
 	GtkWidget *revpage_main;
 	GtkWidget *revpage_warn;
-	GtkWidget *rev_warn_label;
+	GtkWidget *revpage_warn_label;
 	gboolean update_graph;
 	GebrCommProcess *graph_process;
 

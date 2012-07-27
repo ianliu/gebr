@@ -321,7 +321,6 @@ gebr_daemon_server_set_mpi_flavors(GebrDaemonServer *daemon, const gchar *flavor
 		g_free(daemon->priv->mpi_flavors);
 
 	daemon->priv->mpi_flavors = g_strdup(flavors);
-	g_debug(" on %s, mpi='%s'", __func__, flavors ) ;
 
 	if (!daemon)
 		return FALSE;

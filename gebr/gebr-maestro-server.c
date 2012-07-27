@@ -754,7 +754,6 @@ parse_messages(GebrCommServer *comm_server,
 			GString *id = g_list_nth_data(arguments, 0);
 			GString *issues = g_list_nth_data(arguments, 1);
 
-			g_debug("on ISS_DEF, id:'%s', issues:'%s'", id->str, issues->str); 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gebr_job_set_issues(job, issues->str);
 

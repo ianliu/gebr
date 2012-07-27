@@ -288,7 +288,7 @@
     <child>
       <object class="GtkVBox" id="revisions_warn">
         <child>
-          <object class="GtkLabel" id="rev_warn_label">
+          <object class="GtkLabel" id="revpage_warn_label">
             <property name="visible">True</property>
             <property name="sensitive">False</property>
             <property name="label" translatable="yes">#There are no snapshots.

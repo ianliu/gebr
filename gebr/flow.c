@@ -1110,20 +1110,34 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive);
 	gtk_widget_set_sensitive(gebr.ui_flow_browse->speed_button, sensitive_exec_slider);
 
-	if (sensitive) {
+	GtkTreeSelection *flows_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gint flows_nrows = gtk_tree_selection_count_selected_rows(flows_selection);
+
+	if (sensitive && flows_nrows == 1) {
 		gtk_widget_show(gebr.ui_flow_browse->info_window);
-		gtk_widget_show(gebr.ui_flow_browse->rev_main);
 		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
 	} else {
 		if (no_line_selected)
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
-		else if (maestro_disconnected)
+		else if (maestro_disconnected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
-			                   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
-			                     "Try changing its maestro or connecting it."));
+					   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
+					     "Try changing its maestro or connecting it."));
+		} else if (flows_nrows > 1) {
+			gchar *multiple_flows_msg = g_markup_printf_escaped(_("%d Flows selected.\n\n"
+									    "GêBR can execute them\n"
+									    "- <i>sequentially</i> (Shift+R) or\n"
+									    "- <i>parallelly</i> (Shift+Ctrl+R)"),
+									    flows_nrows);
+
+			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), multiple_flows_msg);
+			g_free(multiple_flows_msg);
+
+			g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
+			g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
+		}
 
 		gtk_widget_show(gebr.ui_flow_browse->warn_window);
-		gtk_widget_hide(gebr.ui_flow_browse->rev_main);
 		gtk_widget_hide(gebr.ui_flow_browse->info_window);
 	}
 
