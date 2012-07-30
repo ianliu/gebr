@@ -76,6 +76,7 @@ gebrm_job_finalize(GObject *object)
 
 	g_free(job->priv->info.id);
 	g_free(job->priv->info.title);
+	g_free(job->priv->info.snapshot_title);
 	g_free(job->priv->info.hostname);
 	g_free(job->priv->info.parent_id);
 	g_free(job->priv->info.nice);
@@ -311,6 +312,7 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 		job->priv->info.id = g_strdup(info->id);
 
 	job->priv->info.title = g_strdup(info->title);
+	job->priv->info.snapshot_title = g_strdup(info->snapshot_title);
 	job->priv->info.temp_id = g_strdup(info->temp_id);
 	job->priv->info.hostname = g_strdup(info->hostname);
 	job->priv->info.parent_id = g_strdup(info->parent_id);
@@ -351,6 +353,12 @@ const gchar *
 gebrm_job_get_title(GebrmJob *job)
 {
 	return job->priv->info.title;
+}
+
+const gchar *
+gebrm_job_get_snapshot_title(GebrmJob *job)
+{
+	return job->priv->info.snapshot_title;
 }
 
 void

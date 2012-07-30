@@ -219,7 +219,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	ui_flow_browse->revpage_warn = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "revisions_warn"));
 
-	ui_flow_browse->revpage_warn_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "rev_warn_label"));
+	ui_flow_browse->revpage_warn_label = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "revpage_warn_label"));
 
 	gtk_widget_show(ui_flow_browse->revpage_main);
 	gtk_widget_hide(ui_flow_browse->revpage_warn);

@@ -67,6 +67,7 @@ typedef struct {
 	gchar *id;
 	gchar *temp_id;
 	gchar *title;
+	gchar *snapshot_title;
 	gchar *hostname;
 	gchar *parent_id;
 	gchar *servers;
@@ -114,6 +115,8 @@ void gebrm_job_append_task(GebrmJob *job, GebrmTask *task);
 GebrmJob *gebrm_job_find(const gchar *rid);
 
 const gchar *gebrm_job_get_title(GebrmJob *job);
+
+const gchar *gebrm_job_get_snapshot_title(GebrmJob *job);
 
 void gebrm_job_set_title(GebrmJob *job, const gchar *title);
 

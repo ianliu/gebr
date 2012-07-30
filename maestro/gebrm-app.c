@@ -899,13 +899,14 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.job_def, 21,
+						      gebr_comm_protocol_defs.job_def, 22,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_nprocs(job),
 						      gebrm_job_get_servers_list(job),
 						      gebrm_job_get_hostname(job),
 						      gebrm_job_get_title(job),
+						      gebrm_job_get_snapshot_title(job),
 						      gebrm_job_get_queue(job),
 						      gebrm_job_get_nice(job),
 						      infile,
@@ -994,9 +995,11 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 						      (GebrGeoXmlDocument **)pproj);
 
 	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
+	gchar *snapshot_title = gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(*pflow));
 
 	GebrmJobInfo info = { 0, };
 	info.title = g_strdup(title);
+	info.snapshot_title = g_strdup(snapshot_title);
 	info.temp_id = g_strdup(temp_id);
 	info.hostname = g_strdup(host);
 	info.parent_id = g_strdup(parent_id);
@@ -1804,13 +1807,14 @@ send_messages_of_jobs(const gchar *id,
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 21,
+	                                      gebr_comm_protocol_defs.job_def, 22,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
 					      gebrm_job_get_nprocs(job),
 	                                      gebrm_job_get_servers_list(job),
 	                                      gebrm_job_get_hostname(job),
 	                                      gebrm_job_get_title(job),
+	                                      gebrm_job_get_snapshot_title(job),
 	                                      gebrm_job_get_queue(job),
 	                                      gebrm_job_get_nice(job),
 	                                      infile,

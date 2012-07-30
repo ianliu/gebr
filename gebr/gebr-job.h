@@ -115,6 +115,10 @@ GebrJob *gebr_job_find(const gchar *rid);
 
 const gchar *gebr_job_get_title(GebrJob *job);
 
+const gchar * gebr_job_get_snapshot_title(GebrJob *job);
+
+void gebr_job_set_snapshot_title(GebrJob *job, const gchar *snapshot_title);
+
 void gebr_job_set_title(GebrJob *job, const gchar *title);
 
 const gchar *gebr_job_get_queue(GebrJob *job);

@@ -1013,7 +1013,16 @@ title_column_data_func(GtkTreeViewColumn *tree_column,
 	GebrJob *job;
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
-	g_object_set(cell, "text", gebr_job_get_title(job), NULL);
+	gchar *title = NULL;
+	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
+
+	if (snapshot_title && *snapshot_title)
+		title = g_markup_printf_escaped("%s *", gebr_job_get_title(job));
+	else 
+		title = g_strdup(gebr_job_get_title(job));
+
+	g_object_set(cell, "markup", title, NULL);
+	g_free(title);
 }
 
 static void
@@ -1063,20 +1072,31 @@ compute_subheader_label(GebrJob *job,
 	const gchar *finish_date = gebr_job_get_finish_date(job);
 	GString *start = g_string_new(NULL);
 	GString *finish = g_string_new(NULL);
+	GString *snapshot_text = g_string_new("");
+
+	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
+
+	if (snapshot_title && *snapshot_title) {
+		g_string_append_printf(snapshot_text,
+				       _("<span size='small' font_style='italic'>* Snapshot %s</span>\n"),
+				       snapshot_title);
+	}
 
 	/* start date (may have failed, never started) */
 	if (start_date && strlen(start_date))
-		g_string_append_printf(start, _("Started at %s"), gebr_localized_date(start_date));
+		g_string_append_printf(start, _("%sStarted at %s"),
+				       snapshot_text->str,
+				       gebr_localized_date(start_date));
 
 	/* finish date */
 	if (finish_date && strlen(finish_date)) {
 		const gchar *tmp = gebr_localized_date(finish_date);
 		if (status == JOB_STATUS_FINISHED)
-			g_string_append_printf(finish, _("Finished at %s"), tmp);
+			g_string_append_printf(finish, _("%sFinished at %s"), snapshot_text->str, tmp);
 		else if (status == JOB_STATUS_CANCELED)
-			g_string_append_printf(finish, _("Canceled at %s"), tmp);
+			g_string_append_printf(finish, _("%sCanceled at %s"), snapshot_text->str, tmp);
 		else if (status == JOB_STATUS_FAILED)
-			g_string_append_printf(finish, _("Failed at %s"), tmp);
+			g_string_append_printf(finish, _("%sFailed at %s"), snapshot_text->str, tmp);
 	}
 
 	if (status == JOB_STATUS_FINISHED) {
@@ -1144,7 +1164,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
                                GebrJob 	      *job,
                                GebrCommJobStatus status)
 {
-	gchar *subheader_str, *start_detail_str;
+	gchar *subheader_str = NULL, *start_detail_str = NULL;
 	GtkImage *img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "status_image"));
 	GtkLabel *subheader = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_label"));
 	GtkButton *queued_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
@@ -1154,7 +1174,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	compute_subheader_label(job, status, &subheader_str, &start_detail_str);
 
 	if (subheader_str) {
-		gtk_label_set_text(subheader, subheader_str);
+		gtk_label_set_markup(subheader, subheader_str);
 		gtk_widget_show(GTK_WIDGET(subheader));
 	} else
 		gtk_widget_hide(GTK_WIDGET(subheader));
@@ -1352,7 +1372,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
 	const gchar *title = gebr_job_get_title(job);
-	markup = g_markup_printf_escaped ("<span size=\"large\"><b>%s</b></span>", title);
+	markup = g_strdup_printf ("<span size=\"large\"><b>%s</b></span>", title);
 	gtk_label_set_markup (label, markup);
 	g_free (markup);
 

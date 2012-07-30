@@ -36,6 +36,7 @@ struct _GebrJobPriv {
 
 	gdouble exec_speed;
 	gchar *title;
+	gchar *snapshot_title;
 	gchar *queue;
 	gchar *hostname;
 	gchar *server_group;
@@ -86,6 +87,7 @@ gebr_job_finalize(GObject *object)
 	GebrJob *job = GEBR_JOB(object);
 	g_free(job->priv->run_type);
 	g_free(job->priv->title);
+	g_free(job->priv->snapshot_title);
 	g_free(job->priv->hostname);
 	g_free(job->priv->runid);
 	g_free(job->priv->queue);
@@ -120,6 +122,7 @@ gebr_job_init(GebrJob *job)
 						GebrJobPriv);
 	job->priv->status = JOB_STATUS_INITIAL;
 	job->priv->is_fake = TRUE;
+	job->priv->snapshot_title = NULL;
 }
 
 static void
@@ -323,6 +326,16 @@ const gchar *
 gebr_job_get_title(GebrJob *job)
 {
 	return job->priv->title;
+}
+
+const gchar *
+gebr_job_get_snapshot_title(GebrJob *job) {
+	return job->priv->snapshot_title;
+}
+
+void
+gebr_job_set_snapshot_title(GebrJob *job, const gchar *snapshot_title) {
+	job->priv->snapshot_title = g_strdup(snapshot_title);
 }
 
 GebrCommJobStatus

@@ -380,14 +380,15 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 
 			const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(snap_flow));
 
-			const gchar *open_title_sep = " (";
-			const gchar *close_title_sep = ")";
+			//const gchar *open_title_sep = " <span  weight='light' font_style='italic'>(";
+			//const gchar *close_title_sep = ")</span>";
 
-			gchar *snapflow_title = g_strconcat(flow_title, open_title_sep, comment, close_title_sep, NULL);
-			gebr_geoxml_document_set_title(GEBR_GEOXML_DOCUMENT(snap_flow), snapflow_title);
+			//gchar *snapflow_title = g_strconcat(flow_title, open_title_sep, comment, close_title_sep, NULL);
+			
+			gebr_geoxml_document_set_title(GEBR_GEOXML_DOCUMENT(snap_flow), flow_title);
+			gebr_geoxml_document_set_description(GEBR_GEOXML_DOCUMENT(snap_flow), comment);
 
 			g_free(xml);
-			g_free(snapflow_title);
 			g_free(comment);
 		}
 
