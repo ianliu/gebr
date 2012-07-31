@@ -12,7 +12,7 @@ class MyDotWindow(xdot.DotWindow):
         self.widget.connect('unselect-all', self.on_url_unselect_all)
         
         self.flows = {}
-        self.current_flow = ""
+        self.current_flow = None
 
         Wid = 0L
         if len(sys.argv) == 3:
@@ -38,7 +38,7 @@ class MyDotWindow(xdot.DotWindow):
 
     def on_delete_clicked(self, widget, url):
         delete_str = "delete:"
-        if self.flows and self.flows[self.current_flow]:
+        if self.flows.has_key(self.current_flow) and self.flows[self.current_flow]:
             for snapshot in self.flows[self.current_flow]:
                 delete_str = delete_str + snapshot + ","
             delete_str = delete_str[:-1]
@@ -53,7 +53,7 @@ class MyDotWindow(xdot.DotWindow):
         self.menu.destroy()
         
     def on_url_unselect_all(self, widget, url, event):
-       if not self.flows or not self.flows[self.current_flow]:
+       if not self.flows or not self.flows.has_key(self.current_flow):
            return
        for snapshot in self.flows[self.current_flow]:
            node = self.widget.graph.get_node_by_url(snapshot)
@@ -92,17 +92,19 @@ class MyDotWindow(xdot.DotWindow):
             self.menu.append(snapshot)
         else:
             has_snap = False
-            if url in self.flows[self.current_flow]:
-                has_snap = True
-            if not has_snap:
-                self.on_url_unselect_all(widget, url, event)
+            if self.flows.has_key(self.current_flow):
+                if url in self.flows[self.current_flow]:
+                    has_snap = True
+                if not has_snap:
+                    self.on_url_unselect_all(widget, url, event)
                 
             revert = gtk.MenuItem(_("Revert"))
             revert.connect("activate", self.on_revert_clicked, url)
             revert.show()
             self.menu.append(revert)
-            if self.flows[self.current_flow] and "head" in self.flows[self.current_flow]:
-                return
+            if self.flows.has_key(self.current_flow) and "head" in self.flows[self.current_flow]:
+                self.menu.show_all()
+                return True
             else: 
                 delete = gtk.MenuItem(_("Delete"))
                 delete.connect("activate", self.on_delete_clicked, url)
@@ -131,14 +133,14 @@ class MyDotWindow(xdot.DotWindow):
                for snap in self.flows[self.current_flow]:
                    list_snaps = list_snaps + snap + ","
                sys.stderr.write(str(list_snaps[:-1])) 
-               
-           else:
+           
+           elif info[0] == "draw":
                # Get ID Flow (Filename)
-               id_flow = info[0]
+               id_flow = info[1]
                # Option to keep selection or delete
-               keep_selection = info[1]
+               keep_selection = info[2]
                # Get dot code to generate graph
-               dotfile = info[2]
+               dotfile = info[3]
                
                self.set_dotcode(dotfile)
                
@@ -150,9 +152,9 @@ class MyDotWindow(xdot.DotWindow):
                    for snapshot in self.flows[id_flow]:
                        node = self.widget.graph.get_node_by_url(snapshot)
                        self.widget.on_area_select_node(node, True)
-               
+                       
                self.current_flow = id_flow
-           
+
            return True
 
 def main():

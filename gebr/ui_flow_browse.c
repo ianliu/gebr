@@ -506,7 +506,7 @@ flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
 			GString *file = g_string_new(dotfile);
 			gchar *flow_filename = g_strdup(gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 
-			gchar *command = g_strdup_printf("%s\b%s\b", flow_filename, keep_selection? "yes" : "no");
+			gchar *command = g_strdup_printf("draw\b%s\b%s\b", flow_filename, keep_selection? "yes" : "no");
 			g_string_prepend(file, command);
 
 			if (gebr_comm_process_write_stdin_string(fb->graph_process, file) == 0)
