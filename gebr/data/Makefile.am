@@ -52,7 +52,7 @@ EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA) $(python_DATA)
 CLEANFILES = gebr.desktop
 
 install-data-hook:
-	gebr-geoxml-menu-indices $(gebrmenudir) $(gebrmenudir)/menus.idx2   $(gebrmenudir)/categories.idx2
+	$(top_builddir)/libgebr/geoxml-utils/gebr-geoxml-menu-indices $(gebrmenudir) $(gebrmenudir)/menus.idx2   $(gebrmenudir)/categories.idx2
 	
 uninstall-hook:
 	( cd $(gebrmenudir) && rm -f *.idx2 )
