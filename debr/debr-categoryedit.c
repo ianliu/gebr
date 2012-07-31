@@ -592,10 +592,11 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 	}
 
 	if (retval) {
+		gchar *str_mrk;
+		str_mrk = g_strdup_printf("The category <i>%s</i> already exists in the list, the operation will be cancelled.", i_categ);
 		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					 _("Category already exists"),
-					 _("The category <i>%s</i> already exists in the list, the operation will be cancelled."),
-					 i_categ);
+					 str_mrk);
 		g_free(i_categ);
 	}
 

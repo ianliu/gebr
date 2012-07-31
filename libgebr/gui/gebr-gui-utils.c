@@ -276,7 +276,7 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
 
 	gchar *string = g_strdup_vprintf(message, args);
-	gchar *escaped = g_markup_printf_escaped("%s",string);
+	gchar *escaped = g_strdup_printf("%s",string);
 	gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dialog), "%s", escaped);
 	g_free(escaped);
 	g_free(string);
