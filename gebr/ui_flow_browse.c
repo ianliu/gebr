@@ -36,8 +36,7 @@
  * Prototypes
  */
 
-static void flow_browse_load(GtkTreeSelection *treeselection,
-                             gpointer user_data);
+static void flow_browse_load(void);
 
 static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 					 GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
@@ -51,6 +50,10 @@ static void gebr_flow_browse_revision_delete(const gchar *rev_id);
 static void flow_browse_on_flow_move(void);
 
 static void update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb);
+
+static void flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
+                                            GebrUiFlowBrowse *fb,
+                                            gboolean keep_selection);
 
 
 GebrUiFlowBrowse *flow_browse_setup_ui()
@@ -113,7 +116,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(ui_flow_browse->view, "row-activated", G_CALLBACK(flow_browse_on_row_activated),
 			 ui_flow_browse);
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
-	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), GINT_TO_POINTER(FALSE));
+	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), NULL);
 	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_speed_slider_sensitiveness), ui_flow_browse);
 
 	renderer = gtk_cell_renderer_text_new();
@@ -417,7 +420,13 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 
 void flow_browse_reload_selected(void)
 {
-	flow_browse_load(NULL, GINT_TO_POINTER(TRUE));
+	flow_browse_load();
+
+	/* Redraw graph */
+	gebr.ui_flow_browse->update_graph = TRUE;
+	flow_browse_add_revisions_graph(gebr.flow,
+	                                gebr.ui_flow_browse,
+	                                FALSE);
 }
 
 void flow_browse_select_iter(GtkTreeIter * iter)
@@ -557,16 +566,12 @@ gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
  * \internal
  * Load a selected flow from file when selected in "Flow Browser".
  */
-static void flow_browse_load(GtkTreeSelection *treeselection,
-                             gpointer user_data)
+static void flow_browse_load(void)
 {
-	gboolean keep_selection = GPOINTER_TO_INT(user_data);
 	GtkTreeIter iter;
 
 	gchar *filename;
 	gchar *title;
-
-	GebrGeoXmlSequence *revision;
 
 	gebr_flow_browse_create_graph(gebr.ui_flow_browse);
 
@@ -595,11 +600,9 @@ static void flow_browse_load(GtkTreeSelection *treeselection,
 	/* free previous flow and load it */
 	flow_edition_load_components();
 
-	/* load revisions */
-	gboolean has_revision = FALSE;
-	gebr_geoxml_flow_get_revision(gebr.flow, &revision, 0);
-	for (; revision != NULL && !has_revision; gebr_geoxml_sequence_next(&revision))
-		has_revision = TRUE;
+	/* check if has revisions */
+	gboolean has_revision = gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0;
+
 	/* Create model for Revisions */
 	if (has_revision && nrows == 1) {
 		gtk_widget_show(gebr.ui_flow_browse->revpage_main);
@@ -609,7 +612,7 @@ static void flow_browse_load(GtkTreeSelection *treeselection,
 			gebr.ui_flow_browse->update_graph = TRUE;
 			flow_browse_add_revisions_graph(gebr.flow,
 			                                gebr.ui_flow_browse,
-			                                keep_selection);
+			                                FALSE);
 		}
 	} else if (nrows > 1) {
 		gchar *multiple_selection_msg = g_strdup_printf(_("%d Flows selected.\n\n"
@@ -773,7 +776,12 @@ gebr_flow_browse_revision_delete(const gchar *rev_id)
 			gebr_flow_revisions_hash_free(hash_rev);
 		}
 
-		flow_browse_load(NULL, GINT_TO_POINTER(FALSE));
+		flow_browse_load();
+		/* Redraw graph */
+		gebr.ui_flow_browse->update_graph = TRUE;
+		flow_browse_add_revisions_graph(gebr.flow,
+		                                gebr.ui_flow_browse,
+		                                FALSE);
 	}
 
 }
@@ -962,7 +970,13 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
-	flow_browse_load(NULL, GINT_TO_POINTER(TRUE));
+	flow_browse_load();
+	/* Redraw graph */
+	gebr.ui_flow_browse->update_graph = TRUE;
+	flow_browse_add_revisions_graph(gebr.flow,
+	                                gebr.ui_flow_browse,
+	                                FALSE);
+
 	gebr_validator_force_update(gebr.validator);
 	flow_browse_info_update();
 
