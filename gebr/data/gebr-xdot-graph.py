@@ -91,6 +91,12 @@ class MyDotWindow(xdot.DotWindow):
             snapshot.show()
             self.menu.append(snapshot)
         else:
+            has_snap = False
+            if url in self.flows[self.current_flow]:
+                has_snap = True
+            if not has_snap:
+                self.on_url_unselect_all(widget, url, event)
+                
             revert = gtk.MenuItem(_("Revert"))
             revert.connect("activate", self.on_revert_clicked, url)
             revert.show()
