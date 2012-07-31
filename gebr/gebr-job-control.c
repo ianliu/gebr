@@ -1084,7 +1084,7 @@ snap_icon_column_data_func(GtkTreeViewColumn *tree_column,
 
 	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
 	if (snapshot_title && *snapshot_title)
-		g_object_set(cell, "stock-id", "gtk-dnd-multiple", NULL);
+		g_object_set(cell, "stock-id", "document-open-recent", NULL);
 	else
 		g_object_set(cell, "stock-id", NULL, NULL);
 }

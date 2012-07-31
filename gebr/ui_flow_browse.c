@@ -333,6 +333,8 @@ void flow_browse_info_update(void)
 
                 if (gebr_geoxml_flow_get_parent_revision(gebr.flow, &date, &comment, NULL))
                 	str_tmp = g_markup_printf_escaped(_("<b>Snapshot of origin:</b>  %s <span size='small'>(taken in %s)</span>"), comment, date);
+                else if(gebr_geoxml_flow_get_revisions_number(gebr.flow))
+                	str_tmp = g_markup_printf_escaped(_("This Flow has %ld snapshots, but it is not linked with anyone"), gebr_geoxml_flow_get_revisions_number(gebr.flow));
                 else
                 	str_tmp = g_strdup(_("This Flow has no snapshots"));
 
@@ -1040,7 +1042,7 @@ flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
 	                   -1);
 
 	if (gebr_geoxml_flow_get_revisions_number(flow) > 0)
-		g_object_set(cell, "stock-id", "gtk-dnd-multiple", NULL);
+		g_object_set(cell, "stock-id", "document-open-recent", NULL);
 	else
 		g_object_set(cell, "stock-id", NULL, NULL);
 
