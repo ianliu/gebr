@@ -326,7 +326,8 @@ gebr_ui_flow_run(gboolean is_parallel)
 		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
 
 		/* Executing snapshots */
-		if(i->next == NULL) {
+		gint current_page = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
+		if(i->next == NULL && current_page == NOTEBOOK_PAGE_FLOW_BROWSE) {
 			if (gebr_geoxml_flow_get_revisions_number(flow) > 0) {
 				const gchar *filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
 				if (g_list_find_custom(gebr.ui_flow_browse->select_flows, filename, (GCompareFunc)g_strcmp0)) {
