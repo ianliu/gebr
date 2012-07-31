@@ -10,6 +10,9 @@ class MyDotWindow(xdot.DotWindow):
         self.widget.connect('activate', self.on_url_activate)
         self.widget.connect('select', self.on_url_select)
         self.widget.connect('unselect-all', self.on_url_unselect_all)
+        self.widget.connect("focus-in-event", self.on_focus_in_event)
+        self.widget.connect("focus-out-event", self.on_focus_out_event)
+        self.widget.connect('key-press-event', self.on_key_press_event)
         
         self.flows = {}
         self.current_flow = None
@@ -30,7 +33,30 @@ class MyDotWindow(xdot.DotWindow):
         self.window.destroy()
         
         gettext.install("gebr", locale_dir)
-
+        
+    def on_focus_in_event(self, widget, event):
+        sys.stderr.write("focus-in:\n")
+        sys.stderr.flush()
+        return False
+    
+    def on_focus_out_event(self, widget, event):
+        sys.stderr.write("focus-out:\n")
+        sys.stderr.flush()
+        return False
+    
+    def delete_selected_snapshots(self):
+        if self.flows.has_key(self.current_flow) and self.flows[self.current_flow]:
+            delete_str = "delete:"
+            for snapshot in self.flows[self.current_flow]:
+                delete_str = delete_str + snapshot + ","
+            delete_str = delete_str[:-1]
+            sys.stderr.write(str(delete_str))
+        
+    def on_key_press_event(self, widget, event):
+         if event.keyval == gtk.keysyms.Delete:
+             self.delete_selected_snapshots()
+         return False
+    
     def on_revert_clicked(self, widget, url):
         revert_str = "revert:"+url
         sys.stderr.write(str(revert_str))
@@ -59,13 +85,14 @@ class MyDotWindow(xdot.DotWindow):
            node = self.widget.graph.get_node_by_url(snapshot)
            self.widget.on_area_unselect_node(node)
        self.flows[self.current_flow] = []
-       sys.stderr.write("unselect:")    
-        
+       sys.stderr.write("unselect:")
     
     def on_url_select(self, widget, url, event):
         current = self.current_flow
         id = url.split(":")
         action = id[0]
+        
+        widget.grab_focus()
         
         if not self.flows.has_key(current):
              selection = [id[1]]

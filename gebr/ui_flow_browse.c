@@ -56,6 +56,20 @@ static void flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
                                             gboolean keep_selection);
 
 
+static gboolean
+on_snapshots_focus_in(void)
+{
+	gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+	return FALSE;
+}
+
+static gboolean
+on_snapshots_focus_out(void)
+{
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+	return FALSE;
+}
+
 GebrUiFlowBrowse *flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
@@ -243,6 +257,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	 */
 	GtkWidget *notebook = gtk_notebook_new();
 	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_TOP);
+	gtk_widget_set_can_focus(notebook, FALSE);
 
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrolled_window_info, gtk_label_new(_("Details")));
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scrolled_window_rev, gtk_label_new(_("Snapshots")));
@@ -428,12 +443,6 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 void flow_browse_reload_selected(void)
 {
 	flow_browse_load();
-
-	/* Redraw graph */
-	gebr.ui_flow_browse->update_graph = TRUE;
-	flow_browse_add_revisions_graph(gebr.flow,
-	                                gebr.ui_flow_browse,
-	                                FALSE);
 }
 
 void flow_browse_select_iter(GtkTreeIter * iter)
@@ -453,11 +462,17 @@ graph_process_read_stderr(GebrCommProcess * process,
 	GString *output;
 	output = gebr_comm_process_read_stderr_string_all(process);
 
-	g_debug("ERROR OF PYTHON: %s", output->str);
+//	g_debug("ERROR OF PYTHON: %s", output->str);
 
 	gchar **action = g_strsplit(output->str, ":", -1);
 
-	if (!g_strcmp0(action[0], "revert")) {
+	if (!g_strcmp0(action[0], "focus-in")) {
+		on_snapshots_focus_in();
+	}
+	else if (!g_strcmp0(action[0], "focus-out")) {
+		on_snapshots_focus_out();
+	}
+	else if (!g_strcmp0(action[0], "revert")) {
 		gebr_flow_browse_revision_revert(action[1]);
 	}
 	else if (!g_strcmp0(action[0], "delete")) {
@@ -582,8 +597,6 @@ static void flow_browse_load(void)
 
 	gebr_flow_browse_create_graph(gebr.ui_flow_browse);
 
-	GebrGeoXmlFlow *prev_flow = gebr.flow;
-
 	flow_free();
 
 	gebr_flow_set_toolbar_sensitive();
@@ -615,12 +628,10 @@ static void flow_browse_load(void)
 		gtk_widget_show(gebr.ui_flow_browse->revpage_main);
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_warn);
 
-		if (gebr.flow != prev_flow) {
-			gebr.ui_flow_browse->update_graph = TRUE;
-			flow_browse_add_revisions_graph(gebr.flow,
-			                                gebr.ui_flow_browse,
-			                                FALSE);
-		}
+		gebr.ui_flow_browse->update_graph = TRUE;
+		flow_browse_add_revisions_graph(gebr.flow,
+		                                gebr.ui_flow_browse,
+		                                FALSE);
 	} else if (nrows > 1) {
 		gchar *multiple_selection_msg = g_strdup_printf(_("%d Flows selected.\n\n"
 								  "GêBR can take a snapshot\n"
@@ -784,11 +795,6 @@ gebr_flow_browse_revision_delete(const gchar *rev_id)
 		}
 
 		flow_browse_load();
-		/* Redraw graph */
-		gebr.ui_flow_browse->update_graph = TRUE;
-		flow_browse_add_revisions_graph(gebr.flow,
-		                                gebr.ui_flow_browse,
-		                                FALSE);
 	}
 
 }
@@ -978,11 +984,6 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	flow_browse_load();
-	/* Redraw graph */
-	gebr.ui_flow_browse->update_graph = TRUE;
-	flow_browse_add_revisions_graph(gebr.flow,
-	                                gebr.ui_flow_browse,
-	                                FALSE);
 
 	gebr_validator_force_update(gebr.validator);
 	flow_browse_info_update();
