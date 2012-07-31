@@ -738,6 +738,8 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GString *bold_resources = g_string_new("");
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
 	GtkLabel *bold_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "label6"));
+	GtkBox *snapshot_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "snapshot_box"));
+	GtkLabel *snapshot_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "snapshot_label"));
 	const gchar *nprocs;
 	const gchar *niceness;
 	gint n_servers, i;
@@ -747,6 +749,17 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	if (!job)
 		return;
 
+	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
+
+	if (snapshot_title && *snapshot_title) {
+		gchar *snapshot_markup = g_strdup_printf(_("<span size='small' font_style='italic'>Snapshot %s</span>\n"),
+							 snapshot_title);
+		gtk_label_set_markup(snapshot_label, snapshot_markup);
+		g_free(snapshot_markup);
+		gtk_widget_show(GTK_WIDGET(snapshot_box));
+	} else {
+		gtk_widget_hide(GTK_WIDGET(snapshot_box));
+	}
 	servers = gebr_job_get_servers(job, &n_servers);
 	total_procs = gebr_job_get_total_procs(job);
 	gebr_job_get_resources(job, &nprocs, &niceness);
@@ -1086,31 +1099,21 @@ compute_subheader_label(GebrJob *job,
 	const gchar *finish_date = gebr_job_get_finish_date(job);
 	GString *start = g_string_new(NULL);
 	GString *finish = g_string_new(NULL);
-	GString *snapshot_text = g_string_new("");
-
-	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
-
-	if (snapshot_title && *snapshot_title) {
-		g_string_append_printf(snapshot_text,
-				       _("<span size='small' font_style='italic'>* Snapshot %s</span>\n"),
-				       snapshot_title);
-	}
 
 	/* start date (may have failed, never started) */
 	if (start_date && strlen(start_date))
-		g_string_append_printf(start, _("%sStarted at %s"),
-				       snapshot_text->str,
+		g_string_append_printf(start, _("Started at %s"),
 				       gebr_localized_date(start_date));
 
 	/* finish date */
 	if (finish_date && strlen(finish_date)) {
 		const gchar *tmp = gebr_localized_date(finish_date);
 		if (status == JOB_STATUS_FINISHED)
-			g_string_append_printf(finish, _("%sFinished at %s"), snapshot_text->str, tmp);
+			g_string_append_printf(finish, _("Finished at %s"), tmp);
 		else if (status == JOB_STATUS_CANCELED)
-			g_string_append_printf(finish, _("%sCanceled at %s"), snapshot_text->str, tmp);
+			g_string_append_printf(finish, _("Canceled at %s"), tmp);
 		else if (status == JOB_STATUS_FAILED)
-			g_string_append_printf(finish, _("%sFailed at %s"), snapshot_text->str, tmp);
+			g_string_append_printf(finish, _("Failed at %s"), tmp);
 	}
 
 	if (status == JOB_STATUS_FINISHED) {
