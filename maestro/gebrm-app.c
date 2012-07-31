@@ -163,7 +163,6 @@ gebrm_app_send_mpi_flavors(GebrCommProtocolSocket *socket, GebrmDaemon *daemon)
 					      gebr_comm_protocol_defs.mpi_def, 2,
 					      gebrm_daemon_get_address(daemon),
 					      flavors);
-	g_debug("on maestro, function %s,  daemon %s, SENDING MPI FLAVOR: %s", __func__, gebrm_daemon_get_address(daemon), flavors)  ;
 	return TRUE;
 }
 
@@ -205,7 +204,6 @@ send_groups_definitions(GebrCommProtocolSocket *client, GebrmDaemon *daemon)
 	const gchar *server = gebrm_daemon_get_address(daemon);
 	const gchar *tags = gebrm_daemon_get_tags(daemon);
 
-	g_debug("Sending groups %s (%s) to gebr", tags, server);
 	gebr_comm_protocol_socket_oldmsg_send(client, FALSE,
 					      gebr_comm_protocol_defs.agrp_def, 2,
 					      server, tags);
@@ -895,18 +893,22 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 
 	const gchar *start_date = gebrm_job_get_start_date(job);
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
+	const gchar *snapshot_title = gebrm_job_get_snapshot_title(job);
+	const gchar *snapshot_id = gebrm_job_get_snapshot_id(job);
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.job_def, 22,
+						      gebr_comm_protocol_defs.job_def, 24,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
+						      gebrm_job_get_flow_id(job),
 						      gebrm_job_get_nprocs(job),
 						      gebrm_job_get_servers_list(job),
 						      gebrm_job_get_hostname(job),
 						      gebrm_job_get_title(job),
-						      gebrm_job_get_snapshot_title(job),
+						      snapshot_title ? snapshot_title : "",
+						      snapshot_id ? snapshot_id : "",
 						      gebrm_job_get_queue(job),
 						      gebrm_job_get_nice(job),
 						      infile,
@@ -956,17 +958,20 @@ on_execution_response(GebrCommRunner *runner,
 static void
 gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *client, GebrCommUri *uri)
 {
-	const gchar *gid         = gebr_comm_uri_get_param(uri, "gid");
-	const gchar *parent_id   = gebr_comm_uri_get_param(uri, "parent_id");
-	const gchar *temp_parent = gebr_comm_uri_get_param(uri, "temp_parent");
-	const gchar *speed       = gebr_comm_uri_get_param(uri, "speed");
-	const gchar *nice        = gebr_comm_uri_get_param(uri, "nice");
-	const gchar *name        = gebr_comm_uri_get_param(uri, "name");
-	const gchar *server_host = gebr_comm_uri_get_param(uri, "server-hostname");
-	const gchar *group_type  = gebr_comm_uri_get_param(uri, "group_type");
-	const gchar *host        = gebr_comm_uri_get_param(uri, "host");
-	const gchar *temp_id     = gebr_comm_uri_get_param(uri, "temp_id");
-	const gchar *paths       = gebr_comm_uri_get_param(uri, "paths");
+	const gchar *gid		= gebr_comm_uri_get_param(uri, "gid");
+	const gchar *parent_id		= gebr_comm_uri_get_param(uri, "parent_id");
+	const gchar *temp_parent	= gebr_comm_uri_get_param(uri, "temp_parent");
+	const gchar *flow_id		= gebr_comm_uri_get_param(uri, "flow_id");
+	const gchar *speed		= gebr_comm_uri_get_param(uri, "speed");
+	const gchar *nice		= gebr_comm_uri_get_param(uri, "nice");
+	const gchar *name		= gebr_comm_uri_get_param(uri, "name");
+	const gchar *server_host	= gebr_comm_uri_get_param(uri, "server-hostname");
+	const gchar *group_type		= gebr_comm_uri_get_param(uri, "group_type");
+	const gchar *host		= gebr_comm_uri_get_param(uri, "host");
+	const gchar *temp_id		= gebr_comm_uri_get_param(uri, "temp_id");
+	const gchar *paths		= gebr_comm_uri_get_param(uri, "paths");
+	const gchar *snapshot_title	= gebr_comm_uri_get_param(uri, "snapshot_title");
+	const gchar *snapshot_id	= gebr_comm_uri_get_param(uri, "snapshot_id");
 
 	if (temp_parent) {
 		parent_id = gebrm_client_get_job_id_from_temp(client,
@@ -995,12 +1000,11 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 						      (GebrGeoXmlDocument **)pproj);
 
 	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
-	gchar *snapshot_title = gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(*pflow));
 
 	GebrmJobInfo info = { 0, };
 	info.title = g_strdup(title);
-	info.snapshot_title = g_strdup(snapshot_title);
 	info.temp_id = g_strdup(temp_id);
+	info.flow_id = g_strdup(flow_id);
 	info.hostname = g_strdup(host);
 	info.parent_id = g_strdup(parent_id);
 	info.servers = g_strdup("");
@@ -1008,15 +1012,20 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	info.input = gebr_geoxml_flow_io_get_input_real(*pflow);
 	info.output = gebr_geoxml_flow_io_get_output_real(*pflow);
 	info.error = gebr_geoxml_flow_io_get_error(*pflow);
+	info.snapshot_title = g_strdup(snapshot_title);
+	info.snapshot_id = g_strdup(snapshot_id);
+
 	if (server_host)
 		info.group = g_strdup(server_host);
 	else
 		info.group = g_strdup(name);
+
 	info.group_type = g_strdup(group_type);
 	info.speed = g_strdup(speed);
 	info.submit_date = g_strdup(gebr_iso_date());
 
 	GebrmJob *job = gebrm_job_new();
+
 	gebrm_client_add_temp_id(client, temp_id, gebrm_job_get_id(job));
 	g_debug("Associating temp_id %s with id %s", temp_id, gebrm_job_get_id(job));
 
@@ -1047,7 +1056,6 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	if (!min_subset_servers) {
 		gebrm_job_set_status(job, JOB_STATUS_FAILED);
 
-		g_debug("BUILDING THE MPI LIST...");
 		GString *tmp = g_string_new(NULL);
 		for (GList *i = mpi_flavors; i; i = i->next) {
 			g_string_append(tmp, " and ");
@@ -1807,14 +1815,16 @@ send_messages_of_jobs(const gchar *id,
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 22,
+	                                      gebr_comm_protocol_defs.job_def, 24,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
+					      gebrm_job_get_flow_id(job),
 					      gebrm_job_get_nprocs(job),
 	                                      gebrm_job_get_servers_list(job),
 	                                      gebrm_job_get_hostname(job),
 	                                      gebrm_job_get_title(job),
 	                                      gebrm_job_get_snapshot_title(job),
+	                                      gebrm_job_get_snapshot_id(job),
 	                                      gebrm_job_get_queue(job),
 	                                      gebrm_job_get_nice(job),
 	                                      infile,
