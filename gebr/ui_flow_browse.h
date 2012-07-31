@@ -136,5 +136,11 @@ void gebr_flow_browse_hide(GebrUiFlowBrowse *self);
 
 void gebr_flow_browse_show(GebrUiFlowBrowse *self);
 
+void flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
+                      GtkCellRenderer *cell,
+                      GtkTreeModel *model,
+                      GtkTreeIter *iter,
+                      gpointer data);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

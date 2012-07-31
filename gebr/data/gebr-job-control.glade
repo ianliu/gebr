@@ -37,6 +37,9 @@
                           <object class="GtkCellRendererText" id="tv_title_cell"/>
                         </child>
                         <child>
+                          <object class="GtkCellRendererPixbuf" id="tv_icon_snap"/>
+                        </child>
+                        <child>
                           <object class="GtkCellRendererText" id="tv_time_cell">
                             <property name="sensitive">False</property>
                           </object>

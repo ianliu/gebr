@@ -119,11 +119,18 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), NULL);
 	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_speed_slider_sensitiveness), ui_flow_browse);
 
+	/* Text column */
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
+	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FB_TITLE);
 
+	/* Icon column */
+	renderer = gtk_cell_renderer_pixbuf_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, flow_browse_snapshot_icon, NULL, NULL);
 
 	/*
 	 * Right side: flow info tab
@@ -1016,4 +1023,24 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
 
 	flow_browse_info_update();
+}
+
+void
+flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
+                      GtkCellRenderer *cell,
+                      GtkTreeModel *model,
+                      GtkTreeIter *iter,
+                      gpointer data)
+{
+	GebrGeoXmlFlow * flow;
+
+	gtk_tree_model_get(model, iter,
+	                   FB_XMLPOINTER, &flow,
+	                   -1);
+
+	if (gebr_geoxml_flow_get_revisions_number(flow) > 0)
+		g_object_set(cell, "stock-id", "gtk-dnd-multiple", NULL);
+	else
+		g_object_set(cell, "stock-id", NULL, NULL);
+
 }

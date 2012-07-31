@@ -1013,13 +1013,7 @@ title_column_data_func(GtkTreeViewColumn *tree_column,
 	GebrJob *job;
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
-	gchar *title = NULL;
-	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
-
-	if (snapshot_title && *snapshot_title)
-		title = g_markup_printf_escaped("%s *", gebr_job_get_title(job));
-	else 
-		title = g_strdup(gebr_job_get_title(job));
+	gchar *title = g_strdup(gebr_job_get_title(job));
 
 	g_object_set(cell, "markup", title, NULL);
 	g_free(title);
@@ -1060,6 +1054,26 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 	g_free(relative_time_msg);
 
 	return;
+}
+
+static void
+snap_icon_column_data_func(GtkTreeViewColumn *tree_column,
+		      GtkCellRenderer *cell,
+		      GtkTreeModel *tree_model,
+		      GtkTreeIter *iter,
+		      gpointer data)
+{
+	GebrJob *job;
+
+	gtk_tree_model_get(tree_model, iter,
+	                   JC_STRUCT, &job,
+	                   -1);
+
+	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
+	if (snapshot_title && *snapshot_title)
+		g_object_set(cell, "stock-id", "gtk-dnd-multiple", NULL);
+	else
+		g_object_set(cell, "stock-id", NULL, NULL);
 }
 
 static void
@@ -1901,7 +1915,7 @@ gebr_job_control_new(void)
 	g_object_unref(filter);
 	g_object_unref(sort);
 
-	gtk_widget_set_size_request(GTK_WIDGET(treeview), 150, -1);
+	gtk_widget_set_size_request(GTK_WIDGET(treeview), 280, -1);
 
 	jc->priv->view = GTK_WIDGET(treeview);
 
@@ -1919,6 +1933,10 @@ gebr_job_control_new(void)
 
 	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_title_cell"));
 	gtk_tree_view_column_set_cell_data_func(col, renderer, title_column_data_func, NULL, NULL);
+
+	/* Snapshot icon column */
+	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_icon_snap"));
+	gtk_tree_view_column_set_cell_data_func(col, renderer, snap_icon_column_data_func, NULL, NULL);
 
 	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_time_cell"));
 	gtk_tree_view_column_set_cell_data_func(col, renderer, time_column_data_func, NULL, NULL);
