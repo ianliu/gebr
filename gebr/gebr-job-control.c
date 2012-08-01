@@ -572,7 +572,6 @@ fill_issues_properties(GebrJobControl *jc,
                        const gchar *issues,
                        GebrJob *job)
 {
-	g_debug("on %s", __func__);
 	const gchar *stock_id;
 	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_label"));
@@ -659,7 +658,6 @@ on_job_issued(GebrJob *job,
 	      const gchar *issues,
 	      GebrJobControl *jc)
 {
-	g_debug("on %s", __func__);
 	fill_issues_properties(jc, issues, job);
 }
 
@@ -738,7 +736,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GString *bold_resources = g_string_new("");
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
 	GtkLabel *bold_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "label6"));
-	GtkBox *snapshot_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "snapshot_box"));
+	//GtkBox *snapshot_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "snapshot_box"));
 	GtkLabel *snapshot_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "snapshot_label"));
 	const gchar *nprocs;
 	const gchar *niceness;
@@ -752,13 +750,13 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
 
 	if (snapshot_title && *snapshot_title) {
-		gchar *snapshot_markup = g_strdup_printf(_("<span size='small' font_style='italic'>Snapshot %s</span>\n"),
+		gchar *snapshot_markup = g_strdup_printf(_("<span> (Snapshot %s)</span>"),
 							 snapshot_title);
 		gtk_label_set_markup(snapshot_label, snapshot_markup);
 		g_free(snapshot_markup);
-		gtk_widget_show(GTK_WIDGET(snapshot_box));
+		gtk_widget_show(GTK_WIDGET(snapshot_label));
 	} else {
-		gtk_widget_hide(GTK_WIDGET(snapshot_box));
+		gtk_widget_hide(GTK_WIDGET(snapshot_label));
 	}
 	servers = gebr_job_get_servers(job, &n_servers);
 	total_procs = gebr_job_get_total_procs(job);

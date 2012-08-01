@@ -614,9 +614,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			g_debug("Daemon state change (%s) %s", addr->str, ssta->str);
 
-			g_debug("Daemon %s Infos: NCORES: %s | CLOCK: %s | MODEL: %s | MEMORY: %s",
-			        addr->str, ncores->str, cpu_clock->str, cpu_model->str, memory->str);
-
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
@@ -927,8 +924,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, NULL);
 
-			g_debug("Emit signal to change AC!!!!!");
-
 			g_signal_emit(maestro, signals[AC_CHANGE], 0, is_ac, daemon);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -941,9 +936,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			GString *daemon_addr = g_list_nth_data(arguments, 0);
 			GString *mpi_flavors = g_list_nth_data(arguments, 1);
-
-
-			g_debug("RECEIVING daemon: %s, MPI: %s", daemon_addr->str, mpi_flavors->str);
 
 			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, daemon_addr->str);
 			if (!daemon)

@@ -690,9 +690,12 @@ gebr_job_set_status(GebrJob *job, GebrCommJobStatus status, const gchar *paramet
 	switch(status) {
 	case JOB_STATUS_RUNNING:
 		gebr_job_set_start_date(job, parameter);
+		gebr_job_set_finish_date(job, parameter);
 		break;
 	case JOB_STATUS_CANCELED:
 	case JOB_STATUS_FAILED:
+		gebr_job_set_finish_date(job, parameter);
+		break;
 	case JOB_STATUS_FINISHED:
 		gebr_job_set_finish_date(job, parameter);
 		break;
