@@ -68,6 +68,7 @@ typedef struct {
 	gchar *temp_id;
 	gchar *title;
 	gchar *flow_id;
+	gchar *flow_title;
 	gchar *hostname;
 	gchar *parent_id;
 	gchar *servers;
@@ -119,6 +120,8 @@ GebrmJob *gebrm_job_find(const gchar *rid);
 const gchar *gebrm_job_get_title(GebrmJob *job);
 
 const gchar *gebrm_job_get_flow_id(GebrmJob *job);
+
+const gchar *gebrm_job_get_flow_title(GebrmJob *job);
 
 const gchar *gebrm_job_get_snapshot_title(GebrmJob *job);
 

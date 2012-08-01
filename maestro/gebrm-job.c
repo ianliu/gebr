@@ -77,6 +77,7 @@ gebrm_job_finalize(GObject *object)
 	g_free(job->priv->info.id);
 	g_free(job->priv->info.title);
 	g_free(job->priv->info.flow_id);
+	g_free(job->priv->info.flow_title);
 	g_free(job->priv->info.hostname);
 	g_free(job->priv->info.parent_id);
 	g_free(job->priv->info.nice);
@@ -316,6 +317,7 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.title = g_strdup(info->title);
 	job->priv->info.temp_id = g_strdup(info->temp_id);
 	job->priv->info.flow_id = g_strdup(info->flow_id);
+	job->priv->info.flow_title = g_strdup(info->flow_title);
 	job->priv->info.hostname = g_strdup(info->hostname);
 	job->priv->info.parent_id = g_strdup(info->parent_id);
 	job->priv->info.nice = g_strdup(info->nice);
@@ -364,6 +366,12 @@ const gchar *
 gebrm_job_get_flow_id(GebrmJob *job)
 {
 	return job->priv->info.flow_id;
+}
+
+const gchar *
+gebrm_job_get_flow_title(GebrmJob *job)
+{
+	return job->priv->info.flow_title;
 }
 
 void
