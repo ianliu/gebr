@@ -1053,8 +1053,11 @@ gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
 	GtkTreePath *path;
 	GtkTreeViewColumn *column;
 	gtk_tree_view_get_cursor(tree_view, &path, &column);
-	gint pos, wid;
 
+	if (!column || !path)
+		return;
+
+	gint pos, wid;
 	if(!gtk_tree_view_column_cell_get_position(column, ui_flow_browse->snap_renderer, &pos, &wid))
 		return;
 
