@@ -130,6 +130,38 @@ void flow_delete(gboolean confirm)
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 
+	gint current_page = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	if(rows->next == NULL && current_page == NOTEBOOK_PAGE_FLOW_BROWSE) {
+		GebrGeoXmlDocument *flow;
+		gchar *flow_id;
+
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, rows->data);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		                   FB_FILENAME, &flow_id,
+		                   FB_XMLPOINTER, &flow,
+		                   -1);
+
+		if (gebr_geoxml_flow_get_revisions_number(GEBR_GEOXML_FLOW(flow)) > 0) {
+			if (g_list_find_custom(gebr.ui_flow_browse->select_flows, flow_id, (GCompareFunc)g_strcmp0)) {
+				gchar *str = g_strdup_printf("delete\b%s\n",flow_id);
+				GString *action = g_string_new(str);
+
+				if (gebr_comm_process_write_stdin_string(gebr.ui_flow_browse->graph_process, action) == 0)
+					g_debug("Fail to delete snapshots!");
+
+				g_free(str);
+				g_string_free(action, TRUE);
+				g_free(flow_id);
+				g_list_free(rows);
+				return;
+			}
+		}
+		g_free(flow_id);
+	}
+	g_list_free(rows);
+
 	if (confirm && gebr_gui_confirm_action_dialog(_("Delete Flow"),
 						      _("Are you sure you want to delete the selected Flow(s)?")) == FALSE)
 		return;

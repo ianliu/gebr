@@ -56,26 +56,6 @@ static void flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
                                             gboolean keep_selection);
 
 
-static gboolean remove_accel;
-
-static void
-on_snapshots_focus_in(void)
-{
-	if (!remove_accel) {
-		remove_accel = TRUE;
-		gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
-	}
-}
-
-static void
-on_snapshots_focus_out(void)
-{
-	if (remove_accel) {
-		remove_accel = FALSE;
-		gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
-	}
-}
-
 GebrUiFlowBrowse *flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
@@ -474,13 +454,7 @@ graph_process_read_stderr(GebrCommProcess * process,
 
 	gchar **action = g_strsplit(output->str, ":", -1);
 
-	if (!g_strcmp0(action[0], "focus-in")) {
-		on_snapshots_focus_in();
-	}
-	else if (!g_strcmp0(action[0], "focus-out")) {
-		on_snapshots_focus_out();
-	}
-	else if (!g_strcmp0(action[0], "revert")) {
+	if (!g_strcmp0(action[0], "revert")) {
 		gebr_flow_browse_revision_revert(action[1]);
 	}
 	else if (!g_strcmp0(action[0], "delete")) {
