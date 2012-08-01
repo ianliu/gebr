@@ -1295,7 +1295,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
 	if (mpi == NULL)
 		g_string_append_printf(job->parent.cmd_line, "%s%s ",
-				       job->is_parallelizable ? "$exec ":"",
+				       "$exec ",
 				       binary);
 	else {
 		gchar * mpicmd;
@@ -1443,7 +1443,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (mpi == NULL)
 			g_string_append_printf(job->parent.cmd_line, "%s %s%s ",
 					       sep,
-					       job->is_parallelizable ? "$exec ":"",
+					       "$exec ",
 					       binary);
 		else {
 			gchar * mpicmd;
@@ -1518,8 +1518,11 @@ static void job_assembly_cmdline(GebrdJob *job)
 			g_string_append(job->parent.cmd_line, " ) &\nPIDS=\"$! $PIDS\"");
 			g_string_prepend_c(job->parent.cmd_line, '(');
 		} else {
-			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
-						 n, expr_buf->str, str_buf->str);
+			nice = job->niceness;
+			prefix = g_strdup_printf("NICE=%d\n"
+						 "exec=\"nice -n $NICE\"\n"
+						 "for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
+						 nice, n, expr_buf->str, str_buf->str);
 		}
 		if (!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
 		    strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0 && previous_stdout) {
@@ -1543,8 +1546,13 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_free(n);
 	} else {
 		assemble_bc_cmd_line (expr_buf);
-		g_string_prepend(job->parent.cmd_line, str_buf->str);
-		g_string_prepend(job->parent.cmd_line, expr_buf->str);
+		gchar *prefix = g_strdup_printf("NICE=%d\n"
+						"exec=\"nice -n $NICE\"\n"
+						"%s\n%s",
+						job->niceness, expr_buf->str, str_buf->str);
+
+		g_string_prepend(job->parent.cmd_line, prefix);
+		g_free(prefix);
 	}
 
 	/* Creating Line paths */
