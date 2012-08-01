@@ -56,18 +56,24 @@ static void flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
                                             gboolean keep_selection);
 
 
-static gboolean
+static gboolean remove_accel;
+
+static void
 on_snapshots_focus_in(void)
 {
-	gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
-	return FALSE;
+	if (!remove_accel) {
+		remove_accel = TRUE;
+		gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+	}
 }
 
-static gboolean
+static void
 on_snapshots_focus_out(void)
 {
-	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
-	return FALSE;
+	if (remove_accel) {
+		remove_accel = FALSE;
+		gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+	}
 }
 
 GebrUiFlowBrowse *flow_browse_setup_ui()
