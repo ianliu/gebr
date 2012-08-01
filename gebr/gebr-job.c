@@ -36,6 +36,7 @@ struct _GebrJobPriv {
 
 	gdouble exec_speed;
 	gchar *flow_id;
+	gchar *flow_title;
 	gchar *title;
 	gchar *queue;
 	gchar *hostname;
@@ -91,6 +92,7 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->run_type);
 	g_free(job->priv->title);
 	g_free(job->priv->flow_id);
+	g_free(job->priv->flow_title);
 	g_free(job->priv->hostname);
 	g_free(job->priv->runid);
 	g_free(job->priv->queue);
@@ -667,6 +669,18 @@ void
 gebr_job_set_flow_id(GebrJob *job, const gchar *flow_id)
 {
 	job->priv->flow_id = g_strdup(flow_id);
+}
+
+const gchar *
+gebr_job_get_flow_title(GebrJob *job)
+{
+	return job->priv->flow_title;
+}
+
+void
+gebr_job_set_flow_title(GebrJob *job, const gchar *flow_title)
+{
+	job->priv->flow_title = g_strdup(flow_title);
 }
 
 void

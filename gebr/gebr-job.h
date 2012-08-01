@@ -180,6 +180,10 @@ const gchar *gebr_job_get_flow_id(GebrJob *job);
 
 void gebr_job_set_flow_id(GebrJob *job, const gchar *flow_id);
 
+const gchar *gebr_job_get_flow_title(GebrJob *job);
+
+void gebr_job_set_flow_title(GebrJob *job, const gchar *flow_title);
+
 gint gebr_job_get_total(GebrJob *job);
 
 GebrJobTask *gebr_job_get_tasks(GebrJob *job, gint *n);
