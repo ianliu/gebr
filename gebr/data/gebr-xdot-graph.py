@@ -174,6 +174,7 @@ class MyDotWindow(xdot.DotWindow):
                
                if keep_selection == "no":
                    self.flows[self.current_flow] = []
+                   self.on_url_unselect_all(None, None, None)
     
                # Set on dictionary a dotfile with id of flow
                if self.flows.has_key(id_flow):
