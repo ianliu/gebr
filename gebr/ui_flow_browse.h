@@ -49,12 +49,16 @@ typedef struct {
 	GtkWidget *widget;
 	GtkListStore *store;
 	GtkWidget *view;
+	GtkCellRenderer *text_renderer;
+	GtkCellRenderer *snap_renderer;
 
 	GtkWidget *info_window;
 	GtkWidget *warn_window;
 
 	GtkWidget *revisions_button;
 
+	GtkWidget *notebook;
+	gint notebook_page;
 	GtkWidget *revpage_main;
 	GtkWidget *revpage_warn;
 	GtkWidget *revpage_warn_label;
@@ -136,11 +140,14 @@ void gebr_flow_browse_hide(GebrUiFlowBrowse *self);
 
 void gebr_flow_browse_show(GebrUiFlowBrowse *self);
 
-void flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
+void gebr_flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
                       GtkCellRenderer *cell,
                       GtkTreeModel *model,
                       GtkTreeIter *iter,
                       gpointer data);
+
+void gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
+                                        GebrUiFlowBrowse *ui_flow_browse);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

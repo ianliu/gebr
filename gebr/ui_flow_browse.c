@@ -120,17 +120,20 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_speed_slider_sensitiveness), ui_flow_browse);
 
 	/* Text column */
-	renderer = gtk_cell_renderer_text_new();
+	ui_flow_browse->text_renderer = renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
 	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FB_TITLE);
 
 	/* Icon column */
-	renderer = gtk_cell_renderer_pixbuf_new();
+	ui_flow_browse->snap_renderer = renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
-	gtk_tree_view_column_set_cell_data_func(col, renderer, flow_browse_snapshot_icon, NULL, NULL);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_flow_browse_snapshot_icon, NULL, NULL);
+
+	g_signal_connect(ui_flow_browse->view, "cursor-changed",
+	                 G_CALLBACK(gebr_flow_browse_select_snapshot_column), ui_flow_browse);
 
 	/*
 	 * Right side: flow info tab
@@ -241,7 +244,8 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/**
 	 * Create Notebook
 	 */
-	GtkWidget *notebook = gtk_notebook_new();
+	GtkWidget *notebook;
+	ui_flow_browse->notebook = notebook = gtk_notebook_new();
 	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_TOP);
 	gtk_widget_set_can_focus(notebook, FALSE);
 
@@ -1009,7 +1013,7 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 }
 
 void
-flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
+gebr_flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
                       GtkCellRenderer *cell,
                       GtkTreeModel *model,
                       GtkTreeIter *iter,
@@ -1026,4 +1030,41 @@ flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
 	else
 		g_object_set(cell, "stock-id", NULL, NULL);
 
+}
+
+void
+gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
+                                        GebrUiFlowBrowse *ui_flow_browse)
+{
+	GtkTreeIter iter;
+	gebr_gui_gtk_tree_view_turn_to_single_selection(tree_view);
+	if (!flow_browse_get_selected(&iter, TRUE))
+		return;
+
+	gebr_gui_gtk_tree_view_set_drag_source_dest(tree_view);
+
+	GebrGeoXmlFlow *flow;
+	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_browse->store), &iter,
+	                   FB_XMLPOINTER, &flow, -1);
+
+	if (!gebr_geoxml_flow_get_revisions_number(flow))
+		return;
+
+	GtkTreePath *path;
+	GtkTreeViewColumn *column;
+	gtk_tree_view_get_cursor(tree_view, &path, &column);
+	gint pos, wid;
+
+	if(!gtk_tree_view_column_cell_get_position(column, ui_flow_browse->snap_renderer, &pos, &wid))
+		return;
+
+	gchar *path_str = gtk_tree_path_to_string(path);
+
+	gtk_tree_view_unset_rows_drag_source(tree_view);
+
+	ui_flow_browse->notebook_page = 1;
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(ui_flow_browse->notebook), ui_flow_browse->notebook_page);
+
+	g_free(path_str);
+	gtk_tree_path_free(path);
 }
