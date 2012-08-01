@@ -1106,7 +1106,7 @@ gebr_flow_set_toolbar_sensitive(void)
 	gboolean sensitive = TRUE;
 	gboolean sensitive_exec_slider;
 	gboolean maestro_disconnected = FALSE;
-	gboolean no_line_selected = FALSE;
+	gboolean line_selected = TRUE;
 
 	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED) {
 		sensitive = FALSE;
@@ -1115,7 +1115,7 @@ gebr_flow_set_toolbar_sensitive(void)
 
 	if (!gebr.line) {
 		sensitive = FALSE;
-		no_line_selected = TRUE;
+		line_selected = FALSE;
 	}
 
 	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
@@ -1149,21 +1149,27 @@ gebr_flow_set_toolbar_sensitive(void)
 		gtk_widget_show(gebr.ui_flow_browse->info_window);
 		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
 	} else {
-		if (no_line_selected)
+		if (!line_selected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
-		else if (maestro_disconnected) {
+		} else if (maestro_disconnected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
 					   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
 					     "Try changing its maestro or connecting it."));
-		} else if (flows_nrows > 1) {
-			gchar *multiple_flows_msg = g_markup_printf_escaped(_("%d Flows selected.\n\n"
-									    "GêBR can execute them\n"
-									    "- <i>sequentially</i> (Shift+R) or\n"
-									    "- <i>parallelly</i> (Shift+Ctrl+R)"),
-									    flows_nrows);
+		} else if (flows_nrows  !=  1) {
+			gchar *label_msg;
+			if (flows_nrows >1 )
+				label_msg = g_markup_printf_escaped(_("%d Flows selected.\n\n"
+						"GêBR can execute them\n"
+						"- <i>sequentially</i> (Shift+R) or\n"
+						"- <i>parallelly</i> (Shift+Ctrl+R)"),
+						flows_nrows);
+			else
+				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
+						"Click on <i>New Flow</i> to create a new one\n"
+						"or import one through the <i>Import Flow</i> icon."));
 
-			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), multiple_flows_msg);
-			g_free(multiple_flows_msg);
+			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), label_msg);
+			g_free(label_msg);
 
 			g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
 			g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);

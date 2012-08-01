@@ -155,11 +155,12 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED && !gebr.line) {
 		ui_flow_browse->warn_window = gtk_label_new(_("No Line is selected\n"));
-	else
+	} else
 		ui_flow_browse->warn_window = gtk_label_new(_("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
 							      "Try changing its maestro or connecting it."));
+
 	gtk_widget_set_sensitive(ui_flow_browse->warn_window, FALSE);
 	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->warn_window, TRUE, TRUE, 0);
 
@@ -282,6 +283,7 @@ void flow_browse_info_update(void)
 		g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
 
 		/* Update revisions tab */
+		gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label), _("No Flow selected."));
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 
@@ -323,7 +325,7 @@ void flow_browse_info_update(void)
 
                 if (gebr_geoxml_flow_get_parent_revision(gebr.flow, &date, &comment, NULL))
                 	str_tmp = g_markup_printf_escaped(_("<b>Snapshot of origin:</b>  %s <span size='small'>(taken in %s)</span>"), comment, date);
-                else if(gebr_geoxml_flow_get_revisions_number(gebr.flow))
+                else if (gebr_geoxml_flow_get_revisions_number(gebr.flow))
                 	str_tmp = g_markup_printf_escaped(_("This Flow has %ld snapshots, but it is not linked with anyone"), gebr_geoxml_flow_get_revisions_number(gebr.flow));
                 else
                 	str_tmp = g_strdup(_("This Flow has no snapshots"));
@@ -635,7 +637,7 @@ static void flow_browse_load(void)
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 
 	} else {
-		const gchar *no_snapshots_msg = _("There are no snapshots.\n"
+		const gchar *no_snapshots_msg = _("There are no snapshots.\n\n"
 						  "A snapshot stores the settings of "
 						  "your flow so you can restore it at any "
 						  "moment. To take a snapshot, just click "
