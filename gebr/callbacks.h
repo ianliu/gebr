@@ -81,6 +81,11 @@ void on_flow_import_activate(void);
 void on_flow_execute_parallel_activate(void);
 
 /**
+ * Call to validate a especified Flow
+ */
+gboolean flow_check_before_execution(GebrGeoXmlFlow *flow);
+
+/**
  * Call #flow_export> from #flow.c
  */
 void on_flow_export_activate(void);
