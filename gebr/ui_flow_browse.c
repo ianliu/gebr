@@ -989,7 +989,7 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 
 	gebr_validator_force_update(gebr.validator);
 	flow_browse_info_update();
-
+	update_speed_slider_sensitiveness(gebr.ui_flow_browse);
 	gchar *last_date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	gebr_flow_set_snapshot_last_modify_date(last_date);
 	g_free(snapshot_last_modified_date);
