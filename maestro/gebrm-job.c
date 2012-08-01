@@ -388,7 +388,7 @@ gebrm_job_append_task(GebrmJob *job, GebrmTask *task)
 	switch(status)
 	{
 	case JOB_STATUS_FAILED:
-		gebrm_job_change_task_status(task, job->priv->status, status, "", job);
+		gebrm_job_change_task_status(task, job->priv->status, status, gebr_iso_date(), job);
 		break;
 	case JOB_STATUS_FINISHED:
 	case JOB_STATUS_CANCELED:

@@ -356,7 +356,7 @@ xmlout:
 out:
 	if (error) {
 		keep_polling = FALSE;
-		job_status_notify(job, JOB_STATUS_FAILED, "");
+		job_status_notify(job, JOB_STATUS_FAILED, gebr_iso_date());
 	}
 
 	return keep_polling;
@@ -669,7 +669,7 @@ void job_run_flow(GebrdJob *job)
 	goto out;
 
 err:	/* error */
-	job_status_notify(job, JOB_STATUS_FAILED, "");
+	job_status_notify(job, JOB_STATUS_FAILED, gebr_iso_date());
 
 out:	
 	/* frees */
