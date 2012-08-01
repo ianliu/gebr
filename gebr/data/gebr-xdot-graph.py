@@ -37,12 +37,12 @@ class MyDotWindow(xdot.DotWindow):
     def on_focus_in_event(self, widget, event):
         sys.stderr.write("focus-in:\n")
         sys.stderr.flush()
-        return False
+        return True
     
     def on_focus_out_event(self, widget, event):
         sys.stderr.write("focus-out:\n")
         sys.stderr.flush()
-        return False
+        return True
     
     def delete_selected_snapshots(self):
         if self.flows.has_key(self.current_flow) and self.flows[self.current_flow]:
@@ -54,7 +54,8 @@ class MyDotWindow(xdot.DotWindow):
         
     def on_key_press_event(self, widget, event):
          if event.keyval == gtk.keysyms.Delete:
-             self.delete_selected_snapshots()
+              if self.flows.has_key(self.current_flow) and "head" not in self.flows[self.current_flow]:
+                  self.delete_selected_snapshots()
          return False
     
     def on_revert_clicked(self, widget, url):
