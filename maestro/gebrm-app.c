@@ -899,10 +899,11 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.job_def, 24,
+						      gebr_comm_protocol_defs.job_def, 25,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_flow_id(job),
+						      gebrm_job_get_flow_title(job),
 						      gebrm_job_get_nprocs(job),
 						      gebrm_job_get_servers_list(job),
 						      gebrm_job_get_hostname(job),
@@ -962,6 +963,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	const gchar *parent_id		= gebr_comm_uri_get_param(uri, "parent_id");
 	const gchar *temp_parent	= gebr_comm_uri_get_param(uri, "temp_parent");
 	const gchar *flow_id		= gebr_comm_uri_get_param(uri, "flow_id");
+	const gchar *flow_title		= gebr_comm_uri_get_param(uri, "flow_title");
 	const gchar *speed		= gebr_comm_uri_get_param(uri, "speed");
 	const gchar *nice		= gebr_comm_uri_get_param(uri, "nice");
 	const gchar *name		= gebr_comm_uri_get_param(uri, "name");
@@ -1005,6 +1007,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	info.title = g_strdup(title);
 	info.temp_id = g_strdup(temp_id);
 	info.flow_id = g_strdup(flow_id);
+	info.flow_title = g_strdup(flow_title);
 	info.hostname = g_strdup(host);
 	info.parent_id = g_strdup(parent_id);
 	info.servers = g_strdup("");
@@ -1815,10 +1818,11 @@ send_messages_of_jobs(const gchar *id,
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 24,
+	                                      gebr_comm_protocol_defs.job_def, 25,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
 					      gebrm_job_get_flow_id(job),
+					      gebrm_job_get_flow_title(job),
 					      gebrm_job_get_nprocs(job),
 	                                      gebrm_job_get_servers_list(job),
 	                                      gebrm_job_get_hostname(job),
