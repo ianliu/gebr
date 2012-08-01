@@ -25,6 +25,7 @@
 #include "ui_flow_browse.h"
 #include "document.h"
 #include "flow.h"
+#include "callbacks.h"
 
 gchar *
 get_line_paths(GebrGeoXmlLine *line)
@@ -412,6 +413,10 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 			g_free(comment);
 		}
 
+		if (!flow_check_before_execution(GEBR_GEOXML_FLOW(snap_flow))) {
+			g_free(snapshot_id);
+			continue;
+		}
 
 		if (is_parallel)
 			id = run_flow(GEBR_GEOXML_FLOW(snap_flow),
