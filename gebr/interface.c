@@ -108,7 +108,7 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("Edit properties"), G_CALLBACK(on_document_properties_activate)},
 	{"flow_dict_edit", "accessories-dictionary", N_("Variables dictionary"),
 		NULL, N_("Edit variables dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
-	{"flow_change_revision", "document-open-recent", N_("Saved status"),
+	{"flow_change_revision", "document-open-recent", N_("Take a Snapshot"),
 		"<Control>S", N_("Take a snapshot"), G_CALLBACK(on_flow_revision_save_activate)},
 	{"flow_import", "document-import", N_("Import"), NULL,
 		N_("Import Flows"), G_CALLBACK(on_flow_import_activate)},
