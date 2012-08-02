@@ -91,38 +91,93 @@ class MyDotWindow(xdot.DotWindow):
         if self.flows[current]:
             sys.stderr.write("select:")
         else:
-            sys.stderr.write("unselect:")            
+            sys.stderr.write("unselect:")    
+            
+            
+    # Methods to execute flow
+    def on_execute_single(self, widget, url):
+        snap = "run:single:" + url
+        sys.stderr.write(str(snap))
+        
+    def create_list_and_execution(self, type):
+        list_snaps = "run:" + type + ":"
+        self.flows[self.current_flow].sort()
+        for snap in self.flows[self.current_flow]:
+            list_snaps = list_snaps + snap + ","
+        sys.stderr.write(str(list_snaps[:-1]))  
+    
+    def on_execute_seq(self, widget, url):
+        self.create_list_and_execution("single")
+        
+    def on_execute_parallel(self, widget, url):
+        self.create_list_and_execution("parallel")
+    
     
     def on_url_clicked(self, widget, url, event):
         self.menu = gtk.Menu()
         self.menu.popup(None, None, None, event.button, event.time, url)
+        
+        multiple_selection = False
+        has_snap = False
+        if self.flows.has_key(self.current_flow):
+            if url in self.flows[self.current_flow]:
+                has_snap = True
+            if not has_snap:
+                self.on_url_unselect_all(widget, url, event)
+            if len(self.flows[self.current_flow]) > 1:
+                multiple_selection = True
+                
+        # Insert execution menu
+        if multiple_selection:
+            # Sequentially
+            execute_single = gtk.MenuItem(_("Execute sequentially"))
+            execute_single.connect("activate", self.on_execute_seq, url)
+            execute_single.show()
+            self.menu.append(execute_single)
+            # Parallel
+            execute_paral = gtk.MenuItem(_("Execute parallel"))
+            execute_paral.connect("activate", self.on_execute_parallel, url)
+            execute_paral.show()
+            self.menu.append(execute_paral)
+        else:
+            execute_single = gtk.MenuItem(_("Execute"))
+            execute_single.connect("activate", self.on_execute_single, url)
+            execute_single.show()
+            self.menu.append(execute_single)
+            
         if url == "head":
+            # Add separator
+            separator =  gtk.SeparatorMenuItem()
+            separator.show()
+            self.menu.append(separator)
+            
             snapshot = gtk.MenuItem(_("Take a Snapshot"))
             snapshot.connect("activate", self.on_snapshot_clicked, url)
             snapshot.show()
             self.menu.append(snapshot)
         else:
-            has_snap = False
             if self.flows.has_key(self.current_flow):
-                if url in self.flows[self.current_flow]:
-                    has_snap = True
-                if not has_snap:
-                    self.on_url_unselect_all(widget, url, event)
+                if "head" in self.flows[self.current_flow]:
+                    self.menu.show_all()
+                    return True
                 
-            revert = gtk.MenuItem(_("Revert"))
-            revert.connect("activate", self.on_revert_clicked, url)
-            revert.show()
-            self.menu.append(revert)
-            if self.flows.has_key(self.current_flow) and "head" in self.flows[self.current_flow]:
-                self.menu.show_all()
-                return True
-            else: 
+                # Add separator
+                separator =  gtk.SeparatorMenuItem()
+                separator.show()
+                self.menu.append(separator)
+                
+                if not multiple_selection:
+                    revert = gtk.MenuItem(_("Revert"))
+                    revert.connect("activate", self.on_revert_clicked, url)
+                    revert.show()
+                    self.menu.append(revert)
+                    
                 delete = gtk.MenuItem(_("Delete"))
                 delete.connect("activate", self.on_delete_clicked, url)
                 delete.show()
                 self.menu.append(delete)
         
-        self.menu.show_all()
+                self.menu.show_all()
         return True
 
     def on_url_activate(self, widget, url, event):
@@ -139,11 +194,7 @@ class MyDotWindow(xdot.DotWindow):
            info = file.split("\b")
            
            if info[0] == "run":
-               list_snaps = "run:"+info[1].strip()+":"
-               self.flows[self.current_flow].sort()
-               for snap in self.flows[self.current_flow]:
-                   list_snaps = list_snaps + snap + ","
-               sys.stderr.write(str(list_snaps[:-1])) 
+               self.create_list_and_execution(info[1].strip())
            
            elif info[0] == "delete":
                id = info[1]
