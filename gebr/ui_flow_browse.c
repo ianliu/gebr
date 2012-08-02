@@ -817,8 +817,8 @@ gebr_flow_browse_revision_delete(const gchar *rev_id)
 							    "you will not be able to recover it later."));
 	else
 		response = gebr_gui_confirm_action_dialog(_("Remove snapshots permanently?"),
-		                                          _("If you choose to remove snapshots "
-							    "you will not be able to recover it later."));
+		                                          _("If you choose to remove these snapshots "
+							    "you will not be able to recover them later."));
 	gdk_threads_leave();
 
 	if (response) {
