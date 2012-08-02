@@ -723,6 +723,8 @@ static void flow_browse_load(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
 				   no_snapshots_msg);
 
+		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
+		gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_flow_browse->store), path, &iter);
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 	}
