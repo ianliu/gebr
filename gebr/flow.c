@@ -763,6 +763,9 @@ gboolean flow_revision_save(void)
 			flow_browse_reload_selected();
 			ret = TRUE;
 
+			if (gebr.ui_flow_browse->notebook_page == 0)
+				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.ui_flow_browse->notebook), 1);
+
 			//document_free(flow);
 			g_free (flow_filename);
 		}
