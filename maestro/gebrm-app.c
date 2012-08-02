@@ -1817,7 +1817,7 @@ send_messages_of_jobs(const gchar *id,
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 25,
+	                                      gebr_comm_protocol_defs.job_def, 24,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
 					      gebrm_job_get_flow_id(job),
