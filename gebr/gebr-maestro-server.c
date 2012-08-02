@@ -652,34 +652,33 @@ parse_messages(GebrCommServer *comm_server,
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 25)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 24)) == NULL)
 				goto err;
 
 			GString *id		    = g_list_nth_data(arguments, 0);
 			GString *temp_id	    = g_list_nth_data(arguments, 1);
 			GString *flow_id	    = g_list_nth_data(arguments, 2);
-			GString *flow_title	    = g_list_nth_data(arguments, 3);
-			GString *nprocs		    = g_list_nth_data(arguments, 4);
-			GString *server_list	    = g_list_nth_data(arguments, 5);
-			GString *hostname	    = g_list_nth_data(arguments, 6);
-			GString *title		    = g_list_nth_data(arguments, 7);
-			GString *snapshot_title     = g_list_nth_data(arguments, 8);
-			GString *snapshot_id	    = g_list_nth_data(arguments, 9);
-			GString *parent_id	    = g_list_nth_data(arguments, 10);
-			GString *nice		    = g_list_nth_data(arguments, 11);
-			GString *input		    = g_list_nth_data(arguments, 12);
-			GString *output		    = g_list_nth_data(arguments, 13);
-			GString *error		    = g_list_nth_data(arguments, 14);
-			GString *submit_date	    = g_list_nth_data(arguments, 15);
-			GString *group		    = g_list_nth_data(arguments, 16);
-			GString *group_type	    = g_list_nth_data(arguments, 17);
-			GString *speed		    = g_list_nth_data(arguments, 18);
-			GString *status		    = g_list_nth_data(arguments, 19);
-			GString *start_date	    = g_list_nth_data(arguments, 20);
-			GString *finish_date	    = g_list_nth_data(arguments, 21);
-			GString *run_type	    = g_list_nth_data(arguments, 22);
-			GString *mpi_owner	    = g_list_nth_data(arguments, 23);
-			GString *mpi_flavor	    = g_list_nth_data(arguments, 24);
+			GString *nprocs		    = g_list_nth_data(arguments, 3);
+			GString *server_list	    = g_list_nth_data(arguments, 4);
+			GString *hostname	    = g_list_nth_data(arguments, 5);
+			GString *title		    = g_list_nth_data(arguments, 6);
+			GString *snapshot_title     = g_list_nth_data(arguments, 7);
+			GString *snapshot_id	    = g_list_nth_data(arguments, 8);
+			GString *parent_id	    = g_list_nth_data(arguments, 9);
+			GString *nice		    = g_list_nth_data(arguments, 10);
+			GString *input		    = g_list_nth_data(arguments, 11);
+			GString *output		    = g_list_nth_data(arguments, 12);
+			GString *error		    = g_list_nth_data(arguments, 13);
+			GString *submit_date	    = g_list_nth_data(arguments, 14);
+			GString *group		    = g_list_nth_data(arguments, 15);
+			GString *group_type	    = g_list_nth_data(arguments, 16);
+			GString *speed		    = g_list_nth_data(arguments, 17);
+			GString *status		    = g_list_nth_data(arguments, 18);
+			GString *start_date	    = g_list_nth_data(arguments, 19);
+			GString *finish_date	    = g_list_nth_data(arguments, 20);
+			GString *run_type	    = g_list_nth_data(arguments, 21);
+			GString *mpi_owner	    = g_list_nth_data(arguments, 22);
+			GString *mpi_flavor	    = g_list_nth_data(arguments, 23);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean prev_exist = FALSE;
@@ -712,7 +711,6 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_mpi_owner(job, mpi_owner->str);
 			gebr_job_set_mpi_flavor(job, mpi_flavor->str);
 			gebr_job_set_flow_id(job, flow_id->str);
-			gebr_job_set_flow_title(job, flow_title->str);
 			gebr_job_set_snapshot_title(job, snapshot_title->str);
 			gebr_job_set_snapshot_id(job, snapshot_id->str);
 

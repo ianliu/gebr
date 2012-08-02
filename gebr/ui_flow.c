@@ -164,7 +164,6 @@ run_flow(GebrGeoXmlFlow *flow,
 		speed = 0.0;
 
 	const gchar *flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
-	const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	if (snapshot_id && *snapshot_id) {
 		GebrGeoXmlRevision *snapshot = gebr_geoxml_flow_get_revision_by_id(gebr.flow, snapshot_id);
 		gebr_geoxml_flow_get_revision_data(snapshot, NULL, NULL, &snapshot_title, NULL);
@@ -275,7 +274,6 @@ run_flow(GebrGeoXmlFlow *flow,
 		gebr_comm_uri_add_param(uri, "parent_id", parent_rid);
 
 	gebr_comm_uri_add_param(uri, "flow_id", flow_id);
-	gebr_comm_uri_add_param(uri, "flow_title", flow_title);
 	gebr_comm_uri_add_param(uri, "speed", speed_str);
 	gebr_comm_uri_add_param(uri, "nice", nice);
 	gebr_comm_uri_add_param(uri, "name", name);
@@ -309,7 +307,6 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_job_set_title(job, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
 	gebr_job_set_nice(job, nice);
 	gebr_job_set_flow_id(job, flow_id);
-	gebr_job_set_flow_title(job, flow_title);
 	gebr_job_set_snapshot_title(job, snapshot_title ? snapshot_title : "");
 	gebr_job_set_snapshot_id(job, snapshot_id ? snapshot_id : "");
 

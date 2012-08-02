@@ -1764,7 +1764,7 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 		gtk_tree_model_get(model, &it, JC_STRUCT, &job, -1);
 
 		flow_id = gebr_job_get_flow_id(job);
-		flow_name = gebr_job_get_flow_title(job);
+		flow_name = gebr_job_get_title(job);
 
 		if (get_flow_iter(jc, flow_id, &iter))
 			continue;
