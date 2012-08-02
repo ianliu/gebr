@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-17 10:23-0300\n"
-"PO-Revision-Date: 2011-11-18 16:09-0200\n"
+"POT-Creation-Date: 2012-08-02 15:34-0300\n"
+"PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -1118,10 +1118,11 @@ msgid "File names must be a valid path."
 msgstr "Nome de arquivo deve ser um caminho válido."
 
 #: ../validate.c:44
-msgid "Titles should not start with spaces or end with punctuation characters."
+#, fuzzy
+msgid ""
+"Titles should be capitalized and have no punctuation characters at the end."
 msgstr ""
-"Títulos não devem começar com espaços ou terminar com caracteres de "
-"pontuação."
+"Títulos devem iniciar com maiúscula e não ter caracteres de pontuação no fim."
 
 #: ../validate.c:49
 msgid ""
@@ -1158,8 +1159,13 @@ msgid "Invalid email address."
 msgstr "Endereço de email inválido."
 
 #: ../validate.c:77
-msgid "Program titles should not have extra spaces."
-msgstr "Títulos de programa não devem ter espaços extras."
+#, fuzzy
+msgid ""
+"Program titles should be capitalized and have no punctuation characters at "
+"the end."
+msgstr ""
+"Títulos de programa deve iniciar com maiúscula e não ter caracteres de "
+"pontuação no fim."
 
 #: ../validate.c:82
 msgid ""
@@ -1332,6 +1338,15 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
+
+#~ msgid ""
+#~ "Titles should not start with spaces or end with punctuation characters."
+#~ msgstr ""
+#~ "Títulos não devem começar com espaços ou terminar com caracteres de "
+#~ "pontuação."
+
+#~ msgid "Program titles should not have extra spaces."
+#~ msgstr "Títulos de programa não devem ter espaços extras."
 
 #~ msgid "- - - -"
 #~ msgstr "- - - -"

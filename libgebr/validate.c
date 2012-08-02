@@ -41,7 +41,7 @@ static GebrValidateCase validate_cases[] = {
 	{GEBR_VALIDATE_CASE_TITLE,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_TABS,
-		N_("Titles should not start with spaces or end with punctuation characters.")},
+		N_("Titles should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_DESCRIPTION,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
@@ -74,7 +74,7 @@ static GebrValidateCase validate_cases[] = {
 	{GEBR_VALIDATE_CASE_PROGRAM_TITLE,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK 
 			| GEBR_VALIDATE_CHECK_MTBLK | GEBR_VALIDATE_CHECK_NOPNT | GEBR_VALIDATE_CHECK_TABS,
-		N_("Program titles should not have extra spaces.")},
+		N_("Program titles should be capitalized and have no punctuation characters at the end.")},
 
 	{GEBR_VALIDATE_CASE_PROGRAM_DESCRIPTION,
 		GEBR_VALIDATE_CHECK_EMPTY | GEBR_VALIDATE_CHECK_CAPIT | GEBR_VALIDATE_CHECK_NOBLK
@@ -294,15 +294,15 @@ gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gcha
 	GString *msg = g_string_new(_("<b>Click on the icon to fix:</b>"));
 	if (failed & GEBR_VALIDATE_CHECK_CAPIT)
 		g_string_append(msg, _("\n - Capitalize first letter"));
-	if (failed & GEBR_VALIDATE_CHECK_NOBLK)
+	else if (failed & GEBR_VALIDATE_CHECK_NOBLK)
 		g_string_append(msg, _("\n - Remove spaces at the beginning/end"));
-	if (failed & GEBR_VALIDATE_CHECK_MTBLK)
+	else if (failed & GEBR_VALIDATE_CHECK_MTBLK)
 		g_string_append(msg, _("\n - Remove multiples spaces"));
-	if (failed & GEBR_VALIDATE_CHECK_NOPNT)
+	else if (failed & GEBR_VALIDATE_CHECK_NOPNT)
 		g_string_append(msg, _("\n - Remove final punctuation character"));
-	if (failed & GEBR_VALIDATE_CHECK_URL)
+	else if (failed & GEBR_VALIDATE_CHECK_URL)
 		g_string_append(msg, _("\n - Add URL scheme"));
-	if (failed & GEBR_VALIDATE_CHECK_TABS)
+	else if (failed & GEBR_VALIDATE_CHECK_TABS)
 		g_string_append(msg, _("\n - Replace tabs by space"));
 
 	gchar *ret = msg->str;
