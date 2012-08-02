@@ -145,7 +145,7 @@ class MyDotWindow(xdot.DotWindow):
             execute_single.show()
             self.menu.append(execute_single)
             
-        if url == "head":
+        if url == "head" and not multiple_selection:
             # Add separator
             separator =  gtk.SeparatorMenuItem()
             separator.show()
@@ -160,24 +160,24 @@ class MyDotWindow(xdot.DotWindow):
                 if "head" in self.flows[self.current_flow]:
                     self.menu.show_all()
                     return True
+            
+            # Add separator
+            separator =  gtk.SeparatorMenuItem()
+            separator.show()
+            self.menu.append(separator)
+            
+            if not multiple_selection:
+                revert = gtk.MenuItem(_("Revert"))
+                revert.connect("activate", self.on_revert_clicked, url)
+                revert.show()
+                self.menu.append(revert)
                 
-                # Add separator
-                separator =  gtk.SeparatorMenuItem()
-                separator.show()
-                self.menu.append(separator)
-                
-                if not multiple_selection:
-                    revert = gtk.MenuItem(_("Revert"))
-                    revert.connect("activate", self.on_revert_clicked, url)
-                    revert.show()
-                    self.menu.append(revert)
-                    
-                delete = gtk.MenuItem(_("Delete"))
-                delete.connect("activate", self.on_delete_clicked, url)
-                delete.show()
-                self.menu.append(delete)
-        
-                self.menu.show_all()
+            delete = gtk.MenuItem(_("Delete"))
+            delete.connect("activate", self.on_delete_clicked, url)
+            delete.show()
+            self.menu.append(delete)
+            self.menu.show_all()
+            
         return True
 
     def on_url_activate(self, widget, url, event):
