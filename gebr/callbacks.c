@@ -223,7 +223,8 @@ flows_check_maestro_connected(void)
 }
 
 gboolean
-flow_check_before_execution(GebrGeoXmlFlow *flow)
+flow_check_before_execution(GebrGeoXmlFlow *flow,
+                            gboolean is_snapshot)
 {
 
 	GError *error = NULL;
@@ -241,9 +242,13 @@ flow_check_before_execution(GebrGeoXmlFlow *flow)
 	{
 	case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
 	case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
-		gdk_threads_enter();
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);
-		gdk_threads_leave();
+		if (is_snapshot) {
+			gdk_threads_enter();
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);
+			gdk_threads_leave();
+		} else {
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);
+		}
 		break;
 	case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
@@ -251,9 +256,14 @@ flow_check_before_execution(GebrGeoXmlFlow *flow)
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
 	case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
 	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
-		gdk_threads_enter();
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), error->message);
-		gdk_threads_leave();
+		if (is_snapshot) {
+			gdk_threads_enter();
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), error->message);
+			gdk_threads_leave();
+		} else {
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), error->message);
+		}
+
 		break;
 	}
 
@@ -282,7 +292,7 @@ static gboolean flows_check_before_execution(void)
 		gtk_tree_model_get_iter(model, &iter, i->data); 
 		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
 
-		if (flow_check_before_execution(flow))
+		if (flow_check_before_execution(flow, FALSE))
 			continue;
 
 		return FALSE;

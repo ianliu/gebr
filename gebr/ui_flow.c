@@ -319,17 +319,8 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_job_control_add(gebr.job_control, job);
 	gebr_maestro_server_add_temporary_job(maestro, job);
 	gebr_job_control_select_job(gebr.job_control, job);
+	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 
-	gint current_page = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
-	if (current_page == NOTEBOOK_PAGE_FLOW_BROWSE) {
-		flow_browse_info_update();
-		if (gebr.ui_flow_browse->notebook_page == 1)
-			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.ui_flow_browse->notebook), 0);
-	} else {
-		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	}
-
-	
 	g_free(name);
 	g_free(url);
 	g_free(xml);
@@ -421,7 +412,7 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 			g_free(comment);
 		}
 
-		if (!flow_check_before_execution(GEBR_GEOXML_FLOW(snap_flow))) {
+		if (!flow_check_before_execution(GEBR_GEOXML_FLOW(snap_flow), TRUE)) {
 			g_free(snapshot_id);
 			continue;
 		}

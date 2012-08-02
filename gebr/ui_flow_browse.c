@@ -205,7 +205,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/* Last execution */
 	ui_flow_browse->info.lastrun = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "lastrun_label"));
 	ui_flow_browse->info.job_status = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "job_status"));
-	ui_flow_browse->info.job_name = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "job_name"));
 
 	ui_flow_browse->info.job_button = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "job_button"));
 	g_signal_connect(ui_flow_browse->info.job_button, "clicked", G_CALLBACK(on_job_button_clicked), ui_flow_browse);
@@ -302,6 +301,8 @@ gebr_ui_flow_browse_set_job_status(GebrJob *job,
 		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_BUTTON);
 	else if (status == JOB_STATUS_FAILED)
 		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_BUTTON);
+	else if (status == JOB_STATUS_QUEUED)
+		gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_BUTTON);
 }
 
 static void
@@ -429,18 +430,14 @@ void flow_browse_info_update(void)
         	/* Update job button */
         	GebrJob *job = gebr_job_control_get_recent_job_from_flow(GEBR_GEOXML_DOCUMENT(gebr.flow), gebr.job_control);
         	if (job) {
-        		gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.flow));
-        		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.job_name), flow_title);
-        		g_free(flow_title);
-
         		gebr_ui_flow_browse_set_job_status(job, gebr_job_get_status(job), gebr.ui_flow_browse);
+
         		g_signal_connect(job, "status-change", G_CALLBACK(on_job_status_changed), gebr.ui_flow_browse);
 
         		gtk_widget_show(gebr.ui_flow_browse->info.job_button);
         	} else {
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         	}
-
         }
 
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);

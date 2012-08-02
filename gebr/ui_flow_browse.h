@@ -82,7 +82,6 @@ typedef struct {
 
 		GtkWidget *lastrun;
 		GtkWidget *job_status;
-		GtkWidget *job_name;
 		GtkWidget *job_button;
 
 		GtkWidget *input_label;
