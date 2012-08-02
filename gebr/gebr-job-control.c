@@ -2503,3 +2503,56 @@ gebr_job_control_get_model(GebrJobControl *jc)
 {
 	return GTK_TREE_MODEL(jc->priv->store);
 }
+
+GebrJob *
+gebr_job_control_get_recent_job_from_flow(GebrGeoXmlDocument *flow,
+                                          GebrJobControl *jc)
+{
+	const gchar *flow_id = gebr_geoxml_document_get_filename(flow);
+
+	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->store);
+
+	GebrJob *job = NULL;
+	const gchar *last_date = NULL;
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		GebrJob *curr_job;
+		gtk_tree_model_get(model, &iter,
+		                   JC_STRUCT, &curr_job,
+		                   -1);
+
+		const gchar *id = gebr_job_get_flow_id(curr_job);
+		if (!g_strcmp0(flow_id, id)) {
+			const gchar *last_job_date = gebr_job_get_last_run_date(curr_job);
+			if (!last_date || g_strcmp0(last_date, last_job_date) < 0) {
+				last_date = last_job_date;
+				job = curr_job;
+			}
+		}
+	}
+	return job;
+}
+
+void
+gebr_job_control_apply_flow_filter(GebrGeoXmlFlow *flow,
+                                   GebrJobControl *jc)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->flow_filter);
+
+	const gchar *flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
+
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gchar *id;
+		gtk_tree_model_get(model, &iter,
+		                   1, &id,
+		                   -1);
+
+		if (!g_strcmp0(id, flow_id)) {
+			gtk_combo_box_set_active_iter(jc->priv->flow_combo, &iter);
+			break;
+		}
+		g_free(id);
+	}
+	on_maestro_flow_filter_changed(jc->priv->flow_combo, jc);
+}
