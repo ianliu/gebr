@@ -124,6 +124,7 @@ void flow_delete(gboolean confirm)
 
 	gchar *title;
 	gchar *filename;
+	gboolean there_is_snapshot = FALSE;
 
 	GebrGeoXmlSequence *line_flow;
 
@@ -144,6 +145,7 @@ void flow_delete(gboolean confirm)
 		                   -1);
 
 		if (gebr_geoxml_flow_get_revisions_number(GEBR_GEOXML_FLOW(flow)) > 0) {
+			there_is_snapshot = there_is_snapshot || TRUE;
 			if (g_list_find_custom(gebr.ui_flow_browse->select_flows, flow_id, (GCompareFunc)g_strcmp0)) {
 				gchar *str = g_strdup_printf("delete\b%s\n",flow_id);
 				GString *action = g_string_new(str);
@@ -162,10 +164,20 @@ void flow_delete(gboolean confirm)
 	}
 	g_list_free(rows);
 
+	
+	gchar *deletion_msg;
+	if (there_is_snapshot)
+		deletion_msg = g_strdup(_("Are you sure you want to delete the selected Flow(s) and\n"
+				 "the associated snapshots?"));
+	else
+		deletion_msg = g_strdup(_("Are you sure you want to delete the selected Flow(s)?"));
+
 	if (confirm && gebr_gui_confirm_action_dialog(_("Delete Flow(s)?"),
-						      _("Are you sure you want to delete the selected Flow(s) and\n"
-							"the associated snapshots?")) == FALSE)
+						      deletion_msg) == FALSE) {
+		g_free(deletion_msg);
 		return;
+	}
+	g_free(deletion_msg);
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
