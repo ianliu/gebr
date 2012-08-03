@@ -127,55 +127,57 @@ class MyDotWindow(xdot.DotWindow):
             if len(self.flows[self.current_flow]) > 1:
                 multiple_selection = True
                 
+        if url == "head" and not multiple_selection:
+            snapshot = gtk.MenuItem(_("Take a Snapshot \tCtrl+S"))
+            snapshot.connect("activate", self.on_snapshot_clicked, url)
+            snapshot.show()
+            self.menu.append(snapshot)
+            
+             # Add separator
+            separator =  gtk.SeparatorMenuItem()
+            separator.show()
+            self.menu.append(separator)
+        else:
+            if self.flows.has_key(self.current_flow):
+                is_head = False
+                if "head" in self.flows[self.current_flow]:
+                    is_head = True
+            
+            if not is_head:
+                if not multiple_selection:
+                    revert = gtk.MenuItem(_("Revert"))
+                    revert.connect("activate", self.on_revert_clicked, url)
+                    revert.show()
+                    self.menu.append(revert)
+                    
+                delete = gtk.MenuItem(_("Delete"))
+                delete.connect("activate", self.on_delete_clicked, url)
+                delete.show()
+                self.menu.append(delete)
+                
+                # Add separator
+                separator =  gtk.SeparatorMenuItem()
+                separator.show()
+                self.menu.append(separator)
+            
         # Insert execution menu
         if multiple_selection:
             # Sequentially
-            execute_single = gtk.MenuItem(_("Execute sequentially"))
+            execute_single = gtk.MenuItem(_("Execute sequentially \t\tCtrl+R"))
             execute_single.connect("activate", self.on_execute_seq, url)
             execute_single.show()
             self.menu.append(execute_single)
             # Parallel
-            execute_paral = gtk.MenuItem(_("Execute parallel"))
+            execute_paral = gtk.MenuItem(_("Execute parallelly \t\tCtrl+Shift+R"))
             execute_paral.connect("activate", self.on_execute_parallel, url)
             execute_paral.show()
             self.menu.append(execute_paral)
         else:
-            execute_single = gtk.MenuItem(_("Execute"))
+            execute_single = gtk.MenuItem(_("Execute \t\t\tCtrl+R"))
             execute_single.connect("activate", self.on_execute_single, url)
             execute_single.show()
             self.menu.append(execute_single)
             
-        if url == "head" and not multiple_selection:
-            # Add separator
-            separator =  gtk.SeparatorMenuItem()
-            separator.show()
-            self.menu.append(separator)
-            
-            snapshot = gtk.MenuItem(_("Take a Snapshot"))
-            snapshot.connect("activate", self.on_snapshot_clicked, url)
-            snapshot.show()
-            self.menu.append(snapshot)
-        else:
-            if self.flows.has_key(self.current_flow):
-                if "head" in self.flows[self.current_flow]:
-                    self.menu.show_all()
-                    return True
-            
-            # Add separator
-            separator =  gtk.SeparatorMenuItem()
-            separator.show()
-            self.menu.append(separator)
-            
-            if not multiple_selection:
-                revert = gtk.MenuItem(_("Revert"))
-                revert.connect("activate", self.on_revert_clicked, url)
-                revert.show()
-                self.menu.append(revert)
-                
-            delete = gtk.MenuItem(_("Delete"))
-            delete.connect("activate", self.on_delete_clicked, url)
-            delete.show()
-            self.menu.append(delete)
             self.menu.show_all()
             
         return True
