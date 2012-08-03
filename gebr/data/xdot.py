@@ -1354,10 +1354,8 @@ class NullAction(DragAction):
             if isinstance(url.item, Node): 
                 if url.item.is_selected:
                     return
-            dot_widget.set_highlight(url.highlight)
         else:
             dot_widget.window.set_cursor(gtk.gdk.Cursor(gtk.gdk.ARROW))
-            dot_widget.set_highlight(None)
 
 
 class PanAction(DragAction):
