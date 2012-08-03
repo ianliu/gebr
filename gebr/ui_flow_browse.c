@@ -1104,7 +1104,7 @@ gebr_flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
 	                   -1);
 
 	if (gebr_geoxml_flow_get_revisions_number(flow) > 0)
-		g_object_set(cell, "stock-id", "document-open-recent", NULL);
+		g_object_set(cell, "stock-id", "photos", NULL);
 	else
 		g_object_set(cell, "stock-id", NULL, NULL);
 

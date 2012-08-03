@@ -110,7 +110,8 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/view-sort-ascending.png	\
 	16x16/stock/view-sort-descending.png	\
 	16x16/stock/window-close.png	\
-	16x16/stock/group.png
+	16x16/stock/group.png	\
+	16x16/stock/photos.png
 
 libgebr_gui_icons22x22stockdir = $(datadir)/libgebr/icons/gebr-theme/22x22/stock
 libgebr_gui_icons22x22stock_DATA =		\
@@ -310,7 +311,7 @@ libgebr_gui_iconsscalablestock_DATA = \
 	scalable/stock/gebr-speed-one-core.svg	\
 	scalable/stock/object-locked.svgz   \
 	scalable/stock/object-unlocked.svgz   \
-	scalable/stock/group.svgz   \
+	scalable/stock/group.svgz 
 	$(NULL)
 
 EXTRA_DIST = 					\
