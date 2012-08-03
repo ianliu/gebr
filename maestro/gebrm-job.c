@@ -76,6 +76,7 @@ gebrm_job_finalize(GObject *object)
 
 	g_free(job->priv->info.id);
 	g_free(job->priv->info.title);
+	g_free(job->priv->info.description);
 	g_free(job->priv->info.flow_id);
 	g_free(job->priv->info.flow_title);
 	g_free(job->priv->info.hostname);
@@ -315,6 +316,7 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 		job->priv->info.id = g_strdup(info->id);
 
 	job->priv->info.title = g_strdup(info->title);
+	job->priv->info.description = g_strdup(info->description);
 	job->priv->info.temp_id = g_strdup(info->temp_id);
 	job->priv->info.flow_id = g_strdup(info->flow_id);
 	job->priv->info.flow_title = g_strdup(info->flow_title);
@@ -330,7 +332,6 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.speed = g_strdup(info->speed);
 	job->priv->info.snapshot_title = g_strdup(info->snapshot_title);
 	job->priv->info.snapshot_id = g_strdup(info->snapshot_id);
-	g_debug("On '%s', line '%d', setting spapshot_id:'%s' ", __FILE__, __LINE__, job->priv->info.snapshot_id);
 
 	if (job->priv->info.parent_id && job->priv->info.parent_id[0] != '\0')
 		job->priv->status = JOB_STATUS_QUEUED;
@@ -360,6 +361,12 @@ const gchar *
 gebrm_job_get_title(GebrmJob *job)
 {
 	return job->priv->info.title;
+}
+
+const gchar *
+gebrm_job_get_description(GebrmJob *job)
+{
+	return job->priv->info.description;
 }
 
 const gchar *

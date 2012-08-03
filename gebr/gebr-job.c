@@ -38,6 +38,7 @@ struct _GebrJobPriv {
 	gchar *flow_id;
 	gchar *flow_title;
 	gchar *title;
+	gchar *description;
 	gchar *queue;
 	gchar *hostname;
 	gchar *server_group;
@@ -91,6 +92,7 @@ gebr_job_finalize(GObject *object)
 	GebrJob *job = GEBR_JOB(object);
 	g_free(job->priv->run_type);
 	g_free(job->priv->title);
+	g_free(job->priv->description);
 	g_free(job->priv->flow_id);
 	g_free(job->priv->flow_title);
 	g_free(job->priv->hostname);
@@ -130,6 +132,7 @@ gebr_job_init(GebrJob *job)
 						GebrJobPriv);
 	job->priv->status = JOB_STATUS_INITIAL;
 	job->priv->is_fake = TRUE;
+	job->priv->description = NULL;
 	job->priv->snapshot_title = NULL;
 }
 
@@ -335,6 +338,20 @@ const gchar *
 gebr_job_get_title(GebrJob *job)
 {
 	return job->priv->title;
+}
+
+void
+gebr_job_set_description(GebrJob *job, const gchar *description)
+{
+	if (job->priv->description)
+		g_free(job->priv->description);
+	job->priv->description = g_strdup(description);
+}
+
+const gchar*
+gebr_job_get_description(GebrJob *job)
+{
+	return job->priv->description;
 }
 
 const gchar *

@@ -148,6 +148,17 @@
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkImage" id="snapshot_image">
+                                <property name="visible">True</property>
+                                <property name="stock">photos</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkLabel" id="snapshot_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
@@ -157,7 +168,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </object>

@@ -117,6 +117,10 @@ const gchar *gebr_job_get_title(GebrJob *job);
 
 void gebr_job_set_title(GebrJob *job, const gchar *title);
 
+const gchar *gebr_job_get_description(GebrJob *job);
+
+void gebr_job_set_description(GebrJob *job, const gchar *description);
+
 const gchar *gebr_job_get_queue(GebrJob *job);
 
 GebrCommJobStatus gebr_job_get_status(GebrJob *job);

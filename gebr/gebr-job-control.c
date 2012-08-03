@@ -774,8 +774,9 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GString *bold_resources = g_string_new("");
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
 	GtkLabel *bold_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "label6"));
-	//GtkBox *snapshot_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "snapshot_box"));
+	GtkLabel *header_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
 	GtkLabel *snapshot_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "snapshot_label"));
+	GtkImage *snapshot_image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "snapshot_image"));
 	const gchar *nprocs;
 	const gchar *niceness;
 	gint n_servers, i;
@@ -788,13 +789,18 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
 
 	if (snapshot_title && *snapshot_title) {
-		gchar *snapshot_markup = g_strdup_printf(_("<span> (Snapshot %s)</span>"),
+		gchar *snapshot_markup = g_strdup_printf(_("<span size='large' weight='bold'>%s</span>"),
 							 snapshot_title);
 		gtk_label_set_markup(snapshot_label, snapshot_markup);
+
 		g_free(snapshot_markup);
+		gtk_widget_hide(GTK_WIDGET(header_label));
 		gtk_widget_show(GTK_WIDGET(snapshot_label));
+		gtk_widget_show(GTK_WIDGET(snapshot_image));
 	} else {
+		gtk_widget_show(GTK_WIDGET(header_label));
 		gtk_widget_hide(GTK_WIDGET(snapshot_label));
+		gtk_widget_hide(GTK_WIDGET(snapshot_image));
 	}
 	servers = gebr_job_get_servers(job, &n_servers);
 	total_procs = gebr_job_get_total_procs(job);
@@ -1120,7 +1126,7 @@ snap_icon_column_data_func(GtkTreeViewColumn *tree_column,
 
 	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
 	if (snapshot_title && *snapshot_title)
-		g_object_set(cell, "stock-id", "document-open-recent", NULL);
+		g_object_set(cell, "stock-id", "photos", NULL);
 	else
 		g_object_set(cell, "stock-id", NULL, NULL);
 }
@@ -1424,8 +1430,9 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	update_control_buttons(jc, gebr_job_can_close(job), gebr_job_can_kill(job), TRUE);
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
-	const gchar *title = gebr_job_get_title(job);
-	markup = g_strdup_printf ("<span size=\"large\"><b>%s</b></span>", title);
+	const gchar *description = gebr_job_get_description(job);
+
+	markup = g_strdup_printf ("<span size=\"large\"><b>%s</b></span>", description);
 	gtk_label_set_markup (label, markup);
 	g_free (markup);
 

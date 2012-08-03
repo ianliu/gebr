@@ -123,7 +123,6 @@ static void send_job_def_to_clients(GebrmApp *app, GebrmJob *job);
 
 static void send_messages_of_jobs(const gchar *id, GebrmJob *job, GebrCommProtocolSocket *protocol);
 
-
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
 // Refactor this method to GebrmJobController {{{
@@ -895,11 +894,12 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
 	const gchar *snapshot_title = gebrm_job_get_snapshot_title(job);
 	const gchar *snapshot_id = gebrm_job_get_snapshot_id(job);
+	const gchar *description = gebrm_job_get_description(job);
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.job_def, 24,
+						      gebr_comm_protocol_defs.job_def, 25,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_flow_id(job),
@@ -907,6 +907,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 						      gebrm_job_get_servers_list(job),
 						      gebrm_job_get_hostname(job),
 						      gebrm_job_get_title(job),
+						      description ? description : "",
 						      snapshot_title ? snapshot_title : "",
 						      snapshot_id ? snapshot_id : "",
 						      gebrm_job_get_queue(job),
@@ -1001,9 +1002,12 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 						      (GebrGeoXmlDocument **)pproj);
 
 	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
+	gchar *description = gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(*pflow));
 
+	g_debug("On '%s', line '%d', description:'%s' ", __FILE__, __LINE__, description);
 	GebrmJobInfo info = { 0, };
 	info.title = g_strdup(title);
+	info.description = g_strdup(description);
 	info.temp_id = g_strdup(temp_id);
 	info.flow_id = g_strdup(flow_id);
 	info.flow_title = g_strdup(flow_title);
@@ -1132,6 +1136,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	gebrm_job_info_free(&info);
 	g_list_free(servers);
 	g_free(title);
+	g_free(description);
 }
 
 static void
@@ -1815,9 +1820,11 @@ send_messages_of_jobs(const gchar *id,
 
 	const gchar *start_date = gebrm_job_get_start_date(job);
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
+	const gchar *description = gebrm_job_get_description(job);
+
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 24,
+	                                      gebr_comm_protocol_defs.job_def, 25,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
 					      gebrm_job_get_flow_id(job),
@@ -1825,6 +1832,7 @@ send_messages_of_jobs(const gchar *id,
 	                                      gebrm_job_get_servers_list(job),
 	                                      gebrm_job_get_hostname(job),
 	                                      gebrm_job_get_title(job),
+					      description ? description : "",
 	                                      gebrm_job_get_snapshot_title(job),
 	                                      gebrm_job_get_snapshot_id(job),
 	                                      gebrm_job_get_queue(job),

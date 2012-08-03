@@ -290,9 +290,6 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_comm_uri_add_param(uri, "snapshot_title", snapshot_title ? snapshot_title : "");
 	gebr_comm_uri_add_param(uri, "snapshot_id", snapshot_id ? snapshot_id : "");
 
-	//g_debug("------SENDING----------- ....On '%s', line '%d', snapshot_title:'%s', snapshot_id:'%s', flow_id:'%s'",
-		//__FILE__, __LINE__, snapshot_title, snapshot_id, flow_id);
-
 	g_free(paths);
 
 	gchar *url = gebr_comm_uri_to_string(uri);
