@@ -163,11 +163,16 @@ run_flow(GebrGeoXmlFlow *flow,
 	else
 		speed = 0.0;
 
+	gchar *submit_date = gebr_iso_date();
+
 	const gchar *flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	if (snapshot_id && *snapshot_id) {
 		GebrGeoXmlRevision *snapshot = gebr_geoxml_flow_get_revision_by_id(gebr.flow, snapshot_id);
 		gebr_geoxml_flow_get_revision_data(snapshot, NULL, NULL, &snapshot_title, NULL);
 		gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(snapshot));
+	} else {
+		gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
+		document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
 	}
 
 	gchar *speed_str = g_strdup_printf("%lf", speed);
@@ -187,11 +192,6 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
 	gebr_geoxml_flow_server_set_group(flow, group_type, name);
-
-	gchar *submit_date = gebr_iso_date();
-
-	gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
-	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
 
 	const gchar *run_type;
 	if (gebr_geoxml_flow_get_first_mpi_program(flow) == NULL)
@@ -426,5 +426,11 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 		if (!id)
 			return;
 	}
+
+	gchar *submit_date = gebr_iso_date();
+
+	gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
+	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
+
 	g_strfreev(snaps);
 }
