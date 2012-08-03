@@ -1,3 +1,30 @@
+2012-08-03  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Comments added on command line's sessions. Also, comments about a
+	string variable on the dictionary now appear.
+
+2012-08-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply proper niceness option in the non parallelizable jobs
+
+2012-08-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix finish date of job with status failed
+
+2012-07-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix killing all taks when daemon is quiting. (Fixes issue 1196)
+
+2012-07-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Kill all jobs when daemon quit and notify maestro to that (Fixes
+	issue 1196)
+
+2012-07-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.2: Menu's index speed up, xml catalog and xdot [Sprint
+	59]
+
 2012-07-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.18.1: Issue tracker cleanup

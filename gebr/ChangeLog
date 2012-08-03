@@ -1,3 +1,319 @@
+2012-08-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change Flow deletion message according to whether the flow has
+	snapshot or not
+
+2012-08-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Save flow on run only if it is not a snapshot.
+
+2012-08-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Include in Flow(s) deletion message a warning that the associated
+	snapshots will be lost as well
+	* Change Snapshot label in JobControl tab and apply new icon
+
+2012-08-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set correct validator when generate variables to report
+
+2012-08-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing labels of context menu in snapshots graph.
+
+2012-08-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change Snapshot icon in FlowBrowse tab
+
+2012-08-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove highlight on mouse hover in xdot.py
+
+2012-08-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Swap Yes/No buttons of ui_project_line.c to let them in accordance
+	to the standard NO_YES layout
+
+2012-08-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve button on Flow Browse to see jobs
+
+2012-08-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing label of right-click on flow at flow browse tab.
+
+2012-08-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some problems in context menu on snapshots
+
+2012-08-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating snapshot identification icon when a snapshot is removed.
+
+2012-08-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Go to correctly tab when take a snapshot
+	* Select job on Job Control after run to avoid inconsistent
+	* Improve context menu of snapshots and add execute options
+
+2012-08-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix message of multiple snapshots deletion
+
+2012-08-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove of messages unnecessary parameter flow_title and use
+	job_title on Job Control
+	* Create button on tab Flow Browse to represent last job executed with
+	selected flow and send to Job Control when clicked on that
+	* Add methods on GebrJobContol: get_recent_job_from_flow and
+	apply_flow_filter
+
+2012-08-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix inconsistencies of the warning label of FlowsBrowser tab
+
+2012-08-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add Flow Filter on Job Control
+	* Send flow_title to maestro and get it back on gebr
+	* Add getter and setter for flow_title
+
+2012-08-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add sentinels for column and path in method
+	gebr_flow_browse_select_snapshot_column
+
+2012-08-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Check snapshots before executions
+	* Refactoring method flows_check_before_execution to use in a
+	specified flow and public it
+
+2012-08-01  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Linking snapshot identifier icon with snapshot tab.
+
+2012-08-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add treatment for delete key press to delete snapshots sending
+	action to python
+
+2012-08-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change arrangement of Spapshot label in JobControl
+
+2012-08-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Unselect flows when redraw a graph
+	* Create treatment to not delete when Now is selected
+	* Change color when select a snapshot
+	* Fix critical when remove/add accel group from Flow Browse tab
+
+2012-08-01  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating slider icon when a flow is reversed on a snapshot.
+
+2012-07-31  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving icon and message on flows with snapshot.
+
+2012-07-31  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add snapshot label in gebr-job-control.glade
+
+2012-07-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create treatment for focus in graph to grab key press event of
+	delete
+
+2012-07-31  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding column to identify flows with snapshot. (Fixes issue 1237)
+
+2012-07-31  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add snapshot_id, snapshot_title and flow_id in the protocol
+	(job_def)
+
+2012-07-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix context menu and selection of nodes in module gebr-xdot-graph
+
+2012-07-31  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Uses gebr-geoxml-menu-indices from the project tree
+
+2012-07-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Execute snapshots only on tab Flow Browse
+	* Unselect all snapshots if click with right button on unselected
+	snapshot
+	* Redraw graph on save/reload/delete snapshot
+
+2012-07-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to generate index of report to receive description and
+	add new variable on generate_flow_content to identify snapshots
+	* Fix method flow_browse_load to get variable keep_selection correctly
+	and create treatment when clicked on same flow.
+
+2012-07-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply indication whether it is a snapshot or not in Job Control
+
+2012-07-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change label texts (Details and snapshots) when multiple flows are
+	selected
+
+2012-07-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make treatment to SnapshotsWindow when there is more than one flow
+	selected
+	* Apply proper sapshotSave window title when more than one flow is
+	selected
+	* Include snapshot title in left treeview of Job Control
+
+2012-07-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make proper treatment to '|' (pipe) character in Snapshot
+	description
+
+2012-07-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Added Line Paths on Flow report, and fix inclusion of tables on Line
+	report
+
+2012-07-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add multiple selection to execute and delete snapshots
+	* Remove unecessary debug on parse_message to job define
+	* Add protection of method to remove revision when load it
+
+2012-07-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply I/O layout to LinePaths in report css
+	* Minor fixes detected in Demo 60
+
+2012-07-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving warning of non-empty description of snapshot.
+	* Adapting report to format XHTML 1.0 Transitional.
+
+2012-07-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change method to set snapshot_last_date_modify to get flow through
+	filename instead title
+	* Fix index of snapshots on Flow's Report and fix problems to include
+	parameters
+
+2012-07-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change style of snapshot-revert dialog
+
+2012-07-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving message of snapshot date on report.
+
+2012-07-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compilation warning on GeBR
+
+2012-07-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adapting gebr-report-fancy.css to new report format (part 2)
+
+2012-07-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new class of program and change table to parameters on report
+	(change simple css too)
+	* Include force quit when gebr receive signal to quit
+	* Include user comments on line report of flows only when option is
+	selected
+	* Merge with report-refactoring (Updates issue 1213)
+
+2012-07-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make treatment to ask the user for snapshotSave just when there are
+	modifications.
+
+2012-07-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding "Take a Snapshot" action to graph in right-click and double-
+	click.
+
+2012-07-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor fix in gebr-connections-settings message
+	* Improve gui message when there is no snapshots
+
+2012-07-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Revert cleanup of gebr.desktop file to make distcheck pass.
+
+2012-07-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add Cancel button to RevertSnapshots dialog
+
+2012-07-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix makefile of gebr/data to remove index of Default menus
+
+2012-07-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update translate of GêBR and made some improvements on glade files
+	* Fix compilation problems include on last commit
+	* Clean code with unnecessary texts and input that on glade
+	* Remove option translate from unused labels from files of glade, and
+	fix problem with accents of glade (to fix translate on po file)
+	* Improve message of snapshots dialogs, update translate, and cleanup
+	deprecated code.
+
+2012-07-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include file gebr-xdot-graph.py in POTFILES, change all mentions of
+	Revision to Snapshot and update translate of gebr
+	* Allow exactly 60 characters on comments of revision and include line
+	breaks
+
+2012-07-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Showing message in more details, when flow in queued. (Fixes issue
+	1223)
+
+2012-07-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement snapshots tab with frame around graph
+	* Create treatment to accepts at most 40 characters on revision
+	comments
+	* Change program xdot to change color on select and default margin
+	zoom
+
+2012-07-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make treatment to empty descriptions of revisions
+	* Change behaviour of revision removal to not delete the whole subtree
+	anymore
+
+2012-07-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix freeze of gebr when cancel save of reverted flow
+
+2012-07-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change revision backend to accept a disconnected tree
+
+2012-07-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving labels of revisions's graph.
+	* Initialization of graph process.
+
+2012-07-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.2: Menu's index speed up, xml catalog and xdot [Sprint
+	59]
+
 2012-07-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Merge with xdot, flow revision visualization using xdot and pygtk

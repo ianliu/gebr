@@ -1,3 +1,12 @@
+2012-07-31  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Escaped italic on menu`s properties on debr
+
+2012-07-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.2: Menu's index speed up, xml catalog and xdot [Sprint
+	59]
+
 2012-07-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.18.1: Issue tracker cleanup

@@ -1,3 +1,10 @@
+gebrproject (0.19.3) lucid; urgency=low
+
+  * Multiple Flow's snapshot deletion and execution.
+  * Minor fixes (#1205) (#1194) (#1222) (#1201) (#1196)
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Fri, 03 Aug 2012 18:45:44 -0300
+
 gebrproject (0.19.2) lucid; urgency=low
 
   * Merged fixes and features from 0.18.1.

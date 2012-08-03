@@ -1,3 +1,100 @@
+2012-08-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change Snapshot label in JobControl tab and apply new icon
+	* Change Snapshot icon in FlowBrowse tab
+
+2012-08-02  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixed tooltip on edit program and menu on debr
+
+2012-07-31  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Escaped italic on menu`s properties on debr
+
+2012-07-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply I/O layout to LinePaths in report css
+
+2012-07-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix apperance error when window of report is small
+
+2012-07-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adapting gebr-report-fancy.css to new report format (part 2)
+
+2012-07-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new class of program and change table to parameters on report
+	(change simple css too)
+
+2012-07-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move test of Line Paths from test-utils to test-line
+	* Fix method gebr_geoxml_create_catalog
+
+2012-07-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Translate label 'Now'
+
+2012-07-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong displacement of Details widget (solves issue 1230)
+
+2012-07-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve message of snapshots dialogs, update translate, and cleanup
+	deprecated code.
+
+2012-07-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIx method completion_matched to treat border cases (Fixes issue
+	1205)
+	* Fix method to generate_links_index to separate Navigation and Links
+	and call that correctly (Fixes issue 1194)
+	* Allow exactly 60 characters on comments of revision and include line
+	breaks
+
+2012-07-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing crash on menu preview of DeBR. (Fixes issue 1201)
+
+2012-07-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change shape format of the head in RevisionsGraph
+
+2012-07-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change elipse to line break on very longe comments
+
+2012-07-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change behaviour of revision removal to not delete the whole subtree
+	anymore
+
+2012-07-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Merge revision title elipse and default tip.
+	* Reducing and hiding part of snapshot labels when they are very long.
+
+2012-07-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix upgrade of revisions dtd and create more than one root for flow
+
+2012-07-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change revision backend to accept a disconnected tree
+
+2012-07-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving labels of revisions's graph.
+	* Changing icon for revision to snapshot icon.
+
+2012-07-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.2: Menu's index speed up, xml catalog and xdot [Sprint
+	59]
+
 2012-07-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Add all actions on graph and remove TreeStore from revisions tab

@@ -1,3 +1,38 @@
+2012-08-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change Snapshot label in JobControl tab and apply new icon
+
+2012-08-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault added on last commit
+	* Remove of messages unnecessary parameter flow_title and use
+	job_title on Job Control
+
+2012-08-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send flow_title to maestro and get it back on gebr
+	* Add getter for flow_title on maestro structure
+	* Fix finish date of job with status failed
+
+2012-07-31  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add snapshot_id, snapshot_title and flow_id in the protocol
+	(job_def)
+
+2012-07-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply indication whether it is a snapshot or not in Job Control
+
+2012-07-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Kill all jobs when daemon quit and notify maestro to that (Fixes
+	issue 1196)
+
+2012-07-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.2: Menu's index speed up, xml catalog and xdot [Sprint
+	59]
+
 2012-06-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Fix compilation error add on last commit
