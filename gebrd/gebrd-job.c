@@ -356,7 +356,7 @@ xmlout:
 out:
 	if (error) {
 		keep_polling = FALSE;
-		job_status_notify(job, JOB_STATUS_FAILED, "");
+		job_status_notify(job, JOB_STATUS_FAILED, gebr_iso_date());
 	}
 
 	return keep_polling;
@@ -669,7 +669,7 @@ void job_run_flow(GebrdJob *job)
 	goto out;
 
 err:	/* error */
-	job_status_notify(job, JOB_STATUS_FAILED, "");
+	job_status_notify(job, JOB_STATUS_FAILED, gebr_iso_date());
 
 out:	
 	/* frees */
@@ -953,16 +953,16 @@ job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * parameter, GebrGeoXmlPr
 					temp = g_strdup(strip);
 
 				if (*vmin && *vmax)
-					g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, vmin, temp,
+					g_string_append_printf (expr_buf, "\tmin(%s,max(%s,%s)) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, vmin, temp,
 					                        job->expr_count + job->n_vars, escaped);
 				else if(*vmin)
-					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmin, temp,
+					g_string_append_printf (expr_buf, "\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmin, temp,
 					                        job->expr_count + job->n_vars, escaped);
 				else if(*vmax)
-					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, temp,
+					g_string_append_printf (expr_buf, "\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, temp,
 					                        job->expr_count + job->n_vars, escaped);
 				else
-					g_string_append_printf (expr_buf, "\t\t%s # V[%"G_GSIZE_FORMAT"]: %s\n", temp,
+					g_string_append_printf (expr_buf, "\t%s # V[%"G_GSIZE_FORMAT"]: %s\n", temp,
 					                        job->expr_count + job->n_vars, escaped);
 
 				if(!first)
@@ -1145,7 +1145,7 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 				label = g_strdup(gebr_geoxml_parameter_get_label (param));
 				value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
 				keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
-				g_string_append_printf(expr_buf, "\t\t%s = (%s) ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
+				g_string_append_printf(expr_buf, "\t%s = (%s) ; %s\t# V[%"G_GSIZE_FORMAT"]: %s\n",
 						       keyword, value, keyword, j, replace_quotes(label));
 				var_value = g_strdup_printf("${V[[%"G_GSIZE_FORMAT"]]}", j++);
 				gebr_geoxml_parameter_set_type(param, GEBR_GEOXML_PARAMETER_TYPE_STRING);
@@ -1162,13 +1162,14 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 				prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
 				param = GEBR_GEOXML_PARAMETER(seq);
 
+				label = g_strdup(gebr_geoxml_parameter_get_label (param));
 				value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
 				keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
 				scope = gebr_geoxml_parameter_get_scope(param);
 				gebr_validator_evaluate_interval(gebrd_get_validator(gebrd), value, GEBR_GEOXML_PARAMETER_TYPE_STRING, scope, FALSE, &result, NULL);
 				bash_var = g_strdup_printf("${%s}", keyword);
 				gebr_validator_change_value(gebrd_get_validator(gebrd), param, bash_var, NULL, NULL);
-				g_string_append_printf(str_buf, "\t%s=\"%s\"\n", keyword, result);
+				g_string_append_printf(str_buf, "%s=\"%s\"\t# %s\n", keyword, result, replace_quotes(label));
 				g_free(bash_var);
 				g_free(result);
 				break;
@@ -1194,13 +1195,14 @@ static void assemble_bc_cmd_line (GString *expr_buf)
 		return;
 
 	 g_string_prepend(expr_buf,
-			  "\tV=($(echo 'scale=5\n"
-	                  "\t\tdefine min(a,b){ if(a<b) {return a;} else {return b;}}\n"
-	                  "\t\tdefine max(a,b){ if(a>b) {return a;} else {return b;}}\n"
-	                  "\t\tdefine round(x){ auto s; s = scale; if(x>0) x+=0.5 else x-=0.5; scale = 0; x/=1; scale = s; return (x);}\n");
+	                  "\n# Dictionary\n"
+			  "V=($(echo 'scale=5\n"
+	                  "\tdefine min(a,b){ if(a<b) {return a;} else {return b;}}\n"
+	                  "\tdefine max(a,b){ if(a>b) {return a;} else {return b;}}\n"
+	                  "\tdefine round(x){ auto s; s = scale; if(x>0) x+=0.5 else x-=0.5; scale = 0; x/=1; scale = s; return (x);}\n");
 
 	// Pipe into bc
-	g_string_append (expr_buf, "\t' | bc -l ))\n");
+	g_string_append (expr_buf, "' | bc -l ))\n");
 }
 
 gboolean gebr_output_use_var_iter(GebrdJob *job, const gchar *output_expr)
@@ -1295,7 +1297,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
 	if (mpi == NULL)
 		g_string_append_printf(job->parent.cmd_line, "%s%s ",
-				       job->is_parallelizable ? "$exec ":"",
+				       "$exec ",
 				       binary);
 	else {
 		gchar * mpicmd;
@@ -1443,7 +1445,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (mpi == NULL)
 			g_string_append_printf(job->parent.cmd_line, "%s %s%s ",
 					       sep,
-					       job->is_parallelizable ? "$exec ":"",
+					       "$exec ",
 					       binary);
 		else {
 			gchar * mpicmd;
@@ -1505,7 +1507,9 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (job->is_parallelizable) {
 			nprocs = job->numproc;
 			nice = job->niceness;
-			prefix = g_strdup_printf("PROC=%d\n"
+			prefix = g_strdup_printf("\n# Setting the number of cores \n"
+						 "PROC=%d\n"
+						 "\n# Setting the niceness of the process \n"
 						 "NICE=%d\n"
 						 "exec=\"nice -n $NICE\"\n"
 						 "for (( _outter=0; _outter < %s; _outter+=$PROC ))\n"
@@ -1513,13 +1517,17 @@ static void job_assembly_cmdline(GebrdJob *job)
 						 "  unset PIDS\n"
 						 "  for (( counter=$_outter; counter < $_outter+$PROC && counter < %s; counter++ ))\n"
 						 "  do\n"
-						 "    %s\n%s",
+						 "    %s\n%s \n# Command Line \n",
 						 nprocs, nice, n, n, expr_buf->str, str_buf->str);
 			g_string_append(job->parent.cmd_line, " ) &\nPIDS=\"$! $PIDS\"");
 			g_string_prepend_c(job->parent.cmd_line, '(');
 		} else {
-			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
-						 n, expr_buf->str, str_buf->str);
+			nice = job->niceness;
+			prefix = g_strdup_printf("\n# Setting the niceness of the process \n"
+						 "NICE=%d\n"
+						 "exec=\"nice -n $NICE\"\n"
+						 "for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s \n# Command Line \n",
+						 nice, n, expr_buf->str, str_buf->str);
 		}
 		if (!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
 		    strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0 && previous_stdout) {
@@ -1543,12 +1551,18 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_free(n);
 	} else {
 		assemble_bc_cmd_line (expr_buf);
-		g_string_prepend(job->parent.cmd_line, str_buf->str);
-		g_string_prepend(job->parent.cmd_line, expr_buf->str);
+		gchar *prefix = g_strdup_printf("\n# Setting the niceness of the process \n"
+						"NICE=%d\n"
+						"exec=\"nice -n $NICE\"\n"
+						"%s\n%s \n# Command Line \n",
+						job->niceness, expr_buf->str, str_buf->str);
+
+		g_string_prepend(job->parent.cmd_line, prefix);
+		g_free(prefix);
 	}
 
 	/* Creating Line paths */
-	GString *mkdir = g_string_new("");
+	GString *mkdir = g_string_new("# Creating directories \n");
 	gchar **paths = g_strsplit(job->paths->str, ",", 0);
 	for (int i = 0; paths[i]; i++)
 		if (g_strcmp0(paths[i],"")!=0){

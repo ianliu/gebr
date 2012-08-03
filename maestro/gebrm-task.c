@@ -254,6 +254,7 @@ gebrm_task_emit_status_changed_signal(GebrmTask *task,
 		break;
 	case JOB_STATUS_FINISHED:
 	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
 		param = gebr_iso_date();
 		g_string_assign(task->priv->finish_date, param);
 		break;

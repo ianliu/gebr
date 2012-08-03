@@ -37,6 +37,9 @@
                           <object class="GtkCellRendererText" id="tv_title_cell"/>
                         </child>
                         <child>
+                          <object class="GtkCellRendererPixbuf" id="tv_icon_snap"/>
+                        </child>
+                        <child>
                           <object class="GtkCellRendererText" id="tv_time_cell">
                             <property name="sensitive">False</property>
                           </object>
@@ -116,6 +119,7 @@
                     <child>
                       <object class="GtkImage" id="status_image">
                         <property name="visible">True</property>
+                        <property name="yalign">0</property>
                         <property name="stock">gtk-apply</property>
                         <property name="icon-size">6</property>
                       </object>
@@ -128,65 +132,107 @@
                       <object class="GtkVBox" id="vbox4">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkLabel" id="header_label">
+                          <object class="GtkHBox" id="hbox2">
                             <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label">#&lt;span size="large"&gt;&lt;b&gt;Flow 1&lt;/b&gt;&lt;/span&gt;</property>
-                            <property name="use_markup">True</property>
+                            <child>
+                              <object class="GtkLabel" id="header_label">
+                                <property name="visible">True</property>
+                                <property name="xalign">0</property>
+                                <property name="label">#&lt;span size="large"&gt;&lt;b&gt;Flow 1&lt;/b&gt;&lt;/span&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkImage" id="snapshot_image">
+                                <property name="visible">True</property>
+                                <property name="stock">photos</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="snapshot_label">
+                                <property name="visible">True</property>
+                                <property name="xalign">0</property>
+                                <property name="xpad">5</property>
+                                <property name="label">#Snapshot Very High Compression Engine</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="subheader_box">
+                          <object class="GtkHBox" id="snapshot_box">
                             <property name="visible">True</property>
-                            <property name="spacing">5</property>
                             <child>
-                              <object class="GtkLabel" id="subheader_label">
+                              <object class="GtkHBox" id="subheader_box">
                                 <property name="visible">True</property>
-                                <property name="xalign">0</property>
-                                <property name="label">#label</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="subheader_button">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="relief">none</property>
+                                <property name="spacing">5</property>
                                 <child>
-                                  <object class="GtkHBox" id="hbox4">
+                                  <object class="GtkLabel" id="subheader_label">
                                     <property name="visible">True</property>
-                                    <property name="spacing">5</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label">#label</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="subheader_button">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="relief">none</property>
                                     <child>
-                                      <object class="GtkImage" id="subheader_button_img">
+                                      <object class="GtkHBox" id="hbox4">
                                         <property name="visible">True</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="spacing">5</property>
+                                        <child>
+                                          <object class="GtkImage" id="subheader_button_img">
+                                            <property name="visible">True</property>
+                                            <property name="stock">gtk-missing-image</property>
+                                          </object>
+                                          <packing>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="subheader_button_lbl">
+                                            <property name="visible">True</property>
+                                            <property name="label">#label</property>
+                                          </object>
+                                          <packing>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
                                       </object>
-                                      <packing>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="subheader_button_lbl">
-                                        <property name="visible">True</property>
-                                        <property name="label">#label</property>
-                                      </object>
-                                      <packing>
-                                        <property name="position">1</property>
-                                      </packing>
                                     </child>
                                   </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
-                                <property name="expand">False</property>
-                                <property name="position">1</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                           </object>
@@ -556,7 +602,7 @@
         <child>
           <object class="GtkLabel" id="label5">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Flow&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -588,7 +634,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkComboBox" id="filter-servers-group-cb">
+          <object class="GtkComboBox" id="filter-flow-cb">
             <property name="visible">True</property>
           </object>
           <packing>

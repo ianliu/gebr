@@ -35,7 +35,10 @@ struct _GebrJobPriv {
 	gchar *run_type;
 
 	gdouble exec_speed;
+	gchar *flow_id;
+	gchar *flow_title;
 	gchar *title;
+	gchar *description;
 	gchar *queue;
 	gchar *hostname;
 	gchar *server_group;
@@ -52,6 +55,9 @@ struct _GebrJobPriv {
 	gchar *maestro_address;
 	gchar *mpi_owner;
 	gchar *mpi_flavor;
+	gchar *snapshot_title;
+	gchar *snapshot_id;
+	gchar *gebrjob_id;
 	const gchar *server_list;
 
 	gboolean is_fake;
@@ -86,6 +92,9 @@ gebr_job_finalize(GObject *object)
 	GebrJob *job = GEBR_JOB(object);
 	g_free(job->priv->run_type);
 	g_free(job->priv->title);
+	g_free(job->priv->description);
+	g_free(job->priv->flow_id);
+	g_free(job->priv->flow_title);
 	g_free(job->priv->hostname);
 	g_free(job->priv->runid);
 	g_free(job->priv->queue);
@@ -94,6 +103,9 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->log_file);
 	g_free(job->priv->mpi_owner);
 	g_free(job->priv->mpi_flavor);
+	g_free(job->priv->snapshot_title);
+	g_free(job->priv->snapshot_id);
+	g_free(job->priv->gebrjob_id);
 
 	G_OBJECT_CLASS(gebr_job_parent_class)->finalize(object);
 }
@@ -120,6 +132,8 @@ gebr_job_init(GebrJob *job)
 						GebrJobPriv);
 	job->priv->status = JOB_STATUS_INITIAL;
 	job->priv->is_fake = TRUE;
+	job->priv->description = NULL;
+	job->priv->snapshot_title = NULL;
 }
 
 static void
@@ -242,6 +256,7 @@ gebr_job_new_with_id(const gchar *rid,
 	job->priv->run_type = g_strdup(run_type);
 	job->priv->n_servers = 0;
 	job->priv->mpi_flavor = g_strdup("");
+	job->priv->snapshot_id = g_strdup("");
 	job->priv->server_list = NULL;
 
 	return job;
@@ -323,6 +338,30 @@ const gchar *
 gebr_job_get_title(GebrJob *job)
 {
 	return job->priv->title;
+}
+
+void
+gebr_job_set_description(GebrJob *job, const gchar *description)
+{
+	if (job->priv->description)
+		g_free(job->priv->description);
+	job->priv->description = g_strdup(description);
+}
+
+const gchar*
+gebr_job_get_description(GebrJob *job)
+{
+	return job->priv->description;
+}
+
+const gchar *
+gebr_job_get_snapshot_title(GebrJob *job) {
+	return job->priv->snapshot_title;
+}
+
+void
+gebr_job_set_snapshot_title(GebrJob *job, const gchar *snapshot_title) {
+	job->priv->snapshot_title = g_strdup(snapshot_title);
 }
 
 GebrCommJobStatus
@@ -637,6 +676,24 @@ gebr_job_set_exec_speed(GebrJob *job, gdouble exec_speed)
 	job->priv->exec_speed = exec_speed;
 }
 
+const gchar *
+gebr_job_get_flow_id(GebrJob *job)
+{
+	return job->priv->flow_id;
+}
+
+void
+gebr_job_set_flow_id(GebrJob *job, const gchar *flow_id)
+{
+	job->priv->flow_id = g_strdup(flow_id);
+}
+
+void
+gebr_job_set_flow_title(GebrJob *job, const gchar *flow_title)
+{
+	job->priv->flow_title = g_strdup(flow_title);
+}
+
 void
 gebr_job_set_static_status(GebrJob *job, GebrCommJobStatus status)
 {
@@ -658,9 +715,12 @@ gebr_job_set_status(GebrJob *job, GebrCommJobStatus status, const gchar *paramet
 	switch(status) {
 	case JOB_STATUS_RUNNING:
 		gebr_job_set_start_date(job, parameter);
+		gebr_job_set_finish_date(job, parameter);
 		break;
 	case JOB_STATUS_CANCELED:
 	case JOB_STATUS_FAILED:
+		gebr_job_set_finish_date(job, parameter);
+		break;
 	case JOB_STATUS_FINISHED:
 		gebr_job_set_finish_date(job, parameter);
 		break;
@@ -738,7 +798,6 @@ gebr_job_set_issues(GebrJob *job, const gchar *issues)
 		g_free(job->priv->issues);
 	job->priv->issues = g_strdup(issues);
 	g_signal_emit(job, signals[ISSUED], 0, issues);
-	g_debug("EMITINDO SINAL ISSUED '%s'", job->priv->issues);
 }
 
 void
@@ -795,5 +854,19 @@ const gchar *
 gebr_job_get_mpi_flavor(GebrJob *job)
 {
 	return job->priv->mpi_flavor;
+}
+
+void
+gebr_job_set_snapshot_id(GebrJob *job, const gchar *snapshot_id)
+{
+	if (job->priv->snapshot_id)
+		g_free(job->priv->snapshot_id);
+	job->priv->snapshot_id = g_strdup(snapshot_id);
+}
+
+const gchar *
+gebr_job_get_snapshot_id(GebrJob *job)
+{
+	return job->priv->snapshot_id;
 }
 

@@ -117,6 +117,10 @@ const gchar *gebr_job_get_title(GebrJob *job);
 
 void gebr_job_set_title(GebrJob *job, const gchar *title);
 
+const gchar *gebr_job_get_description(GebrJob *job);
+
+void gebr_job_set_description(GebrJob *job, const gchar *description);
+
 const gchar *gebr_job_get_queue(GebrJob *job);
 
 GebrCommJobStatus gebr_job_get_status(GebrJob *job);
@@ -176,6 +180,12 @@ gdouble gebr_job_get_exec_speed(GebrJob *job);
 
 void gebr_job_set_exec_speed(GebrJob *job, gdouble exec_speed);
 
+const gchar *gebr_job_get_flow_id(GebrJob *job);
+
+void gebr_job_set_flow_id(GebrJob *job, const gchar *flow_id);
+
+void gebr_job_set_flow_title(GebrJob *job, const gchar *flow_title);
+
 gint gebr_job_get_total(GebrJob *job);
 
 GebrJobTask *gebr_job_get_tasks(GebrJob *job, gint *n);
@@ -217,6 +227,14 @@ const gchar *gebr_job_get_mpi_owner(GebrJob *job);
 void gebr_job_set_mpi_flavor(GebrJob *job, const gchar *mpi_flavor);
 
 const gchar *gebr_job_get_mpi_flavor(GebrJob *job);
+
+void gebr_job_set_snapshot_title(GebrJob *job, const gchar *snapshot_title);
+
+const gchar *gebr_job_get_snapshot_title(GebrJob *job);
+
+void gebr_job_set_snapshot_id(GebrJob *job, const gchar *snapshot_id);
+
+const gchar *gebr_job_get_snapshot_id(GebrJob *job);
 
 void gebr_job_set_server_list (GebrJob *job, const gchar *servers);
 G_END_DECLS

@@ -133,6 +133,12 @@ void gebr_job_control_remove(GebrJobControl *jc,
  */
 GtkTreeModel *gebr_job_control_get_model(GebrJobControl *jc);
 
+GebrJob *gebr_job_control_get_recent_job_from_flow(GebrGeoXmlDocument *flow,
+                                                   GebrJobControl *jc);
+
+void gebr_job_control_apply_flow_filter(GebrGeoXmlFlow *flow,
+                                        GebrJobControl *jc);
+
 /**
  * gebr_job_control_setup_filter_button:
  *

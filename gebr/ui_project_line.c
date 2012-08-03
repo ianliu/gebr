@@ -102,7 +102,7 @@ gebr_project_line_hide(GebrUiProjectLine *self)
 void
 gebr_project_line_show(GebrUiProjectLine *self)
 {
-	project_line_load();
+	return;
 }
 
 struct ui_project_line *project_line_setup_ui(void)
@@ -956,8 +956,8 @@ static gboolean update_progress(gpointer user_data)
 			g_free(text);
 
 			gtk_dialog_add_buttons(data->dialog,
-			                       GTK_STOCK_YES, GTK_RESPONSE_YES,
 			                       GTK_STOCK_NO, GTK_RESPONSE_NO,
+			                       GTK_STOCK_YES, GTK_RESPONSE_YES,
 			                       NULL);
 			gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(data->dialog)), scrolled_window, TRUE, TRUE, 0);
 
@@ -1428,10 +1428,10 @@ void project_line_delete(void)
 
 		dialog = gtk_dialog_new_with_buttons(_("Confirm multiple deletion"), NULL,
 						     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-						     GTK_STOCK_YES,
-						     GTK_RESPONSE_YES ,
 						     GTK_STOCK_NO,
 						     GTK_RESPONSE_NO,
+						     GTK_STOCK_YES,
+						     GTK_RESPONSE_YES ,
 						     NULL);
 		gtk_label_set_markup (GTK_LABEL (title), markup);
 		g_free (markup);
@@ -1465,10 +1465,10 @@ void project_line_delete(void)
 
 		dialog = gtk_dialog_new_with_buttons(_("Confirm deletion"), NULL,
 						     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-						     GTK_STOCK_YES,
-						     GTK_RESPONSE_YES ,
 						     GTK_STOCK_NO,
 						     GTK_RESPONSE_NO,
+						     GTK_STOCK_YES,
+						     GTK_RESPONSE_YES ,
 						     NULL);
 		gtk_label_set_markup (GTK_LABEL (title), markup);
 		g_free (markup);

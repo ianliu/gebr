@@ -67,6 +67,9 @@ typedef struct {
 	gchar *id;
 	gchar *temp_id;
 	gchar *title;
+	gchar *description;
+	gchar *flow_id;
+	gchar *flow_title;
 	gchar *hostname;
 	gchar *parent_id;
 	gchar *servers;
@@ -78,6 +81,8 @@ typedef struct {
 	gchar *group;
 	gchar *group_type;
 	gchar *speed;
+	gchar *snapshot_id;
+	gchar *snapshot_title;
 } GebrmJobInfo;
 
 void gebrm_job_info_free(GebrmJobInfo *info);
@@ -114,6 +119,14 @@ void gebrm_job_append_task(GebrmJob *job, GebrmTask *task);
 GebrmJob *gebrm_job_find(const gchar *rid);
 
 const gchar *gebrm_job_get_title(GebrmJob *job);
+
+const gchar *gebrm_job_get_description(GebrmJob *job);
+
+const gchar *gebrm_job_get_flow_id(GebrmJob *job);
+
+const gchar *gebrm_job_get_flow_title(GebrmJob *job);
+
+const gchar *gebrm_job_get_snapshot_title(GebrmJob *job);
 
 void gebrm_job_set_title(GebrmJob *job, const gchar *title);
 
@@ -239,6 +252,18 @@ void gebrm_job_set_mpi_owner(GebrmJob *job, const gchar *mpi_owner);
 const gchar *gebrm_job_get_mpi_flavor(GebrmJob *job);
 
 void gebrm_job_set_mpi_flavor(GebrmJob *job, const gchar *mpi_flavor);
+
+const gchar *gebrm_job_get_snapshot_title(GebrmJob *job);
+
+void gebrm_job_set_snapshot_title(GebrmJob *job, const gchar *snapshot);
+
+const gchar *gebrm_job_get_snapshot_id(GebrmJob *job);
+
+void gebrm_job_set_snapshot_id(GebrmJob *job, const gchar *snapshot);
+
+const gchar *gebrm_job_get_gebrjob_id(GebrmJob *job);
+
+void gebrm_job_set_gebrjob_id(GebrmJob *job, const gchar *snapshot);
 
 G_END_DECLS
 

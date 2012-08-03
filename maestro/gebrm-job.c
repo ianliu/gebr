@@ -76,6 +76,9 @@ gebrm_job_finalize(GObject *object)
 
 	g_free(job->priv->info.id);
 	g_free(job->priv->info.title);
+	g_free(job->priv->info.description);
+	g_free(job->priv->info.flow_id);
+	g_free(job->priv->info.flow_title);
 	g_free(job->priv->info.hostname);
 	g_free(job->priv->info.parent_id);
 	g_free(job->priv->info.nice);
@@ -91,6 +94,8 @@ gebrm_job_finalize(GObject *object)
 	g_free(job->priv->run_type);
 	g_free(job->priv->mpi_owner);
 	g_free(job->priv->mpi_flavor);
+	g_free(job->priv->info.snapshot_title);
+	g_free(job->priv->info.snapshot_id);
 	g_list_foreach(job->priv->tasks, (GFunc)g_object_unref, NULL);
 	g_list_free(job->priv->tasks);
 
@@ -311,7 +316,10 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 		job->priv->info.id = g_strdup(info->id);
 
 	job->priv->info.title = g_strdup(info->title);
+	job->priv->info.description = g_strdup(info->description);
 	job->priv->info.temp_id = g_strdup(info->temp_id);
+	job->priv->info.flow_id = g_strdup(info->flow_id);
+	job->priv->info.flow_title = g_strdup(info->flow_title);
 	job->priv->info.hostname = g_strdup(info->hostname);
 	job->priv->info.parent_id = g_strdup(info->parent_id);
 	job->priv->info.nice = g_strdup(info->nice);
@@ -322,6 +330,8 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.group = g_strdup(info->group);
 	job->priv->info.group_type = g_strdup(info->group_type);
 	job->priv->info.speed = g_strdup(info->speed);
+	job->priv->info.snapshot_title = g_strdup(info->snapshot_title);
+	job->priv->info.snapshot_id = g_strdup(info->snapshot_id);
 
 	if (job->priv->info.parent_id && job->priv->info.parent_id[0] != '\0')
 		job->priv->status = JOB_STATUS_QUEUED;
@@ -353,6 +363,24 @@ gebrm_job_get_title(GebrmJob *job)
 	return job->priv->info.title;
 }
 
+const gchar *
+gebrm_job_get_description(GebrmJob *job)
+{
+	return job->priv->info.description;
+}
+
+const gchar *
+gebrm_job_get_flow_id(GebrmJob *job)
+{
+	return job->priv->info.flow_id;
+}
+
+const gchar *
+gebrm_job_get_flow_title(GebrmJob *job)
+{
+	return job->priv->info.flow_title;
+}
+
 void
 gebrm_job_append_task(GebrmJob *job, GebrmTask *task)
 {
@@ -375,7 +403,7 @@ gebrm_job_append_task(GebrmJob *job, GebrmTask *task)
 	switch(status)
 	{
 	case JOB_STATUS_FAILED:
-		gebrm_job_change_task_status(task, job->priv->status, status, "", job);
+		gebrm_job_change_task_status(task, job->priv->status, status, gebr_iso_date(), job);
 		break;
 	case JOB_STATUS_FINISHED:
 	case JOB_STATUS_CANCELED:
@@ -778,6 +806,8 @@ gebrm_job_info_free(GebrmJobInfo *info)
 	g_free(info->group);
 	g_free(info->group_type);
 	g_free(info->speed);
+	g_free(info->snapshot_title);
+	g_free(info->snapshot_id);
 
 }
 void
@@ -810,4 +840,28 @@ gebrm_job_set_mpi_flavor(GebrmJob *job, const gchar *mpi_flavor)
 {
 	g_free(job->priv->mpi_flavor);
 	job->priv->mpi_flavor = g_strdup(mpi_flavor);
+}
+
+const gchar *
+gebrm_job_get_snapshot_title(GebrmJob *job)
+{
+	return job->priv->info.snapshot_title;
+}
+
+void
+gebrm_job_set_snapshot_title(GebrmJob *job, const gchar *snapshot_title)
+{
+	job->priv->info.snapshot_title = g_strdup(snapshot_title);
+}
+
+const gchar *
+gebrm_job_get_snapshot_id(GebrmJob *job)
+{
+	return job->priv->info.snapshot_id;
+}
+
+void
+gebrm_job_set_snapshot_id(GebrmJob *job, const gchar *snapshot_id)
+{
+	job->priv->info.snapshot_id = g_strdup(snapshot_id);
 }

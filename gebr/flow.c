@@ -124,15 +124,60 @@ void flow_delete(gboolean confirm)
 
 	gchar *title;
 	gchar *filename;
+	gboolean there_is_snapshot = FALSE;
 
 	GebrGeoXmlSequence *line_flow;
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 
-	if (confirm && gebr_gui_confirm_action_dialog(_("Delete Flow"),
-						      _("Are you sure you want to delete the selected Flow(s)?")) == FALSE)
+	gint current_page = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	if(rows->next == NULL && current_page == NOTEBOOK_PAGE_FLOW_BROWSE) {
+		GebrGeoXmlDocument *flow;
+		gchar *flow_id;
+
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, rows->data);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		                   FB_FILENAME, &flow_id,
+		                   FB_XMLPOINTER, &flow,
+		                   -1);
+
+		if (gebr_geoxml_flow_get_revisions_number(GEBR_GEOXML_FLOW(flow)) > 0) {
+			there_is_snapshot = there_is_snapshot || TRUE;
+			if (g_list_find_custom(gebr.ui_flow_browse->select_flows, flow_id, (GCompareFunc)g_strcmp0)) {
+				gchar *str = g_strdup_printf("delete\b%s\n",flow_id);
+				GString *action = g_string_new(str);
+
+				if (gebr_comm_process_write_stdin_string(gebr.ui_flow_browse->graph_process, action) == 0)
+					g_debug("Fail to delete snapshots!");
+
+				g_free(str);
+				g_string_free(action, TRUE);
+				g_free(flow_id);
+				g_list_free(rows);
+				return;
+			}
+		}
+		g_free(flow_id);
+	}
+	g_list_free(rows);
+
+	
+	gchar *deletion_msg;
+	if (there_is_snapshot)
+		deletion_msg = g_strdup(_("Are you sure you want to delete the selected Flow(s) and\n"
+				 "the associated snapshots?"));
+	else
+		deletion_msg = g_strdup(_("Are you sure you want to delete the selected Flow(s)?"));
+
+	if (confirm && gebr_gui_confirm_action_dialog(_("Delete Flow(s)?"),
+						      deletion_msg) == FALSE) {
+		g_free(deletion_msg);
 		return;
+	}
+	g_free(deletion_msg);
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
@@ -644,7 +689,21 @@ gboolean flow_revision_save(void)
 	if (!flow_browse_get_selected(&iter, TRUE))
 		return FALSE;
 
-	dialog = gtk_dialog_new_with_buttons(_("Take snapshot of the selected Flow?"),
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gint num_flows = gtk_tree_selection_count_selected_rows(selection);
+
+	const gchar *dialog_title;
+	const gchar *dialog_msg;
+
+	if (num_flows == 1) {
+		dialog_title = _("Take a snapshot of the current Flow?");
+		dialog_msg = _("Enter a description for the snapshot of the current Flow:");
+	} else {
+		dialog_title = _("Take a snapshot of the selected Flows?");
+		dialog_msg = _("Enter a description for the snapshots of the selected Flows:");
+	}
+
+	dialog = gtk_dialog_new_with_buttons(dialog_title,
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -659,7 +718,7 @@ gboolean flow_revision_save(void)
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align), vbox);
 
-	label = gtk_label_new(_("Enter a description for the snapshot of the selected Flow:"));
+	label = gtk_label_new(dialog_msg);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	entry = gtk_entry_new();
@@ -717,6 +776,9 @@ gboolean flow_revision_save(void)
 			flow_browse_reload_selected();
 			ret = TRUE;
 
+			if (gebr.ui_flow_browse->notebook_page == 0)
+				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.ui_flow_browse->notebook), 1);
+
 			//document_free(flow);
 			g_free (flow_filename);
 		}
@@ -749,8 +811,10 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &xml, NULL, NULL, &id);
 		if (!g_strcmp0(id, id_remove)) {
 			GebrGeoXmlDocument *doc;
-			if (gebr_geoxml_document_load_buffer(&doc, xml) != GEBR_GEOXML_RETV_SUCCESS)
+			if (gebr_geoxml_document_load_buffer(&doc, xml) != GEBR_GEOXML_RETV_SUCCESS) {
 				g_warn_if_reached();
+				return FALSE;
+			}
 
 			parent_id = gebr_geoxml_document_get_parent_id(doc);
 
@@ -783,8 +847,10 @@ flow_revision_remove(GebrGeoXmlFlow *flow,
 		GebrGeoXmlRevision *rev = gebr_geoxml_flow_get_revision_by_id(flow, i->data);
 		gebr_geoxml_flow_get_revision_data(rev, &flow_xml, NULL, NULL, NULL);
 
-		if (gebr_geoxml_document_load_buffer(&doc_rev, flow_xml) != GEBR_GEOXML_RETV_SUCCESS)
+		if (gebr_geoxml_document_load_buffer(&doc_rev, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
 			g_warn_if_reached();
+			return FALSE;
+		}
 		g_free(flow_xml);
 
 		gebr_geoxml_document_set_parent_id(doc_rev, parent_id);
@@ -1056,7 +1122,7 @@ gebr_flow_set_toolbar_sensitive(void)
 	gboolean sensitive = TRUE;
 	gboolean sensitive_exec_slider;
 	gboolean maestro_disconnected = FALSE;
-	gboolean no_line_selected = FALSE;
+	gboolean line_selected = TRUE;
 
 	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED) {
 		sensitive = FALSE;
@@ -1065,7 +1131,7 @@ gebr_flow_set_toolbar_sensitive(void)
 
 	if (!gebr.line) {
 		sensitive = FALSE;
-		no_line_selected = TRUE;
+		line_selected = FALSE;
 	}
 
 	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
@@ -1092,20 +1158,40 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive);
 	gtk_widget_set_sensitive(gebr.ui_flow_browse->speed_button, sensitive_exec_slider);
 
-	if (sensitive) {
+	GtkTreeSelection *flows_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gint flows_nrows = gtk_tree_selection_count_selected_rows(flows_selection);
+
+	if (sensitive && flows_nrows == 1) {
 		gtk_widget_show(gebr.ui_flow_browse->info_window);
-		gtk_widget_show(gebr.ui_flow_browse->rev_main);
 		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
 	} else {
-		if (no_line_selected)
+		if (!line_selected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
-		else if (maestro_disconnected)
+		} else if (maestro_disconnected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
-			                   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
-			                     "Try changing its maestro or connecting it."));
+					   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
+					     "Try changing its maestro or connecting it."));
+		} else if (flows_nrows  !=  1) {
+			gchar *label_msg;
+			if (flows_nrows >1 )
+				label_msg = g_markup_printf_escaped(_("%d Flows selected.\n\n"
+						"GêBR can execute them\n"
+						"- <i>sequentially</i> (Shift+R) or\n"
+						"- <i>parallelly</i> (Shift+Ctrl+R)"),
+						flows_nrows);
+			else
+				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
+						"Click on <i>New Flow</i> to create a new one\n"
+						"or import one through the <i>Import Flow</i> icon."));
+
+			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), label_msg);
+			g_free(label_msg);
+
+			g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
+			g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
+		}
 
 		gtk_widget_show(gebr.ui_flow_browse->warn_window);
-		gtk_widget_hide(gebr.ui_flow_browse->rev_main);
 		gtk_widget_hide(gebr.ui_flow_browse->info_window);
 	}
 
@@ -1369,6 +1455,9 @@ gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
                                     GString *tables_content,
                                     const gchar *scope)
 {
+	/* Set validator to @doc */
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &doc, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+
 	gebr_generate_variables_header_table(tables_content, insert_header, scope);
 
 	GebrGeoXmlParameters *params;
@@ -1378,7 +1467,8 @@ gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
 	gchar *name;
 	gchar *value;
 	gchar *comment;
-	gchar *eval, *result;
+	gchar *eval = NULL;
+	gchar *result = NULL;
 	gchar *var_type;
 	gboolean have_vars = FALSE;
 	GError *error = NULL;
@@ -1451,6 +1541,9 @@ gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
 		                 "      </tbody>\n"
 		                 "    </table>\n"
 		                 "  </div>\n");
+
+	/* Set default validator */
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 }
 
 void

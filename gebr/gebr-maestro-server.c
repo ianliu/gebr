@@ -614,9 +614,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			g_debug("Daemon state change (%s) %s", addr->str, ssta->str);
 
-			g_debug("Daemon %s Infos: NCORES: %s | CLOCK: %s | MODEL: %s | MEMORY: %s",
-			        addr->str, ncores->str, cpu_clock->str, cpu_model->str, memory->str);
-
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
@@ -655,30 +652,34 @@ parse_messages(GebrCommServer *comm_server,
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 21)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 25)) == NULL)
 				goto err;
 
-			GString *id          = g_list_nth_data(arguments, 0);
-			GString *temp_id     = g_list_nth_data(arguments, 1);
-			GString *nprocs      = g_list_nth_data(arguments, 2);
-			GString *server_list = g_list_nth_data(arguments, 3);
-			GString *hostname    = g_list_nth_data(arguments, 4);
-			GString *title       = g_list_nth_data(arguments, 5);
-			GString *parent_id   = g_list_nth_data(arguments, 6);
-			GString *nice        = g_list_nth_data(arguments, 7);
-			GString *input       = g_list_nth_data(arguments, 8);
-			GString *output      = g_list_nth_data(arguments, 9);
-			GString *error       = g_list_nth_data(arguments, 10);
-			GString *submit_date = g_list_nth_data(arguments, 11);
-			GString *group       = g_list_nth_data(arguments, 12);
-			GString *group_type  = g_list_nth_data(arguments, 13);
-			GString *speed       = g_list_nth_data(arguments, 14);
-			GString *status      = g_list_nth_data(arguments, 15);
-			GString *start_date  = g_list_nth_data(arguments, 16);
-			GString *finish_date = g_list_nth_data(arguments, 17);
-			GString *run_type    = g_list_nth_data(arguments, 18);
-			GString *mpi_owner   = g_list_nth_data(arguments, 19);
-			GString *mpi_flavor   = g_list_nth_data(arguments, 20);
+			GString *id		    = g_list_nth_data(arguments, 0);
+			GString *temp_id	    = g_list_nth_data(arguments, 1);
+			GString *flow_id	    = g_list_nth_data(arguments, 2);
+			GString *nprocs		    = g_list_nth_data(arguments, 3);
+			GString *server_list	    = g_list_nth_data(arguments, 4);
+			GString *hostname	    = g_list_nth_data(arguments, 5);
+			GString *title		    = g_list_nth_data(arguments, 6);
+			GString *description	    = g_list_nth_data(arguments, 7);
+			GString *snapshot_title     = g_list_nth_data(arguments, 8);
+			GString *snapshot_id	    = g_list_nth_data(arguments, 9);
+			GString *parent_id	    = g_list_nth_data(arguments, 10);
+			GString *nice		    = g_list_nth_data(arguments, 11);
+			GString *input		    = g_list_nth_data(arguments, 12);
+			GString *output		    = g_list_nth_data(arguments, 13);
+			GString *error		    = g_list_nth_data(arguments, 14);
+			GString *submit_date	    = g_list_nth_data(arguments, 15);
+			GString *group		    = g_list_nth_data(arguments, 16);
+			GString *group_type	    = g_list_nth_data(arguments, 17);
+			GString *speed		    = g_list_nth_data(arguments, 18);
+			GString *status		    = g_list_nth_data(arguments, 19);
+			GString *start_date	    = g_list_nth_data(arguments, 20);
+			GString *finish_date	    = g_list_nth_data(arguments, 21);
+			GString *run_type	    = g_list_nth_data(arguments, 22);
+			GString *mpi_owner	    = g_list_nth_data(arguments, 23);
+			GString *mpi_flavor	    = g_list_nth_data(arguments, 24);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean prev_exist = FALSE;
@@ -710,7 +711,10 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_io(job, input->str, output->str, error->str);
 			gebr_job_set_mpi_owner(job, mpi_owner->str);
 			gebr_job_set_mpi_flavor(job, mpi_flavor->str);
-			g_debug("still_mpi_owner:%s", gebr_job_get_mpi_owner(job));
+			gebr_job_set_flow_id(job, flow_id->str);
+			gebr_job_set_snapshot_title(job, snapshot_title->str);
+			gebr_job_set_snapshot_id(job, snapshot_id->str);
+			gebr_job_set_description(job, description->str);
 
 			if (g_strcmp0(gebr_job_get_queue(job), parent_id->str) != 0) {
 				gebr_job_set_queue(job, parent_id->str);
@@ -755,7 +759,6 @@ parse_messages(GebrCommServer *comm_server,
 			GString *id = g_list_nth_data(arguments, 0);
 			GString *issues = g_list_nth_data(arguments, 1);
 
-			g_debug("on ISS_DEF, id:'%s', issues:'%s'", id->str, issues->str); 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gebr_job_set_issues(job, issues->str);
 
@@ -920,8 +923,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, NULL);
 
-			g_debug("Emit signal to change AC!!!!!");
-
 			g_signal_emit(maestro, signals[AC_CHANGE], 0, is_ac, daemon);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -934,9 +935,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			GString *daemon_addr = g_list_nth_data(arguments, 0);
 			GString *mpi_flavors = g_list_nth_data(arguments, 1);
-
-
-			g_debug("RECEIVING daemon: %s, MPI: %s", daemon_addr->str, mpi_flavors->str);
 
 			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, daemon_addr->str);
 			if (!daemon)
