@@ -1442,6 +1442,9 @@ gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
                                     GString *tables_content,
                                     const gchar *scope)
 {
+	/* Set validator to @doc */
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &doc, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+
 	gebr_generate_variables_header_table(tables_content, insert_header, scope);
 
 	GebrGeoXmlParameters *params;
@@ -1451,7 +1454,8 @@ gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
 	gchar *name;
 	gchar *value;
 	gchar *comment;
-	gchar *eval, *result;
+	gchar *eval = NULL;
+	gchar *result = NULL;
 	gchar *var_type;
 	gboolean have_vars = FALSE;
 	GError *error = NULL;
@@ -1524,6 +1528,9 @@ gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
 		                 "      </tbody>\n"
 		                 "    </table>\n"
 		                 "  </div>\n");
+
+	/* Set default validator */
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 }
 
 void
