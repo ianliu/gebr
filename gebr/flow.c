@@ -162,8 +162,9 @@ void flow_delete(gboolean confirm)
 	}
 	g_list_free(rows);
 
-	if (confirm && gebr_gui_confirm_action_dialog(_("Delete Flow"),
-						      _("Are you sure you want to delete the selected Flow(s)?")) == FALSE)
+	if (confirm && gebr_gui_confirm_action_dialog(_("Delete Flow(s)?"),
+						      _("Are you sure you want to delete the selected Flow(s) and\n"
+							"the associated snapshots?")) == FALSE)
 		return;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
