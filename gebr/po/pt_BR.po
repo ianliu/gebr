@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-17 15:00-0300\n"
+"POT-Creation-Date: 2012-08-06 11:53-0300\n"
 "PO-Revision-Date: 2012-05-10 09:41-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -41,15 +41,15 @@ msgstr ""
 "\n"
 "Conecte-se ao maestro <b>%s</b> para executar esta linha"
 
-#: ../callbacks.c:261
+#: ../callbacks.c:247 ../callbacks.c:250
 msgid "Broken Flow"
 msgstr "Fluxo quebrado"
 
-#: ../callbacks.c:269
+#: ../callbacks.c:261 ../callbacks.c:264
 msgid "Warning"
 msgstr "Aviso"
 
-#: ../callbacks.c:432
+#: ../callbacks.c:456
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se que ela foi instalada "
@@ -247,15 +247,14 @@ msgid "<b>Executed at:</b>"
 msgstr "<b>Executado em</b>:"
 
 #: ../data/gebr-job-control.glade.h:2
+msgid "<b>Flow</b>"
+msgstr "<b>Fluxo:</b>"
+
+#: ../data/gebr-job-control.glade.h:3
 msgid "<b>Group/Working Nodes</b>"
 msgstr "<b>Grupo/Nós</b>"
 
-#: ../data/gebr-job-control.glade.h:3 ../data/gebr-maestro-dialog.glade.h:2
-#: ../data/gebr-connections-settings.glade.h:1
-msgid "<b>Maestro</b>"
-msgstr "<b>Maestro</b>"
-
-#: ../data/gebr-job-control.glade.h:4 ../gebr-job-control.c:763
+#: ../data/gebr-job-control.glade.h:4 ../gebr-job-control.c:818
 #, c-format
 msgid "<b>Process distribution among working nodes</b>"
 msgstr ""
@@ -274,7 +273,7 @@ msgstr "<b>Estado</b>"
 msgid "Command line"
 msgstr "Linha de comando:"
 
-#: ../data/gebr-job-control.glade.h:8 ../ui_flow_browse.c:232
+#: ../data/gebr-job-control.glade.h:8 ../ui_flow_browse.c:279
 msgid "Details"
 msgstr "Detalhes"
 
@@ -282,13 +281,18 @@ msgstr "Detalhes"
 msgid "Dismiss"
 msgstr "Ignorar"
 
-#: ../data/gebr-job-control.glade.h:10 ../flow.c:1323
+#: ../data/gebr-job-control.glade.h:10 ../flow.c:1587
 msgid "Output"
 msgstr "Saída"
 
 #: ../data/gebr-maestro-dialog.glade.h:1
 msgid "<b>Groups</b>"
 msgstr "<b>Grupos</b>"
+
+#: ../data/gebr-maestro-dialog.glade.h:2
+#: ../data/gebr-connections-settings.glade.h:1
+msgid "<b>Maestro</b>"
+msgstr "<b>Maestro</b>"
 
 #: ../data/gebr-maestro-dialog.glade.h:3
 msgid "<i>Drop a working node to create a group!</i>"
@@ -338,11 +342,11 @@ msgstr "<b>Número de Processos</b>"
 
 #: ../data/mpi-parameters-help.glade.h:2
 msgid "<span weight='bold' size='x-large'>MPI Parameters Help</span>"
-msgstr "<span weight='bold' size='x-large'>MPI Parameters Help</span>"
+msgstr "<span weight='bold' size='x-large'>Ajuda dos parâmetros MPI</span>"
 
 #: ../data/mpi-parameters-help.glade.h:3
 msgid "MPI Parameters Help"
-msgstr "Parâmetros MPI Ajuda"
+msgstr "Ajuda dos parâmetros MPI"
 
 #: ../data/mpi-parameters-help.glade.h:4
 msgid ""
@@ -374,38 +378,39 @@ msgstr "<b>Log:</b>"
 msgid "<b>Output:</b>"
 msgstr "<b>Saída:</b>"
 
-#: ../data/flow-properties.glade.h:6
-msgid "GêBR can save remarkable states of a flow through snapshots."
-msgstr "A GêBR salva as configurações do seu fluxo através de snapshots."
+#: ../data/gebr-xdot-graph.py:131
+msgid "Take a Snapshot \tCtrl+S"
+msgstr "Tirar uma foto\tCtrl+S"
 
-#: ../data/flow-properties.glade.h:7
-msgid ""
-"There are no snapshots.\n"
-"\n"
-"A snapshot stores the settings of your flow so you can restore it at any "
-"moment. To take a snapshot, just click on the camera icon and give a non-"
-"empty description."
-msgstr ""
-"Você não tem snapshots.\n"
-"Uma snapshot salva as configurações do seu fluxo de modo que você possa "
-"restaurá-las a qualquer momento. Para tirar uma snapshot, clique no ícone da "
-"câmera e dê uma descrição."
-
-#: ../data/gebr-xdot-graph.py:44
+#: ../data/gebr-xdot-graph.py:148
 msgid "Revert"
 msgstr "Reverter"
 
-#: ../data/gebr-xdot-graph.py:48 ../document.c:351
+#: ../data/gebr-xdot-graph.py:153 ../document.c:361
 msgid "Delete"
 msgstr "Apagar"
 
+#. Sequentially
+#: ../data/gebr-xdot-graph.py:166
+msgid "Execute sequentially \t\tCtrl+R"
+msgstr "Executar sequencialmente\t\tCtrl+R"
+
+#. Parallel
+#: ../data/gebr-xdot-graph.py:171
+msgid "Execute parallelly \t\tCtrl+Shift+R"
+msgstr "Executar paralelamente\t\tCtrl+Shift+R"
+
+#: ../data/gebr-xdot-graph.py:176
+msgid "Execute \t\t\tCtrl+R"
+msgstr "Executar\t\t\tCtrl+R"
+
 #. the final point already comes with gebr_geoxml_error_string
-#: ../document.c:258
+#: ../document.c:268
 #, c-format
 msgid "Cannot load the file at %s: %s"
 msgstr "Não foi possível carregar o arquivo em %s: %s"
 
-#: ../document.c:273
+#: ../document.c:283
 #, c-format
 msgid ""
 "Cannot load menu '%s' at %s:\n"
@@ -414,7 +419,7 @@ msgstr ""
 "Não foi possível carregar o menu '%s' em %s:\n"
 "%s"
 
-#: ../document.c:276
+#: ../document.c:286
 #, c-format
 msgid ""
 "Cannot load the Menu at %s:\n"
@@ -423,23 +428,26 @@ msgstr ""
 "Não foi possível carregar o menu em %s:\n"
 "%s"
 
-#: ../document.c:286 ../document.c:298
+#: ../document.c:296 ../document.c:308
 msgid "document"
 msgstr "documento"
 
-#: ../document.c:289 ../ui_document.c:1668 ../ui_help.c:202 ../ui_help.c:289
+#: ../document.c:299 ../document.c:1273 ../ui_document.c:1668 ../ui_help.c:202
+#: ../ui_help.c:289
 msgid "project"
 msgstr "projeto"
 
-#: ../document.c:292 ../ui_document.c:1670 ../ui_help.c:199 ../ui_help.c:293
+#: ../document.c:302 ../document.c:1251 ../ui_document.c:1670 ../ui_help.c:199
+#: ../ui_help.c:293
 msgid "line"
 msgstr "linha"
 
-#: ../document.c:295 ../ui_document.c:1672 ../ui_help.c:196 ../ui_help.c:297
+#: ../document.c:305 ../document.c:1260 ../ui_document.c:1672 ../ui_help.c:196
+#: ../ui_help.c:297
 msgid "flow"
 msgstr "fluxo"
 
-#: ../document.c:326
+#: ../document.c:336
 #, c-format
 msgid ""
 "The file %s could not be loaded.\n"
@@ -448,7 +456,7 @@ msgstr ""
 "O arquivo %s não pôde ser carregado.\n"
 "%s"
 
-#: ../document.c:333
+#: ../document.c:343
 #, c-format
 msgid ""
 "The file %s from %s%s (file %s) could not be loaded.\n"
@@ -457,19 +465,19 @@ msgstr ""
 "O arquivo %s de %s%s (arquivo %s) não pôde ser carregado.\n"
 "%s"
 
-#: ../document.c:348
+#: ../document.c:358
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../document.c:349 ../interface.c:91 ../interface.c:115
+#: ../document.c:359 ../interface.c:91 ../interface.c:115
 msgid "Export"
 msgstr "Exportar"
 
-#: ../document.c:362
+#: ../document.c:372
 msgid "Choose the filename to export"
 msgstr "Escolha o nome do arquivo para exportar"
 
-#: ../document.c:375
+#: ../document.c:385
 #, c-format
 msgid ""
 "Failed to export the file '%s':\n"
@@ -478,18 +486,59 @@ msgstr ""
 "Falha ao exportar o arquivo '%s':\n"
 "%s."
 
-#: ../document.c:399
+#: ../document.c:409
 msgid "Orphan Lines"
 msgstr "Linhas órfãs"
 
-#: ../document.c:417 ../document.c:431
+#: ../document.c:427 ../document.c:441
 msgid "Orphan Flows"
 msgstr "Fluxos órfãos"
 
-#: ../document.c:477
+#: ../document.c:487
 #, c-format
 msgid "Failed to save the document '%s' at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
+
+#: ../document.c:752
+msgid "Report generated at "
+msgstr "Relatório gerado em "
+
+#: ../document.c:760
+msgid "This line belongs to "
+msgstr "Esta linha pertence a "
+
+#: ../document.c:850
+msgid "Line paths"
+msgstr "Caminhos da Linha:"
+
+#. Variables table
+#: ../document.c:971 ../document.c:979 ../document.c:988 ../ui_document.c:1668
+msgid "Project"
+msgstr "Projeto"
+
+#: ../document.c:980 ../document.c:989 ../line.c:508 ../ui_document.c:1670
+msgid "Line"
+msgstr "Linha"
+
+#: ../document.c:990 ../ui_document.c:1672
+msgid "Flow"
+msgstr "Fluxo"
+
+#: ../document.c:1077
+msgid "Snapshot taken on "
+msgstr "Foto tirada em "
+
+#: ../document.c:1133
+msgid "Snapshot composed by the program(s):"
+msgstr "Fluxo composto pelo(s) programa(s):"
+
+#: ../document.c:1133
+msgid "Flow composed by the program(s):"
+msgstr "Fluxo composto pelo(s) programa(s):"
+
+#: ../document.c:1216
+msgid "Line composed by the Flow(s):"
+msgstr "Linha composta pelo(s) Fluxo(s):"
 
 #: ../flow.c:76 ../interface.c:104
 msgid "New Flow"
@@ -500,66 +549,74 @@ msgstr "Novo Fluxo"
 msgid "New Flow added to Line '%s'."
 msgstr "Novo Fluxo adicionado a Linha '%s'."
 
-#: ../flow.c:133
-msgid "Delete Flow"
-msgstr "Apagar Fluxo"
+#: ../flow.c:170
+msgid ""
+"Are you sure you want to delete the selected Flow(s) and\n"
+"the associated snapshots?"
+msgstr ""
+"Tem certeza que deseja apagar o(s) Fluxo(s) selecionado(s)e as Fotos "
+"associadas?"
 
-#: ../flow.c:134
+#: ../flow.c:173
 msgid "Are you sure you want to delete the selected Flow(s)?"
 msgstr "Tem certeza que quer apagar o(s) Fluxo(s) selecionado(s)?"
 
-#: ../flow.c:146
+#: ../flow.c:175
+msgid "Delete Flow(s)?"
+msgstr "Apagar Fluxo(s)?"
+
+#: ../flow.c:191
 #, c-format
 msgid "Deleting Flow '%s'."
 msgstr "Apagando Fluxo '%s'."
 
-#: ../flow.c:147
+#: ../flow.c:192
 #, c-format
 msgid "Deleting  Flow '%s' from Line '%s'."
 msgstr "Apagando  Fluxo '%s' da Linha '%s'."
 
-#: ../flow.c:197
+#: ../flow.c:242
 #, c-format
 msgid "Flow '%s' imported into Line '%s' from the file '%s'."
 msgstr "Fluxo '%s' importado para a linha '%s' a partir do arquivo '%s'."
 
-#: ../flow.c:208 ../ui_project_line.c:872
+#: ../flow.c:253 ../ui_project_line.c:872
 #, c-format
 msgid "%s (Imported)"
 msgstr "%s (Importado)"
 
-#: ../flow.c:229
+#: ../flow.c:274
 msgid "Choose a Flow to import"
 msgstr "Escolha um Fluxo para importar"
 
-#: ../flow.c:237
+#: ../flow.c:282
 msgid "Flow file types (*.flw, *.flwz, *.flwx)"
 msgstr "Tipos de Arquivos de Fluxo (*.flw, *flwz)"
 
-#: ../flow.c:254 ../flow.c:260 ../ui_project_line.c:883
+#: ../flow.c:299 ../flow.c:305 ../ui_project_line.c:883
 #, c-format
 msgid "Could not import Flow from the file %s"
 msgstr "Não foi possível importar o Fluxo do arquivo %s"
 
-#: ../flow.c:289 ../ui_flow_browse.c:407
+#: ../flow.c:334 ../ui_flow_browse.c:505
 msgid "No Flow selected"
 msgstr "Nenhum Fluxo selecionado"
 
-#: ../flow.c:307
+#: ../flow.c:352
 #, c-format
 msgid "Save '%s' as..."
 msgstr "Salvar '%s' como..."
 
-#: ../flow.c:320
+#: ../flow.c:365
 msgid "Flow file types (*.flwz, *.flwx)"
 msgstr "Tipos de Arquivos de Fluxo (*.flw, *flwz)"
 
-#: ../flow.c:349
+#: ../flow.c:394
 #, c-format
 msgid "Could not clone Flow %s"
 msgstr "Não foi possível clonar o Fluxo %s"
 
-#: ../flow.c:374
+#: ../flow.c:419
 #, c-format
 msgid ""
 "Exported selected Flow(s) into %s with error. See log file for more "
@@ -568,124 +625,57 @@ msgstr ""
 "Fluxo(s) selecionado(s) exportado(s) para '%s' com erro. Veja o arquivo de "
 "logpara mais detalhes."
 
-#: ../flow.c:376
+#: ../flow.c:421
 #, c-format
 msgid "Exported selected Flow(s) into %s."
 msgstr "Fluxos selecionados exportados para %s."
 
-#: ../flow.c:380
+#: ../flow.c:425
 msgid "Could not export Flow(s). See log file for more information."
-msgstr "Impossível exportar Fluxo(s). Veja log para mais detalhes."
+msgstr ""
+"Impossível exportar Fluxo(s). Veja o arquivo de log para mais detalhes."
 
-#: ../flow.c:589
-msgid "Insert a description to your snapshot."
-msgstr "Insira uma descrição para sua snapshot"
+#: ../flow.c:646
+msgid "Insert a description to the snapshot."
+msgstr "Insira uma descrição para a foto"
 
-#: ../flow.c:594
+#: ../flow.c:651
 msgid "The description accepts up to 60 characters"
 msgstr "A descrição aceita até 60 caracteres"
 
-#: ../flow.c:620
-msgid "Take snapshot of the selected Flow?"
-msgstr "Criar uma snapshot do Fluxo selecionado?"
+#: ../flow.c:699
+msgid "Take a snapshot of the current Flow?"
+msgstr "Tirar uma foto do fluxo atual?"
 
-#: ../flow.c:635
-msgid "Write a description about snapshot of the selected Flow:"
-msgstr "Escreva uma descrição da snapshot do Fluxo selecionado:"
+#: ../flow.c:700
+msgid "Enter a description for the snapshot of the current Flow:"
+msgstr "Insira uma descrição da foto do Fluxo atual?"
 
-#: ../flow.c:646
+#: ../flow.c:702
+msgid "Take a snapshot of the selected Flows?"
+msgstr "Tirar uma foto dos Fluxos selecionado?"
+
+#: ../flow.c:703
+msgid "Enter a description for the snapshots of the selected Flows:"
+msgstr "Escreva uma descrição da foto do Fluxo selecionado:"
+
+#: ../flow.c:732
 msgid "Insert a description of your snapshot."
-msgstr "Insira uma descrição para sua snapshot"
+msgstr "Insira uma descrição para a foto."
 
-#: ../flow.c:956
+#: ../flow.c:1058
 msgid "Could not paste Flow. It was probably deleted."
 msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
-#: ../flow.c:995
+#: ../flow.c:1097
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../flow.c:1090
-msgid "Instance"
-msgstr "Instância"
-
-#: ../flow.c:1133
-#, c-format
-msgid "Parameters for the Program \"%s\""
-msgstr "Parâmetros para o Programa \"%s\""
-
-#: ../flow.c:1151
-msgid "Parameter"
-msgstr "Parâmetro"
-
-#: ../flow.c:1151 ../flow.c:1242 ../ui_document.c:732
-msgid "Value"
-msgstr "Valor"
-
-#: ../flow.c:1242
-msgid "Variables"
-msgstr "Variáveis"
-
-#: ../flow.c:1242 ../ui_document.c:709
-msgid "Keyword"
-msgstr "Palavra-chave"
-
-#: ../flow.c:1242
-msgid "Result"
-msgstr "Resultado"
-
-#: ../flow.c:1242 ../ui_document.c:770
-msgid "Comment"
-msgstr "Comentário"
-
-#: ../flow.c:1245 ../ui_document.c:1672
-msgid "Flow"
-msgstr "Fluxo"
-
-#: ../flow.c:1246 ../line.c:508 ../ui_document.c:1670
-msgid "Line"
-msgstr "Linha"
-
-#: ../flow.c:1246 ../ui_document.c:1668
-msgid "Project"
-msgstr "Projeto"
-
-#: ../flow.c:1286
-msgid "There are no variables in this scope"
-msgstr "Não existem variáveis neste escopo"
-
-#: ../flow.c:1321
-msgid "I/O table"
-msgstr "Tabela de entrada/saída"
-
-#: ../flow.c:1322
-msgid "Input"
-msgstr "Entrada"
-
-#: ../flow.c:1322 ../flow.c:1323 ../flow.c:1324 ../ui_flow_browse.c:364
-#: ../ui_flow_browse.c:372 ../ui_flow_browse.c:380
-msgid "(none)"
-msgstr "(nenhum)"
-
-#: ../flow.c:1324
-msgid "Error"
-msgstr "Log de erro"
-
-#. Comment for translators:
-#. "By" as in "By John McClane"
-#: ../flow.c:1395 ../ui_project_line.c:1963
-msgid "By"
-msgstr "Por"
-
-#: ../flow.c:1403
-msgid "Flow composed of the program(s):"
-msgstr "Fluxo composto pelo(s) programa(s):"
-
-#: ../flow.c:1512 ../ui_flow_browse.c:143
+#: ../flow.c:1169 ../ui_flow_browse.c:178
 msgid "No Line is selected\n"
 msgstr "Nenhuma Linha selecionada.\n"
 
-#: ../flow.c:1515 ../ui_flow_browse.c:145
+#: ../flow.c:1172 ../ui_flow_browse.c:180
 msgid ""
 "The Maestro of this Line is disconnected,\n"
 "then you cannot edit flows.\n"
@@ -694,6 +684,99 @@ msgstr ""
 "O Maestro desta linha está desconectada,\n"
 "portanto, você não pode editar os fluxos.\n"
 "Tente alterar seu Maestro ou conectar-se a ele."
+
+#: ../flow.c:1177
+#, c-format
+msgid ""
+"%d Flows selected.\n"
+"\n"
+"GêBR can execute them\n"
+"- <i>sequentially</i> (Shift+R) or\n"
+"- <i>parallelly</i> (Shift+Ctrl+R)"
+msgstr ""
+"%d Fluxos selecionados.\n"
+"\n"
+"GêBR pode executá-los\n"
+"- <i>sequencialmente</i> (Shift+R) ou\n"
+"- <i>paralelamente</i> (Shift+Ctrl+R)"
+
+#: ../flow.c:1183
+#, c-format
+msgid ""
+"This Line has no Flows.\n"
+"\n"
+"Click on <i>New Flow</i> to create a new one\n"
+"or import one through the <i>Import Flow</i> icon."
+msgstr ""
+"Esta linha não tem Fluxos.\n"
+"\n"
+"Clique em <i>Novo Fluxo</i> para criar um\n"
+"ou importe através do botão <i>Import Flow</i>."
+
+#: ../flow.c:1298
+msgid "Instance"
+msgstr "Instância"
+
+#: ../flow.c:1335 ../ui_parameters.c:55
+msgid "Parameters"
+msgstr "Parâmetros"
+
+#: ../flow.c:1366
+msgid "Parameter"
+msgstr "Parâmetro"
+
+#: ../flow.c:1366 ../flow.c:1441 ../ui_document.c:732
+msgid "Value"
+msgstr "Valor"
+
+#: ../flow.c:1383 ../flow.c:1399
+msgid "This program has only default parameters"
+msgstr "Este programa tem apenas seus parâmetros padrões"
+
+#: ../flow.c:1390 ../flow.c:1406
+msgid "This program has only empty parameters"
+msgstr "Este programa tem apenas parâmetros vazios"
+
+#: ../flow.c:1441
+msgid "Variables"
+msgstr "Variáveis"
+
+#: ../flow.c:1441 ../ui_document.c:709
+msgid "Keyword"
+msgstr "Palavra-chave"
+
+#: ../flow.c:1441
+msgid "Result"
+msgstr "Resultado"
+
+#: ../flow.c:1441 ../ui_document.c:770
+msgid "Comment"
+msgstr "Comentário"
+
+#: ../flow.c:1537
+msgid "There are no variables in this scope"
+msgstr "Não existem variáveis neste escopo"
+
+#: ../flow.c:1585
+msgid "I/O table"
+msgstr "Tabela de entrada/saída"
+
+#: ../flow.c:1586
+msgid "Input"
+msgstr "Entrada"
+
+#: ../flow.c:1586 ../flow.c:1587 ../flow.c:1588 ../ui_flow_browse.c:462
+#: ../ui_flow_browse.c:470 ../ui_flow_browse.c:478
+msgid "(none)"
+msgstr "(nenhum)"
+
+#: ../flow.c:1588
+msgid "Error"
+msgstr "Log de erro"
+
+#: ../flow.c:1697
+msgid "Snapshots of this Flow:"
+msgstr "Fotos deste Fluxo:"
 
 #: ../gebr-flow-edition.c:229
 msgid "Run"
@@ -827,11 +910,11 @@ msgstr "Fluxo já contém um Loop"
 
 #: ../gebr-flow-edition.c:1384
 msgid "Overwrite existing output file"
-msgstr "Sobrescrever arquivo de saída pré existente"
+msgstr "Sobrescrever arquivo de saída existente"
 
 #: ../gebr-flow-edition.c:1390
 msgid "Overwrite existing log file"
-msgstr "Sobrescrever arquivo de log pré existente"
+msgstr "Sobrescrever arquivo de log existente"
 
 #: ../gebr-flow-edition.c:1481 ../gebr-flow-edition.c:1496
 #: ../ui_project_line.c:1744 ../ui_project_line.c:1779
@@ -883,28 +966,28 @@ msgstr "Este Programa precisa ser configurado"
 #: ../gebr-flow-edition.c:2211
 #, c-format
 msgid "Maestro protocol version mismatch: %s"
-msgstr "Versão de protocolo do Maestro incompátivel: %s"
+msgstr "Versão de protocolo do Maestro incompatível: %s"
 
-#: ../gebr-job-control.c:214
+#: ../gebr-job-control.c:217
 msgid "No jobs! Try out one of our demos (go to Help->Samples)."
 msgstr ""
 "Você não tem tarefas! Teste um de nossos programas\n"
 "demonstrativos (vá em Ajuda > Exemplos)."
 
-#: ../gebr-job-control.c:216
+#: ../gebr-job-control.c:219
 #, c-format
 msgid "There are filtered jobs. %d out of %d will not appear in the list."
 msgstr "Há tarefas filtradas. %d de %d não aparecerão na lista."
 
-#: ../gebr-job-control.c:219
+#: ../gebr-job-control.c:222
 msgid "Select a job in the list."
 msgstr "Selecione um fluxo da lista."
 
-#: ../gebr-job-control.c:221
+#: ../gebr-job-control.c:224
 msgid "Multiple jobs selected."
 msgstr "Múltiplos fluxos selecionados."
 
-#: ../gebr-job-control.c:714
+#: ../gebr-job-control.c:750
 #, c-format
 msgid ""
 "%s\n"
@@ -913,7 +996,12 @@ msgstr ""
 "%s\n"
 "%.1lf%% do total"
 
-#: ../gebr-job-control.c:756
+#: ../gebr-job-control.c:792
+#, c-format
+msgid "<span size='large' weight='bold'>%s</span>"
+msgstr "<span size='large' weight='bold'>%s</span>"
+
+#: ../gebr-job-control.c:811
 #, c-format
 msgid ""
 "This flow is queued and \n"
@@ -922,12 +1010,12 @@ msgstr ""
 "Este fluxo está enfileirado e \n"
 "não foi executado."
 
-#: ../gebr-job-control.c:768
+#: ../gebr-job-control.c:823
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: ../gebr-job-control.c:770
+#: ../gebr-job-control.c:825
 #, c-format
 msgid ""
 "Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
@@ -938,134 +1026,134 @@ msgstr ""
 "Executada utilizando <b>%d</b> processo(s) no %s <b>%s</b>,\n"
 "%sdistribuída em <b>%d</b> nó(s) de processamento.\n"
 
-#: ../gebr-job-control.c:774
+#: ../gebr-job-control.c:829
 msgid "node"
 msgstr "nó"
 
-#: ../gebr-job-control.c:774
+#: ../gebr-job-control.c:829
 msgid "group"
 msgstr "grupo"
 
-#: ../gebr-job-control.c:775
+#: ../gebr-job-control.c:830
 msgid "using the nodes idle time, "
-msgstr "utilizando o tempo ocioso dos nós,"
+msgstr "utilizando o tempo ocioso dos nós, "
 
-#: ../gebr-job-control.c:782
+#: ../gebr-job-control.c:837
 #, c-format
 msgid "This MPI job (<b>%s</b>) was dispatched by <b>%s</b>.\n"
 msgstr "Esta tarefa MPI (<b>%s</b>) foi despachada por <b>%s</b>.\n"
 
-#: ../gebr-job-control.c:1047
+#: ../gebr-job-control.c:1105
 msgid " ago"
 msgstr " atrás"
 
-#: ../gebr-job-control.c:1069
+#: ../gebr-job-control.c:1147
 #, c-format
 msgid "Started at %s"
 msgstr "Iniciado em %s"
 
-#: ../gebr-job-control.c:1075
+#: ../gebr-job-control.c:1154
 #, c-format
 msgid "Finished at %s"
 msgstr "Finalizado em %s"
 
-#: ../gebr-job-control.c:1077
+#: ../gebr-job-control.c:1156
 #, c-format
 msgid "Canceled at %s"
 msgstr "Cancelado em %s"
 
-#: ../gebr-job-control.c:1079
+#: ../gebr-job-control.c:1158
 #, c-format
 msgid "Failed at %s"
 msgstr "Falhou em %s"
 
-#: ../gebr-job-control.c:1084 ../gebr-job-control.c:1093
-#: ../gebr-job-control.c:1103 ../gebr-job-control.c:1112
+#: ../gebr-job-control.c:1163 ../gebr-job-control.c:1172
+#: ../gebr-job-control.c:1182 ../gebr-job-control.c:1191
 #, c-format
 msgid "Elapsed time: %s"
 msgstr "Tempo decorrido: %s"
 
-#: ../gebr-job-control.c:1120
+#: ../gebr-job-control.c:1199
 msgid "Waiting for job"
 msgstr "Esperando pela tarefa"
 
-#: ../gebr-job-control.c:1128
+#: ../gebr-job-control.c:1207
 msgid "Waiting for nodes"
 msgstr "Esperando pelos nós de processamento"
 
-#: ../gebr-job-control.c:1226
+#: ../gebr-job-control.c:1305
 #, c-format
 msgid "Command line for task %d of %d (node: %s)"
 msgstr "Linha de comando para tarefa %d de %d (nó: %s)"
 
-#: ../gebr-job-control.c:1292
+#: ../gebr-job-control.c:1371
 #, c-format
 msgid "<b>Input file</b>: %s"
 msgstr "<b>Arquivo de entrada</b>: %s"
 
-#: ../gebr-job-control.c:1292 ../gebr-job-control.c:1303
-#: ../gebr-job-control.c:1314 ../ui_help.c:520 ../ui_project_line.c:500
+#: ../gebr-job-control.c:1371 ../gebr-job-control.c:1382
+#: ../gebr-job-control.c:1393 ../ui_help.c:517 ../ui_project_line.c:500
 #: ../ui_project_line.c:502 ../ui_project_line.c:504
 msgid "None"
 msgstr "Nenhum"
 
-#: ../gebr-job-control.c:1303
+#: ../gebr-job-control.c:1382
 #, c-format
 msgid "<b>Output file</b>: %s"
 msgstr "<b>Arquivo de saída</b>: %s"
 
-#: ../gebr-job-control.c:1314
+#: ../gebr-job-control.c:1393
 #, c-format
 msgid "<b>Log File</b>: %s"
 msgstr "<b>Arquivo de log</b>: %s"
 
-#: ../gebr-job-control.c:1452 ../gebr-job-control.c:1679
-#: ../gebr-job-control.c:1764
+#: ../gebr-job-control.c:1532 ../gebr-job-control.c:1762
+#: ../gebr-job-control.c:1824
 msgid "Any"
 msgstr "Qualquer"
 
-#: ../gebr-job-control.c:1459
+#: ../gebr-job-control.c:1539
 msgid "Finished"
 msgstr "Finalizado"
 
-#: ../gebr-job-control.c:1466
+#: ../gebr-job-control.c:1546
 msgid "Canceled/Failed"
 msgstr "Cancelado/Falhado"
 
-#: ../gebr-job-control.c:1473
+#: ../gebr-job-control.c:1553
 msgid "Running"
 msgstr "Executando"
 
-#: ../gebr-job-control.c:1480
+#: ../gebr-job-control.c:1560
 msgid "Queued"
 msgstr "Em fila"
 
-#: ../gebr-job-control.c:1529
+#: ../gebr-job-control.c:1609
 msgid "Word-wrap"
 msgstr "Quebra de linha automática"
 
-#: ../gebr-job-control.c:1535
+#: ../gebr-job-control.c:1615
 msgid "Auto-scroll"
 msgstr "Auto-rolagem"
 
-#: ../gebr-job-control.c:1856
+#: ../gebr-job-control.c:1980
 msgid "Jobs filtered by:"
 msgstr "Tarefas filtradas por:"
 
 #. run file chooser
-#: ../gebr-job-control.c:2126 ../ui_project_line.c:1215
+#: ../gebr-job-control.c:2250 ../ui_project_line.c:1215
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
-#: ../gebr-job-control.c:2130
+#: ../gebr-job-control.c:2254
 msgid "Text (*.txt)"
 msgstr "Texto (*.txt)"
 
-#: ../gebr-job-control.c:2142
+#: ../gebr-job-control.c:2266
 msgid "Could not write file."
 msgstr "Não foi possível escrever o arquivo."
 
-#: ../gebr-job-control.c:2166
+#: ../gebr-job-control.c:2290
 #, c-format
 msgid ""
 "\n"
@@ -1076,11 +1164,11 @@ msgstr ""
 "Data de início: %s\n"
 "Data de término: %s\n"
 
-#: ../gebr-job-control.c:2166 ../gebr-job-control.c:2167
+#: ../gebr-job-control.c:2290 ../gebr-job-control.c:2291
 msgid "(None)"
 msgstr "(Nenhum)"
 
-#: ../gebr-job-control.c:2174
+#: ../gebr-job-control.c:2298
 #, c-format
 msgid ""
 "\n"
@@ -1091,11 +1179,11 @@ msgstr ""
 "Questões:\n"
 "%s"
 
-#: ../gebr-job-control.c:2174
+#: ../gebr-job-control.c:2298
 msgid "(None)\n"
 msgstr "(Nenhum)\n"
 
-#: ../gebr-job-control.c:2182
+#: ../gebr-job-control.c:2306
 #, c-format
 msgid ""
 "\n"
@@ -1108,7 +1196,7 @@ msgstr ""
 "Arquivo de saída: %s\n"
 "Arquivo de log: %s\n"
 
-#: ../gebr-job-control.c:2201
+#: ../gebr-job-control.c:2325
 #, c-format
 msgid ""
 "Output:\n"
@@ -1119,48 +1207,48 @@ msgstr ""
 "%s\n"
 "\n"
 
-#: ../gebr-job-control.c:2206
+#: ../gebr-job-control.c:2330
 #, c-format
 msgid "Saved Job information at \"%s\"."
 msgstr "Informação da Tarefa salvada em \"%s\"."
 
-#: ../gebr-job-control.c:2231 ../gebr-job-control.c:2236
+#: ../gebr-job-control.c:2355 ../gebr-job-control.c:2360
 msgid "Cancel Job"
 msgstr "Cancelar Tarefa"
 
-#: ../gebr-job-control.c:2232
+#: ../gebr-job-control.c:2356
 #, c-format
 msgid "Are you sure you want to cancel Job \"%s\"?"
 msgstr "Tem certeza que deseja cancelar a Tarefa \"%s\"?"
 
-#: ../gebr-job-control.c:2237
+#: ../gebr-job-control.c:2361
 msgid "Are you sure you want to cancel the selected Jobs?"
 msgstr "Tem certeza que quer cancelar as Tarefas selecionadas?"
 
-#: ../gebr-job-control.c:2245
+#: ../gebr-job-control.c:2369
 msgid "Asking node to cancel Job."
 msgstr "Requisitando cancelamento da tarefa aos nós de processamento."
 
-#: ../gebr-job-control.c:2246
+#: ../gebr-job-control.c:2370
 #, c-format
 msgid "Asking node \"%s\" to cancel Job \"%s\"."
 msgstr ""
 "Requisitando ao nó de processamento \"%s\" o cancelamento da Tarefa \"%s\"."
 
-#: ../gebr-job-control.c:2270 ../gebr-job-control.c:2274
+#: ../gebr-job-control.c:2394 ../gebr-job-control.c:2398
 msgid "Clear Job"
 msgstr "Limpar Tarefa"
 
-#: ../gebr-job-control.c:2271
+#: ../gebr-job-control.c:2395
 #, c-format
 msgid "Are you sure you want to clear Job \"%s\"?"
 msgstr "Tem certeza que deseja limpar a Tarefa \"%s\"?"
 
-#: ../gebr-job-control.c:2275
+#: ../gebr-job-control.c:2399
 msgid "Are you sure you want to clear the selected Jobs?"
 msgstr "Tem certeza que quer limpar as Tarefas selecionadas?"
 
-#: ../gebr-job.c:410
+#: ../gebr-job.c:449
 #, c-format
 msgid "Command line (node %s):\n"
 msgstr "Linha de comando (nó %s):\n"
@@ -1245,7 +1333,7 @@ msgstr "AC"
 
 #: ../gebr-maestro-controller.c:1539
 msgid "CPU Clock"
-msgstr "Clock CPU"
+msgstr "Clock da CPU"
 
 #: ../gebr-maestro-controller.c:1551
 msgid "Memory"
@@ -1328,7 +1416,7 @@ msgstr "Conectado"
 
 #: ../gebr-maestro-controller.c:1816
 msgid "Connecting"
-msgstr "Conectando..."
+msgstr "Conectando"
 
 #: ../gebr-maestro-controller.c:1840
 msgid "This node has a different NFS"
@@ -1365,16 +1453,16 @@ msgstr ""
 "Não foi possível conectar-se ao ambiente gráfico do nó de processamento. "
 "Tente reconectá-lo."
 
-#: ../gebr-maestro-server.c:1441
+#: ../gebr-maestro-server.c:1439
 msgid "Local Maestro"
 msgstr "Maestro local"
 
-#: ../gebr-maestro-server.c:1443
+#: ../gebr-maestro-server.c:1441
 #, c-format
 msgid "Maestro %s"
 msgstr "Maestro %s"
 
-#: ../gebr.c:86
+#: ../gebr.c:103
 #, c-format
 msgid ""
 "Unable to create GêBR configuration files.\n"
@@ -1385,23 +1473,23 @@ msgstr ""
 "Talvez você não tenha permissão de escrita no seu\n"
 "próprio diretório ou não haja espaço no dispositivo.\n"
 
-#: ../gebr.c:183
+#: ../gebr.c:201
 msgid "Finalizing GêBR..."
 msgstr "GêBR finalizando..."
 
-#: ../gebr.c:365
+#: ../gebr.c:384
 msgid "Initiating GêBR..."
 msgstr "GêBR iniciando..."
 
-#: ../gebr.c:426 ../gebr.c:520
+#: ../gebr.c:445 ../gebr.c:540
 msgid "Could not save configuration."
 msgstr "Não foi possível salvar a configuração."
 
-#: ../gebr.c:527
+#: ../gebr.c:547
 msgid "Configuration saved"
 msgstr "A configuração foi salva."
 
-#: ../gebr.c:696
+#: ../gebr.c:716
 #, c-format
 msgid ""
 "GêBR now stores data files on its own directory. You may now delete GêBR's "
@@ -1410,7 +1498,7 @@ msgstr ""
 "A GêBR armazena arquivos de dados em um diretório próprio. Você pode agora\n"
 "apagar os arquivos da GêBR em %s."
 
-#: ../gebr.c:703
+#: ../gebr.c:723
 msgid ""
 "Cannot copy data files to GêBR's directory. Please check your write "
 "permissions in your home directory."
@@ -1471,12 +1559,12 @@ msgid "Export selected Projects and Lines"
 msgstr "Exportar Projetos e Linhas selecionados"
 
 #: ../interface.c:93 ../interface.c:94 ../interface.c:125
-#: ../ui_flow_browse.c:189 ../ui_project_line.c:192
+#: ../ui_flow_browse.c:230 ../ui_project_line.c:192
 msgid "View Report"
 msgstr "Visualizar Relatório"
 
 #: ../interface.c:95 ../interface.c:96 ../interface.c:127
-#: ../ui_flow_browse.c:190 ../ui_project_line.c:193
+#: ../ui_flow_browse.c:231 ../ui_project_line.c:193
 msgid "Edit Comments"
 msgstr "Editar Comentários"
 
@@ -1485,12 +1573,12 @@ msgid "Delete selected Flows"
 msgstr "Apagar Fluxos selecionados"
 
 #: ../interface.c:111
-msgid "Saved status"
-msgstr "Estado salvo"
+msgid "Take a Snapshot"
+msgstr "Tirar uma foto"
 
 #: ../interface.c:112
-msgid "Take a snapshot of the selected Flow"
-msgstr "Crie uma snapshot do Fluxo selecionado"
+msgid "Take a snapshot"
+msgstr "Tirar uma foto"
 
 #: ../interface.c:114
 msgid "Import Flows"
@@ -1572,14 +1660,14 @@ msgstr "Fechar"
 msgid "Clear selected Jobs"
 msgstr "Apagar Tarefas selecionadas"
 
-#: ../interface.c:163 ../ui_flow_browse.c:798
+#: ../interface.c:163
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: ../interface.c:164
 msgid "Ask node to cancel the selected Job"
 msgstr ""
-"Requisitar ao nó de processamento o cancelamento das tarefas selecionadas"
+"Requisitar ao nó de processamento o cancelamento das tarefa(s) selecionada(s)"
 
 #: ../interface.c:165
 msgid "Filter"
@@ -1655,8 +1743,8 @@ msgid "Flow Editor"
 msgstr "Editor de Fluxo"
 
 #: ../interface.c:718
-msgid "Job Control"
-msgstr "Controle de Tarefas"
+msgid "Jobs"
+msgstr "Tarefas"
 
 #: ../interface.c:743
 msgid "_Actions"
@@ -2044,7 +2132,7 @@ msgstr "Email inválido"
 msgid "Your email address"
 msgstr "Seu endereço de e-mail"
 
-#: ../ui_flow.c:230
+#: ../ui_flow.c:240
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>Execution error</span>\n"
@@ -2052,7 +2140,7 @@ msgid ""
 "There are no connected nodes on group <b>%s</b>."
 msgstr "Não há nós de processamento conectados neste grupo %s."
 
-#: ../ui_flow.c:235
+#: ../ui_flow.c:245
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>Execution error</span>\n"
@@ -2060,97 +2148,125 @@ msgid ""
 "The selected node (<b>%s</b>) is not connected."
 msgstr "O nó de processamento selecionada (%s) não está conectada."
 
-#: ../ui_flow_browse.c:233
+#: ../ui_flow_browse.c:280
 msgid "Snapshots"
-msgstr "Snapshots"
+msgstr "Fotos"
+
+#. Update revisions tab
+#: ../ui_flow_browse.c:343
+msgid "No Flow selected."
+msgstr "Nenhum Fluxo selecionado"
 
 #. Date labels
-#: ../ui_flow_browse.c:285
+#: ../ui_flow_browse.c:368
 msgid "Created:"
 msgstr "Criado:"
 
-#: ../ui_flow_browse.c:288
+#: ../ui_flow_browse.c:371
 msgid "Modified:"
 msgstr "Alterado:"
 
-#: ../ui_flow_browse.c:305
+#: ../ui_flow_browse.c:388
 #, c-format
 msgid "<b>Snapshot of origin:</b>  %s <span size='small'>(taken in %s)</span>"
 msgstr ""
 "<b>Snapshot de origem:</b>  %s <span size='small'>(tirada em %s)</span>"
 
-#: ../ui_flow_browse.c:307
+#: ../ui_flow_browse.c:392
 msgid "This Flow has no snapshots"
-msgstr "Este Fluxo não tem snapshots"
+msgstr "Este Fluxo não tem fluxos"
 
-#: ../ui_flow_browse.c:318
+#: ../ui_flow_browse.c:403
 msgid "This flow was never executed"
 msgstr "Este fluxo nunca foi executado"
 
-#: ../ui_flow_browse.c:330
+#: ../ui_flow_browse.c:416
 #, c-format
 msgid "group %s"
 msgstr "grupo %s"
 
-#: ../ui_flow_browse.c:333
+#: ../ui_flow_browse.c:419
 #, c-format
 msgid "node %s"
 msgstr "nó %s"
 
-#: ../ui_flow_browse.c:340
+#: ../ui_flow_browse.c:426
 #, c-format
 msgid "Last execution in %s at <b>%s</b>"
 msgstr "Última execução em %s no <b>%s</b>"
 
 #. I/O labels
-#: ../ui_flow_browse.c:349
+#: ../ui_flow_browse.c:447
 msgid "Input:"
 msgstr "Entrada:"
 
-#: ../ui_flow_browse.c:352
+#: ../ui_flow_browse.c:450
 msgid "Output:"
 msgstr "Saída:"
 
-#: ../ui_flow_browse.c:355
+#: ../ui_flow_browse.c:453
 msgid "Log:"
 msgstr "Log:"
 
-#: ../ui_flow_browse.c:663
-msgid "Remove this snapshot permanently?"
-msgstr "Remover esta snapshot permanentemente?"
+#: ../ui_flow_browse.c:698
+#, c-format
+msgid ""
+"%d Flows selected.\n"
+"\n"
+"GêBR can take a snapshot\n"
+"of the current state for\n"
+"each of the selected Flows.\n"
+"To do it, just click on the\n"
+"camera icon."
+msgstr ""
+"%d Fluxos selecionados.\n"
+"\n"
+"A GêBR pode tirar uma foto\n"
+"do estado atual de \n"
+"cada um dos Fluxos selecionados.\n"
+"Para isso, clique no \n"
+"no ícone da câmera."
 
-#: ../ui_flow_browse.c:664
+#: ../ui_flow_browse.c:714
+msgid ""
+"There are no snapshots.\n"
+"\n"
+"A snapshot stores the settings of your flow so you can restore it at any "
+"moment. To take a snapshot, just click on the camera icon and give a non-"
+"empty description."
+msgstr ""
+"Você não tem fotos.\n"
+"Uma foto salva as configurações do seu Fluxo de modo que você possa restaurá-"
+"las a qualquer momento. Para tirar uma foto, clique no ícone da câmera e dê "
+"uma descrição."
+
+#: ../ui_flow_browse.c:814
+msgid "Remove this snapshot permanently?"
+msgstr "Remover esta foto permanentemente?"
+
+#: ../ui_flow_browse.c:815
 msgid ""
 "If you choose to remove this snapshot you will not be able to recover it "
 "later."
 msgstr ""
-"Se você optar por remover esta snapshot, você não conseguirá recuperá-la "
-"mais tarde."
+"Se você optar por remover esta foto, você não conseguirá recuperá-la mais "
+"tarde."
 
-#: ../ui_flow_browse.c:784
-msgid "Backup current Flow?"
-msgstr "Fazer backup do Fluxo atual?"
+#: ../ui_flow_browse.c:818
+msgid "Remove snapshots permanently?"
+msgstr "Remover esta foto permanentemente?"
 
-#: ../ui_flow_browse.c:785
+#: ../ui_flow_browse.c:819
 msgid ""
-"You are about to revert to a previous snapshot. The current Flow will be "
-"lost after this action. Do you want to take a snapshot of the current Flow?"
+"If you choose to remove these snapshots you will not be able to recover them "
+"later."
 msgstr ""
-"Você está prestes a reverter a uma snapshot anterior. O Fluxo atual será "
-"perdido depois dessa ação. Você quer criar uma snapshot do Fluxo atual?"
+"Se você optar por remover esta foto, você jamais conseguirá recuperá-la "
 
-#: ../ui_flow_browse.c:796
-msgid "Yes"
-msgstr "Sim"
-
-#: ../ui_flow_browse.c:797
-msgid "No"
-msgstr "Não"
-
-#: ../ui_flow_browse.c:816
+#: ../ui_flow_browse.c:1045
 #, c-format
 msgid "Could not revert to snapshot with ID %s"
-msgstr "Não foi possível reverter para a snapshot de ID %s"
+msgstr "Não foi possível reverter para a foto de ID %s"
 
 #: ../ui_help.c:78
 msgid "Save the current document"
@@ -2181,8 +2297,8 @@ msgid "Include the _Flow's report"
 msgstr "Incluir relatório do Fluxo"
 
 #: ../ui_help.c:107
-msgid "Include the report of the revisions of _Flows"
-msgstr "Incluir o relatório das revisões dos _Fluxos"
+msgid "Include the report of the snapshots of _Flows"
+msgstr "Incluir o relatório das fotos dos _Fluxos"
 
 #: ../ui_help.c:113
 msgid "No table at all"
@@ -2219,11 +2335,11 @@ msgstr "programa"
 msgid "Report of the %s \"%s\""
 msgstr "Relatório de %s \"%s\""
 
-#: ../ui_help.c:666 ../ui_help.c:686
+#: ../ui_help.c:664 ../ui_help.c:684
 msgid "Unable to create temporary file."
 msgstr "Impossível criar arquivo temporário."
 
-#: ../ui_help.c:677
+#: ../ui_help.c:675
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 
@@ -2275,10 +2391,6 @@ msgstr ""
 #, c-format
 msgid "Maestro <b>%s</b> disconnected"
 msgstr "Maestro <b>%s</b> desconectado"
-
-#: ../ui_parameters.c:55
-msgid "Parameters"
-msgstr "Parâmetros"
 
 #: ../ui_parameters.c:67
 msgid "Default"
@@ -2676,19 +2788,6 @@ msgstr ""
 msgid "Confirm deletion"
 msgstr "Confirme remoção"
 
-#: ../ui_project_line.c:1965
-msgid "at"
-msgstr "em"
-
-#: ../ui_project_line.c:1974
-msgid "Line composed by the Flow(s):"
-msgstr "Linha composta pelo(s) Fluxo(s):"
-
-#. Comment for translators: HTML header for detailed report
-#: ../ui_project_line.c:2007
-msgid "Line paths:"
-msgstr "Caminhos da linha:"
-
 #: ../data/gebr-connections-settings.glade.h:2
 msgid ""
 "<b>Maestro</b> is in between the GêBR and the working nodes. It receives all "
@@ -2862,8 +2961,71 @@ msgstr "<b><span size=\"large\">O que deseja fazer?</span></b>"
 msgid "What do you want to do?"
 msgstr "O que deseja fazer?"
 
+#: ../data/snapshot-revert.glade.h:1
+msgid ""
+"<span size=\"large\">This Flow has modifications.\n"
+"</span>"
+msgstr ""
+"<span size=\"large\">Este Fluxo tem modificações.\n"
+"</span>"
+
+#: ../data/snapshot-revert.glade.h:3
+msgid "Reverting modified Flow"
+msgstr "Revertendo a modificação do Fluxo"
+
+#: ../data/snapshot-revert.glade.h:4
+msgid "Take a snapshot and proceed"
+msgstr "Tirar uma foto e prosseguir"
+
+#~ msgid "This Flow has %ld snapshots, but it is not linked with anyone"
+#~ msgstr "Este Fluxo tem %ld fotos, mas não tem fluxo relacionado."
+
+#~ msgid ""
+#~ "#There are no snapshots.\n"
+#~ "\n"
+#~ "A snapshot stores the settings of your flow so you can restore it at any "
+#~ "moment. To take a snapshot, just click on the camera icon and give a non-"
+#~ "empty description."
+#~ msgstr ""
+#~ "#Não há snapshots.\n"
+#~ "Uma snapshot salva as configurações do seu fluxo de modo que você possa "
+#~ "restaurá-las a qualquer momento. Para tirar uma snapshot, clique no ícone "
+#~ "da câmera e dê uma descrição."
+
+#~ msgid "GêBR can save remarkable states of a flow through snapshots."
+#~ msgstr "A GêBR salva as configurações do seu fluxo através de snapshots."
+
+#~ msgid "Parameters for the Program \"%s\""
+#~ msgstr "Parâmetros para o Programa \"%s\""
+
+#~ msgid "By"
+#~ msgstr "Por"
+
+#~ msgid "Saved status"
+#~ msgstr "Estado salvo"
+
+#~ msgid "Job Control"
+#~ msgstr "Controle de Tarefas"
+
+#~ msgid "Backup current Flow?"
+#~ msgstr "Fazer backup do Fluxo atual?"
+
+#~ msgid ""
+#~ "You are about to revert to a previous snapshot. The current Flow will be "
+#~ "lost after this action. Do you want to take a snapshot of the current "
+#~ "Flow?"
+#~ msgstr ""
+#~ "Você está prestes a reverter a uma snapshot anterior. O Fluxo atual será "
+#~ "perdido depois dessa ação. Você quer criar uma snapshot do Fluxo atual?"
+
+#~ msgid "Yes"
+#~ msgstr "Sim"
+
+#~ msgid "No"
+#~ msgstr "Não"
+
+#~ msgid "at"
+#~ msgstr "em"
+
 #~ msgid "<span size='x-large'>Snapshots</span>"
 #~ msgstr "<span size='x-large'>Snapshots</span>"
-
-#~ msgid "There are no snapshots"
-#~ msgstr "Este Fluxo não tem snapshots"

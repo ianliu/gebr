@@ -643,7 +643,7 @@ on_comment_activate(GtkEntry *entry,
 	const gchar *err_tooltip;
 
 	if (!*text) {
-		err_tooltip = _("Insert a description to your snapshot.");
+		err_tooltip = _("Insert a description to the snapshot.");
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_entry_set_icon_tooltip_markup(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, err_tooltip);
 		gtk_dialog_set_response_sensitive(GTK_DIALOG(dialog), GTK_RESPONSE_OK, FALSE);
