@@ -584,6 +584,11 @@ void gebr_setup_ui(void)
 	gtk_widget_hide(gebr.ui_project_line->info.help_view);
 
 	/*
+	 * Create Structure of Job Control (to use on Flows)
+	 */
+	gebr.job_control = gebr_job_control_new();
+
+	/*
 	 * Notebook's page "Flows"
 	 */
 	toolbar = gtk_toolbar_new();
@@ -701,8 +706,6 @@ void gebr_setup_ui(void)
 	/*
 	 * Notebook's page "Job control"
 	 */
-	gebr.job_control = gebr_job_control_new();
-
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 

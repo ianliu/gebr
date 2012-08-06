@@ -46,6 +46,13 @@ GebrJobControl *gebr_job_control_new(void);
 void gebr_job_control_free(GebrJobControl *jc);
 
 /**
+ * gebr_job_control_get_output_view:
+ *
+ * Returns: A Text View from output
+ */
+GtkWidget *gebr_job_control_get_output_view(GebrJobControl *jc);
+
+/**
  * gebr_job_control_select_job:
  *
  * Selects @job in Job Control tab. If @job is %NULL, deselects everything; if

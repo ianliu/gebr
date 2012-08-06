@@ -61,6 +61,7 @@ struct _GebrJobControlPriv {
 	GtkWidget *filter_info_bar;
 	GtkWidget *label;
 	GtkWidget *text_view;
+	GtkWidget *output_window;
 	GtkWidget *view;
 	GtkWidget *widget;
 	GtkWidget *info_button;
@@ -1274,7 +1275,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
                                   GebrJob *job)
 {
 	GtkTextBuffer *buffer;
-	GtkScrolledWindow *scroll = GTK_SCROLLED_WINDOW(gtk_builder_get_object(jc->priv->builder, "scrolledwindow2"));
+	GtkScrolledWindow *scroll = GTK_SCROLLED_WINDOW(gtk_builder_get_object(jc->priv->builder, "cmd_line_window"));
 	PangoFontDescription *font;
 	font = pango_font_description_new();
 	pango_font_description_set_family(font, "monospace");
@@ -2149,6 +2150,8 @@ gebr_job_control_new(void)
 	jc->priv->text_view = text_view;
 	g_signal_connect(jc->priv->text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), jc);
 
+	jc->priv->output_window = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "output_window"));
+
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), FALSE);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), FALSE);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save"), FALSE);
@@ -2461,6 +2464,8 @@ void
 gebr_job_control_show(GebrJobControl *jc)
 {
 	jc->priv->timeout_source_id = g_timeout_add(1000, update_tree_view, jc);
+
+	gtk_widget_reparent(jc->priv->text_view, jc->priv->output_window);
 }
 
 void
@@ -2562,4 +2567,10 @@ gebr_job_control_apply_flow_filter(GebrGeoXmlFlow *flow,
 		g_free(id);
 	}
 	on_maestro_flow_filter_changed(jc->priv->flow_combo, jc);
+}
+
+GtkWidget *
+gebr_job_control_get_output_view(GebrJobControl *jc)
+{
+	return jc->priv->text_view;
 }

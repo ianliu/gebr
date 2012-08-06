@@ -316,7 +316,11 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_job_control_add(gebr.job_control, job);
 	gebr_maestro_server_add_temporary_job(maestro, job);
 	gebr_job_control_select_job(gebr.job_control, job);
-	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+
+	if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE)
+		gebr_flow_browse_select_job(gebr.ui_flow_browse);
+	else
+		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 
 	g_free(name);
 	g_free(url);

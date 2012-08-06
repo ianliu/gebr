@@ -776,8 +776,7 @@ gboolean flow_revision_save(void)
 			flow_browse_reload_selected();
 			ret = TRUE;
 
-			if (gebr.ui_flow_browse->notebook_page == 0)
-				gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.ui_flow_browse->notebook), 1);
+			gtk_toggle_button_set_active(gebr.ui_flow_browse->snapshots_ctx_button, TRUE);
 
 			//document_free(flow);
 			g_free (flow_filename);
@@ -1186,9 +1185,6 @@ gebr_flow_set_toolbar_sensitive(void)
 
 			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), label_msg);
 			g_free(label_msg);
-
-			g_object_set(gebr.ui_flow_browse->info.help_view, "sensitive", FALSE, NULL);
-			g_object_set(gebr.ui_flow_browse->info.help_edit, "sensitive", FALSE, NULL);
 		}
 
 		gtk_widget_show(gebr.ui_flow_browse->warn_window);

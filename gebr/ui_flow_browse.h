@@ -57,8 +57,6 @@ typedef struct {
 
 	GtkWidget *revisions_button;
 
-	GtkWidget *notebook;
-	gint notebook_page;
 	GtkWidget *revpage_main;
 	GtkWidget *revpage_warn;
 	GtkWidget *revpage_warn_label;
@@ -67,33 +65,28 @@ typedef struct {
 
 	GList *select_flows;
 
+	/* Context Actions */
+	GtkToggleButton *properties_ctx_button;
+	GtkWidget *properties_ctx_box;
+
+	GtkToggleButton *snapshots_ctx_button;
+	GtkWidget *snapshots_ctx_box;
+
+	GtkToggleButton *jobs_ctx_button;
+	GtkWidget *jobs_ctx_box;
+
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;
 
-		GtkWidget *title;
 		GtkWidget *description;
 
-		GtkWidget *rev_num;
-
-		GtkWidget *created_label;
-		GtkWidget *created;
-		GtkWidget *modified_label;
 		GtkWidget *modified;
 
 		GtkWidget *lastrun;
 		GtkWidget *job_status;
 		GtkWidget *job_button;
 
-		GtkWidget *input_label;
-		GtkWidget *input;
-		GtkWidget *output_label;
-		GtkWidget *output;
-		GtkWidget *error_label;
-		GtkWidget *error;
-
 		GtkWidget *help_view;
-		GtkWidget *help_edit;
-		GtkWidget *author;
 	} info;
 
 	GtkWidget *nice_button_high;
@@ -143,13 +136,15 @@ void gebr_flow_browse_hide(GebrUiFlowBrowse *self);
 void gebr_flow_browse_show(GebrUiFlowBrowse *self);
 
 void gebr_flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
-                      GtkCellRenderer *cell,
-                      GtkTreeModel *model,
-                      GtkTreeIter *iter,
-                      gpointer data);
+                                     GtkCellRenderer *cell,
+                                     GtkTreeModel *model,
+                                     GtkTreeIter *iter,
+                                     gpointer data);
 
 void gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
-                                        GebrUiFlowBrowse *ui_flow_browse);
+                                             GebrUiFlowBrowse *ui_flow_browse);
+
+void gebr_flow_browse_select_job(GebrUiFlowBrowse *fb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H
