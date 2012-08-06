@@ -110,9 +110,10 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/view-sort-ascending.png	\
 	16x16/stock/view-sort-descending.png	\
 	16x16/stock/window-close.png	\
-	16x16/stock/group.png	\
+	16x16/stock/group.png		\
 	16x16/stock/photos.png	\
-	16x16/stock/knotes_altered.png	\
+        16x16/stock/utilities-terminal.png \
+        16x16/stock/knotes_altered.png	\
 	16x16/stock/kontact_news.png	\
 	16x16/stock/kontact_todo.png
 
@@ -207,9 +208,9 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/view-refresh.png	\
 	22x22/stock/view-sort-ascending.png	\
 	22x22/stock/view-sort-descending.png	\
-	22x22/stock/window-close.png	\
-	22x22/stock/group.png	\
-	22x22/stock/knotes_altered.png	\
+	22x22/stock/window-close.png	\	
+	22x22/stock/utilities-terminal.png \
+        22x22/stock/knotes_altered.png	\
 	22x22/stock/kontact_news.png	\
 	22x22/stock/kontact_todo.png
 
@@ -305,7 +306,8 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/view-sort-ascending.png	\
 	48x48/stock/view-sort-descending.png	\
 	48x48/stock/window-close.png	\
-	48x48/stock/group.png	\
+        48x48/stock/group.png	\
+        48x48/stock/utilities-terminal.png \
 	48x48/stock/knotes_altered.png	\
 	48x48/stock/kontact_news.png	\
 	48x48/stock/kontact_todo.png
