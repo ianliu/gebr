@@ -408,7 +408,7 @@
             e podemos visualizar quando serão as festas de fim de ano para os próximos 5 anos.</para>
           <figure>
             <mediaobject>
-              <caption>Resultado da execução do Fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
+              <caption>Resultado da execução do Fluxo, na aba <guilabel>Tarefas</guilabel>.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_iter_6.png"/>
               </imageobject>
@@ -449,7 +449,7 @@
           <itemizedlist>
             <listitem><para>É possível reordenar as variáveis do dicionário utilizando-se o recurso de <emphasis>arrastar-soltar</emphasis> (clicar, arrastar e soltar) do mouse. Como uma variável só pode utilizar uma outra que esta definida acima dela, este recurso é fundamental. Para utilizar este recurso, clique sobre uma variável que deseja reordenar e arraste-a para onde deseja movê-la.<figure>
                   <mediaobject>
-                    <caption>Resultado da execução do Fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
+                    <caption>Resultado da execução do Fluxo, na aba <guilabel>Tarefas</guilabel>.</caption>
                     <imageobject>
                       <imagedata fileref="../images/recurso_dict_1.png"/>
                     </imageobject>

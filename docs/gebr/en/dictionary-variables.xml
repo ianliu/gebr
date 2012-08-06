@@ -268,7 +268,7 @@
         <figure>
           <mediaobject>
             <caption>Screenshot of execution of flow, in the tab 
-              <guilabel>Job Control</guilabel>.</caption>
+              <guilabel>Jobs</guilabel>.</caption>
             <imageobject>
               <imagedata fileref="../images/exemplo_iter_6.png"  contentwidth="738px" contentdepth="920px" />
             </imageobject>
@@ -352,7 +352,7 @@
             <figure>
               <mediaobject>
                 <caption>Screenshot of the flow execution in the tab 
-                  <guilabel>Job Control</guilabel>.</caption>
+                  <guilabel>Jobs</guilabel>.</caption>
                 <imageobject>
                   <imagedata fileref="../images/recurso_dict_1.png"  contentwidth="711px" contentdepth="546px" />
                 </imageobject>

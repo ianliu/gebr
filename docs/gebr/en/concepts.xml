@@ -249,7 +249,7 @@
 	  <guilabel>Flow Editor</guilabel>: for editing and executing a Flow;
 	</listitem>
 	<listitem>
-	  <guilabel>Job Control</guilabel>: for inspecting the results.
+	  <guilabel>Jobs</guilabel>: for inspecting the results.
 	</listitem>
       </itemizedlist>
       <!--

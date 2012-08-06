@@ -533,7 +533,7 @@
     </para>
 
     <para>At the moment the Flow is executed, GêBR automatically
-      switches to the <guilabel>Job Control</guilabel> tab and displays a
+      switches to the <guilabel>Jobs</guilabel> tab and displays a
       report of the execution of the Flow .</para>
   </section>
 

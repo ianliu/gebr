@@ -9,17 +9,17 @@
   xml:id="controle_de_tarefas">
 
   <title>A aba 
-    <guilabel>Controle de tarefas</guilabel></title>
+    <guilabel>Tarefas</guilabel></title>
   <para>A GêBR apresenta uma interface para organização e visualização dos resultados.</para>
   <mediaobject>
-    <caption>A tela inicial da aba <guilabel>Controle de tarefas</guilabel></caption>
+    <caption>A tela inicial da aba <guilabel>Tarefas</guilabel></caption>
     <imageobject>
       <imagedata fileref="../images/GeBR_jc_opening.png" />
     </imageobject>
   </mediaobject> 
   <para>Como visto na  
     <xref linkend="flow_editor_execute_flow" />, a GêBR troca para a aba 
-    <guilabel>Controle de tarefas</guilabel> sempre que um Fluxo for executado.</para>
+    <guilabel>Tarefas</guilabel> sempre que um Fluxo é executado.</para>
   <para>Esta aba contém três seções:</para>
   <itemizedlist>
     <listitem><para>Barra de ferramentas: Operações nas tarefas</para></listitem>
@@ -30,7 +30,7 @@
   <section xml:id="sec_6_1">
     <title>Barra de ferramentas</title>
     <mediaobject>
-      <caption>Barra de ferramentas da aba <guilabel>Controle de Tarefas</guilabel></caption>
+      <caption>Barra de ferramentas da aba <guilabel>Tarefas</guilabel></caption>
       <imageobject>
         <imagedata fileref="../images/GeBR_jc_toolbar.png" />
       </imageobject>
@@ -73,7 +73,7 @@
                 </imageobject>
               </inlinemediaobject>
           </guiicon></title>
-          <para>Apaga a tarefa selecionada do <guilabel>Controle de Tarefas</guilabel>. 
+          <para>Apaga a tarefa selecionada da aba <guilabel>Tarefas</guilabel>.
             É necessário cautela pois este processo é irreversível e pode comprometer a execução de outras tarefas.</para>
           <para>Você pode apenas apagar tarefas que não estão em execução ( 
             <guiicon>
@@ -232,7 +232,7 @@
           </imageobject>
         </mediaobject>
         <para>Você pode também consultar as linhas de comando executadas pela GêBR.
-          As linhas de comando são portáveis e podem ser copiadas-coladas em um terminal. Para isso, vá à aba <guilabel>Linha de Comando</guilabel>, na parte inferior da janela do <guilabel>Controle de Tarefas</guilabel> e consultar as linhas de comando dos fluxo. No caso de fluxos paralelizáveis, as linhas de comando estarão separadas de acordo com a divisão de tarefas realizada pela GêBR.</para>
+          As linhas de comando são portáveis e podem ser copiadas-coladas em um terminal. Para isso, vá à aba <guilabel>Linha de Comando</guilabel>, na parte inferior da janela da aba <guilabel>Tarefas</guilabel> e consultar as linhas de comando dos fluxo. No caso de fluxos paralelizáveis, as linhas de comando estarão separadas de acordo com a divisão de tarefas realizada pela GêBR.</para>
           </section>
         </section>
 

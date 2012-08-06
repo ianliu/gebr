@@ -208,7 +208,7 @@
       </mediaobject>
     </figure>
     <para>No momento em que o Fluxo começa a ser executado, a GêBR alterna imediatamente para a aba
-      <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da execução.</para>
+      <guilabel>Tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da execução.</para>
   </section>
   <section xml:id="flow_editor_multicores">
     <title>Multiplos processadores</title>

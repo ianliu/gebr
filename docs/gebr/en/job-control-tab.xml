@@ -8,14 +8,14 @@
   version="5.0"
   xml:id="controle_de_tarefas">
 
-  <title>The <guilabel>Job Control</guilabel> tab</title>
+  <title>The <guilabel>Jobs</guilabel> tab</title>
 
   <para>GêBr presents an interface to the organization and
   visualization of the results.</para>
 
   <para>As seen in 
     <xref linkend="flows_browser_execute_flow" />, GêBR switches to the 
-    <guilabel>Job Control</guilabel> tab whenever a Flow is
+    <guilabel>Jobs</guilabel> tab whenever a Flow is
     executed.</para>
 
   <para>This tab has three sections:</para>
@@ -28,9 +28,9 @@
   <section xml:id="sec_6_1">
     <title>Toolbar</title>
     <figure>
-      <title>Job Control toolbar</title>
+      <title><guilabel>Jobs</guilabel> tab toolbar</title>
       <mediaobject>
-        <caption>Toolbar of Job Control</caption>
+        <caption>Toolbar of the <guilabel>Jobs</guilabel> tab</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_jc_toolbar.png"  contentwidth="733px" contentdepth="534px" />
         </imageobject>
@@ -60,7 +60,7 @@
                 <imagedata fileref="../../common-images/trash-empty.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>). Eliminate from the job Control the selected Job. Caution is needed because the
+          </guiicon>). Eliminate from the Job Control the selected Job. Caution is needed because the
           process is irreversible.</para>
         <para>The user can only clear jobs that are not being executed (<guiicon>
             <inlinemediaobject>
@@ -85,7 +85,7 @@
               </imageobject>
             </inlinemediaobject>
           </guiicon>). The user can cancel a running or queued job. When a
-          Job is terminated in this manner, the job will be marked
+          Job is terminated in this manner, the Job will be marked
           with
           <guiicon>
             <inlinemediaobject>
@@ -162,14 +162,14 @@
     </itemizedlist>
 
     <figure>
-      <title>Job Control left panel</title>
+      <title><guilabel>Jobs</guilabel> tab left panel</title>
       <mediaobject>
         <imageobject>
           <imagedata fileref="../images/GeBR_jc_left_pane.png"  contentwidth="733px" contentdepth="534px" />
         </imageobject>
       </mediaobject>
     </figure>
-    <caption>Screenshot of the Job Control list of jobs.</caption>
+    <caption>Screenshot of the <guilabel>Jobs</guilabel> tab list of jobs.</caption>
   </section>
 
   <section>
@@ -195,7 +195,7 @@
     </guiicon>.</para>
 
     <figure>
-      <title>Job Control Right Panel</title>
+      <title>Jobs tab Right Panel</title>
       <mediaobject>
         <imageobject>
           <imagedata fileref="../images/GeBR_jc_more_details.png"  contentwidth="733px" contentdepth="633px" />
