@@ -21,7 +21,7 @@ class MyDotWindow(xdot.DotWindow):
 
         self.plug = gtk.Plug(Wid)
 
-        self.container = gtk.VBox(False, 0)
+        self.container = gtk.VBox(True, 0)
         self.widget.reparent(self.container)
 
         self.plug.add(self.container)

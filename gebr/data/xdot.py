@@ -1613,7 +1613,7 @@ class DotWidget(gtk.DrawingArea):
         self.zoom_to_fit_on_resize = True
 
     ZOOM_INCREMENT = 1.25
-    ZOOM_TO_FIT_MARGIN = 64
+    ZOOM_TO_FIT_MARGIN = 24
 
     def on_zoom_in(self, action):
         self.zoom_image(self.zoom_ratio * self.ZOOM_INCREMENT)
