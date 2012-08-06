@@ -82,7 +82,7 @@ static const GtkActionEntry actions_entries_project_line[] = {
 		"<Control>L", N_("New Line"), G_CALLBACK(on_new_line_activate)},
 	{"project_line_delete", GTK_STOCK_DELETE, NULL,
 		"Delete", N_("Delete selected Projects and Lines"), G_CALLBACK(on_project_line_delete_activate)},
-	{"project_line_properties", GTK_STOCK_PROPERTIES, NULL,
+	{"project_line_properties", "kontact_todo", NULL,
 		NULL, N_("Edit properties"), G_CALLBACK(on_document_properties_activate)},
 	{"project_line_dict_edit", "accessories-dictionary", N_("Variables dictionary"),
 		NULL, N_("Edit variables dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
@@ -104,7 +104,7 @@ static const GtkActionEntry actions_entries_flow[] = {
 		"<Control>F", N_("New Flow"), G_CALLBACK(on_new_activate)},
 	{"flow_delete", GTK_STOCK_DELETE, NULL, "Delete",
 		N_("Delete selected Flows"), G_CALLBACK(on_flow_delete_activate)},
-	{"flow_properties", GTK_STOCK_PROPERTIES, NULL,
+	{"flow_properties", "kontact_todo", NULL,
 		NULL, N_("Edit properties"), G_CALLBACK(on_document_properties_activate)},
 	{"flow_dict_edit", "accessories-dictionary", N_("Variables dictionary"),
 		NULL, N_("Edit variables dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
@@ -122,9 +122,9 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("Copy selected Flows to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
 		NULL, N_("Paste Flows from clipboard"), G_CALLBACK(on_paste_activate)},
-	{"flow_view", GTK_STOCK_INFO, N_("View Report"),
+	{"flow_view", "kontact_news", N_("View Report"),
 		NULL, N_("View Flow report"), G_CALLBACK(on_flow_browse_show_help)},
-	{"flow_edit", GTK_STOCK_EDIT, N_("Edit Comments"),
+	{"flow_edit", "knotes_altered", N_("Edit Comments"),
 		NULL, N_("Edit Flow comments"), G_CALLBACK(on_flow_browse_edit_help)},
 };
 
@@ -136,7 +136,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 		"<Control><Shift>h", N_("Show Program's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
 		"Delete", N_("Delete Program"), G_CALLBACK(on_flow_component_delete_activate)},
-	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL,
+	{"flow_edition_properties",  "kontact_todo", NULL,
 		NULL, N_("Edit the Program's parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
 		NULL, N_("Refresh Menu list"), G_CALLBACK(on_flow_component_refresh_activate)},
@@ -553,6 +553,15 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"))),
 			   -1);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_view"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"))), -1);
+
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
@@ -599,6 +608,14 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
 	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"))), -1);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_view"))), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
