@@ -404,7 +404,7 @@ void flow_browse_info_update(void)
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         } else {
         	gchar *local;
-        	gchar *group;
+        	gchar *group = g_strdup("");
         	gchar *type;
         	gebr_geoxml_flow_server_get_group(gebr.flow, &type, &local);
         	if (local) {
@@ -418,8 +418,6 @@ void flow_browse_info_update(void)
         		} else if (!g_strcmp0(type, "daemon")) {
         			group = g_strdup_printf(_("node %s"), local);
         		}
-        	} else {
-        		group = g_strdup("");
         	}
         	g_free(local);
 
