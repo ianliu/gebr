@@ -122,9 +122,9 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("Copy selected Flows to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
 		NULL, N_("Paste Flows from clipboard"), G_CALLBACK(on_paste_activate)},
-	{"flow_view", "kontact_news", N_("View Report"),
+	{"flow_view", GTK_STOCK_DND, N_("View Report"),
 		NULL, N_("View Flow report"), G_CALLBACK(on_flow_browse_show_help)},
-	{"flow_edit", "knotes_altered", N_("Edit Comments"),
+	{"flow_edit", "kontact_journal_altered3", N_("Edit Comments"),
 		NULL, N_("Edit Flow comments"), G_CALLBACK(on_flow_browse_edit_help)},
 };
 
