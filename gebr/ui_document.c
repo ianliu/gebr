@@ -114,6 +114,9 @@ typedef struct {
 
 	GebrPropertiesResponseFunc func;
 	gboolean accept_response;
+	gboolean title_ready;
+	gboolean description_ready;
+	gboolean email_ready;
 } GebrPropertiesData;
 
 enum {
@@ -206,6 +209,12 @@ static void on_dict_edit_change_selection(GtkTreeSelection *selection, struct di
 
 static void gebr_dict_update_wizard(struct dict_edit_data *data);
 
+static void on_changed_validate(GebrPropertiesData *data);
+
+static void on_changed_validate_description(GtkEntry *entry, GebrPropertiesData *data);
+
+static void on_changed_validate_email(GtkEntry *entry, GebrPropertiesData *data);
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
@@ -226,12 +235,16 @@ GebrGeoXmlDocument *document_get_current(void)
 
 static void
 on_title_entry_changed(GtkEntry *entry,
-                       GtkWidget *widget)
+                       GebrPropertiesData *data)
 {
+	gboolean has_error;
 	if (gtk_entry_get_text_length(entry) == 0)
-		gtk_widget_set_sensitive(widget, FALSE);
+		has_error = TRUE;
 	else
-		gtk_widget_set_sensitive(widget, TRUE);
+		has_error = FALSE;
+	validate_entry(GTK_ENTRY(entry), has_error, _("Title cannot be empty"), _(""));
+	data->title_ready = !has_error;
+	on_changed_validate(data);
 }
 
 static void
@@ -307,6 +320,9 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	data->accept_response = FALSE;
 	data->document = document;
 	data->builder = builder;
+	data->title_ready = TRUE;
+	data->description_ready = TRUE;
+	data->email_ready = TRUE;
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		flow_browse_single_selection();
@@ -378,7 +394,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_widget_grab_default(ok_button);
 
 	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
-	g_signal_connect(title, "changed", G_CALLBACK(on_title_entry_changed), data->ok_button);
+	g_signal_connect(title, "changed", G_CALLBACK(on_title_entry_changed), data);
 	gtk_entry_set_text(title, gebr_geoxml_document_get_title(document));
 
 	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
@@ -390,8 +406,10 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
-	on_changed_validate_email (email, data->ok_button);
-	g_signal_connect(email, "changed", G_CALLBACK(on_changed_validate_email), data->ok_button);
+	on_changed_validate_email(email, data);
+	g_signal_connect(email, "changed", G_CALLBACK(on_changed_validate_email), data);
+	on_changed_validate_description(description, data);
+	g_signal_connect(description, "changed", G_CALLBACK(on_changed_validate_description), data);
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
@@ -2236,19 +2254,39 @@ static void on_dict_edit_change_selection(GtkTreeSelection *selection, struct di
 	gebr_dict_update_wizard(data);
 }
 
-void on_changed_validate_email(GtkEntry *entry, GtkWidget *widget)
+static void on_changed_validate(GebrPropertiesData *data)
+{
+	gtk_widget_set_sensitive(data->ok_button, (data->title_ready && data->description_ready && data->email_ready));
+}
+
+static void on_changed_validate_description(GtkEntry *entry, GebrPropertiesData *data)
+{
+	const gchar *description = gtk_entry_get_text(GTK_ENTRY(entry));
+
+	gboolean has_error = FALSE;
+
+	if (!*description)
+		has_error = TRUE;
+	else
+		has_error = FALSE;
+	validate_entry(GTK_ENTRY(entry), has_error, _("Description cannot be empty"), _(""));
+	data->description_ready = !has_error;
+	on_changed_validate(data);
+}
+
+static void on_changed_validate_email(GtkEntry *entry, GebrPropertiesData *data)
 {
 	const gchar *email = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	gboolean error = FALSE;
+	gboolean has_error = FALSE;
 
-	if (!*email) {
-		error = TRUE;
-	} else {
-		error = !gebr_validate_check_is_email(email);
-	}
-	validate_entry(GTK_ENTRY(entry), error, _("Invalid email"), _("Your email address"));
-	gtk_widget_set_sensitive(widget, !error);
+	if (!*email)
+		has_error = TRUE;
+	else
+		has_error = !gebr_validate_check_is_email(email);
+	validate_entry(GTK_ENTRY(entry), has_error, _("Invalid email"), _("Your email address"));
+	data->email_ready = !has_error;
+	on_changed_validate(data);
 }
 
 void

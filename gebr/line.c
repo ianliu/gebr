@@ -38,24 +38,6 @@
 #include "ui_document.h"
 
 static void
-on_assistant_entry_changed(GtkEntry *entry,
-                           GtkAssistant *assistant)
-{
-	GtkWidget *current_page;
-	gint page_number;
-	const gchar *text;
-
-	page_number = gtk_assistant_get_current_page(assistant);
-	current_page = gtk_assistant_get_nth_page(assistant, page_number);
-	text = gtk_entry_get_text(entry);
-
-	if (text && *text )
-		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
-	else
-		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-}
-
-static void
 on_assistant_base_validate(GtkEntry *entry,
                            GtkAssistant *assistant)
 {
@@ -139,7 +121,63 @@ typedef struct {
 	gint timeout;
 	GtkWidget *assistant;
 	GtkBuilder *builder;
+	gboolean title_ready;
+	gboolean description_ready;
+	gboolean email_ready;
 } WizardData;
+
+static void
+on_assistant_entry_changed(WizardData *data)
+{
+	GtkWidget *current_page;
+	gint page_number;
+	page_number = gtk_assistant_get_current_page(GTK_ASSISTANT(data->assistant));
+	current_page = gtk_assistant_get_nth_page(GTK_ASSISTANT(data->assistant), page_number);
+
+	gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), current_page, (data->title_ready && data->description_ready && data->email_ready));
+}
+
+static void
+on_assistant_title_changed(GtkEntry *entry,
+                           WizardData *data)
+{
+	const gchar *text = gtk_entry_get_text(entry);
+
+	if (text && *text )
+		data->title_ready = TRUE;
+	else
+		data->title_ready = FALSE;
+	validate_entry(GTK_ENTRY(entry), !data->title_ready, _("Title cannot be empty"), _(""));
+	on_assistant_entry_changed(data);
+}
+
+static void
+on_assistant_description_changed(GtkEntry *entry,
+                           WizardData *data)
+{
+	const gchar *text = gtk_entry_get_text(entry);
+
+	if (text && *text )
+		data->description_ready = TRUE;
+	else
+		data->description_ready = FALSE;
+	validate_entry(GTK_ENTRY(entry), !data->description_ready, _("Description cannot be empty"), _(""));
+	on_assistant_entry_changed(data);
+}
+
+static void
+on_assistant_email_changed(GtkEntry *entry,
+                           WizardData *data)
+{
+	const gchar *text = gtk_entry_get_text(entry);
+
+	if (text && *text )
+		data->email_ready = gebr_validate_check_is_email(text);
+	else
+		data->email_ready = FALSE;
+	validate_entry(GTK_ENTRY(entry), !data->email_ready, _("Invalid email"), _("Your email address"));
+	on_assistant_entry_changed(data);
+}
 
 static gboolean
 progress_bar_animate(gpointer user_data)
@@ -537,6 +575,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page7, _("Creating directories..."));
 
 	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
+	GObject *entry_description = gtk_builder_get_object(builder, "entry_description");
 	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
 	GObject *entry_import = gtk_builder_get_object(builder, "entry_import");
 	GObject *entry_author = gtk_builder_get_object(builder, "entry_author");
@@ -552,7 +591,12 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_entry_set_text(GTK_ENTRY(entry_author), gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.project)));
 	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.project)));
 
-	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
+	on_assistant_title_changed(GTK_ENTRY(entry_title), data);
+	on_assistant_description_changed(GTK_ENTRY(entry_description), data);
+	on_assistant_email_changed(GTK_ENTRY(entry_email), data);
+	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_title_changed), data);
+	g_signal_connect(entry_description, "changed", G_CALLBACK(on_assistant_description_changed), data);
+	g_signal_connect(entry_email, "changed", G_CALLBACK(on_assistant_email_changed), data);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
 	g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
 	g_signal_connect(entry_import, "changed", G_CALLBACK(on_assistant_import_validate), assistant);
