@@ -152,39 +152,8 @@ struct ui_log *log_setup_ui(void)
 	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));
 
-	const gchar *folder_filename = g_build_filename(LIBGEBR_ICONS_DIR,
-	                                                "gebr-theme", "22x22",
-	                                                "stock", "folder.png",
-	                                                NULL);
-
-	const gchar *emblem_filename = g_build_filename(LIBGEBR_ICONS_DIR,
-	                                                "gebr-theme", "16x16",
-	                                                "stock", "dialog-warning.png",
-	                                                NULL);
-	guint emblem_size = 10;
-	guint src_size = 22;
-
-	GdkPixbuf *emblem_pixbuf = gdk_pixbuf_new_from_file_at_scale (emblem_filename,
-	                                                              emblem_size, emblem_size,
-	                                                              TRUE,
-	                                                              NULL);
-
-	GdkPixbuf *emblemed_pixbuf = gdk_pixbuf_new_from_file_at_scale (folder_filename,
-	                                                                src_size, src_size,
-	                                                                TRUE,
-	                                                                NULL);
-
-	gdk_pixbuf_composite(emblem_pixbuf,
-	                     emblemed_pixbuf,
-	                     0, 0,
-	                     emblem_size,
-	                     emblem_size,
-	                     0, 0,
-	                     1.0, 1.0,
-	                     GDK_INTERP_BILINEAR, 0xFF);
-
 	gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
-	gtk_image_set_from_pixbuf(GTK_IMAGE(ui_log->remote_browse), emblemed_pixbuf);
+	gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	/*
 	 * Pack Maestro / Remote Browse with Log
 	 */

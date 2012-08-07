@@ -1465,8 +1465,6 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		gchar *format_node = NULL;
 		gchar *date = NULL;
 		gchar *iso_date = NULL;
-		gchar **time_field = NULL;
-		gchar **iso_date_field = NULL;
 		gboolean has_id;
 
 		if (id && *id) {
@@ -1480,11 +1478,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 			gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
 			if (!unescaped_comment || !*unescaped_comment)
 				unescaped_comment = g_strdup_printf(("- - - -"));
-			iso_date_field = g_strsplit(iso_date, " ", -1);
-			time_field = g_strsplit(iso_date_field[4], ":", -1);
-
-			date = g_strdup_printf("%s %s, %s  %s:%s %s", iso_date_field[2], iso_date_field[1], iso_date_field[3],
-					time_field[0], time_field[1], iso_date_field[5]);
+			gebr_convert_isodate_to_readable_date(iso_date, &date);
 			comment = g_markup_printf_escaped("%s", unescaped_comment);
 		} else {
 			has_id = FALSE;
@@ -1538,8 +1532,6 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 			g_free(format_node);
 			g_free(unescaped_comment);
 			g_free(iso_date);
-			g_strfreev(iso_date_field);
-			g_strfreev(time_field);
 			gebr_geoxml_object_unref(revision);
 		}
 		g_free(comment);

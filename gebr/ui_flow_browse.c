@@ -375,7 +375,7 @@ void flow_browse_info_update(void)
         /* Server */
         gchar *last_text;
 
-        const gchar *last_run = gebr_geoxml_flow_get_date_last_run(gebr.flow);
+        const gchar *last_run = gebr_localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow));
         if (!last_run || !*last_run) {
         	last_text = g_strdup(_("This flow was never executed"));
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
@@ -414,15 +414,24 @@ void flow_browse_info_update(void)
         			break;
         		}
 
-        		last_text = g_markup_printf_escaped(_("Last execution %s at %s"), job_state, date);
+			const gchar *iso = gebr_localized_date(date);
+			gchar *readable_date = NULL;
+			if (gebr_convert_isodate_to_readable_date(iso, &readable_date)) {
+				last_text = g_markup_printf_escaped(_("Last execution %s at %s"), job_state, readable_date);
+			}
 
         		g_free(job_state);
+        		g_free(readable_date);
         		g_free(date);
 
         		gtk_widget_show(gebr.ui_flow_browse->info.job_button);
         		gtk_widget_show(gebr.ui_flow_browse->info.job_status);
         	} else {
-        		last_text = g_markup_printf_escaped(_("Last execution at %s"), gebr_localized_date(last_run));
+			gchar *readable_lastrun = NULL;
+			if (gebr_convert_isodate_to_readable_date(last_run, &readable_lastrun)) {
+				last_text = g_markup_printf_escaped(_("Last execution at %s"), readable_lastrun);
+			} else
+				last_text = g_strdup("");
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
         	}
