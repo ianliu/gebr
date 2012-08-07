@@ -31,6 +31,7 @@
 #include "ui_flow.h"
 #include "ui_help.h"
 #include "callbacks.h"
+#include "ui_parameters.h"
 
 /*
  * Prototypes
@@ -54,7 +55,6 @@ static void update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb);
 static void flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
                                             GebrUiFlowBrowse *fb,
                                             gboolean keep_selection);
-
 
 static void
 on_job_button_clicked(GtkButton *button,
@@ -88,6 +88,8 @@ on_context_button_toggled(GtkToggleButton *button,
 		gtk_widget_show(fb->properties_ctx_box);
 		gtk_widget_hide(fb->snapshots_ctx_box);
 		gtk_widget_hide(fb->jobs_ctx_box);
+
+		gebr_flow_browse_load_parameters_review(gebr.flow, fb);
 	}
 	else if (button == fb->snapshots_ctx_button) {
 		gtk_toggle_button_set_active(fb->properties_ctx_button, !active);
@@ -249,16 +251,26 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	 * Set button and box context
 	 */
 	ui_flow_browse->properties_ctx_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "context_button_flow"));
-	ui_flow_browse->properties_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "snapshots_box"));
+	ui_flow_browse->properties_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "properties_scroll"));
 	g_signal_connect(ui_flow_browse->properties_ctx_button, "toggled", G_CALLBACK(on_context_button_toggled), ui_flow_browse);
+	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->properties_ctx_button), "Review of parameters");
 
 	ui_flow_browse->snapshots_ctx_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "context_button_snaps"));
-	ui_flow_browse->snapshots_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "properties_box"));
+	ui_flow_browse->snapshots_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "snapshots_box"));
 	g_signal_connect(ui_flow_browse->snapshots_ctx_button, "toggled", G_CALLBACK(on_context_button_toggled), ui_flow_browse);
+	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->snapshots_ctx_button), "Snapshots");
 
 	ui_flow_browse->jobs_ctx_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "context_button_jobs"));
 	ui_flow_browse->jobs_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_box"));
 	g_signal_connect(ui_flow_browse->jobs_ctx_button, "toggled", G_CALLBACK(on_context_button_toggled), ui_flow_browse);
+	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->jobs_ctx_button), "Output of last execution");
+
+	/*
+	 * Review of parameters Context
+	 */
+	GtkWidget *properties_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "properties_box"));
+	GtkWidget *rev_params = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "main_rev_params"));
+	gtk_container_add(GTK_CONTAINER(properties_box), rev_params);
 
 	/*
 	 * Snapshots Context
@@ -328,6 +340,12 @@ void flow_browse_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), "");
 
+		/* Update parameters properties context */
+		GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(gebr.ui_flow_browse->info.builder_flow, "parameters_box"));
+		GList *childs = gtk_container_get_children(GTK_CONTAINER(box));
+		for (GList *i = childs; i; i = i->next)
+			gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(i->data));
+
 		/* Update snapshots context */
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label), _("No Flow selected."));
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
@@ -353,22 +371,6 @@ void flow_browse_info_update(void)
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.modified), mod_date);
 	g_free(mod_date);
 	g_free(modified);
-
-        /* Snapshots */
-        {
-                gchar * str_tmp;
-                gchar *date;
-                gchar *comment;
-
-                if (gebr_geoxml_flow_get_parent_revision(gebr.flow, &date, &comment, NULL))
-                	str_tmp = g_markup_printf_escaped(_("<b>Snapshot of origin:</b>  %s <span size='small'>(taken in %s)</span>"), comment, date);
-                else if (gebr_geoxml_flow_get_revisions_number(gebr.flow))
-                	str_tmp = g_strdup("");
-                else
-                	str_tmp = g_strdup(_("This Flow has no snapshots"));
-
-                g_free(str_tmp);
-	}
 
         /* Server */
         gchar *last_text;
@@ -666,7 +668,10 @@ static void flow_browse_load(void)
 
 	flow_browse_info_update();
 
-	gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
+	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+		gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
+	else
+		gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 
 	g_free(filename);
 	g_free(title);
@@ -1029,7 +1034,10 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 	gtk_widget_reparent(output_view, self->jobs_ctx_box);
 
 	/* Set default on properties flow */
-	gtk_toggle_button_set_active(self->properties_ctx_button, TRUE);
+	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+		gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
+	else
+		gebr_flow_browse_load_parameters_review(gebr.flow, self);
 }
 
 void
@@ -1089,4 +1097,283 @@ gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
 
 	g_free(path_str);
 	gtk_tree_path_free(path);
+}
+
+static void
+parameters_review_set_io(GebrGeoXmlFlow *flow,
+                         GebrUiFlowBrowse *fb)
+{
+	gchar *input = gebr_geoxml_flow_io_get_input(flow);
+	gchar *output = gebr_geoxml_flow_io_get_output(flow);
+	gchar *error = gebr_geoxml_flow_io_get_error(flow);
+
+	GtkLabel *input_label = GTK_LABEL(gtk_builder_get_object(fb->info.builder_flow, "input_label"));
+	if (input && *input) {
+		gtk_widget_set_sensitive(GTK_WIDGET(input_label), TRUE);
+		gtk_label_set_text(input_label, input);
+	} else {
+		gtk_label_set_text(input_label, _("Inpur file"));
+		gtk_widget_set_sensitive(GTK_WIDGET(input_label), FALSE);
+	}
+
+	GtkLabel *output_label = GTK_LABEL(gtk_builder_get_object(fb->info.builder_flow, "output_label"));
+	GtkImage *output_image = GTK_IMAGE(gtk_builder_get_object(fb->info.builder_flow, "output_image"));
+	if (output && *output) {
+		gboolean is_append = gebr_geoxml_flow_io_get_output_append(flow);
+		gtk_widget_set_sensitive(GTK_WIDGET(output_label), TRUE);
+		gtk_label_set_text(output_label, output);
+		gtk_image_set_from_stock(output_image, is_append ? "gebr-append-stdout":"gebr-stdout", GTK_ICON_SIZE_BUTTON);
+	} else {
+		gtk_label_set_text(output_label, _("Output file"));
+		gtk_widget_set_sensitive(GTK_WIDGET(output_label), FALSE);
+	}
+
+	GtkLabel *error_label = GTK_LABEL(gtk_builder_get_object(fb->info.builder_flow, "error_label"));
+	GtkImage *error_image = GTK_IMAGE(gtk_builder_get_object(fb->info.builder_flow, "error_image"));
+	if (error && *error) {
+		gboolean is_append = gebr_geoxml_flow_io_get_error_append(flow);
+		gtk_widget_set_sensitive(GTK_WIDGET(error_label), TRUE);
+		gtk_label_set_text(error_label, error);
+		gtk_image_set_from_stock(error_image, is_append ? "gebr-append-stderr":"gebr-stderr", GTK_ICON_SIZE_BUTTON);
+	} else {
+		gtk_label_set_text(error_label, _("Error file"));
+		gtk_widget_set_sensitive(GTK_WIDGET(error_label), FALSE);
+	}
+
+	g_free(input);
+	g_free(output);
+	g_free(error);
+}
+
+static gboolean
+parameters_review_create_row(GebrGeoXmlParameter *parameter,
+                             GtkWidget *box,
+                             const gchar *group_label,
+                             gboolean insert_header)
+{
+	gint i, n_instances;
+	GebrGeoXmlSequence * param;
+	GebrGeoXmlSequence * instance;
+	GebrGeoXmlParameters * parameters;
+	gboolean changed = FALSE;
+
+	if (gebr_geoxml_parameter_get_is_program_parameter(parameter)) {
+		GString * str_value;
+		GString * default_value;
+		GebrGeoXmlProgramParameter * program;
+		GtkWidget *params_info = gtk_hbox_new(FALSE, 10);
+		GtkWidget *param_title, *param_value;
+
+		program = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
+		str_value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
+		default_value = gebr_geoxml_program_parameter_get_string_value(program, TRUE);
+
+		if (g_strcmp0(str_value->str, default_value->str) != 0)
+		{
+			changed = TRUE;
+			/* Translating enum values to labels */
+			GebrGeoXmlSequence *enum_option = NULL;
+
+			gebr_geoxml_program_parameter_get_enum_option(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), &enum_option, 0);
+
+			for (; enum_option; gebr_geoxml_sequence_next(&enum_option))
+			{
+				gchar *enum_value = gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option));
+				if (g_strcmp0(str_value->str, enum_value) == 0)
+				{
+					gchar *label = gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option));
+					g_string_printf(str_value, "%s", label);
+					g_free(enum_value);
+					g_free(label);
+					gebr_geoxml_object_unref(enum_option);
+					break;
+				}
+				g_free(enum_value);
+			}
+			gchar *label = gebr_geoxml_parameter_get_label(parameter);
+			str_value->str = g_markup_printf_escaped("%s",str_value->str);
+
+			if (insert_header && gebr_geoxml_parameter_get_is_in_group(parameter) && group_label) {
+				gchar *label = g_strdup_printf("<b>%s</b>", group_label);
+
+				GtkWidget *group_title = gtk_label_new(NULL);
+				gtk_label_set_markup(GTK_LABEL(group_title), label);
+				gtk_misc_set_alignment(GTK_MISC(group_title), 0.0, 0.5);
+				gtk_box_pack_start(GTK_BOX(box), group_title, FALSE, FALSE, 2);
+
+				g_free(label);
+			}
+
+			/* Add parameter Title and Value on box */
+			gchar *title = g_strdup_printf("%s:", label);
+			param_title = gtk_label_new(title);
+			g_free(title);
+
+			gchar *value = g_markup_printf_escaped("<i>%s</i>", str_value->str);
+			param_value = gtk_label_new(NULL);
+			gtk_label_set_markup(GTK_LABEL(param_value), value);
+			g_free(value);
+
+			gtk_box_pack_start(GTK_BOX(params_info), GTK_WIDGET(param_title), FALSE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(params_info), GTK_WIDGET(param_value), FALSE, FALSE, 0);
+
+			gtk_box_pack_start(GTK_BOX(box), params_info, FALSE, FALSE, 0);
+
+			g_free(label);
+		}
+		g_string_free(str_value, TRUE);
+		g_string_free(default_value, TRUE);
+	} else {
+		/* Group Parameters */
+		gchar *group_label;
+		gchar *label = gebr_geoxml_parameter_get_label(parameter);
+
+		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+		n_instances = gebr_geoxml_parameter_group_get_instances_number(GEBR_GEOXML_PARAMETER_GROUP(parameter));
+
+		i = 1;
+		while (instance) {
+			if (n_instances > 1) {
+				gchar *instance_label = g_strdup_printf(_("Instance %d"), i);
+				group_label = g_strdup_printf("%s (%s)", label, instance_label);
+			} else {
+				group_label = g_strdup(label);
+			}
+
+			parameters = GEBR_GEOXML_PARAMETERS(instance);
+			gebr_geoxml_parameters_get_parameter(parameters, &param, 0);
+
+			gboolean insert = TRUE;
+			while (param) {
+				if (parameters_review_create_row(GEBR_GEOXML_PARAMETER(param), box, group_label, insert))
+					insert = FALSE;
+				gebr_geoxml_sequence_next(&param);
+			}
+
+			i++;
+			gebr_geoxml_sequence_next(&instance);
+		}
+		g_free(label);
+		g_free(group_label);
+	}
+
+	return changed;
+}
+
+static void
+open_properties_program(GtkButton *button,
+                        GebrGeoXmlProgram *prog)
+{
+	GtkTreeIter iter;
+	gebr_flow_edition_get_iter_for_program(prog, &iter);
+
+	flow_edition_select_component_iter(&iter);
+	parameters_configure_setup_ui();
+}
+
+static GtkWidget *
+parameters_review_set_params(GebrGeoXmlFlow *flow,
+                             GebrUiFlowBrowse *fb)
+{
+	gboolean has_programs = FALSE;
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
+
+	GtkWidget *prog_label;
+	GtkWidget *prog_img;
+	gboolean changed = FALSE;
+
+	GebrGeoXmlSequence * prog_seq;
+	gebr_geoxml_flow_get_program(flow, &prog_seq, 0);
+	while (prog_seq) {
+		GebrGeoXmlProgram * prog = GEBR_GEOXML_PROGRAM(prog_seq);
+		GebrGeoXmlParameters *parameters;
+		GebrGeoXmlSequence *sequence;
+
+		/* Create programs info */
+		GtkWidget *prog_props = gtk_hbox_new(FALSE, 5);
+
+		/* Set image of program */
+		const gchar *icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(prog));
+		prog_img = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_BUTTON);
+
+		/* Set name of program */
+		gchar *title = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_program_get_title(prog));
+		prog_label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(prog_label), title);
+		g_free(title);
+
+		gtk_box_pack_start(GTK_BOX(prog_props), prog_img, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(prog_props), prog_label, FALSE, FALSE, 0);
+
+		GtkWidget *expander = gtk_expander_new(NULL);
+		gtk_expander_set_label_widget(GTK_EXPANDER(expander), prog_props);
+
+		/* Set program on Flows box */
+		GtkWidget *prog_box = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(prog_box), expander, FALSE, FALSE, 0);
+
+		GtkWidget *fix_box = gtk_vbox_new(FALSE, 0);
+		GtkWidget *prog_button = gtk_button_new();
+		GtkWidget *image = gtk_image_new_from_stock("kontact_todo", GTK_ICON_SIZE_BUTTON);
+		gtk_button_set_image(GTK_BUTTON(prog_button), image);
+		g_signal_connect(prog_button, "clicked", G_CALLBACK(open_properties_program), prog);
+		gtk_box_pack_start(GTK_BOX(fix_box), prog_button, FALSE, FALSE, 0);
+
+		gtk_box_pack_start(GTK_BOX(prog_box), fix_box, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), prog_box, FALSE, FALSE, 0);
+
+		/* Create box of parameters */
+		GtkWidget *param_align = gtk_alignment_new(0.5, 0.5, 1.0, 1.0);
+		gtk_alignment_set_padding(GTK_ALIGNMENT(param_align), 5, 5, 30, 0);
+
+		GtkWidget *params_box = gtk_vbox_new(FALSE, 5);
+		gtk_container_add(GTK_CONTAINER(param_align), params_box);
+
+		gtk_container_add(GTK_CONTAINER(expander), param_align);
+
+		if (gebr_geoxml_program_get_status(prog) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+			gtk_expander_set_expanded(GTK_EXPANDER(expander), FALSE);
+		else
+			gtk_expander_set_expanded(GTK_EXPANDER(expander), TRUE);
+
+		parameters = gebr_geoxml_program_get_parameters (prog);
+		gebr_geoxml_parameters_get_parameter (parameters, &sequence, 0);
+		gebr_geoxml_object_unref(parameters);
+
+		while (sequence) {
+			if (parameters_review_create_row(GEBR_GEOXML_PARAMETER(sequence), params_box, NULL, FALSE))
+				changed = TRUE;
+			gebr_geoxml_sequence_next (&sequence);
+		}
+
+		if (!changed) {
+			GtkWidget *label = gtk_label_new(_("This program has only default parameters"));
+			gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+			gtk_box_pack_start(GTK_BOX(params_box), label, FALSE, FALSE, 0);
+			gtk_widget_set_sensitive(label, FALSE);
+		}
+
+		has_programs = TRUE;
+		gebr_geoxml_sequence_next(&prog_seq);
+	}
+	if (!has_programs) {
+		prog_label = gtk_label_new(_("This flow has no programs"));
+		gtk_box_pack_start(GTK_BOX(vbox), prog_label, FALSE, FALSE, 0);
+	}
+
+	return vbox;
+}
+
+void
+gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
+                                        GebrUiFlowBrowse *fb)
+{
+	GtkWidget *parameters;
+
+	parameters_review_set_io(flow, fb);
+	parameters = parameters_review_set_params(flow, fb);
+	gtk_widget_show_all(parameters);
+
+	GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(fb->info.builder_flow, "parameters_box"));
+	gtk_container_add(GTK_CONTAINER(box), parameters);
 }

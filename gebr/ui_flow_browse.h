@@ -146,5 +146,8 @@ void gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
 
 void gebr_flow_browse_select_job(GebrUiFlowBrowse *fb);
 
+void gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
+                                             GebrUiFlowBrowse *fb);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H
