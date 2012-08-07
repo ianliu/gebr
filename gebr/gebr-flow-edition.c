@@ -2214,3 +2214,23 @@ gebr_maestro_server_translate_error(const gchar *error_type,
 
 	return message;
 }
+
+void
+gebr_flow_edition_get_iter_for_program(GebrGeoXmlProgram *prog,
+                                       GtkTreeIter *iter)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store);
+
+	gboolean valid = gtk_tree_model_get_iter_first(model, iter);
+	while (valid) {
+		GebrGeoXmlProgram *program;
+
+		gtk_tree_model_get(model, iter,
+		                   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+
+		if (prog == program)
+			return;
+
+		valid = gtk_tree_model_iter_next(model, iter);
+	}
+}

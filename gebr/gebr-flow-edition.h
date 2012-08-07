@@ -193,6 +193,9 @@ void gebr_flow_edition_select_group_for_flow(GebrFlowEdition *fe,
 gchar *gebr_maestro_server_translate_error(const gchar *error_type,
                                            const gchar *error_msg);
 
+void gebr_flow_edition_get_iter_for_program(GebrGeoXmlProgram *prog,
+                                            GtkTreeIter *iter);
+
 G_END_DECLS
 
 #endif /* __GEBR_FLOW_EDITION_H__ */
