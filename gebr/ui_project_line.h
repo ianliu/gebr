@@ -65,8 +65,8 @@ struct ui_project_line {
 		GtkBuilder *builder_proj;
 		GtkBuilder *builder_line;
 
-		GtkWidget *help_edit;
-		GtkWidget *help_view;
+		GtkToolItem *help_edit;
+		GtkToolItem *help_view;
 	} info;
 };
 

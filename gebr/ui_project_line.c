@@ -187,19 +187,7 @@ struct ui_project_line *project_line_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(infopage), GTK_WIDGET(infopage_proj), FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(infopage), GTK_WIDGET(infopage_line), FALSE, TRUE, 0);
 
-	/* Help Buttons */
-	GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
-	ui_project_line->info.help_view = gtk_button_new_with_label(_("View Report"));
-	ui_project_line->info.help_edit = gtk_button_new_with_label(_("Edit Comments"));
-	gtk_box_pack_start(GTK_BOX(hbox), ui_project_line->info.help_view, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), ui_project_line->info.help_edit, TRUE, TRUE, 0);
-	g_signal_connect(GTK_OBJECT(ui_project_line->info.help_view), "clicked",
-			 G_CALLBACK(project_line_show_help), NULL);
-	g_signal_connect(GTK_OBJECT(ui_project_line->info.help_edit), "clicked",
-			 G_CALLBACK(project_line_edit_help), NULL);
-	gtk_box_pack_end(GTK_BOX(infopage), hbox, FALSE, TRUE, 0);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), infopage);
-
 	return ui_project_line;
 }
 
@@ -576,14 +564,9 @@ void project_line_info_update(void)
 	if (!gebr.project_line) {
 		gtk_widget_hide(GTK_WIDGET(infopage_proj));
 		gtk_widget_hide(GTK_WIDGET(infopage_line));
-		gtk_widget_hide(gebr.ui_project_line->info.help_edit);
-		gtk_widget_hide(gebr.ui_project_line->info.help_view);
 		navigation_bar_update();
 		return;
 	}
-
-	gtk_widget_show(gebr.ui_project_line->info.help_edit);
-	gtk_widget_show(gebr.ui_project_line->info.help_view);
 
 	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
 		project_info_update();
@@ -1655,9 +1638,13 @@ static void project_line_load(void)
 		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, &child);
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &project_filename, -1);
+		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_view, _("View Line Report"));
+		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_edit, _("Edit Line comments"));
 	} else {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &project_filename, -1);
+		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_view, _("View Project Report"));
+		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_edit, _("Edit Project comments"));
 	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
@@ -1920,7 +1907,7 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *
  */
 void project_line_show_help(void)
 {
-	gebr_help_show (GEBR_GEOXML_OBJECT (gebr.project_line), FALSE);
+	gebr_help_show(GEBR_GEOXML_OBJECT (gebr.project_line), FALSE);
 }
 
 void project_line_edit_help(void)

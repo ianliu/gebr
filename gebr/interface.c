@@ -90,10 +90,10 @@ static const GtkActionEntry actions_entries_project_line[] = {
 		NULL, N_("Import Projects or Lines"), G_CALLBACK(on_project_line_import_activate)},
 	{"project_line_export", "document-export", N_("Export"),
 		NULL, N_("Export selected Projects and Lines"), G_CALLBACK(on_project_line_export_activate)},
-	{"project_line_view", GTK_STOCK_INFO, N_("View Report"),
-		NULL, N_("View Report"), G_CALLBACK(on_project_line_show_help)},
-	{"project_line_edit", GTK_STOCK_EDIT, N_("Edit Comments"),
-		NULL, N_("Edit Comments"), G_CALLBACK(on_project_line_edit_help)},
+	{"project_line_view", GTK_STOCK_DND, N_("View Project Report"),
+		NULL, N_("View Report"), G_CALLBACK(project_line_show_help)},
+	{"project_line_edit", "kontact_journal_altered3", N_("Edit Project Comments"),
+		NULL, N_("Edit Comments"), G_CALLBACK(project_line_edit_help)},
 };
 
 static const GtkActionEntry actions_entries_flow[] = {
@@ -555,12 +555,14 @@ void gebr_setup_ui(void)
 			   -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_view"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"))), -1);
+
+	GtkToolItem *help_view = GTK_TOOL_ITEM(gtk_action_create_tool_item
+				(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view")));
+	GtkToolItem *help_edit = GTK_TOOL_ITEM(gtk_action_create_tool_item
+				(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit")));
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(help_view), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(help_edit), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
@@ -577,11 +579,13 @@ void gebr_setup_ui(void)
 	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Projects and Lines")));
 	gtk_widget_show_all(vbox);
 
+	gebr.ui_project_line->info.help_edit = help_edit;
+	gebr.ui_project_line->info.help_view = help_view;
+
+
 	/* Hide line and project properties */
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(gebr.ui_project_line->info.builder_proj, "main")));
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "main")));
-	gtk_widget_hide(gebr.ui_project_line->info.help_edit);
-	gtk_widget_hide(gebr.ui_project_line->info.help_view);
 
 	/*
 	 * Create Structure of Job Control (to use on Flows)
