@@ -613,7 +613,9 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"))), -1);
-
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+		                   GTK_TOOL_ITEM(gtk_action_create_tool_item
+		                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
 	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"))), -1);
