@@ -1466,7 +1466,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		gchar *date = NULL;
 		gchar *iso_date = NULL;
 		gchar **time_field = NULL;
-		gchar **iso_date_field;
+		gchar **iso_date_field = NULL;
 		gboolean has_id;
 
 		if (id && *id) {
