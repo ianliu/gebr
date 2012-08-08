@@ -108,6 +108,13 @@ on_context_button_toggled(GtkToggleButton *button,
 		gtk_widget_show(fb->jobs_ctx_box);
 
 		GebrJob *job = gebr_job_control_get_recent_job_from_flow(GEBR_GEOXML_DOCUMENT(gebr.flow), gebr.job_control);
+		if(job){
+			gtk_widget_hide(fb->info.job_no_output);
+			gtk_widget_show(fb->info.job_has_output);
+		} else {
+			gtk_widget_show(fb->info.job_no_output);
+			gtk_widget_hide(fb->info.job_has_output);
+		}
 		gebr_job_control_select_job(gebr.job_control, job);
 	}
 
@@ -292,7 +299,18 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	 * Jobs Context
 	 */
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
-	gtk_widget_reparent(output_view, ui_flow_browse->jobs_ctx_box);
+	GtkWidget *output_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_output_box"));
+	gtk_widget_reparent(output_view, output_box);
+	ui_flow_browse->info.job_has_output = output_box;
+
+	GtkWidget *job_no_output = gtk_label_new("This flow has never been executed.\n\n"
+						"GêBR can execute it using (Ctrl+R).");
+	gtk_widget_set_sensitive(job_no_output, FALSE);
+	ui_flow_browse->info.job_no_output = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_no_output_box"));
+	gtk_box_pack_start(GTK_BOX(ui_flow_browse->info.job_no_output), job_no_output, TRUE, TRUE, 0);
+
+	gtk_widget_show(ui_flow_browse->info.job_no_output);
+	gtk_widget_hide(ui_flow_browse->info.job_has_output);
 
 	/*
 	 * Add Flow Page on GêBR window
@@ -380,6 +398,8 @@ void flow_browse_info_update(void)
         	last_text = g_strdup(_("This flow was never executed"));
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
+        	gtk_widget_hide(gebr.ui_flow_browse->info.job_has_output);
+        	gtk_widget_show(gebr.ui_flow_browse->info.job_no_output);
         } else {
         	/* Update job button */
         	GebrJob *job = gebr_job_control_get_recent_job_from_flow(GEBR_GEOXML_DOCUMENT(gebr.flow), gebr.job_control);
@@ -426,6 +446,8 @@ void flow_browse_info_update(void)
 
         		gtk_widget_show(gebr.ui_flow_browse->info.job_button);
         		gtk_widget_show(gebr.ui_flow_browse->info.job_status);
+        		gtk_widget_show(gebr.ui_flow_browse->info.job_has_output);
+        		gtk_widget_hide(gebr.ui_flow_browse->info.job_no_output);
         	} else {
 			gchar *readable_lastrun = NULL;
 			if (gebr_convert_isodate_to_readable_date(last_run, &readable_lastrun)) {
@@ -434,6 +456,8 @@ void flow_browse_info_update(void)
 				last_text = g_strdup("");
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
+        		gtk_widget_hide(gebr.ui_flow_browse->info.job_has_output);
+        		gtk_widget_show(gebr.ui_flow_browse->info.job_no_output);
         	}
         }
 
@@ -1043,7 +1067,11 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 	flow_browse_info_update();
 
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
-	gtk_widget_reparent(output_view, self->jobs_ctx_box);
+	GtkWidget *output_box = GTK_WIDGET(gtk_builder_get_object(self->info.builder_flow, "jobs_output_box"));
+	gtk_widget_reparent(output_view, output_box);
+
+	gtk_widget_show(self->info.job_no_output);
+	gtk_widget_hide(self->info.job_has_output);
 
 	/* Set default on properties flow */
 	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))

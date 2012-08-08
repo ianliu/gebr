@@ -1175,8 +1175,8 @@ gebr_flow_set_toolbar_sensitive(void)
 			if (flows_nrows >1 )
 				label_msg = g_markup_printf_escaped(_("%d Flows selected.\n\n"
 						"GêBR can execute them\n"
-						"- <i>sequentially</i> (Shift+R) or\n"
-						"- <i>parallelly</i> (Shift+Ctrl+R)"),
+						"- <i>sequentially</i> (Ctrl+R) or\n"
+						"- <i>parallelly</i> (Ctrl+Shift+R)"),
 						flows_nrows);
 			else
 				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
