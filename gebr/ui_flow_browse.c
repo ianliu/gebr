@@ -1124,7 +1124,7 @@ parameters_review_set_io(GebrGeoXmlFlow *flow,
 		gtk_widget_set_sensitive(GTK_WIDGET(input_label), TRUE);
 		gtk_label_set_text(input_label, input);
 	} else {
-		gtk_label_set_text(input_label, _("Inpur file"));
+		gtk_label_set_text(input_label, _("Input file"));
 		gtk_widget_set_sensitive(GTK_WIDGET(input_label), FALSE);
 	}
 
@@ -1350,6 +1350,7 @@ parameters_review_set_params(GebrGeoXmlFlow *flow,
 		gebr_geoxml_parameters_get_parameter (parameters, &sequence, 0);
 		gebr_geoxml_object_unref(parameters);
 
+		changed = FALSE;
 		while (sequence) {
 			if (parameters_review_create_row(GEBR_GEOXML_PARAMETER(sequence), params_box, NULL, FALSE))
 				changed = TRUE;
@@ -1369,6 +1370,8 @@ parameters_review_set_params(GebrGeoXmlFlow *flow,
 	if (!has_programs) {
 		prog_label = gtk_label_new(_("This flow has no programs"));
 		gtk_box_pack_start(GTK_BOX(vbox), prog_label, FALSE, FALSE, 0);
+		gtk_widget_set_sensitive(prog_label, FALSE);
+		gtk_misc_set_alignment(GTK_MISC(prog_label), 0.04, 0.5);
 	}
 
 	return vbox;
