@@ -329,19 +329,55 @@ gebr_ui_flow_browse_set_job_status(GebrJob *job,
                                    GebrUiFlowBrowse *fb)
 {
 	GtkImage *img = GTK_IMAGE(fb->info.job_status);
+	gchar *last_text;
+	const gchar *icon, *job_state, *date;
 
-	if (status == JOB_STATUS_FINISHED)
-		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_BUTTON);
-	else if (status == JOB_STATUS_INITIAL)
-		gtk_image_set_from_stock(img, GTK_STOCK_NETWORK, GTK_ICON_SIZE_BUTTON);
-	else if (status == JOB_STATUS_RUNNING)
-		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_BUTTON);
-	else if (status == JOB_STATUS_CANCELED)
-		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_BUTTON);
-	else if (status == JOB_STATUS_FAILED)
-		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_BUTTON);
-	else if (status == JOB_STATUS_QUEUED)
-		gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_BUTTON);
+	switch(status) {
+	case JOB_STATUS_FINISHED:
+		icon = GTK_STOCK_APPLY;
+		job_state = "finished";
+		date = gebr_job_get_finish_date(job);
+		break;
+	case JOB_STATUS_RUNNING:
+		icon = GTK_STOCK_EXECUTE;
+		job_state = "started";
+		date = gebr_job_get_start_date(job);
+		break;
+	case JOB_STATUS_CANCELED:
+		icon = GTK_STOCK_CANCEL;
+		job_state = "canceled";
+		date = gebr_job_get_finish_date(job);
+		break;
+	case JOB_STATUS_FAILED:
+		icon = GTK_STOCK_CANCEL;
+		job_state = "failed";
+		date = gebr_job_get_finish_date(job);
+		break;
+	case JOB_STATUS_QUEUED:
+		icon = "chronometer";
+		job_state = "submitted";
+		date = gebr_job_get_last_run_date(job);
+		break;
+	case JOB_STATUS_INITIAL:
+	default:
+		icon = GTK_STOCK_NETWORK;
+		job_state = "submitted";
+		date = gebr_job_get_last_run_date(job);
+		break;
+	}
+
+	const gchar *iso = gebr_localized_date(date);
+	gchar *readable_date = NULL;
+	if (gebr_convert_isodate_to_readable_date(iso, &readable_date))
+		last_text = g_markup_printf_escaped(_("Last execution %s at %s"), job_state, readable_date);
+	else
+		last_text = g_strdup_printf("Last execution...");
+
+	gtk_image_set_from_stock(img, icon, GTK_ICON_SIZE_BUTTON);
+	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
+
+	g_free(readable_date);
+	g_free(last_text);
 }
 
 static void
@@ -419,12 +455,12 @@ void flow_browse_info_update(void)
 	g_free(mod_date);
 	g_free(modified);
 
-        /* Server */
-        gchar *last_text;
+	gchar *last_text = NULL;
 
-        const gchar *last_run = gebr_localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow));
+	const gchar *last_run = gebr_localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow));
         if (!last_run || !*last_run) {
         	last_text = g_strdup(_("This flow was never executed"));
+
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_has_output);
@@ -437,61 +473,28 @@ void flow_browse_info_update(void)
 
         		g_signal_connect(job, "status-change", G_CALLBACK(on_job_status_changed), gebr.ui_flow_browse);
 
-        		gchar *job_state, *date;
-        		GebrCommJobStatus status = gebr_job_get_status(job);
-        		switch(status) {
-        		case JOB_STATUS_CANCELED:
-        			job_state = g_strdup("canceled");
-        			date = g_strdup(gebr_job_get_finish_date(job));
-        			break;
-        		case JOB_STATUS_FINISHED:
-        			job_state = g_strdup("finished");
-        			date = g_strdup(gebr_job_get_finish_date(job));
-        			break;
-        		case JOB_STATUS_FAILED:
-        			job_state = g_strdup("failed");
-        			date = g_strdup(gebr_job_get_finish_date(job));
-        			break;
-        		case JOB_STATUS_RUNNING:
-        			job_state = g_strdup("started");
-        			date = g_strdup(gebr_job_get_start_date(job));
-        			break;
-        		case JOB_STATUS_QUEUED:
-        		default:
-        			job_state = g_strdup("submitted");
-        			date = g_strdup(gebr_job_get_last_run_date(job));
-        			break;
-        		}
-
-			const gchar *iso = gebr_localized_date(date);
-			gchar *readable_date = NULL;
-			if (gebr_convert_isodate_to_readable_date(iso, &readable_date)) {
-				last_text = g_markup_printf_escaped(_("Last execution %s at %s"), job_state, readable_date);
-			}
-
-        		g_free(job_state);
-        		g_free(readable_date);
-        		g_free(date);
-
         		gtk_widget_show(gebr.ui_flow_browse->info.job_button);
         		gtk_widget_show(gebr.ui_flow_browse->info.job_status);
         		gtk_widget_show(gebr.ui_flow_browse->info.job_has_output);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_no_output);
         	} else {
 			gchar *readable_lastrun = NULL;
-			if (gebr_convert_isodate_to_readable_date(last_run, &readable_lastrun)) {
+
+			if (gebr_convert_isodate_to_readable_date(last_run, &readable_lastrun))
 				last_text = g_markup_printf_escaped(_("Last execution at %s"), readable_lastrun);
-			} else
+			else
 				last_text = g_strdup("");
-        		gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
+
+			gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_has_output);
         		gtk_widget_show(gebr.ui_flow_browse->info.job_no_output);
         	}
         }
-
-	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
-        g_free(last_text);
+        if (last_text) {
+        	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
+        	g_free(last_text);
+        }
 
 	navigation_bar_update();
 }
