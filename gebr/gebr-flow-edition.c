@@ -1560,6 +1560,43 @@ on_groups_combobox_changed(GtkComboBox *combobox,
 	flow_browse_info_update();
 }
 
+const gchar *
+gebr_flow_get_error_tooltip_from_id(GebrIExprError errorid)
+{
+	const gchar *error_message;
+
+	switch (errorid) {
+	case GEBR_IEXPR_ERROR_SYNTAX:
+	case GEBR_IEXPR_ERROR_TOOBIG:
+	case GEBR_IEXPR_ERROR_RUNTIME:
+	case GEBR_IEXPR_ERROR_INVAL_TYPE:
+	case GEBR_IEXPR_ERROR_TYPE_MISMATCH:
+		error_message = _("This program has an invalid expression");
+		break;
+	case GEBR_IEXPR_ERROR_EMPTY_EXPR:
+		error_message = _("A required parameter is unfilled");
+		break;
+	case GEBR_IEXPR_ERROR_UNDEF_VAR:
+	case GEBR_IEXPR_ERROR_UNDEF_REFERENCE:
+		error_message = _("An undefined variable is being used");
+		break;
+	case GEBR_IEXPR_ERROR_INVAL_VAR:
+	case GEBR_IEXPR_ERROR_BAD_REFERENCE:
+	case GEBR_IEXPR_ERROR_CYCLE:
+		error_message = _("A badly defined variable is being used");
+		break;
+	case GEBR_IEXPR_ERROR_PATH:
+		error_message = _("This program has cleaned their paths");
+		break;
+	case GEBR_IEXPR_ERROR_BAD_MOVE:
+	case GEBR_IEXPR_ERROR_INITIALIZE:
+		error_message = "";
+		break;
+	}
+
+	return error_message;
+}
+
 /**
  * \internal
  * Shows tooltips for each line in component flow tree view.
@@ -1610,39 +1647,15 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	if (!gebr_geoxml_program_get_error_id(program, &errorid) && !never_opened)
 		return FALSE;
 
-	gchar *error_message;
+	const gchar *error_message;
 	if (tooltip_text && *tooltip_text)
 		error_message = tooltip_text;
 	else
 		error_message = _("Unknown error");
 
-	switch (errorid) {
-	case GEBR_IEXPR_ERROR_SYNTAX:
-	case GEBR_IEXPR_ERROR_TOOBIG:
-	case GEBR_IEXPR_ERROR_RUNTIME:
-	case GEBR_IEXPR_ERROR_INVAL_TYPE:
-	case GEBR_IEXPR_ERROR_TYPE_MISMATCH:
-		error_message = _("This program has an invalid expression");
-		break;
-	case GEBR_IEXPR_ERROR_EMPTY_EXPR:
-		error_message = _("A required parameter is unfilled");
-		break;
-	case GEBR_IEXPR_ERROR_UNDEF_VAR:
-	case GEBR_IEXPR_ERROR_UNDEF_REFERENCE:	
-		error_message = _("An undefined variable is being used");
-		break;
-	case GEBR_IEXPR_ERROR_INVAL_VAR:
-	case GEBR_IEXPR_ERROR_BAD_REFERENCE:
-	case GEBR_IEXPR_ERROR_CYCLE:
-		error_message = _("A badly defined variable is being used");
-		break;
-	case GEBR_IEXPR_ERROR_PATH:
-		error_message = _("This program has cleaned their paths");
-		break;
-	case GEBR_IEXPR_ERROR_BAD_MOVE:
-	case GEBR_IEXPR_ERROR_INITIALIZE:
-		break;
-	}
+	const gchar *err_msg = gebr_flow_get_error_tooltip_from_id(errorid);
+	if (*err_msg)
+		error_message = err_msg;
 
 	gtk_tooltip_set_text(tooltip, error_message);
 	g_free(tooltip_text);

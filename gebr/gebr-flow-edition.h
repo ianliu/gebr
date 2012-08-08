@@ -196,6 +196,8 @@ gchar *gebr_maestro_server_translate_error(const gchar *error_type,
 void gebr_flow_edition_get_iter_for_program(GebrGeoXmlProgram *prog,
                                             GtkTreeIter *iter);
 
+const gchar *gebr_flow_get_error_tooltip_from_id(GebrIExprError errorid);
+
 G_END_DECLS
 
 #endif /* __GEBR_FLOW_EDITION_H__ */
