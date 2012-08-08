@@ -178,7 +178,7 @@ class MyDotWindow(xdot.DotWindow):
             execute_single.show()
             self.menu.append(execute_single)
             
-            self.menu.show_all()
+        self.menu.show_all()
             
         return True
 
@@ -221,7 +221,9 @@ class MyDotWindow(xdot.DotWindow):
                    for snapshot in self.flows[id_flow]:
                        node = self.widget.graph.get_node_by_url(snapshot)
                        self.widget.on_area_select_node(node, True)
-                       
+               else:
+                   self.flows[id_flow] = []
+                
                self.current_flow = id_flow
 
            return True
