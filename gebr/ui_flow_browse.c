@@ -1200,7 +1200,7 @@ parameters_review_create_row(GebrGeoXmlParameter *parameter,
 				g_free(enum_value);
 			}
 			gchar *label = gebr_geoxml_parameter_get_label(parameter);
-			str_value->str = g_markup_printf_escaped("%s",str_value->str);
+			str_value->str = g_markup_printf_escaped("<i>%s</i>",str_value->str);
 
 			if (insert_header && gebr_geoxml_parameter_get_is_in_group(parameter) && group_label) {
 				gchar *label = g_strdup_printf("<b>%s</b>", group_label);
@@ -1218,10 +1218,8 @@ parameters_review_create_row(GebrGeoXmlParameter *parameter,
 			param_title = gtk_label_new(title);
 			g_free(title);
 
-			gchar *value = g_markup_printf_escaped("<i>%s</i>", str_value->str);
 			param_value = gtk_label_new(NULL);
-			gtk_label_set_markup(GTK_LABEL(param_value), value);
-			g_free(value);
+			gtk_label_set_markup(GTK_LABEL(param_value), str_value->str);
 
 			gtk_box_pack_start(GTK_BOX(params_info), GTK_WIDGET(param_title), FALSE, FALSE, 0);
 			gtk_box_pack_start(GTK_BOX(params_info), GTK_WIDGET(param_value), FALSE, FALSE, 0);
