@@ -2233,4 +2233,5 @@ gebr_flow_edition_get_iter_for_program(GebrGeoXmlProgram *prog,
 
 		valid = gtk_tree_model_iter_next(model, iter);
 	}
+	iter = NULL;
 }

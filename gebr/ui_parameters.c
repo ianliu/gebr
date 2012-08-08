@@ -179,6 +179,10 @@ parameters_actions(GtkDialog *dialog, gint response, GebrGuiProgramEdit *program
 
 		flow_edition_set_io();
 		gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
+
+		/* Update parameters review on Flow Browse */
+		gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
+
 		break;
 	}
 	case GTK_RESPONSE_APPLY: {

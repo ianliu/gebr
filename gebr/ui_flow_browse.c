@@ -1311,24 +1311,24 @@ parameters_review_set_params(GebrGeoXmlFlow *flow,
 		gtk_label_set_markup(GTK_LABEL(prog_label), title);
 		g_free(title);
 
+		GtkWidget *prog_button = gtk_button_new();
+		GtkWidget *image = gtk_image_new_from_stock("kontact_todo", GTK_ICON_SIZE_BUTTON);
+		gtk_button_set_relief(GTK_BUTTON(prog_button), GTK_RELIEF_NONE);
+		gtk_button_set_image(GTK_BUTTON(prog_button), image);
+		g_signal_connect(prog_button, "clicked", G_CALLBACK(open_properties_program), prog);
+
 		gtk_box_pack_start(GTK_BOX(prog_props), prog_img, FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(prog_props), prog_label, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(prog_props), prog_button, FALSE, FALSE, 0);
 
 		GtkWidget *expander = gtk_expander_new(NULL);
 		gtk_expander_set_label_widget(GTK_EXPANDER(expander), prog_props);
+		gebr_gui_gtk_expander_hacked_define(expander, prog_props);
 
 		/* Set program on Flows box */
 		GtkWidget *prog_box = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(prog_box), expander, FALSE, FALSE, 0);
 
-		GtkWidget *fix_box = gtk_vbox_new(FALSE, 0);
-		GtkWidget *prog_button = gtk_button_new();
-		GtkWidget *image = gtk_image_new_from_stock("kontact_todo", GTK_ICON_SIZE_BUTTON);
-		gtk_button_set_image(GTK_BUTTON(prog_button), image);
-		g_signal_connect(prog_button, "clicked", G_CALLBACK(open_properties_program), prog);
-		gtk_box_pack_start(GTK_BOX(fix_box), prog_button, FALSE, FALSE, 0);
-
-		gtk_box_pack_start(GTK_BOX(prog_box), fix_box, FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), prog_box, FALSE, FALSE, 0);
 
 		/* Create box of parameters */
@@ -1383,6 +1383,11 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	parameters = parameters_review_set_params(flow, fb);
 	gtk_widget_show_all(parameters);
 
+	/* Clean parameters_box before adding a new content */
 	GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(fb->info.builder_flow, "parameters_box"));
+	GList *childs = gtk_container_get_children(GTK_CONTAINER(box));
+	for (GList *i = childs; i; i = i->next)
+		gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(i->data));
+
 	gtk_container_add(GTK_CONTAINER(box), parameters);
 }
