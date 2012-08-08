@@ -809,6 +809,7 @@ gebr_flow_browse_revision_delete(const gchar *rev_id)
 		}
 
 		flow_browse_load();
+		gtk_toggle_button_set_active(gebr.ui_flow_browse->snapshots_ctx_button, TRUE);
 	}
 
 }
@@ -998,6 +999,8 @@ gebr_flow_browse_revision_revert(const gchar *rev_id)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	flow_browse_load();
+
+	gtk_toggle_button_set_active(gebr.ui_flow_browse->snapshots_ctx_button, TRUE);
 
 	gebr_validator_force_update(gebr.validator);
 	flow_browse_info_update();
