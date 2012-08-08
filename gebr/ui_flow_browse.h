@@ -78,6 +78,7 @@ typedef struct {
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;
 
+		GtkWidget *status;
 		GtkWidget *description;
 
 		GtkWidget *modified;

@@ -239,6 +239,9 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	gtk_paned_pack2(GTK_PANED(hpanel), scrolled_window_info, TRUE, FALSE);
 
+	/* Flow Icon Status */
+	ui_flow_browse->info.status = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_status"));
+
 	/* Description */
 	ui_flow_browse->info.description = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_description"));
 
@@ -372,6 +375,32 @@ void flow_browse_info_update(void)
 		navigation_bar_update();
 		return;
 	}
+
+	/* Status Icon */
+	gchar *flow_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "48x48", "stock", "flow-icon.png", NULL);
+	GIcon *flow_icon = g_icon_new_for_string(flow_icon_path, NULL);
+
+	gchar *status_icon_path;
+
+	GError *error = NULL;
+	gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
+	if (error) {
+		status_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "22x22", "stock", "dialog-warning.png", NULL);
+		gtk_widget_set_tooltip_text(gebr.ui_flow_browse->info.status, error->message);
+		g_clear_error(&error);
+	} else {
+		status_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "22x22", "stock", "gtk-apply.png", NULL);
+		gtk_widget_set_tooltip_text(gebr.ui_flow_browse->info.status, _("Ready to execute"));
+	}
+	GIcon *status_icon = g_icon_new_for_string(status_icon_path, NULL);
+	GEmblem *status_emblem = g_emblem_new(status_icon);
+
+	GIcon *icon = g_emblemed_icon_new(flow_icon, status_emblem);
+
+	gtk_image_set_from_gicon(GTK_IMAGE(gebr.ui_flow_browse->info.status), icon, GTK_ICON_SIZE_DIALOG);
+
+	g_free(flow_icon_path);
+	g_free(status_icon_path);
 
 	gchar *markup;
 
@@ -1333,6 +1362,16 @@ parameters_review_set_params(GebrGeoXmlFlow *flow,
 		/* Set image of program */
 		const gchar *icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(prog));
 		prog_img = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_BUTTON);
+
+		/* Set tooltip for program */
+		const gchar *tooltip = NULL;
+
+		GebrIExprError errorid;
+		if (gebr_geoxml_program_get_error_id(prog, &errorid))
+			tooltip = gebr_flow_get_error_tooltip_from_id(errorid);
+
+		gtk_widget_set_tooltip_text(prog_img, tooltip);
+
 
 		/* Set name of program */
 		gchar *title = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_program_get_title(prog));
