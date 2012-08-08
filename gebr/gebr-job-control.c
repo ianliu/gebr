@@ -1433,7 +1433,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
 	const gchar *description = gebr_job_get_description(job);
 
-	markup = g_strdup_printf ("<span size=\"large\"><b>%s</b></span>", description);
+	markup = g_strdup_printf ("<span size=\"x-large\">%s</span>", description);
 	gtk_label_set_markup (label, markup);
 	g_free (markup);
 
