@@ -1332,6 +1332,10 @@ parameters_review_set_params(GebrGeoXmlFlow *flow,
 
 		gtk_box_pack_start(GTK_BOX(vbox), prog_box, FALSE, FALSE, 0);
 
+		if (gebr_geoxml_flow_has_control_program(flow) &&
+		    gebr_geoxml_flow_get_control_program(flow) == prog)
+			gtk_box_reorder_child(GTK_BOX(vbox), prog_box, 0);
+
 		/* Create box of parameters */
 		GtkWidget *param_align = gtk_alignment_new(0.5, 0.5, 1.0, 1.0);
 		gtk_alignment_set_padding(GTK_ALIGNMENT(param_align), 5, 5, 30, 0);
