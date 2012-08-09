@@ -135,7 +135,6 @@ static const gchar *html_viewer_ui_def =
 "   </menu>"
 "   <separator />"
 "   <menu action='StyleMenu'>"
-"    <menuitem action='StyleNoneAction' />"
 "   </menu>"
 "  </menu>"
 "  <menu action='ViewerHelpMenu'>"
@@ -514,10 +513,6 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		GtkRadioAction *radio_action, *first_radio;
 		GSList *style_group = NULL;
 
-		first_radio = radio_action = gtk_radio_action_new ("StyleNoneAction", _("None"), NULL, NULL, 0);
-		gtk_radio_action_set_group (radio_action, style_group);
-		style_group = gtk_radio_action_get_group (radio_action);
-		gtk_action_group_add_action (group, GTK_ACTION (radio_action));
 		dir = g_dir_open (LIBGEBR_STYLES_DIR, 0, &error);
 
 		if (error) {
@@ -536,7 +531,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 					action_name = g_strdup_printf ("StyleAction%d", i);
 					abs_path = g_strconcat (LIBGEBR_STYLES_DIR, "/", fname, NULL);
 					css_title = gebr_document_get_css_header_field (abs_path, "title");
-					radio_action = gtk_radio_action_new (action_name,
+					first_radio = radio_action = gtk_radio_action_new (action_name,
 									     css_title,
 									     NULL, NULL, i);
 					fname_cpy = g_strdup (fname);
