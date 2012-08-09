@@ -842,30 +842,6 @@ gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2)
 		return g_strdup_printf(_("%ld miliseconds"), ms);
 }
 
-gboolean
-gebr_convert_isodate_to_readable_date(const gchar *iso_date,
-			      gchar **readable_date)
-{
-	if (!iso_date)
-		return FALSE;
-
-	gchar **date_field = NULL;
-	gchar **time_field = NULL;
-	date_field = g_strsplit(iso_date, " ", -1);
-	if (!date_field || !date_field[0] || !date_field[1] ||
-	    !date_field[2] || !date_field[3] || !date_field[4])
-		return FALSE;
-
-	time_field = g_strsplit(date_field[4], ":", -1);
-	if (!time_field || !time_field[0] || !time_field[1])
-		return FALSE;
-
-	*readable_date = g_strdup_printf("%s %s, %s  %s:%s %s", date_field[2], date_field[1], date_field[3],
-					 time_field[0], time_field[1], date_field[5]);
-	g_strfreev(date_field);
-	g_strfreev(time_field);
-	return TRUE;
-}
 gchar *
 gebr_compute_diff_iso_times(const gchar *iso_time1, const gchar *iso_time2)
 {

@@ -209,8 +209,6 @@ gchar *gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
  */
 gchar *gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2);
 
-gboolean gebr_convert_isodate_to_readable_date(const gchar *iso_date, gchar **readable_date);
-
 gchar *gebr_compute_diff_iso_times(const gchar *iso_time1, const gchar *iso_time2);
 
 gint gebr_compute_diff_clock_to_me(const gchar *iso_time1);

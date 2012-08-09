@@ -367,16 +367,10 @@ gebr_ui_flow_browse_set_job_status(GebrJob *job,
 	}
 
 	const gchar *iso = gebr_localized_date(date);
-	gchar *readable_date = NULL;
-	if (gebr_convert_isodate_to_readable_date(iso, &readable_date))
-		last_text = g_markup_printf_escaped(_("Last execution %s at %s"), job_state, readable_date);
-	else
-		last_text = g_strdup_printf("Last execution...");
-
+	last_text = g_markup_printf_escaped(_("Last execution %s at %s"), job_state, iso);
 	gtk_image_set_from_stock(img, icon, GTK_ICON_SIZE_BUTTON);
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
 
-	g_free(readable_date);
 	g_free(last_text);
 }
 
@@ -478,12 +472,7 @@ void flow_browse_info_update(void)
         		gtk_widget_show(gebr.ui_flow_browse->info.job_has_output);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_no_output);
         	} else {
-			gchar *readable_lastrun = NULL;
-
-			if (gebr_convert_isodate_to_readable_date(last_run, &readable_lastrun))
-				last_text = g_markup_printf_escaped(_("Last execution at %s"), readable_lastrun);
-			else
-				last_text = g_strdup("");
+        		last_text = g_markup_printf_escaped(_("Last execution at %s"), last_run);
 
 			gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
