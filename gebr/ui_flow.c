@@ -373,9 +373,9 @@ gebr_ui_flow_run(gboolean is_parallel)
 		if (!id)
 			return;
 	}
-	if (rows->next)
+	if (rows->next || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
 		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	else if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE)
+	else
 		gebr_flow_browse_select_job(gebr.ui_flow_browse);
 }
 
@@ -432,9 +432,9 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 			return;
 	}
 
-	if (snaps[1])
+	if (snaps[1] || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
 		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	else if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE)
+	else
 		gebr_flow_browse_select_job(gebr.ui_flow_browse);
 
 	gchar *submit_date = gebr_iso_date();
