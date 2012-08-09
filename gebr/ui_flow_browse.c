@@ -335,33 +335,33 @@ gebr_ui_flow_browse_set_job_status(GebrJob *job,
 	switch(status) {
 	case JOB_STATUS_FINISHED:
 		icon = GTK_STOCK_APPLY;
-		job_state = "finished";
+		job_state = _("finished");
 		date = gebr_job_get_finish_date(job);
 		break;
 	case JOB_STATUS_RUNNING:
 		icon = GTK_STOCK_EXECUTE;
-		job_state = "started";
+		job_state = _("started");
 		date = gebr_job_get_start_date(job);
 		break;
 	case JOB_STATUS_CANCELED:
 		icon = GTK_STOCK_CANCEL;
-		job_state = "canceled";
+		job_state = _("canceled");
 		date = gebr_job_get_finish_date(job);
 		break;
 	case JOB_STATUS_FAILED:
 		icon = GTK_STOCK_CANCEL;
-		job_state = "failed";
+		job_state = _("failed");
 		date = gebr_job_get_finish_date(job);
 		break;
 	case JOB_STATUS_QUEUED:
 		icon = "chronometer";
-		job_state = "submitted";
+		job_state = _("submitted");
 		date = gebr_job_get_last_run_date(job);
 		break;
 	case JOB_STATUS_INITIAL:
 	default:
 		icon = GTK_STOCK_NETWORK;
-		job_state = "submitted";
+		job_state = _("submitted");
 		date = gebr_job_get_last_run_date(job);
 		break;
 	}
@@ -443,7 +443,7 @@ void flow_browse_info_update(void)
 
 	/* Modified date */
 	gchar *modified = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOC(gebr.flow));
-	gchar *mod_date = g_markup_printf_escaped("Modified in %s",
+	gchar *mod_date = g_markup_printf_escaped(_("Modified in %s"),
 	                                          gebr_localized_date(modified));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.modified), mod_date);
 	g_free(mod_date);

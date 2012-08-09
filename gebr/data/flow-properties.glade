@@ -36,7 +36,7 @@
                           <object class="GtkLabel" id="flow_description">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">&lt;span size='x-large'&gt;#Description of Flow&lt;/span&gt;</property>
+                            <property name="label" translatable="no">&lt;span size='x-large'&gt;#Description of Flow&lt;/span&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
@@ -47,7 +47,7 @@
                           <object class="GtkLabel" id="flow_modified">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">&lt;span size='small'&gt;#Modified in august 6, 2012 at 2:42 PM&lt;/span&gt;
+                            <property name="label">&lt;span size='small'&gt;#Modified in august 6, 2012 at 2:42 PM&lt;/span&gt;
 </property>
                             <property name="use_markup">True</property>
                           </object>
@@ -86,7 +86,7 @@
                       <object class="GtkLabel" id="flow_jobs_label">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">#Last execution finished at "date"</property>
+                        <property name="label">#Last execution finished at "date"</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -363,7 +363,7 @@ A snapshot stores the settings of your flow so you can restore it at any moment.
           <object class="GtkLabel" id="input_label">
             <property name="visible">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">Input file</property>
+            <property name="label">Input file</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -412,7 +412,7 @@ A snapshot stores the settings of your flow so you can restore it at any moment.
           <object class="GtkLabel" id="output_label">
             <property name="visible">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">Output file</property>
+            <property name="label">Output file</property>
           </object>
           <packing>
             <property name="position">1</property>
@@ -445,7 +445,7 @@ A snapshot stores the settings of your flow so you can restore it at any moment.
           <object class="GtkLabel" id="error_label">
             <property name="visible">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">Error file</property>
+            <property name="label">Error file</property>
           </object>
           <packing>
             <property name="expand">False</property>

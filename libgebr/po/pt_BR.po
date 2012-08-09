@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-02 15:34-0300\n"
+"POT-Creation-Date: 2012-08-09 15:18-0300\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -559,7 +559,7 @@ msgstr ""
 msgid "Loop iteration counter"
 msgstr "Contador de iterações do Loop"
 
-#: ../geoxml/flow.c:1514
+#: ../geoxml/flow.c:1508
 msgid "Now"
 msgstr "Atual"
 
@@ -1118,11 +1118,11 @@ msgid "File names must be a valid path."
 msgstr "Nome de arquivo deve ser um caminho válido."
 
 #: ../validate.c:44
-#, fuzzy
 msgid ""
 "Titles should be capitalized and have no punctuation characters at the end."
 msgstr ""
-"Títulos devem iniciar com maiúscula e não ter caracteres de pontuação no fim."
+"Títulos devem iniciar com letra maiúscula e não devem ter caracteres de "
+"pontuação no fim."
 
 #: ../validate.c:49
 msgid ""
@@ -1159,7 +1159,6 @@ msgid "Invalid email address."
 msgstr "Endereço de email inválido."
 
 #: ../validate.c:77
-#, fuzzy
 msgid ""
 "Program titles should be capitalized and have no punctuation characters at "
 "the end."
