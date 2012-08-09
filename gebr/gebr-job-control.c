@@ -790,7 +790,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	const gchar *snapshot_title = gebr_job_get_snapshot_title(job);
 
 	if (snapshot_title && *snapshot_title) {
-		gchar *snapshot_markup = g_strdup_printf(_("<span size='large' weight='bold'>%s</span>"),
+		gchar *snapshot_markup = g_strdup_printf(_("<span size=\"x-large\">%s</span>"),
 							 snapshot_title);
 		gtk_label_set_markup(snapshot_label, snapshot_markup);
 
