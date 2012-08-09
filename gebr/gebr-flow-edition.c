@@ -85,6 +85,7 @@ static gboolean flow_edition_reorder(GtkTreeView * tree_view,
 				     GtkTreeViewDropPosition drop_position,
 				     GebrFlowEdition *ui_flow_edition);
 
+static void flow_edition_set_edited_io(gchar *path, gchar *new_text);
 static void flow_edition_component_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path);
 static void flow_edition_component_editing_canceled(GtkCellRenderer *renderer, gpointer user_data);
 static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text);
@@ -751,7 +752,7 @@ static void _open_activated(GebrFlowEdition *fe,
 	if (response == GTK_RESPONSE_YES) {
 		g_object_set(fe->text_renderer, "text", new_text, NULL);
 		
-		flow_edition_component_edited(GTK_CELL_RENDERER_TEXT(fe->text_renderer), g_strdup(path), new_text);
+		flow_edition_set_edited_io( g_strdup(path), new_text);
 	}
 
 	g_free(new_text);
@@ -868,13 +869,10 @@ static void flow_edition_component_editing_canceled(GtkCellRenderer *renderer, g
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
 }
 
-
 static void
-flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
+flow_edition_set_edited_io(gchar *path, gchar *new_text)
 {
 	GtkTreeIter iter;
-
-	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
 
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
 
@@ -901,6 +899,15 @@ flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar 
 	flow_edition_set_io();
 
 	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
+}
+
+static void
+flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
+{
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+
+	flow_edition_set_edited_io(path, new_text);
+
 }
 
 gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
