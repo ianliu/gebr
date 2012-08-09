@@ -1226,7 +1226,7 @@ parameters_review_create_row(GebrGeoXmlParameter *parameter,
 		GString * str_value;
 		GString * default_value;
 		GebrGeoXmlProgramParameter * program;
-		GtkWidget *params_info = gtk_hbox_new(FALSE, 10);
+		GtkWidget *params_info = gtk_hbox_new(FALSE, 0);
 		GtkWidget *param_title, *param_value;
 
 		program = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
@@ -1276,6 +1276,11 @@ parameters_review_create_row(GebrGeoXmlParameter *parameter,
 
 			param_value = gtk_label_new(NULL);
 			gtk_label_set_markup(GTK_LABEL(param_value), str_value->str);
+
+			if (gebr_geoxml_parameter_get_is_in_group(parameter))
+				gtk_misc_set_padding(GTK_MISC(param_title), 20, 0);
+			else
+				gtk_box_set_spacing(GTK_BOX(params_info), 20);
 
 			gtk_box_pack_start(GTK_BOX(params_info), GTK_WIDGET(param_title), FALSE, FALSE, 0);
 			gtk_box_pack_start(GTK_BOX(params_info), GTK_WIDGET(param_value), FALSE, FALSE, 0);
