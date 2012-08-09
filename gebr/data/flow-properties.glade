@@ -142,7 +142,7 @@
                         <child>
                           <object class="GtkImage" id="image2">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-file</property>
+                            <property name="stock">flow-icon</property>
                           </object>
                         </child>
                       </object>
