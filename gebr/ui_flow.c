@@ -165,12 +165,14 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	gchar *submit_date = gebr_iso_date();
 
-	const gchar *flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	const gchar *flow_id;
 	if (snapshot_id && *snapshot_id) {
+		flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
 		GebrGeoXmlRevision *snapshot = gebr_geoxml_flow_get_revision_by_id(gebr.flow, snapshot_id);
 		gebr_geoxml_flow_get_revision_data(snapshot, NULL, NULL, &snapshot_title, NULL);
 		gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(snapshot));
 	} else {
+		flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
 		gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
 		document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
 	}
@@ -317,11 +319,6 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_maestro_server_add_temporary_job(maestro, job);
 	gebr_job_control_select_job(gebr.job_control, job);
 
-	if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE)
-		gebr_flow_browse_select_job(gebr.ui_flow_browse);
-	else
-		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-
 	g_free(name);
 	g_free(url);
 	g_free(xml);
@@ -376,6 +373,10 @@ gebr_ui_flow_run(gboolean is_parallel)
 		if (!id)
 			return;
 	}
+	if (rows->next)
+		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+	else if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE)
+		gebr_flow_browse_select_job(gebr.ui_flow_browse);
 }
 
 void
@@ -430,6 +431,11 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 		if (!id)
 			return;
 	}
+
+	if (snaps[1])
+		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+	else if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE)
+		gebr_flow_browse_select_job(gebr.ui_flow_browse);
 
 	gchar *submit_date = gebr_iso_date();
 
