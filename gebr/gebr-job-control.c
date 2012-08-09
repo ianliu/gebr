@@ -1239,11 +1239,12 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	} else
 		gtk_widget_hide(GTK_WIDGET(subheader));
 
-	if (start_detail_str) {
+	if (start_detail_str)
 		gtk_label_set_text(details_start_date, start_detail_str);
-		gtk_widget_show(GTK_WIDGET(details_start_date));
-	} else
-		gtk_widget_hide(GTK_WIDGET(details_start_date));
+	else
+		gtk_label_set_text(details_start_date, "");
+
+	gtk_widget_show(GTK_WIDGET(details_start_date));
 
 	if (status == JOB_STATUS_FINISHED)
 		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
