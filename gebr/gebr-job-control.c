@@ -1145,18 +1145,18 @@ compute_subheader_label(GebrJob *job,
 
 	/* start date (may have failed, never started) */
 	if (start_date && strlen(start_date))
-		g_string_append_printf(start, _("Started at %s"),
+		g_string_append_printf(start, _("Started on %s"),
 				       gebr_localized_date(start_date));
 
 	/* finish date */
 	if (finish_date && strlen(finish_date)) {
 		const gchar *tmp = gebr_localized_date(finish_date);
 		if (status == JOB_STATUS_FINISHED)
-			g_string_append_printf(finish, _("Finished at %s"), tmp);
+			g_string_append_printf(finish, _("Finished on %s"), tmp);
 		else if (status == JOB_STATUS_CANCELED)
-			g_string_append_printf(finish, _("Canceled at %s"), tmp);
+			g_string_append_printf(finish, _("Canceled on %s"), tmp);
 		else if (status == JOB_STATUS_FAILED)
-			g_string_append_printf(finish, _("Failed at %s"), tmp);
+			g_string_append_printf(finish, _("Failed on %s"), tmp);
 	}
 
 	if (status == JOB_STATUS_FINISHED) {

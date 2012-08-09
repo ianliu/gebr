@@ -1550,7 +1550,7 @@ msgstr "Exportar Projetos e Linhas selecionados"
 
 #: ../interface.c:93 ../ui_project_line.c:1646
 msgid "View Project Report"
-msgstr "Visualizar Relatório"
+msgstr "Visualizar Relatório do Projeto"
 
 #: ../interface.c:94 ../interface.c:125
 msgid "View Report"
@@ -1558,7 +1558,7 @@ msgstr "Visualizar Relatório"
 
 #: ../interface.c:95
 msgid "Edit Project Comments"
-msgstr "Editar Comentários do Projeto"
+msgstr "Editar comentários do Projeto"
 
 #: ../interface.c:96 ../interface.c:127
 msgid "Edit Comments"
@@ -2796,7 +2796,7 @@ msgstr "Confirme remoção"
 
 #: ../ui_project_line.c:1641
 msgid "View Line Report"
-msgstr "Visualizar Relatório"
+msgstr "Visualizar Relatório da Linha"
 
 #: ../ui_project_line.c:1642
 msgid "Edit Line comments"

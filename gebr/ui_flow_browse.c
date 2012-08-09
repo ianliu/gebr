@@ -367,7 +367,7 @@ gebr_ui_flow_browse_set_job_status(GebrJob *job,
 	}
 
 	const gchar *iso = gebr_localized_date(date);
-	last_text = g_markup_printf_escaped(_("Last execution %s at %s"), job_state, iso);
+	last_text = g_markup_printf_escaped(_("Last execution %s on %s"), job_state, iso);
 	gtk_image_set_from_stock(img, icon, GTK_ICON_SIZE_BUTTON);
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
 
@@ -443,7 +443,7 @@ void flow_browse_info_update(void)
 
 	/* Modified date */
 	gchar *modified = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOC(gebr.flow));
-	gchar *mod_date = g_markup_printf_escaped(_("Modified in %s"),
+	gchar *mod_date = g_markup_printf_escaped(_("Modified on %s"),
 	                                          gebr_localized_date(modified));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.modified), mod_date);
 	g_free(mod_date);
