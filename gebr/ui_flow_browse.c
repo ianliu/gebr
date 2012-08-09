@@ -1448,6 +1448,9 @@ void
 gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
                                         GebrUiFlowBrowse *fb)
 {
+	if (!flow)
+		return;
+
 	GtkWidget *parameters;
 
 	parameters_review_set_io(flow, fb);
