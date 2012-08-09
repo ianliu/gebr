@@ -1478,7 +1478,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 			gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
 			if (!unescaped_comment || !*unescaped_comment)
 				unescaped_comment = g_strdup_printf(("- - - -"));
-			date = g_strdup(gebr_localized_date(iso_date));
+			date = g_strdup(iso_date);
 			comment = g_markup_printf_escaped("%s", unescaped_comment);
 		} else {
 			has_id = FALSE;
