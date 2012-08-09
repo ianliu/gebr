@@ -1195,12 +1195,12 @@ static void assemble_bc_cmd_line (GString *expr_buf)
 		return;
 
 	 g_string_prepend(expr_buf,
-	                  "\n# Dictionary\n"
 			  "V=($(echo 'scale=5\n"
 	                  "\tdefine min(a,b){ if(a<b) {return a;} else {return b;}}\n"
 	                  "\tdefine max(a,b){ if(a>b) {return a;} else {return b;}}\n"
 	                  "\tdefine round(x){ auto s; s = scale; if(x>0) x+=0.5 else x-=0.5; scale = 0; x/=1; scale = s; return (x);}\n");
 
+         g_string_prepend(expr_buf, _("\n# Dictionary\n"));
 	// Pipe into bc
 	g_string_append (expr_buf, "' | bc -l ))\n");
 }
@@ -1507,9 +1507,13 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (job->is_parallelizable) {
 			nprocs = job->numproc;
 			nice = job->niceness;
-			prefix = g_strdup_printf("\n# Setting the number of cores \n"
+			gchar *fcomm, *scomm, *ffcomm;
+			fcomm = g_strdup_printf(_("\n# Setting the number of cores \n"));
+			scomm = g_strdup_printf(_("# Command Line"));
+			ffcomm = g_strdup_printf(_("\n# Setting the niceness of the process \n"));
+			prefix = g_strdup_printf("%s"
 						 "PROC=%d\n"
-						 "\n# Setting the niceness of the process \n"
+						 "%s"
 						 "NICE=%d\n"
 						 "exec=\"nice -n $NICE\"\n"
 						 "for (( _outter=0; _outter < %s; _outter+=$PROC ))\n"
@@ -1517,17 +1521,23 @@ static void job_assembly_cmdline(GebrdJob *job)
 						 "  unset PIDS\n"
 						 "  for (( counter=$_outter; counter < $_outter+$PROC && counter < %s; counter++ ))\n"
 						 "  do\n"
-						 "    %s\n%s \n# Command Line \n",
-						 nprocs, nice, n, n, expr_buf->str, str_buf->str);
+						 "    %s\n%s \n%s\n",
+						 fcomm,nprocs, ffcomm,nice, n, n, expr_buf->str, str_buf->str,scomm);
 			g_string_append(job->parent.cmd_line, " ) &\nPIDS=\"$! $PIDS\"");
 			g_string_prepend_c(job->parent.cmd_line, '(');
+			g_free(fcomm);
+			g_free(scomm);
+			g_free(ffcomm);
 		} else {
+			gchar *tcomm;
+			tcomm = g_strdup_printf(_("\n# Setting the number of cores \n"));
 			nice = job->niceness;
-			prefix = g_strdup_printf("\n# Setting the niceness of the process \n"
+			prefix = g_strdup_printf("%s"
 						 "NICE=%d\n"
 						 "exec=\"nice -n $NICE\"\n"
 						 "for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s \n# Command Line \n",
-						 nice, n, expr_buf->str, str_buf->str);
+						 tcomm,nice, n, expr_buf->str, str_buf->str);
+			g_free(tcomm);
 		}
 		if (!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
 		    strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0 && previous_stdout) {
@@ -1550,19 +1560,22 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_free(prefix);
 		g_free(n);
 	} else {
+		gchar *fcomm,*sxcomm;
+		fcomm = g_strdup_printf(_("\n# Setting the niceness of the process \n"));
+		sxcomm = g_strdup_printf(_("# Command Line \n"));
 		assemble_bc_cmd_line (expr_buf);
-		gchar *prefix = g_strdup_printf("\n# Setting the niceness of the process \n"
+		gchar *prefix = g_strdup_printf("%s"
 						"NICE=%d\n"
 						"exec=\"nice -n $NICE\"\n"
-						"%s\n%s \n# Command Line \n",
-						job->niceness, expr_buf->str, str_buf->str);
+						"%s\n%s \n%s",
+						fcomm,job->niceness, expr_buf->str, str_buf->str,sxcomm);
 
 		g_string_prepend(job->parent.cmd_line, prefix);
 		g_free(prefix);
 	}
 
 	/* Creating Line paths */
-	GString *mkdir = g_string_new("# Creating directories \n");
+	GString *mkdir = g_string_new(_("# Creating directories \n"));
 	gchar **paths = g_strsplit(job->paths->str, ",", 0);
 	for (int i = 0; paths[i]; i++)
 		if (g_strcmp0(paths[i],"")!=0){
