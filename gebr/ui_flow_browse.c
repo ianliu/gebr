@@ -1129,6 +1129,10 @@ void
 gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
                                         GebrUiFlowBrowse *ui_flow_browse)
 {
+	gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view)));
+	if (nrows > 1)
+		return;
+
 	GtkTreeIter iter;
 	gebr_gui_gtk_tree_view_turn_to_single_selection(tree_view);
 	if (!flow_browse_get_selected(&iter, TRUE))

@@ -764,6 +764,10 @@ static void
 select_file_column(GtkTreeView *tree_view,
                    GebrFlowEdition *fe)
 {
+	gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view)));
+	if (nrows > 1)
+		return;
+
 	GtkTreeIter iter;
 
 	gebr_gui_gtk_tree_view_turn_to_single_selection(tree_view);
