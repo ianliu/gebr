@@ -1230,6 +1230,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter,
 			radio_value = gebr.config.detailed_flow_parameter_table;
 			break;
 		default:
+			radio_value = GEBR_PARAM_TABLE_ONLY_CHANGED;
 			g_warn_if_reached ();
 			break;
 		}

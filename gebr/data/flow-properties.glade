@@ -425,39 +425,7 @@ A snapshot stores the settings of your flow so you can restore it at any moment.
   <object class="GtkVBox" id="main_rev_params">
     <property name="visible">True</property>
     <child>
-      <object class="GtkHBox" id="input_box">
-        <property name="visible">True</property>
-        <property name="spacing">5</property>
-        <child>
-          <object class="GtkImage" id="input_image">
-            <property name="visible">True</property>
-            <property name="stock">gebr-stdin</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="input_label">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="label">Input file</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="padding">5</property>
-        <property name="position">0</property>
-      </packing>
+      <placeholder/>
     </child>
     <child>
       <object class="GtkAlignment" id="parameters_box">
@@ -467,78 +435,8 @@ A snapshot stores the settings of your flow so you can restore it at any moment.
         </child>
       </object>
       <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
         <property name="padding">5</property>
         <property name="position">1</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkHBox" id="output_box">
-        <property name="visible">True</property>
-        <property name="spacing">5</property>
-        <child>
-          <object class="GtkImage" id="output_image">
-            <property name="visible">True</property>
-            <property name="stock">gebr-stdout</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="output_label">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="label">Output file</property>
-          </object>
-          <packing>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="padding">5</property>
-        <property name="position">2</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkHBox" id="error_box">
-        <property name="visible">True</property>
-        <property name="spacing">5</property>
-        <child>
-          <object class="GtkImage" id="error_image">
-            <property name="visible">True</property>
-            <property name="stock">gebr-stderr</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="error_label">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="label">Error file</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="padding">5</property>
-        <property name="position">3</property>
       </packing>
     </child>
   </object>

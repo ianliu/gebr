@@ -1556,7 +1556,7 @@ parameters_review_set_params(GebrGeoXmlFlow *flow,
 }
 
 void
-gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
+gebr_flow_browse_load_old_parameters_review(GebrGeoXmlFlow *flow,
                                         GebrUiFlowBrowse *fb)
 {
 	if (!flow)
@@ -1575,4 +1575,54 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 		gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(i->data));
 
 	gtk_container_add(GTK_CONTAINER(box), parameters);
+}
+
+void
+gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
+                                        GebrUiFlowBrowse *fb)
+{
+	if (!flow)
+		return;
+
+	GtkWidget *html_parameters = gebr_gui_html_viewer_widget_new();
+	GString *prog_content = g_string_new("");
+	g_string_append_printf(prog_content, "<html>\n"
+					     "  <head>\n");
+	g_string_append_printf(prog_content, "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-report.css\" />",
+						  LIBGEBR_STYLES_DIR);
+	g_string_append_printf(prog_content, "    <style type=\"text/css\"/>\n"
+					     "     .parameters {"
+					     "     font-size: 12px;"
+					     "     }"
+					     "     .parameters caption {"
+					     "     display:none;"
+					     "     }"
+					     "     .io table {"
+					     "     font-size: 12px;"
+					     "     text-align: left;"
+					     "     }"
+					     "     .io caption {"
+					     "     display:none;"
+					     "     }"
+					     "    </style>");
+
+	g_string_append_printf(prog_content, "  </head>\n"
+					     "  <body>\n");
+
+	gebr_flow_generate_io_table(flow, prog_content);
+	gebr_flow_generate_parameter_value_table(flow, prog_content, NULL);
+
+	g_string_append_printf(prog_content, "  </body>\n"
+					     "</html>");
+	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(html_parameters), prog_content->str);
+
+	gtk_widget_show_all(html_parameters);
+
+	/* Clean parameters_box before adding a new content */
+	GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(fb->info.builder_flow, "parameters_box"));
+	GList *childs = gtk_container_get_children(GTK_CONTAINER(box));
+	for (GList *i = childs; i; i = i->next)
+		gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(i->data));
+
+	gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(html_parameters));
 }
