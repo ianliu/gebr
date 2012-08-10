@@ -75,6 +75,10 @@ typedef struct {
 	GtkToggleButton *jobs_ctx_button;
 	GtkWidget *jobs_ctx_box;
 
+	/* Info Bar */
+	GtkWidget *info_jobs;
+	GtkWidget *jobs_status_box;
+
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;
 
@@ -151,6 +155,9 @@ void gebr_flow_browse_select_job(GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
                                              GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
+                               const gchar *job_id);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

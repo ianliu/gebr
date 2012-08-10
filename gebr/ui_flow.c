@@ -304,6 +304,7 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_job_set_exec_speed(job, speed);
 	gebr_job_set_submit_date(job, submit_date);
 	gebr_job_set_title(job, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
+	gebr_job_set_description(job, gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(flow)));
 	gebr_job_set_nice(job, nice);
 	gebr_job_set_flow_id(job, flow_id);
 	gebr_job_set_snapshot_title(job, snapshot_title ? snapshot_title : "");
@@ -372,6 +373,8 @@ gebr_ui_flow_run(gboolean is_parallel)
 
 		if (!id)
 			return;
+
+		gebr_flow_browse_info_job(gebr.ui_flow_browse, id);
 	}
 	if (rows->next || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
 		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);

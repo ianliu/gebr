@@ -657,6 +657,8 @@ void gebr_setup_ui(void)
 	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Flows")));
 	gtk_widget_show_all(vbox);
 
+	gtk_widget_hide(gebr.ui_flow_browse->info_jobs);
+
 	/*
 	 * Notebook's page "Flow edition"
 	 */
