@@ -2280,10 +2280,7 @@ static void on_changed_validate_email(GtkEntry *entry, GebrPropertiesData *data)
 
 	gboolean has_error = FALSE;
 
-	if (!*email)
-		has_error = TRUE;
-	else
-		has_error = !gebr_validate_check_is_email(email);
+	has_error = !gebr_validate_check_is_email(email);
 	validate_entry(GTK_ENTRY(entry), has_error, _("Invalid email"), _("Your email address"));
 	data->email_ready = !has_error;
 	on_changed_validate(data);

@@ -502,9 +502,13 @@ gboolean gebr_validate_check_menu_filename(const gchar * str)
 
 gboolean gebr_validate_check_is_email(const gchar * str)
 {
-	regex_t pattern;
-	regcomp(&pattern, "^[a-z0-9_.-][a-z0-9_.-]*@[a-z0-9.-]*\\.[a-z0-9-][a-z0-9-]*$", REG_NOSUB | REG_ICASE);
-	return (!regexec(&pattern, str, 0, 0, 0) ? TRUE : FALSE);
+	if (str && *str ){
+		regex_t pattern;
+		regcomp(&pattern, "^[a-z0-9_.-][a-z0-9_.-]*@[a-z0-9.-]*\\.[a-z0-9-][a-z0-9-]*$", REG_NOSUB | REG_ICASE);
+		return (!regexec(&pattern, str, 0, 0, 0) ? TRUE : FALSE);
+	}
+	else
+		return TRUE;
 }
 
 gboolean gebr_validate_check_is_url(const gchar * str)

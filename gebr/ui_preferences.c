@@ -405,7 +405,7 @@ get_wizard_status(struct ui_preferences *up)
 		}
 	} else {
 		const gchar *email = gtk_entry_get_text(GTK_ENTRY(up->email));
-		if (gebr_validate_check_is_email(email) || !*email)
+		if (gebr_validate_check_is_email(email))
 			return WIZARD_STATUS_WITHOUT_MAESTRO;
 		else
 			return WIZARD_STATUS_WITHOUT_PREFERENCES;
@@ -483,11 +483,8 @@ on_changed_validate_email(GtkWidget     *widget,
 
 	gboolean error = FALSE;
 
-	if (!*email) {
-		error = TRUE;
-	} else {
-		error = !gebr_validate_check_is_email(email);
-	}
+	error = !gebr_validate_check_is_email(email);
+
 
 	validate_entry(GTK_ENTRY(up->email), error, _("Invalid email"), _("Your email address"));
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, !error);

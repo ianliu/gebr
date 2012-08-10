@@ -170,11 +170,11 @@ on_assistant_email_changed(GtkEntry *entry,
                            WizardData *data)
 {
 	const gchar *text = gtk_entry_get_text(entry);
-
-	if (text && *text )
+	data->email_ready = gebr_validate_check_is_email(text);
+	/*if (text && *text )
 		data->email_ready = gebr_validate_check_is_email(text);
 	else
-		data->email_ready = FALSE;
+		data->email_ready = FALSE;*/
 	validate_entry(GTK_ENTRY(entry), !data->email_ready, _("Invalid email"), _("Your email address"));
 	on_assistant_entry_changed(data);
 }

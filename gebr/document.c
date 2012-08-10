@@ -735,12 +735,19 @@ gchar * gebr_document_generate_header(GebrGeoXmlDocument * document,
 	/* Credits */
 	gchar *author = gebr_geoxml_document_get_author(document);
 	gchar *email = gebr_geoxml_document_get_email(document);
-	g_string_append_printf(dump,
-			       "<div class=\"credits\">\n"
-			       "  <span class=\"author\">%s</span>\n"
-	                       "  <span class=\"email\">%s</span>\n"
-	                       "</div>\n",
-			       author, email);
+	if (!*email)
+		g_string_append_printf(dump,
+		                       "<div class=\"credits\">\n"
+		                       "  <span class=\"author\">%s</span>\n"
+		                       "</div>\n",
+		                       author);
+	else
+		g_string_append_printf(dump,
+		                       "<div class=\"credits\">\n"
+		                       "  <span class=\"author\">%s</span>\n"
+		                       "  <span class=\"email\">%s</span>\n"
+		                       "</div>\n",
+		                       author, email);
 	g_free(author);
 	g_free(email);
 
