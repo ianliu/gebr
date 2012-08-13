@@ -77,7 +77,7 @@ gebr_localized_date(const gchar *iso_date)
 		g_get_current_time(&time_val);
 
 	tm = localtime(&time_val.tv_sec);
-	strftime(date, 100, "%d %b %Y, %X", tm);
+	strftime(date, 100, "%d %b %Y, %H:%M", tm);
 
 	/* convert to utf-8 if necessary */
 	if (g_utf8_validate(date, -1, NULL) == FALSE) {
