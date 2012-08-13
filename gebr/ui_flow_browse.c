@@ -595,7 +595,7 @@ void flow_browse_info_update(void)
         		gtk_widget_show(gebr.ui_flow_browse->info.job_has_output);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_no_output);
         	} else {
-        		last_text = g_markup_printf_escaped(_("Last execution at %s"), last_run);
+        		last_text = g_markup_printf_escaped(_("Submitted on %s"), last_run);
 
 			gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
         		gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
