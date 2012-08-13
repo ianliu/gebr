@@ -624,8 +624,8 @@ void flow_browse_info_update(void)
 	g_free(modified);
 
 	gchar *last_text = NULL;
-	const gchar *last_run = gebr_localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow));
-        if (!g_strcmp0(last_run,"Unknown")) {
+	gchar *last_run_date = gebr_geoxml_flow_get_date_last_run(gebr.flow);
+        if (!last_run_date || !*last_run_date) {
         	last_text = g_strdup(_("This flow was never executed"));
 
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
@@ -633,6 +633,7 @@ void flow_browse_info_update(void)
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_has_output);
         	gtk_widget_show(gebr.ui_flow_browse->info.job_no_output);
         } else {
+        	const gchar *last_run = gebr_localized_date(last_run_date);
         	/* Update job button */
         	GebrJob *job = gebr_job_control_get_recent_job_from_flow(GEBR_GEOXML_DOCUMENT(gebr.flow), gebr.job_control);
         	if (job) {
@@ -653,6 +654,8 @@ void flow_browse_info_update(void)
         		gtk_widget_show(gebr.ui_flow_browse->info.job_no_output);
         	}
         }
+        g_free(last_run_date);
+
         if (last_text) {
         	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
         	g_free(last_text);

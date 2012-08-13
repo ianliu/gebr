@@ -253,6 +253,10 @@ static gboolean flow_import_single (const gchar *path)
 	new_title = g_strdup_printf (_("%s (Imported)"), title);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE, new_title, -1);
 	gebr_geoxml_document_set_title(flow, new_title);
+
+	/* Reset last date run */
+	gebr_geoxml_flow_set_date_last_run(GEBR_GEOXML_FLOW(flow), "");
+
 	document_save(flow, FALSE, FALSE);
 	g_free(new_title);
 
