@@ -211,8 +211,6 @@ static void gebr_dict_update_wizard(struct dict_edit_data *data);
 
 static void on_changed_validate(GebrPropertiesData *data);
 
-static void on_changed_validate_description(GtkEntry *entry, GebrPropertiesData *data);
-
 static void on_changed_validate_email(GtkEntry *entry, GebrPropertiesData *data);
 
 //==============================================================================
@@ -408,8 +406,6 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 	on_changed_validate_email(email, data);
 	g_signal_connect(email, "changed", G_CALLBACK(on_changed_validate_email), data);
-	on_changed_validate_description(description, data);
-	g_signal_connect(description, "changed", G_CALLBACK(on_changed_validate_description), data);
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
@@ -2257,21 +2253,6 @@ static void on_dict_edit_change_selection(GtkTreeSelection *selection, struct di
 static void on_changed_validate(GebrPropertiesData *data)
 {
 	gtk_widget_set_sensitive(data->ok_button, (data->title_ready && data->description_ready && data->email_ready));
-}
-
-static void on_changed_validate_description(GtkEntry *entry, GebrPropertiesData *data)
-{
-	const gchar *description = gtk_entry_get_text(GTK_ENTRY(entry));
-
-	gboolean has_error = FALSE;
-
-	if (!*description)
-		has_error = TRUE;
-	else
-		has_error = FALSE;
-	validate_entry(GTK_ENTRY(entry), has_error, _("Description cannot be empty"), _(""));
-	data->description_ready = !has_error;
-	on_changed_validate(data);
 }
 
 static void on_changed_validate_email(GtkEntry *entry, GebrPropertiesData *data)

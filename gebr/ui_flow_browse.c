@@ -603,7 +603,14 @@ void flow_browse_info_update(void)
 
 	/* Description */
 	gchar *description = gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.flow));
-	markup = g_markup_printf_escaped("<span size='x-large'>%s</span>", description);
+	if (!description || !*description){
+		markup = g_markup_printf_escaped(_("<span size='x-large'>No description available</span>"));
+		gtk_widget_set_sensitive(gebr.ui_flow_browse->info.description, FALSE);
+	}
+	else {
+		markup = g_markup_printf_escaped("<span size='x-large'>%s</span>",description);
+		gtk_widget_set_sensitive(gebr.ui_flow_browse->info.description, TRUE);
+	}
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.description), markup);
 	g_free(markup);
 	g_free(description);
