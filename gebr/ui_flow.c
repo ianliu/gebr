@@ -435,10 +435,12 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 			return;
 	}
 
-	if (snaps[1] || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
-		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	else
-		gebr_flow_browse_select_job(gebr.ui_flow_browse);
+//	if (snaps[1] || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
+//		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+//	else
+//		gebr_flow_browse_select_job(gebr.ui_flow_browse);
+
+	//Show info bar
 
 	gchar *submit_date = gebr_iso_date();
 

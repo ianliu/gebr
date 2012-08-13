@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <locale.h>
 #include <time.h>
 #include <limits.h>
 #include <string.h>
@@ -77,7 +78,11 @@ gebr_localized_date(const gchar *iso_date)
 		g_get_current_time(&time_val);
 
 	tm = localtime(&time_val.tv_sec);
-	strftime(date, 100, "%d %b %Y, %H:%M", tm);
+
+	if (g_strrstr(setlocale(LC_TIME, NULL), "pt_BR"))
+		strftime(date, 100, "%d de %b de %Y, %H:%M", tm);
+	else
+		strftime(date, 100, "%b, %d %Y at %I:%M %p", tm);
 
 	/* convert to utf-8 if necessary */
 	if (g_utf8_validate(date, -1, NULL) == FALSE) {
