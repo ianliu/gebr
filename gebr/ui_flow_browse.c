@@ -451,8 +451,14 @@ on_job_info_status_changed(GebrJob *job,
                            GtkWidget *container)
 {
 	gchar *icon, *job_state, *markup;
-	const gchar *date;
-	const gchar *job_title = gebr_job_get_title(job);
+	const gchar *date, *title;
+	const gchar *snap_id = gebr_job_get_snapshot_id(job);
+
+
+	if(snap_id && *snap_id)
+		title = gebr_job_get_snapshot_title(job);
+	else
+		title = gebr_job_get_title(job);
 
 	switch(new_status) {
 	case JOB_STATUS_FINISHED:
@@ -493,8 +499,8 @@ on_job_info_status_changed(GebrJob *job,
 	gtk_image_set_from_stock(GTK_IMAGE(image), icon, GTK_ICON_SIZE_BUTTON);
 	GtkWidget *label = GTK_WIDGET(g_list_nth_data(children, 1));
 
-	markup = g_markup_printf_escaped("<i>%s</i> %s on %s",
-	                                 job_title,
+	markup = g_markup_printf_escaped("%s <span size='small' font_style='italic'>%s on %s</span>",
+	                                 title,
 	                                 job_state,
 	                                 date);
 	gtk_label_set_markup(GTK_LABEL(label), markup);

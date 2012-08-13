@@ -429,6 +429,8 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 			id = run_flow(GEBR_GEOXML_FLOW(snap_flow),
 				      id, snapshot_id);
 
+		gebr_flow_browse_info_job(gebr.ui_flow_browse, id);
+
 		g_free(snapshot_id);
 
 		if (!id)
