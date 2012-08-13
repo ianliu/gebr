@@ -49,6 +49,7 @@ typedef struct {
 	GtkWidget *widget;
 	GtkListStore *store;
 	GtkWidget *view;
+	GtkCellRenderer *icon_renderer;
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *snap_renderer;
 
@@ -141,6 +142,12 @@ void flow_browse_edit_help(void);
 void gebr_flow_browse_hide(GebrUiFlowBrowse *self);
 
 void gebr_flow_browse_show(GebrUiFlowBrowse *self);
+
+void gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
+                                  GtkCellRenderer *cell,
+                                  GtkTreeModel *model,
+                                  GtkTreeIter *iter,
+                                  gpointer data);
 
 void gebr_flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
                                      GtkCellRenderer *cell,

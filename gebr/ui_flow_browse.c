@@ -244,6 +244,12 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), NULL);
 	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_speed_slider_sensitiveness), ui_flow_browse);
 
+	/* Icon column */
+	ui_flow_browse->icon_renderer = renderer = gtk_cell_renderer_pixbuf_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, gebr_flow_browse_status_icon, NULL, NULL);
+
 	/* Text column */
 	ui_flow_browse->text_renderer = renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -251,7 +257,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", FB_TITLE);
 
-	/* Icon column */
+	/* Snap Icon column */
 	ui_flow_browse->snap_renderer = renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
@@ -1229,11 +1235,30 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 }
 
 void
+gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
+                             GtkCellRenderer *cell,
+                             GtkTreeModel *model,
+                             GtkTreeIter *iter,
+                             gpointer data)
+{
+	GebrGeoXmlFlow * flow;
+
+	gtk_tree_model_get(model, iter,
+	                   FB_XMLPOINTER, &flow,
+	                   -1);
+
+	if (gebr_geoxml_flow_validate(flow, gebr.validator, NULL))
+		g_object_set(cell, "stock-id", "flow-icon", NULL);
+	else
+		g_object_set(cell, "stock-id", GTK_STOCK_DIALOG_WARNING, NULL);
+}
+
+void
 gebr_flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
-                      GtkCellRenderer *cell,
-                      GtkTreeModel *model,
-                      GtkTreeIter *iter,
-                      gpointer data)
+                                GtkCellRenderer *cell,
+                                GtkTreeModel *model,
+                                GtkTreeIter *iter,
+                                gpointer data)
 {
 	GebrGeoXmlFlow * flow;
 
