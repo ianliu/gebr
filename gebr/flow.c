@@ -1231,7 +1231,6 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter,
 			break;
 		default:
 			radio_value = GEBR_PARAM_TABLE_ONLY_CHANGED;
-			g_warn_if_reached ();
 			break;
 		}
 
@@ -1387,6 +1386,7 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
 					                       _("This program has only empty parameters"));
 
 				break;
+			default:
 			case NOTEBOOK_PAGE_FLOW_BROWSE:
 				if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED)
 					g_string_append_printf(tables_content,
@@ -1401,9 +1401,6 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
 					                       "        <td colspan=\"2\">%s</td>\n"
 					                       "      </tr>\n",
 					                       _("This program has only empty parameters"));
-				break;
-			default:
-				g_warn_if_reached ();
 				break;
 			}
 
