@@ -144,13 +144,12 @@ gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
 	GtkWidget *label = gtk_label_new(title);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
-	//g_signal_connect(job, "status-change", G_CALLBACK(on_job_info_status_changed), img);
-
-
 	gtk_box_pack_start(GTK_BOX(job_box), img, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(job_box), label, TRUE, TRUE, 5);
 
 	g_signal_connect(job, "status-change", G_CALLBACK(on_job_info_status_changed), job_box);
+	g_object_set(job_box, "user-data", job, NULL);
+
 	gtk_box_pack_start(GTK_BOX(fb->jobs_status_box), job_box, TRUE, TRUE, 0);
 
 	gtk_widget_show_all(fb->jobs_status_box);
@@ -170,9 +169,15 @@ static void
 on_dismiss_clicked(GtkButton *dismiss,
                    GebrUiFlowBrowse *fb)
 {
-	GList *childs = gtk_container_get_children(GTK_CONTAINER(fb->info_jobs));
-	for (GList *i = childs; i; i = i->next)
-		gtk_container_remove(GTK_CONTAINER(fb->info_jobs), GTK_WIDGET(i->data));
+	GList *childs = gtk_container_get_children(GTK_CONTAINER(fb->jobs_status_box));
+	for (GList *i = childs; i; i = i->next) {
+		GebrJob *job;
+		g_object_get(i->data, "user-data", &job, NULL);
+		g_signal_handlers_disconnect_by_func(job, on_job_info_status_changed, i->data);
+
+		gtk_container_remove(GTK_CONTAINER(fb->jobs_status_box), GTK_WIDGET(i->data));
+		gtk_widget_destroy(GTK_WIDGET(i->data));
+	}
 
 	gtk_widget_hide(fb->info_jobs);
 }
