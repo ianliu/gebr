@@ -15,19 +15,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-gebrmenudir = $(DISTDIR)$(datadir)/gebr/menus/Default
-gebrmenu_DATA = grace.mnu sleep.mnu forloop.mnu
+gebrmenudir = $(datadir)/gebr/menus/Default
+gebrmenu_DATA = grace.mnu sleep.mnu forloop.mnu menus.idx2 categories.idx2
 
-desktopdir = $(DISTDIR)$(datadir)/applications
+desktopdir = $(datadir)/applications
 desktop_DATA = gebr.desktop
 
-pythondir = $(DISTDIR)$(datadir)/gebr/python
+pythondir = $(datadir)/gebr/python
 python_DATA = \
 	gebr-xdot-graph.py \
 	xdot.py \
 	$(NULL)
 
-gladedir = $(DISTDIR)$(datadir)/gebr/glade
+gladedir = $(datadir)/gebr/glade
 glade_DATA = \
 	gebr-job-control.glade \
 	gebr-maestro-dialog.glade \
@@ -42,17 +42,15 @@ glade_DATA = \
 	l.png \
 	$(NULL)
 
-gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
+gebr.desktop: gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 	LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@
+
+menus.idx2 categories.idx2: grace.mnu sleep.mnu forloop.mnu
+	$(top_builddir)/libgebr/geoxml-utils/gebr-geoxml-menu-indices . $(builddir)/menus.idx2 $(builddir)/categories.idx2
 
 all:
 	perl -i -pe 's/&#xEA;/ê/' *.glade
 
 EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA) $(python_DATA)
-CLEANFILES = gebr.desktop
+CLEANFILES = gebr.desktop menus.idx2 categories.idx2
 
-install-data-hook:
-	$(top_builddir)/libgebr/geoxml-utils/gebr-geoxml-menu-indices $(gebrmenudir) $(gebrmenudir)/menus.idx2   $(gebrmenudir)/categories.idx2
-	
-uninstall-hook:
-	( cd $(gebrmenudir) && rm -f *.idx2 )

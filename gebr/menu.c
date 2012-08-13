@@ -64,7 +64,7 @@ static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_fil
 
 static gboolean menu_compare_times(const gchar * directory, time_t index_time, gboolean recursive);
 
-void __menu_list_populate(const gchar *index_menu, const gchar *index_category, GHashTable *categories_hash);
+void __menu_list_populate(const gchar *path, const gchar *index_menu, const gchar *index_category, GHashTable *categories_hash);
 /*
  * Public functions
  */
@@ -206,7 +206,7 @@ menu_list_populate(void)
 						}
 					}
 				}
-				__menu_list_populate(index_menu, index_category, categories_hash);
+				__menu_list_populate(path, index_menu, index_category, categories_hash);
 				g_free(index_menu);
 				g_free(index_category);
 			}
@@ -220,7 +220,7 @@ menu_list_populate(void)
 	g_string_printf(path, "%s/.gebr/gebr/menus", g_get_home_dir());
 
 	menu_list_create_index(path->str, &index_menu, &index_category, TRUE);
-	__menu_list_populate(index_menu, index_category, categories_hash);
+	__menu_list_populate(path->str, index_menu, index_category, categories_hash);
 
 	g_free(index_menu);
 	g_free(index_category);
@@ -230,7 +230,7 @@ menu_list_populate(void)
 
 	if (menu_path_internal_index_is_valid(gebr.config.usermenus->str, gebr_home, &index_menu, &index_category)) {
 		menu_list_create_index(gebr.config.usermenus->str, &index_menu, &index_category, FALSE);
-		__menu_list_populate(index_menu, index_category, categories_hash);
+		__menu_list_populate(NULL, index_menu, index_category, categories_hash);
 		g_debug("********** CREATING usermenu's index:'%s', usermenus's directory: '%s' ", index_menu, gebr.config.usermenus->str);
 		g_free(index_menu);
 		g_free(index_category);
@@ -240,7 +240,8 @@ menu_list_populate(void)
 	g_hash_table_unref(categories_hash);
 }
 
-void __menu_list_populate(const gchar *index_menu,
+void __menu_list_populate(const gchar *path,
+                          const gchar *index_menu,
                           const gchar *index_category,
                           GHashTable *categories_hash)
 {
@@ -304,6 +305,12 @@ void __menu_list_populate(const gchar *index_menu,
 		for (int j = 0; menus_list[j]; j++) {
 			gchar *title;
 			gchar *desc;
+			gchar *file;
+			if (*menus_list[j] == '.') {
+				file = g_strconcat(path, (menus_list[j] + 1), NULL);
+			} else {
+				file = g_strdup(menus_list[j]);
+			}
 			title = g_key_file_get_string(menu_key_file, menus_list[j], "title", NULL);
 			gchar *escaped_title = g_markup_escape_text(title, -1);
 			desc = g_key_file_get_string(menu_key_file, menus_list[j], "description", NULL);
@@ -311,11 +318,12 @@ void __menu_list_populate(const gchar *index_menu,
 			gtk_tree_store_set(gebr.ui_flow_edition->menu_store, &child,
 					   MENU_TITLE_COLUMN, escaped_title,
 					   MENU_DESC_COLUMN, desc,
-					   MENU_FILEPATH_COLUMN, menus_list[j],
+					   MENU_FILEPATH_COLUMN, file,
 					   -1);
 			g_free(escaped_title);
 			g_free(title);
 			g_free(desc);
+			g_free(file);
 		}
 		g_strfreev(menus_list);
 	}
