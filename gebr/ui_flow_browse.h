@@ -53,6 +53,8 @@ typedef struct {
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *snap_renderer;
 
+	GtkWidget *prog_window;
+
 	GtkWidget *info_window;
 	GtkWidget *warn_window;
 
@@ -69,6 +71,7 @@ typedef struct {
 	/* Context Actions */
 	GtkToggleButton *properties_ctx_button;
 	GtkWidget *properties_ctx_box;
+	GtkWidget *html_parameters;
 
 	GtkToggleButton *snapshots_ctx_button;
 	GtkWidget *snapshots_ctx_box;

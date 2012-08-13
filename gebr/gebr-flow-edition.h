@@ -74,6 +74,7 @@ struct _GebrFlowEdition {
 	GtkTreeIter error_iter;
 
 	/* Sequence of programs of a flow */
+	GtkWidget *scrolled_window;
 	GtkListStore *fseq_store;
 	GtkWidget *fseq_view;
 	GtkCellRenderer *text_renderer;
@@ -197,6 +198,8 @@ void gebr_flow_edition_get_iter_for_program(GebrGeoXmlProgram *prog,
                                             GtkTreeIter *iter);
 
 const gchar *gebr_flow_get_error_tooltip_from_id(GebrIExprError errorid);
+
+GtkWidget *gebr_flow_edition_get_programs_view(GebrFlowEdition *fe);
 
 G_END_DECLS
 

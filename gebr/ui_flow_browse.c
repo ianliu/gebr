@@ -73,6 +73,21 @@ on_job_button_clicked(GtkButton *button,
 }
 
 static void
+gebr_flow_browse_update_programs_view(GebrUiFlowBrowse *fb)
+{
+	gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view)));
+	GtkWidget *prog_view = gebr_flow_edition_get_programs_view(gebr.ui_flow_edition);
+
+	if (nrows == 1) {
+		gtk_widget_reparent(prog_view, gebr.ui_flow_browse->prog_window);
+		gtk_widget_show_all(fb->prog_window);
+	} else {
+		gtk_widget_hide(prog_view);
+		gtk_widget_hide(fb->prog_window);
+	}
+}
+
+static void
 on_context_button_toggled(GtkToggleButton *button,
                           GebrUiFlowBrowse *fb)
 {
@@ -212,11 +227,25 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/*
 	 * Left side: flow list
 	 */
+	GtkWidget *list = gtk_vpaned_new();
+
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
-	gtk_paned_pack1(GTK_PANED(hpanel), scrolled_window, FALSE, FALSE);
 	gtk_widget_set_size_request(scrolled_window, 300, -1);
+	gtk_paned_pack1(GTK_PANED(list), scrolled_window, FALSE, FALSE);
+
+	ui_flow_browse->prog_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(ui_flow_browse->prog_window), GTK_POLICY_AUTOMATIC,
+	                               GTK_POLICY_AUTOMATIC);
+	gtk_widget_set_size_request(ui_flow_browse->prog_window, 300, -1);
+	gtk_paned_pack2(GTK_PANED(list), ui_flow_browse->prog_window, FALSE, FALSE);
+
+	/* Set programs list */
+	GtkWidget *prog_view = gebr_flow_edition_get_programs_view(gebr.ui_flow_edition);
+	gtk_widget_reparent(prog_view, ui_flow_browse->prog_window);
+
+	gtk_paned_pack1(GTK_PANED(hpanel), list, FALSE, FALSE);
 
 	ui_flow_browse->store = gtk_list_store_new(FB_N_COLUMN,
 						   G_TYPE_STRING,	/* Name (title for libgeoxml) */
@@ -347,9 +376,12 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/*
 	 * Review of parameters Context
 	 */
+	ui_flow_browse->html_parameters = gebr_gui_html_viewer_widget_new();
+
 	GtkWidget *properties_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "properties_box"));
-	GtkWidget *rev_params = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "main_rev_params"));
-	gtk_container_add(GTK_CONTAINER(properties_box), rev_params);
+	gtk_container_add(GTK_CONTAINER(properties_box), GTK_WIDGET(ui_flow_browse->html_parameters));
+
+	gtk_widget_show_all(ui_flow_browse->html_parameters);
 
 	/*
 	 * Snapshots Context
@@ -619,6 +651,13 @@ void flow_browse_info_update(void)
         	g_free(last_text);
         }
 
+        /* Update flow list */
+        GtkTreeIter iter;
+        if (flow_browse_get_selected(&iter, FALSE)) {
+        	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
+        	gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_flow_browse->store), path, &iter);
+        }
+
 	navigation_bar_update();
 }
 
@@ -806,6 +845,8 @@ static void flow_browse_load(void)
 	/* free previous flow and load it */
 	flow_edition_load_components();
 
+	gebr_flow_browse_update_programs_view(gebr.ui_flow_browse);
+
 	/* check if has revisions */
 	gboolean has_revision = gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0;
 
@@ -844,12 +885,9 @@ static void flow_browse_load(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
 				   no_snapshots_msg);
 
-		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
-		gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_flow_browse->store), path, &iter);
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 	}
-
 
 	gebr_flow_edition_select_group_for_flow(gebr.ui_flow_edition,
 						gebr.flow);
@@ -1224,6 +1262,8 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
 
 	flow_browse_info_update();
+
+	gebr_flow_browse_update_programs_view(self);
 
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
 	GtkWidget *output_box = GTK_WIDGET(gtk_builder_get_object(self->info.builder_flow, "jobs_output_box"));
@@ -1635,25 +1675,44 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	if (!flow)
 		return;
 
-	GtkWidget *html_parameters = gebr_gui_html_viewer_widget_new();
 	GString *prog_content = g_string_new("");
 	g_string_append_printf(prog_content, "<html>\n"
 					     "  <head>\n");
 	g_string_append_printf(prog_content, "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-report.css\" />",
 						  LIBGEBR_STYLES_DIR);
 	g_string_append_printf(prog_content, "    <style type=\"text/css\"/>\n"
+					     "     .programs .title {"
+					     "	     font-size: 14px;"
+					     "	     padding-left: 4px;"
+					     "	   }"
+					     "     .programs .description {"
+					     "	     font-size: 12px;"
+					     "	     padding-left: 2px;"
+					     " 	     padding-bottom: 2px;"
+					     "     }"
 					     "     .parameters {"
-					     "     font-size: 12px;"
+					     "       font-size: 12px;"
+					     "       margin-top: 10px;"
+					     "       margin-right: 10px;"
+					     "       margin-left: 10px;"
 					     "     }"
 					     "     .parameters caption {"
-					     "     display:none;"
+					     "       display:none;"
+					     "     }"
+					     "     .io:before {"
+					     "       font-size: 12px;"
+					     "	     font-weight: bold;"
+					     "       content: \"I/O Table\";"
 					     "     }"
 					     "     .io table {"
-					     "     font-size: 12px;"
-					     "     text-align: left;"
+					     "       font-size: 12px;"
+					     "       text-align: left;"
+					     "	     margin-top: 15px;"
+					     "       margin-right: 10px;"
+					     "       margin-left: 15px;"
 					     "     }"
 					     "     .io caption {"
-					     "     display:none;"
+					     "       display:none;"
 					     "     }"
 					     "    </style>");
 
@@ -1661,19 +1720,11 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 					     "  <body>\n");
 
 	gebr_flow_generate_io_table(flow, prog_content);
-	gebr_flow_generate_parameter_value_table(flow, prog_content, NULL);
+	gebr_flow_generate_parameter_value_table(flow, prog_content, NULL, TRUE);
 
 	g_string_append_printf(prog_content, "  </body>\n"
 					     "</html>");
-	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(html_parameters), prog_content->str);
+	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(fb->html_parameters), prog_content->str);
 
-	gtk_widget_show_all(html_parameters);
-
-	/* Clean parameters_box before adding a new content */
-	GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(fb->info.builder_flow, "parameters_box"));
-	GList *childs = gtk_container_get_children(GTK_CONTAINER(box));
-	for (GList *i = childs; i; i = i->next)
-		gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(i->data));
-
-	gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(html_parameters));
+	g_string_free(prog_content, TRUE);
 }

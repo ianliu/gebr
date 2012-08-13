@@ -241,10 +241,11 @@ flow_edition_setup_ui(void)
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+
+	fe->scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(fe->scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), fe->scrolled_window, TRUE, TRUE, 0);
 
 	fe->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
 	                                    G_TYPE_STRING,
@@ -312,8 +313,8 @@ flow_edition_setup_ui(void)
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(fe->fseq_view)), "changed",
 			 G_CALLBACK(flow_edition_component_selected), fe);
 
-	gtk_container_add(GTK_CONTAINER(scrolled_window), fe->fseq_view);
-	gtk_widget_set_size_request(GTK_WIDGET(scrolled_window), 180, 30);
+	gtk_container_add(GTK_CONTAINER(fe->scrolled_window), fe->fseq_view);
+	gtk_widget_set_size_request(GTK_WIDGET(fe->scrolled_window), 180, 30);
 
 	/*
 	 * Right side: Menu list
@@ -2087,6 +2088,9 @@ out:
 void
 gebr_flow_edition_show(GebrFlowEdition *fe)
 {
+	gtk_widget_show(fe->fseq_view);
+	gtk_widget_reparent(fe->fseq_view, fe->scrolled_window);
+
 	if (gebr.line)
 		gebr_flow_set_toolbar_sensitive();
 
@@ -2258,4 +2262,10 @@ gebr_flow_edition_get_iter_for_program(GebrGeoXmlProgram *prog,
 		valid = gtk_tree_model_iter_next(model, iter);
 	}
 	iter = NULL;
+}
+
+GtkWidget *
+gebr_flow_edition_get_programs_view(GebrFlowEdition *fe)
+{
+	return fe->fseq_view;
 }

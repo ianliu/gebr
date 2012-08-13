@@ -591,6 +591,7 @@ void gebr_setup_ui(void)
 	 * Create Structure of Job Control (to use on Flows)
 	 */
 	gebr.job_control = gebr_job_control_new();
+	gebr.ui_flow_edition = flow_edition_setup_ui();
 
 	/*
 	 * Notebook's page "Flows"
@@ -658,6 +659,7 @@ void gebr_setup_ui(void)
 	gtk_widget_show_all(vbox);
 
 	gtk_widget_hide(gebr.ui_flow_browse->info_jobs);
+	gtk_widget_hide(gebr.ui_flow_browse->prog_window);
 
 	/*
 	 * Notebook's page "Flow edition"
@@ -697,7 +699,6 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"))), -1);
 
-	gebr.ui_flow_edition = flow_edition_setup_ui();
 	insert_speed_controler(GTK_TOOLBAR(toolbar),
 			       &gebr.ui_flow_edition->nice_button_high,
 			       &gebr.ui_flow_edition->nice_button_low,
