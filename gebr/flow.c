@@ -1206,7 +1206,8 @@ gebr_flow_set_toolbar_sensitive(void)
 }
 
 static void append_parameter_row(GebrGeoXmlParameter * parameter,
-                                 GString * dump)
+                                 GString * dump,
+                                 gboolean flow_review)
 {
 	gint i, n_instances;
 	GebrGeoXmlSequence * param;
@@ -1223,17 +1224,21 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter,
 		str_value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
                 default_value = gebr_geoxml_program_parameter_get_string_value(program, TRUE);
 
-		switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
-		case NOTEBOOK_PAGE_PROJECT_LINE:
-			radio_value = gebr.config.detailed_line_parameter_table;
-			break;
-		case NOTEBOOK_PAGE_FLOW_BROWSE:
-			radio_value = gebr.config.detailed_flow_parameter_table;
-			break;
-		default:
-			radio_value = GEBR_PARAM_TABLE_ONLY_CHANGED;
-			break;
-		}
+                if (!flow_review) {
+                	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+                	case NOTEBOOK_PAGE_PROJECT_LINE:
+                		radio_value = gebr.config.detailed_line_parameter_table;
+                		break;
+                	case NOTEBOOK_PAGE_FLOW_BROWSE:
+                		radio_value = gebr.config.detailed_flow_parameter_table;
+                		break;
+                	default:
+                		radio_value = GEBR_PARAM_TABLE_ONLY_CHANGED;
+                		break;
+                	}
+                } else {
+                	radio_value = GEBR_PARAM_TABLE_ONLY_CHANGED;
+                }
 
 		if (((radio_value == GEBR_PARAM_TABLE_ONLY_CHANGED) && (g_strcmp0(str_value->str, default_value->str) != 0)) ||
 		    ((radio_value == GEBR_PARAM_TABLE_ONLY_FILLED) && (str_value->len > 0)) ||
@@ -1299,7 +1304,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter,
 			GString * inner_table = g_string_new(dump->str);
 
 			while (param) {
-				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump);
+				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, flow_review);
 				gebr_geoxml_sequence_next(&param);
 			}
 			/*If there are no parameters returned by the dialog choice...*/
@@ -1324,7 +1329,8 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter,
 
 static void
 gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
-                                             GString *tables_content)
+                                             GString *tables_content,
+                                             gboolean flow_review)
 {
 	GebrGeoXmlParameters *parameters;
 	GebrGeoXmlSequence *sequence;
@@ -1365,7 +1371,7 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
 		GString * initial_table = g_string_new(tables_content->str);
 
 		while (sequence) {
-			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), tables_content);
+			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), tables_content, flow_review);
 			gebr_geoxml_sequence_next (&sequence);
 		}
 
@@ -1389,7 +1395,7 @@ gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program,
 				break;
 			default:
 			case NOTEBOOK_PAGE_FLOW_BROWSE:
-				if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED)
+				if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED || flow_review)
 					g_string_append_printf(tables_content,
 					                       "      <tr>\n"
 					                       "        <td colspan=\"2\">%s</td>\n"
@@ -1590,7 +1596,8 @@ gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
 void
 gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
                                          GString *prog_content,
-                                         const gchar *index)
+                                         const gchar *index,
+                                         gboolean flow_review)
 {
 	gboolean has_index = (index != NULL);
 	gint i = 1;
@@ -1622,7 +1629,7 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 			                       "    <div class=\"description\">%s</div>\n",
 			                       link, title, description);
 
-			gebr_program_generate_parameter_value_table(prog, prog_content);
+			gebr_program_generate_parameter_value_table(prog, prog_content, flow_review);
 
 			g_string_append(prog_content,
 			                "  </div>\n"

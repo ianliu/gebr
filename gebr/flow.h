@@ -144,13 +144,15 @@ void gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
  * gebr_flow_generate_parameter_value_table:
  * @flow: a #GebrGeoXmlFlow
  * @tables_content: A #GString to append content
+ * @index: A index to link the table
  *
  * Creates a string containing a HTML table for the programs of @flow.
  *
  */
 void gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
                                               GString *prog_content,
-                                              const gchar *index);
+                                              const gchar *index,
+                                              gboolean flow_review);
 
 /**
  * gebr_flow_generate_variables_value_table:

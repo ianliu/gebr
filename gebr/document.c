@@ -1005,7 +1005,7 @@ gebr_document_generate_flow_programs(GebrGeoXmlDocument *document,
                                      GString *content,
                                      const gchar *index)
 {
-	gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW (document), content, index);
+	gebr_flow_generate_parameter_value_table(GEBR_GEOXML_FLOW (document), content, index, FALSE);
 }
 
 static void
