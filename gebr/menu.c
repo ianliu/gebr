@@ -219,8 +219,10 @@ menu_list_populate(void)
 	GString *path = g_string_new(NULL);
 	g_string_printf(path, "%s/.gebr/gebr/menus", g_get_home_dir());
 
-	menu_list_create_index(path->str, &index_menu, &index_category, TRUE);
-	__menu_list_populate(path->str, index_menu, index_category, categories_hash);
+	if (menu_path_internal_index_is_valid(path->str, gebr_home, &index_menu, &index_category)) {
+		menu_list_create_index(path->str, &index_menu, &index_category, FALSE);
+	}
+	__menu_list_populate(NULL, index_menu, index_category, categories_hash);
 
 	g_free(index_menu);
 	g_free(index_category);
@@ -230,11 +232,10 @@ menu_list_populate(void)
 
 	if (menu_path_internal_index_is_valid(gebr.config.usermenus->str, gebr_home, &index_menu, &index_category)) {
 		menu_list_create_index(gebr.config.usermenus->str, &index_menu, &index_category, FALSE);
-		__menu_list_populate(NULL, index_menu, index_category, categories_hash);
-		g_debug("********** CREATING usermenu's index:'%s', usermenus's directory: '%s' ", index_menu, gebr.config.usermenus->str);
-		g_free(index_menu);
-		g_free(index_category);
 	}
+	__menu_list_populate(NULL, index_menu, index_category, categories_hash);
+	g_free(index_menu);
+	g_free(index_category);
 
 	g_free(gebr_home);
 	g_hash_table_unref(categories_hash);
