@@ -395,6 +395,7 @@ void flow_export(void)
 			error = TRUE;
 			continue;
 		}
+		gebr_geoxml_flow_set_date_last_run(GEBR_GEOXML_FLOW(flow), "");
 
 		gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
 		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), gebr.line, paths, TRUE);

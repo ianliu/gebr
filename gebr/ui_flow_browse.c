@@ -579,9 +579,8 @@ void flow_browse_info_update(void)
 	g_free(modified);
 
 	gchar *last_text = NULL;
-
 	const gchar *last_run = gebr_localized_date(gebr_geoxml_flow_get_date_last_run(gebr.flow));
-        if (!last_run || !*last_run) {
+        if (!g_strcmp0(last_run,"Unknown")) {
         	last_text = g_strdup(_("This flow was never executed"));
 
         	gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
