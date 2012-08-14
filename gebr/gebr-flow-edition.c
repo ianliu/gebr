@@ -900,6 +900,7 @@ flow_edition_set_edited_io(gchar *path, gchar *new_text)
 	flow_edition_set_io();
 
 	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 }
 
 static void
