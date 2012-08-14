@@ -333,7 +333,7 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.speed = g_strdup(info->speed);
 	job->priv->info.snapshot_title = g_strdup(info->snapshot_title);
 	job->priv->info.snapshot_id = g_strdup(info->snapshot_id);
-	job->priv->info.job_counter = info->job_counter;
+	job->priv->info.job_counter = g_strdup(info->job_counter);
 
 	if (job->priv->info.parent_id && job->priv->info.parent_id[0] != '\0')
 		job->priv->status = JOB_STATUS_QUEUED;

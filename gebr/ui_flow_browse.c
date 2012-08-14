@@ -466,15 +466,20 @@ on_job_info_status_changed(GebrJob *job,
                            const gchar *parameter,
                            GtkWidget *container)
 {
-	gchar *icon, *job_state, *markup;
-	const gchar *date, *title;
+	gchar *icon, *job_state;
+	const gchar *date;
+	gchar *title;
 	const gchar *snap_id = gebr_job_get_snapshot_id(job);
 
+	gchar *aux_title = g_markup_printf_escaped("%s <span size='small'>#%s</span>",
+	                                           gebr_job_get_title(job),
+	                                           gebr_job_get_job_counter(job));
 
 	if(snap_id && *snap_id)
-		title = gebr_job_get_snapshot_title(job);
+		title = g_strdup_printf("%s (%s)", aux_title,
+				gebr_job_get_snapshot_title(job));
 	else
-		title = gebr_job_get_title(job);
+		title = g_strdup(aux_title);
 
 	switch(new_status) {
 	case JOB_STATUS_FINISHED:
@@ -513,14 +518,18 @@ on_job_info_status_changed(GebrJob *job,
 	gtk_image_set_from_stock(GTK_IMAGE(image), icon, GTK_ICON_SIZE_BUTTON);
 	GtkWidget *label = GTK_WIDGET(g_list_nth_data(children, 1));
 
-	markup = g_markup_printf_escaped("%s <span size='small' font_style='italic'>%s on %s</span>",
-	                                 title,
-	                                 job_state,
-	                                 date);
-	gtk_label_set_markup(GTK_LABEL(label), markup);
+	gchar *status_text = g_markup_printf_escaped("<span size='small' font_style='italic'>%s on %s</span>",
+	                                            job_state,
+	                                            date);
 
+	gchar *final_text = g_strconcat(title, " ", status_text, NULL);
+	gtk_label_set_markup(GTK_LABEL(label), final_text);
+
+	g_free(aux_title);
+	g_free(title);
 	g_free(job_state);
-	g_free(markup);
+	g_free(status_text);
+	g_free(final_text);
 }
 
 static gboolean

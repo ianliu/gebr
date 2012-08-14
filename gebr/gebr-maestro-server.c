@@ -709,7 +709,6 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_server_list(job, server_list->str);
 			gebr_job_set_submit_date(job, submit_date->str);
 			gebr_job_set_nprocs(job, nprocs->str);
-			gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 			gebr_job_set_io(job, input->str, output->str, error->str);
 			gebr_job_set_mpi_owner(job, mpi_owner->str);
 			gebr_job_set_mpi_flavor(job, mpi_flavor->str);
@@ -717,6 +716,8 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_snapshot_title(job, snapshot_title->str);
 			gebr_job_set_snapshot_id(job, snapshot_id->str);
 			gebr_job_set_description(job, description->str);
+			gebr_job_set_job_counter(job, job_counter->str);
+			gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 
 			if (g_strcmp0(gebr_job_get_queue(job), parent_id->str) != 0) {
 				gebr_job_set_queue(job, parent_id->str);

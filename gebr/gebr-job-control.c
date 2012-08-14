@@ -1069,7 +1069,9 @@ title_column_data_func(GtkTreeViewColumn *tree_column,
 	GebrJob *job;
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
-	gchar *title = g_strdup(gebr_job_get_title(job));
+	gchar *title = g_strdup_printf("%s <span size='small'>#%s</span>",
+	                               gebr_job_get_title(job),
+	                               gebr_job_get_job_counter(job));
 
 	g_object_set(cell, "markup", title, NULL);
 	g_free(title);
