@@ -297,6 +297,11 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
 {
+	if (document == NULL) {
+		project_line_get_selected(NULL, ProjectLineSelection); //show a message to the user
+		return;
+	}
+
 	g_return_if_fail(document != NULL);
 
 	GtkBuilder *builder = gtk_builder_new();

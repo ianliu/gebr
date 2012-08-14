@@ -1172,7 +1172,7 @@ void project_line_export(void)
 
 	if (!rows) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, FALSE,
-			      _("Please select a Project or Line."));
+			      _("Please select a Project or a Line."));
 		return;
 	}
 
@@ -1951,6 +1951,10 @@ void project_line_show_help(void)
 
 void project_line_edit_help(void)
 {
+	if (gebr.project_line == NULL) {
+		project_line_get_selected(NULL, ProjectLineSelection); //show a message to the user
+		return;
+	}
 	gebr_help_edit_document(GEBR_GEOXML_DOC(gebr.project_line));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.project_line), TRUE, FALSE);
 }

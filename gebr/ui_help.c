@@ -454,6 +454,11 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 	GebrGuiHtmlViewerWidget * html_viewer_widget;
 	GebrGeoXmlObjectType type;
 
+	if (object == NULL) {
+		project_line_get_selected(NULL, ProjectLineSelection); //show a message to the user
+		return;
+	}
+
 	type = gebr_geoxml_object_get_type (object);
 	window = gebr_gui_html_viewer_window_new (); 
 	g_object_set_data (G_OBJECT (window), HTML_WINDOW_OBJECT, object);
