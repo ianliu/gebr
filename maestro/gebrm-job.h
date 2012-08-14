@@ -83,6 +83,7 @@ typedef struct {
 	gchar *speed;
 	gchar *snapshot_id;
 	gchar *snapshot_title;
+	gchar *job_counter;
 } GebrmJobInfo;
 
 void gebrm_job_info_free(GebrmJobInfo *info);
@@ -264,6 +265,10 @@ void gebrm_job_set_snapshot_id(GebrmJob *job, const gchar *snapshot);
 const gchar *gebrm_job_get_gebrjob_id(GebrmJob *job);
 
 void gebrm_job_set_gebrjob_id(GebrmJob *job, const gchar *snapshot);
+
+const gchar *gebrm_job_get_job_counter(GebrmJob *job);
+
+void gebrm_job_set_job_counter(GebrmJob *job, const gchar *job_counter);
 
 G_END_DECLS
 

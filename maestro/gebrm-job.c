@@ -39,6 +39,7 @@ struct _GebrmJobPriv {
 	gint total;
 	GebrCommJobStatus status;
 	gboolean has_issued;
+
 	GList *children; // A list of GebrCommRunner
 };
 
@@ -332,6 +333,7 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.speed = g_strdup(info->speed);
 	job->priv->info.snapshot_title = g_strdup(info->snapshot_title);
 	job->priv->info.snapshot_id = g_strdup(info->snapshot_id);
+	job->priv->info.job_counter = info->job_counter;
 
 	if (job->priv->info.parent_id && job->priv->info.parent_id[0] != '\0')
 		job->priv->status = JOB_STATUS_QUEUED;
@@ -808,6 +810,7 @@ gebrm_job_info_free(GebrmJobInfo *info)
 	g_free(info->speed);
 	g_free(info->snapshot_title);
 	g_free(info->snapshot_id);
+	g_free(info->job_counter);
 
 }
 void
@@ -864,4 +867,16 @@ void
 gebrm_job_set_snapshot_id(GebrmJob *job, const gchar *snapshot_id)
 {
 	job->priv->info.snapshot_id = g_strdup(snapshot_id);
+}
+
+const gchar*
+gebrm_job_get_job_counter(GebrmJob *job)
+{
+	return job->priv->info.job_counter;
+}
+
+void
+gebrm_job_set_job_counter(GebrmJob *job, const gchar *job_counter)
+{
+	job->priv->info.job_counter = g_strdup(job_counter);
 }

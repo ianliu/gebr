@@ -60,6 +60,7 @@ struct _GebrmAppPriv {
 
 	// Job controller
 	GHashTable *jobs;
+	GHashTable *jobs_counter;
 };
 
 typedef struct {
@@ -122,6 +123,8 @@ gboolean gebrm_config_load_servers(GebrmApp *app, const gchar *path);
 static void send_job_def_to_clients(GebrmApp *app, GebrmJob *job);
 
 static void send_messages_of_jobs(const gchar *id, GebrmJob *job, GebrCommProtocolSocket *protocol);
+
+static gboolean gebrm_app_increment_jobs_counter(GebrmApp *app, const gchar *flow_id);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
@@ -490,6 +493,7 @@ gebrm_app_finalize(GObject *object)
 {
 	GebrmApp *app = GEBRM_APP(object);
 	g_hash_table_unref(app->priv->jobs);
+	g_hash_table_unref(app->priv->jobs_counter);
 	g_list_foreach(app->priv->connections, (GFunc)g_object_unref, NULL);
 	g_list_free(app->priv->connections);
 	g_list_free(app->priv->daemons);
@@ -546,6 +550,8 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->daemons = NULL;
 	app->priv->jobs = g_hash_table_new_full(g_str_hash, g_str_equal,
 						g_free, NULL);
+	app->priv->jobs_counter = g_hash_table_new_full(g_str_hash, g_str_equal,
+	                                                g_free, NULL);
 	app->priv->job_def_queue = g_queue_new();
 	app->priv->job_run_queue = g_queue_new();
 	app->priv->xauth_queue = g_queue_new();
@@ -899,7 +905,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.job_def, 25,
+						      gebr_comm_protocol_defs.job_def, 26,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_flow_id(job),
@@ -907,6 +913,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 						      gebrm_job_get_servers_list(job),
 						      gebrm_job_get_hostname(job),
 						      gebrm_job_get_title(job),
+						      gebrm_job_get_job_counter(job),
 						      description ? description : "",
 						      snapshot_title ? snapshot_title : "",
 						      snapshot_id ? snapshot_id : "",
@@ -1004,7 +1011,8 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
 	gchar *description = gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(*pflow));
 
-	g_debug("On '%s', line '%d', description:'%s' ", __FILE__, __LINE__, description);
+	gint job_counter = gebrm_app_increment_jobs_counter(app, flow_id);
+
 	GebrmJobInfo info = { 0, };
 	info.title = g_strdup(title);
 	info.description = g_strdup(description);
@@ -1020,6 +1028,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	info.error = gebr_geoxml_flow_io_get_error(*pflow);
 	info.snapshot_title = g_strdup(snapshot_title);
 	info.snapshot_id = g_strdup(snapshot_id);
+	info.job_counter = g_strdup_printf("%d", job_counter);
 
 	if (server_host)
 		info.group = g_strdup(server_host);
@@ -1069,7 +1078,6 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		}
 		if (tmp->len)
 			g_string_erase(tmp, 0, 5);
-		g_debug("GOT %s", tmp->str);
 
 		gchar *mpi_issue_message;
 
@@ -1824,7 +1832,7 @@ send_messages_of_jobs(const gchar *id,
 
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 25,
+	                                      gebr_comm_protocol_defs.job_def, 26,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
 					      gebrm_job_get_flow_id(job),
@@ -1832,6 +1840,7 @@ send_messages_of_jobs(const gchar *id,
 	                                      gebrm_job_get_servers_list(job),
 	                                      gebrm_job_get_hostname(job),
 	                                      gebrm_job_get_title(job),
+	                                      gebrm_job_get_job_counter(job),
 					      description ? description : "",
 	                                      gebrm_job_get_snapshot_title(job),
 	                                      gebrm_job_get_snapshot_id(job),
@@ -2046,4 +2055,16 @@ gebrm_app_get_admin_servers_file(void)
 		path = g_build_filename("etc", "gebr", "servers.conf", NULL);
 
 	return path;
+}
+
+static gint
+gebrm_app_increment_jobs_counter(GebrmApp *app, const gchar *flow_id)
+{
+	gint *counter = g_hash_table_lookup(app->priv->jobs_counter, flow_id);
+	gint *new_counter = g_new0(gint,1);
+
+	*new_counter = counter ? *counter + 1 : 1;
+	g_hash_table_replace(app->priv->jobs_counter, g_strdup(flow_id), new_counter);
+
+	return *new_counter;
 }
