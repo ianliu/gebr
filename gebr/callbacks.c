@@ -342,6 +342,7 @@ void on_flow_component_delete_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_EDITION :
+	case NOTEBOOK_PAGE_FLOW_BROWSE :
 		flow_program_remove();
 		break;
 	default:
@@ -364,6 +365,7 @@ void on_flow_component_move_top(void)
 	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_EDITION :
+	case NOTEBOOK_PAGE_FLOW_BROWSE :
 		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 		if (!flow_edition_get_selected_component(&iter, TRUE))
 			return;
@@ -385,6 +387,7 @@ void on_flow_component_move_bottom(void)
 	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_EDITION :
+	case NOTEBOOK_PAGE_FLOW_BROWSE :
 		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 		if (!flow_edition_get_selected_component(&iter, TRUE))
 			return;
