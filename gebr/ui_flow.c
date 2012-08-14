@@ -341,6 +341,8 @@ gebr_ui_flow_run(gboolean is_parallel)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
+	gint n = g_list_length(rows);
+
 	for (GList *i = rows; i; i = i->next) {
 		GtkTreePath *path = i->data;
 		GebrGeoXmlFlow *flow;
@@ -350,7 +352,7 @@ gebr_ui_flow_run(gboolean is_parallel)
 
 		/* Executing snapshots */
 		gint current_page = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
-		if(i->next == NULL && current_page == NOTEBOOK_PAGE_FLOW_BROWSE) {
+		if(n == 1 && current_page == NOTEBOOK_PAGE_FLOW_BROWSE) {
 			if (gebr_geoxml_flow_get_revisions_number(flow) > 0) {
 				const gchar *filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
 				if (g_list_find_custom(gebr.ui_flow_browse->select_flows, filename, (GCompareFunc)g_strcmp0)) {
@@ -380,7 +382,7 @@ gebr_ui_flow_run(gboolean is_parallel)
 
 		gebr_flow_browse_info_job(gebr.ui_flow_browse, id);
 	}
-	if (rows->next || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE) {
+	if (n > 1 || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE) {
 		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 	} else {
 		gebr_flow_browse_append_job_on_flow(curr_flow, id, gebr.ui_flow_browse);
