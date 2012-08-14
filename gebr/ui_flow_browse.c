@@ -1369,7 +1369,8 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 
 	GString *prog_content = g_string_new("");
 	g_string_append_printf(prog_content, "<html>\n"
-					     "  <head>\n");
+					     "  <head>\n"
+					     "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
 	g_string_append_printf(prog_content, "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-report.css\" />",
 						  LIBGEBR_STYLES_DIR);
 	g_string_append_printf(prog_content, "    <style type=\"text/css\"/>\n"
