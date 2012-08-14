@@ -401,7 +401,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	ui_flow_browse->properties_ctx_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "context_button_flow"));
 	ui_flow_browse->properties_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "properties_scroll"));
 	g_signal_connect(ui_flow_browse->properties_ctx_button, "toggled", G_CALLBACK(on_context_button_toggled), ui_flow_browse);
-	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->properties_ctx_button), "Review of parameters");
+	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->properties_ctx_button), _("Review of parameters"));
 
 	ui_flow_browse->snapshots_ctx_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "context_button_snaps"));
 	ui_flow_browse->snapshots_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "snapshots_box"));
