@@ -197,6 +197,9 @@ gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
 {
 	GebrJob *job = gebr_job_control_find(gebr.job_control, job_id);
 
+	if (!job)
+		return;
+
 	const gchar *title = gebr_job_get_description(job);
 
 	GtkWidget *job_box = gtk_hbox_new(FALSE, 5);
