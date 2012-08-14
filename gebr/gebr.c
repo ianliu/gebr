@@ -178,6 +178,13 @@ gboolean gebr_quit(gboolean save_config)
 	gebr_comm_process_kill(gebr.ui_flow_browse->graph_process);
 	g_list_free(gebr.ui_flow_browse->select_flows);
 
+	void free(gpointer key, gpointer value) {
+		GList *list = value;
+		g_list_free(list);
+	}
+	g_hash_table_foreach(gebr.ui_flow_browse->flow_jobs, (GHFunc)free, NULL);
+	g_hash_table_destroy(gebr.ui_flow_browse->flow_jobs);
+
 	/* free config stuff */
 	g_key_file_free(gebr.config.key_file);
 	g_string_free(gebr.config.path, TRUE);

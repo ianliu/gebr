@@ -100,6 +100,8 @@ typedef struct {
 		GtkWidget *help_view;
 	} info;
 
+	GHashTable *flow_jobs;
+
 	GtkWidget *nice_button_high;
 	GtkWidget *nice_button_low;
 	GtkWidget *speed_button;
@@ -162,6 +164,16 @@ void gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
                                              GebrUiFlowBrowse *ui_flow_browse);
 
 void gebr_flow_browse_select_job(GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_append_job_on_flow(GebrGeoXmlFlow *flow,
+                                         const gchar *job_id,
+                                         GebrUiFlowBrowse *fb);
+
+GList *gebr_flow_browse_get_jobs_from_flow(GebrGeoXmlFlow *flow,
+                                           GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
+                                           GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
                                              GebrUiFlowBrowse *fb);
