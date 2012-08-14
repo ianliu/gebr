@@ -1435,8 +1435,14 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
 	const gchar *description = gebr_job_get_description(job);
-
-	markup = g_strdup_printf ("<span size=\"x-large\">%s</span>", description);
+	if (description && *description){
+		markup = g_strdup_printf ("<span size=\"x-large\">%s</span>", description);
+		gtk_widget_set_sensitive(GTK_WIDGET(label), TRUE);
+	}
+	else{
+		markup = g_strdup_printf ("<span size=\"x-large\">No description available</span>");
+		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
+	}
 	gtk_label_set_markup (label, markup);
 	g_free (markup);
 
