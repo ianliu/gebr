@@ -134,6 +134,13 @@ on_output_job_clicked(GtkToggleButton *button,
                       GebrJob *job)
 {
 	gboolean active = gtk_toggle_button_get_active(button);
+	GebrCommJobStatus status = gebr_job_get_status(job);
+
+	if (status == JOB_STATUS_QUEUED || status == JOB_STATUS_INITIAL) {
+		if (active)
+			gtk_toggle_button_set_active(button, FALSE);
+		return;
+	}
 
 	if (active) {
 		GList *childs = gtk_container_get_children(GTK_CONTAINER(gebr.ui_flow_browse->jobs_status_box));
@@ -213,6 +220,8 @@ gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
 
 	GtkWidget *output_button = gtk_toggle_button_new();
 	gtk_button_set_relief(GTK_BUTTON(output_button), GTK_RELIEF_NONE);
+	gtk_button_set_focus_on_click(GTK_BUTTON(output_button), FALSE);
+
 	gtk_container_add(GTK_CONTAINER(output_button), job_box);
 	g_signal_connect(output_button, "toggled", G_CALLBACK(on_output_job_clicked), job);
 
@@ -477,6 +486,7 @@ on_job_info_status_changed(GebrJob *job,
 		icon = GTK_STOCK_EXECUTE;
 		job_state = g_strdup(_("started"));
 		date = gebr_localized_date(gebr_job_get_start_date(job));
+		gtk_widget_set_tooltip_text(container, _("See the output of this job"));
 		break;
 	case JOB_STATUS_CANCELED:
 		icon = GTK_STOCK_CANCEL;
@@ -494,6 +504,7 @@ on_job_info_status_changed(GebrJob *job,
 		icon = "chronometer";
 		job_state = g_strdup(_("submitted"));
 		date = gebr_localized_date(gebr_job_get_last_run_date(job));
+		gtk_widget_set_tooltip_text(container, _("This job doesn't have output yet"));
 		break;
 	}
 
