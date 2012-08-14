@@ -130,11 +130,8 @@ static void
 on_assistant_entry_changed(WizardData *data)
 {
 	GtkWidget *current_page;
-	gint page_number;
-	page_number = gtk_assistant_get_current_page(GTK_ASSISTANT(data->assistant));
-	current_page = gtk_assistant_get_nth_page(GTK_ASSISTANT(data->assistant), page_number);
-
-	gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), current_page, (data->title_ready && data->description_ready && data->email_ready));
+	current_page = gtk_assistant_get_nth_page(GTK_ASSISTANT(data->assistant), 0);
+	gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), current_page, (data->title_ready && data->email_ready));
 }
 
 static void
@@ -161,8 +158,6 @@ on_assistant_description_changed(GtkEntry *entry,
 		data->description_ready = TRUE;
 	else
 		data->description_ready = FALSE;
-	validate_entry(GTK_ENTRY(entry), !data->description_ready, _("Description cannot be empty"), _(""));
-	on_assistant_entry_changed(data);
 }
 
 static void
@@ -171,10 +166,6 @@ on_assistant_email_changed(GtkEntry *entry,
 {
 	const gchar *text = gtk_entry_get_text(entry);
 	data->email_ready = gebr_validate_check_is_email(text);
-	/*if (text && *text )
-		data->email_ready = gebr_validate_check_is_email(text);
-	else
-		data->email_ready = FALSE;*/
 	validate_entry(GTK_ENTRY(entry), !data->email_ready, _("Invalid email"), _("Your email address"));
 	on_assistant_entry_changed(data);
 }
@@ -535,6 +526,9 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	WizardData *data = g_new(WizardData, 1);
 	data->assistant = assistant;
 	data->builder = builder;
+	data->title_ready = TRUE;
+	data->description_ready = TRUE;
+	data->email_ready = TRUE;
 	g_signal_connect(assistant, "destroy", G_CALLBACK(on_assistant_destroy), data);
 	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
 	g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), data);
@@ -592,6 +586,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_entry_set_text(GTK_ENTRY(entry_author), gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.project)));
 	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.project)));
 
+	on_assistant_entry_changed(data);
 	on_assistant_title_changed(GTK_ENTRY(entry_title), data);
 	on_assistant_description_changed(GTK_ENTRY(entry_description), data);
 	on_assistant_email_changed(GTK_ENTRY(entry_email), data);

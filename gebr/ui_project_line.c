@@ -408,11 +408,19 @@ line_info_update(void)
 	}
 	g_free(email_text);
 	/* Set description */
-	tmp = g_markup_printf_escaped("<span size='large'><i>%s</i></span>",
-				      gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(gebr.line)));
+	gchar *description = gebr_geoxml_document_get_description(GEBR_GEOXML_DOC(gebr.line));
+	if (!description || !*description){
+		tmp = g_markup_printf_escaped(_("<span size='x-large'>No description available</span>"));
+		gtk_widget_set_sensitive(GTK_WIDGET(label_description), FALSE);
+	}
+	else {
+		tmp = g_markup_printf_escaped("<span size='large'><i>%s</i></span>",
+		                                 gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(gebr.line)));
+		gtk_widget_set_sensitive(GTK_WIDGET(label_description), TRUE);
+	}
 	gtk_label_set_markup(GTK_LABEL(label_description), tmp);
 	g_free(tmp);
-
+	g_free(description);
 	/* Set dates */
 	gtk_label_set_text(GTK_LABEL(label_changed),
 			   gebr_localized_date(gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(gebr.line))));
