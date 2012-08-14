@@ -201,6 +201,9 @@ class MyDotWindow(xdot.DotWindow):
            elif info[0] == "delete":
                id = info[1]
                self.delete_selected_snapshots()
+               
+           elif info[0] == "unselect-all":
+               self.on_url_unselect_all(None, None, None)
            
            elif info[0] == "draw":
                # Get ID Flow (Filename)
@@ -213,7 +216,6 @@ class MyDotWindow(xdot.DotWindow):
                self.set_dotcode(dotfile)
                
                if keep_selection == "no":
-                   self.flows[self.current_flow] = []
                    self.on_url_unselect_all(None, None, None)
     
                # Set on dictionary a dotfile with id of flow

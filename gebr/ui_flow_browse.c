@@ -110,6 +110,12 @@ on_context_button_toggled(GtkToggleButton *button,
 		gtk_widget_hide(fb->snapshots_ctx_box);
 
 		gebr_flow_browse_load_parameters_review(gebr.flow, fb);
+
+		if (gebr_geoxml_flow_get_revisions_number(gebr.flow) > 1) {
+			GString *cmd = g_string_new("unselect-all\bNone\n");
+			gebr_comm_process_write_stdin_string(fb->graph_process, cmd);
+			g_string_free(cmd, TRUE);
+		}
 	}
 	else if (button == fb->snapshots_ctx_button) {
 		gtk_toggle_button_set_active(fb->properties_ctx_button, !active);
