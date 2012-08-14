@@ -76,7 +76,6 @@ typedef struct {
 	GtkToggleButton *snapshots_ctx_button;
 	GtkWidget *snapshots_ctx_box;
 
-	GtkToggleButton *jobs_ctx_button;
 	GtkWidget *jobs_ctx_box;
 
 	/* Info Bar */
@@ -90,12 +89,7 @@ typedef struct {
 		GtkWidget *description;
 
 		GtkWidget *modified;
-
 		GtkWidget *lastrun;
-		GtkWidget *job_status;
-		GtkWidget *job_button;
-		GtkWidget *job_no_output;
-		GtkWidget *job_has_output;
 
 		GtkWidget *help_view;
 	} info;

@@ -39,6 +39,8 @@
 
 static void flow_browse_load(void);
 
+static gboolean flow_browse_static_info_update(void);
+
 static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 					 GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
 
@@ -95,7 +97,6 @@ on_context_button_toggled(GtkToggleButton *button,
 
 	g_signal_handlers_block_by_func(fb->properties_ctx_button, on_context_button_toggled, fb);
 	g_signal_handlers_block_by_func(fb->snapshots_ctx_button, on_context_button_toggled, fb);
-	g_signal_handlers_block_by_func(fb->jobs_ctx_button, on_context_button_toggled, fb);
 
 	if (!active) {
 		gtk_toggle_button_set_active(button, TRUE);
@@ -104,45 +105,61 @@ on_context_button_toggled(GtkToggleButton *button,
 
 	if (button == fb->properties_ctx_button) {
 		gtk_toggle_button_set_active(fb->snapshots_ctx_button, !active);
-		gtk_toggle_button_set_active(fb->jobs_ctx_button, !active);
 
 		gtk_widget_show(fb->properties_ctx_box);
 		gtk_widget_hide(fb->snapshots_ctx_box);
-		gtk_widget_hide(fb->jobs_ctx_box);
 
 		gebr_flow_browse_load_parameters_review(gebr.flow, fb);
 	}
 	else if (button == fb->snapshots_ctx_button) {
 		gtk_toggle_button_set_active(fb->properties_ctx_button, !active);
-		gtk_toggle_button_set_active(fb->jobs_ctx_button, !active);
 
 		gtk_widget_hide(fb->properties_ctx_box);
 		gtk_widget_show(fb->snapshots_ctx_box);
-		gtk_widget_hide(fb->jobs_ctx_box);
 	}
-	else if (button == fb->jobs_ctx_button) {
-		gtk_toggle_button_set_active(fb->snapshots_ctx_button, !active);
-		gtk_toggle_button_set_active(fb->properties_ctx_button, !active);
+	gtk_widget_hide(fb->jobs_ctx_box);
 
-		gtk_widget_hide(fb->properties_ctx_box);
-		gtk_widget_hide(fb->snapshots_ctx_box);
-		gtk_widget_show(fb->jobs_ctx_box);
+	GList *childs = gtk_container_get_children(GTK_CONTAINER(gebr.ui_flow_browse->jobs_status_box));
+	for (GList *i = childs; i; i = i->next)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->data), FALSE);
 
-		GebrJob *job = gebr_job_control_get_recent_job_from_flow(GEBR_GEOXML_DOCUMENT(gebr.flow), gebr.job_control);
-		if(job){
-			gtk_widget_hide(fb->info.job_no_output);
-			gtk_widget_show(fb->info.job_has_output);
-		} else {
-			gtk_widget_show(fb->info.job_no_output);
-			gtk_widget_hide(fb->info.job_has_output);
-		}
-		gebr_job_control_select_job(gebr.job_control, job);
-	}
 
 out:
 	g_signal_handlers_unblock_by_func(fb->properties_ctx_button, on_context_button_toggled, fb);
 	g_signal_handlers_unblock_by_func(fb->snapshots_ctx_button, on_context_button_toggled, fb);
-	g_signal_handlers_unblock_by_func(fb->jobs_ctx_button, on_context_button_toggled, fb);
+}
+
+static void
+on_output_job_clicked(GtkToggleButton *button,
+                      GebrJob *job)
+{
+	gboolean active = gtk_toggle_button_get_active(button);
+
+	if (active) {
+		GList *childs = gtk_container_get_children(GTK_CONTAINER(gebr.ui_flow_browse->jobs_status_box));
+		for (GList *i = childs; i; i = i->next) {
+			if (button == i->data)
+				continue;
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->data), !active);
+		}
+
+		gtk_widget_hide(gebr.ui_flow_browse->properties_ctx_box);
+		gtk_widget_hide(gebr.ui_flow_browse->snapshots_ctx_box);
+
+		if(job) {
+			gtk_widget_show(gebr.ui_flow_browse->jobs_ctx_box);
+			gebr_job_control_select_job(gebr.job_control, job);
+		} else {
+			gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
+		}
+	} else {
+		gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
+
+		if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+			gtk_widget_show(gebr.ui_flow_browse->properties_ctx_box);
+		else
+			gtk_widget_show(gebr.ui_flow_browse->snapshots_ctx_box);
+	}
 }
 
 static void
@@ -151,16 +168,27 @@ on_dismiss_clicked(GtkButton *dismiss,
 {
 	GList *childs = gtk_container_get_children(GTK_CONTAINER(fb->jobs_status_box));
 	for (GList *i = childs; i; i = i->next) {
+		GList *child = gtk_container_get_children(GTK_CONTAINER(i->data));
+
 		GebrJob *job;
-		g_object_get(i->data, "user-data", &job, NULL);
-		g_signal_handlers_disconnect_by_func(job, on_job_info_status_changed, i->data);
+		g_object_get(child->data, "user-data", &job, NULL);
+		g_signal_handlers_disconnect_by_func(job, on_job_info_status_changed, child->data);
+		g_signal_handlers_disconnect_by_func(i->data, on_output_job_clicked, job);
 		gtk_container_remove(GTK_CONTAINER(fb->jobs_status_box), GTK_WIDGET(i->data));
 	}
 
 	if (dismiss)
 		gebr_flow_browse_reset_jobs_from_flow(gebr.flow, fb);
 
+	/* Hide Info bar*/
 	gtk_widget_hide(fb->info_jobs);
+
+	/* Restore last context */
+	if (gtk_toggle_button_get_active(fb->properties_ctx_button))
+		gtk_widget_show(fb->properties_ctx_box);
+	else
+		gtk_widget_show(fb->snapshots_ctx_box);
+	gtk_widget_hide(fb->jobs_ctx_box);
 }
 
 void
@@ -180,9 +208,13 @@ gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
 	gtk_box_pack_start(GTK_BOX(job_box), img, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(job_box), label, TRUE, TRUE, 5);
 
-	GebrCommJobStatus status = gebr_job_get_status(job);
+	GtkWidget *output_button = gtk_toggle_button_new();
+	gtk_button_set_relief(GTK_BUTTON(output_button), GTK_RELIEF_NONE);
+	gtk_container_add(GTK_CONTAINER(output_button), job_box);
+	g_signal_connect(output_button, "toggled", G_CALLBACK(on_output_job_clicked), job);
 
 	/* Update status */
+	GebrCommJobStatus status = gebr_job_get_status(job);
 	on_job_info_status_changed(job, 0, status, NULL, job_box);
 
 	if (status != JOB_STATUS_FINISHED ||
@@ -191,7 +223,7 @@ gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
 		g_signal_connect(job, "status-change", G_CALLBACK(on_job_info_status_changed), job_box);
 		g_object_set(job_box, "user-data", job, NULL);
 	}
-	gtk_box_pack_start(GTK_BOX(fb->jobs_status_box), job_box, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(fb->jobs_status_box), output_button, TRUE, TRUE, 0);
 
 	gtk_widget_show_all(fb->jobs_status_box);
 
@@ -202,8 +234,7 @@ gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
 void
 gebr_flow_browse_select_job(GebrUiFlowBrowse *fb)
 {
-	flow_browse_load();
-	gtk_toggle_button_set_active(fb->jobs_ctx_button, TRUE);
+	flow_browse_static_info_update();
 }
 
 GebrUiFlowBrowse *flow_browse_setup_ui()
@@ -345,12 +376,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	/* Last execution */
 	ui_flow_browse->info.lastrun = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_jobs_label"));
-	ui_flow_browse->info.job_status = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_jobs_status"));
-	gtk_widget_hide(ui_flow_browse->info.job_status);
-
-	ui_flow_browse->info.job_button = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_jobs_button"));
-	g_signal_connect(ui_flow_browse->info.job_button, "clicked", G_CALLBACK(on_job_button_clicked), ui_flow_browse);
-	gtk_widget_hide(ui_flow_browse->info.job_button);
 
 	/*
 	 * Set button and box context
@@ -365,10 +390,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(ui_flow_browse->snapshots_ctx_button, "toggled", G_CALLBACK(on_context_button_toggled), ui_flow_browse);
 	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->snapshots_ctx_button), "Snapshots");
 
-	ui_flow_browse->jobs_ctx_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "context_button_jobs"));
-	ui_flow_browse->jobs_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_box"));
-	g_signal_connect(ui_flow_browse->jobs_ctx_button, "toggled", G_CALLBACK(on_context_button_toggled), ui_flow_browse);
-	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->jobs_ctx_button), "Output of last execution");
+	ui_flow_browse->jobs_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_output_box"));
 
 	/* Info Bar for Jobs */
 	ui_flow_browse->info_jobs = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "info_jobs_box"));
@@ -412,18 +434,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	 * Jobs Context
 	 */
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
-	GtkWidget *output_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_output_box"));
-	gtk_widget_reparent(output_view, output_box);
-	ui_flow_browse->info.job_has_output = output_box;
-
-	GtkWidget *job_no_output = gtk_label_new("This flow has never been executed.\n\n"
-						"GêBR can execute it using (Ctrl+R).");
-	gtk_widget_set_sensitive(job_no_output, FALSE);
-	ui_flow_browse->info.job_no_output = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_no_output_box"));
-	gtk_box_pack_start(GTK_BOX(ui_flow_browse->info.job_no_output), job_no_output, TRUE, TRUE, 0);
-
-	gtk_widget_show(ui_flow_browse->info.job_no_output);
-	gtk_widget_hide(ui_flow_browse->info.job_has_output);
+	gtk_widget_reparent(output_view, ui_flow_browse->jobs_ctx_box);
 
 	/*
 	 * Add Flow Page on GêBR window
@@ -434,57 +445,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	ui_flow_browse->flow_jobs = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	return ui_flow_browse;
-}
-
-static void
-gebr_ui_flow_browse_set_job_status(GebrJob *job,
-                                   GebrCommJobStatus status,
-                                   GebrUiFlowBrowse *fb)
-{
-	GtkImage *img = GTK_IMAGE(fb->info.job_status);
-	gchar *last_text;
-	const gchar *icon, *job_state, *date;
-
-	switch(status) {
-	case JOB_STATUS_FINISHED:
-		icon = GTK_STOCK_APPLY;
-		job_state = _("finished");
-		date = gebr_job_get_finish_date(job);
-		break;
-	case JOB_STATUS_RUNNING:
-		icon = GTK_STOCK_EXECUTE;
-		job_state = _("started");
-		date = gebr_job_get_start_date(job);
-		break;
-	case JOB_STATUS_CANCELED:
-		icon = GTK_STOCK_CANCEL;
-		job_state = _("canceled");
-		date = gebr_job_get_finish_date(job);
-		break;
-	case JOB_STATUS_FAILED:
-		icon = GTK_STOCK_CANCEL;
-		job_state = _("failed");
-		date = gebr_job_get_finish_date(job);
-		break;
-	case JOB_STATUS_QUEUED:
-		icon = "chronometer";
-		job_state = _("submitted");
-		date = gebr_job_get_last_run_date(job);
-		break;
-	case JOB_STATUS_INITIAL:
-	default:
-		icon = GTK_STOCK_NETWORK;
-		job_state = _("submitted");
-		date = gebr_job_get_last_run_date(job);
-		break;
-	}
-
-	const gchar *iso = gebr_localized_date(date);
-	last_text = g_markup_printf_escaped(_("Last execution %s on %s"), job_state, iso);
-	gtk_image_set_from_stock(img, icon, GTK_ICON_SIZE_BUTTON);
-	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
-
-	g_free(last_text);
 }
 
 static void
@@ -549,28 +509,13 @@ on_job_info_status_changed(GebrJob *job,
 	g_free(markup);
 }
 
-static void
-on_job_status_changed(GebrJob *job,
-                      GebrCommJobStatus old_status,
-                      GebrCommJobStatus new_status,
-                      const gchar *parameter,
-                      GebrUiFlowBrowse *fb)
-{
-	gebr_ui_flow_browse_set_job_status(job, new_status, fb);
-}
-
-void flow_browse_info_update(void)
+static gboolean
+flow_browse_static_info_update(void)
 {
 	if (gebr.flow == NULL) {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.description), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.modified), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), "");
-
-		/* Update parameters properties context */
-		GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(gebr.ui_flow_browse->info.builder_flow, "parameters_box"));
-		GList *childs = gtk_container_get_children(GTK_CONTAINER(box));
-		for (GList *i = childs; i; i = i->next)
-			gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(i->data));
 
 		/* Update snapshots context */
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label), _("No Flow selected."));
@@ -578,7 +523,7 @@ void flow_browse_info_update(void)
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 
 		navigation_bar_update();
-		return;
+		return FALSE;
 	}
 
 	/* Status Icon */
@@ -633,41 +578,28 @@ void flow_browse_info_update(void)
 
 	gchar *last_text = NULL;
 	gchar *last_run_date = gebr_geoxml_flow_get_date_last_run(gebr.flow);
-        if (!last_run_date || !*last_run_date) {
-        	last_text = g_strdup(_("This flow was never executed"));
+	if (!last_run_date || !*last_run_date) {
+		last_text = g_strdup(_("This flow was never executed"));
+	} else {
+		const gchar *last_run = gebr_localized_date(last_run_date);
+		last_text = g_markup_printf_escaped(_("Submitted on %s"), last_run);
+	}
+	g_free(last_run_date);
 
-        	gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
-        	gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
-        	gtk_widget_hide(gebr.ui_flow_browse->info.job_has_output);
-        	gtk_widget_show(gebr.ui_flow_browse->info.job_no_output);
-        } else {
-        	const gchar *last_run = gebr_localized_date(last_run_date);
-        	/* Update job button */
-        	GebrJob *job = gebr_job_control_get_recent_job_from_flow(GEBR_GEOXML_DOCUMENT(gebr.flow), gebr.job_control);
-        	if (job) {
-        		gebr_ui_flow_browse_set_job_status(job, gebr_job_get_status(job), gebr.ui_flow_browse);
+	if (last_text) {
+		gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
+		g_free(last_text);
+	}
 
-        		g_signal_connect(job, "status-change", G_CALLBACK(on_job_status_changed), gebr.ui_flow_browse);
+	navigation_bar_update();
 
-        		gtk_widget_show(gebr.ui_flow_browse->info.job_button);
-        		gtk_widget_show(gebr.ui_flow_browse->info.job_status);
-        		gtk_widget_show(gebr.ui_flow_browse->info.job_has_output);
-        		gtk_widget_hide(gebr.ui_flow_browse->info.job_no_output);
-        	} else {
-        		last_text = g_markup_printf_escaped(_("Submitted on %s"), last_run);
+	return TRUE;
+}
 
-			gtk_widget_hide(gebr.ui_flow_browse->info.job_button);
-        		gtk_widget_hide(gebr.ui_flow_browse->info.job_status);
-        		gtk_widget_hide(gebr.ui_flow_browse->info.job_has_output);
-        		gtk_widget_show(gebr.ui_flow_browse->info.job_no_output);
-        	}
-        }
-        g_free(last_run_date);
-
-        if (last_text) {
-        	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
-        	g_free(last_text);
-        }
+void flow_browse_info_update(void)
+{
+	if (!flow_browse_static_info_update())
+		return;
 
         /* Update flow list */
         GtkTreeIter iter;
@@ -687,8 +619,6 @@ void flow_browse_info_update(void)
         		for (GList *i = jobs; i; i = i->next)
         			gebr_flow_browse_info_job(gebr.ui_flow_browse, i->data);
         }
-
-	navigation_bar_update();
 }
 
 gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
@@ -1296,11 +1226,7 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 	gebr_flow_browse_update_programs_view(self);
 
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
-	GtkWidget *output_box = GTK_WIDGET(gtk_builder_get_object(self->info.builder_flow, "jobs_output_box"));
-	gtk_widget_reparent(output_view, output_box);
-
-	gtk_widget_show(self->info.job_no_output);
-	gtk_widget_hide(self->info.job_has_output);
+	gtk_widget_reparent(output_view, self->jobs_ctx_box);
 
 	/* Set default on properties flow */
 	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
@@ -1427,6 +1353,8 @@ gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
 	const gchar *flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
 
 	g_hash_table_insert(fb->flow_jobs, g_strdup(flow_id), NULL);
+
+	on_dismiss_clicked(NULL, fb);
 }
 
 void
