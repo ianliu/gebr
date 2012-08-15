@@ -44,34 +44,11 @@
  */
 
 struct _GebrFlowEditionPriv {
-	GtkWidget *server_combobox;
-	GtkWidget *queue_combobox;
-
-	/* Group selection */
-	gchar *name;
-	GebrMaestroServerGroupType type;
 };
 
 static void on_controller_maestro_state_changed(GebrMaestroController *mc,
 						GebrMaestroServer *maestro,
 						GebrFlowEdition *fe);
-
-static void on_daemons_changed(GebrMaestroController *mc,
-                               GebrFlowEdition *fe);
-
-static void on_group_changed(GebrMaestroController *mc,
-			     GebrMaestroServer *maestro,
-			     GebrFlowEdition *fe);
-
-static gboolean flow_edition_find_by_group(GebrFlowEdition *fe,
-					   GebrMaestroServerGroupType type,
-					   const gchar *name,
-					   GtkTreeIter *iter);
-
-static gboolean flow_edition_find_flow_server(GebrFlowEdition *fe,
-					      GebrGeoXmlFlow *flow,
-					      GtkTreeModel   *model,
-					      GtkTreeIter    *iter);
 
 static gboolean flow_edition_may_reorder(GtkTreeView *tree_view,
 					 GtkTreeIter *iter,
@@ -97,7 +74,6 @@ static void flow_edition_menu_show_help(void);
 
 static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, GebrFlowEdition *ui_flow_edition);
 static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, GebrFlowEdition *ui_flow_edition);
-static void on_groups_combobox_changed(GtkComboBox *combobox, GebrFlowEdition *fe);
 
 static gboolean on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 					       gint x,
@@ -105,20 +81,6 @@ static gboolean on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 					       gboolean keyboard_tip,
 					       GtkTooltip * tooltip,
 					       GebrFlowEdition *ui_flow_edition);
-
-static void on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
-						       GtkCellRenderer *cell,
-						       GtkTreeModel    *tree_model,
-						       GtkTreeIter     *iter,
-						       gpointer         data);
-
-static void on_queue_set_text(GtkCellLayout   *cell_layout,
-                              GtkCellRenderer *cell,
-                              GtkTreeModel    *tree_model,
-                              GtkTreeIter     *iter,
-                              gpointer         data);
-
-static void on_queue_combobox_changed (GtkComboBox *combo, GebrFlowEdition *fe);
 
 static void select_file_column(GtkTreeView *tree_view, GebrFlowEdition *fe);
 
@@ -163,8 +125,6 @@ flow_edition_setup_ui(void)
 
 	GtkWidget *hpanel;
 	GtkWidget *frame;
-	GtkWidget *alignment;
-	GtkWidget *label;
 	GtkWidget *left_vbox;
 	GtkWidget *scrolled_window;
 	GtkWidget *vbox;
@@ -173,16 +133,10 @@ flow_edition_setup_ui(void)
 
 	/* alloc */
 	fe = g_new(GebrFlowEdition, 1);
-	fe->priv = g_new0(GebrFlowEditionPriv, 1);
-	fe->priv->name = NULL;
-	fe->priv->type = -1;
+//	fe->priv = g_new0(GebrFlowEditionPriv, 1);
 
-	g_signal_connect_after(gebr.maestro_controller, "group-changed",
-			       G_CALLBACK(on_group_changed), fe);
 	g_signal_connect_after(gebr.maestro_controller, "maestro-state-changed",
 			       G_CALLBACK(on_controller_maestro_state_changed), fe);
-	g_signal_connect(gebr.maestro_controller, "daemons-changed",
-			       G_CALLBACK(on_daemons_changed), fe);
 
 	/* Create flow edit fe->widget */
 	fe->widget = gtk_vbox_new(FALSE, 0);
@@ -195,46 +149,6 @@ flow_edition_setup_ui(void)
 	left_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
 	gtk_widget_set_size_request(left_vbox, 300, -1);
-
-	/*
-	 * Creates the QUEUE combobox
-	 */
-	fe->priv->queue_combobox = gtk_combo_box_new();
-	g_signal_connect(fe->priv->queue_combobox, "changed",
-			 G_CALLBACK(on_queue_combobox_changed), fe);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(fe->priv->queue_combobox), renderer, TRUE);
-	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(fe->priv->queue_combobox), renderer,
-	                                   on_queue_set_text, NULL, NULL);
-	gtk_widget_show(fe->priv->queue_combobox);
-
-	/*
-	 * Creates the SERVER combobox
-	 */
-	fe->priv->server_combobox = gtk_combo_box_new();
-	g_signal_connect(fe->priv->server_combobox, "changed",
-			 G_CALLBACK(on_groups_combobox_changed), fe);
-	renderer = gtk_cell_renderer_pixbuf_new();
-	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(fe->priv->server_combobox), renderer, FALSE);
-	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(fe->priv->server_combobox), renderer,
-					   on_server_disconnected_set_row_insensitive, NULL, NULL);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(fe->priv->server_combobox), renderer, TRUE);
-	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(fe->priv->server_combobox), renderer,
-					   on_server_disconnected_set_row_insensitive, NULL, NULL);
-
-	frame = gtk_frame_new(NULL);
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	label = gtk_label_new_with_mnemonic(_("Run"));
-	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
-	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
-	gtk_container_add(GTK_CONTAINER(vbox), alignment);
-	gtk_container_add(GTK_CONTAINER(vbox), fe->priv->queue_combobox);
-	gtk_container_add(GTK_CONTAINER(vbox), fe->priv->server_combobox);
-	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
 
 	frame = gtk_frame_new(_("Flow sequence"));
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, TRUE, TRUE, 0);
@@ -415,8 +329,8 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 	}
 	tooltip_execute = _("Execute");
 
-	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
-	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
+	gtk_widget_set_sensitive(gebr.ui_flow_browse->queue_combobox, sensitive);
+	gtk_widget_set_sensitive(gebr.ui_flow_browse->server_combobox, sensitive);
 
 	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
 	const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
@@ -1537,44 +1451,6 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, GebrFlowEdition
 	return GTK_MENU(menu);
 }
 
-static void
-on_groups_combobox_changed(GtkComboBox *combobox,
-			   GebrFlowEdition *fe)
-{
-	GtkTreeIter iter;
-	GtkTreeIter flow_iter;
-
-	if (!flow_browse_get_selected(&flow_iter, TRUE))
-		return;
-
-	if (!gtk_combo_box_get_active_iter(combobox, &iter))
-		return;
-
-	GtkTreeModel *model = gtk_combo_box_get_model(combobox);
-
-	GebrMaestroServer *maestro =
-		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
-							     gebr.line);
-
-	if (!maestro)
-		return;
-
-	gchar *name;
-	GebrMaestroServerGroupType type;
-	gtk_tree_model_get(model, &iter,
-			   MAESTRO_SERVER_TYPE, &type,
-			   MAESTRO_SERVER_NAME, &name,
-			   -1);
-
-	if (fe->priv->name)
-		g_free(fe->priv->name);
-	fe->priv->name = name;
-	fe->priv->type = type;
-
-	flow_edition_set_io();
-	flow_browse_info_update();
-}
-
 const gchar *
 gebr_flow_get_error_tooltip_from_id(GebrIExprError errorid)
 {
@@ -1687,181 +1563,6 @@ set_tooltip:
  * \internal
  * If the server was not connected, the combo box item stay insensitive
  */
-
-static void
-on_queue_set_text(GtkCellLayout   *cell_layout,
-                  GtkCellRenderer *cell,
-                  GtkTreeModel    *tree_model,
-                  GtkTreeIter     *iter,
-                  gpointer         data)
-{
-	GebrJob *job;
-	gchar *name_queue;
-
-	gtk_tree_model_get(tree_model, iter, 0, &job, -1);
-
-	if (!job)
-		name_queue = g_strdup(_("Immediately"));
-	else
-		name_queue = g_strdup_printf(_("After %s"), gebr_job_get_title(job));
-
-	g_object_set(cell, "text", name_queue, NULL);
-	g_free(name_queue);
-}
-
-static void
-on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
-					   GtkCellRenderer *cell,
-					   GtkTreeModel    *tree_model,
-					   GtkTreeIter     *iter,
-					   gpointer         data)
-{
-	gchar *name;
-	GebrMaestroServerGroupType type;
-
-	gtk_tree_model_get(tree_model, iter,
-			   MAESTRO_SERVER_TYPE, &type,
-			   MAESTRO_SERVER_NAME, &name,
-			   -1);
-
-	GebrDaemonServer *daemon = NULL;
-	GebrMaestroServer *maestro;
-	gboolean is_connected = TRUE;
-
-	maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
-							       gebr.line);
-
-	if (!maestro) {
-		if (GTK_IS_CELL_RENDERER_TEXT(cell))
-			g_object_set(cell, "text", "", NULL);
-		else
-			g_object_set(cell, "stock-id", NULL, NULL);
-		return;
-	}
-
-	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
-		daemon = gebr_maestro_server_get_daemon(maestro, name);
-		if (!daemon)
-			return;
-		is_connected = gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED;
-	}
-
-	if (GTK_IS_CELL_RENDERER_TEXT(cell)) {
-		const gchar *txt;
-
-		if (type == MAESTRO_SERVER_TYPE_GROUP) {
-			if (name && *name)
-				txt = name;
-			else
-				txt = gebr_maestro_server_get_display_address(maestro);
-		} else  {
-			txt = gebr_daemon_server_get_hostname(daemon);
-			if (!txt || !*txt)
-				txt = gebr_daemon_server_get_address(daemon);
-		}
-		g_object_set(cell, "text", txt, NULL);
-	} else {
-		const gchar *stock_id;
-		if (type == MAESTRO_SERVER_TYPE_GROUP)
-			stock_id = "group";
-		else {
-			if (is_connected)
-				stock_id = GTK_STOCK_CONNECT;
-			else
-				stock_id = GTK_STOCK_DISCONNECT;
-		}
-
-		g_object_set(cell, "stock-id", stock_id, NULL);
-	}
-
-	g_object_set(cell, "sensitive", is_connected, NULL);
-}
-
-static void on_queue_combobox_changed (GtkComboBox *combo, GebrFlowEdition *fe)
-{
-	gint index;
-	GebrJob *job;
-	GtkTreeIter iter;
-	GtkTreeIter server_iter;
-	GtkTreeModel *server_model;
-
-	if (!flow_browse_get_selected (&iter, FALSE))
-		return;
-
-	if (!gtk_combo_box_get_active_iter (GTK_COMBO_BOX(fe->priv->server_combobox), &server_iter))
-		return;
-
-	server_model = gtk_combo_box_get_model (GTK_COMBO_BOX(fe->priv->server_combobox));
-
-	gtk_tree_model_get (server_model, &server_iter,
-			    0, &job,
-			    -1);
-
-	index = gtk_combo_box_get_active (combo);
-
-	if (index < 0)
-		index = 0;
-
-	gtk_combo_box_set_active(combo, index);
-}
-
-static gboolean
-flow_edition_find_by_group(GebrFlowEdition *fe,
-			   GebrMaestroServerGroupType type,
-			   const gchar *name,
-			   GtkTreeIter *iter)
-{
-	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(fe->priv->server_combobox));
-	if (!model)
-		return FALSE;
-
-	gboolean valid = gtk_tree_model_get_iter_first(model, iter);
-
-	while (valid)
-	{
-		GebrMaestroServerGroupType ttype;
-		gchar *tname;
-
-		gtk_tree_model_get(model, iter,
-				   MAESTRO_SERVER_TYPE, &ttype,
-				   MAESTRO_SERVER_NAME, &tname,
-				   -1);
-
-		if (g_strcmp0(tname, name) == 0 && ttype == type) {
-			g_free(tname);
-			return TRUE;
-		}
-
-		g_free(tname);
-		valid = gtk_tree_model_iter_next(model, iter);
-	}
-
-	return gtk_tree_model_get_iter_first(model, iter);
-}
-
-static gboolean
-flow_edition_find_flow_server(GebrFlowEdition *fe,
-			      GebrGeoXmlFlow *flow,
-			      GtkTreeModel   *model,
-			      GtkTreeIter    *iter)
-{
-	if (!flow)
-		return FALSE;
-
-	gboolean ret;
-	gchar *tmp, *name;
-	GebrMaestroServerGroupType type;
-
-	gebr_geoxml_flow_server_get_group(flow, &tmp, &name);
-	type = gebr_maestro_server_group_str_to_enum(tmp);
-	ret = flow_edition_find_by_group(fe, type, name, iter);
-
-	g_free(tmp);
-	g_free(name);
-
-	return ret;
-}
-
 void
 flow_edition_revalidate_programs(void)
 {
@@ -2016,50 +1717,6 @@ void flow_program_check_sensitiveness (void)
 }
 
 static void
-restore_last_selection(GebrFlowEdition *fe)
-{
-	GtkTreeIter iter;
-
-	if (flow_edition_find_by_group(fe, fe->priv->type,
-				       fe->priv->name, &iter))
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(fe->priv->server_combobox), &iter);
-}
-
-static void
-on_group_changed(GebrMaestroController *mc,
-		 GebrMaestroServer *maestro,
-		 GebrFlowEdition *fe)
-{
-	GtkTreeIter iter;
-	GtkComboBox *cb = GTK_COMBO_BOX(fe->priv->server_combobox);
-	GtkTreeModel *model = gtk_combo_box_get_model(cb);
-
-	if (!gebr.line)
-		return;
-
-	if (fe->priv->name) {
-		restore_last_selection(fe);
-		return;
-	}
-
-	if (gebr_maestro_controller_get_maestro_for_line(mc, gebr.line)) {
-		if (flow_edition_find_flow_server(fe, gebr.flow, model, &iter)) {
-			gchar *name;
-			gtk_tree_model_get(model, &iter, MAESTRO_SERVER_NAME, &name, -1);
-			gtk_combo_box_set_active_iter(cb, &iter);
-		}
-		gebr_flow_edition_select_queue(fe);
-	}
-}
-
-static void
-on_daemons_changed(GebrMaestroController *mc,
-                   GebrFlowEdition *fe)
-{
-	gebr_flow_edition_select_group_for_flow(fe, gebr.flow);
-}
-
-static void
 on_controller_maestro_state_changed(GebrMaestroController *mc,
 				    GebrMaestroServer *maestro,
 				    GebrFlowEdition *fe)
@@ -2078,7 +1735,6 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, TRUE);
 		break;
 	case SERVER_STATE_LOGGED:
-		gebr_flow_edition_update_server(fe, maestro);
 		break;
 	default:
 		break;
@@ -2108,128 +1764,6 @@ gebr_flow_edition_show(GebrFlowEdition *fe)
 void
 gebr_flow_edition_hide(GebrFlowEdition *self)
 {
-}
-
-void
-gebr_flow_edition_select_queue(GebrFlowEdition *self)
-{
-	if (gtk_combo_box_get_active(GTK_COMBO_BOX(self->priv->queue_combobox)) == -1)
-		gtk_combo_box_set_active(GTK_COMBO_BOX(self->priv->queue_combobox), 0);
-
-	if (gebr.config.niceness == 0)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
-}
-
-void
-gebr_flow_edition_update_server(GebrFlowEdition *fe,
-				GebrMaestroServer *maestro)
-{
-	gboolean sensitive = maestro != NULL;
-
-	if (maestro) {
-		const gchar *type, *msg;
-
-		gebr_maestro_server_get_error(maestro, &type, &msg);
-
-		if (g_strcmp0(type, "error:none") == 0) {
-			/* Set groups/servers model for Maestro */
-			GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
-			gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
-
-			/* Set queues model for Maestro */
-			GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro);
-			gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->queue_combobox), queue_model);
-
-			if (gebr.flow)
-				gebr_flow_edition_select_group_for_flow(fe, gebr.flow);
-		}
-		else
-			sensitive = FALSE;
-	}
-	if (gebr_geoxml_line_get_flows_number(gebr.line) > 0)
-		flow_edition_set_run_widgets_sensitiveness(fe, sensitive, TRUE);
-	else
-		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, FALSE);
-}
-
-const gchar *
-gebr_flow_edition_get_selected_queue(GebrFlowEdition *fe)
-{
-	GtkTreeIter iter;
-	GtkComboBox *combo = GTK_COMBO_BOX(fe->priv->queue_combobox);
-
-	if (!gtk_combo_box_get_active_iter(combo, &iter))
-		return "";
-	else {
-		GebrJob *job;
-		GtkTreeModel *model = gtk_combo_box_get_model(combo);
-		gtk_tree_model_get(model, &iter, 0, &job, -1);
-		return job ? gebr_job_get_id(job) : "";
-	}
-}
-
-const gchar *
-gebr_flow_edition_get_selected_server(GebrFlowEdition *fe)
-{
-	GtkTreeIter iter;
-	GtkComboBox *combo = GTK_COMBO_BOX(fe->priv->server_combobox);
-	GtkTreeModel *model = gtk_combo_box_get_model(combo);
-
-	if (!gtk_combo_box_get_active_iter(combo, &iter))
-		return "";
-
-	GebrDaemonServer *daemon;
-	gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-	return gebr_daemon_server_get_address(daemon);
-}
-
-void 
-gebr_flow_edition_get_current_group(GebrFlowEdition *fe,
-				    GebrMaestroServerGroupType *type,
-				    gchar **name)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(fe->priv->server_combobox));
-
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(fe->priv->server_combobox), &iter))
-		gtk_tree_model_get_iter_first(model, &iter);
-
-	gtk_tree_model_get(model, &iter,
-			   MAESTRO_SERVER_TYPE, type,
-			   MAESTRO_SERVER_NAME, name,
-			   -1);
-}
-
-void
-gebr_flow_edition_get_server_hostname(GebrFlowEdition *fe,
-                                      gchar **host)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(fe->priv->server_combobox));
-
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(fe->priv->server_combobox), &iter))
-		gtk_tree_model_get_iter_first(model, &iter);
-
-	gtk_tree_model_get(model, &iter,
-			   MAESTRO_SERVER_HOST, host,
-			   -1);
-}
-
-void
-gebr_flow_edition_select_group_for_flow(GebrFlowEdition *fe,
-					GebrGeoXmlFlow *flow)
-{
-	GtkTreeIter iter;
-	GtkComboBox *cb = GTK_COMBO_BOX(fe->priv->server_combobox);
-	GtkTreeModel *model = gtk_combo_box_get_model(cb);
-
-	if (model) {
-		if (flow_edition_find_flow_server(fe, flow, model, &iter))
-			gtk_combo_box_set_active_iter(cb, &iter);
-		gebr_flow_edition_select_queue(fe);
-	}
 }
 
 gchar *

@@ -27,6 +27,7 @@
 
 #include <libgebr/geoxml/geoxml.h>
 #include "libgebr/comm/gebr-comm-process.h"
+#include "gebr-maestro-server.h"
 
 G_BEGIN_DECLS
 
@@ -53,7 +54,17 @@ typedef struct {
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *snap_renderer;
 
+	GtkWidget *queue_combobox;
+	GtkWidget *server_combobox;
+	gchar *name;
+	GebrMaestroServerGroupType type;
+
+	GtkWidget *menu_window;
+	GtkTreeStore *menu_store;
+	GtkWidget *menu_view;
+
 	GtkWidget *prog_window;
+	GtkWidget *prog_frame;
 
 	GtkWidget *info_window;
 	GtkWidget *warn_window;
@@ -174,6 +185,18 @@ void gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 
 void gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
                                const gchar *job_id);
+
+const gchar *gebr_flow_browse_get_selected_queue(GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_get_current_group(GebrUiFlowBrowse *fb,
+                                        GebrMaestroServerGroupType *type,
+                                        gchar **name);
+
+void gebr_flow_browse_get_server_hostname(GebrUiFlowBrowse *fb,
+                                          gchar **host);
+
+void gebr_flow_browse_update_server(GebrUiFlowBrowse *fb,
+                                    GebrMaestroServer *maestro);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

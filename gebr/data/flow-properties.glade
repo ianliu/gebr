@@ -207,6 +207,26 @@
       </packing>
     </child>
     <child>
+      <object class="GtkScrolledWindow" id="menu_view">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="hscrollbar_policy">automatic</property>
+        <property name="vscrollbar_policy">automatic</property>
+        <child>
+          <object class="GtkViewport" id="menu_view_box">
+            <property name="visible">True</property>
+            <property name="resize_mode">queue</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="position">4</property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkVBox" id="info_jobs_box">
         <child>
         	 <object class="GtkInfoBar" id="info_run">
@@ -278,7 +298,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">False</property>
-        <property name="position">4</property>
+        <property name="position">5</property>
       </packing>
     </child>
   </object>

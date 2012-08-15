@@ -1707,7 +1707,7 @@ static void project_line_load(void)
 	GebrMaestroServer *maestro =
 			gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
 			                                             gebr.line);
-	gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
+	gebr_flow_browse_update_server(gebr.ui_flow_browse, maestro);
 
 	project_line_info_update();
 

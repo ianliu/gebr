@@ -82,7 +82,7 @@ parameters_configure_setup_ui(void)
 	gchar *name;
 	GebrMaestroServerGroupType type;
 	gdouble speed = gebr_interface_get_execution_speed();
-	gebr_flow_edition_get_current_group(gebr.ui_flow_edition, &type, &name);
+	gebr_flow_browse_get_current_group(gebr.ui_flow_browse, &type, &name);
 
 	gebr_ui_flow_update_prog_mpi_nprocess(GEBR_GEOXML_PROGRAM(clone), maestro, speed, name, type);
 

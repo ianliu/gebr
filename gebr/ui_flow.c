@@ -155,7 +155,7 @@ run_flow(GebrGeoXmlFlow *flow,
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return NULL;
 
-	const gchar *parent_rid = gebr_flow_edition_get_selected_queue(gebr.ui_flow_edition);
+	const gchar *parent_rid = gebr_flow_browse_get_selected_queue(gebr.ui_flow_browse);
 
 	gdouble speed;
 	if (!gebr_geoxml_flow_is_single_core(flow, gebr.validator))
@@ -187,10 +187,10 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	GebrMaestroServerGroupType type;
 	gchar *name, *host = NULL;
-	gebr_flow_edition_get_current_group(gebr.ui_flow_edition, &type, &name);
+	gebr_flow_browse_get_current_group(gebr.ui_flow_browse, &type, &name);
 
 	if (type == MAESTRO_SERVER_TYPE_DAEMON)
-		gebr_flow_edition_get_server_hostname(gebr.ui_flow_edition, &host);
+		gebr_flow_browse_get_server_hostname(gebr.ui_flow_browse, &host);
 
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
 	gebr_geoxml_flow_server_set_group(flow, group_type, name);
