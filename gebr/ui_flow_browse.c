@@ -265,7 +265,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	GtkWidget *page;
 	GtkWidget *hpanel;
 	GtkWidget *scrolled_window;
-	GtkWidget *scrolled_window_info;
 	GtkWidget *infopage;
 
 	/* alloc */
@@ -290,13 +289,13 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
-	gtk_widget_set_size_request(scrolled_window, 300, -1);
+	gtk_widget_set_size_request(scrolled_window, 250, -1);
 	gtk_paned_pack1(GTK_PANED(list), scrolled_window, FALSE, FALSE);
 
 	ui_flow_browse->prog_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(ui_flow_browse->prog_window), GTK_POLICY_AUTOMATIC,
 	                               GTK_POLICY_AUTOMATIC);
-	gtk_widget_set_size_request(ui_flow_browse->prog_window, 300, -1);
+	gtk_widget_set_size_request(ui_flow_browse->prog_window, 250, 50);
 	gtk_paned_pack2(GTK_PANED(list), ui_flow_browse->prog_window, FALSE, FALSE);
 
 	/* Set programs list */
@@ -356,10 +355,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/*
 	 * Right side: flow info tab
 	 */
-	scrolled_window_info = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window_info),
-	                               GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
 	/* Get glade file */
 	ui_flow_browse->info.builder_flow = gtk_builder_new();
 	gtk_builder_add_from_file(ui_flow_browse->info.builder_flow, GEBR_GLADE_DIR "/flow-properties.glade", NULL);
@@ -379,9 +374,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_widget_set_sensitive(ui_flow_browse->warn_window, FALSE);
 	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->warn_window, TRUE, TRUE, 0);
 
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window_info), infopage);
-
-	gtk_paned_pack2(GTK_PANED(hpanel), scrolled_window_info, TRUE, FALSE);
+	gtk_paned_pack2(GTK_PANED(hpanel), infopage, TRUE, FALSE);
 
 	/* Flow Icon Status */
 	ui_flow_browse->info.status = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_status"));
