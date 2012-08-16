@@ -1661,7 +1661,7 @@ static void project_line_load(void)
 
 	project_line_free();
 	if (!project_line_get_selected(&iter, DontWarnUnselection)) {
-		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
+		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, FALSE, FALSE);
 		return;
 	}
 

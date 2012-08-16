@@ -102,8 +102,8 @@ on_context_button_toggled(GtkToggleButton *button,
 	g_signal_handlers_block_by_func(fb->snapshots_ctx_button, on_context_button_toggled, fb);
 
 	if (!active) {
-		gtk_toggle_button_set_active(button, TRUE);
-		goto out;
+		active = TRUE;
+		gtk_toggle_button_set_active(button, active);
 	}
 
 	if (button == fb->properties_ctx_button) {
@@ -126,15 +126,14 @@ on_context_button_toggled(GtkToggleButton *button,
 		gtk_widget_hide(fb->properties_ctx_box);
 		gtk_widget_show(fb->snapshots_ctx_box);
 	}
-	gtk_widget_hide(fb->jobs_ctx_box);
-	gtk_widget_hide(fb->menu_window);
 
 	GList *childs = gtk_container_get_children(GTK_CONTAINER(gebr.ui_flow_browse->jobs_status_box));
 	for (GList *i = childs; i; i = i->next)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->data), FALSE);
 
 
-out:
+	gtk_widget_hide(fb->jobs_ctx_box);
+	gtk_widget_hide(fb->menu_window);
 	g_signal_handlers_unblock_by_func(fb->properties_ctx_button, on_context_button_toggled, fb);
 	g_signal_handlers_unblock_by_func(fb->snapshots_ctx_button, on_context_button_toggled, fb);
 }
@@ -202,10 +201,9 @@ on_dismiss_clicked(GtkButton *dismiss,
 
 	/* Restore last context */
 	if (gtk_toggle_button_get_active(fb->properties_ctx_button))
-		gtk_widget_show(fb->properties_ctx_box);
+		gtk_toggle_button_set_active(fb->properties_ctx_button, TRUE);
 	else
-		gtk_widget_show(fb->snapshots_ctx_box);
-	gtk_widget_hide(fb->jobs_ctx_box);
+		gtk_toggle_button_set_active(fb->snapshots_ctx_button, TRUE);
 }
 
 void
@@ -516,9 +514,9 @@ gebr_flow_browse_update_server(GebrUiFlowBrowse *fb,
 			sensitive = FALSE;
 	}
 	if (gebr_geoxml_line_get_flows_number(gebr.line) > 0)
-		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, sensitive, TRUE);
+		flow_browse_set_run_widgets_sensitiveness(fb, sensitive, TRUE);
 	else
-		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
+		flow_browse_set_run_widgets_sensitiveness(fb, FALSE, FALSE);
 }
 
 static void
@@ -544,7 +542,7 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
-		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, TRUE);
+		flow_browse_set_run_widgets_sensitiveness(fb, FALSE, TRUE);
 		break;
 	case SERVER_STATE_LOGGED:
 		gebr_flow_browse_update_server(fb, maestro);
@@ -713,7 +711,7 @@ static void flow_browse_menu_add(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	gebr_flow_set_toolbar_sensitive();
-	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 
 	/* and to the GUI */
@@ -1461,6 +1459,7 @@ static void flow_browse_load(void)
 	flow_free();
 
 	gebr_flow_set_toolbar_sensitive();
+	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 
 	if (!flow_browse_get_selected(&iter, FALSE))
 		return;
@@ -1529,12 +1528,16 @@ static void flow_browse_load(void)
 	                                       gebr.flow);
 
 	flow_browse_info_update();
-	gtk_widget_hide(gebr.ui_flow_browse->menu_window);
 
-	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-		gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
-	else
-		gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
+	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
+		gebr_flow_browse_show_menu_list(gebr.ui_flow_browse);
+	} else {
+		if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+			gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
+		else
+			gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
+		gtk_widget_show(gebr.ui_flow_browse->properties_ctx_box);
+	}
 
 	g_free(filename);
 	g_free(title);
@@ -1606,10 +1609,7 @@ static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			     GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse)
 {
-	gtk_widget_hide(gebr.ui_flow_browse->snapshots_ctx_box);
-	gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
-	gtk_widget_hide(gebr.ui_flow_browse->properties_ctx_box);
-	gtk_widget_show(gebr.ui_flow_browse->menu_window);
+	gebr_flow_browse_show_menu_list(ui_flow_browse);
 }
 
 static void
@@ -2045,8 +2045,10 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	if (!flow)
 		return;
 
-	if (gtk_widget_get_visible(fb->menu_window))
+	if (gtk_widget_get_visible(fb->menu_window)) {
 		gtk_widget_hide(fb->menu_window);
+		gtk_widget_show(fb->properties_ctx_box);
+	}
 
 	GString *prog_content = g_string_new("");
 	g_string_append_printf(prog_content, "<html>\n"
@@ -2149,4 +2151,58 @@ gebr_flow_browse_get_server_hostname(GebrUiFlowBrowse *fb,
 	gtk_tree_model_get(model, &iter,
 			   MAESTRO_SERVER_HOST, host,
 			   -1);
+}
+
+void
+flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
+                                          gboolean sensitive,
+                                          gboolean maestro_err)
+{
+	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive)
+		sensitive = FALSE;
+
+	const gchar *tooltip_disconn;
+	const gchar *tooltip_execute;
+
+	if (!gebr.line) {
+		if (!gebr.project)
+			tooltip_disconn = _("Select a line to execute a flow");
+		else
+			tooltip_disconn = _("Select a line of this project to execute a flow");
+	} else {
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
+			tooltip_disconn = _("The Maestro of this line is disconnected.\nConnecting it to execute a flow.");
+		else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
+			tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
+		else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+			tooltip_disconn = _("This flow does not contain programs\nAdd at least one to execute this flow");
+		else
+			tooltip_disconn = _("Execute");
+	}
+	tooltip_execute = _("Execute");
+
+	gtk_widget_set_sensitive(fb->queue_combobox, sensitive);
+	gtk_widget_set_sensitive(fb->server_combobox, sensitive);
+
+	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
+	const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
+
+	gtk_action_set_stock_id(action, "gtk-execute");
+	gtk_action_set_sensitive(action, sensitive);
+	gtk_action_set_tooltip(action, tooltip);
+
+	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
+	gtk_action_set_stock_id(action, "gtk-execute");
+	gtk_action_set_sensitive(action, sensitive);
+	gtk_action_set_tooltip(action, tooltip);
+}
+
+void
+gebr_flow_browse_show_menu_list(GebrUiFlowBrowse *fb)
+{
+	gtk_widget_show(fb->menu_window);
+	gtk_widget_hide(fb->properties_ctx_box);
+	gtk_widget_hide(fb->snapshots_ctx_box);
+	gtk_widget_hide(fb->jobs_ctx_box);
 }

@@ -297,54 +297,6 @@ gebr_flow_edition_update_speed_slider_sensitiveness(GebrFlowEdition *fe)
 						  sensitive);
 }
 
-void
-flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
-                                           gboolean sensitive,
-                                           gboolean maestro_err)
-{
-	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive)
-		sensitive = FALSE;
-
-	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0 && sensitive)
-		sensitive = FALSE;
-
-	const gchar *tooltip_disconn;
-	const gchar *tooltip_execute;
-
-	if (!gebr.line) {
-		if (!gebr.project)
-			tooltip_disconn = _("Select a line to execute a flow");
-		else
-			tooltip_disconn = _("Select a line of this project to execute a flow");
-	} else {
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
-			tooltip_disconn = _("The Maestro of this line is disconnected.\nConnecting it to execute a flow.");
-		else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
-			tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
-		else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
-			tooltip_disconn = _("This flow does not contain programs\nAdd at least one to execute this flow");
-		else
-			tooltip_disconn = _("Execute");
-	}
-	tooltip_execute = _("Execute");
-
-	gtk_widget_set_sensitive(gebr.ui_flow_browse->queue_combobox, sensitive);
-	gtk_widget_set_sensitive(gebr.ui_flow_browse->server_combobox, sensitive);
-
-	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
-	const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
-
-	gtk_action_set_stock_id(action, "gtk-execute");
-	gtk_action_set_sensitive(action, sensitive);
-	gtk_action_set_tooltip(action, tooltip);
-
-	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
-	gtk_action_set_stock_id(action, "gtk-execute");
-	gtk_action_set_sensitive(action, sensitive);
-	gtk_action_set_tooltip(action, tooltip);
-}
-
 void flow_edition_load_components(void)
 {
 	GebrGeoXmlSequence *first_program;
@@ -1207,7 +1159,7 @@ static void flow_edition_menu_add(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	gebr_flow_set_toolbar_sensitive();
-	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 
 	/* and to the GUI */
@@ -1732,7 +1684,7 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
-		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, TRUE);
+		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, FALSE, TRUE);
 		break;
 	case SERVER_STATE_LOGGED:
 		break;

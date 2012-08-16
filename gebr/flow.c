@@ -89,7 +89,7 @@ void flow_new (void)
 
 	flow_edition_set_io();
 
-	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New Flow added to Line '%s'."), line_title);
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.flow), on_properties_response, TRUE);
@@ -219,7 +219,7 @@ void flow_delete(gboolean confirm)
 		flow_browse_select_iter(&iter);
 
 	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
-		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
+		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, FALSE, FALSE);
 
 	flow_browse_info_update();
 
@@ -261,7 +261,7 @@ static gboolean flow_import_single (const gchar *path)
 	g_free(new_title);
 
 	gebr_flow_set_toolbar_sensitive();
-	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 
 	return TRUE;
 }
@@ -989,7 +989,7 @@ void flow_program_remove(void)
 
 	gebr_flow_set_toolbar_sensitive();
 	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
-		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
+		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, FALSE, FALSE);
 
 	if (valid)
 		flow_edition_select_component_iter(&iter);
@@ -1075,7 +1075,7 @@ void flow_paste(void)
 	}
 	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 
-	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 	project_line_info_update();
 }
 
@@ -1117,7 +1117,7 @@ void flow_program_paste(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 	flow_edition_revalidate_programs();
 	gebr_flow_set_toolbar_sensitive();
-	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 }
 
 void

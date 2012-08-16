@@ -57,10 +57,7 @@ void on_new_activate(void)
 			GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
 
 			if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-				gtk_widget_hide(gebr.ui_flow_browse->snapshots_ctx_box);
-				gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
-				gtk_widget_hide(gebr.ui_flow_browse->properties_ctx_box);
-				gtk_widget_show(gebr.ui_flow_browse->menu_window);
+				gebr_flow_browse_show_menu_list(gebr.ui_flow_browse);
 				return;
 			}
 		}

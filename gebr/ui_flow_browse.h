@@ -208,5 +208,11 @@ void gebr_flow_browse_get_server_hostname(GebrUiFlowBrowse *fb,
 void gebr_flow_browse_update_server(GebrUiFlowBrowse *fb,
                                     GebrMaestroServer *maestro);
 
+void flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
+                                               gboolean sensitive,
+                                               gboolean maestro_err);
+
+void gebr_flow_browse_show_menu_list(GebrUiFlowBrowse *fb);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H
