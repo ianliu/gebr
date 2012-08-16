@@ -2361,6 +2361,9 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, jc->priv->view) {
+		if (!gtk_tree_store_iter_is_valid(GTK_TREE_STORE(model), &iter))
+			continue;
+
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		
 		if (selected_rows == 1) {
