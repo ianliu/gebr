@@ -1166,6 +1166,7 @@ gebr_flow_set_toolbar_sensitive(void)
 
 	GtkTreeSelection *flows_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gint flows_nrows = gtk_tree_selection_count_selected_rows(flows_selection);
+	gint total_rows = gebr_geoxml_line_get_flows_number(gebr.line);
 
 	if (sensitive && flows_nrows == 1) {
 		gtk_widget_show(gebr.ui_flow_browse->info_window);
@@ -1184,7 +1185,10 @@ gebr_flow_set_toolbar_sensitive(void)
 						"GêBR can execute them\n"
 						"- <i>sequentially</i> (Ctrl+R) or\n"
 						"- <i>parallelly</i> (Ctrl+Shift+R)"),
-						flows_nrows);
+									flows_nrows);
+			else if (flows_nrows == 0 && total_rows > 0)
+				label_msg = g_markup_printf_escaped(_("No Flow is selected\n"));
+
 			else
 				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
 						"Click on <i>New Flow</i> to create a new one\n"
