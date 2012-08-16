@@ -100,10 +100,12 @@ static const GtkActionEntry actions_entries_flow[] = {
 	/*
 	 * Flow
 	 */
-	{"flow_new", GTK_STOCK_NEW, NULL,
-		"<Control>F", N_("New Flow"), G_CALLBACK(on_new_activate)},
+	{"flow_new", GTK_STOCK_NEW, N_("New Flow"),
+		"<Control>F", N_("New"), G_CALLBACK(on_new_activate)},
+	{"flow_new_program", GTK_STOCK_NEW, N_("New Program"),
+		NULL, NULL, G_CALLBACK(on_new_program_activate)},
 	{"flow_delete", GTK_STOCK_DELETE, NULL, "Delete",
-		N_("Delete selected Flows"), G_CALLBACK(on_flow_delete_activate)},
+		N_("Delete"), G_CALLBACK(on_flow_delete_activate)},
 	{"flow_properties", "kontact_todo", N_("Properties"),
 		NULL, N_("Edit properties"), G_CALLBACK(on_document_properties_activate)},
 	{"flow_dict_edit", "accessories-dictionary", N_("Variables dictionary"),
@@ -119,9 +121,9 @@ static const GtkActionEntry actions_entries_flow[] = {
 	{"flow_execute_parallel", NULL, NULL,
 		"<Control><Shift>R", NULL, G_CALLBACK(on_flow_execute_parallel_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
-		NULL, N_("Copy selected Flows to clipboard"), G_CALLBACK(on_copy_activate)},
+		NULL, N_("Copy to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
-		NULL, N_("Paste Flows from clipboard"), G_CALLBACK(on_paste_activate)},
+		NULL, N_("Paste from clipboard"), G_CALLBACK(on_paste_activate)},
 	{"flow_view", GTK_STOCK_DND, N_("View Report"),
 		NULL, N_("View report"), G_CALLBACK(on_flow_browse_show_help)},
 	{"flow_edit", "kontact_journal_altered3", N_("Edit Comments"),
@@ -135,21 +137,21 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	{"flow_edition_help", GTK_STOCK_HELP, NULL,
 		"<Control><Shift>h", N_("Show Program's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
-		"Delete", N_("Delete Program"), G_CALLBACK(on_flow_component_delete_activate)},
+		"Delete", N_("Delete"), G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties",  "kontact_todo", N_("Properties"),
 		NULL, N_("Edit the Program's parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
 		NULL, N_("Refresh Menu list"), G_CALLBACK(on_flow_component_refresh_activate)},
 	{"flow_edition_copy", GTK_STOCK_COPY, N_("Copy"),
-		NULL, N_("Copy selected Programs to clipboard"), G_CALLBACK(on_copy_activate)},
+		NULL, N_("Copy to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"),
-		NULL, N_("Paste Programs from clipboard"), G_CALLBACK(on_paste_activate)},
+		NULL, N_("Paste from clipboard"), G_CALLBACK(on_paste_activate)},
 	{"flow_edition_top", GTK_STOCK_GOTO_TOP, N_("Move to Top"),
 		"Home", NULL, G_CALLBACK(on_flow_component_move_top)},
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_execute_activate)}
+		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_execute_activate)},
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {

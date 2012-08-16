@@ -37,6 +37,10 @@ void on_new_project_activate(void);
  */
 void on_new_line_activate(void);
 /**
+ *
+ */
+void on_new_program_activate(void);
+/**
  * Select copy target depending on the context
  */
 void on_copy_activate(void);

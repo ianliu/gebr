@@ -92,6 +92,11 @@ void on_new_line_activate(void)
 	}
 }
 
+void on_new_program_activate(void)
+{
+	gebr_flow_browse_show_menu_list(gebr.ui_flow_browse);
+}
+
 void on_copy_activate(void)
 {
 	GtkTreeIter iter;
@@ -167,7 +172,30 @@ void on_quit_activate(void)
 
 void on_document_properties_activate(void)
 {
-	document_properties_setup_ui(document_get_current(), NULL, FALSE);
+	GtkTreeIter iter;
+	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+	case NOTEBOOK_PAGE_FLOW_BROWSE :{
+		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
+			GebrGeoXmlObject *object;
+
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+			                   FSEQ_GEBR_GEOXML_POINTER, &object, -1);
+
+			if (!object)
+				continue;
+
+			GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
+			if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+				flow_edition_component_activated();
+				return;
+			}
+		}
+		document_properties_setup_ui(document_get_current(), NULL, FALSE);
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void on_document_dict_edit_activate(void)
