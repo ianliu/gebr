@@ -1536,6 +1536,8 @@ static void flow_browse_load(void)
 			gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
 		else
 			gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
+		if (gtk_widget_get_visible(gebr.ui_flow_browse->jobs_ctx_box))
+			gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
 		gtk_widget_show(gebr.ui_flow_browse->properties_ctx_box);
 	}
 
