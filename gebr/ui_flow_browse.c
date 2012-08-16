@@ -1142,7 +1142,7 @@ on_job_info_status_changed(GebrJob *job,
 		icon = GTK_STOCK_EXECUTE;
 		job_state = g_strdup(_("started"));
 		date = gebr_localized_date(gebr_job_get_start_date(job));
-		gtk_widget_set_tooltip_text(container, _("See the output of this job"));
+		gtk_widget_set_tooltip_text(container, _("Show the output of this job"));
 		break;
 	case JOB_STATUS_CANCELED:
 		icon = GTK_STOCK_CANCEL;
