@@ -52,15 +52,6 @@ enum {
 	FSEQ_PROGRAM_DISABLED,
 };
 
-/**
- * Menu store fields
- */
-enum {
-	MENU_TITLE_COLUMN = 0,
-	MENU_DESC_COLUMN,
-	MENU_FILEPATH_COLUMN,
-	MENU_N_COLUMN
-};
 typedef struct _GebrFlowEdition GebrFlowEdition;
 typedef struct _GebrFlowEditionPriv GebrFlowEditionPriv;
 

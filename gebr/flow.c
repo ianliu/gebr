@@ -993,6 +993,8 @@ void flow_program_remove(void)
 
 	if (valid)
 		flow_edition_select_component_iter(&iter);
+
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 }
 
 void flow_program_move_top(void)

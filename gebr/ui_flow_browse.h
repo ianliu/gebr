@@ -45,6 +45,16 @@ enum {
 };
 
 /**
+ * Menu store fields
+ */
+enum {
+	MENU_TITLE_COLUMN = 0,
+	MENU_DESC_COLUMN,
+	MENU_FILEPATH_COLUMN,
+	MENU_N_COLUMN
+};
+
+/**
  */
 typedef struct {
 	GtkWidget *widget;

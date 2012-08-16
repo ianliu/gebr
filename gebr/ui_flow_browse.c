@@ -1065,17 +1065,19 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/*
 	 * Menu list context
 	 */
-	frame = gtk_frame_new(_("Menus"));
-	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, FALSE);
-	gtk_widget_set_size_request(frame, 150, -1);
+	ui_flow_browse->menu_window = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "menu_box"));
 
-	ui_flow_browse->menu_window = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "menu_view"));
-	GtkWidget *menu_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "menu_view_box"));
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
+	                               GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(ui_flow_browse->menu_window), scrolled_window);
 
 	ui_flow_browse->menu_store = gtk_tree_store_new(MENU_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_flow_browse->menu_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
+
 	ui_flow_browse->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->menu_store));
-	gtk_container_add(GTK_CONTAINER(menu_box), ui_flow_browse->menu_view);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->menu_view);
+
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->menu_view),
 	                                          (GebrGuiGtkPopupCallback) flow_browse_menu_popup_menu,
 	                                          ui_flow_browse);
@@ -1097,9 +1099,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Description"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->menu_view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_DESC_COLUMN);frame = gtk_frame_new(_("Menus"));
-	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, FALSE);
-	gtk_widget_set_size_request(frame, 150, -1);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_DESC_COLUMN);
 
 	/*
 	 * Add Flow Page on GêBR window
@@ -2044,6 +2044,9 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 {
 	if (!flow)
 		return;
+
+	if (gtk_widget_get_visible(fb->menu_window))
+		gtk_widget_hide(fb->menu_window);
 
 	GString *prog_content = g_string_new("");
 	g_string_append_printf(prog_content, "<html>\n"
