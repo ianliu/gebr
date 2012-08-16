@@ -907,7 +907,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_widget_set_size_request(ui_flow_browse->prog_window, 250, 50);
 
 	ui_flow_browse->prog_frame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(ui_flow_browse->prog_window), ui_flow_browse->prog_frame);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(ui_flow_browse->prog_window), ui_flow_browse->prog_frame);
 
 	/* Set programs list */
 	GtkWidget *prog_view = gebr_flow_edition_get_programs_view(gebr.ui_flow_edition);
