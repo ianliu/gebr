@@ -1122,7 +1122,7 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 		keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
 
 		GebrGeoXmlFlow *flow;
-		flow = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_EDITION ? gebr.flow : NULL;
+		flow = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE ? gebr.flow : NULL;
 		completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (flow),
 									   GEBR_GEOXML_DOCUMENT (gebr.line),
 									   GEBR_GEOXML_DOCUMENT (gebr.project),
