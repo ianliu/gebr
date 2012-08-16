@@ -126,6 +126,10 @@ void on_paste_activate(void)
 
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 			                   FSEQ_GEBR_GEOXML_POINTER, &object, -1);
+
+			if (!object)
+				continue;
+
 			GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
 			if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 				flow_program_paste();
