@@ -367,7 +367,6 @@ gebr_ui_flow_run(gboolean is_parallel)
 					return;
 				}
 			}
-			gebr_flow_browse_reset_jobs_from_flow(flow, gebr.ui_flow_browse);
 		}
 
 		if (is_parallel)
@@ -378,16 +377,16 @@ gebr_ui_flow_run(gboolean is_parallel)
 		if (!id)
 			return;
 
+		gebr_flow_browse_reset_jobs_from_flow(flow, gebr.ui_flow_browse);
+		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
 		curr_flow = flow;
 
 		gebr_flow_browse_info_job(gebr.ui_flow_browse, id);
 	}
-	if (n > 1 || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE) {
+	if (n > 1 || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
 		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	} else {
-		gebr_flow_browse_append_job_on_flow(curr_flow, id, gebr.ui_flow_browse);
+	else
 		gebr_flow_browse_select_job(gebr.ui_flow_browse);
-	}
 }
 
 void
