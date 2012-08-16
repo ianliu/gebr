@@ -709,7 +709,7 @@ msgstr "%d Fluxos selecionados.\n"
 
 #: ../flow.c:1188
 msgid "No Flow is selected\n"
-msgstr "Nenhum Fluxo selecionado"
+msgstr "Nenhum Fluxo selecionado\n"
 
 #: ../flow.c:1191
 #, c-format
