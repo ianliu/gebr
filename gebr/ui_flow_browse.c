@@ -80,6 +80,9 @@ on_job_button_clicked(GtkButton *button,
 static void
 gebr_flow_browse_update_programs_view(GebrUiFlowBrowse *fb)
 {
+	if (!gtk_widget_get_visible(fb->view))
+		return;
+
 	gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view)));
 	GtkWidget *prog_view = gebr_flow_edition_get_programs_view(gebr.ui_flow_edition);
 
@@ -543,13 +546,18 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
 		flow_browse_set_run_widgets_sensitiveness(fb, FALSE, TRUE);
+		gtk_widget_hide(fb->prog_window);
+		gtk_widget_hide(fb->view);
 		break;
 	case SERVER_STATE_LOGGED:
 		gebr_flow_browse_update_server(fb, maestro);
+		gtk_widget_show(fb->prog_window);
+		gtk_widget_show(fb->view);
 		break;
 	default:
 		break;
 	}
+	gebr_flow_set_toolbar_sensitive();
 
 out:
 	g_free(addr1);
