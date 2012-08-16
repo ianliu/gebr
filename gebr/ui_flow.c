@@ -377,16 +377,16 @@ gebr_ui_flow_run(gboolean is_parallel)
 		if (!id)
 			return;
 
-		gebr_flow_browse_reset_jobs_from_flow(flow, gebr.ui_flow_browse);
 		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
 		curr_flow = flow;
 
-		gebr_flow_browse_info_job(gebr.ui_flow_browse, id);
+		gebr_flow_browse_update_jobs_info(flow, gebr.ui_flow_browse);
 	}
 	if (n > 1 || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
 		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 	else
 		gebr_flow_browse_select_job(gebr.ui_flow_browse);
+
 }
 
 void
@@ -397,8 +397,6 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 	GebrGeoXmlRevision *rev;
 	gchar **snaps = g_strsplit(snapshots, ",", -1);
 	const gchar *id = NULL;
-
-	gebr_flow_browse_reset_jobs_from_flow(flow, gebr.ui_flow_browse);
 
 	for (gint i = 0; snaps[i]; i++) {
 		GebrGeoXmlDocument *snap_flow;
@@ -438,7 +436,6 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 			id = run_flow(GEBR_GEOXML_FLOW(snap_flow),
 				      id, snapshot_id);
 
-		gebr_flow_browse_info_job(gebr.ui_flow_browse, id);
 		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
 
 		g_free(snapshot_id);
@@ -446,6 +443,7 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 		if (!id)
 			continue;
 	}
+	gebr_flow_browse_update_jobs_info(flow, gebr.ui_flow_browse);
 
 	gebr_flow_browse_select_job(gebr.ui_flow_browse);
 

@@ -187,6 +187,9 @@ void gebr_flow_browse_append_job_on_flow(GebrGeoXmlFlow *flow,
 GList *gebr_flow_browse_get_jobs_from_flow(GebrGeoXmlFlow *flow,
                                            GebrUiFlowBrowse *fb);
 
+void gebr_flow_browse_update_jobs_info(GebrGeoXmlFlow *flow,
+                                       GebrUiFlowBrowse *fb);
+
 void gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
                                            GebrUiFlowBrowse *fb);
 

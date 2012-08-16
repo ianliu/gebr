@@ -225,7 +225,7 @@
           			<object class="GtkHBox" id="infobar-content_area1">
           				<property name="spacing">5</property>
 			            <child>
-			              <object class="GtkVBox" id="job_status_box">
+			              <object class="GtkHBox" id="job_status_box">
 			                <child>
 			                  <placeholder/>
 			                </child>

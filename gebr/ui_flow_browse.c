@@ -801,6 +801,15 @@ static GtkMenu *flow_browse_menu_popup_menu(GtkWidget * widget, GebrUiFlowBrowse
 }
 
 void
+on_size_request(GtkWidget      *widget,
+                GtkAllocation *allocation,
+                GebrUiFlowBrowse *fb)
+{
+	allocation->width -= 100;
+	gtk_widget_size_allocate(fb->jobs_status_box, allocation);
+}
+
+void
 gebr_flow_browse_select_job(GebrUiFlowBrowse *fb)
 {
 	flow_browse_static_info_update();
@@ -1020,6 +1029,8 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	ui_flow_browse->info_jobs = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "info_jobs_box"));
 	ui_flow_browse->jobs_status_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "job_status_box"));
 
+	g_signal_connect(ui_flow_browse->info_jobs, "size-allocate", G_CALLBACK(on_size_request), ui_flow_browse);
+
 	GtkButton *dismiss_button = GTK_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "dismiss_button"));
 	g_signal_connect(dismiss_button, "clicked", G_CALLBACK(on_dismiss_clicked), ui_flow_browse);
 
@@ -1169,18 +1180,11 @@ on_job_info_status_changed(GebrJob *job,
 	gtk_image_set_from_stock(GTK_IMAGE(image), icon, GTK_ICON_SIZE_BUTTON);
 	GtkWidget *label = GTK_WIDGET(g_list_nth_data(children, 1));
 
-	gchar *status_text = g_markup_printf_escaped("<span size='small' font_style='italic'>%s on %s</span>",
-	                                            job_state,
-	                                            date);
-
-	gchar *final_text = g_strconcat(title, " ", status_text, NULL);
-	gtk_label_set_markup(GTK_LABEL(label), final_text);
+	gtk_label_set_markup(GTK_LABEL(label), title);
 
 	g_free(aux_title);
 	g_free(title);
 	g_free(job_state);
-	g_free(status_text);
-	g_free(final_text);
 }
 
 static gboolean
@@ -2012,7 +2016,12 @@ gebr_flow_browse_append_job_on_flow(GebrGeoXmlFlow *flow,
 	GList *jobs = NULL;
 
 	jobs = g_hash_table_lookup(fb->flow_jobs, flow_id);
-	jobs = g_list_append(jobs, (gchar*)job_id);
+
+	if (g_list_length(jobs) == 5) {
+		GList *last_job = g_list_last(jobs);
+		jobs = g_list_remove_link(jobs, last_job);
+	}
+	jobs = g_list_prepend(jobs, (gchar*)job_id);
 
 	g_hash_table_insert(fb->flow_jobs, g_strdup(flow_id), g_list_copy(jobs));
 
@@ -2029,6 +2038,17 @@ gebr_flow_browse_get_jobs_from_flow(GebrGeoXmlFlow *flow,
 	jobs = g_hash_table_lookup(fb->flow_jobs, flow_id);
 
 	return jobs;
+}
+
+void
+gebr_flow_browse_update_jobs_info(GebrGeoXmlFlow *flow,
+                                  GebrUiFlowBrowse *fb)
+{
+	on_dismiss_clicked(NULL, fb);
+
+	GList *jobs = gebr_flow_browse_get_jobs_from_flow(flow, fb);
+	for (GList *job = jobs; job; job = job->next)
+		gebr_flow_browse_info_job(gebr.ui_flow_browse, job->data);
 }
 
 void
