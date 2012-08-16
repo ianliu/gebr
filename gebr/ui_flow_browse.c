@@ -1143,6 +1143,10 @@ on_job_info_status_changed(GebrJob *job,
 	else
 		title = g_strdup(aux_title);
 
+	gchar *tooltip_beginning = g_markup_printf_escaped(_("Output of <span font_style='italic'>"));
+	gchar *tooltip_end = g_markup_printf_escaped("</span>");
+	gchar *tooltip = g_strconcat(tooltip_beginning, aux_title, tooltip_end, NULL);
+
 	switch(new_status) {
 	case JOB_STATUS_FINISHED:
 		icon = GTK_STOCK_APPLY;
@@ -1153,7 +1157,7 @@ on_job_info_status_changed(GebrJob *job,
 		icon = GTK_STOCK_EXECUTE;
 		job_state = g_strdup(_("started"));
 		date = gebr_localized_date(gebr_job_get_start_date(job));
-		gtk_widget_set_tooltip_text(container, _("Show the output of this job"));
+		gtk_widget_set_tooltip_markup(container, tooltip);
 		break;
 	case JOB_STATUS_CANCELED:
 		icon = GTK_STOCK_CANCEL;
@@ -1184,6 +1188,9 @@ on_job_info_status_changed(GebrJob *job,
 
 	g_free(aux_title);
 	g_free(title);
+	g_free(tooltip);
+	g_free(tooltip_beginning);
+	g_free(tooltip_end);
 	g_free(job_state);
 }
 
