@@ -87,6 +87,7 @@ gebr_flow_browse_update_programs_view(GebrUiFlowBrowse *fb)
 		gtk_widget_reparent(prog_view, fb->prog_frame);
 		gtk_frame_set_label(GTK_FRAME(fb->prog_frame), gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)));
 		gtk_widget_show_all(fb->prog_window);
+		gtk_widget_hide(fb->properties_ctx_box);
 	} else {
 		gtk_widget_hide(prog_view);
 		gtk_widget_hide(fb->prog_window);
@@ -787,7 +788,7 @@ static GtkMenu *flow_browse_menu_popup_menu(GtkWidget * widget, GebrUiFlowBrowse
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect(GTK_OBJECT(menu_item), "activate", G_CALLBACK(flow_browse_menu_show_help), NULL);
 	gchar *menu_filename;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(fb->menu_store), &iter,
 			   MENU_FILEPATH_COLUMN, &menu_filename, -1);
 	GebrGeoXmlDocument *xml = GEBR_GEOXML_DOCUMENT(menu_load_path(menu_filename));
 	gchar *tmp_help = gebr_geoxml_document_get_help(xml);
@@ -1529,6 +1530,7 @@ static void flow_browse_load(void)
 	                                       gebr.flow);
 
 	flow_browse_info_update();
+	gtk_widget_hide(gebr.ui_flow_browse->menu_window);
 
 	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
 		gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
