@@ -1613,9 +1613,11 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 	gint i = 1;
 	gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 	GebrGeoXmlSequence * sequence;
+	GString *programs_content = g_string_new(NULL);
 
 	gebr_geoxml_flow_get_program(flow, &sequence, 0);
 	while (sequence) {
+		GString *single_prog = g_string_new(NULL);
 		GebrGeoXmlProgram * prog;
 		GebrGeoXmlProgramStatus status;
 
@@ -1631,19 +1633,22 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 	                        		      has_index? "." : "",
                        				      i);
 
-			g_string_append_printf(prog_content,
-			                       "<div class=\"programs\">\n"
+			g_string_append_printf(single_prog,
 			                       "  <div class=\"program\">\n"
 			                       "    <a name=\"%s\"></a>\n"
 			                       "    <div class=\"title\">%s</div>\n"
 			                       "    <div class=\"description\">%s</div>\n",
 			                       link, title, description);
 
-			gebr_program_generate_parameter_value_table(prog, prog_content, flow_review);
+			gebr_program_generate_parameter_value_table(prog, single_prog, flow_review);
 
-			g_string_append(prog_content,
-			                "  </div>\n"
-			                "</div>\n");
+			g_string_append(single_prog,
+			                "  </div>\n");
+
+			if (gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+				g_string_prepend(programs_content, single_prog->str);
+			else
+				g_string_append(programs_content, single_prog->str);
 
 			i++;
 
@@ -1654,7 +1659,15 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 
 		gebr_geoxml_sequence_next(&sequence);
 	}
+
+	g_string_append_printf(prog_content,
+	                       "<div class=\"programs\">\n"
+	                       "  %s"
+	                       "</div>",
+	                       programs_content->str);
+
 	g_free(flow_title);
+	g_string_free(programs_content, TRUE);
 }
 
 void
