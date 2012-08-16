@@ -128,6 +128,7 @@ on_context_button_toggled(GtkToggleButton *button,
 		gtk_widget_show(fb->snapshots_ctx_box);
 	}
 	gtk_widget_hide(fb->jobs_ctx_box);
+	gtk_widget_hide(fb->menu_window);
 
 	GList *childs = gtk_container_get_children(GTK_CONTAINER(gebr.ui_flow_browse->jobs_status_box));
 	for (GList *i = childs; i; i = i->next)
@@ -1604,8 +1605,10 @@ static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			     GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse)
 {
-	gebr.config.current_notebook = 2;
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
+	gtk_widget_hide(gebr.ui_flow_browse->snapshots_ctx_box);
+	gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
+	gtk_widget_hide(gebr.ui_flow_browse->properties_ctx_box);
+	gtk_widget_show(gebr.ui_flow_browse->menu_window);
 }
 
 static void

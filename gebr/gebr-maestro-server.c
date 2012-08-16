@@ -685,7 +685,6 @@ parse_messages(GebrCommServer *comm_server,
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean prev_exist = FALSE;
 
-			g_debug("********Receiving in job_def, job_counter = %s", job_counter->str);
 			if (!job) {
 				job = g_hash_table_lookup(maestro->priv->temp_jobs, temp_id->str);
 				if (job) {
