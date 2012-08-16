@@ -1645,6 +1645,8 @@ update_control_sensitive(GebrUiProjectLine *upl)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"), sensitive);
+
+	project_line_load();
 }
 
 /*
@@ -1694,10 +1696,18 @@ static void project_line_load(void)
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-		if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-			line_load_flows();
-			if (gebr_geoxml_line_get_flows_number(gebr.line) < 1)
-				flow_browse_reload_selected();
+		if (maestro) {
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+				gtk_widget_show(gebr.ui_flow_browse->view);
+				gtk_widget_show(gebr.ui_flow_browse->prog_window);
+				line_load_flows();
+				if (gebr_geoxml_line_get_flows_number(gebr.line) < 1)
+					flow_browse_reload_selected();
+			}
+			else {
+				gtk_widget_hide(gebr.ui_flow_browse->view);
+				gtk_widget_hide(gebr.ui_flow_browse->prog_window);
+			}
 		}
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);

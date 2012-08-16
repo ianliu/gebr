@@ -546,13 +546,9 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
 		flow_browse_set_run_widgets_sensitiveness(fb, FALSE, TRUE);
-		gtk_widget_hide(fb->prog_window);
-		gtk_widget_hide(fb->view);
 		break;
 	case SERVER_STATE_LOGGED:
 		gebr_flow_browse_update_server(fb, maestro);
-		gtk_widget_show(fb->prog_window);
-		gtk_widget_show(fb->view);
 		break;
 	default:
 		break;
