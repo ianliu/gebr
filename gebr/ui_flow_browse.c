@@ -161,7 +161,7 @@ on_output_job_clicked(GtkToggleButton *button,
 
 		gtk_widget_hide(gebr.ui_flow_browse->properties_ctx_box);
 		gtk_widget_hide(gebr.ui_flow_browse->snapshots_ctx_box);
-
+		gtk_widget_hide(gebr.ui_flow_browse->menu_window);
 		if(job) {
 			gtk_widget_show(gebr.ui_flow_browse->jobs_ctx_box);
 			gebr_job_control_select_job(gebr.job_control, job);
