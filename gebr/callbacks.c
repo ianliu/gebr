@@ -194,6 +194,7 @@ void on_document_properties_activate(void)
 		break;
 	}
 	default:
+		document_properties_setup_ui(document_get_current(), NULL, FALSE);
 		break;
 	}
 }
