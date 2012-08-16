@@ -1905,6 +1905,8 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
 	gtk_widget_reparent(output_view, self->jobs_ctx_box);
+	gtk_widget_hide(gebr.ui_flow_browse->menu_window);
+
 
 	/* Set default on properties flow */
 	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
