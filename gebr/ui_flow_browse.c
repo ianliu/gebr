@@ -1122,7 +1122,7 @@ on_job_info_status_changed(GebrJob *job,
 	gchar *title;
 	const gchar *snap_id = gebr_job_get_snapshot_id(job);
 
-	gchar *aux_title = g_markup_printf_escaped("%s <span size='small'>#%s</span>",
+	gchar *aux_title = g_markup_printf_escaped("%s <span>#%s</span>",
 	                                           gebr_job_get_title(job),
 	                                           gebr_job_get_job_counter(job));
 
