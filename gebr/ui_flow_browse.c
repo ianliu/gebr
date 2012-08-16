@@ -85,9 +85,7 @@ gebr_flow_browse_update_programs_view(GebrUiFlowBrowse *fb)
 
 	if (nrows == 1) {
 		gtk_widget_reparent(prog_view, fb->prog_frame);
-		gtk_frame_set_label(GTK_FRAME(fb->prog_frame), gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)));
 		gtk_widget_show_all(fb->prog_window);
-		gtk_widget_hide(fb->properties_ctx_box);
 	} else {
 		gtk_widget_hide(prog_view);
 		gtk_widget_hide(fb->prog_window);
@@ -914,6 +912,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/* Set programs list */
 	GtkWidget *prog_view = gebr_flow_edition_get_programs_view(gebr.ui_flow_edition);
 	gtk_widget_reparent(prog_view, ui_flow_browse->prog_frame);
+	gtk_frame_set_label(GTK_FRAME(ui_flow_browse->prog_frame), _("Flow sequence"));
 
 	gtk_paned_pack2(GTK_PANED(list), ui_flow_browse->prog_window, FALSE, FALSE);
 
