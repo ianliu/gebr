@@ -964,6 +964,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	/* Text column */
 	ui_flow_browse->text_renderer = renderer = gtk_cell_renderer_text_new();
+	g_object_set(ui_flow_browse->text_renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
 	gtk_tree_view_column_set_expand(col, TRUE);
