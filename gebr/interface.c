@@ -90,9 +90,9 @@ static const GtkActionEntry actions_entries_project_line[] = {
 		NULL, N_("Import Projects or Lines"), G_CALLBACK(on_project_line_import_activate)},
 	{"project_line_export", "document-export", N_("Export"),
 		NULL, N_("Export selected Projects and Lines"), G_CALLBACK(on_project_line_export_activate)},
-	{"project_line_view", GTK_STOCK_DND, N_("View Report"),
+	{"project_line_view", "document_review", N_("View Report"),
 		NULL, N_("View Report"), G_CALLBACK(on_project_line_show_help)},
-	{"project_line_edit", "kontact_journal_altered3", N_("Edit Comments"),
+	{"project_line_edit", "document_comment", N_("Edit Comments"),
 		NULL, N_("Edit Comments"), G_CALLBACK(on_project_line_edit_help)},
 };
 
@@ -124,9 +124,9 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("Copy to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
 		NULL, N_("Paste from clipboard"), G_CALLBACK(on_paste_activate)},
-	{"flow_view", GTK_STOCK_DND, N_("View Report"),
+	{"flow_view", "document_review", N_("View Report"),
 		NULL, N_("View report"), G_CALLBACK(on_flow_browse_show_help)},
-	{"flow_edit", "kontact_journal_altered3", N_("Edit Comments"),
+	{"flow_edit", "document_comment", N_("Edit Comments"),
 		NULL, N_("Edit comments"), G_CALLBACK(on_flow_browse_edit_help)},
 };
 
