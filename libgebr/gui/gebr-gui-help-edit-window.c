@@ -64,8 +64,6 @@ static void gebr_gui_help_edit_window_get_property	(GObject	*object,
 
 static void gebr_gui_help_edit_window_dispose(GObject * object);
 
-static void on_preview_toggled(GtkToggleAction * button, GebrGuiHelpEditWindow * self);
-
 static void on_print_clicked(GtkAction * action, GebrGuiHelpEditWindow * self);
 
 static gboolean gebr_gui_help_edit_window_delete_event(GtkWidget * widget, GdkEventAny * event);
@@ -78,8 +76,6 @@ G_DEFINE_TYPE(GebrGuiHelpEditWindow, gebr_gui_help_edit_window, GTK_TYPE_WINDOW)
 
 static const GtkActionEntry action_entries[] = {
 {"FileMenu", NULL, N_("_File")},
-{"EditMenu", NULL, N_("_Edit")},
-
 {"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
 	N_("Print the content of this window"), G_CALLBACK(on_print_clicked)},
 {"CloseAction", GTK_STOCK_CLOSE, NULL, NULL,
@@ -87,13 +83,6 @@ static const GtkActionEntry action_entries[] = {
 };
 
 static const guint n_action_entries = G_N_ELEMENTS(action_entries);
-
-static const GtkToggleActionEntry toggle_entries[] = {
-{"PreviewAction", GTK_STOCK_PRINT_PREVIEW, N_("Preview"), NULL,
-	N_("Toggle between edit and preview modes"), G_CALLBACK(on_preview_toggled), FALSE},
-};
-
-static const guint n_toggle_entries = G_N_ELEMENTS(toggle_entries);
 
 static const gchar * ui_def =
 "<ui>"
@@ -104,20 +93,8 @@ static const gchar * ui_def =
 "    <separator />"
 "    <menuitem action='CloseAction' />"
 "  </menu>"
-"  <menu action='EditMenu'>"
-"   <menuitem action='PreviewAction' />"
-"  </menu>"
 "  <placeholder name='" GEBR_GUI_HELP_EDIT_WINDOW_MENU_BAR_MARK "' />"
 " </menubar>"
-" <toolbar name='" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_NAME "'>"
-"  <placeholder name='" GEBR_GUI_HELP_EDIT_WINDOW_TOOL_BAR_MARK "'>"
-"   <separator />"
-"   <toolitem action='PreviewAction' />"
-"   <separator />"
-"   <toolitem action='PrintAction' />"
-"   <separator />"
-"  </placeholder>"
-" </toolbar>"
 "</ui>";
 
 //==============================================================================
@@ -188,11 +165,9 @@ GebrGuiHelpEditWindowPrivate * priv;
 GtkActionGroup * action_group;
 GtkAccelGroup * accel_group;
 GtkWidget * menu_bar;
-GtkWidget * tool_bar;
 GError * error = NULL;
 
 const gchar * menu_bar_path;
-const gchar * tool_bar_path;
 
 priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
 priv->action_area      = gtk_vbox_new(FALSE, 0);
@@ -204,7 +179,6 @@ priv->ui_manager       = gtk_ui_manager_new();
 action_group = gtk_action_group_new("HelpEditWindowGroup");
 gtk_action_group_set_translation_domain(action_group, GETTEXT_PACKAGE);
 gtk_action_group_add_actions(action_group, action_entries, n_action_entries, self);
-gtk_action_group_add_toggle_actions(action_group, toggle_entries, n_toggle_entries, self);
 gtk_ui_manager_insert_action_group(priv->ui_manager, action_group, 0);
 gtk_ui_manager_add_ui_from_string(priv->ui_manager, ui_def, -1, &error);
 g_object_unref(action_group);
@@ -218,16 +192,11 @@ accel_group = gtk_ui_manager_get_accel_group(priv->ui_manager);
 gtk_window_add_accel_group(GTK_WINDOW(self), accel_group);
 
 menu_bar_path = gebr_gui_help_edit_window_get_menu_bar_path(self);
-tool_bar_path = gebr_gui_help_edit_window_get_tool_bar_path(self);
 menu_bar = gtk_ui_manager_get_widget(priv->ui_manager, menu_bar_path);
-tool_bar = gtk_ui_manager_get_widget(priv->ui_manager, tool_bar_path);
-gtk_toolbar_set_style(GTK_TOOLBAR(tool_bar), GTK_TOOLBAR_ICONS);
 
 gtk_box_pack_start(GTK_BOX(priv->action_area), menu_bar, FALSE, TRUE, 0);
-gtk_box_pack_start(GTK_BOX(priv->action_area), tool_bar, FALSE, TRUE, 0);
 gtk_container_add(GTK_CONTAINER(self), priv->action_area);
 gtk_widget_show(priv->action_area);
-gtk_widget_show(tool_bar);
 }
 
 static void gebr_gui_help_edit_window_set_property(GObject	*object,
@@ -296,18 +265,6 @@ G_OBJECT_CLASS(gebr_gui_help_edit_window_parent_class)->dispose(object);
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
-static void on_preview_toggled(GtkToggleAction * action, GebrGuiHelpEditWindow * self)
-{
-gboolean is_editing;
-GebrGuiHelpEditWindowPrivate * priv;
-GebrGuiHelpEditWidget * help_edit_widget;
-
-priv = GEBR_GUI_HELP_EDIT_WINDOW_GET_PRIVATE(self);
-help_edit_widget = GEBR_GUI_HELP_EDIT_WIDGET(priv->help_edit_widget);
-is_editing = !gtk_toggle_action_get_active(action);
-gebr_gui_help_edit_widget_set_editing(help_edit_widget, is_editing);
-}
-
 static void on_print_clicked(GtkAction * action, GebrGuiHelpEditWindow * self)
 {
 gboolean editing;
