@@ -102,6 +102,7 @@ typedef struct {
 	/* Info Bar */
 	GtkWidget *info_jobs;
 	GtkWidget *jobs_status_box;
+	gint last_info_width;
 
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;
@@ -188,7 +189,8 @@ GList *gebr_flow_browse_get_jobs_from_flow(GebrGeoXmlFlow *flow,
                                            GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_update_jobs_info(GebrGeoXmlFlow *flow,
-                                       GebrUiFlowBrowse *fb);
+                                       GebrUiFlowBrowse *fb,
+                                       gint n_max);
 
 void gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
                                            GebrUiFlowBrowse *fb);
@@ -216,6 +218,11 @@ void flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
                                                gboolean maestro_err);
 
 void gebr_flow_browse_show_menu_list(GebrUiFlowBrowse *fb);
+
+gint gebr_flow_browse_calculate_n_max(GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_select_job_output(const gchar *job_id,
+                                        GebrUiFlowBrowse *fb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H
