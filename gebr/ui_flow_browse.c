@@ -1950,10 +1950,14 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 	                   FB_XMLPOINTER, &flow,
 	                   -1);
 
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+
 	if (gebr_geoxml_flow_validate(flow, gebr.validator, NULL))
 		g_object_set(cell, "stock-id", "flow-icon", NULL);
 	else
 		g_object_set(cell, "stock-id", GTK_STOCK_DIALOG_WARNING, NULL);
+
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 }
 
 void
