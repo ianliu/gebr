@@ -175,9 +175,9 @@ on_output_job_clicked(GtkToggleButton *button,
 		gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
 
 		if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-			gtk_widget_show(gebr.ui_flow_browse->properties_ctx_box);
+			on_context_button_toggled(gebr.ui_flow_browse->properties_ctx_button, gebr.ui_flow_browse);
 		else
-			gtk_widget_show(gebr.ui_flow_browse->snapshots_ctx_box);
+			on_context_button_toggled(gebr.ui_flow_browse->snapshots_ctx_button, gebr.ui_flow_browse);
 	}
 }
 
@@ -196,17 +196,19 @@ on_dismiss_clicked(GtkButton *dismiss,
 		gtk_container_remove(GTK_CONTAINER(fb->jobs_status_box), GTK_WIDGET(i->data));
 	}
 
-	if (dismiss)
+	if (dismiss) {
 		gebr_flow_browse_reset_jobs_from_flow(gebr.flow, fb);
+		gtk_widget_hide(fb->jobs_ctx_box);
+	}
 
 	/* Hide Info bar*/
 	gtk_widget_hide(fb->info_jobs);
 
 	/* Restore last context */
 	if (gtk_toggle_button_get_active(fb->properties_ctx_button))
-		gtk_toggle_button_set_active(fb->properties_ctx_button, TRUE);
+		on_context_button_toggled(fb->properties_ctx_button, fb);
 	else
-		gtk_toggle_button_set_active(fb->snapshots_ctx_button, TRUE);
+		on_context_button_toggled(fb->snapshots_ctx_button, fb);
 }
 
 void
