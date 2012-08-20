@@ -808,6 +808,16 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 
 		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(prog);
 
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
+			g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+			            GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
+			            _("There are unconfigured program(s) in Flow \"%s\"."),
+			            flow_title);
+			gebr_geoxml_object_unref(seq);
+			gebr_pairstrfreev(pvector);
+			return FALSE;
+		}
+
 		if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED
 		    || gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
 			continue;
