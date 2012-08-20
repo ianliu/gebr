@@ -2091,43 +2091,9 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	g_string_append_printf(prog_content, "<html>\n"
 					     "  <head>\n"
 					     "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
-	g_string_append_printf(prog_content, "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-report.css\" />",
-						  LIBGEBR_STYLES_DIR);
-	g_string_append_printf(prog_content, "    <style type=\"text/css\"/>\n"
-					     "     .programs .title {"
-					     "	     font-size: 14px;"
-					     "	     padding-left: 4px;"
-					     "	   }"
-					     "     .programs .description {"
-					     "	     font-size: 12px;"
-					     "	     padding-left: 2px;"
-					     " 	     padding-bottom: 2px;"
-					     "     }"
-					     "     .parameters {"
-					     "       font-size: 12px;"
-					     "       margin-top: 10px;"
-					     "       margin-right: 10px;"
-					     "       margin-left: 10px;"
-					     "     }"
-					     "     .parameters caption {"
-					     "       display:none;"
-					     "     }"
-					     "     .io:before {"
-					     "       font-size: 12px;"
-					     "	     font-weight: bold;"
-					     "       content: \"I/O Table\";"
-					     "     }"
-					     "     .io table {"
-					     "       font-size: 12px;"
-					     "       text-align: left;"
-					     "	     margin-top: 15px;"
-					     "       margin-right: 10px;"
-					     "       margin-left: 15px;"
-					     "     }"
-					     "     .io caption {"
-					     "       display:none;"
-					     "     }"
-					     "    </style>");
+	g_string_append_printf(prog_content, "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-report.css\" />"
+					     "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-flow-review.css\" />",
+						  LIBGEBR_STYLES_DIR, LIBGEBR_STYLES_DIR);
 
 	g_string_append_printf(prog_content, "  </head>\n"
 					     "  <body>\n");

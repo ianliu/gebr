@@ -1,0 +1,42 @@
+/*
+ * @title: Flow Revision
+ * @author: GêBR Core Team
+ * @e-mail: gebr-devel@googlegroups.com
+ */
+
+/*
+* CSS to improve Flow Review
+*/
+.programs .title {
+	font-size: 14px;
+	padding-left: 4px;
+}
+.programs .description {
+	font-size: 12px;
+	padding-left: 2px;
+	padding-bottom: 2px;
+}
+.parameters {
+	font-size: 12px;
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+.parameters caption {
+	display:none;
+}
+.io:before {
+	font-size: 12px;
+	font-weight: bold;
+	content: \"I/O Table\";
+}
+.io table {
+	font-size: 12px;
+	text-align: left;
+	margin-top: 15px;
+	margin-right: 10px;
+	margin-left: 15px;
+}
+.io caption {
+	display:none;
+}
