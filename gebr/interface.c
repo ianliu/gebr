@@ -246,38 +246,6 @@ gebr_interface_set_text_for_performance(gdouble value)
 	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*100 - 400));
 	else
 		g_return_val_if_reached(NULL);
-	/*
-	if (value == 0)
-		return  _("No scatter (1 Core)");
-	else if (value < (SLIDER_100/4))
-		return  _("Very low scatter (to 25% of Cores)");
-	else if (value == (SLIDER_100/4))
-		return  _("Very low scatter (25% of Cores)");
-	else if (value < (SLIDER_100/2))
-		return  _("Low scatter (25% to 50% of Cores)");
-	else if (value == (SLIDER_100/2))
-		return  _("Low scatter (50% of Cores)");
-	else if (value < (3*SLIDER_100/4))
-		return  _("Medium scatter (50% to 75% of Cores)");
-	else if (value == (3*SLIDER_100/4))
-		return  _("Medium scatter (75% of Cores)");
-	else if (value < SLIDER_100)
-		return  _("High scatter (75% to 100% of Cores)");
-	else if (value == SLIDER_100)
-		return  _("High scatter (100% of Cores)");
-	else if (value < SLIDER_100+1)
-		return  _("Very high scatter (100% to 200% of Cores)");
-	else if (value == SLIDER_100+1)
-		return  _("Very high scatter (200% of Cores)");
-	else if (value < SLIDER_MAX-1)
-		return  _("Very high scatter (200% to 300% of Cores)");
-	else if (value == SLIDER_MAX-1)
-		return  _("Very high scatter (300% of Cores)");
-	else if (value < SLIDER_MAX)
-		return  _("Very high scatter (up to 300% of Cores)");
-	else if (value >= SLIDER_MAX)
-		return  _("Very high scatter (400% of Cores)");
-		*/
 }
 
 static gboolean
