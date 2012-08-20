@@ -269,7 +269,9 @@ on_queue_set_text(GtkCellLayout   *cell_layout,
 	if (!job)
 		name_queue = g_strdup(_("Immediately"));
 	else
-		name_queue = g_strdup_printf(_("After %s"), gebr_job_get_title(job));
+		name_queue = g_strdup_printf(_("After %s #%s"),
+					     gebr_job_get_title(job),
+					     gebr_job_get_job_counter(job));
 
 	g_object_set(cell, "text", name_queue, NULL);
 	g_free(name_queue);
