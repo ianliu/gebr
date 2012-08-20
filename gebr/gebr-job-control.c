@@ -600,37 +600,24 @@ on_cb_changed(GtkComboBox *combo,
 	on_select_non_single_job(jc, NULL);
 }
 
-static const gchar *
-get_issues_image_for_status(GebrJob *job)
-{
-	return GTK_STOCK_DIALOG_WARNING;
-}
-
 static void
 fill_issues_properties(GebrJobControl *jc,
                        const gchar *issues,
                        GebrJob *job)
 {
-	const gchar *stock_id;
 	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_label"));
 	GtkImage *image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_image"));
 
-	gtk_widget_show(GTK_WIDGET(info));
+	gtk_widget_show_all(GTK_WIDGET(info));
 	GtkButton *show_issues = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
 	gtk_widget_hide(GTK_WIDGET(show_issues));
 
-	stock_id = get_issues_image_for_status(job);
-
-	if (g_strcmp0(stock_id, GTK_STOCK_DIALOG_ERROR) == 0)
-		gtk_info_bar_set_message_type(info, GTK_MESSAGE_ERROR);
-	else
-		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
-
+	gtk_info_bar_set_message_type(info, GTK_MESSAGE_INFO);
 	gtk_label_set_markup(label, issues);
 	gtk_label_set_line_wrap(label, TRUE);
 	gtk_label_set_line_wrap_mode(label, PANGO_WRAP_WORD);
-	gtk_image_set_from_stock(image, stock_id, GTK_ICON_SIZE_DIALOG);
+	gtk_image_set_from_stock(image, GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
 }
 
 static void
@@ -986,7 +973,7 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 
 	if (has_job && gebr_job_has_issues(job)) {
 		GtkImage *image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "show_issues_img"));
-		gtk_image_set_from_stock(image, get_issues_image_for_status(job), GTK_ICON_SIZE_DND);
+		gtk_image_set_from_stock(image, GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DND);
 		gtk_widget_show(GTK_WIDGET(button));
 	} else
 		gtk_widget_hide(GTK_WIDGET(button));

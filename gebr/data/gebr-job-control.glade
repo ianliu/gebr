@@ -87,6 +87,7 @@
                   <packing>
             		<property name="position">1</property>
 	    			<property name="expand">True</property>
+	    			<property name="fill">True</property>
           		  </packing>
                 </child>
               </object>
@@ -94,17 +95,34 @@
             <child internal-child="action_area">
               <object class="GtkVButtonBox" id="issues_info_bar_hbutton_box">
                 <child>
-                  <object class="GtkButton" id="issues_info_bar_dismiss">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Dismiss</property>
-                  </object>
-                </child>
+                  <object class="GtkHBox" id="box10">
+                    <property name="spacing">5</property>
+              	    <child>
+                      <object class="GtkButton" id="issues_info_bar_dismiss">
+	                    <property name="use_action_appearance">False</property>
+	                    <property name="visible">True</property>
+	                	<property name="relief">none</property>
+	                	<child>
+	                      <object class="GtkImage" id="image11">
+	                        <property name="visible">True</property>
+	                        <property name="stock">gtk-close</property>
+	                      </object>
+	                    </child>
+		              </object>
+		              <packing>
+		                <property name="expand">False</property>
+		                <property name="fill">False</property>
+		                <property name="position">0</property>
+		              </packing>
+	            	</child>
+            	  </object>
+	            </child>
               </object>
             </child>
           </object>
           <packing>
             <property name="position">0</property>
-	    <property name="expand">False</property>
+	    	<property name="expand">False</property>
           </packing>
         </child>
         <child>
@@ -257,7 +275,7 @@
                         <child>
                           <object class="GtkImage" id="show_issues_img">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-dialog-warning</property>
+                            <property name="stock">gtk-info</property>
                             <property name="icon-size">5</property>
                           </object>
                         </child>
