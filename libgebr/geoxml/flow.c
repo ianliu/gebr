@@ -786,7 +786,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	}
 
 	const gchar *input = gebr_geoxml_flow_io_get_input(flow);
-	gchar *resolved_input;
+	gchar *resolved_input = NULL;
 	if (gebr_validator_use_iter(validator, input,
 	                            GEBR_GEOXML_PARAMETER_TYPE_STRING,
 	                            GEBR_GEOXML_DOCUMENT_TYPE_FLOW))
@@ -842,7 +842,6 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
-				g_free(resolved_input);
 				return FALSE;
 			}
 
@@ -907,7 +906,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	program_title = gebr_geoxml_program_get_title(last_configured);
 
 	const gchar *output = gebr_geoxml_flow_io_get_output(flow);
-	gchar *resolved_output;
+	gchar *resolved_output = NULL;
 
 	if (gebr_validator_use_iter(validator, output,
 	                            GEBR_GEOXML_PARAMETER_TYPE_STRING,
@@ -950,7 +949,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	g_free(resolved_output);
 
 	const gchar *error = gebr_geoxml_flow_io_get_error(flow);
-	gchar *resolved_error;
+	gchar *resolved_error = NULL;
 	if (gebr_validator_use_iter(validator, error,
 	                            GEBR_GEOXML_PARAMETER_TYPE_STRING,
 	                            GEBR_GEOXML_DOCUMENT_TYPE_FLOW))
@@ -972,7 +971,6 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			    program_title, flow_title);
 		gebr_geoxml_object_unref(last_configured);
 		gebr_pairstrfreev(pvector);
-		g_free(resolved_error);
 		return FALSE;
 	}
 
