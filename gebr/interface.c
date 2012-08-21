@@ -1,5 +1,5 @@
 /*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+ *   Copyright (C) 2007-2012 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License as
@@ -676,13 +676,6 @@ void gebr_setup_ui(void)
 			       &gebr.ui_flow_edition->speed_button,
 			       &gebr.ui_flow_edition->speed_slider,
 			       &gebr.ui_flow_edition->ruler);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_flow_edition->widget, TRUE, TRUE, 0);
-	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Flow Editor")));
-	gtk_widget_hide(vbox);
-	//gtk_widget_show_all(vbox);
 
 	/*
 	 * Notebook's page "Job control"

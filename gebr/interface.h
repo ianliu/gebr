@@ -1,5 +1,5 @@
 /*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+ *   Copyright (C) 2007-2012 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ enum {
 enum NOTEBOOK_PAGE {
 	NOTEBOOK_PAGE_PROJECT_LINE = 0,
 	NOTEBOOK_PAGE_FLOW_BROWSE,
-	NOTEBOOK_PAGE_FLOW_EDITION,
 	NOTEBOOK_PAGE_JOB_CONTROL,
 };
 

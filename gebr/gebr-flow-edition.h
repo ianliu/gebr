@@ -2,7 +2,7 @@
  * gebr-flow-edition.h
  * This file is part of GêBR Project
  *
- * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
+ * Copyright (C) 2012 - GêBR Core Team (www.gebrproject.com)
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,24 +56,15 @@ typedef struct _GebrFlowEdition GebrFlowEdition;
 typedef struct _GebrFlowEditionPriv GebrFlowEditionPriv;
 
 struct _GebrFlowEdition {
-	GebrFlowEditionPriv *priv;
-
-	GtkWidget *widget;
-
 	GtkTreeIter input_iter;
 	GtkTreeIter output_iter;
 	GtkTreeIter error_iter;
 
 	/* Sequence of programs of a flow */
-	GtkWidget *scrolled_window;
 	GtkListStore *fseq_store;
 	GtkWidget *fseq_view;
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *file_renderer;
-
-	/* available system and user's menus */
-	GtkWidget *menu_view;
-	GtkTreeStore *menu_store;
 
 	GtkWidget *speed_slider;
 	GtkWidget *nice_button_high;
@@ -153,30 +144,9 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
  */
 void flow_program_check_sensitiveness (void);
 
-void gebr_flow_edition_update_speed_slider_sensitiveness(GebrFlowEdition *fe);
-
-void gebr_flow_edition_hide(GebrFlowEdition *self);
-
-void gebr_flow_edition_show(GebrFlowEdition *self);
-
-void gebr_flow_edition_select_queue(GebrFlowEdition *self);
-
-void gebr_flow_edition_update_server(GebrFlowEdition *fe,
-				     GebrMaestroServer *maestro);
-
 const gchar *gebr_flow_edition_get_selected_queue(GebrFlowEdition *fe);
 
 const gchar *gebr_flow_edition_get_selected_server(GebrFlowEdition *fe);
-
-void gebr_flow_edition_get_current_group(GebrFlowEdition *fe,
-					 GebrMaestroServerGroupType *type,
-					 gchar **name);
-
-void gebr_flow_edition_get_server_hostname(GebrFlowEdition *fe,
-                                           gchar **host);
-
-void gebr_flow_edition_select_group_for_flow(GebrFlowEdition *fe,
-					     GebrGeoXmlFlow *flow);
 
 gchar *gebr_maestro_server_translate_error(const gchar *error_type,
                                            const gchar *error_msg);
@@ -187,6 +157,8 @@ void gebr_flow_edition_get_iter_for_program(GebrGeoXmlProgram *prog,
 const gchar *gebr_flow_get_error_tooltip_from_id(GebrIExprError errorid);
 
 GtkWidget *gebr_flow_edition_get_programs_view(GebrFlowEdition *fe);
+
+void gebr_flow_edition_update_speed_slider_sensitiveness(GebrFlowEdition *fe);
 
 G_END_DECLS
 

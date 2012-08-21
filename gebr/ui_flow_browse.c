@@ -1,5 +1,5 @@
 /*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+ *   Copyright (C) 2007-2012 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License as
@@ -111,15 +111,11 @@ gebr_flow_browse_update_programs_view(GebrUiFlowBrowse *fb)
 		return;
 
 	gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view)));
-	GtkWidget *prog_view = gebr_flow_edition_get_programs_view(gebr.ui_flow_edition);
 
-	if (nrows == 1) {
-		gtk_widget_reparent(prog_view, fb->prog_frame);
+	if (nrows == 1)
 		gtk_widget_show_all(fb->prog_window);
-	} else {
-		gtk_widget_hide(prog_view);
+	else
 		gtk_widget_hide(fb->prog_window);
-	}
 }
 
 static void
@@ -1009,7 +1005,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	/* Set programs list */
 	GtkWidget *prog_view = gebr_flow_edition_get_programs_view(gebr.ui_flow_edition);
-	gtk_widget_reparent(prog_view, ui_flow_browse->prog_frame);
+	gtk_container_add(GTK_CONTAINER(ui_flow_browse->prog_frame), prog_view);
 	gtk_frame_set_label(GTK_FRAME(ui_flow_browse->prog_frame), _("Flow sequence"));
 
 	gtk_paned_pack2(GTK_PANED(list), ui_flow_browse->prog_window, FALSE, FALSE);
