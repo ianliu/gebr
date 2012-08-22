@@ -1095,6 +1095,7 @@ gebr_flow_get_error_tooltip_from_id(GebrIExprError errorid)
 		break;
 	case GEBR_IEXPR_ERROR_BAD_MOVE:
 	case GEBR_IEXPR_ERROR_INITIALIZE:
+	default:
 		error_message = "";
 		break;
 	}
