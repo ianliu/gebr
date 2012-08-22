@@ -515,7 +515,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		gebr.current_report.report_group = group;
 
 		gint i = 1;
-		GtkRadioAction *radio_action, *first_radio;
+		GtkRadioAction *radio_action = NULL;
 		GSList *style_group = NULL;
 
 		dir = g_dir_open (LIBGEBR_STYLES_DIR, 0, &error);
@@ -536,7 +536,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 					action_name = g_strdup_printf ("StyleAction%d", i);
 					abs_path = g_strconcat (LIBGEBR_STYLES_DIR, "/", fname, NULL);
 					css_title = gebr_document_get_css_header_field (abs_path, "title");
-					first_radio = radio_action = gtk_radio_action_new (action_name,
+					radio_action = gtk_radio_action_new (action_name,
 									     css_title,
 									     NULL, NULL, i);
 					fname_cpy = g_strdup (fname);
@@ -562,7 +562,9 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 			}
 			g_dir_close (dir);
 		}
-		g_signal_connect (first_radio, "changed", G_CALLBACK (on_style_action_changed), window);
+		if (radio_action) {
+			g_signal_connect (radio_action, "changed", G_CALLBACK (on_style_action_changed), window);
+		}
 
 		gtk_ui_manager_insert_action_group (manager, group, 0);
 		merge_id = gtk_ui_manager_add_ui_from_string (manager, html_viewer_ui_def, -1, &error);
