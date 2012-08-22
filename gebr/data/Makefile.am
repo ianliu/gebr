@@ -51,6 +51,6 @@ menus.idx2 categories.idx2: grace.mnu sleep.mnu forloop.mnu
 all:
 	perl -i -pe 's/&#xEA;/ê/' *.glade
 
-EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA) $(python_DATA)
+EXTRA_DIST = gebr.desktop.in grace.mnu sleep.mnu forloop.mnu $(glade_DATA) $(python_DATA)
 CLEANFILES = gebr.desktop menus.idx2 categories.idx2
 
