@@ -1,3 +1,73 @@
+2012-08-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove toolbar from the Comments GUI
+
+2012-08-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Added new error when flow have at least one unconfigured program
+	* Separate CSS of Flow Review on external file gebr-flow-review.css
+
+2012-08-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Initialize pointers to avoid unwary memoryFrees (fixes issue 1274)
+
+2012-08-17  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Removing kontact_journal_altered3 .png and .svg
+	* Added new icon on edit comment. Correcting Comment from to Comment
+	of the flow
+
+2012-08-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault on validator when try to access null document
+
+2012-08-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change date format according to the language
+	* Changes date format to not include seconds and 'AM/PM' identifiers
+
+2012-08-10  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Allowed blank email
+
+2012-08-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding Html viewer on flow summary view.
+
+2012-08-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making contents parameters table left aligned.
+
+2012-08-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update GeBR translation, mainly, the new FlowBrowser (po file)
+	* Fix date format of Snapshots
+	* Standardize simpler date format in GeBR interface
+
+2012-08-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add icon to represent Flow (flow-icon) on GêBR
+
+2012-08-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply readable format of date to Flows tab
+	* Change Report/Comments toolbar icons
+	* Fix compilation error (unitialized variable)
+	* Fix compilation error (unitialized variable)
+
+2012-08-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new icon utilities-terminal on GeBR
+
+2012-08-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add new images to be used by the DocumentProperties/Report/Comments
+	buttons
+
+2012-08-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.3: Multiple Snapshots Execution [Sprint 60] [Sprint 61]
+
 2012-08-03  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* Change Snapshot label in JobControl tab and apply new icon

@@ -1,3 +1,391 @@
+2012-08-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Remove generated files from the tarball.
+
+2012-08-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge with 0.19.3 packaging fixes.
+
+2012-08-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Complete remove Flow Edition tab from GeBR
+
+2012-08-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update number of jobs on InfoBar according size of GeBR window, and
+	improve behavior of output job in Flow Browse after run and in
+	action of redirection to Job Control.
+	* Fix empty interface when change tab
+	* Patterned info bar of Job Control like others on GeBR
+
+2012-08-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set 'Simple' as the default Report layout
+
+2012-08-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix validate of each flow when update status icon
+
+2012-08-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set 'Show only the parameters which differ from the default' as the
+	default user option
+	* Remove old flow_exec_speed code
+
+2012-08-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Separate CSS of Flow Review on external file gebr-flow-review.css
+
+2012-08-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Show just the job_counter in the infoBar (remove JobTitle)
+	* Show job_counter of queable jobs (Flows tab)
+
+2012-08-17  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Added new icon on edit comment. Correcting Comment from to Comment
+	of the flow
+
+2012-08-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add elipse on Flow title when change size of the view
+
+2012-08-17  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding protection at new, delete program.
+
+2012-08-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove protection of valid iter of JobControl::stop_selected
+
+2012-08-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update correctly Flows window when connect/disconnect maestro
+
+2012-08-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix Properties option in Projects/Lines tab
+
+2012-08-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Hide all actions on tab Flows when maestro are disconnected
+
+2012-08-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set a more informative text to the InfoBar tooltip
+
+2012-08-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding Menu view when output view is clicked.
+
+2012-08-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Info bar show the five last execution of each flow
+
+2012-08-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding output context when flow is selected.
+
+2012-08-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compile errors on po file
+	* Insert Loop before other programs on parameters review
+
+2012-08-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding New Program on context menu of Flow.
+
+2012-08-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Increase the font size of InfoBar snapshot text
+
+2012-08-16  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* No flow selected message introduced on flow browse
+
+2012-08-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change the default tooltip text of infoBar button
+
+2012-08-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault when try to paste program on any I/O field
+	* Move method to change sensitiveness of run widgets to Flow Browse,
+	and fix menu view visible when necessary
+	* Fix search on menu view and update hide/show of that window
+
+2012-08-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making treatment for toolbar to act on flow and program.
+
+2012-08-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix critical when add Frame of programs on scrolled window
+	* Fix seg fault on job control when cancel all jobs
+	* Show info bar with last executed job always (on single and multiple
+	execution)
+
+2012-08-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Just hide FlowEdition instead of not including it
+	* Change Programs' label to 'Flow Sequence'
+	* Fix segFault in Menus list
+	* Remove FlowEdition tab from interface
+	* Fix interface bug of Menus list
+	* Add Menu List to the Flows tab and, as a result, remove it from the
+	Flow Edition tab
+
+2012-08-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move advanced execution to Flow Browse, and create a initial
+	interface for Menu Views on that tab
+	* Update parameters review when made some actions on Programs view
+	* Removed scrolled window on left side of flows, and changed size of
+	right side to better adapt on window
+
+2012-08-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update portuguese translation of the interface (po file)
+
+2012-08-14  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* No description available displayed on job-control
+
+2012-08-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Unselect snapshots when change context on the same flow
+	* Fix method gebr_ui_flow_run to decide when execute snapshots
+
+2012-08-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add job_counter indication in the Flows tab and in the JobControl
+	tab
+	* Add job_counter in the GebrJob structure
+
+2012-08-14  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Refresh flow review when io changed.
+
+2012-08-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Treat job status queued and initial with tooltip
+	* Fix some actions on Program List in Flow Browse
+
+2012-08-14  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Internationalization of no description's warning
+
+2012-08-14  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing segfault when no line or project selected.
+	* Making the description not mandatory.
+
+2012-08-14  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* On review of parameters, html encoding included
+
+2012-08-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Adds a jobs_counter per flow in Maestro
+
+2012-08-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Added protection when flow doesn't have job on method
+	gebr_flow_browse_info_job
+	* Improvement on info bar with last jobs submitted on Flow Browse and
+	moved action to see job's output on each line of info bar
+
+2012-08-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Changed the behavior of the Info bar jobs to behave differently in
+	each flow
+
+2012-08-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Imported and exported flows are set as never executed
+	* Empty email on entry allowed. Added the sentence No description
+	available when no description is set
+
+2012-08-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add program view (same of the Flow Edition) on Flow Browse
+	* Add new treatment to parameters table for parameters review on Flow
+	Browse
+
+2012-08-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make treatment to build the InfoBar in the case of Snapshots
+	execution
+
+2012-08-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Recently imported flows are reported as never executed
+
+2012-08-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new column for status icon on Flow Browse
+
+2012-08-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Sentence Last execution modified. Using submitted on
+
+2012-08-13  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed refresh of user external menu index and added cache of
+	internal menus index.
+	* Added relative Menu index, to make package possible.
+
+2012-08-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some treatments on notebooks page of generate help
+	* Disconnect status-change from job when dismiss info bar
+
+2012-08-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change date format according to the language
+	* Adds more information besides icon to the jobsInfoBar in the Flows
+	tab
+
+2012-08-10  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Allowed blank email
+
+2012-08-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding Html viewer on flow summary view.
+
+2012-08-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add first version of Info Bar for submitted jobs on Flow Browse
+
+2012-08-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix critical after select a IO on Flow Edition
+
+2012-08-09  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Inconsistency removed on context menu, on project line
+
+2012-08-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix minor English terms
+
+2012-08-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing sliding back when auto-scroll is activated on job control.
+
+2012-08-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update GeBR translation, mainly, the new FlowBrowser (po file)
+
+2012-08-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change icon of parameters review context button on Flow Browse to
+	flow-icon
+	* Change to Job Control when execute in another tab than Flow Browse
+	* Fix multiple selection with keyborad on Flow Browse and Flow Edition
+
+2012-08-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Removing option CSS Style None on flow and line reports.
+
+2012-08-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set first page of LineCreation wizard as incomplete by default
+
+2012-08-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improved the presentation of groups on parameters review
+	* Get the correctly flow_id for each flow when execute, and change to
+	Job Control's tab when execute multiple flows
+	* Created protection on method to load parameters review to avoid
+	criticals
+	* Improve description of snapshots on job control
+
+2012-08-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault when the buttons of Report/Comments are clicked and no
+	flow were selected
+	* Standardize simpler date format in GeBR interface
+
+2012-08-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method GebrUiFlowBrowse::set_job_status with new semantic of
+	last execution
+	* Add icon of a Flow with correctly emblem on Flow Browse, and set
+	tooltip for programs with errors
+	* Add method to get tooltip error of a program from an error id
+	* Improve description's size of a Job on Flow Browse
+	* Improve spacing and use new icon for flow
+	* Improve spacings of title on Job Control
+
+2012-08-08  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding job output on flowbrowse tab when flow was not executed.
+
+2012-08-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Reorder loop program to the first position on Parameters Review
+	* Fix some interface problems on Review Parameters in Flow Browse
+	* Fix context menu on graph
+
+2012-08-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Include user comments in the Reports by default
+	* Fix wrong automatic change of context of FlowBrowser when dealing
+	with snapshots
+
+2012-08-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix double escape on parameters value in Flow Browse
+	* Fix critical when create parameters review and improve properties
+	button on Flow Browse
+
+2012-08-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong removal of 'Properties' label to context menu
+
+2012-08-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply readable format of date to Flows tab
+
+2012-08-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create initial interface with basic functionality of Programs review
+	* Add method to get iter for given program
+
+2012-08-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding dictionary icon at flowbrowse tab.
+	* Adding validating title,description and email in project,line and
+	flow creation.
+
+2012-08-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove Report/Comments buttons from Project/Lines tab
+	* Change Report/Comments toolbar icons
+
+2012-08-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fix uninitialized use of variable
+
+2012-08-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change interface of tab Flows and add text view with Output of a Job
+	on the tab
+	* Change name of scrolled windows on Job Control's glade file
+	* Minor changed on xdot
+
+2012-08-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add Report/Comment buttons to the toolbars
+	* Update GêBR translation (po file)
+	* Change label 'Job Control' to 'Jobs' in interface
+
+2012-08-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.3: Multiple Snapshots Execution [Sprint 60] [Sprint 61]
+
 2012-08-03  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* Change Flow deletion message according to whether the flow has

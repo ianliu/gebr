@@ -1,3 +1,11 @@
+2012-08-09  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Internationalization of command lines on flow execution
+
+2012-08-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.3: Multiple Snapshots Execution [Sprint 60] [Sprint 61]
+
 2012-08-03  Igor Nunes <igorsnunes@gebrproject.com>
 
 	* Comments added on command line's sessions. Also, comments about a
