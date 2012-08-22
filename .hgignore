@@ -132,3 +132,4 @@ missing
 rpm/gebrproject.*.spec
 stamp-*
 tags
+*.idx2
