@@ -76,6 +76,9 @@ libgebr_la_SOURCES =		\
 	ui_document.h		\
 	ui_flow.c		\
 	ui_flow.h		\
+	ui_flows_io.c		\
+	ui_flows_io.h		\
+	ui_flow.h		\
 	ui_flow_browse.c	\
 	ui_flow_browse.h	\
 	ui_help.c		\
