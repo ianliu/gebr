@@ -64,6 +64,12 @@ gebr_ui_flows_io_finalize(GObject *object)
 	G_OBJECT_CLASS(gebr_ui_flows_io_parent_class)->finalize(object);
 }
 
+GebrUiFlowsIo *
+gebr_ui_flows_io_new(void)
+{
+	return g_object_new(GEBR_TYPE_UI_FLOWS_IO, NULL);
+}
+
 static void
 gebr_ui_flows_io_class_init(GebrUiFlowsIoClass *klass)
 {

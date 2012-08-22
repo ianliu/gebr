@@ -22,6 +22,7 @@
 #define  __GEBR_UI_FLOWS_IO_H__
 
 #include <glib-object.h>
+#include <libgebr/geoxml/geoxml.h>
 
 #define GEBR_TYPE_UI_FLOWS_IO            (gebr_ui_flows_io_get_type())
 #define GEBR_UI_FLOWS_IO(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GEBR_TYPE_UI_FLOWS_IO, GebrUiFlowsIo))
@@ -102,22 +103,33 @@ GebrUiFlowsIo *gebr_ui_flows_io_new(void);
 /*
  * Setters and getters
  */
-void gebr_ui_flows_io_set_id(GebrUiFlowsIo *io, const gchar *id);
+void gebr_ui_flows_io_set_id(GebrUiFlowsIo *io,
+			     const gchar *id);
+
 const gchar *gebr_ui_flows_io_get_id(GebrUiFlowsIo *io);
 
-void gebr_ui_flows_io_set_io_type(GebrUiFlowsIo *io, GebrFlowsIoType type);
+void gebr_ui_flows_io_set_io_type(GebrUiFlowsIo *io,
+		                  GebrFlowsIoType type);
+
 GebrFlowsIoType gebr_ui_flows_io_get_io_type(GebrUiFlowsIo *io);
 
-const gchar* gebr_ui_flows_io_get_value(GebrUiFlowsIo *io);
-void gebr_ui_flows_io_set_value(GebrUiFlowsIo *io, const gchar *value);
+void gebr_ui_flows_io_set_value(GebrUiFlowsIo *io,
+		                const gchar *value);
 
-void gebr_ui_flows_io_set_overwrite(GebrUiFlowsIo *io, gboolean overwrite);
+const gchar* gebr_ui_flows_io_get_value(GebrUiFlowsIo *io);
+
+void gebr_ui_flows_io_set_overwrite(GebrUiFlowsIo *io,
+				gboolean overwrite);
+
 gboolean gebr_ui_flows_io_get_overwrite(GebrUiFlowsIo *io);
 
-void gebr_ui_flows_io_set_active(GebrUiFlowsIo *io, gboolean active);
+void gebr_ui_flows_io_set_active(GebrUiFlowsIo *io,
+				gboolean active);
+
 gboolean gebr_ui_flows_io_get_active(GebrUiFlowsIo *io);
 
-//gboolean gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io, GebrGeoXmlDocument *flow);
+gboolean gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io,
+				GebrGeoXmlDocument *flow);
 
 G_END_DECLS
 
