@@ -808,16 +808,17 @@ GtkTreeIter line_append_flow_iter(GebrGeoXmlFlow * flow, GebrGeoXmlLineFlow * li
 	GtkTreeIter iter;
 
 	/* add to the flow browser. */
-	gtk_list_store_append(gebr.ui_flow_browse->store, &iter);
+	gtk_tree_store_append(gebr.ui_flow_browse->store, &iter, NULL);
 	gebr_geoxml_object_ref(flow);
 	gebr_geoxml_object_ref(line_flow);
-	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-			   FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)),
-			   FB_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)),
-			   FB_LINE_FLOW_POINTER, line_flow,
-			   FB_XMLPOINTER, flow,
-			   -1);
 
+	GebrUiFlow *ui_flow = gebr_ui_flow_new(flow, line_flow);
+	GebrUiFlowBrowseType type = STRUCT_TYPE_FLOW;
+
+	gtk_tree_store_set(gebr.ui_flow_browse->store, &iter,
+			   FB_STRUCT_TYPE, type,
+	                   FB_STRUCT, ui_flow,
+			   -1);
 	return iter;
 }
 
@@ -870,7 +871,7 @@ void line_move_flow_top(void)
 	gebr_geoxml_sequence_move_after(line_flow, NULL);
 	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 	/* GUI */
-	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
+	gtk_tree_store_move_after(gebr.ui_flow_browse->store, &iter, NULL);
 }
 
 void line_move_flow_bottom(void)
@@ -885,5 +886,5 @@ void line_move_flow_bottom(void)
 	gebr_geoxml_sequence_move_before(line_flow, NULL);
 	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 	/* GUI */
-	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
+	gtk_tree_store_move_before(gebr.ui_flow_browse->store, &iter, NULL);
 }

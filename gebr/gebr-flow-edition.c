@@ -31,7 +31,7 @@
 #include "gebr.h"
 #include "flow.h"
 #include "document.h"
-#include "ui_flow.h"
+#include "ui_flow_execution.h"
 #include "ui_parameters.h"
 #include "callbacks.h"
 #include "ui_document.h"
@@ -1011,8 +1011,8 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, GebrFlowEd
 	control = gebr_geoxml_program_get_control (program);
 
 	is_ordinary = control == GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
-	can_move_up = gebr_gui_gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter);
-	can_move_down = gebr_gui_gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter);
+	can_move_up = gebr_gui_gtk_list_store_can_move_up(GTK_TREE_STORE(ui_flow_edition->fseq_store), &iter);
+	can_move_down = gebr_gui_gtk_list_store_can_move_down(GTK_TREE_STORE(ui_flow_edition->fseq_store), &iter);
 
 	/* Move top */
 	if (is_ordinary && can_move_up) {

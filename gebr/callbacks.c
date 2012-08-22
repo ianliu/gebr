@@ -33,7 +33,7 @@
 #include "line.h"
 #include "flow.h"
 #include "menu.h"
-#include "ui_flow.h"
+#include "ui_flow_execution.h"
 #include "ui_flow_browse.h"
 #include "ui_document.h"
 #include "ui_paths.h"
@@ -385,10 +385,15 @@ static gboolean flows_check_before_execution(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
+	GebrUiFlow *ui_flow;
 	for (GList * i = rows; i; i = i->next)
 	{
 		gtk_tree_model_get_iter(model, &iter, i->data); 
-		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_flow,
+		                   -1);
+
+		flow = gebr_ui_flow_get_flow(ui_flow);
 
 		if (flow_check_before_execution(flow, FALSE))
 			continue;

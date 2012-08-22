@@ -379,14 +379,14 @@ static GtkMenu *popup_menu(GtkTreeView *tree_view, GebrGuiSequenceEdit *self)
 		goto out;
 
 	/*Move top */
-	if (gebr_gui_gtk_list_store_can_move_up(self->list_store, &iter) == TRUE) {
+	if (gebr_gui_gtk_list_store_can_move_up(GTK_TREE_STORE(self->list_store), &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",
 				 G_CALLBACK(on_move_top_activated), self);
 	}
 	/*Move bottom */
-	if (gebr_gui_gtk_list_store_can_move_down(self->list_store, &iter) == TRUE) {
+	if (gebr_gui_gtk_list_store_can_move_down(GTK_TREE_STORE(self->list_store), &iter) == TRUE) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate",

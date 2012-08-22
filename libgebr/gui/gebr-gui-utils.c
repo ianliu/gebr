@@ -296,7 +296,7 @@ void gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint 
 	g_signal_connect(GTK_OBJECT(widget), "key-press-event", G_CALLBACK(widget_return_on_key_press_event), dialog);
 }
 
-gboolean gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_list_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter)
 {
 	GtkTreePath *previous_path;
 	gboolean ret;
@@ -309,7 +309,7 @@ gboolean gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter *
 	return ret;
 }
 
-gboolean gebr_gui_gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_list_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter)
 {
 	GtkTreeIter next;
 
@@ -317,7 +317,7 @@ gboolean gebr_gui_gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter
 	return gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next);
 }
 
-gboolean gebr_gui_gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_list_store_move_up(GtkTreeStore * store, GtkTreeIter * iter)
 {
 	GtkTreeIter previous;
 	GtkTreePath *previous_path;
@@ -329,14 +329,14 @@ gboolean gebr_gui_gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * ite
 	}
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(store), &previous, previous_path);
-	gtk_list_store_move_before(store, iter, &previous);
+	gtk_tree_store_move_before(store, iter, &previous);
 
 	gtk_tree_path_free(previous_path);
 
 	return TRUE;
 }
 
-gboolean gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter)
+gboolean gebr_gui_gtk_list_store_move_down(GtkTreeStore * store, GtkTreeIter * iter)
 {
 	GtkTreeIter next;
 
@@ -344,17 +344,17 @@ gboolean gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * i
 	if (gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &next) == FALSE)
 		return FALSE;
 
-	gtk_list_store_move_after(store, iter, &next);
+	gtk_tree_store_move_after(store, iter, &next);
 
 	return TRUE;
 }
 
-gulong gebr_gui_gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter)
+gulong gebr_gui_gtk_list_store_get_iter_index(GtkTreeStore * store, GtkTreeIter * iter)
 {
 	gchar *node;
 	gulong index;
 
-	node = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(list_store), iter);
+	node = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(store), iter);
 	index = (gulong) atol(node);
 	g_free(node);
 

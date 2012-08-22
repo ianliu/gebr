@@ -1738,9 +1738,6 @@ save_document_properties(GebrPropertiesData *data)
 		project_line_info_update();
 		break;
 	} case GEBR_GEOXML_DOCUMENT_TYPE_FLOW: {
-		flow_browse_get_selected(&iter, FALSE);
-		gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-				   FB_TITLE, gebr_geoxml_document_get_title(data->document), -1);
 		flow_browse_info_update();
 		break;
 	} default:

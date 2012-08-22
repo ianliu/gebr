@@ -30,7 +30,7 @@
 #include "flow.h"
 #include "document.h"
 #include "ui_help.h"
-#include "ui_flow.h"
+#include "ui_flow_execution.h"
 
 /* Prototypes {{{1 */
 static void	parameters_actions			(GtkDialog          *dialog,

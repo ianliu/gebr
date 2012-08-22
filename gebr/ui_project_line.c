@@ -1552,7 +1552,7 @@ void project_line_free(void)
 
 	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_browse->view), NULL);
-	gtk_list_store_clear(gebr.ui_flow_browse->store);
+	gtk_tree_store_clear(gebr.ui_flow_browse->store);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_browse->view), model);
 	flow_free();
 

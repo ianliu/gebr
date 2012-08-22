@@ -35,14 +35,17 @@ G_BEGIN_DECLS
  * Store fields
  */
 enum {
-	FB_TITLE = 0,
-	FB_FILENAME,
-	FB_LINE_FLOW_POINTER,
-	FB_XMLPOINTER,
-	FB_LAST_QUEUES,
-	FB_SNP_LAST_MODIF,
+	FB_STRUCT_TYPE = 0,
+	FB_STRUCT,
 	FB_N_COLUMN
 };
+
+typedef enum {
+	STRUCT_TYPE_FLOW,
+	STRUCT_TYPE_PROGRAM,
+	STRUCT_TYPE_IO,
+	STRUCT_TYPE_COLUMN
+} GebrUiFlowBrowseType;
 
 /**
  * Menu store fields
@@ -58,11 +61,12 @@ enum {
  */
 typedef struct {
 	GtkWidget *widget;
-	GtkListStore *store;
+
+	GtkTreeStore *store;
 	GtkWidget *view;
 	GtkCellRenderer *icon_renderer;
 	GtkCellRenderer *text_renderer;
-	GtkCellRenderer *snap_renderer;
+	GtkCellRenderer *action_renderer;
 
 	GtkWidget *queue_combobox;
 	GtkWidget *server_combobox;
@@ -170,11 +174,17 @@ void gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
                                   GtkTreeIter *iter,
                                   gpointer data);
 
-void gebr_flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
-                                     GtkCellRenderer *cell,
-                                     GtkTreeModel *model,
-                                     GtkTreeIter *iter,
-                                     gpointer data);
+void gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
+                                   GtkCellRenderer *cell,
+                                   GtkTreeModel *model,
+                                   GtkTreeIter *iter,
+                                   gpointer data);
+
+void gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
+                           GtkCellRenderer *cell,
+                           GtkTreeModel *model,
+                           GtkTreeIter *iter,
+                           gpointer data);
 
 void gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
                                              GebrUiFlowBrowse *ui_flow_browse);

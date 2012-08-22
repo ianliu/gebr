@@ -1,47 +1,67 @@
-/*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2011 GeBR core team (http://www.gebrproject.com/)
+/*
+ * ui_flow.h
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2012 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_UI_FLOW_H__
-#define __GEBR_UI_FLOW_H__
+#ifndef __UI_FLOW_H__
+#define __UI_FLOW_H__
 
-#include <glib.h>
 #include <libgebr/geoxml/geoxml.h>
 
-#include "gebr-maestro-server.h"
+#define GEBR_TYPE_UI_FLOW		(gebr_ui_flow_get_type())
+#define GEBR_UI_FLOW(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TYPE_UI_FLOW, GebrUiFlow))
+#define GEBR_UI_FLOW_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_TYPE_UI_FLOW, GebrUiFlowClass))
+#define GEBR_IS_UI_FLOW(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_TYPE_UI_FLOW))
+#define GEBR_IS_UI_FLOW_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_TYPE_UI_FLOW))
+#define GEBR_UI_FLOW_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_TYPE_UI_FLOW, GebrUiFlowClass))
 
 G_BEGIN_DECLS
 
-/**
- * gebr_ui_flow_run:
- *
- * This method runs the selected flows according to the interface setup.
- */
-void gebr_ui_flow_run(gboolean is_parallel);
+typedef struct _GebrUiFlow GebrUiFlow;
+typedef struct _GebrUiFlowPriv GebrUiFlowPriv;
+typedef struct _GebrUiFlowClass GebrUiFlowClass;
 
-void gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
-                                const gchar *snapshots,
-                                gboolean is_parallel);
 
-void gebr_ui_flow_update_prog_mpi_nprocess(GebrGeoXmlProgram *prog,
-                                           GebrMaestroServer *maestro,
-                                           gdouble speed,
-                                           const gchar *group_name,
-                                           GebrMaestroServerGroupType group_type);
+struct _GebrUiFlow {
+	GObject parent;
+	GebrUiFlowPriv *priv;
+};
+
+struct _GebrUiFlowClass {
+	GObjectClass parent_class;
+};
+
+GType gebr_ui_flow_get_type() G_GNUC_CONST;
+
+GebrUiFlow *gebr_ui_flow_new(GebrGeoXmlFlow *flow,
+                             GebrGeoXmlLineFlow *line_flow);
+
+GebrGeoXmlFlow *gebr_ui_flow_get_flow(GebrUiFlow *ui_flow);
+
+GebrGeoXmlLineFlow *gebr_ui_flow_get_line_flow(GebrUiFlow *ui_flow);
+
+const gchar *gebr_ui_flow_get_filename(GebrUiFlow *ui_flow);
+
+const gchar *gebr_ui_flow_get_last_modified(GebrUiFlow *ui_flow);
+
+void gebr_ui_flow_set_last_modified(GebrUiFlow *ui_flow,
+                                    const gchar *last_modified);
 
 G_END_DECLS
 
-#endif /* __GEBR_UI_FLOW_H__ */
+#endif /* __UI_FLOW_H__ */
