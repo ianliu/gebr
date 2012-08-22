@@ -31,7 +31,7 @@ struct _GebrUiFlowProgramPriv {
 	GebrGeoXmlProgram *program;
 	gboolean never_opened;
 	GebrGeoXmlProgramStatus status;
-	GebrIExprError *error_id;
+	GebrIExprError error_id;
 	// inserir ID que deve ser um indentificador unico de um programa
 };
 
@@ -43,12 +43,6 @@ G_DEFINE_TYPE(GebrUiFlowProgram, gebr_ui_flow_program, G_TYPE_OBJECT);
 static void
 gebr_ui_flow_program_finalize(GObject *object)
 {
-	GebrUiFlowProgram *prog = GEBR_UI_FLOW_PROGRAM(object);
-	/*
-	 * Frees
-	 */
-	g_free(prog->priv->error_id);
-	g_free(prog->priv->program);
 	G_OBJECT_CLASS(gebr_ui_flow_program_parent_class)->finalize(object);
 }
 
@@ -67,8 +61,6 @@ gebr_ui_flow_program_init(GebrUiFlowProgram *prog)
 	prog->priv = G_TYPE_INSTANCE_GET_PRIVATE(prog,
 	                                       GEBR_TYPE_UI_FLOW_PROGRAM,
 	                                       GebrUiFlowProgramPriv);
-	prog->priv->error_id = NULL;
-	prog->priv->program = NULL;
 }
 
 GebrUiFlowProgram *
@@ -76,50 +68,61 @@ gebr_ui_flow_program_new(GebrGeoXmlProgram *program)
 {
 	GebrUiFlowProgram *ui_prog = g_object_new(GEBR_TYPE_UI_FLOW_PROGRAM, NULL);
 
-	ui_prog->priv->error_id = NULL;
-	ui_prog->priv->program = NULL;
+	ui_prog->priv->program = program;
 
 	return ui_prog;
 }
 
 /*----------------------------------------------------------------------------------------------*/
 
-void ui_flow_program_set_parent (GebrUiFlowProgram *program, GObject parent) {
-	program->parent = parent;
-}
-
-GObject ui_flow_program_get_parent (GebrUiFlowProgram *program) {
-	return program->parent;
-}
-
-void ui_flow_program_set_xml (GebrUiFlowProgram *program, GebrGeoXmlProgram *prog_xml){
+void
+gebr_ui_flow_program_set_xml (GebrUiFlowProgram *program,
+                              GebrGeoXmlProgram *prog_xml)
+{
 	program->priv->program = prog_xml;
 }
 
-GebrGeoXmlProgram *ui_flow_program_get_xml (GebrUiFlowProgram *program){
+GebrGeoXmlProgram *
+gebr_ui_flow_program_get_xml (GebrUiFlowProgram *program)
+{
 	return program->priv->program;
 }
 
-void ui_flow_program_set_flag_opened (GebrUiFlowProgram *program, gboolean never_opened){
+void
+gebr_ui_flow_program_set_flag_opened (GebrUiFlowProgram *program,
+                                      gboolean never_opened)
+{
 	program->priv->never_opened = never_opened;
 }
 
-gboolean ui_flow_program_get_flag_opened (GebrUiFlowProgram *program){
+gboolean
+gebr_ui_flow_program_get_flag_opened (GebrUiFlowProgram *program)
+{
 	return program->priv->never_opened;
 }
 
-void ui_flow_program_set_status (GebrUiFlowProgram *program, GebrGeoXmlProgramStatus status){
+void
+gebr_ui_flow_program_set_status (GebrUiFlowProgram *program,
+                            GebrGeoXmlProgramStatus status)
+{
 	program->priv->status = status;
 }
 
-GebrGeoXmlProgramStatus ui_flow_program_get_status (GebrUiFlowProgram *program){
+GebrGeoXmlProgramStatus
+gebr_ui_flow_program_get_status (GebrUiFlowProgram *program)
+{
 	return program->priv->status;
 }
 
-void ui_flow_program_set_error_id (GebrUiFlowProgram *program, GebrIExprError error_id){
-	*(program->priv->error_id) = error_id;
+void
+gebr_ui_flow_program_set_error_id (GebrUiFlowProgram *program,
+                              GebrIExprError error_id)
+{
+	program->priv->error_id = error_id;
 }
 
-GebrIExprError ui_flow_program_get_error_id (GebrUiFlowProgram *program){
-	return *(program->priv->error_id);
+GebrIExprError
+gebr_ui_flow_program_get_error_id (GebrUiFlowProgram *program)
+{
+	return program->priv->error_id;
 }

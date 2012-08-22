@@ -28,19 +28,12 @@
 
 struct _GebrUiFlowsIoPriv {
 	gchar *id;
-	GebrFlowsIoType type;
+	GebrUiFlowsIoType type;
 	gchar *value;
 	gboolean overwrite;
 	gboolean active;
 };
 
-
-/*
- * Global variables to implement GebrUiFlowsIoSingleton methods.
- */
-static GebrUiFlowsIoFactory 	__factory = NULL;
-static gpointer           	__data = NULL;
-static GebrUiFlowsIo           *__io = NULL;
 
 /*
  * Prototypes
@@ -65,9 +58,13 @@ gebr_ui_flows_io_finalize(GObject *object)
 }
 
 GebrUiFlowsIo *
-gebr_ui_flows_io_new(void)
+gebr_ui_flows_io_new(GebrUiFlowsIoType type)
 {
-	return g_object_new(GEBR_TYPE_UI_FLOWS_IO, NULL);
+	GebrUiFlowsIo *io = g_object_new(GEBR_TYPE_UI_FLOWS_IO, NULL);
+
+	io->priv->type = type;
+
+	return io;
 }
 
 static void
@@ -86,39 +83,18 @@ gebr_ui_flows_io_init(GebrUiFlowsIo *io)
 					       GEBR_TYPE_UI_FLOWS_IO,
 					       GebrUiFlowsIoPriv);
 	io->priv->id = NULL;
-	io->priv->type = GEBR_IO_TYPE_NONE;
 	io->priv->overwrite = FALSE;
 	io->priv->value = NULL;
 	io->priv->active = FALSE;
 }
-
-void
-gebr_ui_flows_io_singleton_set_factory(GebrUiFlowsIoFactory fac,
-				       gpointer data)
-{
-	__factory = fac;
-	__data = data;
-}
-
-GebrUiFlowsIo *
-gebr_ui_flows_io_singleton_get(void)
-{
-	if (__factory)
-		return (*__factory)(__data);
-
-	if (!__io)
-		__io = gebr_ui_flows_io_new();
-
-	return __io;
-}
-
 
 /*
  * Public Functions
  */
 
 void
-gebr_ui_flows_io_set_id(GebrUiFlowsIo *io, const gchar *id)
+gebr_ui_flows_io_set_id(GebrUiFlowsIo *io,
+                        const gchar *id)
 {
 	io->priv->id = g_strdup(id);
 }
@@ -130,7 +106,8 @@ gebr_ui_flows_io_get_id(GebrUiFlowsIo *io)
 }
 
 void
-gebr_ui_flows_io_set_io_type(GebrUiFlowsIo *io, GebrFlowsIoType type)
+gebr_ui_flows_io_set_io_type(GebrUiFlowsIo *io,
+                             GebrUiFlowsIoType type)
 {
 	io->priv->type = type;
 }
@@ -142,19 +119,21 @@ gebr_ui_flows_io_get_value(GebrUiFlowsIo *io)
 }
 
 void
-gebr_ui_flows_io_set_value(GebrUiFlowsIo *io, const gchar *value)
+gebr_ui_flows_io_set_value(GebrUiFlowsIo *io,
+                           const gchar *value)
 {
 	io->priv->value = g_strdup(value);
 }
 
-GebrFlowsIoType
+GebrUiFlowsIoType
 gebr_ui_flows_io_get_io_type(GebrUiFlowsIo *io)
 {
 	return io->priv->type;
 }
 
 void
-gebr_ui_flows_io_set_overwrite(GebrUiFlowsIo *io, gboolean overwrite)
+gebr_ui_flows_io_set_overwrite(GebrUiFlowsIo *io,
+                               gboolean overwrite)
 {
 	io->priv->overwrite = overwrite;
 }
@@ -178,20 +157,21 @@ gebr_ui_flows_io_get_active(GebrUiFlowsIo *io)
 }
 
 gboolean
-gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io, GebrGeoXmlDocument *flow)
+gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io,
+                                     GebrGeoXmlFlow *flow)
 {
 	gchar *value = NULL;
-	GebrFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
+	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
 
 	switch(type) {
 	case GEBR_IO_TYPE_INPUT:
-		value = gebr_geoxml_flow_io_get_input(GEBR_GEOXML_FLOW(flow));
+		value = gebr_geoxml_flow_io_get_input(flow);
 		break;
 	case GEBR_IO_TYPE_OUTPUT:
-		value = gebr_geoxml_flow_io_get_output(GEBR_GEOXML_FLOW(flow));
+		value = gebr_geoxml_flow_io_get_output(flow);
 		break;
 	case GEBR_IO_TYPE_ERROR:
-		value = gebr_geoxml_flow_io_get_error(GEBR_GEOXML_FLOW(flow));
+		value = gebr_geoxml_flow_io_get_error(flow);
 		break;
 	case GEBR_IO_TYPE_NONE:
 		break;

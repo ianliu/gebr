@@ -51,43 +51,9 @@ typedef enum {
 	GEBR_IO_TYPE_INPUT,
 	GEBR_IO_TYPE_OUTPUT,
 	GEBR_IO_TYPE_ERROR
-} GebrFlowsIoType;
+} GebrUiFlowsIoType;
 
-/* GebrUiFlowsIoSingleton methods {{{1 */
-/**
- * GebrUiFlowsIoFactory:
- *
- * A function that constructs a #GebrUiFlowsIo. See
- * gebr_ui_flows_io_singleton_set_factory().
- */
-typedef GebrUiFlowsIo* (*GebrUiFlowsIoFactory) (gpointer data);
 
-/**
- * gebr_ui_flows_io_singleton_set_factory:
- *
- * Changes the method that is used to create a #GebrUiFlowsIo in
- * gebr_ui_flows_io_singleton_get(). The default method creates a #GebrUiFlowsIo per
- * program execution. You should use this method in unit tests to prevent one
- * test from interfering with another. See the example below.
- *
- * Note that this method changes global behavior and calling it on different
- * threads is probably an error.
- *
- */
-
-void gebr_ui_flows_io_singleton_set_factory(GebrUiFlowsIoFactory factory,
-				     gpointer data);
-
-/**
- * gebr_ui_flows_io_singleton_get:
- *
- * Gets the #GebrUiFlowsIo singleton instance. The instance returned is calculated
- * by the method set with gebr_ui_flows_io_singleton_set_factory(). If no method was
- * set, then a default one is used, which creates one #GebrUiFlowsIo for
- * application.
- */
-GebrUiFlowsIo *gebr_ui_flows_io_singleton_get(void);
-/* }}} GebrUiFlowsIoSingleton methods */
 
 /* GebrUiFlowsIo methods {{{ */
 GType gebr_ui_flows_io_get_type(void) G_GNUC_CONST;
@@ -98,7 +64,7 @@ GType gebr_ui_flows_io_get_type(void) G_GNUC_CONST;
  * Creates a new #GebrUiFlowsIo with reference count of one. Free with
  * g_object_unref().
  */
-GebrUiFlowsIo *gebr_ui_flows_io_new(void);
+GebrUiFlowsIo *gebr_ui_flows_io_new(GebrUiFlowsIoType type);
 
 /*
  * Setters and getters
@@ -109,9 +75,9 @@ void gebr_ui_flows_io_set_id(GebrUiFlowsIo *io,
 const gchar *gebr_ui_flows_io_get_id(GebrUiFlowsIo *io);
 
 void gebr_ui_flows_io_set_io_type(GebrUiFlowsIo *io,
-		                  GebrFlowsIoType type);
+		                  GebrUiFlowsIoType type);
 
-GebrFlowsIoType gebr_ui_flows_io_get_io_type(GebrUiFlowsIo *io);
+GebrUiFlowsIoType gebr_ui_flows_io_get_io_type(GebrUiFlowsIo *io);
 
 void gebr_ui_flows_io_set_value(GebrUiFlowsIo *io,
 		                const gchar *value);
@@ -129,7 +95,7 @@ void gebr_ui_flows_io_set_active(GebrUiFlowsIo *io,
 gboolean gebr_ui_flows_io_get_active(GebrUiFlowsIo *io);
 
 gboolean gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io,
-				GebrGeoXmlDocument *flow);
+                                              GebrGeoXmlFlow *flow);
 
 G_END_DECLS
 
