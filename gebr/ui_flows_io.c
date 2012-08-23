@@ -257,7 +257,7 @@ gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 	GCallback overwrite_callback = G_CALLBACK(on_ui_flows_io_overwrite_toggled);
 	const gchar *label;
 
-	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
+	GebrUiFlowsIoType type = io->priv->type;
 
 	switch(type) {
 	case (GEBR_IO_TYPE_OUTPUT):
@@ -280,6 +280,7 @@ gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 	g_signal_connect (menu_item, "toggled", overwrite_callback, dai);
 	//gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), !overwrite);
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+	gtk_widget_show(menu_item);
 
 	return GTK_MENU(menu);
 }

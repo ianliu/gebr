@@ -18,6 +18,7 @@
 #include "ui_flow.h"
 
 #include "gebr.h"
+#include "line.h"
 
 struct _GebrUiFlowPriv {
 	GebrGeoXmlFlow *flow;
@@ -102,4 +103,75 @@ gebr_ui_flow_set_last_modified(GebrUiFlow *ui_flow,
 		g_free(ui_flow->priv->last_modified);
 
 	ui_flow->priv->last_modified = g_strdup(last_modified);
+}
+
+GtkMenu *
+gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow,
+                        gboolean move_up,
+                        gboolean move_down)
+{
+	GtkWidget *menu;
+	GtkWidget *menu_item;
+
+	GtkTreeIter iter;
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
+		return NULL;
+
+	menu = gtk_menu_new();
+
+	if (!flow_browse_get_selected(&iter, FALSE)) {
+		gtk_container_add(GTK_CONTAINER(menu),
+				  gtk_action_create_menu_item(gtk_action_group_get_action
+							      (gebr.action_group_flow, "flow_new")));
+		gtk_container_add(GTK_CONTAINER(menu),
+				  gtk_action_create_menu_item(gtk_action_group_get_action
+							      (gebr.action_group_flow, "flow_paste")));
+		goto out;
+	}
+
+	/* Move top */
+	if (move_up) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate", G_CALLBACK(line_move_flow_top), NULL);
+	}
+	/* Move bottom */
+	if (move_down) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate", G_CALLBACK(line_move_flow_bottom), NULL);
+	}
+	/* separator */
+	if (move_up || move_down)
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new_program")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_view")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit")));
+
+	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
+	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute")));
+
+ out:	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
 }

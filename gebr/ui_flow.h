@@ -22,6 +22,7 @@
 #define __UI_FLOW_H__
 
 #include <libgebr/geoxml/geoxml.h>
+#include <gtk/gtk.h>
 
 #define GEBR_TYPE_UI_FLOW		(gebr_ui_flow_get_type())
 #define GEBR_UI_FLOW(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TYPE_UI_FLOW, GebrUiFlow))
@@ -61,6 +62,10 @@ const gchar *gebr_ui_flow_get_last_modified(GebrUiFlow *ui_flow);
 
 void gebr_ui_flow_set_last_modified(GebrUiFlow *ui_flow,
                                     const gchar *last_modified);
+
+GtkMenu *gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow,
+                                 gboolean move_up,
+                                 gboolean move_down);
 
 G_END_DECLS
 

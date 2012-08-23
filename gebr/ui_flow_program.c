@@ -85,6 +85,9 @@ void
 gebr_ui_flow_program_set_xml (GebrUiFlowProgram *program,
                               GebrGeoXmlProgram *prog_xml)
 {
+	if (program->priv->program)
+		gebr_geoxml_object_unref(program->priv->program);
+
 	program->priv->program = prog_xml;
 }
 

@@ -46,10 +46,8 @@ static void flow_browse_load(void);
 
 static gboolean flow_browse_static_info_update(void);
 
-//static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
-//					 GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
-
-//static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_flow_browse);
+static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+					 GtkTreeViewColumn * column, GebrUiFlowBrowse *fb);
 
 //static void flow_browse_on_flow_move(void);
 
@@ -949,6 +947,100 @@ on_size_request(GtkWidget      *widget,
 		gebr_flow_browse_select_job_output(gebr_job_get_id(job), fb);
 }
 
+static void
+flow_browse_component_editing_started(GtkCellRenderer *renderer,
+                                      GtkCellEditable *editable,
+                                      gchar *path,
+                                      GebrUiFlowBrowse *fb)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(fb->store);
+	GtkTreeIter iter;
+
+	GebrUiFlowsIo *io;
+
+	gtk_tree_model_get_iter_from_string(model, &iter, path);
+	gtk_tree_model_get(model, &iter,
+	                   FB_STRUCT, &io,
+	                   -1);
+}
+
+static void
+flow_browse_component_editing_canceled(GtkCellRenderer *renderer,
+                                       GebrUiFlowBrowse *fb)
+{
+	return;
+}
+
+static void
+flow_browse_component_edited(GtkCellRendererText *renderer,
+                              gchar *path,
+                              gchar *new_text,
+                              GebrUiFlowBrowse *fb)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(fb->store);
+	GtkTreeIter iter;
+
+	GebrUiFlowsIo *io;
+
+	gtk_tree_model_get_iter_from_string(model, &iter, path);
+	gtk_tree_model_get(model, &iter,
+	                   FB_STRUCT, &io,
+	                   -1);
+}
+
+static GtkMenu *
+flow_browse_popup_menu(GtkWidget *widget,
+                       GebrUiFlowBrowse *fb)
+{
+	GtkMenu *menu = NULL;
+	GtkTreeModel *model = GTK_TREE_MODEL(fb->store);
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+
+	GtkTreeIter iter;
+	if (g_list_length(rows) > 1)
+		flow_browse_single_selection();
+
+	GebrUiFlowBrowseType type;
+	gtk_tree_model_get_iter(model, &iter, rows->data);
+	gtk_tree_model_get(model, &iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   -1);
+
+	if (type == STRUCT_TYPE_FLOW) {
+		GebrUiFlow *ui_flow;
+
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_flow,
+		                   -1);
+
+		gboolean move_up = gebr_gui_gtk_list_store_can_move_up(fb->store, &iter);
+		gboolean move_down = gebr_gui_gtk_list_store_can_move_down(fb->store, &iter);
+		menu = gebr_ui_flow_popup_menu(ui_flow, move_up, move_down);
+	}
+	else if (type == STRUCT_TYPE_IO) {
+		GebrUiFlowsIo *ui_io;
+
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_io,
+		                   -1);
+
+		menu = gebr_ui_flows_io_popup_menu(ui_io, gebr.flow);
+	}
+	else if (type == STRUCT_TYPE_PROGRAM) {
+		GebrUiFlowProgram *ui_program;
+
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_program,
+		                   -1);
+
+		gboolean move_up = gebr_gui_gtk_list_store_can_move_up(fb->store, &iter);
+		gboolean move_down = gebr_gui_gtk_list_store_can_move_down(fb->store, &iter);
+		menu = gebr_ui_flow_program_popup_menu(ui_program, move_up, move_down);
+	}
+	return menu;
+}
+
 GebrUiFlowBrowse *flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
@@ -1060,15 +1152,16 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 
-//	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
-//						  (GebrGuiGtkPopupCallback) flow_browse_popup_menu, ui_flow_browse);
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
+						  (GebrGuiGtkPopupCallback) flow_browse_popup_menu, ui_flow_browse);
+
 //	gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GTK_TREE_VIEW(ui_flow_browse->view),
 //								 FB_LINE_FLOW_POINTER,
 //								 (GebrGuiGtkTreeViewMoveSequenceCallback)
 //								 flow_browse_on_flow_move, NULL);
 
-//	g_signal_connect(ui_flow_browse->view, "row-activated", G_CALLBACK(flow_browse_on_row_activated),
-//			 ui_flow_browse);
+	g_signal_connect(ui_flow_browse->view, "row-activated", G_CALLBACK(flow_browse_on_row_activated),
+			 ui_flow_browse);
 //
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
 	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), NULL);
@@ -1087,8 +1180,14 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/* Text Renderer */
 	ui_flow_browse->text_renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, ui_flow_browse->text_renderer, TRUE);
-	g_object_set(ui_flow_browse->text_renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	g_object_set(ui_flow_browse->text_renderer,
+	             "ellipsize-set", TRUE,
+	             "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_tree_view_column_set_cell_data_func(col, ui_flow_browse->text_renderer, gebr_flow_browse_text, NULL, NULL);
+
+	g_signal_connect(ui_flow_browse->text_renderer, "edited", G_CALLBACK(flow_browse_component_edited), ui_flow_browse);
+	g_signal_connect(ui_flow_browse->text_renderer, "editing-started", G_CALLBACK(flow_browse_component_editing_started), ui_flow_browse);
+	g_signal_connect(ui_flow_browse->text_renderer, "editing-canceled", G_CALLBACK(flow_browse_component_editing_canceled), ui_flow_browse);
 
 	/* Action Icon column */
 	ui_flow_browse->action_renderer = gtk_cell_renderer_pixbuf_new();
@@ -1869,7 +1968,6 @@ static void flow_browse_load(void)
 	                   -1);
 
 	if (type == STRUCT_TYPE_FLOW) {
-
 		gebr_flow_browse_create_graph(gebr.ui_flow_browse);
 
 		flow_free();
@@ -1954,6 +2052,28 @@ static void flow_browse_load(void)
 				gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
 			gtk_widget_show(gebr.ui_flow_browse->properties_ctx_box);
 		}
+	} else if (type == STRUCT_TYPE_PROGRAM) {
+		gboolean has_error;
+		GtkAction * action;
+
+		gebr.program = NULL;
+
+		GebrUiFlowProgram *ui_program;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+				                   FB_STRUCT, &ui_program,
+				                   -1);
+
+		gebr.program = gebr_ui_flow_program_get_xml(ui_program);
+
+		/* If the program has an error, disable the 'Configured' status */
+		action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
+		has_error = gebr_geoxml_program_get_error_id(gebr.program, NULL);
+		gtk_action_set_sensitive(action, !has_error);
+
+		action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help");
+		gchar *tmp_help_p = gebr_geoxml_program_get_help(gebr.program);
+		gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
+		g_free(tmp_help_p);
 	}
 }
 
@@ -2035,89 +2155,26 @@ void flow_browse_edit_help(void)
  * \internal
  * Go to flow components tab
  */
-//static void
-//flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
-//			     GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse)
-//{
-//	gebr_flow_browse_show_menu_list(ui_flow_browse);
-//}
+static void
+flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+			     GtkTreeViewColumn * column, GebrUiFlowBrowse *fb)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(fb->store);
+	GtkTreeIter iter;
 
-/**
- * \internal
- * Build popup menu
- */
-//static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_flow_browse)
-//{
-//	GtkWidget *menu;
-//	GtkWidget *menu_item;
-//
-//	GtkTreeIter iter;
-//
-//	/* no line, no new flow possible */
-//	if (gebr.line == NULL)
-//		return NULL;
-//
-//	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-//	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
-//		return NULL;
-//
-//	menu = gtk_menu_new();
-//
-//	if (!flow_browse_get_selected(&iter, FALSE)) {
-//		gtk_container_add(GTK_CONTAINER(menu),
-//				  gtk_action_create_menu_item(gtk_action_group_get_action
-//							      (gebr.action_group_flow, "flow_new")));
-//		gtk_container_add(GTK_CONTAINER(menu),
-//				  gtk_action_create_menu_item(gtk_action_group_get_action
-//							      (gebr.action_group_flow, "flow_paste")));
-//		goto out;
-//	}
-//
-//	/* Move top */
-//	if (gebr_gui_gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE) {
-//		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
-//		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-//		g_signal_connect(menu_item, "activate", G_CALLBACK(line_move_flow_top), NULL);
-//	}
-//	/* Move bottom */
-//	if (gebr_gui_gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE) {
-//		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
-//		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-//		g_signal_connect(menu_item, "activate", G_CALLBACK(line_move_flow_bottom), NULL);
-//	}
-//	/* separator */
-//	if (gebr_gui_gtk_list_store_can_move_up(ui_flow_browse->store, &iter) == TRUE ||
-//	    gebr_gui_gtk_list_store_can_move_down(ui_flow_browse->store, &iter) == TRUE)
-//		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-//
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new")));
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new_program")));
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy")));
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste")));
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete")));
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties")));
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_view")));
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit")));
-//
-//	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
-//	gtk_container_add(GTK_CONTAINER(menu), menu_item);
-//
-//	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-//	gtk_container_add(GTK_CONTAINER(menu),
-//			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute")));
-//
-// out:	gtk_widget_show_all(menu);
-//
-//	return GTK_MENU(menu);
-//}
+	GebrUiFlowBrowseType type;
+
+	gtk_tree_model_get_iter(model, &iter, path);
+	gtk_tree_model_get(model, &iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   -1);
+
+	if (type == STRUCT_TYPE_FLOW)
+		gebr_flow_browse_show_menu_list(fb);
+
+	else if (type == STRUCT_TYPE_PROGRAM)
+		parameters_configure_setup_ui();
+}
 
 /**
  * \internal
@@ -2239,8 +2296,10 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 		title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 
 		g_object_set(cell, "sensitive", TRUE, NULL);
+		g_object_set(cell, "editable", FALSE, NULL);
 	}
 	else if (type == STRUCT_TYPE_IO) {
+
 		GebrUiFlowsIo *io;
 		gtk_tree_model_get(model, iter,
 		                   FB_STRUCT, &io,
@@ -2256,6 +2315,8 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 			g_object_set(cell, "sensitive", TRUE, NULL);
 		else
 			g_object_set(cell, "sensitive", FALSE, NULL);
+
+		g_object_set(cell, "editable", TRUE, NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *program;
@@ -2268,6 +2329,7 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 		title = gebr_geoxml_program_get_title(prog);
 
 		g_object_set(cell, "sensitive", TRUE, NULL);
+		g_object_set(cell, "editable", FALSE, NULL);
 	}
 
 	g_object_set(cell, "markup", title, NULL);

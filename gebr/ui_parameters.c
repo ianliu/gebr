@@ -31,6 +31,8 @@
 #include "document.h"
 #include "ui_help.h"
 #include "ui_flow_execution.h"
+#include "ui_flow_browse.h"
+#include "ui_flow_program.h"
 
 /* Prototypes {{{1 */
 static void	parameters_actions			(GtkDialog          *dialog,
@@ -49,7 +51,7 @@ parameters_configure_setup_ui(void)
 	GtkWidget *button;
 	GebrGuiProgramEdit *program_edit;
 
-	if (flow_edition_get_selected_component(NULL, FALSE) == FALSE)
+	if (flow_browse_get_selected(NULL, FALSE) == FALSE)
 		return;
 
 	dialog = gtk_dialog_new_with_buttons(_("Parameters"),
@@ -150,34 +152,40 @@ parameters_actions(GtkDialog *dialog, gint response, GebrGuiProgramEdit *program
 		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program_edit->program));
 
 		/* Update interface */
-		flow_edition_get_selected_component(&iter, FALSE);
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-				   FSEQ_GEBR_GEOXML_POINTER, program_edit->program,
-				   FSEQ_ICON_COLUMN, icon,
-				   FSEQ_NEVER_OPENED, FALSE,
-				   -1);
-		flow_edition_select_component_iter(&iter);
+		flow_browse_get_selected(&iter, FALSE);
 
-		GebrGeoXmlProgram *program = program_edit->program;
-		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-			if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
-				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
-				GebrGeoXmlSequence *parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-				gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
-			} else {
-				gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
-				GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
-				const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
-				gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
-			}
-		}
+		GebrUiFlowProgram *ui_program;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		                   FB_STRUCT, &ui_program,
+		                   -1);
 
-		if (validate_selected_program(NULL))
-			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
-		else
-			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
+		gebr_geoxml_object_ref(program_edit->program);
+		gebr_ui_flow_program_set_xml(ui_program, program_edit->program);
 
-		flow_edition_set_io();
+		flow_browse_reload_selected();
+
+//		flow_edition_select_component_iter(&iter);
+
+//		GebrGeoXmlProgram *program = program_edit->program;
+//		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+//			if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
+//				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+//				GebrGeoXmlSequence *parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
+//				gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
+//			} else {
+//				gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
+//				GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
+//				const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
+//				gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
+//			}
+//		}
+//
+//		if (validate_selected_program(NULL))
+//			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
+//		else
+//			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
+//
+//		flow_edition_set_io();
 		gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 
 		/* Update parameters review on Flow Browse */
