@@ -1332,6 +1332,7 @@ flow_browse_static_info_update(void)
 		gtk_widget_set_sensitive(gebr.ui_flow_browse->info.description, TRUE);
 	}
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.description), markup);
+	gtk_label_set_ellipsize(GTK_LABEL(gebr.ui_flow_browse->info.description), PANGO_ELLIPSIZE_END);
 	g_free(markup);
 	g_free(description);
 

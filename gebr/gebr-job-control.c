@@ -780,7 +780,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		gchar *snapshot_markup = g_strdup_printf(_("<span size=\"x-large\">%s</span>"),
 							 snapshot_title);
 		gtk_label_set_markup(snapshot_label, snapshot_markup);
-
+		gtk_label_set_ellipsize(snapshot_label, PANGO_ELLIPSIZE_END);
 		g_free(snapshot_markup);
 		gtk_widget_hide(GTK_WIDGET(header_label));
 		gtk_widget_show(GTK_WIDGET(snapshot_label));
@@ -1431,6 +1431,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 	}
 	gtk_label_set_markup (label, markup);
+	gtk_label_set_ellipsize(label, PANGO_ELLIPSIZE_END);
 	g_free (markup);
 
 	gtk_text_buffer_set_text(jc->priv->text_buffer, "", 0);
