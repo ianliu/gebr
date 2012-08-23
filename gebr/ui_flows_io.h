@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 #include <libgebr/geoxml/geoxml.h>
+#include <gtk/gtk.h>
 
 #define GEBR_TYPE_UI_FLOWS_IO            (gebr_ui_flows_io_get_type())
 #define GEBR_UI_FLOWS_IO(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GEBR_TYPE_UI_FLOWS_IO, GebrUiFlowsIo))
@@ -115,6 +116,8 @@ const gchar *gebr_ui_flows_io_get_label_markup(GebrUiFlowsIo *io);
  */
 const gchar *gebr_ui_flows_io_get_icon_str(GebrUiFlowsIo *io);
 
+GtkMenu *gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
+				     GebrGeoXmlFlow *flow);
 G_END_DECLS
 
 #endif /* __GEBR_UI_FLOWS_IO_H__ */
