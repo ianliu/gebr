@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 #include <libgebr/geoxml/geoxml.h>
+#include <gtk/gtk.h>
 
 #define GEBR_TYPE_UI_FLOW_PROGRAM            (gebr_ui_flow_program_get_type())
 #define GEBR_UI_FLOW_PROGRAM(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GEBR_TYPE_UI_FLOW_PROGRAM, GebrUiFlowProgram))
@@ -68,6 +69,9 @@ GebrIExprError gebr_ui_flow_program_get_error_id (GebrUiFlowProgram *program);
 
 const gchar * gebr_ui_flow_get_error_tooltip(GebrUiFlowProgram *program);
 
+GtkMenu *gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program,
+					 gboolean can_move_up,
+					 gboolean can_move_down);
 G_END_DECLS
 
 #endif /* __GEBR_UI_FLOW_PROGRAM_H__ */
