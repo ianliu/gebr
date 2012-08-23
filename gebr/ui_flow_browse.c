@@ -2258,15 +2258,7 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 		title = g_strdup(gebr_ui_flows_io_get_value(io));
 
 		if (!title || !*title) {
-			GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
-			if (type == GEBR_IO_TYPE_INPUT)
-				title = g_markup_printf_escaped(_("<i>Input file</i>"));
-
-			else if (type == GEBR_IO_TYPE_OUTPUT)
-				title = g_markup_printf_escaped(_("<i>Output file</i>"));
-
-			else if (type == GEBR_IO_TYPE_ERROR)
-				title = g_markup_printf_escaped(_("<i>Log file</i>"));
+			title = g_strdup(gebr_ui_flows_io_get_label_markup(io));
 		}
 
 		if (gebr_ui_flows_io_get_active(io))
