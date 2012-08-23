@@ -766,20 +766,6 @@ on_job_button_clicked(GtkButton *button,
 }
 
 static void
-gebr_flow_browse_update_programs_view(GebrUiFlowBrowse *fb)
-{
-	if (!gtk_widget_get_visible(fb->view))
-		return;
-
-	gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view)));
-
-	if (nrows == 1)
-		gtk_widget_show_all(fb->prog_window);
-	else
-		gtk_widget_hide(fb->prog_window);
-}
-
-static void
 on_output_job_clicked(GtkToggleButton *button,
                       GebrJob *job)
 {
@@ -1050,30 +1036,12 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	gtk_box_pack_start(GTK_BOX(left_size), frame, FALSE, TRUE, 0);
 
-	GtkWidget *list = gtk_vpaned_new();
-
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
 	gtk_widget_set_size_request(scrolled_window, 250, -1);
-	gtk_paned_pack1(GTK_PANED(list), scrolled_window, FALSE, FALSE);
+	gtk_box_pack_start(GTK_BOX(left_size), scrolled_window, TRUE, TRUE, 0);
 
-	ui_flow_browse->prog_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(ui_flow_browse->prog_window), GTK_POLICY_AUTOMATIC,
-	                               GTK_POLICY_AUTOMATIC);
-	gtk_widget_set_size_request(ui_flow_browse->prog_window, 250, 50);
-
-	ui_flow_browse->prog_frame = gtk_frame_new(NULL);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(ui_flow_browse->prog_window), ui_flow_browse->prog_frame);
-
-	/* Set programs list */
-	GtkWidget *prog_view = gebr_flow_edition_get_programs_view(gebr.ui_flow_edition);
-	gtk_container_add(GTK_CONTAINER(ui_flow_browse->prog_frame), prog_view);
-	gtk_frame_set_label(GTK_FRAME(ui_flow_browse->prog_frame), _("Flow sequence"));
-
-	gtk_paned_pack2(GTK_PANED(list), ui_flow_browse->prog_window, FALSE, FALSE);
-
-	gtk_box_pack_start(GTK_BOX(left_size), list, TRUE, TRUE, 0);
 	gtk_paned_pack1(GTK_PANED(hpanel), left_size, FALSE, FALSE);
 
 	ui_flow_browse->store = gtk_tree_store_new(FB_N_COLUMN,
@@ -1082,6 +1050,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
 
+	gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(ui_flow_browse->view), 20);
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->view), TRUE);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
 	gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
@@ -1105,24 +1074,27 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), NULL);
 	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_speed_slider_sensitiveness), ui_flow_browse);
 
-	/* Icon column */
-	ui_flow_browse->icon_renderer = gtk_cell_renderer_pixbuf_new();
-	col = gtk_tree_view_column_new_with_attributes("", ui_flow_browse->icon_renderer, NULL);
+	/* Icon/Text column */
+	col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
+
+	/* Icon Renderer */
+	ui_flow_browse->icon_renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(col, ui_flow_browse->icon_renderer, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, ui_flow_browse->icon_renderer, gebr_flow_browse_status_icon, NULL, NULL);
 
-	/* Text column */
+	/* Text Renderer */
 	ui_flow_browse->text_renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, ui_flow_browse->text_renderer, TRUE);
 	g_object_set(ui_flow_browse->text_renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-	col = gtk_tree_view_column_new_with_attributes("", ui_flow_browse->text_renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
-	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_column_set_cell_data_func(col, ui_flow_browse->text_renderer, gebr_flow_browse_text, NULL, NULL);
 
-	/* Snap Icon column */
+	/* Action Icon column */
 	ui_flow_browse->action_renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", ui_flow_browse->action_renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->view), col);
+	gtk_tree_view_column_set_expand(col, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, ui_flow_browse->action_renderer, gebr_flow_browse_action_icon, NULL, NULL);
 
 	g_signal_connect(ui_flow_browse->view, "cursor-changed",
@@ -1924,8 +1896,6 @@ static void flow_browse_load(void)
 		/* free previous flow and load it */
 		flow_edition_load_components();
 
-		gebr_flow_browse_update_programs_view(gebr.ui_flow_browse);
-
 		/* check if has revisions */
 		gboolean has_revision = gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0;
 
@@ -1998,7 +1968,16 @@ update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb)
 	for (GList *i = rows; i; i = i->next) {
 		GtkTreeIter iter;
 		GebrUiFlow *ui_flow;
+		GebrUiFlowBrowseType type;
 		GebrGeoXmlFlow *flow;
+
+		gtk_tree_model_get_iter(model, &iter, i->data);
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT_TYPE, &type,
+		                   -1);
+
+		if (type != STRUCT_TYPE_FLOW)
+			continue;
 
 		gtk_tree_model_get_iter(model, &iter, i->data);
 		gtk_tree_model_get(model, &iter,
@@ -2170,8 +2149,6 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 
 	flow_browse_info_update();
 
-	gebr_flow_browse_update_programs_view(self);
-
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
 	gtk_widget_reparent(output_view, self->jobs_ctx_box);
 	gtk_widget_hide(gebr.ui_flow_browse->menu_window);
@@ -2191,14 +2168,13 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
                              GtkTreeIter *iter,
                              gpointer data)
 {
-	GebrGeoXmlFlow * flow;
-
 	GebrUiFlowBrowseType type;
 	gtk_tree_model_get(model, iter,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
 	if (type == STRUCT_TYPE_FLOW) {
+		GebrGeoXmlFlow * flow;
 		GebrUiFlow *ui_flow;
 		gtk_tree_model_get(model, iter,
 		                   FB_STRUCT, &ui_flow,
@@ -2216,10 +2192,25 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
-		g_object_set(cell, "stock-id", "", NULL);
+		GebrUiFlowProgram *ui_program;
+		gtk_tree_model_get(model, iter,
+		                   FB_STRUCT, &ui_program,
+		                   -1);
+
+		GebrGeoXmlProgram *program = gebr_ui_flow_program_get_xml(ui_program);
+		const gchar *icon = gebr_gui_get_program_icon(program);
+
+		g_object_set(cell, "stock-id", icon, NULL);
 	}
 	else if (type == STRUCT_TYPE_IO) {
-		g_object_set(cell, "stock-id", "", NULL);
+		GebrUiFlowsIo *ui_io;
+		gtk_tree_model_get(model, iter,
+		                   FB_STRUCT, &ui_io,
+		                   -1);
+
+		const gchar *icon = gebr_ui_flows_io_get_icon_str(ui_io);
+
+		g_object_set(cell, "stock-id", icon, NULL);
 	}
 }
 
@@ -2230,7 +2221,6 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
                       GtkTreeIter *iter,
                       gpointer data)
 {
-	GebrGeoXmlFlow * flow;
 	GebrUiFlowBrowseType type;
 	gtk_tree_model_get(model, iter,
 	                   FB_STRUCT_TYPE, &type,
@@ -2239,6 +2229,7 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 	gchar *title;
 
 	if (type == STRUCT_TYPE_FLOW) {
+		GebrGeoXmlFlow * flow;
 		GebrUiFlow *ui_flow;
 		gtk_tree_model_get(model, iter,
 		                   FB_STRUCT, &ui_flow,
@@ -2297,21 +2288,25 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-	if (type != STRUCT_TYPE_FLOW)
-		return;
+	if (type == STRUCT_TYPE_FLOW) {
+		GebrUiFlow *ui_flow;
+		gtk_tree_model_get(model, iter,
+		                   FB_STRUCT, &ui_flow,
+		                   -1);
 
-	GebrUiFlow *ui_flow;
-	gtk_tree_model_get(model, iter,
-	                   FB_STRUCT, &ui_flow,
-	                   -1);
+		flow = gebr_ui_flow_get_flow(ui_flow);
 
-	flow = gebr_ui_flow_get_flow(ui_flow);
-
-	if (gebr_geoxml_flow_get_revisions_number(flow) > 0)
-		g_object_set(cell, "stock-id", "photos", NULL);
-	else
+		if (gebr_geoxml_flow_get_revisions_number(flow) > 0)
+			g_object_set(cell, "stock-id", "photos", NULL);
+		else
+			g_object_set(cell, "stock-id", NULL, NULL);
+	}
+	else if (type == STRUCT_TYPE_IO) {
+		g_object_set(cell, "stock-id", GTK_STOCK_DIRECTORY, NULL);
+	}
+	else if (type == STRUCT_TYPE_PROGRAM) {
 		g_object_set(cell, "stock-id", NULL, NULL);
-
+	}
 }
 
 void

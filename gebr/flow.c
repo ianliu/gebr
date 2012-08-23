@@ -100,18 +100,18 @@ void flow_free(void)
 {
 	gebr.flow = NULL;
 
-	GtkTreeIter iter;
-	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store);
-	gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
+	GtkTreeIter iter, parent;
+	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 
-	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), NULL);
+	gboolean valid = gtk_tree_model_get_iter_first(model, &parent);
 	while (valid) {
-		GebrGeoXmlProgram *program;
-		gtk_tree_model_get(model, &iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
-		gebr_geoxml_object_unref(program);
-		valid = gtk_list_store_remove(gebr.ui_flow_edition->fseq_store, &iter);
+		valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		while (valid)
+			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
+
+		valid = gtk_tree_model_iter_next(model, &parent);
 	}
-	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), model);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_browse->view), model);
 
 	flow_browse_info_update();
 }

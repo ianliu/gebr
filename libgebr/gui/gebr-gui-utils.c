@@ -613,7 +613,7 @@ void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * i
 
 	GtkTreePath * tree_path;
 	tree_path = gtk_tree_model_get_path(gtk_tree_view_get_model(tree_view), iter);
-	gtk_tree_view_set_cursor(tree_view, tree_path, gtk_tree_view_get_column(tree_view, 0), FALSE);
+	gtk_tree_view_set_cursor(tree_view, tree_path, NULL, FALSE);
 	gtk_tree_path_free(tree_path);
 
 	gebr_gui_gtk_tree_view_scroll_to_iter_cell(tree_view, iter);

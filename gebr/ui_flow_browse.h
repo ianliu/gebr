@@ -77,9 +77,6 @@ typedef struct {
 	GtkTreeStore *menu_store;
 	GtkWidget *menu_view;
 
-	GtkWidget *prog_window;
-	GtkWidget *prog_frame;
-
 	GtkWidget *info_window;
 	GtkWidget *warn_window;
 

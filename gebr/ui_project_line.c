@@ -138,6 +138,7 @@ struct ui_project_line *project_line_setup_ui(void)
 						    G_TYPE_STRING,
 						    G_TYPE_POINTER,
 						    G_TYPE_BOOLEAN);
+
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (ui_project_line->view));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
@@ -1699,14 +1700,12 @@ static void project_line_load(void)
 		if (maestro) {
 			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 				gtk_widget_show(gebr.ui_flow_browse->view);
-				gtk_widget_show(gebr.ui_flow_browse->prog_window);
 				line_load_flows();
 				if (gebr_geoxml_line_get_flows_number(gebr.line) < 1)
 					flow_browse_reload_selected();
 			}
 			else {
 				gtk_widget_hide(gebr.ui_flow_browse->view);
-				gtk_widget_hide(gebr.ui_flow_browse->prog_window);
 			}
 		}
 	} else {
