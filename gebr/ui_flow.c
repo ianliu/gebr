@@ -319,7 +319,7 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_job_control_add(gebr.job_control, job);
 	gebr_maestro_server_add_temporary_job(maestro, job);
 	gebr_job_control_select_job(gebr.job_control, job);
-
+	flow_browse_info_update();
 	g_free(name);
 	g_free(url);
 	g_free(xml);
@@ -450,6 +450,6 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 
 	gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
 	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
-
+	flow_browse_info_update();
 	g_strfreev(snaps);
 }
