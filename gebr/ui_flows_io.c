@@ -62,7 +62,6 @@ GebrUiFlowsIo *
 gebr_ui_flows_io_new(GebrUiFlowsIoType type)
 {
 	GebrUiFlowsIo *io = g_object_new(GEBR_TYPE_UI_FLOWS_IO, NULL);
-
 	io->priv->type = type;
 
 	return io;
@@ -157,31 +156,34 @@ gebr_ui_flows_io_get_active(GebrUiFlowsIo *io)
 	return io->priv->active;
 }
 
-gboolean
-gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io,
+void
+gebr_ui_flows_io_load_from_flow(GebrUiFlowsIo *io,
                                      GebrGeoXmlFlow *flow)
 {
-	gchar *value = NULL;
 	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
+	gchar *active = NULL;
 
 	switch(type) {
 	case GEBR_IO_TYPE_INPUT:
-		value = gebr_geoxml_flow_io_get_input(flow);
+		io->priv->value = gebr_geoxml_flow_io_get_input(flow);
+		active = gebr_geoxml_flow_io_get_input_real(flow);
+		io->priv->active =  active ? TRUE : FALSE;
 		break;
 	case GEBR_IO_TYPE_OUTPUT:
-		value = gebr_geoxml_flow_io_get_output(flow);
+		io->priv->value = gebr_geoxml_flow_io_get_output(flow);
+		io->priv->overwrite = !gebr_geoxml_flow_io_get_output_append(flow);
+		active = gebr_geoxml_flow_io_get_output_real(flow);
+		io->priv->active =  active ? TRUE : FALSE;
 		break;
 	case GEBR_IO_TYPE_ERROR:
-		value = gebr_geoxml_flow_io_get_error(flow);
+		io->priv->value = gebr_geoxml_flow_io_get_error(flow);
+		io->priv->overwrite = !gebr_geoxml_flow_io_get_error_append(flow);
+		io->priv->active = TRUE;
 		break;
 	case GEBR_IO_TYPE_NONE:
 		break;
 	}
-
-	if (value)
-		return TRUE;
-	else
-		return FALSE;
+	g_free(active);
 }
 
 const gchar *
@@ -196,7 +198,6 @@ gebr_ui_flows_io_get_label_markup(GebrUiFlowsIo *io)
 		return _("<i>Input file</i>");
 	case GEBR_IO_TYPE_OUTPUT:
 		return _("<i>Output file</i>");
-
 	case GEBR_IO_TYPE_ERROR:
 		return _("<i>Log file</i>");
 	default:

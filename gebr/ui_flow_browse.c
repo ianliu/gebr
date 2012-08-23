@@ -1803,7 +1803,7 @@ create_programs_view(GtkTreeIter *parent,
 	/* add Input file */
 	GtkTreeIter input_iter;
 	GebrUiFlowsIo *input_io = gebr_ui_flows_io_new(GEBR_IO_TYPE_INPUT);
-	gebr_ui_flows_io_set_value_from_flow(input_io, flow);
+	gebr_ui_flows_io_load_from_flow(input_io, flow);
 	gtk_tree_store_insert(fb->store, &input_iter, parent, 0);
 	gtk_tree_store_set(fb->store, &input_iter,
 	                   FB_STRUCT_TYPE, STRUCT_TYPE_IO,
@@ -1833,7 +1833,7 @@ create_programs_view(GtkTreeIter *parent,
 
 	/* Add Output file */
 	GebrUiFlowsIo *output_io = gebr_ui_flows_io_new(GEBR_IO_TYPE_OUTPUT);
-	gebr_ui_flows_io_set_value_from_flow(output_io, flow);
+	gebr_ui_flows_io_load_from_flow(output_io, flow);
 	gtk_tree_store_append(fb->store, &iter, parent);
 	gtk_tree_store_set(fb->store, &iter,
 	                   FB_STRUCT_TYPE, STRUCT_TYPE_IO,
@@ -1842,7 +1842,7 @@ create_programs_view(GtkTreeIter *parent,
 
 	/* Add Error file */
 	GebrUiFlowsIo *error_io = gebr_ui_flows_io_new(GEBR_IO_TYPE_ERROR);
-	gebr_ui_flows_io_set_value_from_flow(error_io, flow);
+	gebr_ui_flows_io_load_from_flow(error_io, flow);
 	gtk_tree_store_append(fb->store, &iter, parent);
 	gtk_tree_store_set(fb->store, &iter,
 	                   FB_STRUCT_TYPE, STRUCT_TYPE_IO,

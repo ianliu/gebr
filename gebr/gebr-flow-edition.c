@@ -19,6 +19,7 @@
  */
 
 #include "gebr-flow-edition.h"
+#include "ui_flow_program.c"
 
 #include <string.h>
 #include <glib/gi18n.h>
@@ -1121,6 +1122,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	GebrGeoXmlProgram *program;
 	gchar *tooltip_text;
 
+	GebrUiFlowProgram *ui_program = gebr_ui_flow_program_new(program);
 	if (!gtk_tree_view_get_tooltip_context(treeview, &x, &y, keyboard_tip, &model, NULL, &iter))
 		return FALSE;
 
@@ -1159,7 +1161,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	else
 		error_message = _("Unknown error");
 
-	const gchar *err_msg = gebr_flow_get_error_tooltip_from_id(errorid);
+	const gchar *err_msg = gebr_ui_flow_program_get_error_tooltip(ui_program);
 	if (*err_msg)
 		error_message = err_msg;
 

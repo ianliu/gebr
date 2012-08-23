@@ -21,6 +21,7 @@
 #include <config.h>
 #include "ui_flow_program.h"
 
+#include <glib/gi18n.h>
 #include <libgebr/utils.h>
 #include <libgebr/gebr-version.h>
 #include <gebr/ui_flow_program.h>
@@ -69,6 +70,8 @@ gebr_ui_flow_program_new(GebrGeoXmlProgram *program)
 	GebrUiFlowProgram *ui_prog = g_object_new(GEBR_TYPE_UI_FLOW_PROGRAM, NULL);
 
 	ui_prog->priv->program = program;
+	ui_prog->priv->status = gebr_geoxml_program_get_status(program);
+	gebr_geoxml_program_get_error_id(program, &(ui_prog->priv->error_id));
 
 	return ui_prog;
 }
@@ -126,3 +129,43 @@ gebr_ui_flow_program_get_error_id (GebrUiFlowProgram *program)
 {
 	return program->priv->error_id;
 }
+
+const gchar *
+gebr_ui_flow_program_get_error_tooltip(GebrUiFlowProgram *program)
+{
+	GebrIExprError errorid = gebr_ui_flow_program_get_error_id(program);
+	const gchar *error_message;
+
+	switch (errorid) {
+	case GEBR_IEXPR_ERROR_SYNTAX:
+	case GEBR_IEXPR_ERROR_TOOBIG:
+	case GEBR_IEXPR_ERROR_RUNTIME:
+	case GEBR_IEXPR_ERROR_INVAL_TYPE:
+	case GEBR_IEXPR_ERROR_TYPE_MISMATCH:
+		error_message = _("This program has an invalid expression");
+		break;
+	case GEBR_IEXPR_ERROR_EMPTY_EXPR:
+		error_message = _("A required parameter is unfilled");
+		break;
+	case GEBR_IEXPR_ERROR_UNDEF_VAR:
+	case GEBR_IEXPR_ERROR_UNDEF_REFERENCE:
+		error_message = _("An undefined variable is being used");
+		break;
+	case GEBR_IEXPR_ERROR_INVAL_VAR:
+	case GEBR_IEXPR_ERROR_BAD_REFERENCE:
+	case GEBR_IEXPR_ERROR_CYCLE:
+		error_message = _("A badly defined variable is being used");
+		break;
+	case GEBR_IEXPR_ERROR_PATH:
+		error_message = _("This program has cleaned their paths");
+		break;
+	case GEBR_IEXPR_ERROR_BAD_MOVE:
+	case GEBR_IEXPR_ERROR_INITIALIZE:
+	default:
+		error_message = "";
+		break;
+	}
+
+	return error_message;
+}
+

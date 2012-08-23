@@ -94,12 +94,12 @@ void gebr_ui_flows_io_set_active(GebrUiFlowsIo *io,
 gboolean gebr_ui_flows_io_get_active(GebrUiFlowsIo *io);
 
 /**
- * gebr_ui_flows_io_set_value_from_flow:
+ * gebr_ui_flows_io_load_from_flow:
  *
  * Get the io path from the @flow XML and set the @io value
  */
-gboolean gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io,
-                                              GebrGeoXmlFlow *flow);
+void gebr_ui_flows_io_load_from_flow(GebrUiFlowsIo *io,
+					  GebrGeoXmlFlow *flow);
 
 /**
  * gebr_ui_flows_io_get_label_markup:

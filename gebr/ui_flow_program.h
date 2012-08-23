@@ -66,6 +66,7 @@ void gebr_ui_flow_program_set_error_id (GebrUiFlowProgram *program, GebrIExprErr
 
 GebrIExprError gebr_ui_flow_program_get_error_id (GebrUiFlowProgram *program);
 
+const gchar * gebr_ui_flow_get_error_tooltip(GebrUiFlowProgram *program);
 
 G_END_DECLS
 
