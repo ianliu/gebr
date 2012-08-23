@@ -24,6 +24,9 @@
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
 #include <libgebr/gebr-version.h>
+#include <libgebr/gui/gui.h>
+#include <flow.h>
+#include "gebr.h"
 #include <gebr/ui_flow_program.h>
 #include <libgebr/comm/gebr-comm.h>
 
@@ -169,3 +172,71 @@ gebr_ui_flow_program_get_error_tooltip(GebrUiFlowProgram *program)
 	return error_message;
 }
 
+GtkMenu *
+gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program,
+				gboolean can_move_up,
+				gboolean can_move_down)
+{
+	GtkWidget * menu_item;
+	GtkAction * action;
+	GebrGeoXmlProgramControl control;
+	gboolean is_ordinary;
+
+	if (!program)
+		return NULL;
+
+	GebrGeoXmlProgram *program_xml = gebr_ui_flow_program_get_xml(program);
+	GtkWidget *menu = gtk_menu_new();
+
+	control = gebr_geoxml_program_get_control(program_xml);
+
+	is_ordinary = control == GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
+
+	/* Move top */
+	if (is_ordinary && can_move_up) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate", G_CALLBACK(flow_program_move_top), NULL);
+	}
+	/* Move bottom */
+	if (is_ordinary && can_move_down) {
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect(menu_item, "activate", G_CALLBACK(flow_program_move_bottom), NULL);
+	}
+	/* separator */
+	if (is_ordinary && (can_move_up || can_move_down))
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+
+	/* status */
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
+
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_disabled");
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
+
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_unconfigured");
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
+
+	/* separator */
+	menu_item = gtk_separator_menu_item_new();
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group_flow_edition, "flow_edition_copy")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group_flow_edition, "flow_edition_paste")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group_flow_edition, "flow_edition_delete")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group_flow_edition, "flow_edition_properties")));
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action
+						      (gebr.action_group_flow_edition, "flow_edition_help")));
+
+	return GTK_MENU(menu);
+}
