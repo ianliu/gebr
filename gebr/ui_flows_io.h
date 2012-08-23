@@ -74,8 +74,7 @@ void gebr_ui_flows_io_set_id(GebrUiFlowsIo *io,
 
 const gchar *gebr_ui_flows_io_get_id(GebrUiFlowsIo *io);
 
-void gebr_ui_flows_io_set_io_type(GebrUiFlowsIo *io,
-		                  GebrUiFlowsIoType type);
+void gebr_ui_flows_io_set_io_type(GebrUiFlowsIo *io, GebrUiFlowsIoType type);
 
 GebrUiFlowsIoType gebr_ui_flows_io_get_io_type(GebrUiFlowsIo *io);
 
@@ -94,8 +93,27 @@ void gebr_ui_flows_io_set_active(GebrUiFlowsIo *io,
 
 gboolean gebr_ui_flows_io_get_active(GebrUiFlowsIo *io);
 
+/**
+ * gebr_ui_flows_io_set_value_from_flow:
+ *
+ * Get the io path from the @flow XML and set the @io value
+ */
 gboolean gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io,
                                               GebrGeoXmlFlow *flow);
+
+/**
+ * gebr_ui_flows_io_get_label_markup:
+ *
+ * Get the text to be placed in the @io entry.
+ */
+const gchar *gebr_ui_flows_io_get_label_markup(GebrUiFlowsIo *io);
+
+/**
+ * gebr_ui_flows_io_get_icon_str:
+ *
+ * Get the IO icon of @io. Do not validate the io path and, hence, never returns warning icon.
+ */
+const gchar *gebr_ui_flows_io_get_icon_str(GebrUiFlowsIo *io);
 
 G_END_DECLS
 

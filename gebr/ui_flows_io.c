@@ -22,6 +22,7 @@
 #include "ui_flows_io.h"
 
 #include <libgebr/utils.h>
+#include <glib/gi18n.h>
 #include <libgebr/gebr-version.h>
 #include <gebr/ui_flows_io.h>
 #include <libgebr/comm/gebr-comm.h>
@@ -181,6 +182,46 @@ gebr_ui_flows_io_set_value_from_flow(GebrUiFlowsIo *io,
 		return TRUE;
 	else
 		return FALSE;
+}
+
+const gchar *
+gebr_ui_flows_io_get_label_markup(GebrUiFlowsIo *io)
+{
+	if (!io)
+		return NULL;
+
+	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
+	switch (type) {
+	case GEBR_IO_TYPE_INPUT:
+		return _("<i>Input file</i>");
+	case GEBR_IO_TYPE_OUTPUT:
+		return _("<i>Output file</i>");
+
+	case GEBR_IO_TYPE_ERROR:
+		return _("<i>Log file</i>");
+	default:
+		return NULL;
+	}
+}
+
+const gchar *
+gebr_ui_flows_io_get_icon_str(GebrUiFlowsIo *io)
+{
+	if (!io)
+		return NULL;
+
+	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
+
+	switch (type) {
+	case GEBR_IO_TYPE_INPUT:
+		return "gebr-stdin";
+	case GEBR_IO_TYPE_OUTPUT:
+		return io->priv->overwrite ? "gebr-stdout" : "gebr-append-stdout";
+	case GEBR_IO_TYPE_ERROR:
+		return io->priv->overwrite ? "gebr-stderr" : "gebr-append-stderr";
+	default:
+		return NULL;
+	}
 }
 
 #if 0
