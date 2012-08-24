@@ -20,6 +20,8 @@
 
 #include <config.h>
 #include "ui_flows_io.h"
+#include "gebr.h"
+#include "document.h"
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
@@ -29,6 +31,7 @@
 #include <libgebr/gebr-validator.h>
 #include <libgebr/utils.h>
 #include <libgebr/gebr-maestro-info.h>
+#include <libgebr/gui/gebr-gui-parameter.h>
 
 struct _GebrUiFlowsIoPriv {
 	gchar *id;
@@ -195,7 +198,6 @@ gebr_ui_flows_io_get_stock_id(GebrUiFlowsIo *io)
 
 void
 gebr_ui_flows_io_load_from_xml(GebrUiFlowsIo *io,
-			       GebrGeoXmlProject *project,
 			       GebrGeoXmlLine *line,
 			       GebrGeoXmlFlow *flow,
 			       GebrMaestroServer *maestro,
@@ -378,4 +380,78 @@ gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
+}
+
+static void populate_io_popup(GtkEntry *entry, GtkMenu *menu)
+{
+	GtkWidget *submenu;
+	GtkWidget *item;
+
+	item = gtk_separator_menu_item_new();
+	gtk_widget_show(item);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item);
+
+	submenu = gebr_gui_parameter_add_variables_popup(entry,
+							 GEBR_GEOXML_DOCUMENT (gebr.flow),
+							 GEBR_GEOXML_DOCUMENT (gebr.line),
+							 GEBR_GEOXML_DOCUMENT (gebr.project),
+							 GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	item = gtk_menu_item_new_with_label(_("Insert Variable"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+}
+
+void
+gebr_ui_flows_io_start_editing(GebrUiFlowsIo *io,
+                               GtkEntry *entry)
+{
+	GtkTreeModel *completion_model;
+	const gchar *input;
+	const gchar *output;
+	const gchar *error;
+
+	completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (gebr.flow),
+								   GEBR_GEOXML_DOCUMENT (gebr.line),
+								   GEBR_GEOXML_DOCUMENT (gebr.project),
+								   GEBR_GEOXML_PARAMETER_TYPE_FILE);
+	gebr_gui_parameter_set_entry_completion(entry, completion_model, GEBR_GEOXML_PARAMETER_TYPE_FILE);
+
+	input = gebr_geoxml_flow_io_get_input(gebr.flow);
+	output = gebr_geoxml_flow_io_get_output(gebr.flow);
+	error = gebr_geoxml_flow_io_get_error(gebr.flow);
+
+	if ((io->priv->type == GEBR_IO_TYPE_INPUT && !*input) ||
+	    (io->priv->type == GEBR_IO_TYPE_OUTPUT && !*output) ||
+	    (io->priv->type == GEBR_IO_TYPE_ERROR && !*error))
+		gtk_entry_set_text(entry, "");
+
+	g_signal_connect(entry, "populate-popup", G_CALLBACK(populate_io_popup), NULL);
+}
+
+void
+gebr_ui_flows_io_edited(GebrUiFlowsIo *io,
+                        gchar *new_text)
+{
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gchar *mount_point;
+
+	if (maestro)
+		mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+	else
+		mount_point = NULL;
+	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+	gchar *tmp = gebr_relativise_path(new_text, mount_point, paths);
+	gebr_pairstrfreev(paths);
+
+	if (io->priv->type == GEBR_IO_TYPE_INPUT)
+		gebr_geoxml_flow_io_set_input(gebr.flow, tmp);
+	else if (io->priv->type == GEBR_IO_TYPE_OUTPUT)
+		gebr_geoxml_flow_io_set_output(gebr.flow, tmp);
+	else if (io->priv->type == GEBR_IO_TYPE_ERROR)
+		gebr_geoxml_flow_io_set_error(gebr.flow, tmp);
+
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
+
+	gebr_ui_flows_io_load_from_xml(io, gebr.line, gebr.flow, maestro, gebr.validator);
 }

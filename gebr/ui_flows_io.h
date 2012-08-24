@@ -110,7 +110,6 @@ const gchar* gebr_ui_flows_io_get_stock_id(GebrUiFlowsIo *io);
  */
 void
 gebr_ui_flows_io_load_from_xml(GebrUiFlowsIo *io,
-			       GebrGeoXmlProject *project,
 			       GebrGeoXmlLine *line,
 			       GebrGeoXmlFlow *flow,
 			       GebrMaestroServer *maestro,
@@ -132,6 +131,13 @@ const gchar *gebr_ui_flows_io_get_icon_str(GebrUiFlowsIo *io);
 
 GtkMenu *gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 				     GebrGeoXmlFlow *flow);
+
+void gebr_ui_flows_io_start_editing(GebrUiFlowsIo *io,
+                                    GtkEntry *entry);
+
+void gebr_ui_flows_io_edited(GebrUiFlowsIo *io,
+                             gchar *new_text);
+
 G_END_DECLS
 
 #endif /* __GEBR_UI_FLOWS_IO_H__ */

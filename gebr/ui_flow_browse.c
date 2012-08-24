@@ -965,6 +965,10 @@ flow_browse_component_editing_started(GtkCellRenderer *renderer,
 	gtk_tree_model_get(model, &iter,
 	                   FB_STRUCT, &io,
 	                   -1);
+
+	g_object_set_data(G_OBJECT(editable), "path", g_strdup(path));
+
+	gebr_ui_flows_io_start_editing(io, GTK_ENTRY(editable));
 }
 
 static void
@@ -976,19 +980,28 @@ flow_browse_component_editing_canceled(GtkCellRenderer *renderer,
 
 static void
 flow_browse_component_edited(GtkCellRendererText *renderer,
-                              gchar *path,
+                              gchar *strpath,
                               gchar *new_text,
                               GebrUiFlowBrowse *fb)
 {
-//	GtkTreeModel *model = GTK_TREE_MODEL(fb->store);
-//	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(fb->store);
+	GtkTreeIter iter;
 
-//	GebrUiFlowsIo *io;
-//
-//	gtk_tree_model_get_iter_from_string(model, &iter, path);
-//	gtk_tree_model_get(model, &iter,
-//	                   FB_STRUCT, &io,
-//	                   -1);
+	GebrUiFlowsIo *io;
+
+	gtk_tree_model_get_iter_from_string(model, &iter, strpath);
+	gtk_tree_model_get(model, &iter,
+	                   FB_STRUCT, &io,
+	                   -1);
+
+	gebr_ui_flows_io_edited(io, new_text);
+
+	GtkTreePath *path = gtk_tree_path_new_from_string(strpath);
+	gtk_tree_model_row_changed(model, path, &iter);
+	gtk_tree_path_free(path);
+
+	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 }
 
 static GtkMenu *
@@ -2273,8 +2286,7 @@ create_programs_view(GtkTreeIter *parent,
 	GtkTreeIter input_iter;
 	GebrUiFlowsIo *input_io = gebr_ui_flows_io_new(GEBR_IO_TYPE_INPUT);
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-	gebr_ui_flows_io_load_from_xml(input_io, gebr.project, gebr.line,
-				       gebr.flow, maestro, gebr.validator);
+	gebr_ui_flows_io_load_from_xml(input_io, gebr.line, gebr.flow, maestro, gebr.validator);
 	gtk_tree_store_insert(fb->store, &input_iter, parent, 0);
 	gtk_tree_store_set(fb->store, &input_iter,
 	                   FB_STRUCT_TYPE, STRUCT_TYPE_IO,
@@ -2304,8 +2316,7 @@ create_programs_view(GtkTreeIter *parent,
 
 	/* Add Output file */
 	GebrUiFlowsIo *output_io = gebr_ui_flows_io_new(GEBR_IO_TYPE_OUTPUT);
-	gebr_ui_flows_io_load_from_xml(output_io, gebr.project, gebr.line,
-				       gebr.flow, maestro, gebr.validator);
+	gebr_ui_flows_io_load_from_xml(output_io, gebr.line, gebr.flow, maestro, gebr.validator);
 	gtk_tree_store_append(fb->store, &iter, parent);
 	gtk_tree_store_set(fb->store, &iter,
 	                   FB_STRUCT_TYPE, STRUCT_TYPE_IO,
@@ -2314,8 +2325,7 @@ create_programs_view(GtkTreeIter *parent,
 
 	/* Add Error file */
 	GebrUiFlowsIo *error_io = gebr_ui_flows_io_new(GEBR_IO_TYPE_ERROR);
-	gebr_ui_flows_io_load_from_xml(error_io, gebr.project, gebr.line,
-				       gebr.flow, maestro, gebr.validator);
+	gebr_ui_flows_io_load_from_xml(error_io, gebr.line, gebr.flow, maestro, gebr.validator);
 	gtk_tree_store_append(fb->store, &iter, parent);
 	gtk_tree_store_set(fb->store, &iter,
 	                   FB_STRUCT_TYPE, STRUCT_TYPE_IO,
@@ -2750,7 +2760,7 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 
 static void
 flow_browse_open_activated(GebrUiFlowBrowse *fb,
-                           GebrUiFlowsIoType type,
+                           GebrUiFlowsIo *ui_io,
                            const gchar *path)
 {
 	gchar *entry_text;
@@ -2758,6 +2768,9 @@ flow_browse_open_activated(GebrUiFlowBrowse *fb,
 	GtkFileChooserAction action;
 	gchar *stock;
 	gchar *title = NULL;
+
+	GebrUiFlowBrowseType type = gebr_ui_flows_io_get_io_type(ui_io);
+
 	if (type == GEBR_IO_TYPE_INPUT) {
 		entry_text = gebr_geoxml_flow_io_get_input(gebr.flow);
 
@@ -2796,7 +2809,7 @@ flow_browse_open_activated(GebrUiFlowBrowse *fb,
 	if (response == GTK_RESPONSE_YES) {
 		g_object_set(fb->text_renderer, "text", new_text, NULL);
 
-//		flow_edition_set_edited_io( g_strdup(path), new_text);
+		gebr_ui_flows_io_edited(ui_io, new_text);
 	}
 
 	g_free(new_text);
@@ -2831,7 +2844,9 @@ gebr_flow_browse_select_file_column(GtkTreeView *tree_view,
 
 	gtk_tree_view_unset_rows_drag_source(tree_view);
 
-	flow_browse_open_activated(fb, gebr_ui_flows_io_get_io_type(ui_io), path_str);
+	flow_browse_open_activated(fb, ui_io, path_str);
+
+	gtk_tree_model_row_changed(GTK_TREE_MODEL(fb->store), path, iter);
 
 	g_free(path_str);
 	gtk_tree_path_free(path);
