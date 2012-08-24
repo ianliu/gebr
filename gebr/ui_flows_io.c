@@ -328,17 +328,17 @@ gebr_ui_flows_io_get_icon_str(GebrUiFlowsIo *io)
 
 void
 on_ui_flows_io_overwrite_toggled(GtkCheckMenuItem *item,
-					     GebrUiFlowsDai *dai)
+                                 GebrUiFlowsDai *dai)
 {
-	gboolean overwrite = !gtk_check_menu_item_get_active(item);
+	gboolean overwrite = gtk_check_menu_item_get_active(item);
 	gebr_ui_flows_io_set_overwrite(dai->io, overwrite);
 
 	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(dai->io);
 
 	if (type == GEBR_IO_TYPE_OUTPUT)
-		gebr_geoxml_flow_io_set_output_append(GEBR_GEOXML_FLOW(dai->doc), overwrite);
-	else if (type == GEBR_IO_TYPE_OUTPUT)
-		gebr_geoxml_flow_io_set_error_append(GEBR_GEOXML_FLOW(dai->doc), overwrite);
+		gebr_geoxml_flow_io_set_output_append(GEBR_GEOXML_FLOW(dai->doc), !overwrite);
+	else if (type == GEBR_IO_TYPE_ERROR)
+		gebr_geoxml_flow_io_set_error_append(GEBR_GEOXML_FLOW(dai->doc), !overwrite);
 }
 
 GtkMenu *
@@ -372,9 +372,10 @@ gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 	dai->io  = io;
 
 	g_signal_connect (menu_item, "toggled", overwrite_callback, dai);
-	//gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), !overwrite);
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), overwrite);
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
-	gtk_widget_show(menu_item);
+
+	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }

@@ -405,15 +405,26 @@ void flow_edition_component_activated(void)
 	GtkTreeIter iter;
 	gchar *title;
 
-	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (!flow_edition_get_selected_component(&iter, TRUE))
-		return;
-	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
+	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	if (!flow_browse_get_selected(&iter, TRUE))
 		return;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, FSEQ_TITLE_COLUMN, &title, -1);
+	GebrUiFlowBrowseType type;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   -1);
+
+	if (type != STRUCT_TYPE_PROGRAM)
+		return;
+
+	GebrUiFlowProgram *ui_program;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+	                   FB_STRUCT, &ui_program,
+	                   -1);
+
+	GebrGeoXmlProgram *program = gebr_ui_flow_program_get_xml(ui_program);
+	title = gebr_geoxml_program_get_title(program);
+
 	gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Configuring program '%s'."), title);
 	parameters_configure_setup_ui();
 	g_free(title);
@@ -904,8 +915,8 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, GebrFlowEd
 	control = gebr_geoxml_program_get_control (program);
 
 	is_ordinary = control == GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
-	can_move_up = gebr_gui_gtk_list_store_can_move_up(GTK_TREE_STORE(ui_flow_edition->fseq_store), &iter);
-	can_move_down = gebr_gui_gtk_list_store_can_move_down(GTK_TREE_STORE(ui_flow_edition->fseq_store), &iter);
+	can_move_up = gebr_gui_gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter);
+	can_move_down = gebr_gui_gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter);
 
 	/* Move top */
 	if (is_ordinary && can_move_up) {

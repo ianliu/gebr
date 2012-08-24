@@ -52,6 +52,7 @@
 #include "ui_flow_program.h"
 #include "ui_flow_browse.h"
 #include "ui_project_line.h"
+#include "ui_flows_io.h"
 
 static void on_properties_response(gboolean accept)
 {
@@ -1022,7 +1023,7 @@ void flow_program_remove(void)
 			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
 		}
 	}
-	flow_program_check_sensitiveness();
+	flow_browse_program_check_sensitiveness();
 	flow_edition_set_io();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
@@ -1038,35 +1039,39 @@ void flow_program_remove(void)
 
 void flow_program_move_top(void)
 {
-	GtkTreeIter iter;
+	GtkTreeIter iter, input;
 	GebrGeoXmlProgramControl control;
 
 	control = gebr_geoxml_program_get_control (gebr.program);
 	if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
 		return;
 
-	flow_edition_get_selected_component(&iter, FALSE);
+	flow_browse_get_selected(&iter, FALSE);
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.program), NULL);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
-				  &iter, &gebr.ui_flow_edition->input_iter);
+
+	if (gebr_flow_browse_get_io_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &input, GEBR_IO_TYPE_INPUT))
+		gtk_tree_store_move_after(gebr.ui_flow_browse->store, &iter, &input);
+
 	flow_program_check_sensitiveness();
 }
 
 void flow_program_move_bottom(void)
 {
-	GtkTreeIter iter;
+	GtkTreeIter iter, output;
 	GebrGeoXmlProgramControl control;
 
 	control = gebr_geoxml_program_get_control (gebr.program);
 	if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
 		return;
 
-	flow_edition_get_selected_component(&iter, FALSE);
+	flow_browse_get_selected(&iter, FALSE);
 	gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(gebr.program), NULL);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
-				   &iter, &gebr.ui_flow_edition->output_iter);
+
+	if (gebr_flow_browse_get_io_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &output, GEBR_IO_TYPE_OUTPUT))
+		gtk_tree_store_move_before(gebr.ui_flow_browse->store, &iter, &output);
+
 	flow_program_check_sensitiveness();
 }
 
@@ -1136,11 +1141,15 @@ void flow_program_copy(void)
 	GtkTreeIter iter;
 
 	gebr_geoxml_clipboard_clear();
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
-		GebrGeoXmlObject *program;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+		GebrUiFlowProgram *ui_program;
+		GebrGeoXmlProgram *program;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+				   FB_STRUCT, &ui_program,
+				   -1);
+
+		program = gebr_ui_flow_program_get_xml(ui_program);
 		gebr_geoxml_clipboard_copy(GEBR_GEOXML_OBJECT(program));
 	}
 }

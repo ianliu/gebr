@@ -193,7 +193,7 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program,
 
 	control = gebr_geoxml_program_get_control(program_xml);
 
-	is_ordinary = control == GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
+	is_ordinary = control != GEBR_GEOXML_PROGRAM_CONTROL_FOR;
 
 	/* Move top */
 	if (is_ordinary && can_move_up) {
@@ -240,6 +240,8 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program,
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_flow_edition, "flow_edition_help")));
+
+	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }

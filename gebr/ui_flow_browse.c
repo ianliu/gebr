@@ -1017,8 +1017,8 @@ flow_browse_popup_menu(GtkWidget *widget,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
 
-		gboolean move_up = gebr_gui_gtk_list_store_can_move_up(fb->store, &iter);
-		gboolean move_down = gebr_gui_gtk_list_store_can_move_down(fb->store, &iter);
+		gboolean move_up = gebr_gui_gtk_tree_store_can_move_up(fb->store, &iter);
+		gboolean move_down = gebr_gui_gtk_tree_store_can_move_down(fb->store, &iter);
 		menu = gebr_ui_flow_popup_menu(ui_flow, move_up, move_down);
 	}
 	else if (type == STRUCT_TYPE_IO) {
@@ -1029,6 +1029,10 @@ flow_browse_popup_menu(GtkWidget *widget,
 		                   -1);
 
 		menu = gebr_ui_flows_io_popup_menu(ui_io, gebr.flow);
+
+		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+		gtk_tree_model_row_changed(model, path, &iter);
+		gtk_tree_path_free(path);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *ui_program;
@@ -1037,8 +1041,8 @@ flow_browse_popup_menu(GtkWidget *widget,
 		                   FB_STRUCT, &ui_program,
 		                   -1);
 
-		gboolean move_up = gebr_gui_gtk_list_store_can_move_up(fb->store, &iter);
-		gboolean move_down = gebr_gui_gtk_list_store_can_move_down(fb->store, &iter);
+		gboolean move_up = gebr_gui_gtk_tree_store_can_move_up(fb->store, &iter);
+		gboolean move_down = gebr_gui_gtk_tree_store_can_move_up(fb->store, &iter);
 		menu = gebr_ui_flow_program_popup_menu(ui_program, move_up, move_down);
 	}
 	return menu;
@@ -2202,6 +2206,51 @@ void flow_browse_select_iter(GtkTreeIter * iter)
 void flow_browse_single_selection(void)
 {
 	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+}
+
+void flow_browse_status_changed(guint status)
+{
+	GtkTreeIter iter;
+
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+		flow_browse_change_iter_status(status, &iter, gebr.ui_flow_browse);
+	}
+
+	flow_browse_program_check_sensitiveness();
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+}
+
+gboolean
+gebr_flow_browse_get_io_iter(GtkTreeModel *model,
+                             GtkTreeIter *io_iter,
+                             GebrUiFlowBrowseType io_type)
+{
+	GtkTreeIter iter, parent;
+	gboolean valid;
+	GebrUiFlowBrowseType type;
+	GebrUiFlowsIo *ui_io;
+
+	valid = gtk_tree_model_get_iter_first(model, &parent);
+	while (valid) {
+		valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		while (valid) {
+			gtk_tree_model_get(model, &iter,
+					   FB_STRUCT_TYPE, &type,
+					   FB_STRUCT, &ui_io,
+					   -1);
+
+			if (type == STRUCT_TYPE_IO) {
+				if (gebr_ui_flows_io_get_io_type(ui_io) == io_type) {
+					*io_iter = iter;
+					return TRUE;
+				}
+			}
+			valid = gtk_tree_model_iter_next(model, &iter);
+		}
+		valid = gtk_tree_model_iter_next(model, &parent);
+	}
+	return FALSE;
 }
 
 static void

@@ -436,14 +436,18 @@ void gebr_help_show_selected_program_help(void)
 {
 	GtkTreeIter iter;
 
-	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-	if (!flow_edition_get_selected_component(&iter, TRUE))
+	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	if (!flow_browse_get_selected(&iter, TRUE))
 		return;
-	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
+
+	GebrUiFlowBrowseType type;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   -1);
+
+	if (type != STRUCT_TYPE_PROGRAM)
 		return;
-	}
+
 	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE);
 }
 

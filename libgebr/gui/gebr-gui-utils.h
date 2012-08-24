@@ -46,24 +46,24 @@ void gebr_gui_gtk_dialog_set_response_on_widget_return(GtkDialog * dialog, gint 
 /**
  * Checks if row pointed by \p iter can move upwards.
  */
-gboolean gebr_gui_gtk_list_store_can_move_up(GtkTreeStore * store, GtkTreeIter * iter);
+gboolean gebr_gui_gtk_list_store_can_move_up(GtkListStore * store, GtkTreeIter * iter);
 
 /**
  * Checks if row pointed by \p iter can move downwards.
  */
-gboolean gebr_gui_gtk_list_store_can_move_down(GtkTreeStore * store, GtkTreeIter * iter);
+gboolean gebr_gui_gtk_list_store_can_move_down(GtkListStore * store, GtkTreeIter * iter);
 
 /**
  * Moves the row pointed by \p iter upwards.
  * \return Wheter the row was moved or not.
  */
-gboolean gebr_gui_gtk_list_store_move_up(GtkTreeStore * store, GtkTreeIter * iter);
+gboolean gebr_gui_gtk_list_store_move_up(GtkListStore * store, GtkTreeIter * iter);
 
 /**
  * Moves the row pointed by \p iter downwards.
  * \return Wheter the row was moved or not.
  */
-gboolean gebr_gui_gtk_list_store_move_down(GtkTreeStore * store, GtkTreeIter * iter);
+gboolean gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * iter);
 
 /**
  * Returns the index of the row pointed by \p iter in \p list_store.

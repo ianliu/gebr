@@ -107,17 +107,16 @@ void on_copy_activate(void)
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE:
 		gebr_geoxml_clipboard_clear();
-		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
-			GebrGeoXmlObject *object;
+		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+			GebrUiFlowBrowseType type;
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			                   FB_STRUCT_TYPE, &type,
+			                   -1);
 
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-			                   FSEQ_GEBR_GEOXML_POINTER, &object, -1);
+			if (type == STRUCT_TYPE_FLOW)
+				break;
 
-			if (!object)
-				continue;
-
-			GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
-			if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+			if (type == STRUCT_TYPE_PROGRAM) {
 				flow_program_copy();
 				return;
 			}
@@ -134,17 +133,16 @@ void on_paste_activate(void)
 	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :{
-		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
-			GebrGeoXmlObject *object;
+		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+			GebrUiFlowBrowseType type;
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			                   FB_STRUCT_TYPE, &type,
+			                   -1);
 
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-			                   FSEQ_GEBR_GEOXML_POINTER, &object, -1);
+			if (type == STRUCT_TYPE_FLOW)
+				break;
 
-			if (!object)
-				continue;
-
-			GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
-			if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+			if (type == STRUCT_TYPE_PROGRAM) {
 				flow_program_paste();
 				return;
 			}
@@ -467,20 +465,22 @@ void on_flow_component_move_top(void)
 	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :
-		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-		if (!flow_edition_get_selected_component(&iter, TRUE))
+		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+		if (!flow_browse_get_selected(&iter, TRUE))
 			return;
-		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
-		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
-			return;
-		}
-		flow_program_move_top();
+
+		GebrUiFlowBrowseType type;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		                   FB_STRUCT_TYPE, &type,
+		                   -1);
+
+		if (type == STRUCT_TYPE_PROGRAM)
+			flow_program_move_top();
 		break;
 	default:
 		break;
 	}
-	flow_program_check_sensitiveness();
+	flow_browse_program_check_sensitiveness();
 }
 
 void on_flow_component_move_bottom(void)
@@ -488,27 +488,29 @@ void on_flow_component_move_bottom(void)
 	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :
-		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
-		if (!flow_edition_get_selected_component(&iter, TRUE))
+		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+		if (!flow_browse_get_selected(&iter, TRUE))
 			return;
-		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
-		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
-			return;
-		}
-		flow_program_move_bottom();
+
+		GebrUiFlowBrowseType type;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		                   FB_STRUCT_TYPE, &type,
+		                   -1);
+
+		if (type == STRUCT_TYPE_PROGRAM)
+			flow_program_move_bottom();
 		break;
 	default:
 		break;
 	}
-	flow_program_check_sensitiveness();
+	flow_browse_program_check_sensitiveness();
 }
 
 void on_flow_component_status_activate(GtkAction *action,
 				       gpointer user_data)
 {
 	guint status = GPOINTER_TO_UINT(user_data);
-	flow_edition_status_changed(status);
+	flow_browse_status_changed(status);
 	flow_edition_set_io();
 }
 

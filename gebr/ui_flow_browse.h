@@ -244,5 +244,11 @@ void  flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
                                      GtkTreeIter *iter,
                                      GebrUiFlowBrowse *fb);
 
+gboolean gebr_flow_browse_get_io_iter(GtkTreeModel *model,
+                                      GtkTreeIter *io_iter,
+                                      GebrUiFlowBrowseType io_type);
+
+void flow_browse_status_changed(guint status);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H
