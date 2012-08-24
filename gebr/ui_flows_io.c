@@ -174,13 +174,13 @@ gebr_ui_flows_io_load_from_flow(GebrUiFlowsIo *io,
 	case GEBR_IO_TYPE_INPUT:
 		io->priv->value = gebr_geoxml_flow_io_get_input(flow);
 		active = gebr_geoxml_flow_io_get_input_real(flow);
-		io->priv->active =  active ? TRUE : FALSE;
+		io->priv->active =  *active ? TRUE : FALSE;
 		break;
 	case GEBR_IO_TYPE_OUTPUT:
 		io->priv->value = gebr_geoxml_flow_io_get_output(flow);
 		io->priv->overwrite = !gebr_geoxml_flow_io_get_output_append(flow);
 		active = gebr_geoxml_flow_io_get_output_real(flow);
-		io->priv->active =  active ? TRUE : FALSE;
+		io->priv->active =  *active ? TRUE : FALSE;
 		break;
 	case GEBR_IO_TYPE_ERROR:
 		io->priv->value = gebr_geoxml_flow_io_get_error(flow);
