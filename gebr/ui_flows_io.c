@@ -45,8 +45,6 @@ typedef struct {
 	GebrUiFlowsIo *io;
 } GebrUiFlowsDai;
 
-
-
 /*
  * Prototypes
  */

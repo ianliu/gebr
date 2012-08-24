@@ -2300,9 +2300,6 @@ static void flow_browse_load(void)
 		gebr_flow_set_toolbar_sensitive();
 		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 
-		create_programs_view(&iter, gebr.ui_flow_browse);
-		flow_browse_program_check_sensitiveness();
-
 		gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view)));
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), nrows > 1? FALSE : TRUE);
 
@@ -2319,6 +2316,9 @@ static void flow_browse_load(void)
 
 		/* free previous flow and load it */
 		flow_edition_load_components();
+
+		create_programs_view(&iter, gebr.ui_flow_browse);
+		flow_browse_program_check_sensitiveness();
 
 		/* check if has revisions */
 		gboolean has_revision = gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0;
