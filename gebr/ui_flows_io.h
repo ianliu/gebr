@@ -24,6 +24,7 @@
 #include <glib-object.h>
 #include <libgebr/geoxml/geoxml.h>
 #include <gtk/gtk.h>
+#include "gebr-maestro-server.h"
 
 #define GEBR_TYPE_UI_FLOWS_IO            (gebr_ui_flows_io_get_type())
 #define GEBR_UI_FLOWS_IO(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GEBR_TYPE_UI_FLOWS_IO, GebrUiFlowsIo))
@@ -94,13 +95,26 @@ void gebr_ui_flows_io_set_active(GebrUiFlowsIo *io,
 
 gboolean gebr_ui_flows_io_get_active(GebrUiFlowsIo *io);
 
+void gebr_ui_flows_io_set_tooltip(GebrUiFlowsIo *io, const gchar *tooltip);
+
+const gchar* gebr_ui_flows_io_get_tooltip(GebrUiFlowsIo *io);
+
+void gebr_ui_flows_io_set_stock_id(GebrUiFlowsIo *io, const gchar *stock_id);
+
+const gchar* gebr_ui_flows_io_get_stock_id(GebrUiFlowsIo *io);
+
 /**
- * gebr_ui_flows_io_load_from_flow:
+ * gebr_ui_flows_io_load_from_xml:
  *
  * Get the io path from the @flow XML and set the @io value
  */
-void gebr_ui_flows_io_load_from_flow(GebrUiFlowsIo *io,
-					  GebrGeoXmlFlow *flow);
+void
+gebr_ui_flows_io_load_from_xml(GebrUiFlowsIo *io,
+			       GebrGeoXmlProject *project,
+			       GebrGeoXmlLine *line,
+			       GebrGeoXmlFlow *flow,
+			       GebrMaestroServer *maestro,
+			       GebrValidator *validator);
 
 /**
  * gebr_ui_flows_io_get_label_markup:

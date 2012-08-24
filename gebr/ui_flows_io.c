@@ -26,7 +26,9 @@
 
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/gebr-version.h>
+#include <libgebr/gebr-validator.h>
 #include <libgebr/utils.h>
+#include <libgebr/gebr-maestro-info.h>
 
 struct _GebrUiFlowsIoPriv {
 	gchar *id;
@@ -34,6 +36,8 @@ struct _GebrUiFlowsIoPriv {
 	gchar *value;
 	gboolean overwrite;
 	gboolean active;
+	gchar *tooltip;
+	gchar *stock_id;
 };
 
 typedef struct {
@@ -62,6 +66,8 @@ gebr_ui_flows_io_finalize(GObject *object)
 	 */
 	g_free(io->priv->id);
 	g_free(io->priv->value);
+	g_free(io->priv->tooltip);
+	g_free(io->priv->stock_id);
 	G_OBJECT_CLASS(gebr_ui_flows_io_parent_class)->finalize(object);
 }
 
@@ -93,6 +99,8 @@ gebr_ui_flows_io_init(GebrUiFlowsIo *io)
 	io->priv->overwrite = FALSE;
 	io->priv->value = NULL;
 	io->priv->active = FALSE;
+	io->priv->tooltip = NULL;
+	io->priv->stock_id = NULL;
 }
 
 /*
@@ -164,33 +172,121 @@ gebr_ui_flows_io_get_active(GebrUiFlowsIo *io)
 }
 
 void
-gebr_ui_flows_io_load_from_flow(GebrUiFlowsIo *io,
-                                     GebrGeoXmlFlow *flow)
+gebr_ui_flows_io_set_tooltip(GebrUiFlowsIo *io, const gchar *tooltip)
 {
-	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
-	gchar *active = NULL;
+	io->priv->tooltip = g_strdup(tooltip);
+}
 
+const gchar*
+gebr_ui_flows_io_get_tooltip(GebrUiFlowsIo *io)
+{
+	return io->priv->tooltip;
+}
+
+void
+gebr_ui_flows_io_set_stock_id(GebrUiFlowsIo *io, const gchar *stock_id)
+{
+	io->priv->stock_id = g_strdup(stock_id);
+}
+
+const gchar*
+gebr_ui_flows_io_get_stock_id(GebrUiFlowsIo *io)
+{
+	return io->priv->stock_id;
+}
+
+void
+gebr_ui_flows_io_load_from_xml(GebrUiFlowsIo *io,
+			       GebrGeoXmlProject *project,
+			       GebrGeoXmlLine *line,
+			       GebrGeoXmlFlow *flow,
+			       GebrMaestroServer *maestro,
+			       GebrValidator *validator)
+{
+	GError *err = NULL;
+	gchar *err_msg, *result, *tooltip, *tmp, *mount_point;
+	gchar *path, *path_real;
+	const gchar *icon, *title, *aux;
+	gboolean ok = FALSE;
+	gchar ***paths = gebr_geoxml_line_get_paths(line);
+
+	if (maestro)
+		mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+	else
+		mount_point = NULL;
+
+	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
+	gboolean active = io->priv->active;
+	gboolean overwrite = io->priv->overwrite;
+
+	// Get the path
 	switch(type) {
 	case GEBR_IO_TYPE_INPUT:
-		io->priv->value = gebr_geoxml_flow_io_get_input(flow);
-		active = gebr_geoxml_flow_io_get_input_real(flow);
-		io->priv->active =  *active ? TRUE : FALSE;
+		aux = gebr_geoxml_flow_io_get_input(flow);
 		break;
 	case GEBR_IO_TYPE_OUTPUT:
-		io->priv->value = gebr_geoxml_flow_io_get_output(flow);
-		io->priv->overwrite = !gebr_geoxml_flow_io_get_output_append(flow);
-		active = gebr_geoxml_flow_io_get_output_real(flow);
-		io->priv->active =  *active ? TRUE : FALSE;
+		aux = gebr_geoxml_flow_io_get_output(flow);
 		break;
 	case GEBR_IO_TYPE_ERROR:
-		io->priv->value = gebr_geoxml_flow_io_get_error(flow);
-		io->priv->overwrite = !gebr_geoxml_flow_io_get_error_append(flow);
-		io->priv->active = TRUE;
+		aux = gebr_geoxml_flow_io_get_error(flow);
 		break;
 	case GEBR_IO_TYPE_NONE:
 		break;
 	}
-	g_free(active);
+
+	path_real = gebr_relativise_path(aux, mount_point, paths);
+	path = g_markup_escape_text(path_real, -1);
+
+	g_return_if_fail(path);
+
+	// Validation
+	gchar *resolved_path = gebr_resolve_relative_path(path_real, paths);
+	gebr_validator_evaluate(validator, resolved_path, GEBR_GEOXML_PARAMETER_TYPE_STRING,
+				GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
+
+	ok = gebr_validator_evaluate_interval(validator, path_real,
+					      GEBR_GEOXML_PARAMETER_TYPE_STRING,
+					      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+					      FALSE, &tmp, NULL);
+
+	title = path;
+	if (!*path || !active) {
+		title = gebr_ui_flows_io_get_label_markup(io);
+		icon = gebr_ui_flows_io_get_icon_str(io);
+		tooltip = NULL;
+	} else if (err) {
+		tooltip = g_strdup(err->message);
+		icon = GTK_STOCK_DIALOG_WARNING;
+	} else if (!gebr_validate_path(tmp, paths, &err_msg)) {
+		tooltip = err_msg;
+		icon = GTK_STOCK_DIALOG_WARNING;
+	} else {
+		switch(type) {
+		case GEBR_IO_TYPE_INPUT:
+			tooltip = g_strdup_printf(_("Input file \"%s\""), result);
+			icon = "gebr-stdin";
+			break;
+		case GEBR_IO_TYPE_OUTPUT:
+			tooltip = g_strdup_printf(_("%s output file \"%s\""),
+						  overwrite ? _("Append to") : _("Overwrite"), result);
+			break;
+		case GEBR_IO_TYPE_ERROR:
+			tooltip = g_strdup_printf(_("%s log file \"%s\""),
+						  overwrite ? _("Append to") : _("Overwrite"), result);
+			break;
+		case GEBR_IO_TYPE_NONE:
+			break;
+		}
+	}
+
+	io->priv->value = g_strdup(title);
+	io->priv->tooltip = g_strdup(tooltip);
+	io->priv->stock_id = g_strdup(icon);
+
+	g_free(tmp);
+	g_free(mount_point);
+	g_free(path);
+	g_free(path_real);
 }
 
 const gchar *
