@@ -383,13 +383,18 @@ static gboolean flows_check_before_execution(void)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
+	GebrUiFlowBrowseType type;
 	GebrUiFlow *ui_flow;
 	for (GList * i = rows; i; i = i->next)
 	{
 		gtk_tree_model_get_iter(model, &iter, i->data); 
 		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT_TYPE, &type,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
+
+		if (type != STRUCT_TYPE_FLOW)
+			return FALSE;
 
 		flow = gebr_ui_flow_get_flow(ui_flow);
 
