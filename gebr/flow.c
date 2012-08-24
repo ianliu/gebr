@@ -49,6 +49,8 @@
 #include "ui_document.h"
 #include "ui_flow_browse.h"
 #include "gebr-flow-edition.h"
+#include "ui_flow_program.h"
+#include "ui_flow_browse.h"
 #include "ui_project_line.h"
 
 static void on_properties_response(gboolean accept)
@@ -988,15 +990,23 @@ void flow_program_remove(void)
 	GtkTreeIter iter;
 	gboolean valid = FALSE;
 	GebrGeoXmlProgram *program;
+	GebrUiFlowBrowseType type;
 
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
-		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
-		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)){
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		                   FB_STRUCT_TYPE, &type,
+		                   -1);
+
+		if (type == STRUCT_TYPE_IO) {
 			flow_edition_set_io();
-		} else {
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-					   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+		}
+		else if (type == STRUCT_TYPE_PROGRAM) {
+			GebrUiFlowProgram *ui_program;
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			                   FB_STRUCT, &ui_program,
+			                   -1);
+
+			program = gebr_ui_flow_program_get_xml(ui_program);
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program));
 
 			// Remove `iter' variable from dictionary if the Loop is configured
@@ -1007,11 +1017,10 @@ void flow_program_remove(void)
 				GList *affected;
 				param = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
 				gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(param), &affected, &err);
-				flow_edition_revalidate_programs();
+				flow_browse_revalidate_programs(gebr.ui_flow_browse);
 			}
-			valid = gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
+			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
 		}
-
 	}
 	flow_program_check_sensitiveness();
 	flow_edition_set_io();
@@ -1022,7 +1031,7 @@ void flow_program_remove(void)
 		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, FALSE, FALSE);
 
 	if (valid)
-		flow_edition_select_component_iter(&iter);
+		flow_browse_select_iter(&iter);
 
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 }
@@ -1088,6 +1097,7 @@ void flow_copy(void)
 
 		filename = gebr_ui_flow_get_filename(ui_flow);
 		gebr.flow_clipboard = g_list_prepend(gebr.flow_clipboard, g_strdup(filename));
+		g_free(ui_flow);
 	}
 	gebr.flow_clipboard = g_list_reverse(gebr.flow_clipboard);
 }
@@ -1155,9 +1165,9 @@ void flow_program_paste(void)
 	}
 
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE, FALSE);
-	flow_program_check_sensitiveness();
+	flow_browse_program_check_sensitiveness();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-	flow_edition_revalidate_programs();
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 	gebr_flow_set_toolbar_sensitive();
 	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 }

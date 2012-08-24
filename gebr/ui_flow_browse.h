@@ -183,8 +183,13 @@ void gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
                            GtkTreeIter *iter,
                            gpointer data);
 
+void gebr_flow_browse_select_file_column(GtkTreeView *tree_view,
+                                                GtkTreeIter *iter,
+                                                GebrUiFlowBrowse *fb);
+
 void gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
-                                             GebrUiFlowBrowse *ui_flow_browse);
+                                             GtkTreeIter *iter,
+                                             GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_select_job(GebrUiFlowBrowse *fb);
 
@@ -230,6 +235,14 @@ gint gebr_flow_browse_calculate_n_max(GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_select_job_output(const gchar *job_id,
                                         GebrUiFlowBrowse *fb);
+
+void flow_browse_revalidate_programs(GebrUiFlowBrowse *fb);
+
+void flow_browse_program_check_sensitiveness(void);
+
+void  flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
+                                     GtkTreeIter *iter,
+                                     GebrUiFlowBrowse *fb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

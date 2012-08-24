@@ -45,6 +45,7 @@
 #include "ui_help.h"
 #include "document.h"
 #include "ui_project_line.h"
+#include "ui_flow_browse.h"
 #include "ui_paths.h"
 #include "line.h"
 #include "gebr-expr.h"
@@ -556,7 +557,7 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 static void
 close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *data)
 {
-	flow_edition_revalidate_programs();
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GebrGeoXmlSequence *i_parameter;

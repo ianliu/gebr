@@ -110,20 +110,28 @@ gboolean
 validate_selected_program(GError **error)
 {
 	GtkTreeIter iter;
-	flow_edition_get_selected_component(&iter, FALSE);
+	flow_browse_get_selected(&iter, FALSE);
 	return validate_program_iter(&iter, error);
 }
 
 gboolean
 validate_program_iter(GtkTreeIter *iter, GError **error)
 {
+	GebrUiFlowBrowseType type;
+	GebrUiFlowProgram *ui_program;
 	gboolean never_opened;
 	GebrGeoXmlProgram *program;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
-			   FSEQ_GEBR_GEOXML_POINTER, &program,
-			   FSEQ_NEVER_OPENED, &never_opened,
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), iter,
+			   FB_STRUCT_TYPE, &type,
+	                   FB_STRUCT, &ui_program,
 			   -1);
+
+	if (type != STRUCT_TYPE_PROGRAM)
+		return FALSE;
+
+	never_opened = gebr_ui_flow_program_get_flag_opened(ui_program);
+	program = gebr_ui_flow_program_get_xml(ui_program);
 
 	if (never_opened)
 		return FALSE;
@@ -164,28 +172,29 @@ parameters_actions(GtkDialog *dialog, gint response, GebrGuiProgramEdit *program
 
 		flow_browse_reload_selected();
 
-//		flow_edition_select_component_iter(&iter);
+		flow_browse_select_iter(&iter);
 
-//		GebrGeoXmlProgram *program = program_edit->program;
-//		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-//			if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
-//				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
-//				GebrGeoXmlSequence *parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-//				gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
-//			} else {
-//				gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
-//				GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
-//				const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
-//				gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
-//			}
-//		}
-//
-//		if (validate_selected_program(NULL))
-//			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
-//		else
-//			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
-//
-//		flow_edition_set_io();
+		GebrGeoXmlProgram *program = program_edit->program;
+		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
+				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+				GebrGeoXmlSequence *parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
+				gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
+			} else {
+				gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
+				GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
+				const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
+				gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
+			}
+		}
+
+		if (validate_selected_program(NULL))
+			flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter, gebr.ui_flow_browse);
+		else
+			flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter, gebr.ui_flow_browse);
+
+		flow_browse_revalidate_programs(gebr.ui_flow_browse);
+		flow_edition_set_io();
 		gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 
 		/* Update parameters review on Flow Browse */
