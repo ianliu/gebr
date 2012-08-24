@@ -949,6 +949,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(ui_flow_browse->queue_combobox, "changed",
 	                 G_CALLBACK(on_queue_combobox_changed), ui_flow_browse);
 	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(ui_flow_browse->queue_combobox), renderer, TRUE);
 	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(ui_flow_browse->queue_combobox), renderer,
 	                                   on_queue_set_text, NULL, NULL);
