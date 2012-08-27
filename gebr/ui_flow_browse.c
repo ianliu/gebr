@@ -2481,8 +2481,14 @@ update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb)
 		                   FB_STRUCT_TYPE, &type,
 		                   -1);
 
-		if (type != STRUCT_TYPE_FLOW)
-			continue;
+		if (type != STRUCT_TYPE_FLOW) {
+			GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_first_mpi_program(gebr.flow);
+			if ((gebr_geoxml_flow_is_parallelizable(gebr.flow, gebr.validator))
+			    || (gebr_geoxml_program_get_status(prog) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED))
+				sensitive = TRUE;
+			gebr_geoxml_object_unref(prog);
+			break;
+		}
 
 		gtk_tree_model_get_iter(model, &iter, i->data);
 		gtk_tree_model_get(model, &iter,

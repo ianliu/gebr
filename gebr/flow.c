@@ -351,12 +351,17 @@ void flow_export(void)
 	else {
 		GtkTreeIter iter;
 		GtkTreePath *path = rows->data;
+		GebrUiFlowBrowseType type;
 		GebrUiFlow *ui_flow;
 
 		gtk_tree_model_get_iter (model, &iter, path);
 		gtk_tree_model_get (model, &iter,
+		                    FB_STRUCT_TYPE, &type,
 		                    FB_STRUCT, &ui_flow,
 		                    -1);
+
+		if (type != STRUCT_TYPE_FLOW)
+			goto out;
 
 		flow_filename = gebr_ui_flow_get_filename(ui_flow);
 
@@ -397,11 +402,16 @@ void flow_export(void)
 		GtkTreePath *path = i->data;
 		GebrGeoXmlDocument *doc;
 		GebrUiFlow *ui_flow;
+		GebrUiFlowBrowseType type;
 
 		gtk_tree_model_get_iter (model, &iter, path);
 		gtk_tree_model_get (model, &iter,
+		                    FB_STRUCT_TYPE, &type,
 		                    FB_STRUCT, &ui_flow,
 		                    -1);
+
+		if (type != STRUCT_TYPE_FLOW)
+			goto out;
 
 		doc = GEBR_GEOXML_DOCUMENT(gebr_ui_flow_get_flow(ui_flow));
 		flow_filename = gebr_ui_flow_get_filename(ui_flow);
@@ -1102,7 +1112,6 @@ void flow_copy(void)
 
 		filename = gebr_ui_flow_get_filename(ui_flow);
 		gebr.flow_clipboard = g_list_prepend(gebr.flow_clipboard, g_strdup(filename));
-		g_free(ui_flow);
 	}
 	gebr.flow_clipboard = g_list_reverse(gebr.flow_clipboard);
 }

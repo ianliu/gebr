@@ -240,22 +240,18 @@ void on_flow_delete_activate(void)
 	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :{
-		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
-			GebrGeoXmlObject *object;
+		if (!flow_browse_get_selected(&iter, FALSE))
+			return;
 
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-			                   FSEQ_GEBR_GEOXML_POINTER, &object, -1);
+		GebrUiFlowBrowseType type;
 
-			if (!object)
-				continue;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		                   FB_STRUCT_TYPE, &type, -1);
 
-			GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
-			if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-				flow_program_remove();
-				return;
-			}
-		}
-		flow_delete(TRUE);
+		if (type == STRUCT_TYPE_FLOW)
+			flow_delete(TRUE);
+		else if (type ==  STRUCT_TYPE_PROGRAM)
+			on_flow_component_delete_activate();
 		break;
 	}
 	default:
