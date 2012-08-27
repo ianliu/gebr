@@ -170,6 +170,9 @@ parameters_actions(GtkDialog *dialog, gint response, GebrGuiProgramEdit *program
 		gebr_geoxml_object_ref(program_edit->program);
 		gebr_ui_flow_program_set_xml(ui_program, program_edit->program);
 
+		if (gebr_ui_flow_program_get_flag_opened(ui_program))
+			gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
+
 		flow_browse_reload_selected();
 
 		flow_browse_select_iter(&iter);
