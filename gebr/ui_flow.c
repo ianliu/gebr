@@ -336,7 +336,6 @@ gebr_ui_flow_run(gboolean is_parallel)
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	const gchar *id = NULL;
-	GebrGeoXmlFlow *curr_flow;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
@@ -378,8 +377,6 @@ gebr_ui_flow_run(gboolean is_parallel)
 			return;
 
 		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
-		curr_flow = flow;
-
 		gebr_flow_browse_update_jobs_info(flow, gebr.ui_flow_browse, gebr_flow_browse_calculate_n_max(gebr.ui_flow_browse));
 	}
 	if (n > 1 || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)

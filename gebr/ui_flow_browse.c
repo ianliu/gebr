@@ -1217,7 +1217,6 @@ on_job_info_status_changed(GebrJob *job,
                            GtkWidget *container)
 {
 	gchar *icon, *job_state;
-	const gchar *date;
 	gchar *title;
 	const gchar *snap_id = gebr_job_get_snapshot_id(job);
 
@@ -1238,29 +1237,24 @@ on_job_info_status_changed(GebrJob *job,
 	case JOB_STATUS_FINISHED:
 		icon = GTK_STOCK_APPLY;
 		job_state = g_strdup(_("finished"));
-		date = gebr_localized_date(gebr_job_get_finish_date(job));
 		break;
 	case JOB_STATUS_RUNNING:
 		icon = GTK_STOCK_EXECUTE;
 		job_state = g_strdup(_("started"));
-		date = gebr_localized_date(gebr_job_get_start_date(job));
 		break;
 	case JOB_STATUS_CANCELED:
 		icon = GTK_STOCK_CANCEL;
 		job_state = g_strdup(_("canceled"));
-		date = gebr_localized_date(gebr_job_get_finish_date(job));
 		break;
 	case JOB_STATUS_FAILED:
 		icon = GTK_STOCK_CANCEL;
 		job_state = g_strdup(_("failed"));
-		date = gebr_localized_date(gebr_job_get_finish_date(job));
 		break;
 	case JOB_STATUS_QUEUED:
 	case JOB_STATUS_INITIAL:
 	default:
 		icon = "chronometer";
 		job_state = g_strdup(_("submitted"));
-		date = gebr_localized_date(gebr_job_get_last_run_date(job));
 		g_free(tooltip);
 		tooltip = g_strdup(_("This job doesn't have output yet"));
 		break;
