@@ -172,13 +172,89 @@ gebr_ui_flows_io_get_active(GebrUiFlowsIo *io)
 	return io->priv->active;
 }
 
+void gebr_ui_flows_io_update_active(GebrUiFlowsIo *io,
+				    GebrGeoXmlFlow *flow)
+{
+	GebrGeoXmlSequence *program;
+	GebrGeoXmlProgram *first_program = NULL;
+	GebrGeoXmlProgram *last_program = NULL;
+	gboolean has_some_error_output = FALSE;
+	gboolean has_configured = FALSE;
+
+	gebr_geoxml_flow_get_program(flow, &program, 0);
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		GebrGeoXmlProgramControl control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
+		if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+			continue;
+		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+			if (!has_configured) {
+				first_program = GEBR_GEOXML_PROGRAM(program);
+				gebr_geoxml_object_ref(first_program);
+				has_configured = TRUE;
+			}
+			if (!has_some_error_output && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))){
+				has_some_error_output = TRUE;
+			}
+
+			if (last_program)
+				gebr_geoxml_object_unref(last_program);
+
+			last_program = GEBR_GEOXML_PROGRAM(program);
+			gebr_geoxml_object_ref(last_program);
+		}
+	}
+
+	if (has_configured) {
+		io->priv->active = TRUE;
+		gebr_geoxml_object_unref(first_program);
+		gebr_geoxml_object_unref(last_program);
+	}
+}
+
 void
 gebr_ui_flows_io_set_tooltip(GebrUiFlowsIo *io, const gchar *tooltip)
 {
 	io->priv->tooltip = g_strdup(tooltip);
 }
 
-const gchar*
+void
+gebr_ui_flows_io_update_tooltip(GebrUiFlowsIo *io,
+				const gchar *path,
+				const gchar *evaluated,
+				GError *err,
+				const gchar *err_msg)
+{
+	gboolean active = io->priv->active;
+	gchar *tooltip = NULL;
+
+	if (!*path || !active) {
+		tooltip = NULL;
+	} else if (err) {
+		tooltip = g_strdup(err->message);
+	} else if (err_msg) {
+		tooltip = g_strdup(err_msg);
+	} else {
+		switch(io->priv->type) {
+		case GEBR_IO_TYPE_INPUT:
+			tooltip = g_strdup_printf(_("Input file \"%s\""), evaluated);
+			break;
+		case GEBR_IO_TYPE_OUTPUT:
+			tooltip = g_strdup_printf(_("%s output file \"%s\""),
+						  io->priv->overwrite ? _("Append to") : _("Overwrite"), evaluated);
+			break;
+		case GEBR_IO_TYPE_ERROR:
+			tooltip = g_strdup_printf(_("%s log file \"%s\""),
+						  io->priv->overwrite ? _("Append to") : _("Overwrite"), evaluated);
+			break;
+		case GEBR_IO_TYPE_NONE:
+			break;
+		}
+	}
+	io->priv->tooltip = g_strdup(tooltip);
+}
+
+
+const gchar *
 gebr_ui_flows_io_get_tooltip(GebrUiFlowsIo *io)
 {
 	return io->priv->tooltip;
@@ -204,10 +280,9 @@ gebr_ui_flows_io_load_from_xml(GebrUiFlowsIo *io,
 			       GebrValidator *validator)
 {
 	GError *err = NULL;
-	gchar *err_msg, *result, *tooltip, *tmp, *mount_point;
-	gchar *path, *path_real;
-	const gchar *icon, *title, *aux;
-	gboolean ok = FALSE;
+	gchar *err_msg = NULL, *result = NULL, *tmp = NULL, *mount_point = NULL, *path = NULL, *path_real = NULL, *resolved_path = NULL;
+	const gchar *aux;
+
 	gchar ***paths = gebr_geoxml_line_get_paths(line);
 
 	if (maestro)
@@ -215,12 +290,9 @@ gebr_ui_flows_io_load_from_xml(GebrUiFlowsIo *io,
 	else
 		mount_point = NULL;
 
-	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(io);
-	gboolean active = io->priv->active;
-	gboolean overwrite = io->priv->overwrite;
-
+	gebr_ui_flows_io_update_active(io, flow);
 	// Get the path
-	switch(type) {
+	switch(io->priv->type) {
 	case GEBR_IO_TYPE_INPUT:
 		aux = gebr_geoxml_flow_io_get_input(flow);
 		break;
@@ -240,53 +312,30 @@ gebr_ui_flows_io_load_from_xml(GebrUiFlowsIo *io,
 	g_return_if_fail(path);
 
 	// Validation
-	gchar *resolved_path = gebr_resolve_relative_path(path_real, paths);
+	resolved_path = gebr_resolve_relative_path(path_real, paths);
 	gebr_validator_evaluate(validator, resolved_path, GEBR_GEOXML_PARAMETER_TYPE_STRING,
 				GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
 
-	ok = gebr_validator_evaluate_interval(validator, path_real,
-					      GEBR_GEOXML_PARAMETER_TYPE_STRING,
-					      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-					      FALSE, &tmp, NULL);
+	gebr_validator_evaluate_interval(validator, path_real,
+					 GEBR_GEOXML_PARAMETER_TYPE_STRING,
+					 GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+					 FALSE, &tmp, NULL);
 
-	title = path;
-	if (!*path || !active) {
-		title = gebr_ui_flows_io_get_label_markup(io);
-		icon = gebr_ui_flows_io_get_icon_str(io);
-		tooltip = NULL;
-	} else if (err) {
-		tooltip = g_strdup(err->message);
-		icon = GTK_STOCK_DIALOG_WARNING;
-	} else if (!gebr_validate_path(tmp, paths, &err_msg)) {
-		tooltip = err_msg;
-		icon = GTK_STOCK_DIALOG_WARNING;
-	} else {
-		switch(type) {
-		case GEBR_IO_TYPE_INPUT:
-			tooltip = g_strdup_printf(_("Input file \"%s\""), result);
-			icon = "gebr-stdin";
-			break;
-		case GEBR_IO_TYPE_OUTPUT:
-			tooltip = g_strdup_printf(_("%s output file \"%s\""),
-						  overwrite ? _("Append to") : _("Overwrite"), result);
-			break;
-		case GEBR_IO_TYPE_ERROR:
-			tooltip = g_strdup_printf(_("%s log file \"%s\""),
-						  overwrite ? _("Append to") : _("Overwrite"), result);
-			break;
-		case GEBR_IO_TYPE_NONE:
-			break;
-		}
-	}
+	gebr_validate_path(tmp, paths, &err_msg);
 
-	io->priv->value = g_strdup(title);
-	io->priv->tooltip = g_strdup(tooltip);
-	io->priv->stock_id = g_strdup(icon);
+	gebr_ui_flows_io_update_tooltip(io, path, result, err, err_msg);
+	gebr_ui_flows_io_update_stock_id(io, path, result, err, err_msg);
+
+	if (*path && io->priv->active)
+		io->priv->value = g_strdup(path);
+	else
+		io->priv->value = g_strdup("");
 
 	g_free(tmp);
 	g_free(mount_point);
 	g_free(path);
 	g_free(path_real);
+	g_free(resolved_path);
 }
 
 const gchar *
@@ -326,6 +375,22 @@ gebr_ui_flows_io_get_icon_str(GebrUiFlowsIo *io)
 	default:
 		return NULL;
 	}
+}
+
+void
+gebr_ui_flows_io_update_stock_id(GebrUiFlowsIo *io,
+				 const gchar *path,
+				 const gchar *evaluated,
+				 GError *error_1,
+				 const gchar *err_msg)
+{
+	const gchar *icon = gebr_ui_flows_io_get_icon_str(io);
+
+	if (error_1 || err_msg)
+		icon = GTK_STOCK_DIALOG_WARNING;
+
+	io->priv->stock_id = g_strdup(icon);
+	return;
 }
 
 void
@@ -444,14 +509,19 @@ gebr_ui_flows_io_edited(GebrUiFlowsIo *io,
 	gchar *tmp = gebr_relativise_path(new_text, mount_point, paths);
 	gebr_pairstrfreev(paths);
 
-	if (io->priv->type == GEBR_IO_TYPE_INPUT)
-		gebr_geoxml_flow_io_set_input(gebr.flow, tmp);
-	else if (io->priv->type == GEBR_IO_TYPE_OUTPUT)
-		gebr_geoxml_flow_io_set_output(gebr.flow, tmp);
-	else if (io->priv->type == GEBR_IO_TYPE_ERROR)
-		gebr_geoxml_flow_io_set_error(gebr.flow, tmp);
+	gebr_ui_flows_io_set_value(io, tmp);
+
+	if (new_text) {
+		if (io->priv->type == GEBR_IO_TYPE_INPUT)
+			gebr_geoxml_flow_io_set_input(gebr.flow, tmp);
+		else if (io->priv->type == GEBR_IO_TYPE_OUTPUT)
+			gebr_geoxml_flow_io_set_output(gebr.flow, tmp);
+		else if (io->priv->type == GEBR_IO_TYPE_ERROR)
+			gebr_geoxml_flow_io_set_error(gebr.flow, tmp);
+	}
 
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	gebr_ui_flows_io_load_from_xml(io, gebr.line, gebr.flow, maestro, gebr.validator);
 }
+

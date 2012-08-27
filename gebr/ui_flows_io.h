@@ -95,7 +95,16 @@ void gebr_ui_flows_io_set_active(GebrUiFlowsIo *io,
 
 gboolean gebr_ui_flows_io_get_active(GebrUiFlowsIo *io);
 
+void gebr_ui_flows_io_update_active(GebrUiFlowsIo *io,
+				    GebrGeoXmlFlow *flow);
+
 void gebr_ui_flows_io_set_tooltip(GebrUiFlowsIo *io, const gchar *tooltip);
+
+void gebr_ui_flows_io_update_tooltip(GebrUiFlowsIo *io,
+				       const gchar *path,
+				       const gchar *evaluated_path,
+				       GError *err,
+				       const gchar *err_2);
 
 const gchar* gebr_ui_flows_io_get_tooltip(GebrUiFlowsIo *io);
 
@@ -129,6 +138,17 @@ const gchar *gebr_ui_flows_io_get_label_markup(GebrUiFlowsIo *io);
  */
 const gchar *gebr_ui_flows_io_get_icon_str(GebrUiFlowsIo *io);
 
+void gebr_ui_flows_io_update_stock_id(GebrUiFlowsIo *io,
+				      const gchar *path,
+				      const gchar *evaluated,
+				      GError *error_1,
+				      const gchar *err_msg);
+
+/**
+ * gebr_ui_flows_io_popup_menu:
+ *
+ * Returns a menu, according to the type of @io.
+ */
 GtkMenu *gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 				     GebrGeoXmlFlow *flow);
 

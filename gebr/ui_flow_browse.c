@@ -68,6 +68,12 @@ static void flow_browse_menu_add(void);
 void gebr_flow_browse_cursor_changed(GtkTreeView *tree_view,
                                      GebrUiFlowBrowse *fb);
 
+static void flow_browse_on_query_tooltip(GtkTreeView * treeview,
+					 gint x,
+					 gint y,
+					 gboolean keyboard_tip,
+					 GtkTooltip * tooltip,
+					 GebrUiFlowBrowse *ui_flow_browse);
 /*
  * Methods of Servers/queues Combo Box
  */
@@ -1478,6 +1484,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	ui_flow_browse->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->store));
 
+	g_object_set(G_OBJECT(ui_flow_browse->view), "has-tooltip", TRUE, NULL);
 	gtk_tree_view_set_level_indentation(GTK_TREE_VIEW(ui_flow_browse->view), 20);
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->view), TRUE);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
@@ -1499,6 +1506,8 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(ui_flow_browse->view, "key-press-event",
 	                 G_CALLBACK(flow_browse_component_key_pressed), ui_flow_browse);
 	g_signal_connect(ui_flow_browse->view, "row-activated", G_CALLBACK(flow_browse_on_row_activated),
+			 ui_flow_browse);
+	g_signal_connect(ui_flow_browse->view, "query-tooltip", G_CALLBACK(flow_browse_on_query_tooltip),
 			 ui_flow_browse);
 //
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
@@ -2567,6 +2576,52 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 		parameters_configure_setup_ui();
 }
 
+static void
+flow_browse_on_query_tooltip(GtkTreeView * treeview,
+			     gint x,
+			     gint y,
+			     gboolean keyboard_tip,
+			     GtkTooltip * tooltip,
+			     GebrUiFlowBrowse *ui_flow_browse)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *message = NULL;
+	GebrUiFlowBrowseType type;
+
+	if (!gtk_tree_view_get_tooltip_context(treeview, &x, &y, keyboard_tip, &model, NULL, &iter))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(ui_flow_browse->store),
+			   &iter, FB_STRUCT_TYPE, &type, -1);
+
+	if (type == STRUCT_TYPE_FLOW) {
+		GebrUiFlow *ui_flow;
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_flow,
+		                   -1);
+
+		GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
+		gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
+		message = g_markup_printf_escaped(_("Flow <i>%s</i>"), flow_title);
+		g_free(flow_title);
+	} else if (type == STRUCT_TYPE_PROGRAM) {
+		GebrUiFlowProgram *ui_program;
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_program,
+		                   -1);
+		message = g_strdup(gebr_ui_flow_program_get_tooltip(ui_program));
+	} else if (type == STRUCT_TYPE_IO) {
+		GebrUiFlowsIo *ui_io;
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_io,
+		                   -1);
+		message = g_strdup(gebr_ui_flows_io_get_tooltip(ui_io));
+	}
+
+	gtk_tooltip_set_markup(tooltip, message);
+	g_free(message);
+}
 /**
  * \internal
  * Saves the current selected line.
@@ -2656,7 +2711,7 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		                   FB_STRUCT, &ui_io,
 		                   -1);
 
-		const gchar *icon = gebr_ui_flows_io_get_icon_str(ui_io);
+		const gchar *icon = gebr_ui_flows_io_get_stock_id(ui_io);
 
 		g_object_set(cell, "stock-id", icon, NULL);
 	}

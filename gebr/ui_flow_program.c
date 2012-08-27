@@ -36,6 +36,7 @@ struct _GebrUiFlowProgramPriv {
 	gboolean never_opened;
 	GebrGeoXmlProgramStatus status;
 	GebrIExprError error_id;
+	gchar *tooltip;
 	// inserir ID que deve ser um indentificador unico de um programa
 };
 
@@ -63,8 +64,8 @@ static void
 gebr_ui_flow_program_init(GebrUiFlowProgram *prog)
 {
 	prog->priv = G_TYPE_INSTANCE_GET_PRIVATE(prog,
-	                                       GEBR_TYPE_UI_FLOW_PROGRAM,
-	                                       GebrUiFlowProgramPriv);
+						 GEBR_TYPE_UI_FLOW_PROGRAM,
+						 GebrUiFlowProgramPriv);
 }
 
 GebrUiFlowProgram *
@@ -75,6 +76,7 @@ gebr_ui_flow_program_new(GebrGeoXmlProgram *program)
 	ui_prog->priv->program = program;
 	ui_prog->priv->status = gebr_geoxml_program_get_status(program);
 	gebr_geoxml_program_get_error_id(program, &(ui_prog->priv->error_id));
+	gebr_ui_flow_program_update_tooltip(ui_prog);
 
 	return ui_prog;
 }
@@ -82,8 +84,8 @@ gebr_ui_flow_program_new(GebrGeoXmlProgram *program)
 /*----------------------------------------------------------------------------------------------*/
 
 void
-gebr_ui_flow_program_set_xml (GebrUiFlowProgram *program,
-                              GebrGeoXmlProgram *prog_xml)
+gebr_ui_flow_program_set_xml(GebrUiFlowProgram *program,
+			     GebrGeoXmlProgram *prog_xml)
 {
 	if (program->priv->program)
 		gebr_geoxml_object_unref(program->priv->program);
@@ -92,27 +94,27 @@ gebr_ui_flow_program_set_xml (GebrUiFlowProgram *program,
 }
 
 GebrGeoXmlProgram *
-gebr_ui_flow_program_get_xml (GebrUiFlowProgram *program)
+gebr_ui_flow_program_get_xml(GebrUiFlowProgram *program)
 {
 	return program->priv->program;
 }
 
 void
-gebr_ui_flow_program_set_flag_opened (GebrUiFlowProgram *program,
-                                      gboolean never_opened)
+gebr_ui_flow_program_set_flag_opened(GebrUiFlowProgram *program,
+				     gboolean never_opened)
 {
 	program->priv->never_opened = never_opened;
 }
 
 gboolean
-gebr_ui_flow_program_get_flag_opened (GebrUiFlowProgram *program)
+gebr_ui_flow_program_get_flag_opened(GebrUiFlowProgram *program)
 {
 	return program->priv->never_opened;
 }
 
 void
-gebr_ui_flow_program_set_status (GebrUiFlowProgram *program,
-                            GebrGeoXmlProgramStatus status)
+gebr_ui_flow_program_set_status(GebrUiFlowProgram *program,
+				GebrGeoXmlProgramStatus status)
 {
 	program->priv->status = status;
 }
@@ -124,8 +126,8 @@ gebr_ui_flow_program_get_status (GebrUiFlowProgram *program)
 }
 
 void
-gebr_ui_flow_program_set_error_id (GebrUiFlowProgram *program,
-                              GebrIExprError error_id)
+gebr_ui_flow_program_set_error_id(GebrUiFlowProgram *program,
+				  GebrIExprError error_id)
 {
 	program->priv->error_id = error_id;
 }
@@ -137,42 +139,53 @@ gebr_ui_flow_program_get_error_id (GebrUiFlowProgram *program)
 }
 
 const gchar *
-gebr_ui_flow_program_get_error_tooltip(GebrUiFlowProgram *program)
+gebr_ui_flow_program_get_tooltip(GebrUiFlowProgram *program)
 {
-	GebrIExprError errorid = gebr_ui_flow_program_get_error_id(program);
-	const gchar *error_message;
+	return program->priv->tooltip;
+}
 
-	switch (errorid) {
-	case GEBR_IEXPR_ERROR_SYNTAX:
-	case GEBR_IEXPR_ERROR_TOOBIG:
-	case GEBR_IEXPR_ERROR_RUNTIME:
-	case GEBR_IEXPR_ERROR_INVAL_TYPE:
-	case GEBR_IEXPR_ERROR_TYPE_MISMATCH:
-		error_message = _("This program has an invalid expression");
-		break;
-	case GEBR_IEXPR_ERROR_EMPTY_EXPR:
-		error_message = _("A required parameter is unfilled");
-		break;
-	case GEBR_IEXPR_ERROR_UNDEF_VAR:
-	case GEBR_IEXPR_ERROR_UNDEF_REFERENCE:
-		error_message = _("An undefined variable is being used");
-		break;
-	case GEBR_IEXPR_ERROR_INVAL_VAR:
-	case GEBR_IEXPR_ERROR_BAD_REFERENCE:
-	case GEBR_IEXPR_ERROR_CYCLE:
-		error_message = _("A badly defined variable is being used");
-		break;
-	case GEBR_IEXPR_ERROR_PATH:
-		error_message = _("This program has cleaned their paths");
-		break;
-	case GEBR_IEXPR_ERROR_BAD_MOVE:
-	case GEBR_IEXPR_ERROR_INITIALIZE:
-	default:
-		error_message = "";
-		break;
+void
+gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program) {
+	const gchar *tooltip;
+	if (program->priv->status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
+		tooltip =  _("This program needs to be configured");
+	} else {
+		GebrIExprError errorid = program->priv->error_id;
+
+		switch (errorid) {
+		case GEBR_IEXPR_ERROR_SYNTAX:
+		case GEBR_IEXPR_ERROR_TOOBIG:
+		case GEBR_IEXPR_ERROR_RUNTIME:
+		case GEBR_IEXPR_ERROR_INVAL_TYPE:
+		case GEBR_IEXPR_ERROR_TYPE_MISMATCH:
+			tooltip = _("This program has an invalid expression");
+			break;
+		case GEBR_IEXPR_ERROR_EMPTY_EXPR:
+			tooltip = _("A required parameter is unfilled");
+			break;
+		case GEBR_IEXPR_ERROR_UNDEF_VAR:
+		case GEBR_IEXPR_ERROR_UNDEF_REFERENCE:
+			tooltip = _("An undefined variable is being used");
+			break;
+		case GEBR_IEXPR_ERROR_INVAL_VAR:
+		case GEBR_IEXPR_ERROR_BAD_REFERENCE:
+		case GEBR_IEXPR_ERROR_CYCLE:
+			tooltip = _("A badly defined variable is being used");
+			break;
+		case GEBR_IEXPR_ERROR_PATH:
+			tooltip = _("This program has cleaned their paths");
+			break;
+		case GEBR_IEXPR_ERROR_BAD_MOVE:
+		case GEBR_IEXPR_ERROR_INITIALIZE:
+		default:
+			tooltip = NULL;
+			break;
+		}
 	}
 
-	return error_message;
+	if (program->priv->tooltip)
+		g_free(program->priv->tooltip);
+	program->priv->tooltip = g_strdup(tooltip);
 }
 
 GtkMenu *
@@ -244,4 +257,11 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program,
 	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
+}
+
+const gchar *
+gebr_ui_flow_program_get_error_tooltip(GebrUiFlowProgram *program)
+{
+	//FIXME: remove as soon as we remove gebr-flow-edition.c
+	return NULL;
 }
