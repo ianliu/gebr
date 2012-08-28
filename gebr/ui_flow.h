@@ -63,6 +63,11 @@ const gchar *gebr_ui_flow_get_last_modified(GebrUiFlow *ui_flow);
 void gebr_ui_flow_set_last_modified(GebrUiFlow *ui_flow,
                                     const gchar *last_modified);
 
+gboolean gebr_ui_flow_get_is_selected(GebrUiFlow *ui_flow);
+
+void gebr_ui_flow_set_is_selected(GebrUiFlow *ui_flow,
+                                  gboolean is_selected);
+
 GtkMenu *gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow,
                                  gboolean move_up,
                                  gboolean move_down);

@@ -23,6 +23,7 @@
 struct _GebrUiFlowPriv {
 	GebrGeoXmlFlow *flow;
 	GebrGeoXmlLineFlow *line_flow;
+	gboolean selected;
 
 	gchar *filename;
 	gchar *last_modified;
@@ -67,6 +68,7 @@ gebr_ui_flow_new(GebrGeoXmlFlow *flow,
 	ui_flow->priv->flow = flow;
 	ui_flow->priv->line_flow = line_flow;
 	ui_flow->priv->filename = g_strdup(gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
+	ui_flow->priv->selected = FALSE;
 
 	return ui_flow;
 }
@@ -104,6 +106,20 @@ gebr_ui_flow_set_last_modified(GebrUiFlow *ui_flow,
 
 	ui_flow->priv->last_modified = g_strdup(last_modified);
 }
+
+gboolean
+gebr_ui_flow_get_is_selected(GebrUiFlow *ui_flow)
+{
+	return ui_flow->priv->selected;
+}
+
+void
+gebr_ui_flow_set_is_selected(GebrUiFlow *ui_flow,
+                             gboolean is_selected)
+{
+	ui_flow->priv->selected = is_selected;
+}
+
 
 GtkMenu *
 gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow,
