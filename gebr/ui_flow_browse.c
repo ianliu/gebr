@@ -509,7 +509,7 @@ static gboolean flow_browse_get_selected_menu(GtkTreeIter * iter, gboolean warn_
 
 static void flow_browse_menu_add(void)
 {
-	GtkTreeIter iter;
+	GtkTreeIter iter, parent;
 	gchar *name;
 	gchar *filename;
 	GebrGeoXmlFlow *menu;
@@ -532,7 +532,7 @@ static void flow_browse_menu_add(void)
 	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->menu_store), &iter,
-			   MENU_TITLE_COLUMN, &name, MENU_FILEPATH_COLUMN, &filename, -1);
+	                   MENU_TITLE_COLUMN, &name, MENU_FILEPATH_COLUMN, &filename, -1);
 	menu = menu_load_path(filename);
 	if (menu == NULL)
 		goto out;
@@ -541,13 +541,37 @@ static void flow_browse_menu_add(void)
 	 * note that menu changes aren't saved to disk
 	 */
 	GebrGeoXmlProgramControl c1, c2;
-	GebrGeoXmlProgram *first_prog;
-
-	gtk_tree_model_get_iter_first (GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
-	gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-			    FSEQ_GEBR_GEOXML_POINTER, &first_prog, -1);
+	GebrGeoXmlProgram *first_prog = NULL;
+	GtkTreeModel *model = GTK_TREE_MODEL (gebr.ui_flow_browse->store);
 
 	gebr_geoxml_flow_get_program(menu, &program, 0);
+
+	gboolean valid = gtk_tree_model_get_iter_first (model, &parent);
+	while (valid) {
+		valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		if (valid)
+			break;
+		valid = gtk_tree_model_iter_next(model, &parent);
+	}
+	GebrUiFlowBrowseType type;
+	GebrUiFlowProgram *ui_program;
+	while (valid) {
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT_TYPE, &type,
+		                   -1);
+
+		if (type != STRUCT_TYPE_PROGRAM || first_prog) {
+			valid = gtk_tree_model_iter_next(model, &iter);
+			continue;
+		}
+
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_program,
+		                   -1);
+
+		first_prog = gebr_ui_flow_program_get_xml(ui_program);
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
 
 	c1 = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
 	c2 = gebr_geoxml_program_get_control (first_prog);
