@@ -1528,8 +1528,6 @@ flow_browse_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * p
 		} else {
 			gebr_geoxml_sequence_move_after(flow, position_flow);
 			gtk_tree_store_move_after(fb->store, iter, position);
-			gebr_geoxml_object_ref(position_flow);
-			gebr_geoxml_sequence_next(&position_flow);
 		}
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, TRUE);
 		flow_browse_reload_selected();
@@ -2538,11 +2536,17 @@ static void flow_browse_load(void)
 
 	model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 
-	GtkTreePath *curr_path;
+	GtkTreePath *curr_path = NULL;
 	gtk_tree_view_get_cursor(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &curr_path, NULL);
-
-	if (!gtk_tree_model_get_iter(model, &iter, curr_path))
-		return;
+	if (curr_path) {
+		if (!gtk_tree_model_get_iter(model, &iter, curr_path))
+			return;
+	}
+	else {
+		if (!flow_browse_get_selected(&iter, FALSE))
+			return;
+	}
+	gtk_tree_path_free(curr_path);
 
 	gtk_tree_model_get(model, &iter,
 	                   FB_STRUCT_TYPE, &type,
@@ -3459,9 +3463,6 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 	gebr_geoxml_object_ref(program);
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
 		control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
-
-		if (has_control && control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
-			continue;
 
 		if (!has_control && control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
 			gtk_tree_store_prepend(gebr.ui_flow_browse->store, &iter, &parent);
