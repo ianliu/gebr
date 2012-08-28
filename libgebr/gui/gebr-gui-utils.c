@@ -604,8 +604,8 @@ out:	g_list_foreach(list, (GFunc) gtk_tree_iter_free, NULL);
 
 void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
-	GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(tree_view);
-	gtk_tree_selection_unselect_all(tree_selection);
+//	GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(tree_view);
+//	gtk_tree_selection_unselect_all(tree_selection);
 	if (iter == NULL)
 		return;
 
