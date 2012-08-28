@@ -2538,7 +2538,10 @@ static void flow_browse_load(void)
 
 	model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 
-	if (!flow_browse_get_selected(&iter, FALSE))
+	GtkTreePath *curr_path;
+	gtk_tree_view_get_cursor(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &curr_path, NULL);
+
+	if (!gtk_tree_model_get_iter(model, &iter, curr_path))
 		return;
 
 	gtk_tree_model_get(model, &iter,
@@ -2554,23 +2557,26 @@ static void flow_browse_load(void)
 		if (n_rows > 1) {
 			GebrUiFlowBrowseType each_type;
 			for (GList *i = rows; i; i = i->next) {
-				if (!gtk_tree_model_get_iter(model, &iter, i->data))
+				GtkTreeIter it;
+				if (!gtk_tree_model_get_iter(model, &it, i->data))
 					continue;
 
-				gtk_tree_model_get(model, &iter,
+				gtk_tree_model_get(model, &it,
 				                   FB_STRUCT_TYPE, &each_type,
 				                   -1);
 
 				if (type != each_type) {
 					mixed_selection = TRUE;
-					gtk_tree_selection_unselect_iter(selection, &iter);
+					gtk_tree_selection_unselect_iter(selection, &it);
 				}
+
+				if (type == STRUCT_TYPE_IO)
+					gtk_tree_selection_unselect_iter(selection, &it);
 			}
 		}
 	}
-
 	if (mixed_selection)
-		return;
+		gtk_tree_selection_select_iter(selection, &iter);
 
 	if (type == STRUCT_TYPE_FLOW) {
 		gebr_flow_browse_create_graph(gebr.ui_flow_browse);
