@@ -49,6 +49,8 @@ struct _GebrUiFlowProgramClass {
 
 /*----------------------------------------------------------------------------------------------*/
 
+GType gebr_ui_flow_program_get_type() G_GNUC_CONST;
+
 GebrUiFlowProgram *gebr_ui_flow_program_new(GebrGeoXmlProgram *program);
 
 void gebr_ui_flow_program_set_xml (GebrUiFlowProgram *program, GebrGeoXmlProgram *prog_xml);
