@@ -74,6 +74,16 @@ static void flow_browse_on_query_tooltip(GtkTreeView * treeview,
 					 gboolean keyboard_tip,
 					 GtkTooltip * tooltip,
 					 GebrUiFlowBrowse *ui_flow_browse);
+					 
+static void remove_programs_view(GebrUiFlowBrowse *fb);
+
+static void create_programs_view(GtkTreeIter *parent,
+                                 GebrUiFlowBrowse *fb);
+
+void flow_add_program_to_flow(GebrGeoXmlSequence *program,
+                              GtkTreeIter *flow_iter,
+                              gboolean never_opened);
+
 /*
  * Methods of Servers/queues Combo Box
  */
@@ -1383,6 +1393,153 @@ flow_browse_component_key_pressed(GtkWidget *view,
 	return TRUE;
 }
 
+static gboolean
+flow_browse_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+			 GtkTreeViewDropPosition drop_position, GebrUiFlowBrowse *fb)
+{
+	GtkTreeModel *model;
+	GebrGeoXmlProgram *program;
+	GebrGeoXmlProgramControl con;
+
+	model = gtk_tree_view_get_model (tree_view);
+
+	gpointer ui_struct;
+	GebrUiFlowBrowseType type;
+
+	gtk_tree_model_get(model, iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   FB_STRUCT, &ui_struct,
+	                   -1);
+
+	gpointer ui_struct_dest;
+	GebrUiFlowBrowseType type_dest;
+
+	gtk_tree_model_get(model, position,
+	                   FB_STRUCT_TYPE, &type_dest,
+	                   FB_STRUCT, &ui_struct_dest,
+	                   -1);
+
+	if (type == STRUCT_TYPE_FLOW &&
+	    type_dest == STRUCT_TYPE_FLOW)
+		return TRUE;
+
+	if (type == STRUCT_TYPE_FLOW &&
+	    type_dest != STRUCT_TYPE_FLOW)
+		return FALSE;
+
+	if (type == STRUCT_TYPE_PROGRAM &&
+	    type_dest == STRUCT_TYPE_FLOW)
+		return TRUE;
+
+	if (type == STRUCT_TYPE_IO)
+		return FALSE;
+
+	if (type_dest == STRUCT_TYPE_IO) {
+		if (drop_position != GTK_TREE_VIEW_DROP_AFTER &&
+		    gebr_ui_flows_io_get_io_type(GEBR_UI_FLOWS_IO(ui_struct_dest)) == GEBR_IO_TYPE_INPUT)
+			return FALSE;
+
+		if (drop_position != GTK_TREE_VIEW_DROP_BEFORE &&
+		    gebr_ui_flows_io_get_io_type(GEBR_UI_FLOWS_IO(ui_struct_dest)) == GEBR_IO_TYPE_OUTPUT)
+			return FALSE;
+
+		if (gebr_ui_flows_io_get_io_type(GEBR_UI_FLOWS_IO(ui_struct_dest)) == GEBR_IO_TYPE_ERROR)
+			return FALSE;
+	}
+
+	if (!gtk_tree_store_iter_is_valid(GTK_TREE_STORE(model), iter))
+		return FALSE;
+
+	if (type == STRUCT_TYPE_PROGRAM) {
+		program = gebr_ui_flow_program_get_xml(GEBR_UI_FLOW_PROGRAM(ui_struct));
+		con = gebr_geoxml_program_get_control (program);
+		if (con != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+			return FALSE;
+	}
+
+	/* Check if the target iter is a control program */
+	if (type_dest == STRUCT_TYPE_PROGRAM) {
+		program = gebr_ui_flow_program_get_xml(GEBR_UI_FLOW_PROGRAM(ui_struct_dest));
+		con = gebr_geoxml_program_get_control (program);
+		if (con != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+/**
+ * \internal
+ */
+static gboolean
+flow_browse_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
+		     GtkTreeViewDropPosition drop_position, GebrUiFlowBrowse *fb)
+{
+	gpointer ui_struct, ui_struct_dest;
+	GebrUiFlowBrowseType type, type_dest;
+	GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
+
+	gtk_tree_model_get(model, iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   FB_STRUCT, &ui_struct,
+	                   -1);
+
+	gtk_tree_model_get(model, position,
+	                   FB_STRUCT_TYPE, &type_dest,
+	                   FB_STRUCT, &ui_struct_dest,
+	                   -1);
+
+	if (type != STRUCT_TYPE_FLOW && type_dest != STRUCT_TYPE_FLOW) {
+		GebrGeoXmlSequence *program;
+		GebrGeoXmlSequence *position_program;
+
+
+		program = GEBR_GEOXML_SEQUENCE(gebr_ui_flow_program_get_xml(GEBR_UI_FLOW_PROGRAM(ui_struct)));
+		if (type_dest != STRUCT_TYPE_IO)
+			position_program = GEBR_GEOXML_SEQUENCE(gebr_ui_flow_program_get_xml(GEBR_UI_FLOW_PROGRAM(ui_struct_dest)));
+		else
+			position_program = NULL;
+
+		if (drop_position != GTK_TREE_VIEW_DROP_AFTER) {
+			gebr_geoxml_sequence_move_before(program, position_program);
+			gtk_tree_store_move_before(fb->store, iter, position);
+		} else {
+			gebr_geoxml_sequence_move_after(program, position_program);
+			gtk_tree_store_move_after(fb->store, iter, position);
+		}
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+
+		flow_browse_revalidate_programs(fb);
+		flow_browse_program_check_sensitiveness();
+		gebr_flow_browse_load_parameters_review(gebr.flow, fb);
+	}
+	else if (type == STRUCT_TYPE_FLOW && type_dest == STRUCT_TYPE_FLOW) {
+		GebrGeoXmlSequence *flow;
+		GebrGeoXmlSequence *position_flow;
+
+		flow = GEBR_GEOXML_SEQUENCE(gebr_ui_flow_get_line_flow(GEBR_UI_FLOW(ui_struct)));
+		position_flow = GEBR_GEOXML_SEQUENCE(gebr_ui_flow_get_line_flow(GEBR_UI_FLOW(ui_struct_dest)));
+
+		remove_programs_view(fb);
+
+		if (drop_position != GTK_TREE_VIEW_DROP_AFTER) {
+			gebr_geoxml_sequence_move_before(flow, position_flow);
+			gtk_tree_store_move_before(fb->store, iter, position);
+		} else {
+			gebr_geoxml_sequence_move_after(flow, position_flow);
+			gtk_tree_store_move_after(fb->store, iter, position);
+			gebr_geoxml_object_ref(position_flow);
+			gebr_geoxml_sequence_next(&position_flow);
+		}
+		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, TRUE);
+		flow_browse_reload_selected();
+	}
+//	else if (type == STRUCT_TYPE_PROGRAM && type_dest == STRUCT_TYPE_FLOW) {
+//	}
+
+	return FALSE;
+}
+
 GebrUiFlowBrowse *flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
@@ -1454,7 +1611,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
 
 	/* View with combobox, flows and programs */
-	GtkWidget* left_size = gtk_vbox_new(FALSE, 0);
+	GtkWidget* left_side = gtk_vbox_new(FALSE, 0);
 
 	/* Add Queues combobox and Groups combobox on view */
 	GtkWidget *frame = gtk_frame_new(NULL);
@@ -1468,15 +1625,17 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_container_add(GTK_CONTAINER(vbox), ui_flow_browse->queue_combobox);
 	gtk_container_add(GTK_CONTAINER(vbox), ui_flow_browse->server_combobox);
 
-	gtk_box_pack_start(GTK_BOX(left_size), frame, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(left_side), frame, FALSE, TRUE, 0);
 
+	frame = gtk_frame_new(NULL);
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
 	gtk_widget_set_size_request(scrolled_window, 250, -1);
-	gtk_box_pack_start(GTK_BOX(left_size), scrolled_window, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
+	gtk_box_pack_start(GTK_BOX(left_side), frame, TRUE, TRUE, 0);
 
-	gtk_paned_pack1(GTK_PANED(hpanel), left_size, FALSE, FALSE);
+	gtk_paned_pack1(GTK_PANED(hpanel), left_side, FALSE, FALSE);
 
 	ui_flow_browse->store = gtk_tree_store_new(FB_N_COLUMN,
 						   G_TYPE_INT,		/* Type */
@@ -1490,18 +1649,21 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
 	gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 
-//	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)),
-//				    GTK_SELECTION_MULTIPLE);
+	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
+	gtk_widget_modify_base(ui_flow_browse->view, GTK_STATE_NORMAL, &(style->bg[GTK_STATE_NORMAL]));
+
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)),
+				    GTK_SELECTION_MULTIPLE);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
 						  (GebrGuiGtkPopupCallback) flow_browse_popup_menu, ui_flow_browse);
 
-//	gebr_gui_gtk_tree_view_set_gebr_geoxml_sequence_moveable(GTK_TREE_VIEW(ui_flow_browse->view),
-//								 FB_LINE_FLOW_POINTER,
-//								 (GebrGuiGtkTreeViewMoveSequenceCallback)
-//								 flow_browse_on_flow_move, NULL);
+	gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_flow_browse->view),
+	                                            (GebrGuiGtkTreeViewReorderCallback) flow_browse_reorder,
+	                                            (GebrGuiGtkTreeViewReorderCallback) flow_browse_may_reorder,
+	                                            ui_flow_browse);
 
 	g_signal_connect(ui_flow_browse->view, "key-press-event",
 	                 G_CALLBACK(flow_browse_component_key_pressed), ui_flow_browse);
@@ -2276,6 +2438,25 @@ gebr_flow_browse_get_io_iter(GtkTreeModel *model,
 }
 
 static void
+remove_programs_view(GebrUiFlowBrowse *fb)
+{
+	GtkTreeIter parent, iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(fb->store);
+
+	gboolean removed = FALSE;
+	gboolean valid = gtk_tree_model_get_iter_first(model, &parent);
+	while (valid && !removed) {
+		valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		while (valid) {
+			removed = TRUE;
+			gtk_tree_store_remove(fb->store, &iter);
+			valid = gtk_tree_model_iter_next(model, &iter);
+		}
+		valid = gtk_tree_model_iter_next(model, &parent);
+	}
+}
+
+static void
 create_programs_view(GtkTreeIter *parent,
                      GebrUiFlowBrowse *fb)
 {
@@ -2290,6 +2471,7 @@ create_programs_view(GtkTreeIter *parent,
 	                   -1);
 
 	GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
+	gebr_ui_flow_set_is_selected(ui_flow, TRUE);
 
 	/* add Input file */
 	GtkTreeIter input_iter;
@@ -2350,15 +2532,45 @@ create_programs_view(GtkTreeIter *parent,
  */
 static void flow_browse_load(void)
 {
+	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GebrUiFlowBrowseType type;
+
+	model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 
 	if (!flow_browse_get_selected(&iter, FALSE))
 		return;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+	gtk_tree_model_get(model, &iter,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
+
+	gboolean mixed_selection = FALSE;
+	gint n_rows = 1;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	if (rows) {
+		n_rows = g_list_length(rows);
+		if (n_rows > 1) {
+			GebrUiFlowBrowseType each_type;
+			for (GList *i = rows; i; i = i->next) {
+				if (!gtk_tree_model_get_iter(model, &iter, i->data))
+					continue;
+
+				gtk_tree_model_get(model, &iter,
+				                   FB_STRUCT_TYPE, &each_type,
+				                   -1);
+
+				if (type != each_type) {
+					mixed_selection = TRUE;
+					gtk_tree_selection_unselect_iter(selection, &iter);
+				}
+			}
+		}
+	}
+
+	if (mixed_selection)
+		return;
 
 	if (type == STRUCT_TYPE_FLOW) {
 		gebr_flow_browse_create_graph(gebr.ui_flow_browse);
@@ -2373,7 +2585,7 @@ static void flow_browse_load(void)
 
 		GebrUiFlow *ui_flow;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
 
@@ -2382,11 +2594,17 @@ static void flow_browse_load(void)
 		if (gebr.validator)
 			gebr_validator_update(gebr.validator);
 
+		gebr_ui_flow_set_is_selected(ui_flow, FALSE);
+
 		/* free previous flow and load it */
 		flow_edition_load_components();
 
-		create_programs_view(&iter, gebr.ui_flow_browse);
-		flow_browse_program_check_sensitiveness();
+		if (n_rows == 1) {
+			create_programs_view(&iter, gebr.ui_flow_browse);
+			flow_browse_program_check_sensitiveness();
+		} else {
+			remove_programs_view(gebr.ui_flow_browse);
+		}
 
 		/* check if has revisions */
 		gboolean has_revision = gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0;
@@ -2453,9 +2671,9 @@ static void flow_browse_load(void)
 		gebr.program = NULL;
 
 		GebrUiFlowProgram *ui_program;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-				                   FB_STRUCT, &ui_program,
-				                   -1);
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_program,
+		                   -1);
 
 		gebr.program = gebr_ui_flow_program_get_xml(ui_program);
 
@@ -2469,6 +2687,9 @@ static void flow_browse_load(void)
 		gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
 		g_free(tmp_help_p);
 	}
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
 }
 
 static void
@@ -2676,6 +2897,9 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
+	GdkColor color;
+	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
+
 	if (type == STRUCT_TYPE_FLOW) {
 		GebrGeoXmlFlow * flow;
 		GebrUiFlow *ui_flow;
@@ -2693,6 +2917,8 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 			g_object_set(cell, "stock-id", GTK_STOCK_DIALOG_WARNING, NULL);
 
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+
+		g_object_set(cell, "cell-background-gdk", &(style->bg[GTK_STATE_NORMAL]), NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *ui_program;
@@ -2704,6 +2930,8 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		const gchar *icon = gebr_gui_get_program_icon(program);
 
 		g_object_set(cell, "stock-id", icon, NULL);
+		gtk_style_lookup_color(style, "base_color", &color);
+		g_object_set(cell, "cell-background-gdk", &color, NULL);
 	}
 	else if (type == STRUCT_TYPE_IO) {
 		GebrUiFlowsIo *ui_io;
@@ -2714,6 +2942,8 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		const gchar *icon = gebr_ui_flows_io_get_stock_id(ui_io);
 
 		g_object_set(cell, "stock-id", icon, NULL);
+		gtk_style_lookup_color(style, "base_color", &color);
+		g_object_set(cell, "cell-background-gdk", &color, NULL);
 	}
 }
 
@@ -2730,19 +2960,31 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 	                   -1);
 
 	gchar *title = NULL;
+	GdkColor color;
+	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
 
 	if (type == STRUCT_TYPE_FLOW) {
 		GebrGeoXmlFlow * flow;
 		GebrUiFlow *ui_flow;
+
 		gtk_tree_model_get(model, iter,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
 
 		flow = gebr_ui_flow_get_flow(ui_flow);
-		title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
+		gchar *_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
+		gboolean is_selected = gebr_ui_flow_get_is_selected(ui_flow);
+
+		if (is_selected)
+			title = g_markup_printf_escaped("<b>%s</b>", _title);
+		else
+			title = g_strdup(_title);
+
+		g_free(_title);
 
 		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "editable", FALSE, NULL);
+		g_object_set(cell, "cell-background-gdk", &(style->bg[GTK_STATE_NORMAL]), NULL);
 	}
 	else if (type == STRUCT_TYPE_IO) {
 
@@ -2765,6 +3007,8 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 			g_object_set(cell, "sensitive", FALSE, NULL);
 			g_object_set(cell, "editable", FALSE, NULL);
 		}
+		gtk_style_lookup_color(style, "base_color", &color);
+		g_object_set(cell, "cell-background-gdk", &color, NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *program;
@@ -2778,6 +3022,8 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 
 		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "editable", FALSE, NULL);
+		gtk_style_lookup_color(style, "base_color", &color);
+		g_object_set(cell, "cell-background-gdk", &color, NULL);
 	}
 
 	g_object_set(cell, "markup", title, NULL);
@@ -2798,6 +3044,9 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
+	GdkColor color;
+	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
+
 	if (type == STRUCT_TYPE_FLOW) {
 		GebrUiFlow *ui_flow;
 		gtk_tree_model_get(model, iter,
@@ -2810,12 +3059,18 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 			g_object_set(cell, "stock-id", "photos", NULL);
 		else
 			g_object_set(cell, "stock-id", NULL, NULL);
+
+		g_object_set(cell, "cell-background-gdk", &(style->bg[GTK_STATE_NORMAL]), NULL);
 	}
 	else if (type == STRUCT_TYPE_IO) {
 		g_object_set(cell, "stock-id", GTK_STOCK_DIRECTORY, NULL);
+		gtk_style_lookup_color(style, "base_color", &color);
+		g_object_set(cell, "cell-background-gdk", &color, NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		g_object_set(cell, "stock-id", NULL, NULL);
+		gtk_style_lookup_color(style, "base_color", &color);
+		g_object_set(cell, "cell-background-gdk", &color, NULL);
 	}
 }
 
@@ -3120,4 +3375,103 @@ gebr_flow_browse_show_menu_list(GebrUiFlowBrowse *fb)
 	gtk_widget_hide(fb->properties_ctx_box);
 	gtk_widget_hide(fb->snapshots_ctx_box);
 	gtk_widget_hide(fb->jobs_ctx_box);
+}
+
+void
+flow_add_program_to_flow(GebrGeoXmlSequence *program,
+                         GtkTreeIter *flow_iter,
+                         gboolean never_opened)
+{
+	gebr_geoxml_object_ref(program);
+	GebrUiFlowProgram *ui_program = gebr_ui_flow_program_new(GEBR_GEOXML_PROGRAM(program));
+	gebr_ui_flow_program_set_flag_opened(ui_program, never_opened);
+	gtk_tree_store_set(gebr.ui_flow_browse->store, flow_iter,
+	                   FB_STRUCT_TYPE, STRUCT_TYPE_PROGRAM,
+	                   FB_STRUCT, ui_program,
+	                   -1);
+}
+
+void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
+				       gboolean select_last,
+				       gboolean never_opened)
+{
+	GtkTreeIter iter, parent;
+	GebrGeoXmlProgramControl control;
+	gboolean has_control;
+	GebrGeoXmlProgram *first_prog = NULL;
+
+	GtkTreeModel *model = GTK_TREE_MODEL (gebr.ui_flow_browse->store);
+
+	gboolean valid = gtk_tree_model_get_iter_first (model, &parent);
+	while (valid) {
+		valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		if (valid)
+			break;
+		valid = gtk_tree_model_iter_next(model, &parent);
+	}
+
+
+	GtkTreeIter output_iter;
+	GebrUiFlowBrowseType type;
+	GebrUiFlowProgram *ui_program;
+	GebrUiFlowsIo *ui_io;
+	while (valid) {
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT_TYPE, &type,
+		                   -1);
+
+		if (type == STRUCT_TYPE_IO) {
+			gtk_tree_model_get(model, &iter,
+			                   FB_STRUCT, &ui_io,
+			                   -1);
+
+			if (gebr_ui_flows_io_get_io_type(ui_io) == GEBR_IO_TYPE_OUTPUT) {
+				output_iter = iter;
+				break;
+			}
+		}
+
+		if (type != STRUCT_TYPE_PROGRAM || first_prog) {
+			valid = gtk_tree_model_iter_next(model, &iter);
+			continue;
+		}
+
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_program,
+		                   -1);
+
+		if (!first_prog)
+			first_prog = gebr_ui_flow_program_get_xml(ui_program);
+
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
+
+	control = gebr_geoxml_program_get_control (first_prog);
+	has_control = control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
+
+	// Reference this program so _sequence_next don't destroy it
+	gebr_geoxml_object_ref(program);
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
+
+		if (has_control && control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+			continue;
+
+		if (!has_control && control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
+			gtk_tree_store_prepend(gebr.ui_flow_browse->store, &iter, &parent);
+			has_control = TRUE;
+		} else
+			gtk_tree_store_insert_before(gebr.ui_flow_browse->store, &iter, &parent, &output_iter);
+
+		flow_add_program_to_flow(program, &iter, never_opened);
+
+		GebrIExprError undef;
+		gebr_geoxml_program_get_error_id(GEBR_GEOXML_PROGRAM(program), &undef);
+		if (never_opened || undef == GEBR_IEXPR_ERROR_PATH)
+			continue;
+		gebr_geoxml_program_is_valid(GEBR_GEOXML_PROGRAM(program), gebr.validator, NULL);
+	}
+
+	if (select_last)
+		flow_browse_select_iter(&iter);
 }

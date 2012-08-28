@@ -250,5 +250,16 @@ gboolean gebr_flow_browse_get_io_iter(GtkTreeModel *model,
 
 void flow_browse_status_changed(guint status);
 
+/**
+ * flow_add_program_sequence_to_view:
+ * @program: A #GebrGeoXmlSequence of #GebrGeoXmlProgram to be added to the view.
+ * @select_last: Whether to select the last program.
+ *
+ * Adds all programs in the sequence @program into the flow edition view.
+ */
+void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
+				       gboolean select_last,
+				       gboolean never_opened);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

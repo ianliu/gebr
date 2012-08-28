@@ -106,9 +106,20 @@ void flow_free(void)
 	GtkTreeIter iter, parent;
 	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 
+	GebrUiFlowBrowseType type;
+	GebrUiFlow *ui_flow;
 	gboolean valid = gtk_tree_model_get_iter_first(model, &parent);
 	while (valid) {
 		valid = gtk_tree_model_iter_children(model, &iter, &parent);
+
+		gtk_tree_model_get(model, &parent,
+		                   FB_STRUCT_TYPE, &type,
+		                   FB_STRUCT, &ui_flow,
+		                   -1);
+
+		if (type == STRUCT_TYPE_FLOW)
+			gebr_ui_flow_set_is_selected(ui_flow, FALSE);
+
 		while (valid)
 			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
 
