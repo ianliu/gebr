@@ -1576,6 +1576,13 @@ flow_browse_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * p
 	return FALSE;
 }
 
+static void
+on_line_back_clicked(GtkButton *button,
+                     GebrUiFlowBrowse *fb)
+{
+	gebr_interface_change_tab(NOTEBOOK_PAGE_PROJECT_LINE);
+}
+
 GebrUiFlowBrowse *flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
@@ -1664,13 +1671,30 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	gtk_box_pack_start(GTK_BOX(left_side), frame, FALSE, TRUE, 0);
 
-	ui_flow_browse->flows_frame = gtk_frame_new(NULL);
+	frame = gtk_frame_new(NULL);
+	GtkWidget *button = gtk_button_new();
+	GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_BUTTON);
+	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 5);
+	ui_flow_browse->flows_line_label = gtk_label_new("None");
+	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->flows_line_label, TRUE, TRUE, 5);
+	gtk_container_add(GTK_CONTAINER(button), hbox);
+	gtk_frame_set_label_widget(GTK_FRAME(frame), button);
+	g_signal_connect(button, "clicked", G_CALLBACK(on_line_back_clicked), ui_flow_browse);
+
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
 	gtk_widget_set_size_request(scrolled_window, 250, -1);
-	gtk_container_add(GTK_CONTAINER(ui_flow_browse->flows_frame), scrolled_window);
-	gtk_box_pack_start(GTK_BOX(left_side), ui_flow_browse->flows_frame, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
+
+	gtk_box_pack_start(GTK_BOX(left_side), frame, TRUE, TRUE, 0);
+
+	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 5, 0, 0, 0);
+	gtk_container_add(GTK_CONTAINER(frame), alignment);
+
+	gtk_container_add(GTK_CONTAINER(left_side), frame);
 
 	gtk_paned_pack1(GTK_PANED(hpanel), left_side, FALSE, FALSE);
 
@@ -2569,6 +2593,11 @@ static void flow_browse_load(void)
 
 	model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 
+	/* Update line title on back button */
+	gchar *line_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->flows_line_label), line_title);
+	g_free(line_title);
+
 	GtkTreePath *curr_path = NULL;
 	gtk_tree_view_get_cursor(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &curr_path, NULL);
 	if (curr_path) {
@@ -2602,22 +2631,17 @@ static void flow_browse_load(void)
 				                   FB_STRUCT_TYPE, &each_type,
 				                   -1);
 
-				if (type != each_type) {
+				if (type == STRUCT_TYPE_IO)
+					gtk_tree_selection_unselect_iter(selection, &iter);
+				else if (type != each_type) {
 					mixed_selection = TRUE;
 					gtk_tree_selection_unselect_iter(selection, &it);
 				}
-
-				if (type == STRUCT_TYPE_IO)
-					gtk_tree_selection_unselect_iter(selection, &it);
 			}
 		}
 	}
 	if (mixed_selection)
 		gtk_tree_selection_select_iter(selection, &iter);
-
-	gchar *line_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line));
-	gtk_frame_set_label(GTK_FRAME(gebr.ui_flow_browse->flows_frame), line_title);
-	g_free(line_title);
 
 	if (type == STRUCT_TYPE_FLOW) {
 		gebr_flow_browse_create_graph(gebr.ui_flow_browse);

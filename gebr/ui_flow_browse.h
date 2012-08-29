@@ -64,7 +64,7 @@ typedef struct {
 
 	GtkTreeStore *store;
 	GtkWidget *view;
-	GtkWidget *flows_frame;
+	GtkWidget *flows_line_label;
 	GtkCellRenderer *icon_renderer;
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *action_renderer;
