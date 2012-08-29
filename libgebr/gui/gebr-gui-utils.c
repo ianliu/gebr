@@ -113,6 +113,7 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 		if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
 						  (gint) event->x, (gint) event->y, &path, NULL, NULL, NULL)) {
 			gtk_tree_selection_unselect_all(selection);
+			gtk_tree_view_set_cursor(tree_view, path, NULL, FALSE);
 			gtk_tree_selection_select_path(selection, path);
 			gtk_tree_path_free(path);
 		}

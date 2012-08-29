@@ -347,14 +347,19 @@ gebr_ui_flow_run(gboolean is_parallel)
 		GtkTreePath *path = i->data;
 		GebrGeoXmlFlow *flow;
 		GtkTreeIter iter;
+		GebrUiFlowBrowseType type;
 		GebrUiFlow *ui_flow;
 
 		gtk_tree_model_get_iter(model, &iter, path);
 		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT_TYPE, &type,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
 
-		flow = gebr_ui_flow_get_flow(ui_flow);
+		if (type != STRUCT_TYPE_FLOW)
+			flow = gebr.flow;
+		else
+			flow = gebr_ui_flow_get_flow(ui_flow);
 
 		/* Executing snapshots */
 		gint current_page = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));

@@ -390,9 +390,9 @@ static gboolean flows_check_before_execution(void)
 		                   -1);
 
 		if (type != STRUCT_TYPE_FLOW)
-			return FALSE;
-
-		flow = gebr_ui_flow_get_flow(ui_flow);
+			flow = gebr.flow;
+		else
+			flow = gebr_ui_flow_get_flow(ui_flow);
 
 		if (flow_check_before_execution(flow, FALSE))
 			continue;

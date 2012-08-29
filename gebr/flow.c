@@ -372,9 +372,9 @@ void flow_export(void)
 		                    -1);
 
 		if (type != STRUCT_TYPE_FLOW)
-			goto out;
-
-		flow_filename = gebr_ui_flow_get_filename(ui_flow);
+			flow_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		else
+			flow_filename = gebr_ui_flow_get_filename(ui_flow);
 
 		if (document_load (&flow, flow_filename, FALSE))
 			goto out;
@@ -421,11 +421,14 @@ void flow_export(void)
 		                    FB_STRUCT, &ui_flow,
 		                    -1);
 
-		if (type != STRUCT_TYPE_FLOW)
-			goto out;
+		if (type != STRUCT_TYPE_FLOW) {
+			flow_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
+			doc = GEBR_GEOXML_DOCUMENT(gebr.flow);
+		} else {
+			flow_filename = gebr_ui_flow_get_filename(ui_flow);
+			doc = GEBR_GEOXML_DOCUMENT(gebr_ui_flow_get_flow(ui_flow));
+		}
 
-		doc = GEBR_GEOXML_DOCUMENT(gebr_ui_flow_get_flow(ui_flow));
-		flow_filename = gebr_ui_flow_get_filename(ui_flow);
 
 		flow = gebr_geoxml_document_clone (doc);
 		if (!flow) {
