@@ -90,7 +90,7 @@ void flow_new (void)
 
 	flow_browse_select_iter(&iter);
 
-	flow_edition_set_io();
+	flow_browse_validate_io(gebr.ui_flow_browse);
 
 	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 
@@ -1019,10 +1019,7 @@ void flow_program_remove(void)
 		                   FB_STRUCT_TYPE, &type,
 		                   -1);
 
-		if (type == STRUCT_TYPE_IO) {
-			flow_edition_set_io();
-		}
-		else if (type == STRUCT_TYPE_PROGRAM) {
+		if (type == STRUCT_TYPE_PROGRAM) {
 			GebrUiFlowProgram *ui_program;
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 			                   FB_STRUCT, &ui_program,
@@ -1045,7 +1042,7 @@ void flow_program_remove(void)
 		}
 	}
 	flow_browse_program_check_sensitiveness();
-	flow_edition_set_io();
+	flow_browse_validate_io(gebr.ui_flow_browse);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	gebr_flow_set_toolbar_sensitive();

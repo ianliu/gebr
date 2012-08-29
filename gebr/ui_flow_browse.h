@@ -262,5 +262,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 				       gboolean select_last,
 				       gboolean never_opened);
 
+void flow_browse_validate_io(GebrUiFlowBrowse *fb);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

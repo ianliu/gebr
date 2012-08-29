@@ -197,7 +197,7 @@ parameters_actions(GtkDialog *dialog, gint response, GebrGuiProgramEdit *program
 			flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter, gebr.ui_flow_browse);
 
 		flow_browse_revalidate_programs(gebr.ui_flow_browse);
-		flow_edition_set_io();
+		flow_browse_validate_io(gebr.ui_flow_browse);
 		gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 
 		/* Update parameters review on Flow Browse */

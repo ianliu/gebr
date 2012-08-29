@@ -512,7 +512,7 @@ void on_flow_component_status_activate(GtkAction *action,
 {
 	guint status = GPOINTER_TO_UINT(user_data);
 	flow_browse_status_changed(status);
-	flow_edition_set_io();
+	flow_browse_validate_io(gebr.ui_flow_browse);
 }
 
 void on_job_control_save(void)

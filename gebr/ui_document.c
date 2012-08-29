@@ -574,7 +574,7 @@ close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *da
 	}
 
 	if (gebr.flow)
-		flow_edition_set_io();
+		flow_browse_validate_io(gebr.ui_flow_browse);
 
 	gtk_widget_destroy(dialog);
 
