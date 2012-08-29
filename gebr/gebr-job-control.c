@@ -361,6 +361,7 @@ jobs_visible_for_flow(GtkTreeModel *model,
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_label_set_ellipsize(GTK_LABEL(label), PANGO_ELLIPSIZE_END);
 		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
 		jc->priv->use_filter_flow = TRUE;
 		g_free(text);
@@ -780,7 +781,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		gchar *snapshot_markup = g_strdup_printf(_("<span size=\"x-large\">%s</span>"),
 							 snapshot_title);
 		gtk_label_set_markup(snapshot_label, snapshot_markup);
-
+		gtk_label_set_ellipsize(snapshot_label, PANGO_ELLIPSIZE_END);
 		g_free(snapshot_markup);
 		gtk_widget_hide(GTK_WIDGET(header_label));
 		gtk_widget_show(GTK_WIDGET(snapshot_label));
@@ -1431,6 +1432,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 	}
 	gtk_label_set_markup (label, markup);
+	gtk_label_set_ellipsize(label, PANGO_ELLIPSIZE_END);
 	g_free (markup);
 
 	gtk_text_buffer_set_text(jc->priv->text_buffer, "", 0);
@@ -1975,7 +1977,7 @@ gebr_job_control_new(void)
 
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 2);
 	gtk_box_pack_start(GTK_BOX(vbox), gtk_label_new(_("Jobs filtered by:")), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(content), vbox, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(content), vbox, TRUE, TRUE, 0);
 
 	GtkBox *left_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "left-side-box"));
 	gtk_box_pack_start(left_box, jc->priv->filter_info_bar, FALSE, TRUE, 0);
@@ -2013,19 +2015,31 @@ gebr_job_control_new(void)
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view)), "changed",
 			 G_CALLBACK(job_control_on_cursor_changed), jc);
 
-	col = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(jc->priv->builder, "tv_column"));
 
-	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_icon_cell"));
+	/* Icon column */
+	renderer = gtk_cell_renderer_pixbuf_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(treeview, col);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, icon_column_data_func, NULL, NULL);
 
-	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_title_cell"));
+	/* Title column */
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(treeview, col);
+	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, title_column_data_func, NULL, NULL);
 
 	/* Snapshot icon column */
-	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_icon_snap"));
+	renderer = gtk_cell_renderer_pixbuf_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(treeview, col);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, snap_icon_column_data_func, NULL, NULL);
 
-	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_time_cell"));
+	/* Time column */
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(treeview, col);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, time_column_data_func, NULL, NULL);
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(jc->priv->view),

@@ -319,6 +319,7 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_job_control_add(gebr.job_control, job);
 	gebr_maestro_server_add_temporary_job(maestro, job);
 	gebr_job_control_select_job(gebr.job_control, job);
+	flow_browse_info_update();
 
 	g_free(name);
 	g_free(url);
@@ -336,7 +337,6 @@ gebr_ui_flow_run(gboolean is_parallel)
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	const gchar *id = NULL;
-	GebrGeoXmlFlow *curr_flow;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
@@ -384,7 +384,6 @@ gebr_ui_flow_run(gboolean is_parallel)
 			return;
 
 		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
-		curr_flow = flow;
 
 		gebr_flow_browse_update_jobs_info(flow, gebr.ui_flow_browse, gebr_flow_browse_calculate_n_max(gebr.ui_flow_browse));
 	}
@@ -458,6 +457,7 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 
 	gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
 	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
+	flow_browse_info_update();
 
 	g_strfreev(snaps);
 }

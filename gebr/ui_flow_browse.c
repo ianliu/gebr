@@ -1625,6 +1625,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect(ui_flow_browse->queue_combobox, "changed",
 	                 G_CALLBACK(on_queue_combobox_changed), ui_flow_browse);
 	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(ui_flow_browse->queue_combobox), renderer, TRUE);
 	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(ui_flow_browse->queue_combobox), renderer,
 	                                   on_queue_set_text, NULL, NULL);
@@ -2226,7 +2227,6 @@ on_job_info_status_changed(GebrJob *job,
                            GtkWidget *container)
 {
 	gchar *icon, *job_state;
-	const gchar *date;
 	gchar *title;
 	const gchar *snap_id = gebr_job_get_snapshot_id(job);
 
@@ -2247,29 +2247,24 @@ on_job_info_status_changed(GebrJob *job,
 	case JOB_STATUS_FINISHED:
 		icon = GTK_STOCK_APPLY;
 		job_state = g_strdup(_("finished"));
-		date = gebr_localized_date(gebr_job_get_finish_date(job));
 		break;
 	case JOB_STATUS_RUNNING:
 		icon = GTK_STOCK_EXECUTE;
 		job_state = g_strdup(_("started"));
-		date = gebr_localized_date(gebr_job_get_start_date(job));
 		break;
 	case JOB_STATUS_CANCELED:
 		icon = GTK_STOCK_CANCEL;
 		job_state = g_strdup(_("canceled"));
-		date = gebr_localized_date(gebr_job_get_finish_date(job));
 		break;
 	case JOB_STATUS_FAILED:
 		icon = GTK_STOCK_CANCEL;
 		job_state = g_strdup(_("failed"));
-		date = gebr_localized_date(gebr_job_get_finish_date(job));
 		break;
 	case JOB_STATUS_QUEUED:
 	case JOB_STATUS_INITIAL:
 	default:
 		icon = "chronometer";
 		job_state = g_strdup(_("submitted"));
-		date = gebr_localized_date(gebr_job_get_last_run_date(job));
 		g_free(tooltip);
 		tooltip = g_strdup(_("This job doesn't have output yet"));
 		break;
@@ -2347,6 +2342,7 @@ flow_browse_static_info_update(void)
 		gtk_widget_set_sensitive(gebr.ui_flow_browse->info.description, TRUE);
 	}
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.description), markup);
+	gtk_label_set_ellipsize(GTK_LABEL(gebr.ui_flow_browse->info.description), PANGO_ELLIPSIZE_END);
 	g_free(markup);
 	g_free(description);
 
@@ -3361,7 +3357,7 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 					     "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
 	g_string_append_printf(prog_content, "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-report.css\" />"
 					     "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-flow-review.css\" />",
-						  LIBGEBR_STYLES_DIR, LIBGEBR_STYLES_DIR);
+						  LIBGEBR_STYLES_DIR, LIBGEBR_DATA_DIR);
 
 	g_string_append_printf(prog_content, "  </head>\n"
 					     "  <body>\n");

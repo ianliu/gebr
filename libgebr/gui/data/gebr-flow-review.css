@@ -48,6 +48,6 @@
 
 body {
     background-attachment: fixed;
-    background: #f9f5f3 url('../pixmaps/flows-review-bg.png') top right repeat-x;
+    background: #f9f5f3 url('pixmaps/flows-review-bg.png') top right repeat-x;
     margin-top: 40px;
 }
