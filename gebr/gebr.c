@@ -205,6 +205,10 @@ gboolean gebr_quit(gboolean save_config)
 	g_slist_foreach(gebr.tmpfiles, (GFunc) g_free, NULL);
 	g_slist_free(gebr.tmpfiles);
 
+	GString *path = g_string_new(NULL);
+	g_string_printf(path, "%s/.gebr/tmp/*.html", g_get_home_dir());
+	gebr_temp_directory_destroy(path);
+
 	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("Finalizing GêBR..."));
 	gebr_log_close(gebr.log);
 
