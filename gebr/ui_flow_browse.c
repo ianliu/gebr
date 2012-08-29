@@ -1556,9 +1556,22 @@ flow_browse_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * p
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, TRUE);
 		flow_browse_reload_selected();
 	}
-//	else if (type == STRUCT_TYPE_PROGRAM && type_dest == STRUCT_TYPE_FLOW) {
-//	}
+	else if (type == STRUCT_TYPE_PROGRAM && type_dest == STRUCT_TYPE_FLOW) {
+		GebrGeoXmlSequence *prog;
+		GebrGeoXmlSequence *position_flow;
 
+		prog = GEBR_GEOXML_SEQUENCE(gebr_ui_flow_program_get_xml(GEBR_UI_FLOW_PROGRAM(ui_struct)));
+		position_flow = GEBR_GEOXML_SEQUENCE(gebr_ui_flow_get_flow(GEBR_UI_FLOW(ui_struct_dest)));
+
+		flow_program_copy();
+		flow_program_remove();
+
+		remove_programs_view(fb);
+
+		GtkTreeSelection *selection = gtk_tree_view_get_selection(tree_view);
+		gtk_tree_selection_select_iter(selection, position);
+		flow_program_paste();
+	}
 	return FALSE;
 }
 
@@ -1649,13 +1662,13 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	gtk_box_pack_start(GTK_BOX(left_side), frame, FALSE, TRUE, 0);
 
-	frame = gtk_frame_new(NULL);
+	ui_flow_browse->flows_frame = gtk_frame_new(NULL);
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
 	gtk_widget_set_size_request(scrolled_window, 250, -1);
-	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
-	gtk_box_pack_start(GTK_BOX(left_side), frame, TRUE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(ui_flow_browse->flows_frame), scrolled_window);
+	gtk_box_pack_start(GTK_BOX(left_side), ui_flow_browse->flows_frame, TRUE, TRUE, 0);
 
 	gtk_paned_pack1(GTK_PANED(hpanel), left_side, FALSE, FALSE);
 
@@ -2471,8 +2484,7 @@ remove_programs_view(GebrUiFlowBrowse *fb)
 		valid = gtk_tree_model_iter_children(model, &iter, &parent);
 		while (valid) {
 			removed = TRUE;
-			gtk_tree_store_remove(fb->store, &iter);
-			valid = gtk_tree_model_iter_next(model, &iter);
+			valid = gtk_tree_store_remove(fb->store, &iter);
 		}
 		valid = gtk_tree_model_iter_next(model, &parent);
 	}
@@ -2605,6 +2617,10 @@ static void flow_browse_load(void)
 	}
 	if (mixed_selection)
 		gtk_tree_selection_select_iter(selection, &iter);
+
+	gchar *line_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line));
+	gtk_frame_set_label(GTK_FRAME(gebr.ui_flow_browse->flows_frame), line_title);
+	g_free(line_title);
 
 	if (type == STRUCT_TYPE_FLOW) {
 		gebr_flow_browse_create_graph(gebr.ui_flow_browse);
