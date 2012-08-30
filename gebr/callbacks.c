@@ -139,8 +139,11 @@ void on_paste_activate(void)
 			                   FB_STRUCT_TYPE, &type,
 			                   -1);
 
-			if (type == STRUCT_TYPE_FLOW)
+			if (type == STRUCT_TYPE_FLOW) {
+				if (!gebr_geoxml_flow_get_programs_number(gebr.flow))
+					flow_program_paste();
 				break;
+			}
 
 			if (type == STRUCT_TYPE_PROGRAM) {
 				flow_program_paste();
