@@ -73,9 +73,8 @@ const gchar *gebr_ui_flow_program_get_tooltip(GebrUiFlowProgram *program);
 
 void gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program);
 
-GtkMenu *gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program,
-					 gboolean can_move_up,
-					 gboolean can_move_down);
+GtkMenu *gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program);
+
 G_END_DECLS
 
 #endif /* __GEBR_UI_FLOW_PROGRAM_H__ */

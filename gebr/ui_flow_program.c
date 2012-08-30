@@ -189,9 +189,7 @@ gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program) {
 }
 
 GtkMenu *
-gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program,
-				gboolean can_move_up,
-				gboolean can_move_down)
+gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 {
 	GtkWidget * menu_item;
 	GtkAction * action;
@@ -207,23 +205,6 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program,
 	control = gebr_geoxml_program_get_control(program_xml);
 
 	is_ordinary = control != GEBR_GEOXML_PROGRAM_CONTROL_FOR;
-
-	/* Move top */
-	if (is_ordinary && can_move_up) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(flow_program_move_top), NULL);
-	}
-	/* Move bottom */
-	if (is_ordinary && can_move_down) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(flow_program_move_bottom), NULL);
-	}
-	/* separator */
-	if (is_ordinary && (can_move_up || can_move_down))
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-
 
 	/* status */
 	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");

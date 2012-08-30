@@ -1073,10 +1073,7 @@ flow_browse_popup_menu(GtkWidget *widget,
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
-
-		gboolean move_up = gebr_gui_gtk_tree_store_can_move_up(fb->store, &iter);
-		gboolean move_down = gebr_gui_gtk_tree_store_can_move_down(fb->store, &iter);
-		menu = gebr_ui_flow_popup_menu(ui_flow, move_up, move_down);
+		menu = gebr_ui_flow_popup_menu(ui_flow);
 	}
 	else if (type == STRUCT_TYPE_IO) {
 		GebrUiFlowsIo *ui_io;
@@ -1097,10 +1094,7 @@ flow_browse_popup_menu(GtkWidget *widget,
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_program,
 		                   -1);
-
-		gboolean move_up = gebr_gui_gtk_tree_store_can_move_up(fb->store, &iter);
-		gboolean move_down = gebr_gui_gtk_tree_store_can_move_up(fb->store, &iter);
-		menu = gebr_ui_flow_program_popup_menu(ui_program, move_up, move_down);
+		menu = gebr_ui_flow_program_popup_menu(ui_program);
 	}
 	return menu;
 }

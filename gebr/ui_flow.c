@@ -122,9 +122,7 @@ gebr_ui_flow_set_is_selected(GebrUiFlow *ui_flow,
 
 
 GtkMenu *
-gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow,
-                        gboolean move_up,
-                        gboolean move_down)
+gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow)
 {
 	GtkWidget *menu;
 	GtkWidget *menu_item;
@@ -146,22 +144,6 @@ gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow,
 							      (gebr.action_group_flow, "flow_paste")));
 		goto out;
 	}
-
-	/* Move top */
-	if (move_up) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(line_move_flow_top), NULL);
-	}
-	/* Move bottom */
-	if (move_down) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(line_move_flow_bottom), NULL);
-	}
-	/* separator */
-	if (move_up || move_down)
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new")));
