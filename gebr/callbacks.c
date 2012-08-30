@@ -61,7 +61,7 @@ void on_new_activate(void)
 			GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
 
 			if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-				gebr_flow_browse_show_menu_list(gebr.ui_flow_browse);
+				gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
 				return;
 			}
 		}
@@ -98,7 +98,7 @@ void on_new_line_activate(void)
 
 void on_new_program_activate(void)
 {
-	gebr_flow_browse_show_menu_list(gebr.ui_flow_browse);
+	gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
 }
 
 void on_copy_activate(void)

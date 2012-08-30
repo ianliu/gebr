@@ -60,6 +60,18 @@ enum {
 };
 
 /**
+ * Context Types
+ */
+typedef enum {
+	CONTEXT_FLOW,
+	CONTEXT_SNAPSHOTS,
+	CONTEXT_JOBS,
+	CONTEXT_MENU,
+	CONTEXT_PARAMETERS,
+	CONTEXT_N_TYPES
+} GebrUiFlowBrowseContext;
+
+/**
  */
 typedef struct {
 	GtkWidget *widget;
@@ -78,7 +90,7 @@ typedef struct {
 	gchar *name;
 	GebrMaestroServerGroupType type;
 
-	GtkWidget *menu_window;
+
 	GtkTreeStore *menu_store;
 	GtkWidget *menu_view;
 
@@ -97,19 +109,16 @@ typedef struct {
 
 	/* Context Actions */
 	GtkToggleButton *properties_ctx_button;
-	GtkWidget *properties_ctx_box;
 	GtkWidget *html_parameters;
-	GtkWidget *parameters_ctx_box;
 
 	GtkToggleButton *snapshots_ctx_button;
-	GtkWidget *snapshots_ctx_box;
-
-	GtkWidget *jobs_ctx_box;
 
 	/* Info Bar */
 	GtkWidget *info_jobs;
 	GtkWidget *jobs_status_box;
 	gint last_info_width;
+
+	GtkWidget *context[CONTEXT_N_TYPES];
 
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;
@@ -235,8 +244,6 @@ void flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
                                                gboolean sensitive,
                                                gboolean maestro_err);
 
-void gebr_flow_browse_show_menu_list(GebrUiFlowBrowse *fb);
-
 gint gebr_flow_browse_calculate_n_max(GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_select_job_output(const gchar *job_id,
@@ -268,6 +275,9 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 				       gboolean never_opened);
 
 void flow_browse_validate_io(GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,
+                                             GebrUiFlowBrowse *fb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

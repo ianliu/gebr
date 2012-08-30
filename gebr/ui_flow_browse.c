@@ -736,25 +736,21 @@ on_context_button_toggled(GtkToggleButton *button,
 	if (button == fb->properties_ctx_button) {
 		gtk_toggle_button_set_active(fb->snapshots_ctx_button, !active);
 
-		gtk_widget_show(fb->properties_ctx_box);
-		gtk_widget_hide(fb->snapshots_ctx_box);
+		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, fb);
 
 		gebr_flow_browse_load_parameters_review(gebr.flow, fb);
 	}
 	else if (button == fb->snapshots_ctx_button) {
 		gtk_toggle_button_set_active(fb->properties_ctx_button, !active);
 
-		if (!gtk_widget_get_visible(fb->snapshots_ctx_box)) {
+		if (!gtk_widget_get_visible(fb->context[CONTEXT_SNAPSHOTS])) {
 			if (gebr_geoxml_flow_get_revisions_number(gebr.flow) > 1) {
 				GString *cmd = g_string_new("unselect-all\bNone\n");
 				gebr_comm_process_write_stdin_string(fb->graph_process, cmd);
 				g_string_free(cmd, TRUE);
 			}
 		}
-
-		gtk_widget_hide(fb->properties_ctx_box);
-		gtk_widget_hide(fb->parameters_ctx_box);
-		gtk_widget_show(fb->snapshots_ctx_box);
+		gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, fb);
 	}
 
 	GList *childs = gtk_container_get_children(GTK_CONTAINER(gebr.ui_flow_browse->jobs_status_box));
@@ -762,8 +758,6 @@ on_context_button_toggled(GtkToggleButton *button,
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->data), FALSE);
 
 
-	gtk_widget_hide(fb->jobs_ctx_box);
-	gtk_widget_hide(fb->menu_window);
 	g_signal_handlers_unblock_by_func(fb->properties_ctx_button, on_context_button_toggled, fb);
 	g_signal_handlers_unblock_by_func(fb->snapshots_ctx_button, on_context_button_toggled, fb);
 }
@@ -817,6 +811,8 @@ on_output_job_clicked(GtkToggleButton *button,
 		return;
 	}
 
+	gboolean has_output = FALSE;
+
 	if (active) {
 		GList *childs = gtk_container_get_children(GTK_CONTAINER(gebr.ui_flow_browse->jobs_status_box));
 		for (GList *i = childs; i; i = i->next) {
@@ -827,23 +823,18 @@ on_output_job_clicked(GtkToggleButton *button,
 			}
 		}
 
-		gtk_widget_hide(gebr.ui_flow_browse->properties_ctx_box);
-		gtk_widget_hide(gebr.ui_flow_browse->snapshots_ctx_box);
-		gtk_widget_hide(gebr.ui_flow_browse->menu_window);
-		gtk_widget_hide(gebr.ui_flow_browse->parameters_ctx_box);
 		if(job) {
-			gtk_widget_show(gebr.ui_flow_browse->jobs_ctx_box);
+			has_output = TRUE;
+			gebr_flow_browse_define_context_to_show(CONTEXT_JOBS, gebr.ui_flow_browse);
 			gebr_job_control_select_job(gebr.job_control, job);
-		} else {
-			gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
 		}
-	} else {
-		gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
+	}
 
+	if (!has_output) {
 		if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-			on_context_button_toggled(gebr.ui_flow_browse->properties_ctx_button, gebr.ui_flow_browse);
+			gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 		else
-			on_context_button_toggled(gebr.ui_flow_browse->snapshots_ctx_button, gebr.ui_flow_browse);
+			gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 	}
 }
 
@@ -867,17 +858,14 @@ on_dismiss_clicked(GtkButton *dismiss,
 
 	if (dismiss) {
 		gebr_flow_browse_reset_jobs_from_flow(gebr.flow, fb);
-		gtk_widget_hide(fb->jobs_ctx_box);
+		if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+			gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+		else
+			gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 	}
 
 	/* Hide Info bar*/
 	gtk_widget_hide(fb->info_jobs);
-
-	/* Restore last context */
-	if (gtk_toggle_button_get_active(fb->properties_ctx_button))
-		on_context_button_toggled(fb->properties_ctx_button, fb);
-	else
-		on_context_button_toggled(fb->snapshots_ctx_button, fb);
 }
 
 void
@@ -1800,17 +1788,18 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	 * Set button and box context
 	 */
 	ui_flow_browse->properties_ctx_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "context_button_flow"));
-	ui_flow_browse->properties_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "properties_scroll"));
-	ui_flow_browse->parameters_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "parameters_ctx_box"));
+	ui_flow_browse->context[CONTEXT_FLOW] = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "properties_scroll"));
 	g_signal_connect(ui_flow_browse->properties_ctx_button, "toggled", G_CALLBACK(on_context_button_toggled), ui_flow_browse);
 	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->properties_ctx_button), _("Review of parameters"));
 
+	ui_flow_browse->context[CONTEXT_PARAMETERS] = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "parameters_ctx_box"));
+
 	ui_flow_browse->snapshots_ctx_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "context_button_snaps"));
-	ui_flow_browse->snapshots_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "snapshots_box"));
+	ui_flow_browse->context[CONTEXT_SNAPSHOTS] = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "snapshots_box"));
 	g_signal_connect(ui_flow_browse->snapshots_ctx_button, "toggled", G_CALLBACK(on_context_button_toggled), ui_flow_browse);
 	gtk_widget_set_tooltip_text(GTK_WIDGET(ui_flow_browse->snapshots_ctx_button), "Snapshots");
 
-	ui_flow_browse->jobs_ctx_box = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_output_box"));
+	ui_flow_browse->context[CONTEXT_JOBS] = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "jobs_output_box"));
 
 	/* Info Bar for Jobs */
 	ui_flow_browse->info_jobs = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "info_jobs_box"));
@@ -1850,23 +1839,23 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_widget_show(ui_flow_browse->revpage_main);
 	gtk_widget_hide(ui_flow_browse->revpage_warn);
 
-	gtk_container_add(GTK_CONTAINER(ui_flow_browse->snapshots_ctx_box), rev_main);
+	gtk_container_add(GTK_CONTAINER(ui_flow_browse->context[CONTEXT_SNAPSHOTS]), rev_main);
 
 	/*
 	 * Jobs Context
 	 */
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
-	gtk_widget_reparent(output_view, ui_flow_browse->jobs_ctx_box);
+	gtk_widget_reparent(output_view, ui_flow_browse->context[CONTEXT_JOBS]);
 
 	/*
 	 * Menu list context
 	 */
-	ui_flow_browse->menu_window = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "menu_box"));
+	ui_flow_browse->context[CONTEXT_MENU] = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "menu_box"));
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 	                               GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(ui_flow_browse->menu_window), scrolled_window);
+	gtk_container_add(GTK_CONTAINER(ui_flow_browse->context[CONTEXT_MENU]), scrolled_window);
 
 	ui_flow_browse->menu_store = gtk_tree_store_new(MENU_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_flow_browse->menu_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
@@ -2685,9 +2674,32 @@ static void flow_browse_load(void)
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-
 	if (gebr.ui_flow_browse->program_edit)
 		save_parameters(gebr.ui_flow_browse->program_edit);
+
+	/* Set correct view */
+	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
+		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
+	} else {
+		if (type == STRUCT_TYPE_FLOW) {
+			GebrUiFlow *ui_flow;
+			gtk_tree_model_get(model, &iter,
+			                   FB_STRUCT, &ui_flow,
+			                   -1);
+
+			if (gebr_ui_flow_get_flow(ui_flow) != gebr.flow)
+				gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+		} else {
+			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
+			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU]) &&
+			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_PARAMETERS])) {
+				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+					gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+				else
+					gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
+			}
+		}
+	}
 
 	gboolean mixed_selection = FALSE;
 	gint n_rows = 1;
@@ -2799,21 +2811,6 @@ static void flow_browse_load(void)
 		                                       gebr.flow);
 
 		flow_browse_info_update();
-
-		if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
-			gebr_flow_browse_show_menu_list(gebr.ui_flow_browse);
-		} else {
-			if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-				gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
-			else
-				gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
-			if (gtk_widget_get_visible(gebr.ui_flow_browse->jobs_ctx_box)) {
-				gtk_widget_hide(gebr.ui_flow_browse->jobs_ctx_box);
-				gtk_widget_hide(gebr.ui_flow_browse->parameters_ctx_box);
-			}
-			gtk_widget_show(gebr.ui_flow_browse->properties_ctx_box);
-			gtk_widget_hide(gebr.ui_flow_browse->parameters_ctx_box);
-		}
 	} else if (type == STRUCT_TYPE_PROGRAM) {
 		gboolean has_error;
 		GtkAction * action;
@@ -2938,8 +2935,9 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-	if (type == STRUCT_TYPE_FLOW)
-		gebr_flow_browse_show_menu_list(fb);
+	if (type == STRUCT_TYPE_FLOW) {
+		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, fb);
+	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrGuiProgramEdit *program_edit = parameters_configure_setup_ui();
 
@@ -2949,17 +2947,12 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 
 			fb->program_edit = program_edit;
 
-			GList *children = gtk_container_get_children(GTK_CONTAINER(fb->parameters_ctx_box));
+			GList *children = gtk_container_get_children(GTK_CONTAINER(fb->context[CONTEXT_PARAMETERS]));
 			if (children)
 				gtk_widget_destroy(children->data);
 
-			gtk_container_add(GTK_CONTAINER(fb->parameters_ctx_box), program_edit->widget);
-			gtk_widget_show_all(fb->parameters_ctx_box);
-			gtk_widget_hide(fb->menu_window);
-			gtk_widget_hide(fb->properties_ctx_box);
-			gtk_widget_hide(fb->snapshots_ctx_box);
-			gtk_widget_hide(fb->jobs_ctx_box);
-			gtk_widget_hide(fb->properties_ctx_box);
+			gtk_container_add(GTK_CONTAINER(fb->context[CONTEXT_PARAMETERS]), program_edit->widget);
+			gebr_flow_browse_define_context_to_show(CONTEXT_PARAMETERS, fb);
 		}
 	}
 }
@@ -3178,10 +3171,7 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 	flow_browse_info_update();
 
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
-	gtk_widget_reparent(output_view, self->jobs_ctx_box);
-	gtk_widget_hide(gebr.ui_flow_browse->menu_window);
-	gtk_widget_hide(gebr.ui_flow_browse->parameters_ctx_box);
-
+	gtk_widget_reparent(output_view, self->context[CONTEXT_JOBS]);
 
 	/* Set default on properties flow */
 	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
@@ -3613,11 +3603,13 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	if (!flow)
 		return;
 
-	gtk_widget_hide(fb->parameters_ctx_box);
-
-	if (gtk_widget_get_visible(fb->menu_window)) {
-		gtk_widget_hide(fb->menu_window);
-		gtk_widget_show(fb->properties_ctx_box);
+	if (!gtk_widget_get_visible(fb->context[CONTEXT_JOBS]) &&
+	    !gtk_widget_get_visible(fb->context[CONTEXT_MENU]) &&
+	    !gtk_widget_get_visible(fb->context[CONTEXT_PARAMETERS])) {
+		if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+			gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+		else
+			gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 	}
 
 	GString *prog_content = g_string_new("");
@@ -3687,11 +3679,15 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
 }
 
 void
-gebr_flow_browse_show_menu_list(GebrUiFlowBrowse *fb)
+gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,
+                                        GebrUiFlowBrowse *fb)
 {
-	gtk_widget_show(fb->menu_window);
-	gtk_widget_hide(fb->properties_ctx_box);
-	gtk_widget_hide(fb->parameters_ctx_box);
-	gtk_widget_hide(fb->snapshots_ctx_box);
-	gtk_widget_hide(fb->jobs_ctx_box);
+	gtk_widget_show(fb->context[current_context]);
+
+	for (gint i = CONTEXT_FLOW; i < CONTEXT_N_TYPES; i++) {
+		if (i == current_context)
+			continue;
+
+		gtk_widget_hide(fb->context[i]);
+	}
 }

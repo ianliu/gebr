@@ -629,7 +629,7 @@ void gebr_setup_ui(void)
 	gtk_widget_show_all(vbox);
 
 	gtk_widget_hide(gebr.ui_flow_browse->info_jobs);
-	gtk_widget_hide(gebr.ui_flow_browse->menu_window);
+	gtk_widget_hide(gebr.ui_flow_browse->context[CONTEXT_MENU]);
 
 	/*
 	 * Notebook's page "Flow edition"
