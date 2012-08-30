@@ -70,7 +70,15 @@ parameters_configure_setup_ui(void)
 {
 	GebrGuiProgramEdit *program_edit;
 
-	if (flow_browse_get_selected(NULL, FALSE) == FALSE)
+	GtkTreeIter iter;
+	if (flow_browse_get_selected(&iter, FALSE) == FALSE)
+		return NULL;
+
+	GebrUiFlowBrowseType row_type;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+	                   FB_STRUCT_TYPE, &row_type, -1);
+
+	if (row_type != STRUCT_TYPE_PROGRAM)
 		return NULL;
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line );

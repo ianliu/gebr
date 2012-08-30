@@ -2670,6 +2670,8 @@ static void flow_browse_load(void)
 		g_free(line_title);
 	}
 
+	gebr_flow_set_toolbar_sensitive();
+
 	GtkTreePath *curr_path = NULL;
 	gtk_tree_view_get_cursor(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &curr_path, NULL);
 	if (curr_path) {
@@ -2703,8 +2705,7 @@ static void flow_browse_load(void)
 				gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 		} else {
 			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
-			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU]) &&
-			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_PARAMETERS])) {
+			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
 				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
 					gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 				else
@@ -2748,7 +2749,6 @@ static void flow_browse_load(void)
 
 		flow_free();
 
-		gebr_flow_set_toolbar_sensitive();
 		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 
 		gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view)));
@@ -2954,6 +2954,20 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 		GebrGuiProgramEdit *program_edit = parameters_configure_setup_ui();
 
 		if (program_edit) {
+			GebrUiFlowProgram *ui_program;
+
+			gtk_tree_model_get(model, &iter,
+			                   FB_STRUCT, &ui_program,
+			                   -1);
+
+			gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
+
+			GtkTreeIter parent;
+			gtk_tree_model_iter_parent(model, &parent, &iter);
+			GtkTreePath *path = gtk_tree_model_get_path(model, &parent);
+			gtk_tree_model_row_changed(model, path, &parent);
+			gtk_tree_path_free(path);
+
 			if (fb->program_edit)
 				gebr_gui_program_edit_destroy(fb->program_edit);
 
@@ -3616,8 +3630,7 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 		return;
 
 	if (!gtk_widget_get_visible(fb->context[CONTEXT_JOBS]) &&
-	    !gtk_widget_get_visible(fb->context[CONTEXT_MENU]) &&
-	    !gtk_widget_get_visible(fb->context[CONTEXT_PARAMETERS])) {
+	    !gtk_widget_get_visible(fb->context[CONTEXT_MENU])) {
 		if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
 			gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 		else
