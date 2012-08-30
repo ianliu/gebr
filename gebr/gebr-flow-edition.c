@@ -518,7 +518,6 @@ flow_edition_set_edited_io(gchar *path, gchar *new_text)
 	flow_edition_set_io();
 
 	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 }
 
 static void
@@ -625,7 +624,6 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	g_list_free (paths);
 
 	flow_edition_set_io();
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 
 	return TRUE;
 }
@@ -779,7 +777,6 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 
 	flow_program_check_sensitiveness();
 	flow_edition_set_io();
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 
 	return FALSE;
 }
