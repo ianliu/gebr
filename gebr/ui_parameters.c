@@ -132,7 +132,8 @@ gboolean
 validate_selected_program(GError **error)
 {
 	GtkTreeIter iter;
-	flow_browse_get_selected(&iter, FALSE);
+	if (!flow_browse_get_selected(&iter, FALSE))
+		return FALSE;
 	return validate_program_iter(&iter, error);
 }
 
