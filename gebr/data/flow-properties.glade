@@ -292,6 +292,13 @@
         <property name="position">5</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkVBox" id="parameters_ctx_box">
+      </object>
+      <packing>
+        <property name="position">6</property>
+      </packing>
+    </child>
   </object>
   <object class="GtkVBox" id="main_rev">
     <property name="visible">True</property>

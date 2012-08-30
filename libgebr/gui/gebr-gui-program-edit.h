@@ -57,7 +57,8 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gpointer parameter_widget_data,
 			       gboolean use_default,
 			       GebrValidator *validator,
-			       GebrMaestroInfo *info);
+			       GebrMaestroInfo *info,
+			       gboolean add_title);
 
 /**
  * \internal

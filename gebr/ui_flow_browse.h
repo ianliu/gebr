@@ -27,7 +27,9 @@
 
 #include <libgebr/geoxml/geoxml.h>
 #include "libgebr/comm/gebr-comm-process.h"
+#include <libgebr/gui/gebr-gui-program-edit.h>
 #include "gebr-maestro-server.h"
+#include "ui_flow_program.h"
 
 G_BEGIN_DECLS
 
@@ -68,6 +70,8 @@ typedef struct {
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *action_renderer;
 
+	GebrGuiProgramEdit *program_edit;
+
 	GtkWidget *queue_combobox;
 	GtkWidget *server_combobox;
 	gchar *name;
@@ -94,6 +98,7 @@ typedef struct {
 	GtkToggleButton *properties_ctx_button;
 	GtkWidget *properties_ctx_box;
 	GtkWidget *html_parameters;
+	GtkWidget *parameters_ctx_box;
 
 	GtkToggleButton *snapshots_ctx_button;
 	GtkWidget *snapshots_ctx_box;

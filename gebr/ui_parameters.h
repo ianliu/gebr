@@ -31,7 +31,7 @@ G_BEGIN_DECLS
  * Otherwise, if the user confirm by pressing Ok, the original program is
  * deleted and the copy is moved into its position.
  */
-void parameters_configure_setup_ui(void);
+GebrGuiProgramEdit *parameters_configure_setup_ui(void);
 
 /**
  */
