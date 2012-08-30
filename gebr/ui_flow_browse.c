@@ -2649,7 +2649,6 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 
 	gebr.ui_flow_browse->program_edit = NULL;
-	flow_browse_select_iter(&iter);
 }
 /**
  * \internal
