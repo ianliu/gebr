@@ -66,6 +66,7 @@ typedef struct {
 
 	GtkTreeStore *store;
 	GtkWidget *view;
+	GtkWidget *flows_line_label;
 	GtkCellRenderer *icon_renderer;
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *action_renderer;
@@ -265,6 +266,8 @@ void flow_browse_status_changed(guint status);
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 				       gboolean select_last,
 				       gboolean never_opened);
+
+void flow_browse_validate_io(GebrUiFlowBrowse *fb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

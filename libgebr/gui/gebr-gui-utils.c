@@ -113,6 +113,7 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 		if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
 						  (gint) event->x, (gint) event->y, &path, NULL, NULL, NULL)) {
 			gtk_tree_selection_unselect_all(selection);
+			gtk_tree_view_set_cursor(tree_view, path, NULL, FALSE);
 			gtk_tree_selection_select_path(selection, path);
 			gtk_tree_path_free(path);
 		}
@@ -604,8 +605,8 @@ out:	g_list_foreach(list, (GFunc) gtk_tree_iter_free, NULL);
 
 void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
-	GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(tree_view);
-	gtk_tree_selection_unselect_all(tree_selection);
+//	GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(tree_view);
+//	gtk_tree_selection_unselect_all(tree_selection);
 	if (iter == NULL)
 		return;
 

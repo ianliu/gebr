@@ -1207,7 +1207,7 @@ gebr_validate_path(const gchar *path,
 		   gchar ***pvector,
 		   gchar **err_msg)
 {
-	if (!*path)
+	if (!path || !*path)
 		return TRUE;
 
 	for (int i = 0; pvector[i]; i++) {

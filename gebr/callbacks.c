@@ -390,9 +390,9 @@ static gboolean flows_check_before_execution(void)
 		                   -1);
 
 		if (type != STRUCT_TYPE_FLOW)
-			return FALSE;
-
-		flow = gebr_ui_flow_get_flow(ui_flow);
+			flow = gebr.flow;
+		else
+			flow = gebr_ui_flow_get_flow(ui_flow);
 
 		if (flow_check_before_execution(flow, FALSE))
 			continue;
@@ -512,7 +512,7 @@ void on_flow_component_status_activate(GtkAction *action,
 {
 	guint status = GPOINTER_TO_UINT(user_data);
 	flow_browse_status_changed(status);
-	flow_edition_set_io();
+	flow_browse_validate_io(gebr.ui_flow_browse);
 }
 
 void on_job_control_save(void)

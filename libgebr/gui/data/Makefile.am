@@ -17,9 +17,9 @@ include $(top_srcdir)/Makefile.decl
 
 # TODO: remove this install dir!
 libgebrdatadir = $(datadir)/libgebr/
-libgebrdata_DATA = gebr.css
+libgebrdata_DATA = gebr.css gebr-flow-review.css
 
 gebrstylesdir = $(datadir)/libgebr/styles
-gebrstyles_DATA = gebr-report.css gebr-report-fancy.css gebr-flow-review.css
+gebrstyles_DATA = gebr-report.css gebr-report-fancy.css
 
 EXTRA_DIST = $(libgebrdata_DATA) $(gebrstyles_DATA)
