@@ -1693,12 +1693,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	gtk_box_pack_start(GTK_BOX(left_side), frame, TRUE, TRUE, 0);
 
-	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 5, 0, 0, 0);
-	gtk_container_add(GTK_CONTAINER(frame), alignment);
-
-	gtk_container_add(GTK_CONTAINER(left_side), frame);
-
 	gtk_paned_pack1(GTK_PANED(hpanel), left_side, FALSE, FALSE);
 
 	ui_flow_browse->store = gtk_tree_store_new(FB_N_COLUMN,
