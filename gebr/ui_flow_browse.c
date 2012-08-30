@@ -2675,9 +2675,11 @@ static void flow_browse_load(void)
 	model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 
 	/* Update line title on back button */
-	gchar *line_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line));
-	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->flows_line_label), line_title);
-	g_free(line_title);
+	if (gebr.line) {
+		gchar *line_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line));
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->flows_line_label), line_title);
+		g_free(line_title);
+	}
 
 	GtkTreePath *curr_path = NULL;
 	gtk_tree_view_get_cursor(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &curr_path, NULL);
