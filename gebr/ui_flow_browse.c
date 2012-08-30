@@ -1562,13 +1562,18 @@ on_line_back_clicked(GtkButton *button,
 	gebr_interface_change_tab(NOTEBOOK_PAGE_PROJECT_LINE);
 }
 
-void
+static gboolean
 on_menus_escaped(GtkWidget   *widget,
 		 GdkEventKey *event,
 		 GebrUiFlowBrowse *ui_flow_browse)
 {
-	gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, ui_flow_browse);
+	if (event->keyval == GDK_Escape) {
+		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, ui_flow_browse);
+		return TRUE;
+	}
+	return FALSE;
 }
+
 GebrUiFlowBrowse *flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
