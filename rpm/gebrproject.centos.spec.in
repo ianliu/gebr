@@ -2,8 +2,6 @@
 %define version @PACKAGE_VERSION@
 %define release 1%{dist}
 
-%define is_centos4 %(grep -c 'CentOS.* 4' /etc/*-release)
-
 Name: %{name}
 Version: %{version}
 Release: %{release}
@@ -15,14 +13,13 @@ Source: %{name}-%{version}.tar.gz
 BuildRequires: automake bison bzip2 expat-devel file flex gettext gperf
 BuildRequires: gtk-doc intltool libjpeg-devel libtiff-devel openssh-clients
 BuildRequires: python-devel shared-mime-info unzip wget xauth zlib-devel
-BuildRequires: libtidy-devel
-%if %is_centos4
+BuildRequires: libtidy-devel procmail
+%if 0%{?rhel} == 4
 BuildRequires: gcc4 gcc4-c++ xorg-x11-devel
 %else
 BuildRequires: libICE-devel libX11-devel libXext-devel libXt-devel libXrender-devel
 BuildRequires: gcc-c++ xorg-x11-proto-devel xorg-x11-xtrans-devel
 %endif
-BuildRequires: yum
 BuildRoot: /var/tmp/gebrproject-%{version}-%{release}
 Summary: Seismic processing environment
 Requires: openssh xz bc pygtk2 graphviz

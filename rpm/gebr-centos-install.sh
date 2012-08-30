@@ -2,6 +2,10 @@
 
 # Please, maintain a ChangeLog history style here:
 #
+# 2012-08-27  Fabrício Matheus Gonçalves  <fmatheus@gebrproject.com>
+#
+#   * Add $CACHE_DIR to avoid download all dependencies if possible.
+#
 # 2012-01-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 #
 #	* Remove links, as they are being created in the spec file.
@@ -220,6 +224,9 @@ mkdir -p $TMP_DIR
 	cp -a ../gebrproject-$GEBR_VERSION $TMP_DIR
 cd $TMP_DIR
 
+CACHE_DIR=${CACHE_DIR-$TMP_DIR/cache}
+mkdir -p $CACHE_DIR
+
 function fetchpackage {
   URL=$1
   if [ $# -ge 2 ] ; then
@@ -227,12 +234,14 @@ function fetchpackage {
   else
     DST=`basename $URL`
   fi
-  [ -f $DST ] || wget -c $URL
+  lockfile -1 $CACHE_DIR/$DST.lock
+  [ -f $CACHE_DIR/$DST ] || (cd $CACHE_DIR && wget -c $URL)
+  rm -f $CACHE_DIR/$DST.lock
 }
 
 # libtool-2.2
 	fetchpackage ftp.gnu.org/gnu/libtool/libtool-2.2.tar.bz2 \
-	&& (cd libtool-2.2 2> /dev/null || (tar xjf libtool-2.2.tar.bz2 \
+	&& (cd libtool-2.2 2> /dev/null || (tar xjf $CACHE_DIR/libtool-2.2.tar.bz2 \
 	&& cd libtool-2.2 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd libtool-2.2 \
@@ -240,7 +249,7 @@ function fetchpackage {
 
 # pkg-config-0.25
 	fetchpackage http://pkgconfig.freedesktop.org/releases/pkg-config-0.25.tar.gz \
-	&& (cd pkg-config-0.25 2> /dev/null || (tar xzf pkg-config-0.25.tar.gz \
+	&& (cd pkg-config-0.25 2> /dev/null || (tar xzf $CACHE_DIR/pkg-config-0.25.tar.gz \
 	&& cd pkg-config-0.25 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd pkg-config-0.25 \
@@ -248,7 +257,7 @@ function fetchpackage {
 
 # glib-2.24.1
 	fetchpackage http://ftp.gnome.org/pub/gnome/sources/glib/2.24/glib-2.24.1.tar.bz2 \
-	&& (cd glib-2.24.1 2> /dev/null || (tar jxf glib-2.24.1.tar.bz2 \
+	&& (cd glib-2.24.1 2> /dev/null || (tar jxf $CACHE_DIR/glib-2.24.1.tar.bz2 \
 	&& cd glib-2.24.1 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd glib-2.24.1 \
@@ -256,7 +265,7 @@ function fetchpackage {
 
 # atk-1.30.0
 	fetchpackage http://ftp.acc.umu.se/pub/GNOME/sources/atk/1.30/atk-1.30.0.tar.bz2 \
-	&& (cd atk-1.30.0 2> /dev/null || (tar jxf atk-1.30.0.tar.bz2 \
+	&& (cd atk-1.30.0 2> /dev/null || (tar jxf $CACHE_DIR/atk-1.30.0.tar.bz2 \
 	&& cd atk-1.30.0 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd atk-1.30.0 \
@@ -264,7 +273,7 @@ function fetchpackage {
 
 # pixman-0.10.0
 	fetchpackage http://cairographics.org/releases/pixman-0.10.0.tar.gz \
-	&& (cd pixman-0.10.0 2> /dev/null || (tar zxf pixman-0.10.0.tar.gz \
+	&& (cd pixman-0.10.0 2> /dev/null || (tar zxf $CACHE_DIR/pixman-0.10.0.tar.gz \
 	&& cd pixman-0.10.0 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd pixman-0.10.0 \
@@ -272,7 +281,7 @@ function fetchpackage {
 
 # libpng-1.2.44.tar.gz
 	fetchpackage ftp://ftp.simplesystems.org/pub/libpng/png/src/history/libpng12/libpng-1.2.44.tar.gz \
-	&& (cd libpng-1.2.44 2> /dev/null || (tar xzf libpng-1.2.44.tar.gz \
+	&& (cd libpng-1.2.44 2> /dev/null || (tar xzf $CACHE_DIR/libpng-1.2.44.tar.gz \
 	&& cd libpng-1.2.44 \
 	&& ./configure --prefix=$PREFIX_DIR)) \
 	&& cd libpng-1.2.44 \
@@ -280,7 +289,7 @@ function fetchpackage {
 
 # freetype-2.3.12
 	fetchpackage http://download.savannah.gnu.org/releases/freetype/freetype-2.3.12.tar.bz2 \
-	&& (cd freetype-2.3.12 2> /dev/null || (tar jxf freetype-2.3.12.tar.bz2 \
+	&& (cd freetype-2.3.12 2> /dev/null || (tar jxf $CACHE_DIR/freetype-2.3.12.tar.bz2 \
 	&& cd freetype-2.3.12 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd freetype-2.3.12 \
@@ -288,7 +297,7 @@ function fetchpackage {
 
 # fontconfig-2.4.92
 	fetchpackage http://www.fontconfig.org/release/fontconfig-2.4.92.tar.gz \
-	&& (cd fontconfig-2.4.92 2> /dev/null || (tar xzf fontconfig-2.4.92.tar.gz \
+	&& (cd fontconfig-2.4.92 2> /dev/null || (tar xzf $CACHE_DIR/fontconfig-2.4.92.tar.gz \
 	&& cd fontconfig-2.4.92 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd fontconfig-2.4.92 \
@@ -296,7 +305,7 @@ function fetchpackage {
 
 # cairo-1.6.10
 	fetchpackage http://cairographics.org/releases/cairo-1.6.4.tar.gz \
-	&& (cd cairo-1.6.4 2> /dev/null || (tar zxf cairo-1.6.4.tar.gz \
+	&& (cd cairo-1.6.4 2> /dev/null || (tar zxf $CACHE_DIR/cairo-1.6.4.tar.gz \
 	&& cd cairo-1.6.4 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --enable-xlib=yes)) \
 	&& cd cairo-1.6.4 \
@@ -304,7 +313,7 @@ function fetchpackage {
 
 # pango-1.20.5
 	fetchpackage http://ftp.gnome.org/pub/gnome/sources/pango/1.20/pango-1.20.5.tar.bz2 \
-	&& (cd pango-1.20.5 2> /dev/null || (tar xjf pango-1.20.5.tar.bz2 \
+	&& (cd pango-1.20.5 2> /dev/null || (tar xjf $CACHE_DIR/pango-1.20.5.tar.bz2 \
 	&& cd pango-1.20.5 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd pango-1.20.5 \
@@ -312,7 +321,7 @@ function fetchpackage {
 
 # gtk-2.20.1
 	fetchpackage http://ftp.gnome.org/pub/gnome/sources/gtk+/2.20/gtk+-2.20.1.tar.bz2 \
-	&& (cd gtk+-2.20.1 2> /dev/null || (tar jxf gtk+-2.20.1.tar.bz2 \
+	&& (cd gtk+-2.20.1 2> /dev/null || (tar jxf $CACHE_DIR/gtk+-2.20.1.tar.bz2 \
 	&& cd gtk+-2.20.1 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --without-libjasper)) \
 	&& cd gtk+-2.20.1 \
@@ -320,7 +329,7 @@ function fetchpackage {
 
 # libxml2-2.6.32
 	fetchpackage ftp://xmlsoft.org/libxml2/old/libxml2-2.6.32.tar.gz \
-	&& (cd libxml2-2.6.32 2> /dev/null || (tar zxf libxml2-2.6.32.tar.gz \
+	&& (cd libxml2-2.6.32 2> /dev/null || (tar zxf $CACHE_DIR/libxml2-2.6.32.tar.gz \
 	&& cd libxml2-2.6.32 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --without-python)) \
 	&& cd libxml2-2.6.32 \
@@ -328,7 +337,7 @@ function fetchpackage {
 
 # gdome2-0.8.1
 	fetchpackage http://gdome2.cs.unibo.it/tarball/gdome2-0.8.1.tar.gz \
-	&& (cd gdome2-0.8.1 2> /dev/null || (tar zxf gdome2-0.8.1.tar.gz \
+	&& (cd gdome2-0.8.1 2> /dev/null || (tar zxf $CACHE_DIR/gdome2-0.8.1.tar.gz \
 	&& cd gdome2-0.8.1 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd gdome2-0.8.1 \
@@ -336,7 +345,7 @@ function fetchpackage {
 
 # icu4c-4_2_1-src
 	fetchpackage http://download.icu-project.org/files/icu4c/4.2.1/icu4c-4_2_1-src.tgz \
-	&& (cd icu/source 2> /dev/null || (tar xzf icu4c-4_2_1-src.tgz \
+	&& (cd icu/source 2> /dev/null || (tar xzf $CACHE_DIR/icu4c-4_2_1-src.tgz \
 	&& cd icu/source \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --disable-tests --disable-samples)) \
 	&& cd icu/source \
@@ -345,7 +354,7 @@ function fetchpackage {
 if test $CENTOS_MAJOR_VERSION -eq 4; then
 # xproto-6.6.2
 	fetchpackage http://xlibs.freedesktop.org/release/xproto-6.6.2.tar.bz2 \
-	&& (cd xproto-6.6.2 2> /dev/null || (tar xjf xproto-6.6.2.tar.bz2 \
+	&& (cd xproto-6.6.2 2> /dev/null || (tar xjf $CACHE_DIR/xproto-6.6.2.tar.bz2 \
 	&& cd xproto-6.6.2 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd xproto-6.6.2 \
@@ -353,7 +362,7 @@ if test $CENTOS_MAJOR_VERSION -eq 4; then
 
 # libxtrans-0.1
 	fetchpackage http://xlibs.freedesktop.org/release/libXtrans-0.1.tar.bz2 \
-	&& (cd libXtrans-0.1 2> /dev/null || (tar xjf libXtrans-0.1.tar.bz2 \
+	&& (cd libXtrans-0.1 2> /dev/null || (tar xjf $CACHE_DIR/libXtrans-0.1.tar.bz2 \
 	&& cd libXtrans-0.1 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd libXtrans-0.1 \
@@ -361,7 +370,7 @@ if test $CENTOS_MAJOR_VERSION -eq 4; then
 
 # libICE-6.3.3
 	fetchpackage http://xlibs.freedesktop.org/release/libICE-6.3.3.tar.bz2 \
-	&& (cd libICE-6.3.3 2> /dev/null || (tar xjf libICE-6.3.3.tar.bz2 \
+	&& (cd libICE-6.3.3 2> /dev/null || (tar xjf $CACHE_DIR/libICE-6.3.3.tar.bz2 \
 	&& cd libICE-6.3.3 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd libICE-6.3.3 \
@@ -369,7 +378,7 @@ if test $CENTOS_MAJOR_VERSION -eq 4; then
 
 # libSM-6.0.3
 	fetchpackage http://xlibs.freedesktop.org/release/libSM-6.0.3.tar.bz2 \
-	&& (cd libSM-6.0.3 2> /dev/null || (tar xjf libSM-6.0.3.tar.bz2 \
+	&& (cd libSM-6.0.3 2> /dev/null || (tar xjf $CACHE_DIR/libSM-6.0.3.tar.bz2 \
 	&& cd libSM-6.0.3 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd libSM-6.0.3 \
@@ -377,7 +386,7 @@ if test $CENTOS_MAJOR_VERSION -eq 4; then
 
 # libXt-0.1.5
 	fetchpackage http://xlibs.freedesktop.org/release/libXt-0.1.5.tar.bz2 \
-	&& (cd libXt-0.1.5 2> /dev/null || (tar xjf libXt-0.1.5.tar.bz2 \
+	&& (cd libXt-0.1.5 2> /dev/null || (tar xjf $CACHE_DIR/libXt-0.1.5.tar.bz2 \
 	&& cd libXt-0.1.5 \
 	&& patch Initialize.c << EOF
 306,310c306
@@ -408,7 +417,7 @@ fi
 
 # libxslt-1.1.26
 	fetchpackage ftp://xmlsoft.org/libxslt/libxslt-1.1.26.tar.gz \
-	&& (cd libxslt-1.1.26 2> /dev/null || (tar xzf libxslt-1.1.26.tar.gz \
+	&& (cd libxslt-1.1.26 2> /dev/null || (tar xzf $CACHE_DIR/libxslt-1.1.26.tar.gz \
 	&& cd libxslt-1.1.26 && touch libtoolT \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd libxslt-1.1.26 \
@@ -416,14 +425,14 @@ fi
 
 # docbook-xsl-1.75.2
 	fetchpackage http://ufpr.dl.sourceforge.net/project/docbook/docbook-xsl/1.75.2/docbook-xsl-1.75.2.tar.bz2 \
-	&& (cd docbook-xsl-1.75.2 2> /dev/null || tar xjf docbook-xsl-1.75.2.tar.bz2) \
+	&& (cd docbook-xsl-1.75.2 2> /dev/null || tar xjf $CACHE_DIR/docbook-xsl-1.75.2.tar.bz2) \
 	&& cd docbook-xsl-1.75.2 \
 	&& export XML_CATALOG_FILES=$PWD/catalog.xml \
 	&& cd - || exit 1
 
 # tidy-20091223cvs
 	fetchpackage http://ftp.de.debian.org/debian/pool/main/t/tidy/tidy_20091223cvs.orig.tar.gz \
-	&& (cd tidy-20091223cvs 2> /dev/null || (tar xzf tidy_20091223cvs.orig.tar.gz \
+	&& (cd tidy-20091223cvs 2> /dev/null || (tar xzf $CACHE_DIR/tidy_20091223cvs.orig.tar.gz \
 	&& cd tidy-20091223cvs \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd tidy-20091223cvs \
@@ -431,7 +440,7 @@ fi
 
 # libsoup
 	fetchpackage http://ftp.gnome.org/pub/GNOME/desktop/2.25/2.25.91/sources/libsoup-2.25.91.tar.bz2 \
-	&& (cd libsoup-2.25.91 2> /dev/null || (tar xjf libsoup-2.25.91.tar.bz2 \
+	&& (cd libsoup-2.25.91 2> /dev/null || (tar xjf $CACHE_DIR/libsoup-2.25.91.tar.bz2 \
 	&& cd libsoup-2.25.91 \
 	&& patch configure << EOF
 23482c23482
@@ -445,7 +454,7 @@ EOF
 
 # sqlite
 	fetchpackage http://www.sqlite.org/sqlite-3.6.10.tar.gz \
-	&& (cd sqlite-3.6.10 2> /dev/null || (tar xzf sqlite-3.6.10.tar.gz \
+	&& (cd sqlite-3.6.10 2> /dev/null || (tar xzf $CACHE_DIR/sqlite-3.6.10.tar.gz \
 	&& cd sqlite-3.6.10 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --disable-tcl)) \
 	&& cd sqlite-3.6.10 \
@@ -453,7 +462,7 @@ EOF
 
 # webkit-1.1.5
 	fetchpackage http://webkitgtk.org/webkit-1.1.5.tar.gz \
-	&& (cd webkit-1.1.5 2> /dev/null || (tar xzf webkit-1.1.5.tar.gz \
+	&& (cd webkit-1.1.5 2> /dev/null || (tar xzf $CACHE_DIR/webkit-1.1.5.tar.gz \
 	&& cd webkit-1.1.5 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --disable-xslt --disable-video)) \
 	&& cd webkit-1.1.5
@@ -492,7 +501,7 @@ EOF
 # gebr
 	[ -d gebrproject-$GEBR_VERSION ] \
 	|| (fetchpackage $GEBR_REPO/gebrproject-$GEBR_VERSION.tar.gz \
-	&& rm -fr gebrproject-$GEBR_VERSION && tar zxf gebrproject-$GEBR_VERSION.tar.gz) \
+	&& rm -fr gebrproject-$GEBR_VERSION && tar zxf $CACHE_DIR/gebrproject-$GEBR_VERSION.tar.gz) \
 	&& cd gebrproject-$GEBR_VERSION
 # Check for version 0.11.0 or greater
 if [ -d rpm ]; then
@@ -508,8 +517,8 @@ fi
 
 # GeBR menus
 for menu in $GEBR_MENUS; do
-	([ -f $menu.tar.gz ] || wget -c $MENU_REPO/$menu.tar.gz) \
-	&& (cd $menu 2> /dev/null || (tar xzf $menu.tar.gz \
+	([ -f $menu.tar.gz ] || fetchpackage $MENU_REPO/$menu.tar.gz) \
+	&& (cd $menu 2> /dev/null || (tar xzf $CACHE_DIR/$menu.tar.gz \
 	&& cd $menu \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
 	&& cd $menu \
