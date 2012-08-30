@@ -733,7 +733,7 @@ gboolean flow_revision_save(void)
 	GtkWidget *label;
 	GtkWidget *entry;
 	GtkWidget *align;
-
+	GebrUiFlowBrowseType type;
 	GtkTreeIter iter;
 	gboolean ret = FALSE;
 
@@ -743,6 +743,13 @@ gboolean flow_revision_save(void)
 	if (!flow_browse_get_selected(&iter, TRUE))
 		return FALSE;
 
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+	                   FB_STRUCT_TYPE, &type, -1);
+
+	if (type != STRUCT_TYPE_FLOW) {
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("No Flow selected."));
+		return FALSE;
+	}
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gint num_flows = gtk_tree_selection_count_selected_rows(selection);
 
@@ -809,7 +816,6 @@ gboolean flow_revision_save(void)
 
 	if (response == GTK_RESPONSE_OK) {
 		GebrUiFlow *ui_flow;
-		GebrUiFlowBrowseType type;
 		GebrGeoXmlRevision *revision;
 		gchar *id;
 
