@@ -3379,6 +3379,15 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 		g_object_set(cell, "stock-id", GTK_STOCK_DIRECTORY, NULL);
 		gtk_style_lookup_color(style, "base_color", &color);
 		g_object_set(cell, "cell-background-gdk", &color, NULL);
+
+		GebrUiFlowsIo *ui_io;
+		gtk_tree_model_get(model, iter,
+		                   FB_STRUCT, &ui_io,
+		                   -1);
+		if (gebr_ui_flows_io_get_active(ui_io))
+			g_object_set(cell, "sensitive", TRUE, NULL);
+		else
+			g_object_set(cell, "sensitive", FALSE, NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		g_object_set(cell, "stock-id", NULL, NULL);
