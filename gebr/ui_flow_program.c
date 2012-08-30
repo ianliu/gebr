@@ -193,18 +193,13 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 {
 	GtkWidget * menu_item;
 	GtkAction * action;
-	GebrGeoXmlProgramControl control;
-	gboolean is_ordinary;
 
 	if (!program)
 		return NULL;
 
-	GebrGeoXmlProgram *program_xml = gebr_ui_flow_program_get_xml(program);
 	GtkWidget *menu = gtk_menu_new();
 
-	control = gebr_geoxml_program_get_control(program_xml);
 
-	is_ordinary = control != GEBR_GEOXML_PROGRAM_CONTROL_FOR;
 
 	/* status */
 	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");

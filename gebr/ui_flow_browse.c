@@ -1542,11 +1542,6 @@ flow_browse_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * p
 		flow_browse_reload_selected();
 	}
 	else if (type == STRUCT_TYPE_PROGRAM && type_dest == STRUCT_TYPE_FLOW) {
-		GebrGeoXmlSequence *prog;
-		GebrGeoXmlSequence *position_flow;
-
-		prog = GEBR_GEOXML_SEQUENCE(gebr_ui_flow_program_get_xml(GEBR_UI_FLOW_PROGRAM(ui_struct)));
-		position_flow = GEBR_GEOXML_SEQUENCE(gebr_ui_flow_get_flow(GEBR_UI_FLOW(ui_struct_dest)));
 
 		flow_program_copy();
 		flow_program_remove();

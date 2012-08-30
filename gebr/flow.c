@@ -246,7 +246,6 @@ static gboolean flow_import_single (const gchar *path)
 {
 	gchar *new_title;
 	const gchar *title;
-	GtkTreeIter iter;
 	GebrGeoXmlDocument *flow;
 	GebrGeoXmlLineFlow *line_flow;
 
@@ -261,7 +260,6 @@ static gboolean flow_import_single (const gchar *path)
 	document_import (flow, FALSE);
 	line_flow = gebr_geoxml_line_append_flow (gebr.line, gebr_geoxml_document_get_filename (flow));
 	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
-	iter = line_append_flow_iter(GEBR_GEOXML_FLOW (flow), line_flow);
 	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 	gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), gebr.validator);
 	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
