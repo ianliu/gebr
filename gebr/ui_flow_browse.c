@@ -3366,7 +3366,7 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 			g_object_set(cell, "stock-id", "photos", NULL);
 		else
 			g_object_set(cell, "stock-id", NULL, NULL);
-
+		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "cell-background-gdk", &(style->bg[GTK_STATE_NORMAL]), NULL);
 	}
 	else if (type == STRUCT_TYPE_IO) {
