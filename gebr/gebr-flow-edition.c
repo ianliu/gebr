@@ -59,7 +59,6 @@ static void flow_edition_set_edited_io(gchar *path, gchar *new_text);
 static void flow_edition_component_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path);
 static void flow_edition_component_editing_canceled(GtkCellRenderer *renderer, gpointer user_data);
 static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text);
-static void flow_edition_component_selected(void);
 static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, GebrFlowEdition *ui_flow_edition);
 
 static gboolean on_flow_sequence_query_tooltip(GtkTreeView * treeview,
@@ -141,8 +140,6 @@ flow_edition_setup_ui(void)
 	/* Double click on flow component open its parameter window */
 	g_signal_connect(fe->fseq_view, "row-activated",
 			 G_CALLBACK(flow_edition_component_activated), fe);
-	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(fe->fseq_view)), "changed",
-			 G_CALLBACK(flow_edition_component_selected), fe);
 
 	return fe;
 }
@@ -178,7 +175,6 @@ gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_u
 void flow_edition_select_component_iter(GtkTreeIter * iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter);
-	flow_edition_component_selected();
 }
 
 void flow_edition_set_io(void)
@@ -786,40 +782,6 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
 
 	return FALSE;
-}
-
-/**
- * \internal
- * When a flow component (a program in the flow) is selected this funtions get the state of the program and set it on
- * Flow Component Menu.
- */
-static void flow_edition_component_selected(void)
-{
-	gboolean has_error;
-	GtkTreeIter iter;
-	GtkAction * action;
-
-	gebr.program = NULL;
-	if (!flow_edition_get_selected_component(&iter, FALSE))
-		return;
-
-	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
-		return;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-			   FSEQ_GEBR_GEOXML_POINTER, &gebr.program, -1);
-
-	/* If the program has an error, disable the 'Configured' status */
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
-	has_error = gebr_geoxml_program_get_error_id(gebr.program, NULL);
-	gtk_action_set_sensitive(action, !has_error);
-
-	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help");
-	gchar *tmp_help_p = gebr_geoxml_program_get_help(gebr.program);
-	gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
-	g_free(tmp_help_p);
 }
 
 static void on_output_append_toggled (GtkCheckMenuItem *item)
