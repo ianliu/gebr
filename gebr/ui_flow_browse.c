@@ -2607,7 +2607,7 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 			} 
 			valid = gtk_tree_model_iter_next(model, &iter);
 		}
-		gtk_tree_model_iter_next(model, &parent);
+		valid = gtk_tree_model_iter_next(model, &parent);
 	}
 
 	if (!ui_struct || (iter.stamp == 0))
