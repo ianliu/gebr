@@ -2454,7 +2454,7 @@ void flow_browse_status_changed(guint status)
 gboolean
 gebr_flow_browse_get_io_iter(GtkTreeModel *model,
                              GtkTreeIter *io_iter,
-                             GebrUiFlowBrowseType io_type)
+                             GebrUiFlowsIoType io_type)
 {
 	GtkTreeIter iter, parent;
 	gboolean valid;
@@ -3416,7 +3416,7 @@ flow_browse_open_activated(GebrUiFlowBrowse *fb,
 	gchar *stock;
 	gchar *title = NULL;
 
-	GebrUiFlowBrowseType type = gebr_ui_flows_io_get_io_type(ui_io);
+	GebrUiFlowsIoType type = gebr_ui_flows_io_get_io_type(ui_io);
 
 	if (type == GEBR_IO_TYPE_INPUT) {
 		entry_text = gebr_geoxml_flow_io_get_input(gebr.flow);

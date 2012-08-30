@@ -29,6 +29,7 @@
 #include "libgebr/comm/gebr-comm-process.h"
 #include <libgebr/gui/gebr-gui-program-edit.h>
 #include "gebr-maestro-server.h"
+#include "ui_flows_io.h"
 #include "ui_flow_program.h"
 
 G_BEGIN_DECLS
@@ -259,7 +260,7 @@ void  flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
 
 gboolean gebr_flow_browse_get_io_iter(GtkTreeModel *model,
                                       GtkTreeIter *io_iter,
-                                      GebrUiFlowBrowseType io_type);
+                                      GebrUiFlowsIoType io_type);
 
 void flow_browse_status_changed(guint status);
 
