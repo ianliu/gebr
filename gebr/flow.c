@@ -815,14 +815,17 @@ gboolean flow_revision_save(void)
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 			                   FB_STRUCT_TYPE, &type, -1);
 
-			if (type != STRUCT_TYPE_FLOW)
-				continue;
-
-
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-			                   FB_STRUCT, &ui_flow, -1);
-
-			flow_filename = gebr_ui_flow_get_filename(ui_flow);
+			if (type != STRUCT_TYPE_FLOW) {
+				GtkTreeIter parent;
+				gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent, &iter);
+				flow_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.flow));
+				flow_browse_select_iter(&parent);
+			}
+			else {
+				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+				                   FB_STRUCT, &ui_flow, -1);
+				flow_filename = gebr_ui_flow_get_filename(ui_flow);
+			}
 
 			if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, TRUE))
 				return FALSE;
