@@ -2591,10 +2591,13 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 					break;
 				}
 			} 
-			gtk_tree_model_iter_next(model, &iter);
+			valid = gtk_tree_model_iter_next(model, &iter);
 		}
 		gtk_tree_model_iter_next(model, &parent);
 	}
+
+	if (!ui_struct || (iter.stamp == 0))
+		return;
 
 	GebrUiFlowProgram *ui_program = GEBR_UI_FLOW_PROGRAM(ui_struct);
 
