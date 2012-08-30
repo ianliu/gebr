@@ -224,7 +224,8 @@ void gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
                                            GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
-                                             GebrUiFlowBrowse *fb);
+                                             GebrUiFlowBrowse *fb,
+                                             gboolean same_flow);
 
 void gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
                                const gchar *job_id);
@@ -279,6 +280,8 @@ void flow_browse_validate_io(GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,
                                              GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_escape_context(GebrUiFlowBrowse *fb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

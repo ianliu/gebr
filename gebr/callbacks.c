@@ -684,3 +684,9 @@ void open_url_on_press_event(void)
 {
 	gebr_gui_show_uri("http://www.gebrproject.com/install-guide/download");
 }
+
+void
+on_flows_escape_context(void)
+{
+	gebr_flow_browse_escape_context(gebr.ui_flow_browse);
+}

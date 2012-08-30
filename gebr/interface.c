@@ -128,6 +128,7 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("View report"), G_CALLBACK(on_flow_browse_show_help)},
 	{"flow_edit", "document_comment", N_("Edit Comments"),
 		NULL, N_("Edit comments"), G_CALLBACK(on_flow_browse_edit_help)},
+	{"escape", "escape", NULL, "Escape", NULL, G_CALLBACK(on_flows_escape_context)},
 };
 
 static const GtkActionEntry actions_entries_flow_edition[] = {
@@ -152,6 +153,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
 		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_execute_activate)},
+	{"escape", "escape", NULL, "Escape", NULL, G_CALLBACK(on_flows_escape_context)}
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {

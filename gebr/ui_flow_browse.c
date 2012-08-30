@@ -738,7 +738,7 @@ on_context_button_toggled(GtkToggleButton *button,
 
 		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, fb);
 
-		gebr_flow_browse_load_parameters_review(gebr.flow, fb);
+		gebr_flow_browse_load_parameters_review(gebr.flow, fb, FALSE);
 	}
 	else if (button == fb->snapshots_ctx_button) {
 		gtk_toggle_button_set_active(fb->properties_ctx_button, !active);
@@ -1030,7 +1030,7 @@ flow_browse_component_edited(GtkCellRendererText *renderer,
 	gtk_tree_path_free(path);
 
 	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
 }
 
 static GtkMenu *
@@ -1397,7 +1397,7 @@ flow_browse_component_key_pressed(GtkWidget *view,
 	g_list_free (paths);
 
 	flow_browse_validate_io(fb);
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
 
 	return TRUE;
 }
@@ -1520,7 +1520,7 @@ flow_browse_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * p
 
 		flow_browse_revalidate_programs(fb);
 		flow_browse_program_check_sensitiveness();
-		gebr_flow_browse_load_parameters_review(gebr.flow, fb);
+		gebr_flow_browse_load_parameters_review(gebr.flow, fb, TRUE);
 	}
 	else if (type == STRUCT_TYPE_FLOW && type_dest == STRUCT_TYPE_FLOW) {
 		GebrGeoXmlSequence *flow;
@@ -1560,18 +1560,6 @@ on_line_back_clicked(GtkButton *button,
                      GebrUiFlowBrowse *fb)
 {
 	gebr_interface_change_tab(NOTEBOOK_PAGE_PROJECT_LINE);
-}
-
-static gboolean
-on_menus_escaped(GtkWidget   *widget,
-		 GdkEventKey *event,
-		 GebrUiFlowBrowse *ui_flow_browse)
-{
-	if (event->keyval == GDK_Escape) {
-		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, ui_flow_browse);
-		return TRUE;
-	}
-	return FALSE;
 }
 
 GebrUiFlowBrowse *flow_browse_setup_ui()
@@ -1869,8 +1857,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	ui_flow_browse->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->menu_store));
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->menu_view);
-
-	g_signal_connect(ui_flow_browse->menu_view, "key-press-event", G_CALLBACK(on_menus_escaped), ui_flow_browse);
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->menu_view),
 	                                          (GebrGuiGtkPopupCallback) flow_browse_menu_popup_menu,
@@ -2646,7 +2632,7 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 
 	/* Update parameters review on Flow Browse */
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, FALSE);
 
 	gebr.ui_flow_browse->program_edit = NULL;
 }
@@ -2690,28 +2676,8 @@ static void flow_browse_load(void)
 	if (gebr.ui_flow_browse->program_edit)
 		save_parameters(gebr.ui_flow_browse->program_edit);
 
-	/* Set correct view */
-	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
-		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
-	} else {
-		if (type == STRUCT_TYPE_FLOW) {
-			GebrUiFlow *ui_flow;
-			gtk_tree_model_get(model, &iter,
-			                   FB_STRUCT, &ui_flow,
-			                   -1);
-
-			if (gebr_ui_flow_get_flow(ui_flow) != gebr.flow)
-				gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
-		} else {
-			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
-			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
-				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-					gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
-				else
-					gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
-			}
-		}
-	}
+	GebrGeoXmlFlow *old_flow = gebr.flow;
+	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(old_flow));
 
 	gboolean mixed_selection = FALSE;
 	gint n_rows = 1;
@@ -2766,9 +2732,6 @@ static void flow_browse_load(void)
 
 		gebr_ui_flow_set_is_selected(ui_flow, FALSE);
 
-		/* free previous flow and load it */
-		flow_edition_load_components();
-
 		if (n_rows == 1) {
 			create_programs_view(&iter, gebr.ui_flow_browse);
 			flow_browse_program_check_sensitiveness();
@@ -2821,7 +2784,6 @@ static void flow_browse_load(void)
 		gebr_flow_browse_select_group_for_flow(gebr.ui_flow_browse,
 		                                       gebr.flow);
 
-		flow_browse_info_update();
 	} else if (type == STRUCT_TYPE_PROGRAM) {
 		gboolean has_error;
 		GtkAction * action;
@@ -2844,6 +2806,35 @@ static void flow_browse_load(void)
 		g_free(tmp_help_p);
 	}
 
+	/* Set correct view */
+	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
+		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
+	} else {
+		if (type == STRUCT_TYPE_FLOW) {
+			GebrGeoXmlFlow *flow;
+			GebrUiFlow *ui_flow;
+
+			gtk_tree_model_get(model, &iter,
+			                   FB_STRUCT, &ui_flow,
+			                   -1);
+
+			flow = gebr_ui_flow_get_flow(ui_flow);
+			if (flow != old_flow) {
+				gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
+				flow_browse_info_update();
+			}
+		} else {
+			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
+			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
+				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+					gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
+				else
+					gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
+			}
+		}
+	}
+
+	gebr_geoxml_document_unref(GEBR_GEOXML_DOCUMENT(old_flow));
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
 	g_list_free(rows);
 }
@@ -3202,7 +3193,7 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 	if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
 		gtk_toggle_button_set_active(gebr.ui_flow_browse->properties_ctx_button, TRUE);
 	else
-		gebr_flow_browse_load_parameters_review(gebr.flow, self);
+		gebr_flow_browse_load_parameters_review(gebr.flow, self, TRUE);
 }
 
 void
@@ -3623,17 +3614,22 @@ gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
 
 void
 gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
-                                        GebrUiFlowBrowse *fb)
+                                        GebrUiFlowBrowse *fb,
+                                        gboolean same_flow)
 {
 	if (!flow)
 		return;
 
-	if (!gtk_widget_get_visible(fb->context[CONTEXT_JOBS]) &&
-	    !gtk_widget_get_visible(fb->context[CONTEXT_MENU])) {
-		if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-			gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
-		else
-			gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
+	if (same_flow) {
+		if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
+		    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
+			if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+				gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+			else
+				gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
+		}
+	} else {
+		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 	}
 
 	GString *prog_content = g_string_new("");
@@ -3714,4 +3710,21 @@ gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,
 
 		gtk_widget_hide(fb->context[i]);
 	}
+}
+
+void
+gebr_flow_browse_escape_context(GebrUiFlowBrowse *fb)
+{
+	if (gtk_widget_get_visible(fb->context[CONTEXT_FLOW]))
+		return;
+
+	if (gtk_widget_get_visible(fb->context[CONTEXT_PARAMETERS])) {
+		if (gebr.ui_flow_browse->program_edit)
+		save_parameters(gebr.ui_flow_browse->program_edit);
+	}
+	else if (gtk_widget_get_visible(fb->context[CONTEXT_JOBS])) {
+		flow_browse_info_update();
+	}
+
+	gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, fb);
 }

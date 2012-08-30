@@ -223,6 +223,12 @@ void on_server_common_stop(void);
  */
 void open_url_on_press_event(void);
 
+/*
+ * Function: on_flows_escape_context
+ * Return to Flows context on Flow Browse
+ */
+void on_flows_escape_context(void);
+
 G_END_DECLS
 
 #endif /* __GEBR_CALLBACKS_H__ */

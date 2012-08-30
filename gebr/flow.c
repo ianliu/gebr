@@ -1054,7 +1054,7 @@ void flow_program_remove(void)
 	if (valid)
 		flow_browse_select_iter(&iter);
 
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
 }
 
 void flow_program_move_top(void)
