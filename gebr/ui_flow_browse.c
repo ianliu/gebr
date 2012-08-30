@@ -1562,6 +1562,13 @@ on_line_back_clicked(GtkButton *button,
 	gebr_interface_change_tab(NOTEBOOK_PAGE_PROJECT_LINE);
 }
 
+void
+on_menus_escaped(GtkWidget   *widget,
+		 GdkEventKey *event,
+		 GebrUiFlowBrowse *ui_flow_browse)
+{
+	gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, ui_flow_browse);
+}
 GebrUiFlowBrowse *flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
@@ -1857,6 +1864,8 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	ui_flow_browse->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->menu_store));
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->menu_view);
+
+	g_signal_connect(ui_flow_browse->menu_view, "key-press-event", G_CALLBACK(on_menus_escaped), ui_flow_browse);
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->menu_view),
 	                                          (GebrGuiGtkPopupCallback) flow_browse_menu_popup_menu,
