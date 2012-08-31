@@ -369,13 +369,14 @@ restore_project_line_flow_selection(void)
 
 	if (project_line_selected) {
 		project_line_select_iter(&iter);
+		GtkTreeIter flow_iter;
 
 		if (gebr.config.flow_treepath_string->len &&
-		    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &flow_iter,
 							gebr.config.flow_treepath_string->str))
 		{
-			flow_browse_select_iter(&iter);
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
+			flow_browse_select_iter(&flow_iter);
 		}
 	}
 }
@@ -526,7 +527,11 @@ void gebr_config_save(gboolean verbose)
 		g_free(str);
 
 		if (flow_browse_get_selected(&iter, FALSE)) {
-			g_string_assign(gebr.config.flow_treepath_string, gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter));
+			GtkTreeIter parent;
+			if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent, &iter))
+				g_string_assign(gebr.config.flow_treepath_string, gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent));
+			else
+				g_string_assign(gebr.config.flow_treepath_string, gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter));
 			g_key_file_set_string(gebr.config.key_file, "state", "flow_treepath_string", gebr.config.flow_treepath_string->str);
 		}
 	}

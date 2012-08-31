@@ -149,7 +149,10 @@ void on_quit_activate(void)
 	GtkTreeIter iter;
 	GebrMaestroServer *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED) {
+		// Save configuration before quit
+		gebr_config_save(FALSE);
 		gebr.quit = TRUE;
+
 		// Disconnect client from maestro
 		gebr_maestro_server_disconnect(m, TRUE);
 

@@ -213,7 +213,7 @@ unmount_gvfs(GebrMaestroServer *maestro,
 {
 	if (!maestro->priv->has_connected_daemon) {
 		if (quit)
-			gebr_quit(TRUE);
+			gebr_quit(FALSE);
 		else
 			return;
 	}
@@ -233,7 +233,7 @@ unmount_gvfs(GebrMaestroServer *maestro,
 	maestro->priv->mount_location = NULL;
 
 	if (quit)
-		gebr_quit(TRUE);
+		gebr_quit(FALSE);
 }
 
 static void
