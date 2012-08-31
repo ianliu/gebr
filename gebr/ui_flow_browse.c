@@ -2739,6 +2739,8 @@ static void flow_browse_load(void)
 			remove_programs_view(gebr.ui_flow_browse);
 		}
 
+		flow_browse_info_update();
+
 		/* check if has revisions */
 		gboolean has_revision = gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0;
 
@@ -2819,10 +2821,8 @@ static void flow_browse_load(void)
 			                   -1);
 
 			flow = gebr_ui_flow_get_flow(ui_flow);
-			if (flow != old_flow) {
+			if (flow != old_flow)
 				gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
-				flow_browse_info_update();
-			}
 		} else {
 			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
 			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
