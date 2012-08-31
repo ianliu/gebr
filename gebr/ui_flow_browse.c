@@ -858,10 +858,12 @@ on_dismiss_clicked(GtkButton *dismiss,
 
 	if (dismiss) {
 		gebr_flow_browse_reset_jobs_from_flow(gebr.flow, fb);
-		if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-			gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
-		else
-			gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
+		if (gtk_widget_get_visible(fb->context[CONTEXT_JOBS])) {
+			if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+				gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, fb);
+			else
+				gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, fb);
+		}
 	}
 
 	/* Hide Info bar*/
