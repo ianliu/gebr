@@ -283,5 +283,9 @@ void gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_con
 
 void gebr_flow_browse_escape_context(GebrUiFlowBrowse *fb);
 
+void gebr_flow_browse_block_changed_signal(GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_unblock_changed_signal(GebrUiFlowBrowse *fb);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

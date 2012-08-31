@@ -3731,3 +3731,17 @@ gebr_flow_browse_escape_context(GebrUiFlowBrowse *fb)
 
 	gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, fb);
 }
+
+void
+gebr_flow_browse_block_changed_signal(GebrUiFlowBrowse *fb)
+{
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view));
+	g_signal_handlers_block_by_func(selection, flow_browse_load, NULL);
+}
+
+void
+gebr_flow_browse_unblock_changed_signal(GebrUiFlowBrowse *fb)
+{
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view));
+	g_signal_handlers_unblock_by_func(selection, flow_browse_load, NULL);
+}

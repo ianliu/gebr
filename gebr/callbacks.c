@@ -130,27 +130,13 @@ void on_copy_activate(void)
 
 void on_paste_activate(void)
 {
-	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :{
-		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
-			GebrUiFlowBrowseType type;
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-			                   FB_STRUCT_TYPE, &type,
-			                   -1);
-
-			if (type == STRUCT_TYPE_FLOW) {
-				if (!gebr_geoxml_flow_get_programs_number(gebr.flow))
-					flow_program_paste();
-				break;
-			}
-
-			if (type == STRUCT_TYPE_PROGRAM) {
-				flow_program_paste();
-				return;
-			}
-		}
-		flow_paste();
+		gboolean is_flow = gebr.flow_clipboard && (g_list_length(gebr.flow_clipboard) > 0);
+		if (is_flow)
+			flow_paste();
+		else
+			flow_program_paste();
 		break;
 	}
 	default:

@@ -221,16 +221,19 @@ void flow_delete(gboolean confirm)
 		}
 
 		/* Free and delete flow from the disk */
+		gebr_flow_browse_block_changed_signal(gebr.ui_flow_browse);
 		gebr_remove_help_edit_window(GEBR_GEOXML_DOCUMENT(flow));
 		valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
-		flow_free();
+		gebr_flow_browse_unblock_changed_signal(gebr.ui_flow_browse);
 
 		document_delete(flow_id);
 
-		g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
-
 		g_free(title);
 	}
+
+	flow_free();
+	g_signal_emit_by_name(gebr.ui_flow_browse->view, "cursor-changed");
+
 	if (valid)
 		flow_browse_select_iter(&iter);
 
@@ -1171,6 +1174,7 @@ void flow_program_copy(void)
 		program = gebr_ui_flow_program_get_xml(ui_program);
 		gebr_geoxml_clipboard_copy(GEBR_GEOXML_OBJECT(program));
 	}
+	gebr.flow_clipboard = NULL;
 }
 
 void flow_program_paste(void)
