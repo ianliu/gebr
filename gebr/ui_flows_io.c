@@ -386,8 +386,9 @@ gebr_ui_flows_io_update_stock_id(GebrUiFlowsIo *io,
 {
 	const gchar *icon = gebr_ui_flows_io_get_icon_str(io);
 
-	if (error_1 || err_msg)
-		icon = GTK_STOCK_DIALOG_WARNING;
+	if (error_1 || err_msg || !icon)
+		if (io->priv->active)
+			icon = GTK_STOCK_DIALOG_WARNING;
 
 	io->priv->stock_id = g_strdup(icon);
 	return;
@@ -406,6 +407,9 @@ on_ui_flows_io_overwrite_toggled(GtkCheckMenuItem *item,
 		gebr_geoxml_flow_io_set_output_append(GEBR_GEOXML_FLOW(dai->doc), !overwrite);
 	else if (type == GEBR_IO_TYPE_ERROR)
 		gebr_geoxml_flow_io_set_error_append(GEBR_GEOXML_FLOW(dai->doc), !overwrite);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	gebr_ui_flows_io_load_from_xml(dai->io, gebr.line, GEBR_GEOXML_FLOW(dai->doc), maestro, gebr.validator);
 }
 
 GtkMenu *
@@ -417,6 +421,9 @@ gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 	gboolean overwrite;
 	GCallback overwrite_callback = G_CALLBACK(on_ui_flows_io_overwrite_toggled);
 	const gchar *label;
+
+	if (!io->priv->active)
+		return NULL;
 
 	GebrUiFlowsIoType type = io->priv->type;
 
