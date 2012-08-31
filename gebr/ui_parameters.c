@@ -132,7 +132,7 @@ parameters_configure_setup_ui(void)
 		gtk_box_pack_start(GTK_BOX(hbox_buttons), button, FALSE, TRUE, 5);
 		g_string_free(full_uri, TRUE);
 	}
-	gtk_widget_show(program_edit->widget);
+	gtk_widget_show_all(program_edit->widget);
 	return program_edit;
 }
 
