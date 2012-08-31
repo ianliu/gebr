@@ -3474,6 +3474,9 @@ gebr_flow_browse_select_file_column(GtkTreeView *tree_view,
 	GtkTreeViewColumn *column;
 	gtk_tree_view_get_cursor(tree_view, &path, &column);
 
+	if (!path || !column)
+		return;
+
 	gint pos, wid;
 	if(!gtk_tree_view_column_cell_get_position(column, fb->action_renderer, &pos, &wid))
 		return;
