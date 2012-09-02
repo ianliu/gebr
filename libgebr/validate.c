@@ -125,6 +125,30 @@ const gchar * gebr_validate_case_get_message (GebrValidateCase *validate_case)
 	return _(validate_case->validcase_msg);
 }
 
+static gint
+gebr_validate_case_check_value_aux(gint flags, const gchar *value, gint failed) 
+{
+	if (flags & GEBR_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
+		failed |= GEBR_VALIDATE_CHECK_EMPTY;
+	if (flags & GEBR_VALIDATE_CHECK_CAPIT && !gebr_validate_check_no_lower_case(value))
+		failed |= GEBR_VALIDATE_CHECK_CAPIT;
+	if (flags & GEBR_VALIDATE_CHECK_NOBLK && !gebr_validate_check_no_blanks_at_boundaries(value))
+		failed |= GEBR_VALIDATE_CHECK_NOBLK;
+	if (flags & GEBR_VALIDATE_CHECK_MTBLK && !gebr_validate_check_no_multiple_blanks(value))
+		failed |= GEBR_VALIDATE_CHECK_MTBLK;
+	if (flags & GEBR_VALIDATE_CHECK_NOPNT && !gebr_validate_check_no_punctuation_at_end(value))
+		failed |= GEBR_VALIDATE_CHECK_NOPNT;
+	if (flags & GEBR_VALIDATE_CHECK_EMAIL && !gebr_validate_check_is_email(value))
+		failed |= GEBR_VALIDATE_CHECK_EMAIL;
+	if (flags & GEBR_VALIDATE_CHECK_FILEN && !gebr_validate_check_menu_filename(value))
+		failed |= GEBR_VALIDATE_CHECK_FILEN;
+	if (flags & GEBR_VALIDATE_CHECK_URL && !gebr_validate_check_is_url(value))
+		failed |= GEBR_VALIDATE_CHECK_URL;
+	if (flags & GEBR_VALIDATE_CHECK_TABS && !gebr_validate_check_tabs(value))
+		failed |= GEBR_VALIDATE_CHECK_TABS;
+	return failed;
+}
+
 gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value, gboolean * can_fix)
 {
 	gint flags = self->flags;
@@ -135,37 +159,109 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 			    flags & GEBR_VALIDATE_CHECK_EMAIL ||
 			    flags & GEBR_VALIDATE_CHECK_FILEN) ? FALSE : TRUE;
 
-	void gebr_validate_case_check_value_aux(const gchar *value) 
-	{
-		if (flags & GEBR_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
-			failed |= GEBR_VALIDATE_CHECK_EMPTY;
-		if (flags & GEBR_VALIDATE_CHECK_CAPIT && !gebr_validate_check_no_lower_case(value))
-			failed |= GEBR_VALIDATE_CHECK_CAPIT;
-		if (flags & GEBR_VALIDATE_CHECK_NOBLK && !gebr_validate_check_no_blanks_at_boundaries(value))
-			failed |= GEBR_VALIDATE_CHECK_NOBLK;
-		if (flags & GEBR_VALIDATE_CHECK_MTBLK && !gebr_validate_check_no_multiple_blanks(value))
-			failed |= GEBR_VALIDATE_CHECK_MTBLK;
-		if (flags & GEBR_VALIDATE_CHECK_NOPNT && !gebr_validate_check_no_punctuation_at_end(value))
-			failed |= GEBR_VALIDATE_CHECK_NOPNT;
-		if (flags & GEBR_VALIDATE_CHECK_EMAIL && !gebr_validate_check_is_email(value))
-			failed |= GEBR_VALIDATE_CHECK_EMAIL;
-		if (flags & GEBR_VALIDATE_CHECK_FILEN && !gebr_validate_check_menu_filename(value))
-			failed |= GEBR_VALIDATE_CHECK_FILEN;
-		if (flags & GEBR_VALIDATE_CHECK_URL && !gebr_validate_check_is_url(value))
-			failed |= GEBR_VALIDATE_CHECK_URL;
-		if (flags & GEBR_VALIDATE_CHECK_TABS && !gebr_validate_check_tabs(value))
-			failed |= GEBR_VALIDATE_CHECK_TABS;
-	}
-
 	if (self->name == GEBR_VALIDATE_CASE_CATEGORY) {
 		gchar **cats = g_strsplit(value, "|", 0);
 		for (int i = 0; cats[i] != NULL; ++i)
-			gebr_validate_case_check_value_aux(cats[i]);
+			gebr_validate_case_check_value_aux(flags, cats[i], failed);
 		g_strfreev(cats);
 	} else
-		gebr_validate_case_check_value_aux(value);
+		gebr_validate_case_check_value_aux(flags, value, failed);
 
 	return failed;
+}
+
+
+static gchar *
+gebr_validate_case_fix_aux(GebrValidateCase * self, const gchar *value, gboolean *has_fix)
+{
+	gchar * tmp = NULL;
+	gchar * fix = g_strdup(value);
+	*has_fix = FALSE;
+
+	if (self->flags & GEBR_VALIDATE_CHECK_CAPIT
+	    && !gebr_validate_check_no_lower_case(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_first_to_upper(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+		*has_fix = TRUE;
+	}
+	if (self->flags & GEBR_VALIDATE_CHECK_NOBLK
+	    && !gebr_validate_check_no_blanks_at_boundaries(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_no_blanks_at_boundaries(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+		*has_fix = TRUE;
+	}
+	if (self->flags & GEBR_VALIDATE_CHECK_MTBLK
+	    && !gebr_validate_check_no_multiple_blanks(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_multiple_blanks(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+		*has_fix = TRUE;
+	}
+	if (self->flags & GEBR_VALIDATE_CHECK_NOPNT
+	    && !gebr_validate_check_no_punctuation_at_end(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_no_punctuation_at_end(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+		*has_fix = TRUE;
+	}
+	if (self->flags & GEBR_VALIDATE_CHECK_URL
+	    && !gebr_validate_check_is_url(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_url(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+		*has_fix = TRUE;
+	}
+	if (self->flags & GEBR_VALIDATE_CHECK_TABS
+	    && !gebr_validate_check_tabs(fix)) {
+		if (fix != NULL)
+			tmp = fix;
+		fix = gebr_validate_change_tabs(fix);
+		if (tmp) {
+			g_free(tmp);
+			tmp = NULL;
+		}
+		*has_fix = TRUE;
+	}
+
+	return fix;
+}
+
+static gchar *
+gebr_validate_case_fix_aux_iter(GebrValidateCase * self, const gchar *value)
+{
+	gchar *tmp;
+	gboolean has_fix;
+	gchar *fix = gebr_validate_case_fix_aux (self, value, &has_fix);
+
+	while (has_fix) {
+		tmp = fix;
+		fix = gebr_validate_case_fix_aux (self, fix, &has_fix);
+		g_free (tmp);
+	}
+
+	return fix;
 }
 
 gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
@@ -176,102 +272,12 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 	if (!can_fix)
 		return NULL;
 
-	gchar * gebr_validate_case_fix_aux(const gchar *value, gboolean *has_fix)
-	{
-		gchar * tmp = NULL;
-		gchar * fix = g_strdup(value);
-		*has_fix = FALSE;
-
-		if (self->flags & GEBR_VALIDATE_CHECK_CAPIT
-		    && !gebr_validate_check_no_lower_case(fix)) {
-			if (fix != NULL)
-				tmp = fix;
-			fix = gebr_validate_change_first_to_upper(fix);
-			if (tmp) {
-				g_free(tmp);
-				tmp = NULL;
-			}
-			*has_fix = TRUE;
-		}
-		if (self->flags & GEBR_VALIDATE_CHECK_NOBLK
-		    && !gebr_validate_check_no_blanks_at_boundaries(fix)) {
-			if (fix != NULL)
-				tmp = fix;
-			fix = gebr_validate_change_no_blanks_at_boundaries(fix);
-			if (tmp) {
-				g_free(tmp);
-				tmp = NULL;
-			}
-			*has_fix = TRUE;
-		}
-		if (self->flags & GEBR_VALIDATE_CHECK_MTBLK
-		    && !gebr_validate_check_no_multiple_blanks(fix)) {
-			if (fix != NULL)
-				tmp = fix;
-			fix = gebr_validate_change_multiple_blanks(fix);
-			if (tmp) {
-				g_free(tmp);
-				tmp = NULL;
-			}
-			*has_fix = TRUE;
-		}
-		if (self->flags & GEBR_VALIDATE_CHECK_NOPNT
-		    && !gebr_validate_check_no_punctuation_at_end(fix)) {
-			if (fix != NULL)
-				tmp = fix;
-			fix = gebr_validate_change_no_punctuation_at_end(fix);
-			if (tmp) {
-				g_free(tmp);
-				tmp = NULL;
-			}
-			*has_fix = TRUE;
-		}
-		if (self->flags & GEBR_VALIDATE_CHECK_URL
-		    && !gebr_validate_check_is_url(fix)) {
-			if (fix != NULL)
-				tmp = fix;
-			fix = gebr_validate_change_url(fix);
-			if (tmp) {
-				g_free(tmp);
-				tmp = NULL;
-			}
-			*has_fix = TRUE;
-		}
-		if (self->flags & GEBR_VALIDATE_CHECK_TABS
-		    && !gebr_validate_check_tabs(fix)) {
-			if (fix != NULL)
-				tmp = fix;
-			fix = gebr_validate_change_tabs(fix);
-			if (tmp) {
-				g_free(tmp);
-				tmp = NULL;
-			}
-			*has_fix = TRUE;
-		}
-		
-		return fix;
-	}
-
-	gchar * gebr_validate_case_fix_aux_iter(const gchar *value)
-	{
-		gchar *tmp;
-		gboolean has_fix;
-		gchar *fix = gebr_validate_case_fix_aux (value, &has_fix);
-
-		while (has_fix) {
-			tmp = fix;
-			fix = gebr_validate_case_fix_aux (fix, &has_fix);
-			g_free (tmp);
-		}
-
-		return fix;
-	}
 
 	if (self->name == GEBR_VALIDATE_CASE_CATEGORY) {
 		GString *fix = g_string_new("");
 		gchar **cats = g_strsplit(value, "|", 0);
 		for (int i = 0; cats[i] != NULL; i++) {
-			gchar *ifix = gebr_validate_case_fix_aux_iter(cats[i]);
+			gchar *ifix = gebr_validate_case_fix_aux_iter(self, cats[i]);
 			g_string_append_printf(fix, "%s%s", ifix != NULL ? ifix : cats[i], cats[i+1] != NULL ? "|" : "");
 			if (ifix != NULL)
 				g_free(ifix);
@@ -282,7 +288,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 		g_string_free(fix, FALSE);
 		return ret;
 	} else
-		return gebr_validate_case_fix_aux_iter(value);
+		return gebr_validate_case_fix_aux_iter(self, value);
 }
 
 gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gchar * value, gboolean * can_fix)
