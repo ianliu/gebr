@@ -102,11 +102,7 @@ test_gebr_geoxml_leaks_flow_foreach_parameter(void)
 	gebr_geoxml_document_load((GebrGeoXmlDocument **)&flow,
 				  TEST_DIR "/test.mnu", TRUE, NULL);
 
-	gboolean callback(GebrGeoXmlObject *object, gpointer user_data) {
-		return TRUE;
-	}
-
-	gebr_geoxml_flow_foreach_parameter(flow, callback, NULL);
+	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)gebr_callback_true, NULL);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
@@ -191,12 +187,8 @@ test_gebr_geoxml_leaks_program_foreach(void)
 	gebr_geoxml_document_load((GebrGeoXmlDocument **)&flow,
 				  TEST_DIR "/test.mnu", TRUE, NULL);
 
-	gboolean callback(GebrGeoXmlObject *object, gpointer user_data) {
-		return TRUE;
-	}
-
 	gebr_geoxml_flow_get_program(flow, (GebrGeoXmlSequence**)&prog, 0);
-	gebr_geoxml_program_foreach_parameter(prog, callback, NULL);
+	gebr_geoxml_program_foreach_parameter(prog, (GebrGeoXmlCallback)gebr_callback_true, NULL);
 	gebr_geoxml_object_unref(prog);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }

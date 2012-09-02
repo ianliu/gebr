@@ -799,14 +799,10 @@ void test_gebr_geoxml_flow_revisions_get_root_id(void)
 	GList *values = NULL;
 	gchar *result1, *result2, *result3, *result4;
 
-	void list_free(gpointer data) {
-		g_list_free(data);
-	}
-
-	GHashTable *hash1 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, list_free);
-	GHashTable *hash2 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, list_free);
-	GHashTable *hash3 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, list_free);
-	GHashTable *hash4 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, list_free);
+	GHashTable *hash1 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_list_free);
+	GHashTable *hash2 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_list_free);
+	GHashTable *hash3 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_list_free);
+	GHashTable *hash4 = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_list_free);
 
 	values = NULL;
 	values = g_list_prepend(values, "B");
