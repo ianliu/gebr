@@ -422,6 +422,55 @@ static void __category_edit_move_bottom(CategoryEdit * category_edit, GtkTreeIte
 	g_signal_emit_by_name(category_edit, "changed");
 }
 
+static gboolean
+tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event,
+			    CategoryEdit * category_edit)
+{
+	if (event->button != 1)
+		return FALSE;
+
+	GtkTreePath *path;
+	GtkTreeViewColumn *column;
+	/* Get tree path for row that was clicked */
+	if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
+					  (gint) event->x, (gint) event->y, &path, &column, NULL, NULL)) {
+		if (gtk_tree_view_column_get_sort_column_id(column) == 1) {
+			GtkTreeIter iter;
+			gchar *stock;
+			GebrGeoXmlValueSequence *category;
+
+			gtk_tree_model_get_iter(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store),
+						&iter, path);
+			gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), &iter,
+					   1, &stock,
+					   2, &category,
+					   -1);
+			if (stock) {
+				GebrValidateCase *validate_case =
+					gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY);
+				gchar *fix = gebr_validate_case_fix(validate_case,
+								    gebr_geoxml_value_sequence_get(category));
+
+				gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, &iter,
+						   0, fix,
+						   1, stock,
+						   -1);
+
+				gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(category), fix);
+				__category_edit_validate_iter(category_edit, &iter);
+
+				g_signal_emit_by_name(category_edit, "changed");
+
+				g_free(fix);
+				g_free(stock);
+			}
+		}
+		gtk_tree_path_free(path);
+	}
+
+	return FALSE;
+}
+
 /**
  * \internal
  */
@@ -432,54 +481,6 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 	 * \internal
 	 * Handle validation warning clicks, triggering automatic fixes.
 	 */
-	gboolean tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * event,
-					     CategoryEdit * category_edit)
-	{
-		if (event->button != 1)
-			return FALSE;
-
-		GtkTreePath *path;
-		GtkTreeViewColumn *column;
-		/* Get tree path for row that was clicked */
-		if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
-						  (gint) event->x, (gint) event->y, &path, &column, NULL, NULL)) {
-			if (gtk_tree_view_column_get_sort_column_id(column) == 1) {
-				GtkTreeIter iter;
-				gchar *stock;
-				GebrGeoXmlValueSequence *category;
-
-				gtk_tree_model_get_iter(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store),
-							&iter, path);
-				gtk_tree_model_get(GTK_TREE_MODEL(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store), &iter,
-						   1, &stock,
-						   2, &category,
-						   -1);
-				if (stock) {
-					GebrValidateCase *validate_case =
-						gebr_validate_get_validate_case(GEBR_VALIDATE_CASE_CATEGORY);
-					gchar *fix = gebr_validate_case_fix(validate_case,
-									    gebr_geoxml_value_sequence_get(category));
-
-					gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, &iter,
-							   0, fix,
-							   1, stock,
-							   -1);
-
-					gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(category), fix);
-					__category_edit_validate_iter(category_edit, &iter);
-
-					g_signal_emit_by_name(category_edit, "changed");
-
-					g_free(fix);
-					g_free(stock);
-				}
-			}
-			gtk_tree_path_free(path);
-		}
-
-		return FALSE;
-	}
-
 	GtkWidget *tree_view;
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;

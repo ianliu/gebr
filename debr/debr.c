@@ -158,6 +158,20 @@ gboolean debr_config_load(void)
 	return ret;
 }
 
+struct ConfigSaveData {
+	gint i;
+	gchar **list;
+};
+
+static void
+hash_to_vector_foreach(gpointer key, gpointer value, gpointer user_data)
+{
+	struct ConfigSaveData *data = user_data;
+	const gchar *folder = key;
+	data->list[data->i] = g_strdup(folder);
+	data->i++;
+}
+
 void debr_config_save(void)
 {
 	gsize length;
@@ -165,21 +179,20 @@ void debr_config_save(void)
 	GError *error;
 	FILE *configfp;
 	gchar ** list;
-	guint i = 0;
 
 	list = g_new(gchar *, g_hash_table_size(debr.config.opened_folders) + 1);
 
-	void foreach(gchar * key) {
-		list[i++] = g_strdup(key);
-	}
+	struct ConfigSaveData data;
+	data.list = list;
+	data.i = 0;
 
-	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
+	g_hash_table_foreach(debr.config.opened_folders, hash_to_vector_foreach, &data);
 
-	list[i] = NULL;
+	list[data.i] = NULL;
 
 	g_key_file_set_string(debr.config.key_file, "general", "name", debr.config.name->str);
 	g_key_file_set_string(debr.config.key_file, "general", "email", debr.config.email->str);
-	g_key_file_set_string_list(debr.config.key_file, "general", "menu_dir", (const gchar * const *)list, i);
+	g_key_file_set_string_list(debr.config.key_file, "general", "menu_dir", (const gchar * const *)list, data.i);
 	g_key_file_set_string(debr.config.key_file, "general", "htmleditor", debr.config.htmleditor->str);
 	g_key_file_set_boolean(debr.config.key_file, "general", "native_editor", debr.config.native_editor);
 	g_key_file_set_boolean(debr.config.key_file, "general", "menu_sort_ascending", debr.config.menu_sort_ascending);
