@@ -751,21 +751,20 @@ gebrm_daemon_has_tag(GebrmDaemon *daemon,
 	return g_tree_lookup(daemon->priv->tags, tag) != NULL;
 }
 
+static gboolean
+traverse_tags(gpointer key, gpointer value, gpointer data)
+{
+	GString *b = data;
+	gchar *tag = key;
+	g_string_append_printf(b, "%s,", tag);
+	return FALSE;
+}
+
 gchar *
 gebrm_daemon_get_tags(GebrmDaemon *daemon)
 {
-	gboolean traverse(gpointer key,
-			  gpointer value,
-			  gpointer data)
-	{
-		GString *b = data;
-		gchar *tag = key;
-		g_string_append_printf(b, "%s,", tag);
-		return FALSE;
-	}
-
 	GString *buf = g_string_new("");
-	g_tree_foreach(daemon->priv->tags, traverse, buf);
+	g_tree_foreach(daemon->priv->tags, traverse_tags, buf);
 
 	if (buf->len > 0)
 		g_string_erase(buf, buf->len - 1, 1);
@@ -964,20 +963,19 @@ gebrm_daemon_get_uncompleted_tasks(GebrmDaemon *daemon)
 	return daemon->priv->uncompleted_tasks;
 }
 
+static void
+get_jobs(gpointer key, gpointer value, gpointer user_data)
+{
+	GList *jobs = user_data;
+	GebrmTask *task = value;
+	jobs = g_list_prepend(jobs, g_strdup(gebrm_task_get_job_id(task)));
+}
+
 GList *
 gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon)
 {
 	GList *jobs = NULL;
-
-	void get_jobs(gpointer key, gpointer value)
-	{
-		GebrmTask *task = value;
-
-		jobs = g_list_prepend(jobs, g_strdup(gebrm_task_get_job_id(task)));
-	}
-
-	g_hash_table_foreach(daemon->priv->tasks, (GHFunc)get_jobs, NULL);
-
+	g_hash_table_foreach(daemon->priv->tasks, get_jobs, jobs);
 	return jobs;
 }
 
