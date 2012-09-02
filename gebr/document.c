@@ -166,6 +166,79 @@ int document_load_path(GebrGeoXmlDocument **document, const gchar * path)
 	return document_load_path_with_parent(document, path, NULL, FALSE);
 }
 
+/*
+ * Callback to remove menu reference from program to maintain backward compatibility
+ */
+static void
+__document_discard_menu_ref_callback(GebrGeoXmlProgram * program, const gchar * filename, gint index)
+{
+	GebrGeoXmlFlow *menu;
+	GebrGeoXmlSequence *menu_program;
+
+	menu = menu_load_ancient(filename);
+	if (menu == NULL)
+		return;
+
+	/* go to menu's program index specified in flow */
+	gebr_geoxml_flow_get_program(menu, &menu_program, index);
+	gchar *tmp_help_p = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(menu_program));
+	gebr_geoxml_program_set_help(program, tmp_help_p);
+	g_free(tmp_help_p);
+
+	document_free(GEBR_GEOXML_DOC(menu));
+}	
+
+/**
+ * Remove the first reference (if found) to \p path from \p parent.
+ * \p parent is a project or a line.
+ */
+static void
+remove_parent_ref(GebrGeoXmlDocument *parent_document, const gchar *path)
+{
+	GebrGeoXmlSequence * sequence;
+	GebrGeoXmlDocumentType type;
+
+	gchar *basename;
+	basename = g_path_get_basename(path);
+
+	type = gebr_geoxml_document_get_type(parent_document);
+	if (type == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
+		gebr_geoxml_project_get_line(GEBR_GEOXML_PROJECT(parent_document), &sequence, 0);
+	else if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
+		gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(parent_document), &sequence, 0);
+	else
+		return;
+	for (; sequence != NULL; gebr_geoxml_sequence_next(&sequence)) {
+		const gchar *i_src;
+
+		if (type == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
+			i_src = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(sequence));
+		else
+			i_src = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(sequence));
+		if (!strcmp(i_src, basename)) {
+			gebr_geoxml_sequence_remove(sequence);
+			document_save(parent_document, FALSE, FALSE);
+			break;
+		}
+	}
+
+	g_free(basename);
+}
+
+static const gchar *
+get_document_name(GebrGeoXmlDocument *document)
+{
+	if (document == NULL)
+		return _("document");
+
+	switch (gebr_geoxml_document_get_type(document)) {
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: return _("project");
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: return _("line");
+	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW: return _("flow");
+	default: return _("document");
+	}
+}
+
 int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent, gboolean cache)
 {
 	if (cache) {
@@ -174,27 +247,6 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			return GEBR_GEOXML_RETV_SUCCESS;
 	}
 
-	/*
-	 * Callback to remove menu reference from program to maintain backward compatibility
-	 */
-	void  __document_discard_menu_ref_callback(GebrGeoXmlProgram * program, const gchar * filename, gint index)
-	{
-		GebrGeoXmlFlow *menu;
-		GebrGeoXmlSequence *menu_program;
-
-		menu = menu_load_ancient(filename);
-		if (menu == NULL)
-			return;
-
-		/* go to menu's program index specified in flow */
-		gebr_geoxml_flow_get_program(menu, &menu_program, index);
-		gchar *tmp_help_p = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(menu_program));
-		gebr_geoxml_program_set_help(program, tmp_help_p);
-		g_free(tmp_help_p);
-
-		document_free(GEBR_GEOXML_DOC(menu));
-	}	
-
 	int ret = gebr_geoxml_document_load(document, path, TRUE, g_str_has_suffix(path, ".flw") ?
 					    __document_discard_menu_ref_callback : NULL);
 
@@ -202,43 +254,6 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		if (cache)
 			document_cache_add(path, *document);
 		return GEBR_GEOXML_RETV_SUCCESS;
-	}
-
-	/**
-	 * \internal
-	 * Remove the first reference (if found) to \p path from \p parent.
-	 * \p parent is a project or a line.
-	 */
-	void remove_parent_ref(GebrGeoXmlDocument *parent_document, const gchar *path)
-	{
-		GebrGeoXmlSequence * sequence;
-		GebrGeoXmlDocumentType type;
-
-		gchar *basename;
-		basename = g_path_get_basename(path);
-
-		type = gebr_geoxml_document_get_type(parent_document);
-		if (type == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-			gebr_geoxml_project_get_line(GEBR_GEOXML_PROJECT(parent_document), &sequence, 0);
-		else if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
-			gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(parent_document), &sequence, 0);
-		else
-			return;
-		for (; sequence != NULL; gebr_geoxml_sequence_next(&sequence)) {
-			const gchar *i_src;
-
-			if (type == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-				i_src = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(sequence));
-			else
-				i_src = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(sequence));
-			if (!strcmp(i_src, basename)) {
-				gebr_geoxml_sequence_remove(sequence);
-				document_save(parent_document, FALSE, FALSE);
-				break;
-			}
-		}
-
-		g_free(basename);
 	}
 
 	GString *string;
@@ -289,26 +304,6 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		goto out;
 	}
 
-	const gchar *get_document_name(GebrGeoXmlDocument *document)
-       	{
-		const gchar *document_name;
-		if (document == NULL)
-			document_name = _("document");
-		else switch (gebr_geoxml_document_get_type(document)) {
-		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
-			document_name = _("project");
-			break;
-		case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
-			document_name = _("line");
-			break;
-		case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
-			document_name = _("flow");
-			break;
-		default:
-			document_name = _("document");
-		}
-		return document_name;
-	}
 	const gchar *document_name = get_document_name(*document);
 
 	gchar *fname;
@@ -503,15 +498,16 @@ gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date
 	return ret;
 }
 
+static void
+foreach_document_free(gpointer key, gpointer value, gpointer document)
+{
+	if (value == document)
+		g_hash_table_remove(gebr.xmls_by_filename, key);
+}
+
 void document_free(GebrGeoXmlDocument * document)
 {
-	void foreach(gpointer key, gpointer value)
-	{
-		if (value == (gpointer)document)
-			g_hash_table_remove(gebr.xmls_by_filename, key);
-	}
-	g_hash_table_foreach(gebr.xmls_by_filename, (GHFunc)foreach, NULL);
-
+	g_hash_table_foreach(gebr.xmls_by_filename, foreach_document_free, document);
 	gebr_geoxml_document_free(document);
 }
 

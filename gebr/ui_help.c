@@ -154,6 +154,12 @@ static void on_help_clicked(GtkAction *action, GebrGuiHtmlViewerWindow * self)
 		gebr_gui_help_button_clicked("projects_lines_view_report_project", NULL);
 }
 
+static void 
+free_help(GtkWidget * widget, gpointer help)
+{
+	g_free((gchar *)help);
+}
+
 static GtkWidget *
 create_help_edit_window(GebrGeoXmlDocument * document)
 {
@@ -180,13 +186,6 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 
 	g_signal_connect(window, "destroy",
 			 G_CALLBACK(on_help_edit_window_destroy), document);
-
-	void 
-	free_help(GtkWidget * widget,
-		  gpointer help)
-	{
-		g_free((gchar *)help);
-	}
 
 	g_signal_connect_after(window, "destroy", G_CALLBACK(free_help), help);
 

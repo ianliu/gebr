@@ -150,6 +150,13 @@ gebr_init(gboolean has_config)
 		menu_list_populate();
 }
 
+static void
+free_flow_jobs_list(gpointer key, gpointer value)
+{
+	GList *list = value;
+	g_list_free(list);
+}
+
 gboolean gebr_quit(gboolean save_config)
 {
 	g_free(SESSIONID);
@@ -177,12 +184,7 @@ gboolean gebr_quit(gboolean save_config)
 
 	gebr_comm_process_kill(gebr.ui_flow_browse->graph_process);
 	g_list_free(gebr.ui_flow_browse->select_flows);
-
-	void free(gpointer key, gpointer value) {
-		GList *list = value;
-		g_list_free(list);
-	}
-	g_hash_table_foreach(gebr.ui_flow_browse->flow_jobs, (GHFunc)free, NULL);
+	g_hash_table_foreach(gebr.ui_flow_browse->flow_jobs, (GHFunc)free_flow_jobs_list, NULL);
 	g_hash_table_destroy(gebr.ui_flow_browse->flow_jobs);
 
 	/* free config stuff */
@@ -589,19 +591,20 @@ void gebr_message(GebrLogMessageType type, gboolean in_statusbar, gboolean in_lo
 	g_free(string);
 }
 
+static void
+remove_window(GebrGeoXmlDocument * document)
+{
+	if (document == NULL)
+		return;
+	GtkWidget * window = g_hash_table_lookup(gebr.help_edit_windows, document);
+	if (window)
+		gtk_widget_destroy(window);
+}
+
 void gebr_remove_help_edit_window(GebrGeoXmlDocument * document)
 {
 	if (document == NULL)
 		return;
-
-	void remove_window(GebrGeoXmlDocument * document)
-	{
-		if (document == NULL)
-			return;
-		GtkWidget * window = g_hash_table_lookup(gebr.help_edit_windows, document);
-		if (window)
-			gtk_widget_destroy(window);
-	}
 
 	switch (gebr_geoxml_document_get_type(document)) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
