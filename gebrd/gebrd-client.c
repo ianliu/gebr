@@ -258,6 +258,14 @@ parse_comma_separated_string(gchar *str)
 	return list;
 }
 
+static void
+get_mpi_flavors(GebrdMpiConfig *mpi_config, GString *mpi_flavors) {
+	mpi_flavors = g_string_prepend_c(mpi_flavors, ',');
+	mpi_flavors = g_string_prepend(mpi_flavors, mpi_config->name->str);
+	g_debug("%s", mpi_config->name->str);
+}
+
+
 static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct client *client)
 {
 	GList *link;
@@ -304,13 +312,6 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				server_type = "moab";
 			} else
 				server_type = "regular";
-
-			/* send return */
-			void get_mpi_flavors(GebrdMpiConfig *mpi_config, GString *mpi_flavors) {
-				mpi_flavors = g_string_prepend_c(mpi_flavors, ',');
-				mpi_flavors = g_string_prepend(mpi_flavors, mpi_config->name->str);
-				g_debug("%s", mpi_config->name->str);
-			}
 
 			GString *mpi_flavors = g_string_new("");
 			g_list_foreach(gebrd->mpi_flavors, (GFunc) get_mpi_flavors, mpi_flavors);

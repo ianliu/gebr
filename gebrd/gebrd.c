@@ -359,6 +359,25 @@ mpi_fallback(void)
 	}
 }
 
+/*
+ * Prints the error message of @error.
+ */
+static gboolean
+key_file_exception(GError ** error, const gchar * path)
+{
+	if (*error == NULL)
+		return FALSE;
+
+	if ((*error)->domain == G_FILE_ERROR && (*error)->code == G_FILE_ERROR_NOENT)
+		return FALSE;
+
+	g_warning("Error reading %s: %s\n", path, (*error)->message);
+	g_error_free(*error);
+	*error = NULL;
+
+	return TRUE;
+}
+
 void gebrd_config_load(void)
 {
 	gchar ** groups;
@@ -370,23 +389,6 @@ void gebrd_config_load(void)
 	gebrd->mpi_flavors = NULL;
 	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd.conf", g_get_home_dir());
 	key_file = g_key_file_new();
-
-	/*
-	 * Prints the error message of @error.
-	 */
-	gboolean key_file_exception(GError ** error, const gchar * path) {
-		if (*error == NULL)
-			return FALSE;
-
-		if ((*error)->domain == G_FILE_ERROR && (*error)->code == G_FILE_ERROR_NOENT)
-			return FALSE;
-
-		g_warning("Error reading %s: %s\n", path, (*error)->message);
-		g_error_free(*error);
-		*error = NULL;
-
-		return TRUE;
-	}
 
 	/*
 	 * Loads both configuration files in the same GKeyFile structure.
