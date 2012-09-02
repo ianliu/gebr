@@ -72,6 +72,48 @@ static void gebr_comm_protocol_socket_disconnected(GebrCommStreamSocket *socket,
 {
 	g_signal_emit(self, object_signals[DISCONNECTED], 0);
 }
+
+
+static gboolean
+parse_http_msg(GebrCommProtocolSocket * self, GString *data)
+{
+	self->priv->incoming_msg = gebr_comm_http_msg_new_parsing(self->priv->incoming_msg, data);
+	if (!self->priv->incoming_msg)
+		return FALSE;
+	if (!self->priv->incoming_msg->parsed)
+		return TRUE; /* more data need... */
+
+	if (self->priv->incoming_msg->type == GEBR_COMM_HTTP_TYPE_REQUEST)
+		g_signal_emit(self, object_signals[PROCESS_REQUEST], 0, self->priv->incoming_msg);
+	else if (self->priv->incoming_msg->type == GEBR_COMM_HTTP_TYPE_RESPONSE) {
+		if (self->priv->requests_fifo != NULL) {
+			GebrCommHttpMsg *request = (GebrCommHttpMsg*)self->priv->requests_fifo->data;
+			GebrCommHttpMsg *response = self->priv->incoming_msg;
+			g_signal_emit(self, object_signals[PROCESS_RESPONSE], 0, request, response);
+			gebr_comm_http_msg_response_received(request, response);
+			gebr_comm_http_msg_free(request);
+
+			self->priv->requests_fifo = g_list_remove_link(self->priv->requests_fifo, self->priv->requests_fifo);
+		}
+	}
+	gebr_comm_http_msg_free(self->priv->incoming_msg);
+	self->priv->incoming_msg = NULL;
+
+	return TRUE;
+}
+
+static gboolean
+parse_old_msg(GebrCommProtocolSocket * self, GString *data)
+{
+	/* old non-rest protocol */
+	//TODO: emit data received with raw string data
+	gboolean ret;
+	if ((ret = gebr_comm_protocol_receive_data(self->protocol, data)))
+		g_signal_emit(self, object_signals[OLD_PARSE_MESSAGES], 0);
+
+	return ret;
+}
+
 static void gebr_comm_protocol_socket_read(GebrCommStreamSocket *socket, GebrCommProtocolSocket * self)
 {
 	GString *data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(socket));
@@ -79,57 +121,21 @@ static void gebr_comm_protocol_socket_read(GebrCommStreamSocket *socket, GebrCom
 	if (!data)
 		return;
 
-	gboolean parse_http_msg()
-	{
-		self->priv->incoming_msg = gebr_comm_http_msg_new_parsing(self->priv->incoming_msg, data);
-		if (!self->priv->incoming_msg)
-			return FALSE;
-		if (!self->priv->incoming_msg->parsed)
-			return TRUE; /* more data need... */
-
-		if (self->priv->incoming_msg->type == GEBR_COMM_HTTP_TYPE_REQUEST)
-			g_signal_emit(self, object_signals[PROCESS_REQUEST], 0, self->priv->incoming_msg);
-		else if (self->priv->incoming_msg->type == GEBR_COMM_HTTP_TYPE_RESPONSE) {
-			if (self->priv->requests_fifo != NULL) {
-				GebrCommHttpMsg *request = (GebrCommHttpMsg*)self->priv->requests_fifo->data;
-				GebrCommHttpMsg *response = self->priv->incoming_msg;
-				g_signal_emit(self, object_signals[PROCESS_RESPONSE], 0, request, response);
-				gebr_comm_http_msg_response_received(request, response);
-				gebr_comm_http_msg_free(request);
-
-				self->priv->requests_fifo = g_list_remove_link(self->priv->requests_fifo, self->priv->requests_fifo);
-			}
-		}
-		gebr_comm_http_msg_free(self->priv->incoming_msg);
-		self->priv->incoming_msg = NULL;
-
-		return TRUE;
-	}
-	gboolean parse_old_msg()
-	{
-		/* old non-rest protocol */
-		//TODO: emit data received with raw string data
-		gboolean ret;
-		if ((ret = gebr_comm_protocol_receive_data(self->protocol, data)))
-			g_signal_emit(self, object_signals[OLD_PARSE_MESSAGES], 0);
-
-		return ret;
-	}
 
 	while (data->len) {
 		gboolean ret;
 		if (self->protocol->message->hash)
-			ret = parse_old_msg();
+			ret = parse_old_msg(self, data);
 		else if (self->priv->incoming_msg != NULL)
-			ret = parse_http_msg();
+			ret = parse_http_msg(self, data);
 		else if (g_str_has_prefix(data->str, "HTTP/1.1 ") ||
 			 g_str_has_prefix(data->str, "GET ") ||
 			 g_str_has_prefix(data->str, "PUT ") ||
 			 g_str_has_prefix(data->str, "POST ") ||
 			 g_str_has_prefix(data->str, "DELETE "))
-			ret = parse_http_msg();
+			ret = parse_http_msg(self, data);
 		else
-			ret = parse_old_msg();
+			ret = parse_old_msg(self, data);
 
 		if (!ret)
 			break;

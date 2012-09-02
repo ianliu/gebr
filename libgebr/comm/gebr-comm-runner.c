@@ -412,6 +412,13 @@ calculate_servers_scores_and_num_procs(GebrCommRunner *self)
 	return values;
 }
 
+static gint
+daemon_exec_info_comp_func(gconstpointer a, gconstpointer b)
+{
+	const DaemonExecInfo *d1 = a, *d2 = b;
+	return d2->weight - d1->weight;
+}
+
 static GList *
 normalize_and_sort_servers(GList *values)
 {
@@ -427,12 +434,7 @@ normalize_and_sort_servers(GList *values)
 		data->weight /= sum;
 	}
 
-	gint comp_func(gconstpointer a, gconstpointer b) {
-		const DaemonExecInfo *d1 = a, *d2 = b;
-		return d2->weight - d1->weight;
-	}
-
-	return g_list_sort(values, comp_func);
+	return g_list_sort(values, daemon_exec_info_comp_func);
 }
 
 static void
@@ -764,6 +766,19 @@ mpi_run_flow(GebrCommRunner *self)
 	g_free(flow_xml);
 }
 
+static gint
+server_score_comp_func(ServerScore *a, ServerScore *b)
+{
+	gdouble res = b->score - a->score;
+	if(res < 0)
+		return -1;
+	else if (res > 0)
+		return +1;
+	else
+		return 0;
+}
+
+
 static void
 on_response_received(GebrCommHttpMsg *request,
 		     GebrCommHttpMsg *response,
@@ -800,17 +815,7 @@ on_response_received(GebrCommHttpMsg *request,
 
 	self->priv->responses++;
 	if (self->priv->responses == self->priv->requests) {
-		gint comp_func(ServerScore *a, ServerScore *b) {
-			gdouble res = b->score - a->score;
-			if(res < 0)
-				return -1;
-			else if (res > 0)
-				return +1;
-			else
-				return 0;
-		}
-
-		self->priv->cores_scores = g_list_sort(self->priv->cores_scores, (GCompareFunc)comp_func);
+		self->priv->cores_scores = g_list_sort(self->priv->cores_scores, (GCompareFunc)server_score_comp_func);
 		set_servers_execution_info(self);
 
 		GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(GEBR_GEOXML_FLOW(self->priv->flow));
