@@ -2635,6 +2635,63 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 
 	gebr.ui_flow_browse->program_edit = NULL;
 }
+
+static gboolean
+flow_browse_on_multiple_selection(GtkTreeModel *model,
+                                  GtkTreeIter *last_iter,
+                                  GebrUiFlowBrowseType last_type,
+                                  GebrUiFlowBrowse *fb)
+{
+	gebr_flow_browse_block_changed_signal(fb);
+
+	gboolean mixed_selection = FALSE;
+	gboolean change_type = FALSE;
+	gint n_rows = 1;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	if (rows) {
+		n_rows = g_list_length(rows);
+		if (n_rows > 1) {
+			GebrUiFlowBrowseType each_type;
+			for (GList *i = rows; i; i = i->next) {
+				GtkTreeIter it;
+				if (!gtk_tree_model_get_iter(model, &it, i->data))
+					continue;
+
+				gtk_tree_model_get(model, &it,
+				                   FB_STRUCT_TYPE, &each_type,
+				                   -1);
+
+				if (last_type == STRUCT_TYPE_IO) {
+					gtk_tree_selection_unselect_iter(selection, last_iter);
+					change_type = TRUE;
+					last_type = STRUCT_TYPE_PROGRAM;
+				}
+				if (last_type != each_type) {
+					mixed_selection = TRUE;
+					gtk_tree_selection_unselect_iter(selection, &it);
+				}
+			}
+		}
+	}
+
+	if (mixed_selection && !change_type)
+		gtk_tree_selection_select_iter(selection, last_iter);
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+
+	gebr_flow_browse_unblock_changed_signal(fb);
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+
+	return n_rows > 1;
+}
+
 /**
  * \internal
  * Load a selected flow from file when selected in "Flow Browser".
@@ -2678,36 +2735,7 @@ static void flow_browse_load(void)
 	GebrGeoXmlFlow *old_flow = gebr.flow;
 	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(old_flow));
 
-	gboolean mixed_selection = FALSE;
-	gint n_rows = 1;
-	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
-	if (rows) {
-		n_rows = g_list_length(rows);
-		if (n_rows > 1) {
-			GebrUiFlowBrowseType each_type;
-			for (GList *i = rows; i; i = i->next) {
-				GtkTreeIter it;
-				if (!gtk_tree_model_get_iter(model, &it, i->data))
-					continue;
-
-				gtk_tree_model_get(model, &it,
-				                   FB_STRUCT_TYPE, &each_type,
-				                   -1);
-
-				if (type == STRUCT_TYPE_IO)
-					gtk_tree_selection_unselect_iter(selection, &iter);
-				else if (type != each_type) {
-					mixed_selection = TRUE;
-					gtk_tree_selection_unselect_iter(selection, &it);
-				}
-			}
-		}
-	}
-
-	if (mixed_selection)
-		gtk_tree_selection_select_iter(selection, &iter);
-
+	gboolean multiple_selection = flow_browse_on_multiple_selection(model, &iter, type, gebr.ui_flow_browse);
 
 	gint nrows;
 
@@ -2734,7 +2762,7 @@ static void flow_browse_load(void)
 
 		gebr_ui_flow_set_is_selected(ui_flow, FALSE);
 
-		if (n_rows == 1) {
+		if (!multiple_selection) {
 			create_programs_view(&iter, gebr.ui_flow_browse);
 			flow_browse_program_check_sensitiveness();
 		} else {
@@ -2836,8 +2864,6 @@ static void flow_browse_load(void)
 	}
 
 	gebr_geoxml_document_unref(GEBR_GEOXML_DOCUMENT(old_flow));
-	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
-	g_list_free(rows);
 }
 
 static void
@@ -3633,6 +3659,7 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 				gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 		}
 	} else {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->properties_ctx_button), TRUE);
 		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 	}
 
