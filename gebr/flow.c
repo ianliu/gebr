@@ -1275,6 +1275,26 @@ gebr_flow_set_toolbar_sensitive(void)
 
 	GtkTreeSelection *flows_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gint flows_nrows = gtk_tree_selection_count_selected_rows(flows_selection);
+
+	if (flows_nrows > 1) {
+		GebrUiFlowsIoType type;
+		GtkTreeIter iter;
+		GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
+
+		GList *rows = gtk_tree_selection_get_selected_rows(flows_selection, NULL);
+		gtk_tree_model_get_iter(model, &iter, rows->data);
+
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT_TYPE, &type,
+		                   -1);
+
+		if (type == STRUCT_TYPE_PROGRAM)
+			flows_nrows = 1;
+
+		g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+		g_list_free(rows);
+	}
+
 	gint total_rows = gebr_geoxml_line_get_flows_number(gebr.line);
 
 	if (sensitive && flows_nrows == 1) {
