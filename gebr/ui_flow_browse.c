@@ -2564,11 +2564,6 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 {
 	GtkTreeIter iter, parent;
 
-	gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(program_edit->program),
-					 GEBR_GEOXML_SEQUENCE(gebr.program));
-
-	gebr_geoxml_object_ref(gebr.program);
-	gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(gebr.program));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	/* Update interface */
@@ -2603,7 +2598,6 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 
 	GebrUiFlowProgram *ui_program = GEBR_UI_FLOW_PROGRAM(ui_struct);
 
-	gebr_geoxml_object_ref(program_edit->program);
 	gebr_ui_flow_program_set_xml(ui_program, program_edit->program);
 
 	if (gebr_ui_flow_program_get_flag_opened(ui_program))

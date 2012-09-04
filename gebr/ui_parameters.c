@@ -88,21 +88,14 @@ parameters_configure_setup_ui(void)
 	else
 		info = NULL;
 
-	GebrGeoXmlSequence *clone = gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program));
-
-	if (!clone) {
-		g_warn_if_reached();
-		return NULL;
-	}
-
 	gchar *name;
 	GebrMaestroServerGroupType type;
 	gdouble speed = gebr_interface_get_execution_speed();
 	gebr_flow_browse_get_current_group(gebr.ui_flow_browse, &type, &name);
 
-	gebr_ui_flow_update_prog_mpi_nprocess(GEBR_GEOXML_PROGRAM(clone), maestro, speed, name, type);
+	gebr_ui_flow_update_prog_mpi_nprocess(gebr.program, maestro, speed, name, type);
 
-	program_edit = gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(clone), NULL,
+	program_edit = gebr_gui_program_edit_setup_ui(gebr.program, NULL,
 						      FALSE, gebr.validator, info, FALSE);
 
 	GtkWidget *hbox_buttons = gtk_hbox_new(FALSE, 0);
