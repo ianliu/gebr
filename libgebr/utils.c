@@ -1516,3 +1516,15 @@ gebr_gzfile_get_contents(const gchar *filename,
 
 	return TRUE;
 }
+
+gboolean
+gebr_callback_true(void)
+{
+	return TRUE;
+}
+
+void
+gebr_string_freeall(GString *string)
+{
+	g_string_free(string, TRUE);
+}

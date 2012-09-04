@@ -273,6 +273,50 @@ GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, GdomeDoc
 
 /**
  * \internal
+ * Change group XML as declared in flow-0.3.5, project-0.3.2 and line-0.3.2
+ */
+static void
+__port_to_new_group_semantics(GdomeElement *root_element)
+{
+	GdomeElement *element;
+	GSList *list = __gebr_geoxml_get_elements_by_tag(root_element, "parameters");
+	gebr_foreach_gslist_hyg(element, list, parameters) {
+		__gebr_geoxml_set_attr_value(element, "default-selection",
+					     __gebr_geoxml_get_attr_value(element, "exclusive"));
+		__gebr_geoxml_remove_attr(element, "exclusive");
+		__gebr_geoxml_set_attr_value(element, "selection",
+					     __gebr_geoxml_get_attr_value(element, "selected"));
+		__gebr_geoxml_remove_attr(element, "selected");
+		gdome_el_unref(element, &exception);
+	}
+
+	list = __gebr_geoxml_get_elements_by_tag(root_element, "group");
+	gebr_foreach_gslist_hyg(element, list, group) {
+		GdomeNode *new_instance;
+		GebrGeoXmlParameters *template_instance;
+
+		template_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_get_first_element(element, "parameters"));
+		/* encapsulate template instance into template-instance element */
+		GdomeElement *template_container;
+		template_container = __gebr_geoxml_insert_new_element(element, "template-instance",
+								      (GdomeElement*)template_instance);
+		gdome_n_unref(gdome_el_insertBefore_protected(template_container, (GdomeNode*)template_instance, NULL, &exception), &exception);
+
+		/* move new instance after template instance */
+		new_instance = gdome_el_cloneNode((GdomeElement*)template_instance, TRUE, &exception);
+		GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_element((GdomeElement*)template_container);
+		gdome_n_unref(gdome_n_insertBefore_protected((GdomeNode*)element, new_instance, next, &exception), &exception);
+
+		gebr_geoxml_object_unref(template_instance);
+		gdome_n_unref(new_instance, &exception);
+		gdome_n_unref(next, &exception);
+		gdome_el_unref(template_container, &exception);
+		gdome_el_unref(element, &exception);
+	}
+}
+
+/**
+ * \internal
  */
 static int
 __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
@@ -302,48 +346,6 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	 * Success, now change to last version
 	 */
 
-	/**
-	 * \internal
-	 * Change group XML as declared in flow-0.3.5, project-0.3.2 and line-0.3.2
-	 */
-	void __port_to_new_group_semantics(void)
-	{
-		GdomeElement *element;
-		GSList *list = __gebr_geoxml_get_elements_by_tag(root_element, "parameters");
-		gebr_foreach_gslist_hyg(element, list, parameters) {
-			__gebr_geoxml_set_attr_value(element, "default-selection",
-						     __gebr_geoxml_get_attr_value(element, "exclusive"));
-			__gebr_geoxml_remove_attr(element, "exclusive");
-			__gebr_geoxml_set_attr_value(element, "selection",
-						     __gebr_geoxml_get_attr_value(element, "selected"));
-			__gebr_geoxml_remove_attr(element, "selected");
-			gdome_el_unref(element, &exception);
-		}
-
-		list = __gebr_geoxml_get_elements_by_tag(root_element, "group");
-		gebr_foreach_gslist_hyg(element, list, group) {
-			GdomeNode *new_instance;
-			GebrGeoXmlParameters *template_instance;
-
-			template_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_get_first_element(element, "parameters"));
-			/* encapsulate template instance into template-instance element */
-			GdomeElement *template_container;
-			template_container = __gebr_geoxml_insert_new_element(element, "template-instance",
-									      (GdomeElement*)template_instance);
-			gdome_n_unref(gdome_el_insertBefore_protected(template_container, (GdomeNode*)template_instance, NULL, &exception), &exception);
-
-			/* move new instance after template instance */
-			new_instance = gdome_el_cloneNode((GdomeElement*)template_instance, TRUE, &exception);
-			GdomeNode *next = (GdomeNode*)__gebr_geoxml_next_element((GdomeElement*)template_container);
-			gdome_n_unref(gdome_n_insertBefore_protected((GdomeNode*)element, new_instance, next, &exception), &exception);
-
-			gebr_geoxml_object_unref(template_instance);
-			gdome_n_unref(new_instance, &exception);
-			gdome_n_unref(next, &exception);
-			gdome_el_unref(template_container, &exception);
-			gdome_el_unref(element, &exception);
-		}
-	}
 
 	/* document 0.1.x to 0.2.0 */
 	if (strcmp(version, "0.2.0") < 0) {
@@ -608,7 +610,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			}
 			g_slist_free(refer);
 
-			__port_to_new_group_semantics();
+			__port_to_new_group_semantics(root_element);
 		}
 	}
 	/* 0.3.2 to 0.3.3 */ 
@@ -700,7 +702,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*)el, &exception), &exception);
 			gdome_el_unref(el, &exception);
 
-			__port_to_new_group_semantics();
+			__port_to_new_group_semantics(root_element);
 
 			__gebr_geoxml_remove_attr(root_element, "nextid");
 

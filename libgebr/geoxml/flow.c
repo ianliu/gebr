@@ -1457,6 +1457,101 @@ gebr_geoxml_flow_is_single_core(GebrGeoXmlFlow *flow,
 	return FALSE;
 }
 
+static void
+print_format(GebrGeoXmlFlow *flow, gchar *id, GString *graph, gboolean is_head,
+	     const gchar *head)
+{
+	GebrGeoXmlSequence *revision = NULL;
+	gint fontsize = 10;
+	GString *final_comment = g_string_new("");
+	gchar *comment = NULL;
+	gchar *unescaped_comment = NULL;
+	gchar *format_node = NULL;
+	gchar *date = NULL;
+	gchar *iso_date = NULL;
+	gboolean has_id;
+
+	if (id && *id) {
+		has_id = TRUE;
+		gulong int_id = gebr_geoxml_flow_get_revision_index_by_id(flow, (gchar *)id);
+		gint status =  gebr_geoxml_flow_get_revision(flow, &revision, int_id);
+
+		if (status != GEBR_GEOXML_RETV_SUCCESS)
+			g_warn_if_reached();
+
+		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
+		if (!unescaped_comment || !*unescaped_comment)
+			unescaped_comment = g_strdup_printf(("- - - -"));
+		date = g_strdup(iso_date);
+		comment = g_markup_printf_escaped("%s", unescaped_comment);
+	} else {
+		has_id = FALSE;
+		date = g_strdup("--");
+		comment = g_strdup_printf("--");
+	}
+
+
+	size_t comment_size = strlen(comment);
+	g_string_append(final_comment, comment);
+
+	if(comment_size > 20) {
+		gchar *last_space;
+		last_space = g_strrstr_len(comment, 21, " ");
+		g_string_insert(final_comment, (last_space - comment), "<br/>");
+		if(comment_size > 40) {
+			last_space = g_strrstr_len(comment, 40, " ");
+			g_string_insert(final_comment, (last_space - comment) + 5, "<br/>");
+		}
+		fontsize = 8;
+	} else if(comment_size > 15) {
+		fontsize = 9;
+	}
+
+	if (is_head) {
+		gchar *new_comment = g_strdup_printf("%s%s", final_comment->str, has_id? " (modified)" : "");
+		const gchar *now = _("Now");
+		format_node = g_strdup_printf(
+				"%s [URL=\"%s\" label = \"%s\","
+				"shape = ellipse, color = \"#000080\","
+				"fontsize = 10]",
+				head, head, now);
+		g_free(new_comment);
+	} else {
+		format_node = g_strdup_printf(
+				"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
+				"<tr><td bgcolor=\"#000040\" align=\"center\"><font color=\"white\">%s</font></td></tr>"
+				"<tr><td align=\"center\">%s</td></tr></table>>, shape = note,"
+				"fontsize = %d]",
+				(gchar*)id,
+				(gchar*)id,
+				final_comment->str,
+				date,
+				fontsize);
+	}
+
+	graph =  g_string_append(graph, format_node);
+
+	g_string_free(final_comment, TRUE);
+	if (has_id) {
+		g_free(format_node);
+		g_free(unescaped_comment);
+		g_free(iso_date);
+		gebr_geoxml_object_unref(revision);
+	}
+	g_free(comment);
+	g_free(date);
+}
+
+static void
+print_edges(gchar *key, GList *value, GString *text)
+{
+	for (GList *child = value; child; child = child->next) {
+		g_string_append_printf(text, "%s->%s[style=filled]",
+				       key, (gchar*)child->data);
+	}
+}
+
+
 gchar *
 gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 {
@@ -1466,104 +1561,16 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 	graph =  g_string_append(graph, ("digraph { graph [bgcolor=white]"));
 	GList *parents = g_hash_table_get_keys(hash);
 
-	void print_format(GebrGeoXmlFlow *flow, gchar *id, GString *graph, gboolean is_head) {
-		GebrGeoXmlSequence *revision = NULL;
-		gint fontsize = 10;
-		GString *final_comment = g_string_new("");
-		gchar *comment = NULL;
-		gchar *unescaped_comment = NULL;
-		gchar *format_node = NULL;
-		gchar *date = NULL;
-		gchar *iso_date = NULL;
-		gboolean has_id;
-
-		if (id && *id) {
-			has_id = TRUE;
-			gulong int_id = gebr_geoxml_flow_get_revision_index_by_id(flow, (gchar *)id);
-			gint status =  gebr_geoxml_flow_get_revision(flow, &revision, int_id);
-
-			if (status != GEBR_GEOXML_RETV_SUCCESS)
-				g_warn_if_reached();
-
-			gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), NULL, &iso_date, &unescaped_comment, NULL);
-			if (!unescaped_comment || !*unescaped_comment)
-				unescaped_comment = g_strdup_printf(("- - - -"));
-			date = g_strdup(iso_date);
-			comment = g_markup_printf_escaped("%s", unescaped_comment);
-		} else {
-			has_id = FALSE;
-			date = g_strdup("--");
-			comment = g_strdup_printf("--");
-		}
-
-
-		size_t comment_size = strlen(comment);
-		g_string_append(final_comment, comment);
-
-		if(comment_size > 20) {
-			gchar *last_space;
-			last_space = g_strrstr_len(comment, 21, " ");
-			g_string_insert(final_comment, (last_space - comment), "<br/>");
-			if(comment_size > 40) {
-				last_space = g_strrstr_len(comment, 40, " ");
-				g_string_insert(final_comment, (last_space - comment) + 5, "<br/>");
-			}
-			fontsize = 8;
-		} else if(comment_size > 15) {
-			fontsize = 9;
-		}
-
-		if (is_head) {
-			gchar *new_comment = g_strdup_printf("%s%s", final_comment->str, has_id? " (modified)" : "");
-			const gchar *now = _("Now");
-			format_node = g_strdup_printf(
-					"%s [URL=\"%s\" label = \"%s\","
-					"shape = ellipse, color = \"#000080\","
-					"fontsize = 10]",
-					head, head, now);
-			g_free(new_comment);
-		} else {
-			format_node = g_strdup_printf(
-					"%s [URL=\"%s\" label =<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">"
-					"<tr><td bgcolor=\"#000040\" align=\"center\"><font color=\"white\">%s</font></td></tr>"
-					"<tr><td align=\"center\">%s</td></tr></table>>, shape = note,"
-					"fontsize = %d]",
-					(gchar*)id,
-					(gchar*)id,
-					final_comment->str,
-					date,
-					fontsize);
-		}
-
-		graph =  g_string_append(graph, format_node);
-
-		g_string_free(final_comment, TRUE);
-		if (has_id) {
-			g_free(format_node);
-			g_free(unescaped_comment);
-			g_free(iso_date);
-			gebr_geoxml_object_unref(revision);
-		}
-		g_free(comment);
-		g_free(date);
-	}
 
 	//Print formats 
 	for (GList *parent = parents; parent; parent = parent->next) {
-		print_format(flow, parent->data, graph, FALSE);
+		print_format(flow, parent->data, graph, FALSE, head);
 	}
 
 	gchar *parent_id = gebr_geoxml_document_get_parent_id(GEBR_GEOXML_DOCUMENT(flow));
-	print_format(flow, parent_id, graph, TRUE);
+	print_format(flow, parent_id, graph, TRUE, head);
 	if (parent_id && *parent_id)
 		g_string_append_printf(graph, "%s->%s[style=filled]", parent_id, head);
-
-	void print_edges(gchar *key, GList *value, GString *text) {
-		for (GList *child = value; child; child = child->next) {
-			g_string_append_printf(text, "%s->%s[style=filled]",
-					       key, (gchar*)child->data);
-		}
-	}
 
 	g_hash_table_foreach(hash, (GHFunc) print_edges, graph);
         graph =  g_string_append(graph, ("}\n"));

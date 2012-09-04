@@ -146,6 +146,15 @@ gebr_ui_flow_update_prog_mpi_nprocess(GebrGeoXmlProgram *prog,
 	gebr_geoxml_program_mpi_set_n_process(prog, nprocs);
 }
 
+static void
+modify_paths_func(GString *path, gpointer data)
+{
+	gchar ***paths = data;
+	gchar *tmp = gebr_resolve_relative_path(path->str, paths);
+	g_string_assign(path, tmp);
+	g_free(tmp);
+}
+
 static const gchar *
 run_flow(GebrGeoXmlFlow *flow,
 	 const gchar *after,
@@ -208,15 +217,8 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	gebr_ui_flow_update_mpi_nprocess(GEBR_GEOXML_FLOW(clone), maestro, speed, name, type);
 
-	void func(GString *path, gpointer data)
-	{
-		gchar ***paths = data;
-		gchar *tmp = gebr_resolve_relative_path(path->str, paths);
-		g_string_assign(path, tmp);
-		g_free(tmp);
-	}
 	gchar ***tmp = gebr_geoxml_line_get_paths(gebr.line);
-	gebr_flow_modify_paths(GEBR_GEOXML_FLOW(clone), func, FALSE, tmp);
+	gebr_flow_modify_paths(GEBR_GEOXML_FLOW(clone), modify_paths_func, FALSE, tmp);
 	gebr_pairstrfreev(tmp);
 
 	gebr_geoxml_document_merge_dicts(gebr.validator,

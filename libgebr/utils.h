@@ -382,6 +382,20 @@ gboolean gebr_gzfile_get_contents(const gchar *filename,
                                   GString *contents,
                                   gchar **error);
 
+/**
+ * gebr_callback_true:
+ *
+ * Returns %TRUE.
+ */
+gboolean gebr_callback_true(void);
+
+/**
+ * gebr_string_freeall:
+ *
+ * Equivalent to calling g_string_free(string, TRUE).
+ */
+void gebr_string_freeall(GString *string);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

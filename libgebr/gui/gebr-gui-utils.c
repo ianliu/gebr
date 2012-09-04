@@ -481,24 +481,38 @@ gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter
 	return ret;
 }
 
+struct TreeModelFindByColumnData {
+	int column;
+	gboolean found;
+	GtkTreeIter *iter;
+	const gchar *value;
+};
+
+static gboolean
+foreach_find_by_column(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i, gpointer user_data)
+{
+	struct TreeModelFindByColumnData *data = user_data;
+	gchar *string;
+	gtk_tree_model_get(model, i, data->column, &string, -1);
+	if (!strcmp(data->value, string)) {
+		data->found = TRUE;
+		*(data->iter) = *i;
+		g_free(string);
+		return TRUE;
+	}
+	g_free(string);
+	return FALSE;
+}
+
 gboolean gebr_gui_gtk_tree_model_find_by_column(GtkTreeModel * model, GtkTreeIter * iter, int column, const gchar *value)
 {
-	gboolean found = FALSE;
-	gboolean foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i, gpointer data)
-	{
-		gchar *string;
-		gtk_tree_model_get(model, i, column, &string, -1);
-		if (!strcmp(value, string)) {
-			found = TRUE;
-			*iter = *i;
-			g_free(string);
-			return TRUE;
-		}
-		g_free(string);
-		return FALSE;
-	}
-	gebr_gui_gtk_tree_model_foreach_recursive(model, foreach, NULL);
-	return found;
+	struct TreeModelFindByColumnData data;
+	data.found = FALSE;
+	data.column = column;
+	data.iter = iter;
+	data.value = value;
+	gebr_gui_gtk_tree_model_foreach_recursive(model, foreach_find_by_column, &data);
+	return data.found;
 }
 
 void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
@@ -764,62 +778,58 @@ void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTree
 	}
 }
 
+static gboolean
+on_tag_event(GtkTextTag *text_tag, GtkTextView *text_view, GdkEvent *event, GtkTextIter *iter)
+{
+	if (!(event->type == GDK_BUTTON_RELEASE && event->button.button == 1))
+		return FALSE;
+
+	GebrGuiGtkTextViewLinkClickCallback callback;
+	gpointer user_data;
+	user_data = g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_user_data");
+	callback = (GebrGuiGtkTextViewLinkClickCallback)g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback");
+	callback(text_view, text_tag, g_object_get_data(G_OBJECT(text_tag), "url"), user_data);
+
+	return FALSE;
+}
+
+static gboolean
+on_text_view_motion_notify(GtkTextView *text_view, GdkEventMotion *event)
+{
+	GtkTextIter iter;
+	GSList *tags;
+	gboolean ret = FALSE;
+	gint x = event->x;
+	gint y = event->y;
+
+	gtk_text_view_window_to_buffer_coords(text_view, GTK_TEXT_WINDOW_TEXT, x, y, &x, &y);
+	gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
+	tags = gtk_text_iter_get_tags(&iter);
+	for (GSList *i = tags; i != NULL; i = g_slist_next(i)) {
+		GtkTextTag *text_tag = (GtkTextTag*)i->data;
+		gpointer callback;
+
+		callback = g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback");
+		if (callback) {
+			ret = TRUE;
+			break;
+		}
+	}
+	g_slist_free(tags);
+
+	if (ret)
+		gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), 
+				      gdk_cursor_new(GDK_HAND2));
+	else
+		gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), gdk_cursor_new(GDK_XTERM));
+	//gdk_window_get_pointer(GTK_WIDGET(text_view)->window, NULL, NULL, NULL);
+
+	return FALSE;
+}
+
 GtkTextTag *gebr_gui_gtk_text_view_create_link_tag(GtkTextView * text_view, const gchar * url,
 						   GebrGuiGtkTextViewLinkClickCallback callback, gpointer user_data)
 {
-	/**
-	 * \internal
-	 */
-	gboolean on_tag_event(GtkTextTag *text_tag, GtkTextView *text_view, GdkEvent *event, GtkTextIter *iter)
-	{
-		if (!(event->type == GDK_BUTTON_RELEASE && event->button.button == 1))
-			return FALSE;
-
-		GebrGuiGtkTextViewLinkClickCallback callback;
-		gpointer user_data;
-		user_data = g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_user_data");
-		callback = (GebrGuiGtkTextViewLinkClickCallback)g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback");
-		callback(text_view, text_tag, g_object_get_data(G_OBJECT(text_tag), "url"), user_data);
-
-		return FALSE;
-	}
-
-	/**
-	 * \internal
-	 */
-	gboolean on_text_view_motion_notify(GtkTextView *text_view, GdkEventMotion *event)
-       	{
-		GtkTextIter iter;
-		GSList *tags;
-		gboolean ret = FALSE;
-		gint x = event->x;
-		gint y = event->y;
-
-		gtk_text_view_window_to_buffer_coords(text_view, GTK_TEXT_WINDOW_TEXT, x, y, &x, &y);
-		gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
-		tags = gtk_text_iter_get_tags(&iter);
-		for (GSList *i = tags; i != NULL; i = g_slist_next(i)) {
-			GtkTextTag *text_tag = (GtkTextTag*)i->data;
-			gpointer callback;
-
-			callback = g_object_get_data(G_OBJECT(text_tag), "__gebr_gui_gtk_text_buffer_create_link_tag_callback");
-			if (callback) {
-				ret = TRUE;
-				break;
-			}
-		}
-		g_slist_free(tags);
-
-		if (ret)
-			gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), 
-					      gdk_cursor_new(GDK_HAND2));
-		else
-			gdk_window_set_cursor(gtk_text_view_get_window(text_view, GTK_TEXT_WINDOW_TEXT), gdk_cursor_new(GDK_XTERM));
-		//gdk_window_get_pointer(GTK_WIDGET(text_view)->window, NULL, NULL, NULL);
-
-		return FALSE;
-	}
-
 	GtkTextBuffer *text_buffer = gtk_text_view_get_buffer(text_view);
 	GtkTextTag *text_tag = gtk_text_buffer_create_tag(text_buffer, NULL, NULL);
 
@@ -852,34 +862,31 @@ GtkTextMark *gebr_gui_gtk_text_buffer_create_mark_before_last_char(GtkTextBuffer
 	return end_mark;
 }
 
+static gboolean
+on_text_view_query_tooltip(GtkTextView * text_view, gint x, gint y, gboolean keyboard_mode, GtkTooltip * tooltip)
+{
+	GtkTextIter iter;
+	GSList *tags;
+	gboolean ret = FALSE;
+
+	gtk_text_view_window_to_buffer_coords(text_view, GTK_TEXT_WINDOW_TEXT, x, y, &x, &y);
+	gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
+	tags = gtk_text_iter_get_tags(&iter);
+	for (GSList *i = tags; i != NULL; i = g_slist_next(i)) {
+		gchar *tooltip_markup;
+		tooltip_markup = g_object_get_data(i->data, "tooltip");
+		if (tooltip_markup != NULL) {
+			gtk_tooltip_set_markup(tooltip, tooltip_markup);
+			ret = TRUE;
+			break;
+		}
+	}
+	g_slist_free(tags);
+	return ret;
+}
+
 void gebr_gui_gtk_text_view_set_tooltip_on_tag(GtkTextView * text_view, GtkTextTag * text_tag, const gchar* tooltip)
 {
-	/**
-	 * \internal
-	 */
-	gboolean
-	on_text_view_query_tooltip(GtkTextView * text_view, gint x, gint y, gboolean keyboard_mode, GtkTooltip * tooltip)
-	{
-		GtkTextIter iter;
-		GSList *tags;
-		gboolean ret = FALSE;
-
-		gtk_text_view_window_to_buffer_coords(text_view, GTK_TEXT_WINDOW_TEXT, x, y, &x, &y);
-		gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
-		tags = gtk_text_iter_get_tags(&iter);
-		for (GSList *i = tags; i != NULL; i = g_slist_next(i)) {
-			gchar *tooltip_markup;
-			tooltip_markup = g_object_get_data(i->data, "tooltip");
-			if (tooltip_markup != NULL) {
-				gtk_tooltip_set_markup(tooltip, tooltip_markup);
-				ret = TRUE;
-				break;
-			}
-		}
-		g_slist_free(tags);
-		return ret;
-	}
-
 	tooltip = (const gchar*)g_strdup(tooltip);
 	gebr_gui_g_object_set_free_parent(text_tag, (gpointer)tooltip);
 	g_object_set_data(G_OBJECT(text_tag), "tooltip", (gpointer)tooltip);
@@ -907,22 +914,25 @@ gebr_gui_gtk_widget_set_popup_callback(GtkWidget * widget, GebrGuiGtkPopupCallba
 	return TRUE;
 }
 
-void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu)
+static void
+popup_position(GtkMenu *m, gint *xp, gint *yp, gboolean *push_in, gpointer user_data)
 {
 	gint x, y;
 	gint xb, yb, hb;
+	GtkWidget *widget = user_data;
 
 	gdk_window_get_origin(widget->window, &x, &y);
 	xb = widget->allocation.x;
 	yb = widget->allocation.y;
 	hb = widget->allocation.height;
 
-	void popup_position(GtkMenu *m, gint *xp, gint *yp, gboolean *push_in, gpointer d) {
-		*xp = x + xb;
-		*yp = y + yb + hb;
-		*push_in = TRUE;
-	}
+	*xp = x + xb;
+	*yp = y + yb + hb;
+	*push_in = TRUE;
+}
 
+void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu)
+{
 	gtk_widget_show_all(GTK_WIDGET(menu));
 	gtk_menu_popup(menu, NULL, NULL, popup_position, NULL, 0, gtk_get_current_event_time());
 }

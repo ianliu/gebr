@@ -47,6 +47,16 @@ gebr_comm_uri_add_param(GebrCommUri *uri, const gchar *key, const gchar *value)
 	g_hash_table_insert(uri->params, g_strdup(key), g_strdup(value));
 }
 
+static void concatenate_uri(gpointer key,
+			    gpointer value,
+			    gpointer user_data)
+{
+	GString *buffer = user_data;
+	gchar *escaped = g_uri_escape_string(value, NULL, TRUE);
+	g_string_append_printf(buffer, "%s=%s;", (gchar*)key, escaped);
+	g_free(escaped);
+}
+
 gchar *
 gebr_comm_uri_to_string(GebrCommUri *uri)
 {
@@ -57,16 +67,7 @@ gebr_comm_uri_to_string(GebrCommUri *uri)
 	if (g_hash_table_size(uri->params) > 0)
 		g_string_append_c(buffer, '?');
 
-	void concatenate_uri(gpointer key,
-			     gpointer value,
-			     gpointer user_data)
-	{
-		gchar *escaped = g_uri_escape_string(value, NULL, TRUE);
-		g_string_append_printf(buffer, "%s=%s;", (gchar*)key, escaped);
-		g_free(escaped);
-	}
-
-	g_hash_table_foreach(uri->params, concatenate_uri, NULL);
+	g_hash_table_foreach(uri->params, concatenate_uri, buffer);
 	if (buffer->str[buffer->len-1] == ';')
 		g_string_erase(buffer, buffer->len-1, 1);
 

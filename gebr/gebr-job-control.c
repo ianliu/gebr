@@ -2223,32 +2223,42 @@ gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 	g_signal_connect(job, "status-change", G_CALLBACK(on_status_update_toolbar_buttons), jc);
 }
 
+struct JobControlFindData {
+	const gchar *rid;
+	GebrJob *job;
+};
+
+static gboolean
+job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)
+{
+	GebrJob *i;
+	struct JobControlFindData *data = user_data;
+
+	gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
+
+	if (!i)
+		return FALSE;
+
+	if (g_strcmp0(gebr_job_get_id(i), data->rid) == 0) {
+		data->job = i;
+		return TRUE;
+	}
+	return FALSE;
+}
+
 GebrJob *
 gebr_job_control_find(GebrJobControl *jc, const gchar *rid)
 {
-	GebrJob *job = NULL;
+	struct JobControlFindData data;
 
 	g_return_val_if_fail(rid != NULL, NULL);
 
-	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
-	{
-		GebrJob *i;
+	data.job = NULL;
+	data.rid = rid;
 
-		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
+	gtk_tree_model_foreach(GTK_TREE_MODEL(jc->priv->store), job_find_foreach_func, &data);
 
-		if (!i)
-			return FALSE;
-
-		if (g_strcmp0(gebr_job_get_id(i), rid) == 0) {
-			job = i;
-			return TRUE;
-		}
-		return FALSE;
-	}
-
-	gtk_tree_model_foreach(GTK_TREE_MODEL(jc->priv->store), job_find_foreach_func, NULL);
-
-	return job;
+	return data.job;
 }
 
 gboolean

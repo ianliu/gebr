@@ -353,48 +353,56 @@ GebrGeoXmlFlow *menu_load(const gchar * path)
 	return GEBR_GEOXML_FLOW(menu);
 }
 
-void menu_load_user_directory(void)
-{
+struct LoadUserDirectoryData {
 	GtkTreeIter iter;
 	gchar *filename;
+	gint i;
+};
 
-	gint i = 0;
+static void
+load_user_directory_foreach(gpointer key, gpointer value, gpointer user_data)
+{
+	GString *path;
+	gchar *dirname;
+	gchar *dname;
+	gchar *folder = key;
+	struct LoadUserDirectoryData *data = user_data;
 
-	void foreach(gchar * key) {
-		GString *path;
-		gchar *dirname;
-		gchar *dname;
+	dname = g_path_get_basename(folder);
+	dirname = g_markup_printf_escaped("%s", dname);
 
-		dname = g_path_get_basename(key);
-		dirname = g_markup_printf_escaped("%s", dname);
+	gtk_tree_store_append(debr.ui_menu.model, &data->iter, NULL);
+	gtk_tree_store_set(debr.ui_menu.model, &data->iter,
+			   MENU_IMAGE, GTK_STOCK_DIRECTORY,
+			   MENU_FILENAME, dirname,
+			   MENU_PATH, folder,
+			   -1);
 
-		gtk_tree_store_append(debr.ui_menu.model, &iter, NULL);
-		gtk_tree_store_set(debr.ui_menu.model, &iter,
-				   MENU_IMAGE, GTK_STOCK_DIRECTORY,
-				   MENU_FILENAME, dirname,
-				   MENU_PATH, key,
-				   -1);
+	path = g_string_new(NULL);
+	gebr_directory_foreach_file(data->filename, folder) {
+		if (fnmatch("*.mnu", data->filename, 1))
+			continue;
 
-		path = g_string_new(NULL);
-		gebr_directory_foreach_file(filename, key) {
-			if (fnmatch("*.mnu", filename, 1))
-				continue;
-
-			g_string_printf(path, "%s/%s", key, filename);
-			menu_open_with_parent(path->str, &iter, FALSE);
-		}
-
-		g_string_free(path, TRUE);
-		g_free(dirname);
-		g_free(dname);
-		i++;
+		g_string_printf(path, "%s/%s", folder, data->filename);
+		menu_open_with_parent(path->str, &data->iter, FALSE);
 	}
 
-	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
+	g_string_free(path, TRUE);
+	g_free(dirname);
+	g_free(dname);
+	data->i++;
+}
+
+void menu_load_user_directory(void)
+{
+	struct LoadUserDirectoryData data;
+	data.i = 0;
+
+	g_hash_table_foreach(debr.config.opened_folders, load_user_directory_foreach, &data);
 
 	/* select first menu */
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.model), &iter) == TRUE)
-		menu_select_iter(&iter);
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(debr.ui_menu.model), &data.iter) == TRUE)
+		menu_select_iter(&data.iter);
 }
 
 void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * menu, gboolean select)
@@ -557,6 +565,14 @@ gboolean menu_save_all(void)
 	return menu_save_folder(NULL);
 }
 
+static void
+add_shortcut_folders_foreach(gpointer key, gpointer value, gpointer user_data)
+{
+	gchar *folder = key;
+	GtkFileChooser *chooser = user_data;
+	gtk_file_chooser_add_shortcut_folder(chooser, folder, NULL);
+}
+
 gboolean menu_save_as(GtkTreeIter * iter)
 {
 	GtkTreeIter parent;
@@ -578,10 +594,7 @@ gboolean menu_save_as(GtkTreeIter * iter)
 	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), menu_filename);
 	g_free(title);
 
-	void foreach(gchar * key) {
-		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), key, NULL);
-	}
-	g_hash_table_foreach(debr.config.opened_folders, (GHFunc)foreach, NULL);
+	g_hash_table_foreach(debr.config.opened_folders, add_shortcut_folders_foreach, dialog);
 
 	gtk_tree_model_iter_parent(GTK_TREE_MODEL(debr.ui_menu.model), &parent, iter);
 	if (gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(debr.ui_menu.model),
@@ -1540,32 +1553,34 @@ void menu_path_get_parent(const gchar * path, GtkTreeIter * parent)
 	g_free(dirname);
 }
 
+static glong
+count_unsaved_in_folder(GtkTreeIter * iter)
+{
+	glong count = 0;
+	gboolean valid;
+	GtkTreeIter child;
+	MenuStatus status;
+
+	valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, iter);
+	while (valid) {
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
+		if (status == MENU_STATUS_UNSAVED)
+			count++;
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
+	}
+	return count;
+}
+
 glong menu_count_unsaved(GtkTreeIter * folder)
 {
-	glong count;
-
-	count = 0;
-
-	void process(GtkTreeIter * iter) {
-		gboolean valid;
-		GtkTreeIter child;
-		MenuStatus status;
-
-		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, iter);
-		while (valid) {
-			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
-			if (status == MENU_STATUS_UNSAVED)
-				count++;
-			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
-		}
-	}
+	glong count = 0;
 
 	if (folder)
-		process(folder);
+		count += count_unsaved_in_folder(folder);
 	else {
 		GtkTreeIter iter;
 		gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model))
-			process(&iter);
+			count += count_unsaved_in_folder(&iter);
 	}
 
 	return count;
@@ -2203,6 +2218,21 @@ static gboolean menu_get_folder_iter_from_path(const gchar * path, GtkTreeIter *
 	return FALSE;
 }
 
+static void
+menu_get_unsaved_in_folder(GtkTreeIter * iter, GList *list)
+{
+	gboolean valid;
+	GtkTreeIter child;
+	valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, iter);
+	while (valid) {
+		MenuStatus status;
+		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
+		if (status == MENU_STATUS_UNSAVED)
+			list = g_list_prepend(list, gtk_tree_iter_copy(&child));
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
+	}
+}
+
 /**
  * \internal
  */
@@ -2212,25 +2242,12 @@ static GList * menu_get_unsaved(GtkTreeIter * folder)
 
 	GList * list = NULL;
 
-	void process(GtkTreeIter * iter) {
-		gboolean valid;
-		GtkTreeIter child;
-		valid = gtk_tree_model_iter_children(GTK_TREE_MODEL(debr.ui_menu.model), &child, iter);
-		while (valid) {
-			MenuStatus status;
-			gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &child, MENU_STATUS, &status, -1);
-			if (status == MENU_STATUS_UNSAVED)
-				list = g_list_prepend(list, gtk_tree_iter_copy(&child));
-			valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(debr.ui_menu.model), &child);
-		}
-	}
-
 	if (folder)
-		process(folder);
+		menu_get_unsaved_in_folder(folder, list);
 	else {
 		GtkTreeIter iter;
 		gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(debr.ui_menu.model))
-			process(&iter);
+			menu_get_unsaved_in_folder(&iter, list);
 	}
 
 	return list;

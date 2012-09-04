@@ -536,6 +536,45 @@ void flow_copy_from_dicts(GebrGeoXmlFlow * flow)
 		flow_copy_from_dicts_parse_parameters(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
 }
 
+struct FlowModifyPathData {
+	GebrFlowModifyPathsFunc func;
+	gpointer data;
+	gboolean set_programs_unconfigured;
+};
+
+static gboolean
+flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter,
+			     struct FlowModifyPathData *data)
+{
+	gboolean cleaned = FALSE;
+	if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		GebrGeoXmlSequence *value;
+
+		gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE, &value, 0);
+		for (; value != NULL; gebr_geoxml_sequence_next(&value)) {
+			GString *path;
+
+			path = g_string_new(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(value)));
+			if (path->len == 0)
+				continue;
+			else
+				cleaned = TRUE;
+
+			data->func(path, data->data);
+			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
+			g_string_free(path, TRUE);
+		}
+		if (data->set_programs_unconfigured && cleaned) {
+			GebrGeoXmlProgram *program = gebr_geoxml_parameter_get_program(parameter);
+			gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_PATH);
+			gebr_geoxml_object_unref(program);
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
 void
 gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 		       GebrFlowModifyPathsFunc func,
@@ -543,37 +582,6 @@ gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 		       gpointer data)
 {
 	GString *path = g_string_new(NULL);
-
-	gboolean flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter)
-	{
-		gboolean cleaned = FALSE;
-		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-			GebrGeoXmlSequence *value;
-
-			gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE, &value, 0);
-			for (; value != NULL; gebr_geoxml_sequence_next(&value)) {
-				GString *path;
-
-				path = g_string_new(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(value)));
-				if (path->len == 0)
-					continue;
-				else
-					cleaned = TRUE;
-
-				func(path, data);
-				gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
-				g_string_free(path, TRUE);
-			}
-			if (set_programs_unconfigured && cleaned) {
-				GebrGeoXmlProgram *program = gebr_geoxml_parameter_get_program(parameter);
-				gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-				gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_PATH);
-				gebr_geoxml_object_unref(program);
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
 
 	/* flow's IO */
 	g_string_assign(path, gebr_geoxml_flow_io_get_input(flow));
@@ -587,7 +595,11 @@ gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 	gebr_geoxml_flow_io_set_error(flow, path->str);
 
 	/* all parameters */
-	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)flow_paths_foreach_parameter, NULL);
+	struct FlowModifyPathData flow_modify_data;
+	flow_modify_data.func = func;
+	flow_modify_data.data = data;
+	flow_modify_data.set_programs_unconfigured = set_programs_unconfigured;
+	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)flow_paths_foreach_parameter, &flow_modify_data);
 
 	/* call recursively for each revision */
 	GebrGeoXmlSequence *revision;
@@ -609,40 +621,50 @@ gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 	g_string_free(path, TRUE);
 }
 
-void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, GebrGeoXmlLine *line, gchar ***paths, gboolean relative)
+struct FlowSetPathsToRelativeData {
+	gchar ***paths;
+	const gchar *mount_point;
+};
+
+static void
+flow_modify_paths_func(GString *path, gpointer user_data)
 {
-	gchar *mount_point;
-	void func(GString *path, gpointer data)
-	{
-		gchar *tmp;
+	gchar *tmp;
+	struct FlowSetPathsToRelativeData *data = user_data;
 
-		if (!paths || path->len == 0) {
-			tmp = g_strdup(path->str);
-		} else {
-			gchar *tmp2 = gebr_relativise_old_home_path(path->str);
-			tmp = gebr_relativise_path(tmp2, mount_point, paths);
-			g_free(tmp2);
-		}
-
-		g_string_assign(path, tmp);
-		g_free(tmp);
+	if (!data->paths || path->len == 0) {
+		tmp = g_strdup(path->str);
+	} else {
+		gchar *tmp2 = gebr_relativise_old_home_path(path->str);
+		tmp = gebr_relativise_path(tmp2, data->mount_point, data->paths);
+		g_free(tmp2);
 	}
 
+	g_string_assign(path, tmp);
+	g_free(tmp);
+}
+
+void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, GebrGeoXmlLine *line, gchar ***paths, gboolean relative)
+{
+	struct FlowSetPathsToRelativeData data;
+	data.paths = paths;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
 	if (maestro)
-		mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+		data.mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 	else
-		mount_point = NULL;
-	gebr_flow_modify_paths(flow, func, FALSE, NULL);
+		data.mount_point = NULL;
+	gebr_flow_modify_paths(flow, flow_modify_paths_func, FALSE, &data);
+}
+
+static void
+flow_empty_paths_func(GString *path, gpointer data)
+{
+	g_string_assign(path, "");
 }
 
 void flow_set_paths_to_empty(GebrGeoXmlFlow * flow)
 {
-	void func(GString *path, gpointer data)
-	{
-		g_string_assign(path, "");
-	}
-	gebr_flow_modify_paths(flow, func, TRUE, NULL);
+	gebr_flow_modify_paths(flow, flow_empty_paths_func, TRUE, NULL);
 }
 
 static void
@@ -984,16 +1006,19 @@ gebr_flow_revisions_hash_create(GebrGeoXmlFlow *flow)
 
 	return hash;
 }
+
+static void
+free_revisions_list_func(gpointer key, gpointer value)
+{
+	GList *list = value;
+	g_list_free(list);
+}
+
 void
 gebr_flow_revisions_hash_free(GHashTable *revision)
 {
-	void free_hash(gpointer key, gpointer value)
-	{
-		GList *list = value;
-		g_list_free(list);
-	}
 
-	g_hash_table_foreach(revision, (GHFunc) free_hash, NULL);
+	g_hash_table_foreach(revision, (GHFunc) free_revisions_list_func, NULL);
 	g_hash_table_destroy(revision);
 }
 

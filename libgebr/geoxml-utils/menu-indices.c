@@ -23,6 +23,7 @@
 #include <geoxml.h>
 #include <glib.h>
 #include <libgebr.h>
+#include <libgebr/utils.h>
 
 gboolean
 gebr_geoxml_scan_menu_dir(const gchar * directory, GKeyFile * menu_key_file, GHashTable * categ_hash)
@@ -115,6 +116,12 @@ parse_command_line_args(gint argc, gchar **argv, gchar **directory,
 	return TRUE;
 }
 
+static void
+hash_to_keyfile(gchar *key, GString *value, GKeyFile *categ_key_file)
+{
+	g_key_file_set_string(categ_key_file, key, "menus", g_strdup(value->str));
+}
+
 //Example of call ./gebr-geoxml-menu-indices /usr/share/gebr/menus/Seismic_Unix/ /tmp/menu.idx2 /tmp/categories.idx2
 int main(int argc, gchar *argv[])
 {
@@ -132,19 +139,10 @@ int main(int argc, gchar *argv[])
 	GKeyFile *categ_key_file = g_key_file_new();
 	gchar *categ_key_file_str;
 
-	void g_strfree(GString *string){
-		g_string_free(string, TRUE);
-	}
-	
 	GHashTable *categ_hash = g_hash_table_new_full(g_str_hash,g_str_equal,
-						       g_free, (GDestroyNotify) g_strfree);
+						       g_free, (GDestroyNotify) gebr_string_freeall);
 	gebr_geoxml_init();
 	gebr_geoxml_scan_menu_dir(directory, menu_key_file, categ_hash);
-
-	void hash_to_keyfile(gchar *key, GString *value, GKeyFile *categ_key_file)
-	{
-		g_key_file_set_string(categ_key_file, key, "menus", g_strdup(value->str));
-	}
 
 	g_hash_table_foreach(categ_hash, (GHFunc)hash_to_keyfile, categ_key_file);
 	menu_key_file_str = g_key_file_to_data(menu_key_file, NULL, NULL);

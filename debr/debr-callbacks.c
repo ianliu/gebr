@@ -155,6 +155,14 @@ void on_menu_new_activate(void)
 	menu_new(TRUE);
 }
 
+static void
+add_shortcut_folders_foreach(gpointer key, gpointer value, gpointer user_data)
+{
+	gchar *folder = key;
+	GtkFileChooser *chooser = user_data;
+	gtk_file_chooser_add_shortcut_folder(chooser, key, NULL);
+}
+
 void on_menu_open_activate(void)
 {
 	GtkWidget *chooser_dialog;
@@ -166,10 +174,7 @@ void on_menu_open_activate(void)
 						     GTK_FILE_CHOOSER_ACTION_OPEN,
 						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						     GTK_STOCK_OPEN, GTK_RESPONSE_YES, NULL);
-	void foreach(gchar * key) {
-		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), key, NULL);
-	}
-	g_hash_table_foreach(debr.config.opened_folders, (GHFunc) foreach, NULL);
+	g_hash_table_foreach(debr.config.opened_folders, (GHFunc) add_shortcut_folders_foreach, chooser_dialog);
 
 	filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filefilter, _("Menu files (*.mnu)"));
