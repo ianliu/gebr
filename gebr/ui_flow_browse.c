@@ -1033,6 +1033,7 @@ flow_browse_component_edited(GtkCellRendererText *renderer,
 
 	gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
+	flow_browse_info_update();
 }
 
 static GtkMenu *
@@ -2630,6 +2631,8 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 	/* Update parameters review on Flow Browse */
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, FALSE);
 
+	flow_browse_info_update();
+
 	gebr.ui_flow_browse->program_edit = NULL;
 }
 /**
@@ -2705,6 +2708,9 @@ static void flow_browse_load(void)
 	if (mixed_selection)
 		gtk_tree_selection_select_iter(selection, &iter);
 
+
+	gint nrows;
+
 	if (type == STRUCT_TYPE_FLOW) {
 		gebr_flow_browse_create_graph(gebr.ui_flow_browse);
 
@@ -2712,7 +2718,7 @@ static void flow_browse_load(void)
 
 		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 
-		gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view)));
+		nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view)));
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), nrows > 1? FALSE : TRUE);
 
 		GebrUiFlow *ui_flow;
@@ -2733,50 +2739,6 @@ static void flow_browse_load(void)
 			flow_browse_program_check_sensitiveness();
 		} else {
 			remove_programs_view(gebr.ui_flow_browse);
-		}
-
-		flow_browse_info_update();
-
-		/* check if has revisions */
-		gboolean has_revision = gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0;
-
-		/* Create model for Revisions */
-		if (has_revision && nrows == 1) {
-			gtk_widget_show(gebr.ui_flow_browse->revpage_main);
-			gtk_widget_hide(gebr.ui_flow_browse->revpage_warn);
-
-			gebr.ui_flow_browse->update_graph = TRUE;
-			flow_browse_add_revisions_graph(gebr.flow,
-			                                gebr.ui_flow_browse,
-			                                FALSE);
-		} else if (nrows > 1) {
-			gchar *multiple_selection_msg = g_strdup_printf(_("%d Flows selected.\n\n"
-					"GêBR can take a snapshot\n"
-					"of the current state for\n"
-					"each of the selected Flows.\n"
-					"To do it, just click on the\n"
-					"camera icon."
-			),
-			nrows);
-			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
-			                   multiple_selection_msg);
-			g_free(multiple_selection_msg);
-
-			gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
-			gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
-
-		} else {
-			const gchar *no_snapshots_msg = _("There are no snapshots.\n\n"
-					"A snapshot stores the settings of "
-					"your flow so you can restore it at any "
-					"moment. To take a snapshot, just click "
-					"on the camera icon and give a non-empty "
-					"description.");
-			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
-			                   no_snapshots_msg);
-
-			gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
-			gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 		}
 
 		gebr_flow_browse_select_group_for_flow(gebr.ui_flow_browse,
@@ -2803,6 +2765,49 @@ static void flow_browse_load(void)
 		gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
 		g_free(tmp_help_p);
 	}
+
+	if (type == STRUCT_TYPE_PROGRAM || type == STRUCT_TYPE_IO)
+		nrows = 1;
+
+	/* check if has revisions */
+	gboolean has_revision = gebr_geoxml_flow_get_revisions_number(gebr.flow) > 0;
+
+	if (has_revision && nrows == 1) {
+		gtk_widget_show(gebr.ui_flow_browse->revpage_main);
+		gtk_widget_hide(gebr.ui_flow_browse->revpage_warn);
+
+		gebr.ui_flow_browse->update_graph = TRUE;
+		flow_browse_add_revisions_graph(gebr.flow,
+		                                gebr.ui_flow_browse,
+		                                FALSE);
+	} else if (nrows > 1) {
+		gchar *multiple_selection_msg = g_strdup_printf(_("%d Flows selected.\n\n"
+				"GêBR can take a snapshot\n"
+				"of the current state for\n"
+				"each of the selected Flows.\n"
+				"To do it, just click on the\n"
+				"camera icon."), nrows);
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
+		                   multiple_selection_msg);
+		g_free(multiple_selection_msg);
+
+		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
+		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
+	} else {
+		const gchar *no_snapshots_msg = _("There are no snapshots.\n\n"
+				"A snapshot stores the settings of "
+				"your flow so you can restore it at any "
+				"moment. To take a snapshot, just click "
+				"on the camera icon and give a non-empty "
+				"description.");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
+		                   no_snapshots_msg);
+
+		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
+		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
+	}
+
+	flow_browse_info_update();
 
 	/* Set correct view */
 	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
@@ -3725,7 +3730,10 @@ gebr_flow_browse_escape_context(GebrUiFlowBrowse *fb)
 		flow_browse_info_update();
 	}
 
-	gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, fb);
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(fb->properties_ctx_button)))
+		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, fb);
+	else
+		gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, fb);
 }
 
 void
