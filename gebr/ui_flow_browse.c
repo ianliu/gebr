@@ -3662,8 +3662,14 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
                                           gboolean sensitive,
                                           gboolean maestro_err)
 {
-	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive)
-		sensitive = FALSE;
+	if (gebr_geoxml_line_get_flows_number(gebr.line) <= 0){
+		gtk_widget_set_can_focus (fb->view,FALSE);
+		gtk_widget_grab_focus(gtk_widget_get_parent(GTK_WIDGET(fb->view)));
+		if (sensitive)
+			sensitive = FALSE;
+	}
+	else
+		gtk_widget_set_can_focus (fb->view,TRUE);
 
 	const gchar *tooltip_disconn;
 	const gchar *tooltip_execute;
