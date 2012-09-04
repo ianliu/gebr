@@ -1864,7 +1864,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	                                          (GebrGuiGtkPopupCallback) flow_browse_menu_popup_menu,
 	                                          ui_flow_browse);
 	g_signal_connect(ui_flow_browse->menu_view, "key-press-event",
-	                 G_CALLBACK(flow_edition_component_key_pressed), ui_flow_browse);
+	                 G_CALLBACK(flow_browse_component_key_pressed), ui_flow_browse);
 	g_signal_connect(GTK_OBJECT(ui_flow_browse->menu_view), "row-activated",
 	                 G_CALLBACK(flow_browse_menu_add), ui_flow_browse);
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_flow_browse->menu_view), MENU_TITLE_COLUMN);
