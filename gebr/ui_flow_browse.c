@@ -3671,7 +3671,7 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 						  LIBGEBR_STYLES_DIR, LIBGEBR_DATA_DIR);
 
 	g_string_append_printf(prog_content, "  </head>\n"
-					     "  <body>\n");
+					     "  <body oncontextmenu=\"return false;\"/>\n");
 
 	gebr_flow_generate_io_table(flow, prog_content);
 	gebr_flow_generate_parameter_value_table(flow, prog_content, NULL, TRUE);
