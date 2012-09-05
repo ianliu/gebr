@@ -1446,8 +1446,8 @@ gebr_maestro_server_get_display_address(GebrMaestroServer *maestro)
 static gboolean
 foreach_maestro_server_func(gpointer key, gpointer value, gpointer data)
 {
-	GList *groups = data;
-	groups = g_list_prepend(groups, g_strdup((gchar*)(key)));
+	GList **groups = data;
+	*groups = g_list_prepend(*groups, g_strdup((gchar*)(key)));
 	return FALSE;
 }
 
@@ -1468,7 +1468,7 @@ gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 			g_tree_insert(tree, i->data, GUINT_TO_POINTER(TRUE));
 	}
 
-	g_tree_foreach(tree, foreach_maestro_server_func, groups);
+	g_tree_foreach(tree, foreach_maestro_server_func, &groups);
 	g_object_unref(daemons);
 	g_tree_unref(tree);
 	return groups;
