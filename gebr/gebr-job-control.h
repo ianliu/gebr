@@ -146,6 +146,8 @@ GebrJob *gebr_job_control_get_recent_job_from_flow(GebrGeoXmlDocument *flow,
 void gebr_job_control_apply_flow_filter(GebrGeoXmlFlow *flow,
                                         GebrJobControl *jc);
 
+void gebr_job_control_reset_filters(GebrJobControl *jc);
+
 /**
  * gebr_job_control_setup_filter_button:
  *
@@ -161,6 +163,13 @@ detail_button_query_tooltip(GtkWidget  *widget,
 			       gboolean    keyboard_mode,
 			       GtkTooltip *tooltip,
 			       GebrJobControl *jc);
+
+/**
+ * gebr_job_control_set_auto_filter:
+ *
+ * Sets the indication whether the filter to be applied is user_defined or is the automatic filter generated originated from the Flows tab 
+ */
+void gebr_job_control_set_automatic_filter(GebrJobControl *jc, gboolean value);
 
 G_END_DECLS
 
