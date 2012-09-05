@@ -48,8 +48,10 @@ void on_new_activate(void)
 	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :{
-		if (!flow_browse_get_selected(&iter, FALSE))
+		if (!flow_browse_get_selected(&iter, FALSE)) {
+			flow_new();
 			return;
+		}
 
 		GebrUiFlowBrowseType type;
 
