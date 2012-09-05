@@ -2850,8 +2850,7 @@ static void flow_browse_load(void)
 			                   -1);
 
 			flow = gebr_ui_flow_get_flow(ui_flow);
-			if (flow != old_flow)
-				gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
+			gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
 		} else {
 			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
 			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
