@@ -422,7 +422,30 @@ void flow_edition_component_activated(void)
 	title = gebr_geoxml_program_get_title(program);
 
 	gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Configuring program '%s'."), title);
-	parameters_configure_setup_ui();
+
+	GebrGuiProgramEdit *program_edit = parameters_configure_setup_ui();
+
+	if (program_edit) {
+		gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
+
+		GtkTreeIter parent;
+		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent, &iter);
+		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent);
+		gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_flow_browse->store), path, &parent);
+		gtk_tree_path_free(path);
+
+		if (gebr.ui_flow_browse->program_edit)
+			gebr_gui_program_edit_destroy(gebr.ui_flow_browse->program_edit);
+
+		gebr.ui_flow_browse->program_edit = program_edit;
+
+		GList *children = gtk_container_get_children(GTK_CONTAINER(gebr.ui_flow_browse->context[CONTEXT_PARAMETERS]));
+		if (children)
+			gtk_widget_destroy(children->data);
+
+		gtk_container_add(GTK_CONTAINER(gebr.ui_flow_browse->context[CONTEXT_PARAMETERS]), program_edit->widget);
+		gebr_flow_browse_define_context_to_show(CONTEXT_PARAMETERS, gebr.ui_flow_browse);
+	}
 	g_free(title);
 }
 

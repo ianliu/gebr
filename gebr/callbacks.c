@@ -173,26 +173,21 @@ void on_document_properties_activate(void)
 	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :{
-		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_edition->fseq_view) {
-			GebrGeoXmlObject *object;
+		if (!flow_browse_get_selected(&iter, FALSE))
+			return;
 
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-			                   FSEQ_GEBR_GEOXML_POINTER, &object, -1);
+		GebrUiFlowBrowseType type;
 
-			if (!object)
-				continue;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		                   FB_STRUCT_TYPE, &type, -1);
 
-			GebrGeoXmlObjectType type = gebr_geoxml_object_get_type(object);
-			if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-				flow_edition_component_activated();
-				return;
-			}
-		}
-		document_properties_setup_ui(document_get_current(), NULL, FALSE);
+		if (type == STRUCT_TYPE_FLOW)
+			document_properties_setup_ui(document_get_current(), NULL, FALSE);
+		else if (type ==  STRUCT_TYPE_PROGRAM)
+			flow_edition_component_activated();
 		break;
 	}
 	default:
-		document_properties_setup_ui(document_get_current(), NULL, FALSE);
 		break;
 	}
 }

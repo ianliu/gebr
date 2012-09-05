@@ -139,7 +139,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 		"<Control><Shift>h", N_("Show Program's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
 		"Delete", N_("Delete"), G_CALLBACK(on_flow_component_delete_activate)},
-	{"flow_edition_properties",  "kontact_todo", N_("Properties"),
+	{"flow_edition_properties",  "kontact_todo", N_("Edit Parameters"),
 		NULL, N_("Edit the Program's parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
 		NULL, N_("Refresh Menu list"), G_CALLBACK(on_flow_component_refresh_activate)},
