@@ -634,6 +634,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		g_free(html);
 		break;
 	case GEBR_GEOXML_OBJECT_TYPE_PROGRAM:
+		gebr_gui_html_viewer_widget_generate_links(html_viewer_widget, object);
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
 		gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
 		g_free(html);

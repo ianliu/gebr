@@ -105,26 +105,10 @@ parameters_configure_setup_ui(void)
 	g_signal_connect(button_default, "clicked", G_CALLBACK(on_parameters_default_button_clicked), program_edit);
 	g_signal_connect(button_help, "clicked", G_CALLBACK(on_parameters_help_button_clicked), program_edit);
  
-	gtk_box_pack_end(GTK_BOX(hbox_buttons), button_default, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox_buttons), button_help, FALSE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox_buttons), button_help, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_buttons), button_default, FALSE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(program_edit->widget), hbox_buttons, FALSE, TRUE, 5);
 
-	const gchar *uri = gebr_geoxml_program_get_url(program_edit->program);
-	if (strlen(uri)) {
-		GtkWidget *button;
-		GString *full_uri;
-
-		full_uri = g_string_new(NULL);
-		if (g_str_has_prefix(uri, "http://"))
-			g_string_assign(full_uri, uri);
-		else
-			g_string_printf(full_uri, "http://%s", uri);
-
-		button = gtk_link_button_new_with_label(full_uri->str, _(" Link "));
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NORMAL);
-		gtk_box_pack_start(GTK_BOX(hbox_buttons), button, FALSE, TRUE, 5);
-		g_string_free(full_uri, TRUE);
-	}
 	gtk_widget_show_all(program_edit->widget);
 	return program_edit;
 }

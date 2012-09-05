@@ -200,10 +200,13 @@ static void create_generate_links_index_function(JSContextRef context)
 				"headers[i].setAttribute('id', anchor);"
 			"}"
 		"}";
+
 	gebr_js_evaluate(context, script);
 }
 
-static void generate_links_index(JSContextRef context, const gchar * links, gboolean is_programs_help)
+static void generate_links_index(JSContextRef context,
+                                 const gchar * links,
+                                 gboolean is_programs_help)
 {
 	gchar * script;
 
@@ -246,11 +249,18 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 
 		if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 			GebrGeoXmlDocument *menu = gebr_geoxml_object_get_owner_document(priv->object);
+			const gchar *uri = gebr_geoxml_program_get_url(GEBR_GEOXML_PROGRAM(priv->object));
 			help = gebr_geoxml_document_get_help (menu);
-			if(strlen(help) > 0)
+
+			if (strlen(help) && strlen(uri)) {
+				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu'], ['<b>More Info</b>', 'gebr://link']]", TRUE);
+			} else if(strlen(help) > 0)
 				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
+			else if (strlen(uri))
+				generate_links_index(context, "[['<b>More Info</b>', 'gebr://link']]", TRUE);
 			else
 				generate_links_index(context, NULL, TRUE);
+
 			g_free (help);
 		} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 			GString * list;
@@ -302,6 +312,24 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 			}
 			GebrGeoXmlDocument *menu = gebr_geoxml_object_get_owner_document(priv->object);
 			object = GEBR_GEOXML_OBJECT(menu);
+		} else if (!g_strcmp0(uri, "gebr://link")) {
+			if (gebr_geoxml_object_get_type(priv->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				                        _("Invalid link"), _("Sorry, couldn't reach link."));
+				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+			}
+			GString *full_uri = g_string_new(NULL);
+			const gchar *url = gebr_geoxml_program_get_url(GEBR_GEOXML_PROGRAM(priv->object));
+			if (g_str_has_prefix(url, "http://"))
+				g_string_assign(full_uri, url);
+			else
+				g_string_printf(full_uri, "http://%s", uri);
+
+			gebr_gui_show_uri(full_uri->str);
+
+			g_string_free(full_uri, TRUE);
+
+			return  WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 		} else {
 			if (gebr_geoxml_object_get_type(priv->object) != GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
