@@ -113,6 +113,15 @@ const gchar * gebr_gui_html_viewer_widget_get_html (GebrGuiHtmlViewerWidget *sel
 GebrGeoXmlObject *
 gebr_gui_html_viewer_widget_get_related_object (GebrGuiHtmlViewerWidget *self);
 
+/**
+ * gebr_gui_html_viewer_widget_load_anchor:
+ * @anchor: The anchor to go
+ *
+ * Reload html to move view to anchor
+ */
+void gebr_gui_html_viewer_widget_load_anchor (GebrGuiHtmlViewerWidget *self,
+                                              gint anchor);
+
 
 G_END_DECLS
 

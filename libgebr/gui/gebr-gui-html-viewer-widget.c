@@ -528,3 +528,25 @@ gebr_gui_html_viewer_widget_get_related_object (GebrGuiHtmlViewerWidget *self)
 	GebrGuiHtmlViewerWidgetPrivate * priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE (self);
 	return priv->object;
 }
+
+void
+gebr_gui_html_viewer_widget_load_anchor (GebrGuiHtmlViewerWidget *self,
+                                         gint anchor)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	const gchar *uri = webkit_web_view_get_uri(WEBKIT_WEB_VIEW(priv->web_view));
+	gchar *new_uri;
+
+	gchar *find = g_strrstr(uri, "#");
+	if (find)
+		find[0] = '\0';
+
+	new_uri = g_strdup_printf("%s#%d", uri, anchor);
+
+	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(priv->web_view), new_uri);
+}
