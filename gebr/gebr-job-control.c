@@ -2644,6 +2644,10 @@ gebr_job_control_hide(GebrJobControl *jc)
 {
 	if (jc->priv->timeout_source_id)
 		g_source_remove(jc->priv->timeout_source_id);
+
+	jc->priv->automatic_filter = TRUE;
+	gebr_job_control_reset_filters(jc);
+	jc->priv->automatic_filter = FALSE;
 }
 
 void
