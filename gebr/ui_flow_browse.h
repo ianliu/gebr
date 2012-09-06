@@ -287,5 +287,7 @@ void gebr_flow_browse_block_changed_signal(GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_unblock_changed_signal(GebrUiFlowBrowse *fb);
 
+void flow_edition_component_activated(void);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

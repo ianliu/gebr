@@ -48,7 +48,6 @@
 #include "ui_flow_execution.h"
 #include "ui_document.h"
 #include "ui_flow_browse.h"
-#include "gebr-flow-edition.h"
 #include "ui_flow_program.h"
 #include "ui_flow_browse.h"
 #include "ui_project_line.h"
@@ -1101,7 +1100,7 @@ void flow_program_move_top(void)
 	if (gebr_flow_browse_get_io_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &input, GEBR_IO_TYPE_INPUT))
 		gtk_tree_store_move_after(gebr.ui_flow_browse->store, &iter, &input);
 
-	flow_program_check_sensitiveness();
+	flow_browse_program_check_sensitiveness();
 }
 
 void flow_program_move_bottom(void)
@@ -1120,7 +1119,7 @@ void flow_program_move_bottom(void)
 	if (gebr_flow_browse_get_io_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &output, GEBR_IO_TYPE_OUTPUT))
 		gtk_tree_store_move_before(gebr.ui_flow_browse->store, &iter, &output);
 
-	flow_program_check_sensitiveness();
+	flow_browse_program_check_sensitiveness();
 }
 
 void flow_copy(void)
@@ -1342,7 +1341,6 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_top"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_bottom"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"), sensitive_exec_slider);
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->speed_button, sensitive_exec_slider);
 }
 
 static void append_parameter_row(GebrGeoXmlParameter * parameter,

@@ -158,7 +158,6 @@ void on_menu_new_activate(void)
 static void
 add_shortcut_folders_foreach(gpointer key, gpointer value, gpointer user_data)
 {
-	gchar *folder = key;
 	GtkFileChooser *chooser = user_data;
 	gtk_file_chooser_add_shortcut_folder(chooser, key, NULL);
 }

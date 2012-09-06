@@ -31,7 +31,6 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
 
-#include "gebr-flow-edition.h"
 #include "interface.h"
 #include "gebr.h"
 #include "flow.h"
@@ -563,7 +562,6 @@ void gebr_setup_ui(void)
 	 * Create Structure of Job Control (to use on Flows)
 	 */
 	gebr.job_control = gebr_job_control_new();
-	gebr.ui_flow_edition = flow_edition_setup_ui();
 
 	/*
 	 * Notebook's page "Flows"
@@ -670,13 +668,6 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"))), -1);
-
-	insert_speed_controler(GTK_TOOLBAR(toolbar),
-			       &gebr.ui_flow_edition->nice_button_high,
-			       &gebr.ui_flow_edition->nice_button_low,
-			       &gebr.ui_flow_edition->speed_button,
-			       &gebr.ui_flow_edition->speed_slider,
-			       &gebr.ui_flow_edition->ruler);
 
 	/*
 	 * Notebook's page "Job control"

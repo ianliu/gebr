@@ -227,7 +227,6 @@ gboolean gebr_quit(gboolean save_config)
 
 	g_free(gebr.ui_project_line);
 	g_free(gebr.ui_flow_browse);
-	g_free(gebr.ui_flow_edition);
 	gebr_job_control_free(gebr.job_control);
 	g_free(gebr.ui_server_list);
 

@@ -32,7 +32,6 @@
 #include "interface.h"
 #include "ui_flow.h"
 #include "ui_flow_browse.h"
-#include "gebr-flow-edition.h"
 #include "ui_help.h"
 #include "gebr-job-control.h"
 #include "ui_log.h"
@@ -100,7 +99,6 @@ struct gebr {
 	GtkWidget *navigation_box_label;
 	struct ui_project_line *ui_project_line;
 	GebrUiFlowBrowse *ui_flow_browse;
-	GebrFlowEdition *ui_flow_edition;
 	GebrJobControl *job_control;
 	struct ui_log *ui_log;
 	struct ui_server_list *ui_server_list;

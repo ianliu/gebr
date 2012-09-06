@@ -195,7 +195,6 @@ void project_list_populate(void)
 	/* free previous selection path */
 	gtk_tree_store_clear(gebr.ui_project_line->store);
 	gtk_tree_store_clear(gebr.ui_flow_browse->store);
-	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
 
 	project_line_free();
 

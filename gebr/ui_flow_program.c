@@ -235,9 +235,3 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 	return GTK_MENU(menu);
 }
 
-const gchar *
-gebr_ui_flow_program_get_error_tooltip(GebrUiFlowProgram *program)
-{
-	//FIXME: remove as soon as we remove gebr-flow-edition.c
-	return NULL;
-}

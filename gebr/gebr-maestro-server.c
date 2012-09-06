@@ -1826,3 +1826,18 @@ gebr_maestro_server_reset_daemons_timeout(GebrMaestroServer *maestro)
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 }
+
+gchar *
+gebr_maestro_server_translate_error(const gchar *error_type,
+                                    const gchar *error_msg)
+{
+	gchar *message = NULL;
+
+	if (g_strcmp0(error_type, "error:protocol") == 0)
+		message = g_strdup_printf(_("Maestro protocol version mismatch: %s"), error_msg);
+	else if (g_strcmp0(error_type, "error:ssh") == 0)
+		message = g_strdup(error_msg);
+
+	return message;
+}
+

@@ -73,40 +73,8 @@ struct _GebrFlowEdition {
 	GtkWidget *ruler;
 };
 
-/**
- * Assembly the flow edit ui_flow_edition->widget.
- *
- * @return The structure containing relevant data.
- */
-GebrFlowEdition *flow_edition_setup_ui(void);
 
-/**
- * Load current flow's (gebr.flow) programs.
- */
-void flow_edition_load_components(void);
 
-/**
- * Return TRUE if there is a selected component (program) and put it into _iter_
- * If _warn_unselected_ is TRUE then a error message is displayed if the FALSE is returned
- */
-gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected);
-
-/**
- * Select \p iter and scroll to it.
- */
-void flow_edition_select_component_iter(GtkTreeIter * iter);
-
-/**
- * Set the XML IO into iterators
- */
-void flow_edition_set_io(void);
-
-/**
- * Show the current selected flow components parameters
- */
-void flow_edition_component_activated(void);
-
-gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key);
 
 /**
  * flow_edition_change_iter_status:
@@ -118,34 +86,10 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key);
 void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter *iter);
 
 /**
- * Change the flow status when select the status from the "Flow Component" menu.
- */
-void flow_edition_status_changed(guint status);
-
-/**
- * flow_edition_revalidate_programs:
- */
-void flow_edition_revalidate_programs(void);
-
-/**
  * Checks if the first program has input entrance, the last one has output exit and if even one of then has error exit.
  * If one of this is false, so the respective component are made insensitive. 
  */
 void flow_program_check_sensitiveness (void);
-
-const gchar *gebr_flow_edition_get_selected_queue(GebrFlowEdition *fe);
-
-const gchar *gebr_flow_edition_get_selected_server(GebrFlowEdition *fe);
-
-gchar *gebr_maestro_server_translate_error(const gchar *error_type,
-                                           const gchar *error_msg);
-
-void gebr_flow_edition_get_iter_for_program(GebrGeoXmlProgram *prog,
-                                            GtkTreeIter *iter);
-
-const gchar *gebr_flow_get_error_tooltip_from_id(GebrIExprError errorid);
-
-GtkWidget *gebr_flow_edition_get_programs_view(GebrFlowEdition *fe);
 
 void gebr_flow_edition_update_speed_slider_sensitiveness(GebrFlowEdition *fe);
 
