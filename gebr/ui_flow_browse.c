@@ -2797,7 +2797,7 @@ static void flow_browse_load(void)
 		gebr.program = gebr_ui_flow_program_get_xml(ui_program);
 
 		/* If the program has an error, disable the 'Configured' status */
-		action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
+		action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_toggle_status");
 		has_error = gebr_geoxml_program_get_error_id(gebr.program, NULL);
 		gtk_action_set_sensitive(action, !has_error);
 
