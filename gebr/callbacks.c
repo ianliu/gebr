@@ -491,14 +491,6 @@ void on_flow_component_move_bottom(void)
 	flow_browse_program_check_sensitiveness();
 }
 
-void on_flow_component_status_activate(GtkAction *action,
-				       gpointer user_data)
-{
-	guint status = GPOINTER_TO_UINT(user_data);
-	flow_browse_status_changed(status);
-	flow_browse_validate_io(gebr.ui_flow_browse);
-}
-
 void on_job_control_save(void)
 {
 	gebr_job_control_save_selected(gebr.job_control);
@@ -671,3 +663,13 @@ on_flows_escape_context(void)
 {
 	gebr_flow_browse_escape_context(gebr.ui_flow_browse);
 }
+
+void on_flow_component_status_activate(GtkToggleAction *toggleaction)
+{
+	if (gtk_toggle_action_get_active(toggleaction))
+		flow_browse_status_changed(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+	else
+		flow_browse_status_changed(GEBR_GEOXML_PROGRAM_STATUS_DISABLED);
+	flow_browse_validate_io(gebr.ui_flow_browse);
+}
+

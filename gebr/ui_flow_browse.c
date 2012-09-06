@@ -43,6 +43,8 @@
  * Prototypes
  */
 
+static void selection_changed_signal(void);
+
 static void flow_browse_load(void);
 
 static gboolean flow_browse_static_info_update(void);
@@ -1310,10 +1312,27 @@ flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
 	gtk_tree_path_free(path);
 }
 
-gboolean
-flow_browse_component_key_pressed(GtkWidget *view,
-                                  GdkEventKey *key,
-                                  GebrUiFlowBrowse *fb)
+static gboolean
+flow_browse_component_key_pressed(GtkWidget *view, GdkEventKey *key, GebrUiFlowBrowse *fb)
+{
+	if (key->keyval != GDK_space)
+		return FALSE;
+
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view));
+	GList *paths = gtk_tree_selection_get_selected_rows(selection, NULL);
+
+	if (!paths)
+		return FALSE;
+
+	g_list_foreach(paths, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(paths);
+
+	flow_browse_toggle_selected_program_status(fb);
+	return TRUE;
+}
+	
+void
+flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 {
 	GList			* listiter;
 	GList			* paths;
@@ -1324,15 +1343,11 @@ flow_browse_component_key_pressed(GtkWidget *view,
 	GtkTreeSelection	* selection;
 	gboolean		  has_disabled = FALSE;
 
-
-	if (key->keyval != GDK_space)
-		return FALSE;
-
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (fb->view));
 	paths = gtk_tree_selection_get_selected_rows (selection, &model);
 
 	if (!paths)
-		return FALSE;
+		return;
 
 	listiter = paths;
 	do {
@@ -1398,8 +1413,6 @@ flow_browse_component_key_pressed(GtkWidget *view,
 
 	flow_browse_validate_io(fb);
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
-
-	return TRUE;
 }
 
 static gboolean
@@ -1708,7 +1721,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 			 ui_flow_browse);
 //
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
-	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), NULL);
+	g_signal_connect(selection, "changed", G_CALLBACK(selection_changed_signal), NULL);
 	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_speed_slider_sensitiveness), ui_flow_browse);
 
 	/* Icon/Text column */
@@ -2688,8 +2701,12 @@ flow_browse_on_multiple_selection(GtkTreeModel *model,
 	return n_rows > 1;
 }
 
+static void selection_changed_signal(void)
+{
+	flow_browse_load();
+}
+
 /**
- * \internal
  * Load a selected flow from file when selected in "Flow Browser".
  */
 static void flow_browse_load(void)

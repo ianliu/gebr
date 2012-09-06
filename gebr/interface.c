@@ -169,13 +169,9 @@ static const GtkActionEntry actions_entries_job_control[] = {
 		NULL, N_("Filter jobs by group, node and status"), NULL},
 };
 
-static const GtkActionEntry status_action_entries[] = {
-	{"flow_edition_status_configured", NULL, N_("Configured"),
-		NULL, N_("Change the selected Programs status to configured"), NULL},
-	{"flow_edition_status_disabled", NULL, N_("Disabled"),
-		NULL, N_("Change the selected Programs status to disabled"), NULL},
-	{"flow_edition_status_unconfigured", NULL, N_("Not configured"),
-		NULL, N_("Change the selected Programs status to not configured"), NULL}
+static const GtkToggleActionEntry status_action_entries[] = {
+	{"flow_edition_toggle_status", NULL, N_("Enabled"),
+		NULL, N_("Toggle the status of the selected programs"), NULL}
 };
 
 /*
@@ -414,7 +410,6 @@ void gebr_setup_ui(void)
 
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
-	GtkAction *action;
 
 	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment for\nseismic processing tools"));
 
@@ -459,7 +454,7 @@ void gebr_setup_ui(void)
 
 	gebr.action_group_status = gtk_action_group_new("Status");
 	gtk_action_group_set_translation_domain(gebr.action_group_status, GETTEXT_PACKAGE);
-	gtk_action_group_add_actions(gebr.action_group_status, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
+	gtk_action_group_add_toggle_actions(gebr.action_group_status, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
 	gebr.accel_group_array[ACCEL_STATUS] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_status, gebr.accel_group_array[ACCEL_STATUS]);
 
@@ -613,6 +608,10 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
 
+	GtkAction *action;
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_toggle_status");
+	g_signal_connect(action, "toggled", G_CALLBACK(on_flow_component_status_activate), NULL);
+
 	gebr.ui_flow_browse = flow_browse_setup_ui();
 
 	insert_speed_controler(GTK_TOOLBAR(toolbar),
@@ -653,15 +652,6 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"))), -1);
-
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
-	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED));
-
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_disabled");
-	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_DISABLED));
-
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_unconfigured");
-	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED));
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 

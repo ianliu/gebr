@@ -276,6 +276,14 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 				       gboolean select_last,
 				       gboolean never_opened);
 
+/**
+ * flow_browse_toggle_selected_program_status:
+ *
+ * Toggles the status for the selected program.
+ * If no program is selected, nothing is done.
+ */
+void flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb);
+
 void flow_browse_validate_io(GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,

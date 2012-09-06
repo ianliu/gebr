@@ -34,7 +34,6 @@
 struct _GebrUiFlowProgramPriv {
 	GebrGeoXmlProgram *program;
 	gboolean never_opened;
-	GebrGeoXmlProgramStatus status;
 	GebrIExprError error_id;
 	gchar *tooltip;
 	// inserir ID que deve ser um indentificador unico de um programa
@@ -74,7 +73,6 @@ gebr_ui_flow_program_new(GebrGeoXmlProgram *program)
 	GebrUiFlowProgram *ui_prog = g_object_new(GEBR_TYPE_UI_FLOW_PROGRAM, NULL);
 
 	ui_prog->priv->program = program;
-	ui_prog->priv->status = gebr_geoxml_program_get_status(program);
 	gebr_geoxml_program_get_error_id(program, &(ui_prog->priv->error_id));
 	gebr_ui_flow_program_update_tooltip(ui_prog);
 
@@ -116,13 +114,13 @@ void
 gebr_ui_flow_program_set_status(GebrUiFlowProgram *program,
 				GebrGeoXmlProgramStatus status)
 {
-	program->priv->status = status;
+	gebr_geoxml_program_set_status(program->priv->program, status);
 }
 
 GebrGeoXmlProgramStatus
-gebr_ui_flow_program_get_status (GebrUiFlowProgram *program)
+gebr_ui_flow_program_get_status(GebrUiFlowProgram *program)
 {
-	return program->priv->status;
+	return gebr_geoxml_program_get_status(program->priv->program);
 }
 
 void
@@ -147,7 +145,7 @@ gebr_ui_flow_program_get_tooltip(GebrUiFlowProgram *program)
 void
 gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program) {
 	const gchar *tooltip;
-	if (program->priv->status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
+	if (gebr_ui_flow_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
 		tooltip =  _("This program needs to be configured");
 	} else {
 		GebrIExprError errorid = program->priv->error_id;
@@ -198,20 +196,24 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 		return NULL;
 
 	GtkWidget *menu = gtk_menu_new();
+	gboolean active;
+	
+	switch(gebr_ui_flow_program_get_status(program))
+	{
+	case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
+		active = TRUE;
+		break;
+	case GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED:
+	case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
+	case GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN:
+		active = FALSE;
+		break;
+	}
 
-
-
-	/* status */
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_toggle_status");
+	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), active);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
 
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_disabled");
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
-
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_unconfigured");
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
-
-	/* separator */
 	menu_item = gtk_separator_menu_item_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	gtk_container_add(GTK_CONTAINER(menu),
