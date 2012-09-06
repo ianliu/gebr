@@ -18,6 +18,7 @@
 
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
+#include <stdlib.h>
 
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
@@ -2794,6 +2795,18 @@ static void flow_browse_load(void)
 		gchar *tmp_help_p = gebr_geoxml_program_get_help(gebr.program);
 		gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
 		g_free(tmp_help_p);
+
+		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+		gchar *pathstr= gtk_tree_path_to_string(path);
+
+		gchar **anchors = g_strsplit(pathstr, ":", -1);
+		gint anchor = atoi(anchors[1]);
+
+		gebr_gui_html_viewer_widget_load_anchor(GEBR_GUI_HTML_VIEWER_WIDGET(gebr.ui_flow_browse->html_parameters), anchor);
+
+		g_free(pathstr);
+		g_strfreev(anchors);
+		gtk_tree_path_free(path);
 	}
 
 	if (type == STRUCT_TYPE_PROGRAM || type == STRUCT_TYPE_IO)
@@ -2852,12 +2865,15 @@ static void flow_browse_load(void)
 			                   -1);
 
 			flow = gebr_ui_flow_get_flow(ui_flow);
-			gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
+			if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+				gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
+			else
+				gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 		} else {
 			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
 			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
 				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-					gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
+					gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 				else
 					gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 			}

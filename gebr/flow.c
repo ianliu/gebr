@@ -1227,6 +1227,7 @@ void flow_program_paste(void)
 	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 	gebr_flow_set_toolbar_sensitive();
 	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
 }
 
 void
