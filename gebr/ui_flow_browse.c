@@ -1313,11 +1313,8 @@ flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
 }
 
 static gboolean
-flow_browse_component_key_pressed(GtkWidget *view, GdkEventKey *key, GebrUiFlowBrowse *fb)
+toggle_selected_program_status(GebrUiFlowBrowse *fb)
 {
-	if (key->keyval != GDK_space)
-		return FALSE;
-
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view));
 	GList *paths = gtk_tree_selection_get_selected_rows(selection, NULL);
 
@@ -1329,6 +1326,50 @@ flow_browse_component_key_pressed(GtkWidget *view, GdkEventKey *key, GebrUiFlowB
 
 	flow_browse_toggle_selected_program_status(fb);
 	return TRUE;
+}
+
+static gboolean
+delete_selected_program(GebrUiFlowBrowse *fb)
+{
+	GtkTreeIter iter;
+
+	if (!flow_browse_get_selected(&iter, FALSE))
+		return FALSE;
+
+	GebrUiFlowBrowseType type;
+	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(fb->view));
+
+	gtk_tree_model_get(model, &iter, 0, &type, -1);
+
+	GtkAction *action;
+
+	switch (type) {
+	case STRUCT_TYPE_FLOW:
+		action = gtk_action_group_get_action(gebr.action_group_flow, "flow_delete");
+		break;
+	case STRUCT_TYPE_PROGRAM:
+		action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_delete");
+		break;
+	case STRUCT_TYPE_IO:
+	case STRUCT_TYPE_COLUMN:
+		return FALSE;
+	}
+
+	gtk_action_activate(action);
+
+	return TRUE;
+}
+
+static gboolean
+flow_browse_component_key_pressed(GtkWidget *view, GdkEventKey *key, GebrUiFlowBrowse *fb)
+{
+	if (key->keyval == GDK_space)
+		return toggle_selected_program_status(fb);
+
+	if (key->keyval == GDK_Delete)
+		return delete_selected_program(fb);
+
+	return FALSE;
 }
 	
 void
