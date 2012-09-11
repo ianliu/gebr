@@ -118,7 +118,7 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("Export selected Flows"), G_CALLBACK(on_flow_export_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL,
 		"<Control>R", N_("Execute"), G_CALLBACK(on_flow_execute_activate)},
-	{"flow_execute_details", GTK_STOCK_PRINT, NULL,
+	{"flow_execute_details", "detailed_execution", NULL,
 		NULL, N_("Execution details"), G_CALLBACK(on_flow_execute_details_activate)},
 	{"flow_execute_parallel", NULL, NULL,
 		"<Control><Shift>R", NULL, G_CALLBACK(on_flow_execute_parallel_activate)},
