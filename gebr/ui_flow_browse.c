@@ -1453,6 +1453,7 @@ flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 	g_list_free (paths);
 
 	flow_browse_validate_io(fb);
+	flow_browse_static_info_update();
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
 }
 
@@ -3160,6 +3161,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
                gebr_geoxml_program_get_error_id(GEBR_GEOXML_PROGRAM(program), &undef);
                if (never_opened || undef == GEBR_IEXPR_ERROR_PATH)
                        continue;
+
                gebr_geoxml_program_is_valid(GEBR_GEOXML_PROGRAM(program), gebr.validator, NULL);
        }
 
