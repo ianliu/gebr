@@ -2847,17 +2847,17 @@ static void flow_browse_load(void)
 		gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
 		g_free(tmp_help_p);
 
-		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-		gchar *pathstr= gtk_tree_path_to_string(path);
-
-		gchar **anchors = g_strsplit(pathstr, ":", -1);
-		gint anchor = atoi(anchors[1]);
+		gint anchor = 0;
+		gint index = 1;
+		GebrGeoXmlSequence *progs;
+		gebr_geoxml_flow_get_program(gebr.flow, &progs, 0);
+		for (; progs && !anchor; gebr_geoxml_sequence_next(&progs)) {
+			if (GEBR_GEOXML_PROGRAM(progs) == gebr.program)
+				anchor = index;
+			index++;
+		}
 
 		gebr_gui_html_viewer_widget_load_anchor(GEBR_GUI_HTML_VIEWER_WIDGET(gebr.ui_flow_browse->html_parameters), anchor);
-
-		g_free(pathstr);
-		g_strfreev(anchors);
-		gtk_tree_path_free(path);
 	}
 
 	if (type == STRUCT_TYPE_PROGRAM || type == STRUCT_TYPE_IO)
