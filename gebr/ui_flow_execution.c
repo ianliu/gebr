@@ -27,6 +27,10 @@
 #include "flow.h"
 #include "callbacks.h"
 
+#define SLIDER_MAX 8.0
+#define SLIDER_100 5.0
+#define VALUE_MAX 20.0
+
 gchar *
 get_line_paths(GebrGeoXmlLine *line)
 {
@@ -158,18 +162,23 @@ modify_paths_func(GString *path, gpointer data)
 static const gchar *
 run_flow(GebrGeoXmlFlow *flow,
 	 const gchar *after,
-	 const gchar *snapshot_id)
+	 const gchar *snapshot_id,
+	 gboolean is_detailed)
 {
 	gchar *snapshot_title = NULL;
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return NULL;
 
-	const gchar *parent_rid = gebr_flow_browse_get_selected_queue(gebr.ui_flow_browse);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	const gchar *parent_rid = gebr_ui_flow_execution_get_selected_queue(gebr.ui_flow_browse->queue_combo, maestro);
 
 	gdouble speed;
-	if (!gebr_geoxml_flow_is_single_core(flow, gebr.validator))
-		speed = gebr_interface_get_execution_speed();
-	else
+	if (!gebr_geoxml_flow_is_single_core(flow, gebr.validator)) {
+		gdouble slider_value = gtk_adjustment_get_value(gebr.ui_flow_browse->speed_adjustment);
+		gdouble value = gebr_ui_flow_execution_calculate_speed_from_slider_value(slider_value);
+		speed = is_detailed ? value : gebr_interface_get_execution_speed();
+	} else
 		speed = 0.0;
 
 	gchar *submit_date = gebr_iso_date();
@@ -186,20 +195,40 @@ run_flow(GebrGeoXmlFlow *flow,
 		document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
 	}
 
+	gint niceness;
+
+	if (is_detailed) {
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->nice_button_high)))
+			niceness = 0;
+		else
+			niceness = 19;
+	} else
+		niceness =  gebr_interface_get_niceness();
+
+
 	gchar *speed_str = g_strdup_printf("%lf", speed);
-	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
+	gchar *nice =  g_strdup_printf("%d", niceness);
 
 	const gchar *hostname = g_get_host_name();
 
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 
 	GebrMaestroServerGroupType type;
 	gchar *name, *host = NULL;
-	gebr_flow_browse_get_current_group(gebr.ui_flow_browse, &type, &name);
+	
+	if (is_detailed) {
+		gebr_ui_flow_execution_get_current_group(gebr.ui_flow_browse->server_combo,
+							 &type,
+							 &name,
+							 maestro);
+	} else {
+		name = g_strdup(gebr.config.execution_server_name->str);
+		type = (GebrMaestroServerGroupType) gebr.config.execution_server_type;
+	}
+
 
 	if (type == MAESTRO_SERVER_TYPE_DAEMON)
-		gebr_flow_browse_get_server_hostname(gebr.ui_flow_browse, &host);
+		gebr_ui_flow_execution_get_server_hostname(gebr.ui_flow_browse->server_combo, maestro, &host);
 
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
 	gebr_geoxml_flow_server_set_group(flow, group_type, name);
@@ -333,7 +362,7 @@ run_flow(GebrGeoXmlFlow *flow,
 }
 
 void
-gebr_ui_flow_run(gboolean is_parallel)
+gebr_ui_flow_run(gboolean is_parallel, gboolean is_detailed)
 {
 	GList *rows;
 	GtkTreeModel *model;
@@ -369,7 +398,9 @@ gebr_ui_flow_run(gboolean is_parallel)
 			if (gebr_geoxml_flow_get_revisions_number(flow) > 0) {
 				const gchar *filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
 				if (g_list_find_custom(gebr.ui_flow_browse->select_flows, filename, (GCompareFunc)g_strcmp0)) {
-					gchar *str = g_strdup_printf("run\b%s\n", is_parallel? "parallel" : "single");
+					gchar *str = g_strdup_printf("run\b%s\b%s\n",
+								     is_parallel? "parallel" : "single",
+								     is_detailed ? "detailed" : "default");
 					GString *action = g_string_new(str);
 
 					if (gebr_comm_process_write_stdin_string(gebr.ui_flow_browse->graph_process, action) == 0)
@@ -383,9 +414,9 @@ gebr_ui_flow_run(gboolean is_parallel)
 		}
 
 		if (is_parallel)
-			id = run_flow(flow, NULL, NULL);
+			id = run_flow(flow, NULL, NULL, is_detailed);
 		else
-			id = run_flow(flow, id, NULL);
+			id = run_flow(flow, id, NULL, is_detailed);
 
 		if (!id)
 			return;
@@ -404,7 +435,8 @@ gebr_ui_flow_run(gboolean is_parallel)
 void
 gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
                            const gchar *snapshots,
-                           gboolean is_parallel)
+                           gboolean is_parallel,
+			   gboolean is_detailed)
 {
 	GebrGeoXmlRevision *rev;
 	gchar **snaps = g_strsplit(snapshots, ",", -1);
@@ -443,10 +475,10 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 
 		if (is_parallel)
 			id = run_flow(GEBR_GEOXML_FLOW(snap_flow),
-				      NULL, snapshot_id);
+				      NULL, snapshot_id, is_detailed);
 		else
 			id = run_flow(GEBR_GEOXML_FLOW(snap_flow),
-				      id, snapshot_id);
+				      id, snapshot_id, is_detailed);
 
 		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
 
@@ -467,4 +499,476 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 	flow_browse_info_update();
 
 	g_strfreev(snaps);
+}
+
+gdouble
+gebr_ui_flow_execution_calculate_speed_from_slider_value(gdouble x)
+{
+	if (x > SLIDER_100)
+		return (VALUE_MAX - SLIDER_100) / (SLIDER_MAX - SLIDER_100) * (x - SLIDER_100) + SLIDER_100;
+	else
+		return x;
+}
+
+gdouble
+gebr_ui_flow_execution_calculate_slider_from_speed (gdouble speed)
+{
+	if (speed > SLIDER_100)
+		return (SLIDER_MAX - SLIDER_100) * (speed - SLIDER_100) / (VALUE_MAX - SLIDER_100) + SLIDER_100;
+	else
+		return speed;
+}
+
+static gboolean
+change_value(GtkRange *range, GtkScrollType scroll, gdouble value)
+{
+	GtkAdjustment *adj = gtk_range_get_adjustment(range);
+	gdouble min, max;
+
+	min = gtk_adjustment_get_lower(adj);
+	max = gtk_adjustment_get_upper(adj);
+
+	gdouble speed = CLAMP (value, min, max);
+
+	gtk_adjustment_set_value(adj, speed);
+
+	return TRUE;
+}
+
+const gchar *
+gebr_ui_flow_execution_set_text_for_performance(gdouble value)
+{
+	if (value <= 0.1)
+	    return _(g_strdup_printf("1 core"));
+	else if (value < (SLIDER_100))
+	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*20));
+	else if (value <= 400)
+	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*100 - 400));
+	else
+		g_return_val_if_reached(NULL);
+}
+
+static void
+on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
+					   GtkCellRenderer *cell,
+					   GtkTreeModel    *tree_model,
+					   GtkTreeIter     *iter,
+					   gpointer         data)
+{
+	gchar *name;
+	GebrMaestroServerGroupType type;
+
+	gtk_tree_model_get(tree_model, iter,
+			   MAESTRO_SERVER_TYPE, &type,
+			   MAESTRO_SERVER_NAME, &name,
+			   -1);
+
+	GebrDaemonServer *daemon = NULL;
+	GebrMaestroServer *maestro;
+	gboolean is_connected = TRUE;
+
+	maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+							       gebr.line);
+
+	if (!maestro) {
+		if (GTK_IS_CELL_RENDERER_TEXT(cell))
+			g_object_set(cell, "text", "", NULL);
+		else
+			g_object_set(cell, "stock-id", NULL, NULL);
+		return;
+	}
+
+	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
+		daemon = gebr_maestro_server_get_daemon(maestro, name);
+		if (!daemon)
+			return;
+		is_connected = gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED;
+	}
+
+	if (GTK_IS_CELL_RENDERER_TEXT(cell)) {
+		const gchar *txt;
+
+		if (type == MAESTRO_SERVER_TYPE_GROUP) {
+			if (name && *name)
+				txt = name;
+			else
+				txt = gebr_maestro_server_get_display_address(maestro);
+		} else  {
+			txt = gebr_daemon_server_get_hostname(daemon);
+			if (!txt || !*txt)
+				txt = gebr_daemon_server_get_address(daemon);
+		}
+		g_object_set(cell, "text", txt, NULL);
+	} else {
+		const gchar *stock_id;
+		if (type == MAESTRO_SERVER_TYPE_GROUP)
+			stock_id = "group";
+		else {
+			if (is_connected)
+				stock_id = GTK_STOCK_CONNECT;
+			else
+				stock_id = GTK_STOCK_DISCONNECT;
+		}
+
+		g_object_set(cell, "stock-id", stock_id, NULL);
+	}
+
+	g_object_set(cell, "sensitive", is_connected, NULL);
+}
+
+static gboolean
+speed_controller_query_tooltip(GtkWidget  *widget,
+			       gint        x,
+			       gint        y,
+			       gboolean    keyboard_mode,
+			       GtkTooltip *tooltip,
+			       gpointer    user_data)
+{
+	GtkRange *scale = GTK_RANGE(widget);
+	gdouble value = gtk_range_get_value(scale);
+	const gchar *text_tooltip;
+	text_tooltip = gebr_ui_flow_execution_set_text_for_performance(value);
+	gtk_tooltip_set_text (tooltip, text_tooltip);
+	return TRUE;
+}
+
+static void
+on_queue_set_text(GtkCellLayout   *cell_layout,
+                  GtkCellRenderer *cell,
+                  GtkTreeModel    *tree_model,
+                  GtkTreeIter     *iter,
+                  gpointer         data)
+{
+	GebrJob *job;
+	gchar *name_queue;
+
+	gtk_tree_model_get(tree_model, iter, 0, &job, -1);
+
+	if (!job)
+		name_queue = g_strdup(_("Immediately"));
+	else
+		name_queue = g_strdup_printf(_("After %s #%s"),
+					     gebr_job_get_title(job),
+					     gebr_job_get_job_counter(job));
+
+	g_object_set(cell, "text", name_queue, NULL);
+	g_free(name_queue);
+}
+
+void
+gebr_ui_flow_execution_get_server_hostname(GtkComboBox *combo,
+					   GebrMaestroServer *maestro,
+					   gchar **host)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+
+	if (!gtk_combo_box_get_active_iter(combo, &iter))
+		gtk_tree_model_get_iter_first(model, &iter);
+
+	gtk_tree_model_get(model, &iter,
+			   MAESTRO_SERVER_HOST, host,
+			   -1);
+}
+
+void
+gebr_ui_flow_execution_get_current_group(GtkComboBox *combo,
+					 GebrMaestroServerGroupType *type,
+					 gchar **name,
+					 GebrMaestroServer *maestro)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(combo), &iter))
+		gtk_tree_model_get_iter_first(model, &iter);
+
+	gtk_tree_model_get(model, &iter,
+			   MAESTRO_SERVER_TYPE, type,
+			   MAESTRO_SERVER_NAME, name,
+			   -1);
+}
+
+const gchar *
+gebr_ui_flow_execution_get_selected_queue(GtkComboBox *combo,
+					  GebrMaestroServer *maestro)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gebr_maestro_server_get_queues_model(maestro);
+
+	if (!gtk_combo_box_get_active_iter(combo, &iter))
+		return "";
+	else {
+		GebrJob *job;
+		gtk_tree_model_get(model, &iter, 0, &job, -1);
+		return job ? gebr_job_get_id(job) : "";
+	}
+}
+
+void
+gebr_ui_flow_execution_save_default()
+{
+	/* Set server*/
+	gtk_combo_box_get_active(gebr.ui_flow_browse->server_combo);
+
+	/* Set speed*/
+	gebr.config.flow_exec_speed = gebr_ui_flow_execution_calculate_speed_from_slider_value(gtk_adjustment_get_value(gebr.ui_flow_browse->speed_adjustment));
+
+	/* Set niceness*/
+	gboolean active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->nice_button_high));
+	gebr.config.niceness = active ? 0 : 19;
+}
+
+void
+on_execution_details_destroy (GtkWidget *widget,
+			      gpointer   user_data)
+{
+	gtk_widget_destroy(widget);
+}
+
+void
+on_cancel_button_clicked(GtkButton *button,
+			 GtkWidget *window)
+{
+	gtk_widget_destroy(window);
+}
+
+static void
+on_help_button_clicked(GtkButton *button,
+		       gpointer pointer)
+{
+	gebr_gui_help_button_clicked("", NULL);
+}
+
+static void
+on_save_default_button_clicked(GtkButton *button,
+			       gpointer pointer)
+{
+	gebr_ui_flow_execution_save_default();
+}
+
+static void
+on_run_button_clicked(GtkButton *button,
+		      GtkWindow *window)
+{
+	gebr_ui_flow_run(FALSE, TRUE);
+	gtk_widget_destroy(GTK_WIDGET(window));
+}
+
+static void 
+on_show_scale(GtkWidget * scale)
+{
+	gtk_range_set_value(GTK_RANGE(scale),
+			    gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed));
+}
+
+static void
+execution_details_restore_default_values()
+{
+	/* Speed */
+	gdouble speed_value;
+	GtkAdjustment *flow_exec_adjustment = gebr.ui_flow_browse->speed_adjustment;
+
+	if (gebr.config.flow_exec_speed != -1) {
+		speed_value = gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed);
+	}
+
+	gtk_adjustment_set_value(flow_exec_adjustment,
+				 speed_value); 
+
+	gtk_adjustment_value_changed(flow_exec_adjustment);
+
+	/* Priority */
+	if (gebr.config.niceness == 19)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->nice_button_low), TRUE);
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->nice_button_high), TRUE);
+
+	/* Server */
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+	GtkComboBox *combo = gebr.ui_flow_browse->server_combo;
+	GtkTreeIter iter;
+
+	gchar *name = gebr.config.execution_server_name->str;
+	gint type = gebr.config.execution_server_type;
+
+	gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
+
+	while (valid)
+	{
+		GebrMaestroServerGroupType ttype;
+		gchar *tname;
+
+		gtk_tree_model_get(model, &iter,
+				   MAESTRO_SERVER_TYPE, &ttype,
+				   MAESTRO_SERVER_NAME, &tname,
+				   -1);
+		if (g_strcmp0(tname, name) == 0 && ttype == type) {
+			g_free(tname);
+			break;
+		}
+		g_free(tname);
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
+
+	gtk_combo_box_set_active_iter(combo, &iter);
+
+	/* Queue */
+	model = gebr_maestro_server_get_queues_model(maestro);
+	if (gtk_tree_model_get_iter_first(model, &iter)) {
+		gtk_combo_box_set_active_iter(gebr.ui_flow_browse->queue_combo, &iter);
+	}
+
+}
+
+void
+gebr_ui_flow_execution_slider_setup_ui(gdouble speed, GtkWidget **speed_slider)
+{
+	GtkAdjustment *flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, SLIDER_MAX, 0.1, 1, 0.1));
+
+
+	GtkWidget *scale = gtk_hscale_new(flow_exec_adjustment);
+	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
+	gtk_scale_set_digits(GTK_SCALE(scale), 1);
+
+	gdouble med = SLIDER_100 / 2.0;
+	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), (med/2), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), ((med+SLIDER_100)/2), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_100+1), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_MAX-1), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
+
+	g_object_set(scale, "has-tooltip",TRUE, NULL);
+
+	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
+	g_signal_connect(scale, "query-tooltip", G_CALLBACK(speed_controller_query_tooltip), NULL);
+	g_signal_connect(scale, "map", G_CALLBACK(on_show_scale), NULL);
+
+	*speed_slider = scale;
+
+	gebr.ui_flow_browse->speed_adjustment = flow_exec_adjustment;
+}
+
+void
+priority_button_toggled(GtkToggleButton *b1,
+			GtkToggleButton *b2)
+{
+	gboolean active = gtk_toggle_button_get_active(b1);
+
+	if (active) {
+		g_signal_handlers_block_by_func(b2, priority_button_toggled, b1);
+		gtk_toggle_button_set_active(b2, FALSE);
+		g_signal_handlers_unblock_by_func(b2, priority_button_toggled, b1);
+	} else {
+		g_signal_handlers_block_by_func(b1, priority_button_toggled, b2);
+		gtk_toggle_button_set_active(b1, TRUE);
+		g_signal_handlers_unblock_by_func(b1, priority_button_toggled, b2);
+	}
+}
+
+void
+gebr_ui_flow_execution_priority_setup_ui(GtkWidget **priority_buttons)
+{
+	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+
+	GtkWidget *high = gtk_toggle_button_new_with_label(_("High priority"));
+	GtkWidget *low = gtk_toggle_button_new_with_label(_("Low priority"));
+	gtk_widget_set_can_focus(high, FALSE);
+	gtk_widget_set_can_focus(low, FALSE);
+	gtk_button_set_relief(GTK_BUTTON(high), GTK_RELIEF_HALF);
+	gtk_button_set_relief(GTK_BUTTON(low), GTK_RELIEF_HALF);
+	gtk_widget_set_tooltip_text(high, _("Share available resources"));
+	gtk_widget_set_tooltip_text(low, _("Wait for free resources"));
+	g_object_set_data(G_OBJECT(high), "nice", GINT_TO_POINTER(0));
+	g_object_set_data(G_OBJECT(low), "nice", GINT_TO_POINTER(19));
+	g_signal_connect(high, "toggled", G_CALLBACK(priority_button_toggled), low);
+	g_signal_connect(low, "toggled", G_CALLBACK(priority_button_toggled), high);
+	gtk_box_pack_end(GTK_BOX(hbox), high, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbox), low, TRUE, TRUE, 0);
+
+	gebr.ui_flow_browse->nice_button_high = GTK_WIDGET(high);
+	gebr.ui_flow_browse->nice_button_low = GTK_WIDGET(low);
+
+	*priority_buttons = hbox;
+	return;
+}
+void
+gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
+{
+	GtkBuilder *builder = gtk_builder_new();
+
+	g_return_if_fail(gtk_builder_add_from_file(builder,
+						   GEBR_GLADE_DIR "/gebr-execution-details.glade",
+						   NULL));
+
+	GtkWidget *main_dialog = GTK_WIDGET(gtk_builder_get_object(builder, "main_dialog"));
+	GtkWidget *maestro_box = GTK_WIDGET(gtk_builder_get_object(builder, "maestro_box"));
+	GtkWidget *order_box = GTK_WIDGET(gtk_builder_get_object(builder, "order_box"));
+	GtkWidget *dispersion_box = GTK_WIDGET(gtk_builder_get_object(builder, "dispersion_box"));
+	GtkWidget *priority_box = GTK_WIDGET(gtk_builder_get_object(builder, "priority_box"));
+
+	GtkWidget *run_button = GTK_WIDGET(gtk_builder_get_object(builder, "run_button"));
+	GtkWidget *cancel_button = GTK_WIDGET(gtk_builder_get_object(builder, "cancel_button"));
+	GtkWidget *default_button = GTK_WIDGET(gtk_builder_get_object(builder, "default_button"));
+	GtkWidget *help_button = GTK_WIDGET(gtk_builder_get_object(builder, "help_button"));
+
+	gtk_window_set_title(GTK_WINDOW(main_dialog), _("Run"));
+
+	GtkWidget *speed_slider, *priority_buttons;
+	gebr_ui_flow_execution_slider_setup_ui(gebr.config.flow_exec_speed, &speed_slider);
+	gebr_ui_flow_execution_priority_setup_ui(&priority_buttons);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GtkTreeModel *servers_model = gebr_maestro_server_get_groups_model(maestro);
+	GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro);
+
+	GtkWidget *servers_combo = gtk_combo_box_new_with_model(servers_model);
+	GtkWidget *queue_combo = gtk_combo_box_new_with_model(queue_model);
+
+	gebr.ui_flow_browse->server_combo = GTK_COMBO_BOX(servers_combo);
+	gebr.ui_flow_browse->queue_combo = GTK_COMBO_BOX(queue_combo);
+
+	GtkCellRenderer *renderer;
+	/*Queue combobox*/
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combo), renderer, TRUE);
+
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(queue_combo), renderer,
+	                                   on_queue_set_text, NULL, NULL);
+
+	/*Server combobox*/
+	renderer = gtk_cell_renderer_pixbuf_new();
+	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(servers_combo), renderer, FALSE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(servers_combo), renderer,
+	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(servers_combo), renderer, TRUE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(servers_combo), renderer,
+	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
+	gtk_container_add(GTK_CONTAINER(maestro_box), servers_combo);
+	gtk_container_add(GTK_CONTAINER(order_box), queue_combo);
+
+	gtk_container_add(GTK_CONTAINER(dispersion_box), speed_slider);
+	gtk_container_add(GTK_CONTAINER(priority_box), priority_buttons);
+
+	gtk_widget_set_sensitive(speed_slider, slider_sensitiviness);
+
+	execution_details_restore_default_values();
+
+	g_signal_connect(main_dialog, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
+	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), main_dialog);
+	g_signal_connect(GTK_BUTTON(cancel_button), "clicked", G_CALLBACK(on_cancel_button_clicked), main_dialog);
+	g_signal_connect(GTK_BUTTON(help_button), "clicked", G_CALLBACK(on_help_button_clicked), NULL);
+	g_signal_connect(GTK_BUTTON(default_button), "clicked", G_CALLBACK(on_save_default_button_clicked), NULL);
+
+	gtk_window_set_modal(GTK_WINDOW(main_dialog), TRUE);
+	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
+
+	gtk_widget_show_all(main_dialog);
 }

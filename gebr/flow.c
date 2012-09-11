@@ -1271,7 +1271,6 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive);
-	gtk_widget_set_sensitive(gebr.ui_flow_browse->speed_button, sensitive_exec_slider);
 
 	GtkTreeSelection *flows_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gint flows_nrows = gtk_tree_selection_count_selected_rows(flows_selection);

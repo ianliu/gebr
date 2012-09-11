@@ -37,6 +37,7 @@
 #include "ui_log.h"
 #include "ui_preferences.h"
 #include "ui_project_line.h"
+#include "ui_flow_execution.h"
 
 #include "gebr-maestro-controller.h"
 
@@ -78,8 +79,6 @@ struct gebr {
 
 	GHashTable * help_edit_windows;
 	GHashTable * xmls_by_filename;
-
-	GtkAdjustment *flow_exec_adjustment;
 
 	GebrValidator *validator;
 
@@ -126,6 +125,9 @@ struct gebr {
 		gboolean job_log_auto_scroll;
 		gboolean native_editor;
 
+		// Execution details
+		GString *execution_server_name;
+		gint execution_server_type;
 		gdouble flow_exec_speed;
 		gint niceness;
 

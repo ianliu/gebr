@@ -395,7 +395,13 @@ void on_flow_execute_activate(void)
 	if (!flows_check_maestro_connected())
 		return;
 
-	gebr_ui_flow_run(FALSE);
+	gebr_ui_flow_run(FALSE, FALSE);
+}
+
+void on_flow_execute_details_activate(void)
+{
+	gboolean sensitive = gebr_ui_flow_browse_update_speed_slider_sensitiveness(gebr.ui_flow_browse);
+	gebr_ui_flow_execution_details_setup_ui(sensitive);
 }
 
 void
@@ -406,7 +412,7 @@ on_flow_execute_parallel_activate(void)
 
 	if (!flows_check_maestro_connected())
 		return;
-	gebr_ui_flow_run(TRUE);
+	gebr_ui_flow_run(TRUE, FALSE);
 }
 
 void on_flow_revision_save_activate(void)

@@ -99,18 +99,18 @@ class MyDotWindow(xdot.DotWindow):
         snap = "run:single:" + url
         sys.stderr.write(str(snap))
         
-    def create_list_and_execution(self, type):
-        list_snaps = "run:" + type + ":"
+    def create_list_and_execution(self, type, mod):
+	list_snaps = "run:" + type + ":" + mod + ":"
         self.flows[self.current_flow].sort()
         for snap in self.flows[self.current_flow]:
             list_snaps = list_snaps + snap + ","
         sys.stderr.write(str(list_snaps[:-1]))  
     
-    def on_execute_seq(self, widget, url):
-        self.create_list_and_execution("single")
+    def on_execute_seq(self, widget, url, mod):
+        self.create_list_and_execution("single", "default")
         
     def on_execute_parallel(self, widget, url):
-        self.create_list_and_execution("parallel")
+        self.create_list_and_execution("parallel", "default")
     
     
     def on_url_clicked(self, widget, url, event):
@@ -196,7 +196,7 @@ class MyDotWindow(xdot.DotWindow):
            info = file.split("\b")
            
            if info[0] == "run":
-               self.create_list_and_execution(info[1].strip())
+               self.create_list_and_execution(info[1].strip(), info[2].strip())
            
            elif info[0] == "delete":
                id = info[1]

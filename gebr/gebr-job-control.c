@@ -1572,7 +1572,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gtk_widget_set_tooltip_text(GTK_WIDGET(job_group), msg);
 
 	gdouble speed = gebr_job_get_exec_speed(job);
-	const gchar *icon = gebr_interface_get_speed_icon(gebr_interface_calculate_slider_from_speed(speed));
+	const gchar *icon = gebr_interface_get_speed_icon(gebr_ui_flow_execution_calculate_slider_from_speed(speed));
 	if (icon)
 		gtk_image_set_from_stock(info_button_image, icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
@@ -2933,8 +2933,8 @@ detail_button_query_tooltip(GtkWidget  *widget,
 		return FALSE;
 
 	gdouble value = gebr_job_get_exec_speed(job);
-	gdouble tmp = gebr_interface_calculate_slider_from_speed(value);
-	const gchar *text_tooltip = gebr_interface_set_text_for_performance(tmp);
+	gdouble tmp = gebr_ui_flow_execution_calculate_slider_from_speed(value);
+	const gchar *text_tooltip = gebr_ui_flow_execution_set_text_for_performance(tmp);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }

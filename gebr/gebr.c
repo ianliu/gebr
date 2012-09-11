@@ -140,10 +140,6 @@ gebr_init(gboolean has_config)
 
 	gebr_post_config(has_config);
 
-	gtk_adjustment_set_value(gebr.flow_exec_adjustment,
-				 gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed));
-	gtk_adjustment_value_changed(gebr.flow_exec_adjustment);
-
 	/* check for a menu list change */
 	//TODO: DO IT!
 //	if (menu_refresh_needed() == TRUE)
@@ -330,6 +326,9 @@ gebr_config_load(void)
 	gebr.config.detailed_line_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_line_parameter_table", GEBR_PARAM_TABLE_ONLY_CHANGED);
 	gebr.config.flow_exec_speed = g_key_file_get_double(gebr.config.key_file, "general", "flow_exec_speed", NULL);
 	gebr.config.niceness = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "niceness", 1);
+	gebr.config.execution_server_name = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "execution_server_name", "");
+	GString *execution_server_type = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "execution_server_type", "");
+	gebr.config.execution_server_type = (gint) gebr_maestro_server_group_str_to_enum(execution_server_type->str);
 	gebr.config.detailed_flow_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", "gebr-report.css");
 	gebr.config.detailed_line_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "gebr-report.css");
 
@@ -519,6 +518,8 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_integer (gebr.config.key_file, "general", "detailed_line_parameter_table", gebr.config.detailed_line_parameter_table);
 	g_key_file_set_double (gebr.config.key_file, "general", "flow_exec_speed", gebr.config.flow_exec_speed);
 	g_key_file_set_integer(gebr.config.key_file, "general", "niceness", gebr.config.niceness);
+	g_key_file_set_string(gebr.config.key_file, "general", "execution_server_name", gebr.config.execution_server_name->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "execution_server_type", gebr_maestro_server_group_enum_to_str(gebr.config.execution_server_type));
 
 	g_key_file_set_integer(gebr.config.key_file, "state", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
 

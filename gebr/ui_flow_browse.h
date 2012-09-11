@@ -86,8 +86,6 @@ typedef struct {
 
 	GebrGuiProgramEdit *program_edit;
 
-	GtkWidget *queue_combobox;
-	GtkWidget *server_combobox;
 	gchar *name;
 	GebrMaestroServerGroupType type;
 
@@ -137,9 +135,12 @@ typedef struct {
 
 	GtkWidget *nice_button_high;
 	GtkWidget *nice_button_low;
-	GtkWidget *speed_button;
+	GtkWidget *priority_box;
 	GtkWidget *speed_slider;
+	GtkAdjustment *speed_adjustment;
 	GtkWidget *ruler;
+	GtkComboBox *server_combo;
+	GtkComboBox *queue_combo;
 } GebrUiFlowBrowse;
 
 /**
@@ -296,6 +297,8 @@ void gebr_flow_browse_block_changed_signal(GebrUiFlowBrowse *fb);
 void gebr_flow_browse_unblock_changed_signal(GebrUiFlowBrowse *fb);
 
 void flow_edition_component_activated(void);
+
+gboolean gebr_ui_flow_browse_update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H
