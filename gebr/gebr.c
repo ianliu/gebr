@@ -182,7 +182,9 @@ gboolean gebr_quit(gboolean save_config)
 	flow_free();
 	project_line_free();
 
-	gebr_comm_process_kill(gebr.ui_flow_browse->graph_process);
+	if (gebr.ui_flow_browse->graph_process)
+		gebr_comm_process_kill(gebr.ui_flow_browse->graph_process);
+
 	g_list_free(gebr.ui_flow_browse->select_flows);
 	g_hash_table_foreach(gebr.ui_flow_browse->flow_jobs, (GHFunc)free_flow_jobs_list, NULL);
 	g_hash_table_destroy(gebr.ui_flow_browse->flow_jobs);
