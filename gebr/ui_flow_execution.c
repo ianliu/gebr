@@ -171,11 +171,11 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-	const gchar *parent_rid = gebr_ui_flow_execution_get_selected_queue(gebr.ui_flow_browse->queue_combo, maestro);
+	const gchar *parent_rid = is_detailed? gebr_ui_flow_execution_get_selected_queue(gebr.ui_flow_browse->queue_combo, maestro) : "";
 
 	gdouble speed;
 	if (!gebr_geoxml_flow_is_single_core(flow, gebr.validator)) {
-		gdouble slider_value = gtk_adjustment_get_value(gebr.ui_flow_browse->speed_adjustment);
+		gdouble slider_value = is_detailed? gtk_adjustment_get_value(gebr.ui_flow_browse->speed_adjustment) : gebr.config.flow_exec_speed;
 		gdouble value = gebr_ui_flow_execution_calculate_speed_from_slider_value(slider_value);
 		speed = is_detailed ? value : gebr_interface_get_execution_speed();
 	} else
@@ -227,8 +227,13 @@ run_flow(GebrGeoXmlFlow *flow,
 	}
 
 
-	if (type == MAESTRO_SERVER_TYPE_DAEMON)
-		gebr_ui_flow_execution_get_server_hostname(gebr.ui_flow_browse->server_combo, maestro, &host);
+	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
+		if (is_detailed)
+			gebr_ui_flow_execution_get_server_hostname(gebr.ui_flow_browse->server_combo, maestro, &host);
+		else
+			//FIXME: Save host of server on config to restore here
+			host = gebr.config.execution_server_name->str;
+	}
 
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
 	gebr_geoxml_flow_server_set_group(flow, group_type, name);
@@ -709,7 +714,23 @@ void
 gebr_ui_flow_execution_save_default()
 {
 	/* Set server*/
-	gtk_combo_box_get_active(gebr.ui_flow_browse->server_combo);
+	GtkTreeIter iter;
+	if (gtk_combo_box_get_active_iter(gebr.ui_flow_browse->server_combo, &iter)) {
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+
+		gchar *name;
+		GebrMaestroServerGroupType type;
+
+		gtk_tree_model_get(model, &iter,
+		                   MAESTRO_SERVER_TYPE, &type,
+		                   MAESTRO_SERVER_NAME, &name,
+		                   -1);
+
+		gebr.config.execution_server_name = g_string_new(name);
+		gebr.config.execution_server_type = type;
+		g_free(name);
+	}
 
 	/* Set speed*/
 	gebr.config.flow_exec_speed = gebr_ui_flow_execution_calculate_speed_from_slider_value(gtk_adjustment_get_value(gebr.ui_flow_browse->speed_adjustment));
