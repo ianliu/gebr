@@ -758,7 +758,7 @@ gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError **
 	return TRUE;
 }
 
-glong
+gdouble
 gebr_get_lower_bound_for_type(TimesType type)
 {
 	if (type == TIME_MOMENTS_AGO)
@@ -780,57 +780,60 @@ gebr_get_lower_bound_for_type(TimesType type)
 }
 
 gchar *
+gebr_get_control_text_for_type(TimesType type)
+{
+	if (type == TIME_MOMENTS_AGO)
+		return g_strdup(_("Moments ago"));
+	if (type == TIME_MINUTES_AGO)
+		return g_strdup(_("Minutes ago"));
+	if (type == TIME_HOURS_AGO)
+		return g_strdup(_("Hours ago"));
+	if (type == TIME_DAYS_AGO)
+		return g_strdup(_("Days ago"));
+	if (type == TIME_WEEKS_AGO)
+		return g_strdup(_("Weeks ago"));
+	if (type == TIME_MONTHS_AGO)
+		return g_strdup(_("Months ago"));
+	if (type == TIME_YEARS_AGO)
+		return g_strdup(_("Years ago"));
+
+	return NULL;
+}
+
+gchar *
 gebr_calculate_relative_time (GTimeVal *time1,
                               GTimeVal *time2,
-                              TimesType *type,
-                              glong *delta)
+                              TimesType *_type,
+                              gdouble *delta)
 {
-	glong time_diff = time2->tv_sec - time1->tv_sec;
+	TimesType type;
+	gdouble time_diff = (time2->tv_sec - time1->tv_sec) + (time2->tv_usec - time1->tv_usec)/1000000.0;
 
-	if ( time_diff < 0) {
+	if ( time_diff < 0)
 		return NULL;
-	}
 
 	if (delta)
 		*delta = time_diff;
 
-	if ( time_diff < 60*5) {
-		if (type)
-			*type = TIME_MOMENTS_AGO;
-		return (g_strdup(_("Moments")));
-	}
-	else if ( time_diff < 3600) {
-		if (type)
-			*type = TIME_MINUTES_AGO;
-		return (g_strdup(_("Minutes")));
-	}
-	else if ( time_diff < 86400) {
-		if (type)
-			*type = TIME_HOURS_AGO;
-		return (g_strdup(_("Hours")));
-	}
-	else if ( time_diff < 86400*7) {
-		if (type)
-			*type = TIME_DAYS_AGO;
-		return (g_strdup(_("Days")));
-	}
-	else if ( time_diff < 2678400) {
-		if (type)
-			*type = TIME_WEEKS_AGO;
-		return (g_strdup(_("Weeks")));
-	}
-	else if ( time_diff < 32140800) {
-		if (type)
-			*type = TIME_MONTHS_AGO;
-		return (g_strdup(_("Months")));
-	}
-	else {
-		if (type)
-			*type = TIME_YEARS_AGO;
-		return (g_strdup(_("Years")));
-	}
+	if ( time_diff < 60*5)
+		type = TIME_MOMENTS_AGO;
+	else if ( time_diff < 3600)
+		type = TIME_MINUTES_AGO;
+	else if ( time_diff < 86400)
+		type = TIME_HOURS_AGO;
+	else if ( time_diff < 86400*7)
+		type = TIME_DAYS_AGO;
+	else if ( time_diff < 2678400)
+		type = TIME_WEEKS_AGO;
+	else if ( time_diff < 32140800)
+		type = TIME_MONTHS_AGO;
+	else
+		type = TIME_YEARS_AGO;
 
-	return NULL;
+	if (_type)
+		*_type = type;
+
+	return gebr_get_control_text_for_type(type);
 }
 
 gchar *

@@ -214,7 +214,7 @@ gboolean gebr_str_canonical_var_name(const gchar * keyword,
 gchar *gebr_calculate_relative_time (GTimeVal *time1,
                                      GTimeVal *time2,
                                      TimesType *type,
-                                     glong *delta);
+                                     gdouble *delta);
 
 /**
  * gebr_get_lower_bound_for_type:
@@ -222,7 +222,15 @@ gchar *gebr_calculate_relative_time (GTimeVal *time1,
  *
  * Returns:
  */
-glong gebr_get_lower_bound_for_type(TimesType type);
+gdouble gebr_get_lower_bound_for_type(TimesType type);
+
+/**
+ * gebr_get_control_text_for_type:
+ * @type:
+ *
+ * Return:
+ */
+gchar *gebr_get_control_text_for_type(TimesType type);
 
 /**
  * gebr_calculate_relative_time:
