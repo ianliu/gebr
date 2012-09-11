@@ -1575,6 +1575,7 @@ flow_browse_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * p
 
 		flow_browse_revalidate_programs(fb);
 		flow_browse_program_check_sensitiveness();
+		flow_browse_static_info_update();
 		gebr_flow_browse_load_parameters_review(gebr.flow, fb, TRUE);
 	}
 	else if (type == STRUCT_TYPE_FLOW && type_dest == STRUCT_TYPE_FLOW) {
