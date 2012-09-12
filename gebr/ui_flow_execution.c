@@ -896,14 +896,16 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution)
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 
-	gtk_combo_box_set_active_iter(combo, &iter);
+	if (valid)
+		gtk_combo_box_set_active_iter(combo, &iter);
+	else if (gtk_tree_model_get_iter_first(model, &iter))
+		gtk_tree_model_get_iter_first(model, &iter);
 
 	/* Queue */
 	model = gebr_maestro_server_get_queues_model(maestro);
 	if (gtk_tree_model_get_iter_first(model, &iter)) {
 		gtk_combo_box_set_active_iter(ui_flow_execution->priv->queue_combo, &iter);
 	}
-
 }
 
 void
