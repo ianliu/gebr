@@ -80,6 +80,7 @@ typedef struct {
 	GtkTreeStore *store;
 	GtkWidget *view;
 	GtkWidget *flows_line_label;
+	GtkWidget *left_panel;
 	GtkCellRenderer *icon_renderer;
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *action_renderer;

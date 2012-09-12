@@ -194,7 +194,6 @@ void gebr_setup_ui(void)
 {
 	GtkWidget *main_vbox;
 	GtkWidget *menu_bar;
-	GtkWidget *navigation_hbox;
 
 	GtkWidget *vbox;
 	GtkWidget *toolbar;

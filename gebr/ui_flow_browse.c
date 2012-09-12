@@ -1308,15 +1308,16 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	 * Left side: flow list
 	 */
 
-
 	/* View with flows and programs */
 	GtkWidget* left_side = gtk_vbox_new(FALSE, 0);
 	GtkWidget *frame = gtk_frame_new(NULL);
 	GtkWidget *button = gtk_button_new();
 	GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
 	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_BUTTON);
+
 	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 5);
 	ui_flow_browse->flows_line_label = gtk_label_new("None");
+	ui_flow_browse->left_panel = left_side;
 	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->flows_line_label, TRUE, TRUE, 5);
 	gtk_container_add(GTK_CONTAINER(button), hbox);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), button);
@@ -1366,7 +1367,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 			 ui_flow_browse);
 	g_signal_connect(ui_flow_browse->view, "query-tooltip", G_CALLBACK(flow_browse_on_query_tooltip),
 			 ui_flow_browse);
-//
+
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
 	g_signal_connect(selection, "changed", G_CALLBACK(selection_changed_signal), NULL);
 

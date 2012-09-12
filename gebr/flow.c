@@ -1299,7 +1299,9 @@ gebr_flow_set_toolbar_sensitive(void)
 	if (sensitive && flows_nrows == 1) {
 		gtk_widget_show(gebr.ui_flow_browse->info_window);
 		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
+		gtk_widget_show(gebr.ui_flow_browse->left_panel);
 	} else {
+		gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		if (!line_selected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
 		} else if (maestro_disconnected) {
