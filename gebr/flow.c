@@ -1301,13 +1301,14 @@ gebr_flow_set_toolbar_sensitive(void)
 		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
 		gtk_widget_show(gebr.ui_flow_browse->left_panel);
 	} else {
-		gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		if (!line_selected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
+			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (maestro_disconnected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
 					   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
 					     "Try changing its maestro or connecting it."));
+			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (flows_nrows  !=  1) {
 			gchar *label_msg;
 			if (flows_nrows >1 )
