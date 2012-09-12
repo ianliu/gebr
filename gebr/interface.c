@@ -534,24 +534,3 @@ gebr_interface_get_speed_icon(gdouble value)
 	else
 		g_return_val_if_reached(NULL);
 }
-
-void
-gebr_interface_update_speed_sensitiveness(GtkWidget *button,
-					  GtkWidget *slider,
-					  gboolean sensitive)
-{
-	GtkWidget *child = gtk_bin_get_child(GTK_BIN(button));
-
-	g_return_if_fail(GTK_IS_IMAGE(child) == TRUE);
-
-	if (!sensitive) {
-		gtk_image_set_from_stock(GTK_IMAGE(child), gebr_interface_get_speed_icon(0),
-					 GTK_ICON_SIZE_LARGE_TOOLBAR);
-		gtk_widget_hide(slider);
-	} else {
-		gdouble speed = gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed);
-		gtk_image_set_from_stock(GTK_IMAGE(child), gebr_interface_get_speed_icon(speed),
-					 GTK_ICON_SIZE_LARGE_TOOLBAR);
-		gtk_widget_show(slider);
-	}
-}

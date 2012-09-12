@@ -2591,10 +2591,6 @@ gebr_ui_flow_browse_update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb)
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
 	g_list_free(rows);
 
-	//gtk_widget_set_sensitive(ufb->speed_slider, sensitive);
-	//gebr_interface_update_speed_sensitiveness(ufb->speed_button,
-	//					  ufb->speed_slider,
-	//					  sensitive);
 	return sensitive;
 }
 
@@ -3385,16 +3381,14 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
 	tooltip_execute = _("Execute");
 
 	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
+	GtkAction *detailed_execution = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details");
 	const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
 
 	gtk_action_set_stock_id(action, "gtk-execute");
 	gtk_action_set_sensitive(action, sensitive);
 	gtk_action_set_tooltip(action, tooltip);
-
-	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
-	gtk_action_set_stock_id(action, "gtk-execute");
-	gtk_action_set_sensitive(action, sensitive);
-	gtk_action_set_tooltip(action, tooltip);
+	gtk_action_set_sensitive(detailed_execution, sensitive);
+	gtk_action_set_tooltip(detailed_execution, tooltip);
 }
 
 void
