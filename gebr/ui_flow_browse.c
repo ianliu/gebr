@@ -2480,17 +2480,18 @@ static void flow_browse_load(void)
 		gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
 		g_free(tmp_help_p);
 
-		gint anchor = 0;
-		gint index = 1;
-		GebrGeoXmlSequence *progs;
-		gebr_geoxml_flow_get_program(gebr.flow, &progs, 0);
-		for (; progs && !anchor; gebr_geoxml_sequence_next(&progs)) {
-			if (GEBR_GEOXML_PROGRAM(progs) == gebr.program)
-				anchor = index;
-			index++;
+		if (gebr_geoxml_program_get_status(gebr.program) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+			gint anchor = 0;
+			gint index = 1;
+			GebrGeoXmlSequence *progs;
+			gebr_geoxml_flow_get_program(gebr.flow, &progs, 0);
+			for (; progs && !anchor; gebr_geoxml_sequence_next(&progs)) {
+				if (GEBR_GEOXML_PROGRAM(progs) == gebr.program)
+					anchor = index;
+				index++;
+			}
+			gebr_gui_html_viewer_widget_load_anchor(GEBR_GUI_HTML_VIEWER_WIDGET(gebr.ui_flow_browse->html_parameters), anchor);
 		}
-
-		gebr_gui_html_viewer_widget_load_anchor(GEBR_GUI_HTML_VIEWER_WIDGET(gebr.ui_flow_browse->html_parameters), anchor);
 	}
 
 	if (type == STRUCT_TYPE_PROGRAM || type == STRUCT_TYPE_IO)
