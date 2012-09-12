@@ -1965,8 +1965,6 @@ flow_browse_static_info_update(void)
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label), _("No Flow selected."));
 		gtk_widget_hide(gebr.ui_flow_browse->revpage_main);
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
-
-		navigation_bar_update();
 		return FALSE;
 	}
 
@@ -2035,9 +2033,6 @@ flow_browse_static_info_update(void)
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.lastrun), last_text);
 		g_free(last_text);
 	}
-
-	navigation_bar_update();
-
 	return TRUE;
 }
 

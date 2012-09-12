@@ -600,7 +600,6 @@ void project_line_info_update(void)
 	if (!gebr.project_line) {
 		gtk_widget_hide(GTK_WIDGET(infopage_proj));
 		gtk_widget_hide(GTK_WIDGET(infopage_line));
-		navigation_bar_update();
 		return;
 	}
 
@@ -613,8 +612,6 @@ void project_line_info_update(void)
 		gtk_widget_hide(GTK_WIDGET(infopage_proj));
 		gtk_widget_show(GTK_WIDGET(infopage_line));
 	}
-
-	navigation_bar_update();
 }
 
 gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType check_type)

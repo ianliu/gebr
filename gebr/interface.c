@@ -263,16 +263,6 @@ void gebr_setup_ui(void)
 	gtk_widget_show_all(menu_bar);
 
 	/*
-	 * Create navigation bar
-	 */
-	navigation_hbox = gtk_hbox_new(FALSE, 2);
-	gtk_box_pack_start(GTK_BOX(main_vbox), navigation_hbox, FALSE, FALSE, 4);
-	gebr.navigation_box_label = gtk_label_new(NULL);
-	gtk_box_pack_start(GTK_BOX(navigation_hbox), gebr.navigation_box_label, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(navigation_hbox);
-
-	/*
 	 * Notebook
 	 */
 	gebr.notebook = gtk_notebook_new();

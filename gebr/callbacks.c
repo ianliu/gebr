@@ -556,32 +556,6 @@ void import_demo(GtkWidget *menu_item, const gchar *path)
 	project_line_import_path(path);
 }
 
-void navigation_bar_update(void)
-{
-	GString *markup;
-
-	if (gebr.project_line == NULL) {
-		gtk_label_set_text(GTK_LABEL(gebr.navigation_box_label), "");
-		return;
-	}
-
-	markup = g_string_new(NULL);
-	g_string_append(markup, g_markup_printf_escaped("<i>%s</i>",
-							gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.project))));
-	if (gebr.line != NULL)
-		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-								gebr_geoxml_document_get_title(GEBR_GEOXML_DOC
-											       (gebr.line))));
-	if (gebr.flow != NULL)
-		g_string_append(markup, g_markup_printf_escaped(" :: <i>%s</i>",
-								gebr_geoxml_document_get_title(GEBR_GEOXML_DOC
-											       (gebr.flow))));
-
-	gtk_label_set_markup(GTK_LABEL(gebr.navigation_box_label), markup->str);
-
-	g_string_free(markup, TRUE);
-}
-
 void on_flow_browse_show_help(void) {
     flow_browse_show_help();
 }
