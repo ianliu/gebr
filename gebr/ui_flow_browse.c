@@ -1329,7 +1329,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_widget_set_size_request(scrolled_window, 250, -1);
 	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 
-	gtk_box_pack_start(GTK_BOX(left_side), frame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(left_side), frame, TRUE, TRUE, 5);
 
 	gtk_paned_pack1(GTK_PANED(hpanel), left_side, FALSE, FALSE);
 
