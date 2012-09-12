@@ -228,11 +228,34 @@ run_flow(GebrGeoXmlFlow *flow,
 
 
 	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
-		if (is_detailed)
+		if (is_detailed) {
 			gebr_ui_flow_execution_get_server_hostname(gebr.ui_flow_browse->server_combo, maestro, &host);
-		else
-			//FIXME: Save host of server on config to restore here
-			host = gebr.config.execution_server_name->str;
+		} else {
+			gboolean find_host = FALSE;
+			GtkTreeIter iter;
+			GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+			gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
+			while (valid && !find_host) {
+				gchar *name, *hostname;
+				GebrMaestroServerGroupType type;
+
+				gtk_tree_model_get(model, &iter,
+				                   MAESTRO_SERVER_TYPE, &type,
+				                   MAESTRO_SERVER_NAME, &name,
+				                   MAESTRO_SERVER_HOST, &hostname,
+				                   -1);
+
+				if (type == gebr.config.execution_server_type &&
+				    !g_strcmp0(name, gebr.config.execution_server_name->str)) {
+					find_host = TRUE;
+					host = hostname;
+				}
+				g_free(name);
+				if (!find_host)
+					g_free(hostname);
+				valid = gtk_tree_model_iter_next(model, &iter);
+			}
+		}
 	}
 
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
