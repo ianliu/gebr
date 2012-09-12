@@ -29,6 +29,7 @@
 #include "gebr.h"
 #include <gebr/ui_flow_program.h>
 #include <libgebr/comm/gebr-comm.h>
+#include <callbacks.h>
 
 
 struct _GebrUiFlowProgramPriv {
@@ -198,7 +199,7 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 	GtkWidget *menu = gtk_menu_new();
 	gboolean active;
 	
-	switch(gebr_ui_flow_program_get_status(program))
+	switch (gebr_ui_flow_program_get_status(program))
 	{
 	case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
 		active = TRUE;
@@ -211,7 +212,11 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 	}
 
 	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_toggle_status");
+
+	g_signal_handlers_block_by_func(action, on_flow_component_status_activate, NULL);
 	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), active);
+	g_signal_handlers_unblock_by_func(action, on_flow_component_status_activate, NULL);
+
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
 
 	menu_item = gtk_separator_menu_item_new();
