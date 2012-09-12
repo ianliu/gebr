@@ -96,7 +96,7 @@ class MyDotWindow(xdot.DotWindow):
             
     # Methods to execute flow
     def on_execute_single(self, widget, url):
-        snap = "run:single:" + url
+        snap = "run:single:default:" + url
         sys.stderr.write(str(snap))
         
     def create_list_and_execution(self, type, mod):
@@ -106,7 +106,7 @@ class MyDotWindow(xdot.DotWindow):
             list_snaps = list_snaps + snap + ","
         sys.stderr.write(str(list_snaps[:-1]))  
     
-    def on_execute_seq(self, widget, url, mod):
+    def on_execute_seq(self, widget, url):
         self.create_list_and_execution("single", "default")
         
     def on_execute_parallel(self, widget, url):
