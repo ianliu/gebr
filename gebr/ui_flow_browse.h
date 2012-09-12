@@ -86,10 +86,6 @@ typedef struct {
 
 	GebrGuiProgramEdit *program_edit;
 
-	gchar *name;
-	GebrMaestroServerGroupType type;
-
-
 	GtkTreeStore *menu_store;
 	GtkWidget *menu_view;
 
@@ -119,6 +115,8 @@ typedef struct {
 
 	GtkWidget *context[CONTEXT_N_TYPES];
 
+	GHashTable *flow_jobs;
+
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;
 
@@ -127,20 +125,8 @@ typedef struct {
 
 		GtkWidget *modified;
 		GtkWidget *lastrun;
-
-		GtkWidget *help_view;
 	} info;
 
-	GHashTable *flow_jobs;
-
-	GtkWidget *nice_button_high;
-	GtkWidget *nice_button_low;
-	GtkWidget *priority_box;
-	GtkWidget *speed_slider;
-	GtkAdjustment *speed_adjustment;
-	GtkWidget *ruler;
-	GtkComboBox *server_combo;
-	GtkComboBox *queue_combo;
 } GebrUiFlowBrowse;
 
 /**

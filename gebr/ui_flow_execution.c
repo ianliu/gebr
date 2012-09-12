@@ -31,6 +31,40 @@
 #define SLIDER_100 5.0
 #define VALUE_MAX 20.0
 
+struct _GebrUiFlowExecutionPriv {
+	GtkWidget *nice_button_high;
+	GtkWidget *nice_button_low;
+	GtkAdjustment *speed_adjustment;
+	GtkComboBox *server_combo;
+	GtkComboBox *queue_combo;
+	GtkWidget *window;
+};
+
+G_DEFINE_TYPE(GebrUiFlowExecution, gebr_ui_flow_execution, G_TYPE_OBJECT);
+
+static void
+gebr_ui_flow_execution_finalize(GObject *object)
+{
+	G_OBJECT_CLASS(gebr_ui_flow_execution_parent_class)->finalize(object);
+}
+
+static void
+gebr_ui_flow_execution_init(GebrUiFlowExecution *ui_flow_execution)
+{
+	ui_flow_execution->priv = G_TYPE_INSTANCE_GET_PRIVATE(ui_flow_execution,
+	                                                      GEBR_TYPE_UI_FLOW_EXECUTION,
+	                                                      GebrUiFlowExecutionPriv);
+}
+
+static void
+gebr_ui_flow_execution_class_init(GebrUiFlowExecutionClass *klass)
+{
+	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+	gobject_class->finalize = gebr_ui_flow_execution_finalize;
+
+	g_type_class_add_private(klass, sizeof(GebrUiFlowExecutionPriv));
+}
+
 gchar *
 get_line_paths(GebrGeoXmlLine *line)
 {
@@ -160,9 +194,10 @@ modify_paths_func(GString *path, gpointer data)
 }
 
 static const gchar *
-run_flow(GebrGeoXmlFlow *flow,
-	 const gchar *after,
-	 const gchar *snapshot_id,
+run_flow(GebrUiFlowExecution *ui_flow_execution,
+         GebrGeoXmlFlow *flow,
+         const gchar *after,
+         const gchar *snapshot_id,
 	 gboolean is_detailed)
 {
 	gchar *snapshot_title = NULL;
@@ -171,11 +206,11 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-	const gchar *parent_rid = is_detailed? gebr_ui_flow_execution_get_selected_queue(gebr.ui_flow_browse->queue_combo, maestro) : "";
+	const gchar *parent_rid = is_detailed? gebr_ui_flow_execution_get_selected_queue(ui_flow_execution->priv->queue_combo, maestro) : "";
 
 	gdouble speed;
 	if (!gebr_geoxml_flow_is_single_core(flow, gebr.validator)) {
-		gdouble slider_value = is_detailed? gtk_adjustment_get_value(gebr.ui_flow_browse->speed_adjustment) : gebr.config.flow_exec_speed;
+		gdouble slider_value = is_detailed? gtk_adjustment_get_value(ui_flow_execution->priv->speed_adjustment) : gebr.config.flow_exec_speed;
 		gdouble value = gebr_ui_flow_execution_calculate_speed_from_slider_value(slider_value);
 		speed = is_detailed ? value : gebr_interface_get_execution_speed();
 	} else
@@ -198,7 +233,7 @@ run_flow(GebrGeoXmlFlow *flow,
 	gint niceness;
 
 	if (is_detailed) {
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->nice_button_high)))
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_high)))
 			niceness = 0;
 		else
 			niceness = 19;
@@ -217,7 +252,7 @@ run_flow(GebrGeoXmlFlow *flow,
 	gchar *name, *host = NULL;
 	
 	if (is_detailed) {
-		gebr_ui_flow_execution_get_current_group(gebr.ui_flow_browse->server_combo,
+		gebr_ui_flow_execution_get_current_group(ui_flow_execution->priv->server_combo,
 							 &type,
 							 &name,
 							 maestro);
@@ -229,7 +264,7 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
 		if (is_detailed) {
-			gebr_ui_flow_execution_get_server_hostname(gebr.ui_flow_browse->server_combo, maestro, &host);
+			gebr_ui_flow_execution_get_server_hostname(ui_flow_execution->priv->server_combo, maestro, &host);
 		} else {
 			gboolean find_host = FALSE;
 			GtkTreeIter iter;
@@ -390,7 +425,9 @@ run_flow(GebrGeoXmlFlow *flow,
 }
 
 void
-gebr_ui_flow_run(gboolean is_parallel, gboolean is_detailed)
+gebr_ui_flow_run(GebrUiFlowExecution *ui_flow_execution,
+                 gboolean is_parallel,
+                 gboolean is_detailed)
 {
 	GList *rows;
 	GtkTreeModel *model;
@@ -442,9 +479,9 @@ gebr_ui_flow_run(gboolean is_parallel, gboolean is_detailed)
 		}
 
 		if (is_parallel)
-			id = run_flow(flow, NULL, NULL, is_detailed);
+			id = run_flow(ui_flow_execution, flow, NULL, NULL, is_detailed);
 		else
-			id = run_flow(flow, id, NULL, is_detailed);
+			id = run_flow(ui_flow_execution, flow, id, NULL, is_detailed);
 
 		if (!id)
 			return;
@@ -461,7 +498,8 @@ gebr_ui_flow_run(gboolean is_parallel, gboolean is_detailed)
 }
 
 void
-gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
+gebr_ui_flow_run_snapshots(GebrUiFlowExecution *ui_flow_execution,
+                           GebrGeoXmlFlow *flow,
                            const gchar *snapshots,
                            gboolean is_parallel,
 			   gboolean is_detailed)
@@ -502,10 +540,12 @@ gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
 		}
 
 		if (is_parallel)
-			id = run_flow(GEBR_GEOXML_FLOW(snap_flow),
+			id = run_flow(ui_flow_execution,
+			              GEBR_GEOXML_FLOW(snap_flow),
 				      NULL, snapshot_id, is_detailed);
 		else
-			id = run_flow(GEBR_GEOXML_FLOW(snap_flow),
+			id = run_flow(ui_flow_execution,
+			              GEBR_GEOXML_FLOW(snap_flow),
 				      id, snapshot_id, is_detailed);
 
 		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
@@ -734,11 +774,11 @@ gebr_ui_flow_execution_get_selected_queue(GtkComboBox *combo,
 }
 
 void
-gebr_ui_flow_execution_save_default()
+gebr_ui_flow_execution_save_default(GebrUiFlowExecution *ui_flow_execution)
 {
 	/* Set server*/
 	GtkTreeIter iter;
-	if (gtk_combo_box_get_active_iter(gebr.ui_flow_browse->server_combo, &iter)) {
+	if (gtk_combo_box_get_active_iter(ui_flow_execution->priv->server_combo, &iter)) {
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 		GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
 
@@ -756,10 +796,10 @@ gebr_ui_flow_execution_save_default()
 	}
 
 	/* Set speed*/
-	gebr.config.flow_exec_speed = gebr_ui_flow_execution_calculate_speed_from_slider_value(gtk_adjustment_get_value(gebr.ui_flow_browse->speed_adjustment));
+	gebr.config.flow_exec_speed = gebr_ui_flow_execution_calculate_speed_from_slider_value(gtk_adjustment_get_value(ui_flow_execution->priv->speed_adjustment));
 
 	/* Set niceness*/
-	gboolean active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->nice_button_high));
+	gboolean active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_high));
 	gebr.config.niceness = active ? 0 : 19;
 }
 
@@ -786,17 +826,17 @@ on_help_button_clicked(GtkButton *button,
 
 static void
 on_save_default_button_clicked(GtkButton *button,
-			       gpointer pointer)
+			       GebrUiFlowExecution *ui_flow_execution)
 {
-	gebr_ui_flow_execution_save_default();
+	gebr_ui_flow_execution_save_default(ui_flow_execution);
 }
 
 static void
 on_run_button_clicked(GtkButton *button,
-		      GtkWindow *window)
+		      GebrUiFlowExecution *ui_flow_execution)
 {
-	gebr_ui_flow_run(FALSE, TRUE);
-	gtk_widget_destroy(GTK_WIDGET(window));
+	gebr_ui_flow_run(ui_flow_execution, FALSE, TRUE);
+	gtk_widget_destroy(GTK_WIDGET(ui_flow_execution->priv->window));
 }
 
 static void 
@@ -807,11 +847,11 @@ on_show_scale(GtkWidget * scale)
 }
 
 static void
-execution_details_restore_default_values()
+execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution)
 {
 	/* Speed */
 	gdouble speed_value;
-	GtkAdjustment *flow_exec_adjustment = gebr.ui_flow_browse->speed_adjustment;
+	GtkAdjustment *flow_exec_adjustment = ui_flow_execution->priv->speed_adjustment;
 
 	if (gebr.config.flow_exec_speed != -1) {
 		speed_value = gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed);
@@ -824,14 +864,14 @@ execution_details_restore_default_values()
 
 	/* Priority */
 	if (gebr.config.niceness == 19)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->nice_button_low), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_low), TRUE);
 	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gebr.ui_flow_browse->nice_button_high), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_high), TRUE);
 
 	/* Server */
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
-	GtkComboBox *combo = gebr.ui_flow_browse->server_combo;
+	GtkComboBox *combo = ui_flow_execution->priv->server_combo;
 	GtkTreeIter iter;
 
 	gchar *name = gebr.config.execution_server_name->str;
@@ -861,16 +901,17 @@ execution_details_restore_default_values()
 	/* Queue */
 	model = gebr_maestro_server_get_queues_model(maestro);
 	if (gtk_tree_model_get_iter_first(model, &iter)) {
-		gtk_combo_box_set_active_iter(gebr.ui_flow_browse->queue_combo, &iter);
+		gtk_combo_box_set_active_iter(ui_flow_execution->priv->queue_combo, &iter);
 	}
 
 }
 
 void
-gebr_ui_flow_execution_slider_setup_ui(gdouble speed, GtkWidget **speed_slider)
+gebr_ui_flow_execution_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
+                                       gdouble speed,
+                                       GtkWidget **speed_slider)
 {
 	GtkAdjustment *flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, SLIDER_MAX, 0.1, 1, 0.1));
-
 
 	GtkWidget *scale = gtk_hscale_new(flow_exec_adjustment);
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
@@ -894,7 +935,7 @@ gebr_ui_flow_execution_slider_setup_ui(gdouble speed, GtkWidget **speed_slider)
 
 	*speed_slider = scale;
 
-	gebr.ui_flow_browse->speed_adjustment = flow_exec_adjustment;
+	ui_flow_execution->priv->speed_adjustment = flow_exec_adjustment;
 }
 
 void
@@ -915,7 +956,8 @@ priority_button_toggled(GtkToggleButton *b1,
 }
 
 void
-gebr_ui_flow_execution_priority_setup_ui(GtkWidget **priority_buttons)
+gebr_ui_flow_execution_priority_setup_ui(GebrUiFlowExecution *ui_flow_execution,
+                                         GtkWidget **priority_buttons)
 {
 	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
 
@@ -934,8 +976,8 @@ gebr_ui_flow_execution_priority_setup_ui(GtkWidget **priority_buttons)
 	gtk_box_pack_end(GTK_BOX(hbox), high, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbox), low, TRUE, TRUE, 0);
 
-	gebr.ui_flow_browse->nice_button_high = GTK_WIDGET(high);
-	gebr.ui_flow_browse->nice_button_low = GTK_WIDGET(low);
+	ui_flow_execution->priv->nice_button_high = GTK_WIDGET(high);
+	ui_flow_execution->priv->nice_button_low = GTK_WIDGET(low);
 
 	*priority_buttons = hbox;
 	return;
@@ -945,11 +987,15 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 {
 	GtkBuilder *builder = gtk_builder_new();
 
+	GebrUiFlowExecution *ui_flow_execution = g_object_new(GEBR_TYPE_UI_FLOW_EXECUTION, NULL);
+
 	g_return_if_fail(gtk_builder_add_from_file(builder,
 						   GEBR_GLADE_DIR "/gebr-execution-details.glade",
 						   NULL));
 
 	GtkWidget *main_dialog = GTK_WIDGET(gtk_builder_get_object(builder, "main_dialog"));
+	ui_flow_execution->priv->window = main_dialog;
+
 	GtkWidget *maestro_box = GTK_WIDGET(gtk_builder_get_object(builder, "maestro_box"));
 	GtkWidget *order_box = GTK_WIDGET(gtk_builder_get_object(builder, "order_box"));
 	GtkWidget *dispersion_box = GTK_WIDGET(gtk_builder_get_object(builder, "dispersion_box"));
@@ -963,8 +1009,8 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	gtk_window_set_title(GTK_WINDOW(main_dialog), _("Run"));
 
 	GtkWidget *speed_slider, *priority_buttons;
-	gebr_ui_flow_execution_slider_setup_ui(gebr.config.flow_exec_speed, &speed_slider);
-	gebr_ui_flow_execution_priority_setup_ui(&priority_buttons);
+	gebr_ui_flow_execution_slider_setup_ui(ui_flow_execution, gebr.config.flow_exec_speed, &speed_slider);
+	gebr_ui_flow_execution_priority_setup_ui(ui_flow_execution, &priority_buttons);
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	GtkTreeModel *servers_model = gebr_maestro_server_get_groups_model(maestro);
@@ -973,8 +1019,8 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	GtkWidget *servers_combo = gtk_combo_box_new_with_model(servers_model);
 	GtkWidget *queue_combo = gtk_combo_box_new_with_model(queue_model);
 
-	gebr.ui_flow_browse->server_combo = GTK_COMBO_BOX(servers_combo);
-	gebr.ui_flow_browse->queue_combo = GTK_COMBO_BOX(queue_combo);
+	ui_flow_execution->priv->server_combo = GTK_COMBO_BOX(servers_combo);
+	ui_flow_execution->priv->queue_combo = GTK_COMBO_BOX(queue_combo);
 
 	GtkCellRenderer *renderer;
 	/*Queue combobox*/
@@ -1003,13 +1049,13 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 
 	gtk_widget_set_sensitive(speed_slider, slider_sensitiviness);
 
-	execution_details_restore_default_values();
+	execution_details_restore_default_values(ui_flow_execution);
 
 	g_signal_connect(main_dialog, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
-	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), main_dialog);
+	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), ui_flow_execution);
 	g_signal_connect(GTK_BUTTON(cancel_button), "clicked", G_CALLBACK(on_cancel_button_clicked), main_dialog);
 	g_signal_connect(GTK_BUTTON(help_button), "clicked", G_CALLBACK(on_help_button_clicked), NULL);
-	g_signal_connect(GTK_BUTTON(default_button), "clicked", G_CALLBACK(on_save_default_button_clicked), NULL);
+	g_signal_connect(GTK_BUTTON(default_button), "clicked", G_CALLBACK(on_save_default_button_clicked), ui_flow_execution);
 
 	gtk_window_set_modal(GTK_WINDOW(main_dialog), TRUE);
 	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));

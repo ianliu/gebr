@@ -1296,9 +1296,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	g_signal_connect_after(gebr.maestro_controller, "maestro-state-changed",
 	                       G_CALLBACK(on_controller_maestro_state_changed), ui_flow_browse);
 
-	ui_flow_browse->name = NULL;
-	ui_flow_browse->type = 0;
-
 	/*
 	 * Create flow browse page
 	 */
@@ -1812,7 +1809,7 @@ graph_process_read_stderr(GebrCommProcess * process,
 		if (!g_strcmp0(action[2], "detailed"))
 			is_detailed = TRUE;
 
-		gebr_ui_flow_run_snapshots(gebr.flow, action[3], is_parallel, is_detailed);
+		gebr_ui_flow_run_snapshots(NULL, gebr.flow, action[3], is_parallel, is_detailed);
 	}
 
 	g_string_free(output, TRUE);

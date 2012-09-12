@@ -396,7 +396,7 @@ void on_flow_execute_activate(void)
 	if (!flows_check_maestro_connected())
 		return;
 
-	gebr_ui_flow_run(FALSE, FALSE);
+	gebr_ui_flow_run(NULL, FALSE, FALSE);
 }
 
 void on_flow_execute_details_activate(void)
@@ -413,7 +413,7 @@ on_flow_execute_parallel_activate(void)
 
 	if (!flows_check_maestro_connected())
 		return;
-	gebr_ui_flow_run(TRUE, FALSE);
+	gebr_ui_flow_run(NULL, TRUE, FALSE);
 }
 
 void on_flow_revision_save_activate(void)

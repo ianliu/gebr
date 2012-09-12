@@ -23,19 +23,43 @@
 
 #include "gebr-maestro-server.h"
 
+#define GEBR_TYPE_UI_FLOW_EXECUTION		(gebr_ui_flow_execution_get_type())
+#define GEBR_UI_FLOW_EXECUTION(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TYPE_UI_FLOW_EXECUTION, GebrUiFlowExecution))
+#define GEBR_UI_FLOW_EXECUTION_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_TYPE_UI_FLOW_EXECUTION, GebrUiFlowExecutionClass))
+#define GEBR_IS_UI_FLOW_EXECUTION(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_TYPE_UI_FLOW_EXECUTION))
+#define GEBR_IS_UI_FLOW_EXECUTION_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_TYPE_UI_FLOW_EXECUTION))
+#define GEBR_UI_FLOW_EXECUTION_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_TYPE_UI_FLOW_EXECUTION, GebrUiFlowExecutionClass))
+
 G_BEGIN_DECLS
+
+typedef struct _GebrUiFlowExecution GebrUiFlowExecution;
+typedef struct _GebrUiFlowExecutionPriv GebrUiFlowExecutionPriv;
+typedef struct _GebrUiFlowExecutionClass GebrUiFlowExecutionClass;
+
+
+struct _GebrUiFlowExecution {
+	GObject parent;
+	GebrUiFlowExecutionPriv *priv;
+};
+
+struct _GebrUiFlowExecutionClass {
+	GObjectClass parent_class;
+};
 
 /**
  * gebr_ui_flow_run:
  *
  * This method runs the selected flows according to the interface setup.
  */
-void gebr_ui_flow_run(gboolean is_parallel, gboolean is_detailed);
+void gebr_ui_flow_run(GebrUiFlowExecution *ui_flow_execution,
+                      gboolean is_parallel,
+                      gboolean is_detailed);
 
-void gebr_ui_flow_run_snapshots(GebrGeoXmlFlow *flow,
+void gebr_ui_flow_run_snapshots(GebrUiFlowExecution *ui_flow_execution,
+                                GebrGeoXmlFlow *flow,
                                 const gchar *snapshots,
                                 gboolean is_parallel,
-				gboolean is_detailed);
+                                gboolean is_detailed);
 
 void gebr_ui_flow_update_prog_mpi_nprocess(GebrGeoXmlProgram *prog,
                                            GebrMaestroServer *maestro,
