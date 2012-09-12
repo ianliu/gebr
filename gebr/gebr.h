@@ -102,6 +102,8 @@ struct gebr {
 	struct ui_log *ui_log;
 	struct ui_server_list *ui_server_list;
 
+	GebrUiFlowExecution *ui_flow_execution;
+
 	struct gebr_config {
 		GKeyFile *key_file;
 		GString *path;

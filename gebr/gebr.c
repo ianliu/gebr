@@ -92,6 +92,7 @@ gebr_init(gboolean has_config)
 	gebr.flow = NULL;
 	gebr.program = NULL;
 	gebr.flow_clipboard = NULL;
+	gebr.ui_flow_execution = NULL;
 
 	gebr.current_report.report_wind = NULL;
 	gebr.current_report.report_group = NULL;
@@ -225,6 +226,7 @@ gboolean gebr_quit(gboolean save_config)
 
 	g_free(gebr.ui_project_line);
 	g_free(gebr.ui_flow_browse);
+	g_free(gebr.ui_flow_execution);
 	gebr_job_control_free(gebr.job_control);
 	g_free(gebr.ui_server_list);
 
