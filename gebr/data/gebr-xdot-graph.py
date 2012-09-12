@@ -100,7 +100,7 @@ class MyDotWindow(xdot.DotWindow):
         sys.stderr.write(str(snap))
         
     def create_list_and_execution(self, type, mod):
-	list_snaps = "run:" + type + ":" + mod + ":"
+        list_snaps = "run:" + type + ":" + mod + ":"
         self.flows[self.current_flow].sort()
         for snap in self.flows[self.current_flow]:
             list_snaps = list_snaps + snap + ","
