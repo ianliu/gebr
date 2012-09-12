@@ -982,16 +982,16 @@ gebr_ui_flow_execution_priority_setup_ui(GebrUiFlowExecution *ui_flow_execution,
 	*priority_buttons = hbox;
 	return;
 }
-void
+GebrUiFlowExecution *
 gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 {
 	GtkBuilder *builder = gtk_builder_new();
 
 	GebrUiFlowExecution *ui_flow_execution = g_object_new(GEBR_TYPE_UI_FLOW_EXECUTION, NULL);
 
-	g_return_if_fail(gtk_builder_add_from_file(builder,
-						   GEBR_GLADE_DIR "/gebr-execution-details.glade",
-						   NULL));
+	g_return_val_if_fail(gtk_builder_add_from_file(builder,
+	                                               GEBR_GLADE_DIR "/gebr-execution-details.glade",
+	                                               NULL), NULL);
 
 	GtkWidget *main_dialog = GTK_WIDGET(gtk_builder_get_object(builder, "main_dialog"));
 	ui_flow_execution->priv->window = main_dialog;
@@ -1061,4 +1061,6 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
 
 	gtk_widget_show_all(main_dialog);
+
+	return ui_flow_execution;
 }
