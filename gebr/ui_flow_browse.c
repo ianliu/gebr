@@ -1426,8 +1426,8 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_tree_view_column_set_expand(col, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, ui_flow_browse->action_renderer, gebr_flow_browse_action_icon, NULL, NULL);
 
-	g_signal_connect(ui_flow_browse->view, "cursor-changed",
-	                 G_CALLBACK(gebr_flow_browse_cursor_changed), ui_flow_browse);
+	g_signal_connect_after(ui_flow_browse->view, "cursor-changed",
+	                       G_CALLBACK(gebr_flow_browse_cursor_changed), ui_flow_browse);
 
 	/*
 	 * Right side: flow info tab
@@ -3245,7 +3245,10 @@ gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
 
 	gtk_tree_view_unset_rows_drag_source(tree_view);
 
-	gtk_toggle_button_set_active(fb->snapshots_ctx_button, TRUE);
+	if (!gtk_toggle_button_get_active(fb->snapshots_ctx_button))
+		gtk_toggle_button_set_active(fb->snapshots_ctx_button, TRUE);
+	else
+		gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, fb);
 
 	g_free(path_str);
 	gtk_tree_path_free(path);
