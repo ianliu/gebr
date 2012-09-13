@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-13 16:09-0300\n"
+"POT-Creation-Date: 2012-09-13 17:04-0300\n"
 "PO-Revision-Date: 2012-05-10 09:41-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -278,7 +278,7 @@ msgstr "Linha de comando:"
 msgid "Details"
 msgstr "Detalhes"
 
-#: ../data/gebr-job-control.glade.h:9 ../flow.c:1729
+#: ../data/gebr-job-control.glade.h:9 ../flow.c:1732
 msgid "Output"
 msgstr "Saída"
 
@@ -361,30 +361,30 @@ msgstr ""
 "programa, uma implementação de MPI diferente pode ser usada. Atualmente, "
 "GêBR suporta Open MPI e MPICH 2."
 
-#: ../data/gebr-xdot-graph.py:131
+#: ../data/gebr-xdot-graph.py:137
 msgid "Take a Snapshot \tCtrl+S"
 msgstr "Tirar uma foto\tCtrl+S"
 
-#: ../data/gebr-xdot-graph.py:148
+#: ../data/gebr-xdot-graph.py:154
 msgid "Revert"
 msgstr "Reverter"
 
-#: ../data/gebr-xdot-graph.py:153 ../document.c:356 ../interface.c:108
+#: ../data/gebr-xdot-graph.py:159 ../document.c:356 ../interface.c:108
 #: ../interface.c:142
 msgid "Delete"
 msgstr "Apagar"
 
 #. Sequentially
-#: ../data/gebr-xdot-graph.py:166
+#: ../data/gebr-xdot-graph.py:172
 msgid "Execute sequentially \t\tCtrl+R"
 msgstr "Executar sequencialmente\t\tCtrl+R"
 
 #. Parallel
-#: ../data/gebr-xdot-graph.py:171
+#: ../data/gebr-xdot-graph.py:177
 msgid "Execute parallelly \t\tCtrl+Shift+R"
 msgstr "Executar paralelamente\t\tCtrl+Shift+R"
 
-#: ../data/gebr-xdot-graph.py:176
+#: ../data/gebr-xdot-graph.py:182
 msgid "Execute \t\t\tCtrl+R"
 msgstr "Executar\t\t\tCtrl+R"
 
@@ -585,7 +585,7 @@ msgstr "Tipos de Arquivos de Fluxo (*.flw, *flwz)"
 msgid "Could not import Flow from the file %s"
 msgstr "Não foi possível importar o Fluxo do arquivo %s"
 
-#: ../flow.c:352 ../ui_flow_browse.c:2092
+#: ../flow.c:352 ../ui_flow_browse.c:2095
 msgid "No Flow selected"
 msgstr "Nenhum Fluxo selecionado"
 
@@ -650,19 +650,19 @@ msgstr "Escreva uma descrição da foto do Fluxo selecionado:"
 msgid "Insert a description of your snapshot."
 msgstr "Insira uma descrição para a foto."
 
-#: ../flow.c:1167
+#: ../flow.c:1170
 msgid "Could not paste Flow. It was probably deleted."
 msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
-#: ../flow.c:1211
+#: ../flow.c:1214
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../flow.c:1305 ../ui_flow_browse.c:1446
+#: ../flow.c:1308 ../ui_flow_browse.c:1446
 msgid "No Line is selected\n"
 msgstr "Nenhuma Linha selecionada.\n"
 
-#: ../flow.c:1309 ../ui_flow_browse.c:1448
+#: ../flow.c:1312 ../ui_flow_browse.c:1448
 msgid ""
 "The Maestro of this Line is disconnected,\n"
 "then you cannot edit flows.\n"
@@ -672,7 +672,7 @@ msgstr ""
 "portanto, você não pode editar os fluxos.\n"
 "Tente alterar seu Maestro ou conectar-se a ele."
 
-#: ../flow.c:1315
+#: ../flow.c:1318
 #, c-format
 msgid ""
 "%d Flows selected.\n"
@@ -687,12 +687,12 @@ msgstr ""
 "- <i>sequencialmente</i> (Shift+R) ou\n"
 "- <i>paralelamente</i> (Shift+Ctrl+R)"
 
-#: ../flow.c:1321
+#: ../flow.c:1324
 #, c-format
 msgid "No Flow is selected\n"
 msgstr "Nenhum Fluxo selecionado\n"
 
-#: ../flow.c:1324
+#: ../flow.c:1327
 #, c-format
 msgid ""
 "This Line has no Flows.\n"
@@ -705,67 +705,67 @@ msgstr ""
 "Clique em <i>Novo Fluxo</i> para criar um\n"
 "ou importe através do botão <i>Import Flow</i>."
 
-#: ../flow.c:1441
+#: ../flow.c:1444
 msgid "Instance"
 msgstr "Instância"
 
-#: ../flow.c:1479
+#: ../flow.c:1482
 msgid "Parameters"
 msgstr "Parâmetros"
 
-#: ../flow.c:1510
+#: ../flow.c:1513
 msgid "Parameter"
 msgstr "Parâmetro"
 
-#: ../flow.c:1510 ../flow.c:1583 ../ui_document.c:751
+#: ../flow.c:1513 ../flow.c:1586 ../ui_document.c:751
 msgid "Value"
 msgstr "Valor"
 
-#: ../flow.c:1527 ../flow.c:1544
+#: ../flow.c:1530 ../flow.c:1547
 msgid "This program has only default parameters"
 msgstr "Este programa tem apenas seus parâmetros padrões"
 
-#: ../flow.c:1534 ../flow.c:1551
+#: ../flow.c:1537 ../flow.c:1554
 msgid "This program has only empty parameters"
 msgstr "Este programa tem apenas parâmetros vazios"
 
-#: ../flow.c:1583
+#: ../flow.c:1586
 msgid "Variables"
 msgstr "Variáveis"
 
-#: ../flow.c:1583 ../ui_document.c:728
+#: ../flow.c:1586 ../ui_document.c:728
 msgid "Keyword"
 msgstr "Palavra-chave"
 
-#: ../flow.c:1583
+#: ../flow.c:1586
 msgid "Result"
 msgstr "Resultado"
 
-#: ../flow.c:1583 ../ui_document.c:789
+#: ../flow.c:1586 ../ui_document.c:789
 msgid "Comment"
 msgstr "Comentário"
 
-#: ../flow.c:1679
+#: ../flow.c:1682
 msgid "There are no variables in this scope"
 msgstr "Não existem variáveis neste escopo"
 
-#: ../flow.c:1727
+#: ../flow.c:1730
 msgid "I/O table"
 msgstr "Tabela de entrada/saída"
 
-#: ../flow.c:1728
+#: ../flow.c:1731
 msgid "Input"
 msgstr "Entrada"
 
-#: ../flow.c:1728 ../flow.c:1729 ../flow.c:1730
+#: ../flow.c:1731 ../flow.c:1732 ../flow.c:1733
 msgid "(none)"
 msgstr "(nenhum)"
 
-#: ../flow.c:1730
+#: ../flow.c:1733
 msgid "Error"
 msgstr "Log de erro"
 
-#: ../flow.c:1853
+#: ../flow.c:1856
 msgid "Snapshots of this Flow:"
 msgstr "Fotos deste Fluxo:"
 
@@ -1397,14 +1397,13 @@ msgstr "Importar Fluxos"
 msgid "Export selected Flows"
 msgstr "Exportar Fluxos selecionados"
 
-#: ../interface.c:120 ../ui_flow_browse.c:3408 ../ui_flow_browse.c:3410
+#: ../interface.c:120 ../ui_flow_browse.c:3418 ../ui_flow_browse.c:3420
 msgid "Execute"
 msgstr "Executar"
 
-# Execução detalhada
-#: ../interface.c:122 ../ui_flow_browse.c:3411
+#: ../interface.c:122 ../ui_flow_browse.c:3421
 msgid "Execution details"
-msgstr "Dispersão de execução: %s"
+msgstr "Execução detalhada"
 
 #: ../interface.c:125 ../interface.c:147
 msgid "Copy"
@@ -1960,69 +1959,69 @@ msgid ""
 msgstr ""
 "Se você optar por remover esta foto, você jamais conseguirá recuperá-la "
 
-#: ../ui_flow_browse.c:1775
+#: ../ui_flow_browse.c:1778
 #, c-format
 msgid "Could not revert to snapshot with ID %s"
 msgstr "Não foi possível reverter para a foto de ID %s"
 
-#: ../ui_flow_browse.c:1933
+#: ../ui_flow_browse.c:1936
 #, c-format
 msgid "Output of <span font_style='italic'>"
 msgstr ""
 
-#: ../ui_flow_browse.c:1940
+#: ../ui_flow_browse.c:1943
 msgid "finished"
 msgstr "Finalizado"
 
-#: ../ui_flow_browse.c:1944
+#: ../ui_flow_browse.c:1947
 msgid "started"
 msgstr "iniciado"
 
-#: ../ui_flow_browse.c:1948
+#: ../ui_flow_browse.c:1951
 msgid "canceled"
 msgstr "cancelado"
 
-#: ../ui_flow_browse.c:1952
+#: ../ui_flow_browse.c:1955
 msgid "failed"
 msgstr "falhou"
 
-#: ../ui_flow_browse.c:1958
+#: ../ui_flow_browse.c:1961
 msgid "submitted"
 msgstr "submetido"
 
-#: ../ui_flow_browse.c:1960
+#: ../ui_flow_browse.c:1963
 msgid "This job doesn't have output yet"
 msgstr "Esta tarefa ainda não tem saídas"
 
 #. Update snapshots context
-#: ../ui_flow_browse.c:1989
+#: ../ui_flow_browse.c:1992
 msgid "No Flow selected."
 msgstr "Nenhum Fluxo selecionado"
 
-#: ../ui_flow_browse.c:2009
+#: ../ui_flow_browse.c:2012
 msgid "Ready to execute"
 msgstr "Pronto para executar"
 
-#: ../ui_flow_browse.c:2026 ../ui_project_line.c:414
+#: ../ui_flow_browse.c:2029 ../ui_project_line.c:414
 #, c-format
 msgid "<span size='x-large'>No description available</span>"
 msgstr "<span size='x-large'>Nenhuma descrição disponível</span>"
 
-#: ../ui_flow_browse.c:2040
+#: ../ui_flow_browse.c:2043
 #, c-format
 msgid "Modified on %s"
 msgstr "Alterado em %s"
 
-#: ../ui_flow_browse.c:2049
+#: ../ui_flow_browse.c:2052
 msgid "This flow was never executed"
 msgstr "Este fluxo nunca foi executado"
 
-#: ../ui_flow_browse.c:2052
+#: ../ui_flow_browse.c:2055
 #, c-format
 msgid "Submitted on %s"
 msgstr "Submetido em %s"
 
-#: ../ui_flow_browse.c:2509
+#: ../ui_flow_browse.c:2512
 #, c-format
 msgid ""
 "%d Flows selected.\n"
@@ -2041,7 +2040,7 @@ msgstr ""
 "Para isso, clique no \n"
 "no ícone da câmera."
 
-#: ../ui_flow_browse.c:2522
+#: ../ui_flow_browse.c:2525
 msgid ""
 "There are no snapshots.\n"
 "\n"
@@ -2054,36 +2053,36 @@ msgstr ""
 "las a qualquer momento. Para tirar uma foto, clique no ícone da câmera e dê "
 "uma descrição."
 
-#: ../ui_flow_browse.c:2863
+#: ../ui_flow_browse.c:2870
 #, c-format
 msgid "Flow <i>%s</i>"
 msgstr ""
 
-#: ../ui_flow_browse.c:3133
+#: ../ui_flow_browse.c:3140
 msgid "Choose an input file"
 msgstr "Escolha um arquivo de entrada"
 
-#: ../ui_flow_browse.c:3140
+#: ../ui_flow_browse.c:3147
 msgid "Choose an output file"
 msgstr "Escolha um arquivo de saída"
 
-#: ../ui_flow_browse.c:3144
+#: ../ui_flow_browse.c:3151
 msgid "Choose a log file"
 msgstr "Escolha um arquivo de log"
 
-#: ../ui_flow_browse.c:3148
+#: ../ui_flow_browse.c:3155
 msgid "Choose file"
 msgstr "Escolha um arquivo"
 
-#: ../ui_flow_browse.c:3396
+#: ../ui_flow_browse.c:3406
 msgid "Select a line to execute a flow"
 msgstr "Selecione uma linha deste projeto para executar um fluxo."
 
-#: ../ui_flow_browse.c:3398
+#: ../ui_flow_browse.c:3408
 msgid "Select a line of this project to execute a flow"
 msgstr "Selecione a linha deste projeto para executar um fluxo."
 
-#: ../ui_flow_browse.c:3402
+#: ../ui_flow_browse.c:3412
 msgid ""
 "The Maestro of this line is disconnected.\n"
 "Connecting it to execute a flow."
@@ -2092,7 +2091,7 @@ msgstr ""
 "\n"
 "Conecte-se ao maestro <b>%s</b> para executar esta linha"
 
-#: ../ui_flow_browse.c:3404
+#: ../ui_flow_browse.c:3414
 msgid ""
 "This line does not contain flows\n"
 "Create a flow to execute this line"
@@ -2100,7 +2099,7 @@ msgstr ""
 "A linha não contém fluxos\n"
 "Crie um fluxo para executar esta linha"
 
-#: ../ui_flow_browse.c:3406
+#: ../ui_flow_browse.c:3416
 msgid ""
 "This flow does not contain programs\n"
 "Add at least one to execute this flow"
@@ -2108,7 +2107,7 @@ msgstr ""
 "Este fluxo não contém programas\n"
 "Adicione um programa para executar este programa."
 
-#: ../ui_flow_browse.c:3498
+#: ../ui_flow_browse.c:3508
 #, c-format
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
