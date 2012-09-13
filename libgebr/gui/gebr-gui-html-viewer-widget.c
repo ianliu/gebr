@@ -252,11 +252,11 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 			const gchar *uri = gebr_geoxml_program_get_url(GEBR_GEOXML_PROGRAM(priv->object));
 			help = gebr_geoxml_document_get_help (menu);
 
-			if (strlen(help) && strlen(uri)) {
+			if (strlen(help) > 0 && strlen(uri) > 0) {
 				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu'], ['<b>More Info</b>', 'gebr://link']]", TRUE);
 			} else if(strlen(help) > 0)
 				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
-			else if (strlen(uri))
+			else if (strlen(uri) > 0)
 				generate_links_index(context, "[['<b>More Info</b>', 'gebr://link']]", TRUE);
 			else
 				generate_links_index(context, NULL, TRUE);
