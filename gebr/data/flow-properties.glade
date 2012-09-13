@@ -302,7 +302,6 @@
   </object>
   <object class="GtkVBox" id="main_rev">
     <property name="visible">True</property>
-    <property name="border_width">5</property>
     <child>
       <object class="GtkVBox" id="revisions_main">
         <property name="visible">True</property>
@@ -312,7 +311,6 @@
             <child>
               <object class="GtkVBox" id="graph_box">
                 <property name="visible">True</property>
-                <property name="border_width">5</property>
                 <child>
                   <placeholder/>
                 </child>
