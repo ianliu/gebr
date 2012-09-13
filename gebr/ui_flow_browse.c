@@ -2681,14 +2681,6 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			                   FB_STRUCT, &ui_program,
 			                   -1);
 
-			gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
-
-			GtkTreeIter parent;
-			gtk_tree_model_iter_parent(model, &parent, &iter);
-			GtkTreePath *path = gtk_tree_model_get_path(model, &parent);
-			gtk_tree_model_row_changed(model, path, &parent);
-			gtk_tree_path_free(path);
-
 			if (fb->program_edit)
 				gebr_gui_program_edit_destroy(fb->program_edit);
 
@@ -2700,6 +2692,13 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 
 			gtk_container_add(GTK_CONTAINER(fb->context[CONTEXT_PARAMETERS]), program_edit->widget);
 			gebr_flow_browse_define_context_to_show(CONTEXT_PARAMETERS, fb);
+
+			if (gebr_ui_flow_program_get_flag_opened(ui_program)) {
+				gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
+				flow_browse_revalidate_programs(gebr.ui_flow_browse);
+				flow_browse_validate_io(gebr.ui_flow_browse);
+				flow_browse_info_update();
+			}
 		}
 	}
 }
