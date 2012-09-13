@@ -1320,11 +1320,12 @@ gebr_flow_set_toolbar_sensitive(void)
 			else if (flows_nrows == 0 && total_rows > 0)
 				label_msg = g_markup_printf_escaped(_("No Flow is selected\n"));
 
-			else
+			else{
 				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
 						"Click on <i>New Flow</i> to create a new one\n"
 						"or import one through the <i>Import Flow</i> icon."));
-
+				gtk_widget_hide(gebr.ui_flow_browse->left_panel);
+			}
 			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), label_msg);
 			g_free(label_msg);
 		}
