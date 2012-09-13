@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/gui/gui.h>
@@ -44,6 +45,20 @@ static gboolean	parameters_on_delete_event		(GtkDialog          *dialog,
 							 GdkEventAny        *event,
 							 GebrGuiProgramEdit *program_edit);
 							 */
+
+static gboolean
+on_parameters_key_press(GtkWidget *widget,
+                        GdkEvent *event,
+                        GebrGuiProgramEdit *program_edit)
+{
+	if (event->key.keyval == GDK_Return) {
+		flow_browse_revalidate_programs(gebr.ui_flow_browse);
+		flow_browse_validate_io(gebr.ui_flow_browse);
+		flow_browse_info_update();
+	}
+
+	return FALSE;
+}
 
 static void
 on_parameters_default_button_clicked(GtkButton *button,
@@ -102,6 +117,7 @@ parameters_configure_setup_ui(void)
 	GtkWidget *button_default = gtk_button_new_with_mnemonic(_(" _Default "));
 	GtkWidget *button_help = gtk_button_new_with_mnemonic(_(" _Help "));
 
+	g_signal_connect(program_edit->widget, "event", G_CALLBACK(on_parameters_key_press), program_edit);
 	g_signal_connect(button_default, "clicked", G_CALLBACK(on_parameters_default_button_clicked), program_edit);
 	g_signal_connect(button_help, "clicked", G_CALLBACK(on_parameters_help_button_clicked), program_edit);
  
