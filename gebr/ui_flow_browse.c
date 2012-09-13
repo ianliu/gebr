@@ -2551,7 +2551,7 @@ static void flow_browse_load(void)
 
 			flow = gebr_ui_flow_get_flow(ui_flow);
 
-			if (flow == old_flow && !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_FLOW])) {
+			if (flow != old_flow || !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_FLOW])) {
 				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
 					gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
 				else if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_SNAPSHOTS])) {
