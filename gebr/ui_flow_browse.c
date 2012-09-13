@@ -2313,6 +2313,7 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 
 	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 	flow_browse_validate_io(gebr.ui_flow_browse);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	/* Update parameters review on Flow Browse */
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, FALSE);
