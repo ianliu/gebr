@@ -732,11 +732,7 @@ flow_browse_popup_menu(GtkWidget *widget,
 		                   FB_STRUCT, &ui_io,
 		                   -1);
 
-		menu = gebr_ui_flows_io_popup_menu(ui_io, gebr.flow);
-
-		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-		gtk_tree_model_row_changed(model, path, &iter);
-		gtk_tree_path_free(path);
+		menu = gebr_ui_flows_io_popup_menu(ui_io, gebr.flow, &iter);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *ui_program;

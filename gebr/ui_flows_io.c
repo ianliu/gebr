@@ -46,6 +46,7 @@ struct _GebrUiFlowsIoPriv {
 typedef struct {
 	GebrGeoXmlDocument *doc;
 	GebrUiFlowsIo *io;
+	GtkTreeIter *iter;
 } GebrUiFlowsDai;
 
 /*
@@ -410,11 +411,17 @@ on_ui_flows_io_overwrite_toggled(GtkCheckMenuItem *item,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	gebr_ui_flows_io_load_from_xml(dai->io, gebr.line, GEBR_GEOXML_FLOW(dai->doc), maestro, gebr.validator);
+
+	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
+	GtkTreePath *path = gtk_tree_model_get_path(model, dai->iter);
+	gtk_tree_model_row_changed(model, path, dai->iter);
+	gtk_tree_path_free(path);
 }
 
 GtkMenu *
 gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
-			    GebrGeoXmlFlow *flow)
+			    GebrGeoXmlFlow *flow,
+			    GtkTreeIter *iter)
 {
 	GtkWidget *menu = gtk_menu_new();
 	GtkWidget * menu_item;
@@ -444,10 +451,11 @@ gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 	GebrUiFlowsDai *dai = g_new0(GebrUiFlowsDai, 1);
 	dai->doc = GEBR_GEOXML_DOCUMENT(flow);
 	dai->io  = io;
+	dai->iter = iter;
 
-	g_signal_connect (menu_item, "toggled", overwrite_callback, dai);
-	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), overwrite);
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), overwrite);
+	g_signal_connect(menu_item, "toggled", overwrite_callback, dai);
+	gtk_menu_shell_append(GTK_MENU_SHELL (menu), menu_item);
 
 	gtk_widget_show_all(menu);
 

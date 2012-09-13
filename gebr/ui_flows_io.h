@@ -150,7 +150,8 @@ void gebr_ui_flows_io_update_stock_id(GebrUiFlowsIo *io,
  * Returns a menu, according to the type of @io.
  */
 GtkMenu *gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
-				     GebrGeoXmlFlow *flow);
+				     GebrGeoXmlFlow *flow,
+				     GtkTreeIter *iter);
 
 void gebr_ui_flows_io_start_editing(GebrUiFlowsIo *io,
                                     GtkEntry *entry);
