@@ -3399,6 +3399,7 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
 
 	const gchar *tooltip_disconn;
 	const gchar *tooltip_execute;
+	const gchar *tooltip_execute_detail;
 
 	if (!gebr.line) {
 		if (!gebr.project)
@@ -3417,16 +3418,18 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
 			tooltip_disconn = _("Execute");
 	}
 	tooltip_execute = _("Execute");
+	tooltip_execute_detail = _("Execution details");
 
 	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
 	GtkAction *detailed_execution = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details");
 	const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
+	const gchar *tooltip_detail = sensitive ? tooltip_execute_detail : tooltip_disconn;
 
 	gtk_action_set_stock_id(action, "gtk-execute");
 	gtk_action_set_sensitive(action, sensitive);
 	gtk_action_set_tooltip(action, tooltip);
 	gtk_action_set_sensitive(detailed_execution, sensitive);
-	gtk_action_set_tooltip(detailed_execution, tooltip);
+	gtk_action_set_tooltip(detailed_execution, tooltip_detail);
 }
 
 void
