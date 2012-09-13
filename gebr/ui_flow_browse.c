@@ -48,8 +48,6 @@ static void selection_changed_signal(void);
 
 static void flow_browse_load(void);
 
-static gboolean flow_browse_static_info_update(void);
-
 static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 					 GtkTreeViewColumn * column, GebrUiFlowBrowse *fb);
 
@@ -1980,7 +1978,7 @@ on_job_info_status_changed(GebrJob *job,
 	g_free(job_state);
 }
 
-static gboolean
+gboolean
 flow_browse_static_info_update(void)
 {
 	if (gebr.flow == NULL) {

@@ -656,5 +656,7 @@ void on_flow_component_status_activate(GtkToggleAction *toggleaction)
 	else
 		flow_browse_status_changed(GEBR_GEOXML_PROGRAM_STATUS_DISABLED);
 	flow_browse_validate_io(gebr.ui_flow_browse);
+	flow_browse_static_info_update();
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
 }
 

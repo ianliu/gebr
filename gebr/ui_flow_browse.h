@@ -285,6 +285,8 @@ void gebr_flow_browse_unblock_changed_signal(GebrUiFlowBrowse *fb);
 
 void flow_edition_component_activated(void);
 
+gboolean flow_browse_static_info_update(void);
+
 gboolean gebr_ui_flow_browse_update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb);
 
 G_END_DECLS
