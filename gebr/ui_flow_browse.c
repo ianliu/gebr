@@ -2904,6 +2904,9 @@ gebr_flow_browse_hide(GebrUiFlowBrowse *self)
 void
 gebr_flow_browse_show(GebrUiFlowBrowse *self)
 {
+    if (gebr.last_notebook == NOTEBOOK_PAGE_JOB_CONTROL)
+        gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+
 	if (gebr.line)
 		gebr_flow_set_toolbar_sensitive();
 
