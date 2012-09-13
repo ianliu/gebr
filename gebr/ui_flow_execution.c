@@ -484,16 +484,21 @@ gebr_ui_flow_run(GebrUiFlowExecution *ui_flow_execution,
 			id = run_flow(ui_flow_execution, flow, id, NULL, is_detailed);
 
 		if (!id)
-			return;
+			continue;
 
 		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
 
 		gebr_flow_browse_update_jobs_info(flow, gebr.ui_flow_browse, gebr_flow_browse_calculate_n_max(gebr.ui_flow_browse));
 	}
+
 	if (n > 1 || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
 		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 	else
 		gebr_flow_browse_select_job_output(id, gebr.ui_flow_browse);
+
+	/* Close dialog of Detailed execution */
+	if (is_detailed && gtk_widget_get_visible(ui_flow_execution->priv->window))
+		gtk_widget_destroy(ui_flow_execution->priv->window);
 
 }
 
@@ -565,6 +570,10 @@ gebr_ui_flow_run_snapshots(GebrUiFlowExecution *ui_flow_execution,
 	gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
 	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
 	flow_browse_info_update();
+
+	/* Close dialog of Detailed execution */
+	if (is_detailed && gtk_widget_get_visible(ui_flow_execution->priv->window))
+		gtk_widget_destroy(ui_flow_execution->priv->window);
 
 	g_strfreev(snaps);
 }
@@ -836,7 +845,6 @@ on_run_button_clicked(GtkButton *button,
 		      GebrUiFlowExecution *ui_flow_execution)
 {
 	gebr_ui_flow_run(ui_flow_execution, FALSE, TRUE);
-	gtk_widget_destroy(GTK_WIDGET(ui_flow_execution->priv->window));
 }
 
 static void 
