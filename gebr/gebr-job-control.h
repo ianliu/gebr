@@ -171,6 +171,13 @@ detail_button_query_tooltip(GtkWidget  *widget,
  */
 void gebr_job_control_set_automatic_filter(GebrJobControl *jc, gboolean value);
 
+/**
+ * gebr_job_control_get_selected_job:
+ *
+ * Returns: The selected job
+ */
+GebrJob *gebr_job_control_get_selected_job(GebrJobControl *jc);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_CONTROL_H__ */

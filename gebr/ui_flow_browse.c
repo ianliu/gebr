@@ -530,7 +530,8 @@ on_dismiss_clicked(GtkButton *dismiss,
 
 void
 gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
-                          const gchar *job_id)
+                          const gchar *job_id,
+                          gboolean select)
 {
 	GebrJob *job = gebr_job_control_find(gebr.job_control, job_id);
 
@@ -573,6 +574,9 @@ gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
 
 	if (!gtk_widget_get_visible(fb->info_jobs))
 		gtk_widget_show_all(fb->info_jobs);
+
+	if (select)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(output_button), TRUE);
 }
 
 void
@@ -2533,8 +2537,6 @@ static void flow_browse_load(void)
 		gtk_widget_show(gebr.ui_flow_browse->revpage_warn);
 	}
 
-	flow_browse_info_update();
-
 	/* Set correct view */
 	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
 		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
@@ -2566,6 +2568,8 @@ static void flow_browse_load(void)
 			}
 		}
 	}
+
+	flow_browse_info_update();
 
 	gebr_geoxml_document_unref(GEBR_GEOXML_DOCUMENT(old_flow));
 }
@@ -3325,10 +3329,28 @@ gebr_flow_browse_update_jobs_info(GebrGeoXmlFlow *flow,
 {
 	on_dismiss_clicked(NULL, fb);
 
+	gboolean selection_before = FALSE;
+	if (gtk_widget_get_visible(fb->context[CONTEXT_JOBS]))
+		selection_before = TRUE;
+
+	const gchar *selected_id = "";
+	if (selection_before) {
+		GebrJob *selected_job = gebr_job_control_get_selected_job(gebr.job_control);
+		if (selected_job)
+			selected_id = gebr_job_get_id(selected_job);
+	}
+
+	gboolean select;
 	gint i = 0;
 	GList *jobs = gebr_flow_browse_get_jobs_from_flow(flow, fb);
-	for (GList *job = jobs; job && i < n_max; job = job->next, i++)
-		gebr_flow_browse_info_job(gebr.ui_flow_browse, job->data);
+	for (GList *job = jobs; job && i < n_max; job = job->next, i++) {
+		if (selection_before && !g_strcmp0(selected_id, job->data))
+			select = TRUE;
+		else
+			select = FALSE;
+
+		gebr_flow_browse_info_job(gebr.ui_flow_browse, job->data, select);
+	}
 }
 
 void

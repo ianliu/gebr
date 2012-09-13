@@ -216,7 +216,8 @@ void gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
                                              gboolean same_flow);
 
 void gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
-                               const gchar *job_id);
+                               const gchar *job_id,
+                               gboolean select);
 
 const gchar *gebr_flow_browse_get_selected_queue(GebrUiFlowBrowse *fb);
 

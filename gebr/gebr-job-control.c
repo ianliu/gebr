@@ -339,34 +339,6 @@ get_server_group_iter(GebrJobControl *jc, const gchar *group, const gchar *type_
 	return FALSE;
 }
 
-static GebrJob *
-get_selected_job(GebrJobControl *jc)
-{
-	GebrJob *job = NULL;
-	GtkTreeModel *model;
-	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
-	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
-
-	if (!rows || rows->next)
-		goto free_and_return;
-
-	GtkTreeIter iter;
-
-	if (!gtk_tree_model_get_iter(model, &iter, rows->data))
-		g_return_val_if_reached(NULL);
-
-	gtk_tree_model_get(model, &iter,
-	                   JC_STRUCT, &job,
-	                   -1);
-
-free_and_return:
-
-	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
-	g_list_free(rows);
-
-	return job;
-}
-
 static gboolean
 jobs_visible_for_flow(GtkTreeModel *model,
 			 GtkTreeIter *iter,
@@ -757,7 +729,7 @@ on_dismiss_clicked(GtkButton *dismiss, GebrJobControl *jc)
 static void
 on_show_issues_clicked(GtkButton *show_issues, GebrJobControl *jc)
 {
-	GebrJob *job = get_selected_job(jc);
+	GebrJob *job = gebr_job_control_get_selected_job(jc);
 	if (!job)
 		return;
 	fill_issues_properties(jc, gebr_job_get_issues(job), job);
@@ -769,7 +741,7 @@ on_job_wait_button(GtkButton *button,
 {
 	GebrJob *job, *parent;
 
-	job = get_selected_job(jc);
+	job = gebr_job_control_get_selected_job(jc);
 	if (!job)
 		return;
 	parent = gebr_job_control_find(jc, gebr_job_get_queue(job));
@@ -856,7 +828,7 @@ on_pie_tooltip(GebrGuiPie *pie,
 
 	const gchar *server;
 
-	GebrJob *job = get_selected_job(jc);
+	GebrJob *job = gebr_job_control_get_selected_job(jc);
 	if (!job)
 		return FALSE;
 
@@ -887,7 +859,7 @@ paint_square(GtkWidget *widget, GdkEventExpose *event, Color *color)
 static void
 job_control_fill_servers_info(GebrJobControl *jc)
 {
-	GebrJob *job = get_selected_job(jc);
+	GebrJob *job = gebr_job_control_get_selected_job(jc);
 	if (!job)
 		return;
 
@@ -1624,7 +1596,7 @@ update_tree_view(gpointer data)
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 
-	GebrJob *job = get_selected_job(jc);
+	GebrJob *job = gebr_job_control_get_selected_job(jc);
 	if (job && gebr_job_get_status(job) == JOB_STATUS_RUNNING)
 		gebr_jc_update_status_and_time(jc, job, JOB_STATUS_RUNNING);
 
@@ -2846,6 +2818,34 @@ restore_user_defined_filters(GebrJobControl *jc)
 	jc->priv->restore_mode = FALSE;
 }
 
+GebrJob *
+gebr_job_control_get_selected_job(GebrJobControl *jc)
+{
+	GebrJob *job = NULL;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	if (!rows || rows->next)
+		goto free_and_return;
+
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter(model, &iter, rows->data))
+		g_return_val_if_reached(NULL);
+
+	gtk_tree_model_get(model, &iter,
+	                   JC_STRUCT, &job,
+	                   -1);
+
+free_and_return:
+
+	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free(rows);
+
+	return job;
+}
+
 gboolean static
 update_user_defined_filters(GebrJobControl *jc)
 {
@@ -2928,7 +2928,7 @@ detail_button_query_tooltip(GtkWidget  *widget,
 			       GtkTooltip *tooltip,
 			       GebrJobControl *jc)
 {
-	GebrJob *job = get_selected_job(jc);
+	GebrJob *job = gebr_job_control_get_selected_job(jc);
 	if (!job)
 		return FALSE;
 
