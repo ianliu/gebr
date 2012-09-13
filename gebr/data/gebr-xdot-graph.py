@@ -2,6 +2,7 @@ import pygtk
 import sys, gtk, glib
 import xdot
 import gettext
+import gtk.keysyms
 
 class MyDotWindow(xdot.DotWindow):
     def __init__(self):
@@ -10,6 +11,7 @@ class MyDotWindow(xdot.DotWindow):
         self.widget.connect('activate', self.on_url_activate)
         self.widget.connect('select', self.on_url_select)
         self.widget.connect('unselect-all', self.on_url_unselect_all)
+        self.widget.connect('key-press-event', self.on_url_key_press)
         
         self.flows = {}
         self.current_flow = None
@@ -30,6 +32,10 @@ class MyDotWindow(xdot.DotWindow):
         self.window.destroy()
         
         gettext.install("gebr", locale_dir)
+        
+    def on_url_key_press(self, widget, event):
+        if event.keyval == gtk.keysyms.Delete:
+            self.delete_selected_snapshots()
         
     def delete_selected_snapshots(self):
         if self.flows.has_key(self.current_flow) and self.flows[self.current_flow]:
