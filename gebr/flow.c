@@ -119,7 +119,7 @@ void flow_free(void)
 		if (type == STRUCT_TYPE_FLOW)
 			gebr_ui_flow_set_is_selected(ui_flow, FALSE);
 
-		while (valid)
+		while (valid && gtk_tree_store_iter_is_valid(gebr.ui_flow_browse->store, &iter))
 			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
 
 		valid = gtk_tree_model_iter_next(model, &parent);
