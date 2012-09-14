@@ -1926,6 +1926,7 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 	GtkTreeIter new_it;
 	gint index = 0;
 	gint select_index = 0;
+	gboolean find_index = FALSE;
 
 	if (prev_selected) {
 		GtkTreeModel *flows_model = GTK_TREE_MODEL(jc->priv->flow_filter);
@@ -1936,6 +1937,7 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 			                   1, &id, -1);
 
 			if (g_strcmp0(id, prev_selected) == 0) {
+				find_index = TRUE;
 				select_index = index;
 				break;
 			}
@@ -1944,6 +1946,9 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 		}
 	}
 	gtk_combo_box_set_active(jc->priv->flow_combo, select_index);
+
+	if (!find_index)
+		on_reset_filter(NULL, jc);
 
 	g_signal_handlers_unblock_by_func(combo, on_cb_changed, jc);
 }
@@ -2026,6 +2031,7 @@ on_maestro_server_filter_changed(GtkComboBox *combo,
 	GtkTreeIter new_it;
 	gint index = 0;
 	gint select_index = 0;
+	gboolean find_index = FALSE;
 
 	GtkTreeModel *servers_model = GTK_TREE_MODEL(jc->priv->server_filter);
 	gebr_gui_gtk_tree_model_foreach_hyg(new_it, servers_model, combo) {
@@ -2034,12 +2040,16 @@ on_maestro_server_filter_changed(GtkComboBox *combo,
 		gtk_tree_model_get(servers_model, &new_it, 0, &addr, -1);
 
 		if (g_strcmp0(addr, prev_selected) == 0) {
+			find_index = TRUE;
 			select_index = index;
 			break;
 		}
 		index++;
 	}
 	gtk_combo_box_set_active(jc->priv->server_combo, select_index);
+
+	if (!find_index)
+		on_reset_filter(NULL, jc);
 
 	g_signal_handlers_unblock_by_func(jc->priv->server_combo, on_cb_changed, jc);
 }
