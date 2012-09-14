@@ -1281,10 +1281,10 @@ view_selection_func(GtkTreeSelection *selection,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-	if (gtk_tree_selection_count_selected_rows(selection) <= 1)
-		return TRUE;
-
 	if (type == STRUCT_TYPE_IO) {
+		if (gtk_tree_selection_count_selected_rows(selection) == 0)
+			return TRUE;
+
 		if (path_currently_selected)
 			return TRUE;
 		return FALSE;
@@ -2351,10 +2351,15 @@ flow_browse_on_multiple_selection(GtkTreeModel *model,
 				                   -1);
 
 				if (last_type == STRUCT_TYPE_IO) {
-					gtk_tree_selection_unselect_iter(selection, last_iter);
 					change_type = TRUE;
 					last_type = STRUCT_TYPE_PROGRAM;
 				}
+
+				if (each_type == STRUCT_TYPE_IO) {
+					gtk_tree_selection_unselect_iter(selection, &it);
+					continue;
+				}
+
 				if (last_type != each_type) {
 					mixed_selection = TRUE;
 					gtk_tree_selection_unselect_iter(selection, &it);
