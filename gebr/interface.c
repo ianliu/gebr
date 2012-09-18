@@ -183,6 +183,59 @@ static const GtkToggleActionEntry status_action_entries[] = {
 static void assembly_menus(GtkMenuBar * menu_bar);
 
 /*
+ * Inserts more buttons inside the toolbar of Project and Lines tab.
+ */
+static void
+insert_more_button_project_line (GtkToolbar *toolbar)
+{
+	GtkToolItem *more_item = gtk_tool_item_new();
+	GtkWidget *more_button = gebr_gui_tool_button_new();
+	gtk_button_set_relief(GTK_BUTTON(more_button), GTK_RELIEF_NONE);
+	gtk_container_add(GTK_CONTAINER(more_button), gtk_label_new("More"));
+
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
+	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+
+	GtkWidget *dictionary = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"));
+	GtkWidget *view_report = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"));
+	GtkWidget *edit_report = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"));
+	GtkWidget *import = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"));
+	GtkWidget *export = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"));
+
+	gtk_widget_set_can_focus(more_button, FALSE);
+	gtk_widget_set_can_focus(dictionary, FALSE);
+	gtk_widget_set_can_focus(view_report, FALSE);
+	gtk_widget_set_can_focus(edit_report, FALSE);
+	gtk_widget_set_can_focus(import, FALSE);
+	gtk_widget_set_can_focus(export, FALSE);
+
+	gtk_box_pack_start(GTK_BOX(hbox), dictionary, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(gtk_separator_tool_item_new()), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), view_report, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), edit_report, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(gtk_separator_tool_item_new()), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), import, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), export, TRUE, TRUE, 0);
+
+	gebr.ui_project_line->info.help_edit = GTK_TOOL_ITEM(edit_report);
+	gebr.ui_project_line->info.help_view = GTK_TOOL_ITEM(view_report);
+
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_widget_show_all(vbox);
+	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(more_button), vbox);
+
+	gtk_widget_show_all(more_button);
+	gtk_container_add(GTK_CONTAINER(more_item), more_button);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), more_item, -1);
+}
+
+/*
  * Public functions
  */
 
@@ -291,39 +344,14 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"))),
 			   -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"))),
-			   -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
-
-	GtkToolItem *help_view = GTK_TOOL_ITEM(gtk_action_create_tool_item
-				(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view")));
-	GtkToolItem *help_edit = GTK_TOOL_ITEM(gtk_action_create_tool_item
-				(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit")));
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(help_view), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(help_edit), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"))), -1);
 
 	gebr.ui_project_line = project_line_setup_ui();
+	insert_more_button_project_line (GTK_TOOLBAR(toolbar));
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_project_line->widget, TRUE, TRUE, 0);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Projects and Lines")));
 	gtk_widget_show_all(vbox);
-
-	gebr.ui_project_line->info.help_edit = help_edit;
-	gebr.ui_project_line->info.help_view = help_view;
-
 
 	/* Hide line and project properties */
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(gebr.ui_project_line->info.builder_proj, "main")));
