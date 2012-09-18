@@ -763,8 +763,6 @@ gebr_get_lower_bound_for_type(TimesType type)
 {
 	if (type == TIME_MOMENTS_AGO)
 		return -100;
-	if (type == TIME_MINUTES_AGO)
-		return 60*5;
 	if (type == TIME_HOURS_AGO)
 		return 3600;
 	if (type == TIME_DAYS_AGO)
@@ -784,8 +782,6 @@ gebr_get_control_text_for_type(TimesType type)
 {
 	if (type == TIME_MOMENTS_AGO)
 		return g_strdup(_("Moments ago"));
-	if (type == TIME_MINUTES_AGO)
-		return g_strdup(_("Minutes ago"));
 	if (type == TIME_HOURS_AGO)
 		return g_strdup(_("Hours ago"));
 	if (type == TIME_DAYS_AGO)
@@ -815,10 +811,8 @@ gebr_calculate_relative_time (GTimeVal *time1,
 	if (delta)
 		*delta = time_diff;
 
-	if ( time_diff < 60*5)
+	if ( time_diff < 3600)
 		type = TIME_MOMENTS_AGO;
-	else if ( time_diff < 3600)
-		type = TIME_MINUTES_AGO;
 	else if ( time_diff < 86400)
 		type = TIME_HOURS_AGO;
 	else if ( time_diff < 86400*7)

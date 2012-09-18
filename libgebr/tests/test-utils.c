@@ -179,38 +179,46 @@ void test_gebr_str_replace(void)
 void test_gebr_calculate_relative_time(void){
 	GTimeVal time1, time2;
 	time1.tv_sec = 0;
+	time1.tv_usec = 0;
 	gchar *string;
 
+	time2.tv_usec = 0;
 	time2.tv_sec = 3;
-	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==,"Moments");
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==,"Moments ago");
 
+	time2.tv_usec = 0;
 	time2.tv_sec = 60*6;
-	string = g_strdup(("Minutes"));
+	string = g_strdup(("Moments ago"));
 	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==, string);
 	g_free(string);
 
+	time2.tv_usec = 0;
 	time2.tv_sec = 3600*2;
-	string = g_strdup(("Hours"));
+	string = g_strdup(("Hours ago"));
 	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==, string);
 	g_free(string);
 
+	time2.tv_usec = 0;
 	time2.tv_sec = 86400*2;
-	string = g_strdup(("Days"));
+	string = g_strdup(("Days ago"));
 	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==, string);
 	g_free(string);
 
+	time2.tv_usec = 0;
 	time2.tv_sec = 86400*10;
-	string = g_strdup(("Weeks"));
+	string = g_strdup(("Weeks ago"));
 	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==, string);
 	g_free(string);
 
-	time2.tv_sec = 2678400;
-	string = g_strdup(("Months"));
+	time2.tv_usec = 0;
+	time2.tv_sec = 2678800;
+	string = g_strdup(("Months ago"));
 	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==, string);
 	g_free(string);
 
+	time2.tv_usec = 0;
 	time2.tv_sec = 32140800;
-	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==,"Years");
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2, NULL, NULL),==,"Years ago");
 }
 
 static void
