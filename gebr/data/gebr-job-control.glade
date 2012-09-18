@@ -71,13 +71,9 @@
 	    			<property name="fill">True</property>
           		  </packing>
                 </child>
-              </object>
-            </child>
-            <child internal-child="action_area">
-              <object class="GtkVButtonBox" id="issues_info_bar_hbutton_box">
                 <child>
                   <object class="GtkHBox" id="box10">
-                    <property name="spacing">5</property>
+                    <property name="spacing">0</property>
               	    <child>
                       <object class="GtkButton" id="issues_info_bar_dismiss">
 	                    <property name="use_action_appearance">False</property>
@@ -97,8 +93,13 @@
 		              </packing>
 	            	</child>
             	  </object>
-	            </child>
-              </object>
+	              <packing>
+	            	<property name="position">2</property>
+	    			<property name="expand">False</property>
+	    			<property name="fill">False</property>
+          		  </packing>
+          		</child>
+          	  </object>
             </child>
           </object>
           <packing>
