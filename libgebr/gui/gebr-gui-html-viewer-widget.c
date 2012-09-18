@@ -22,6 +22,7 @@
 
 #include "../libgebr-gettext.h"
 
+#include <stdlib.h>
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
@@ -542,11 +543,24 @@ gebr_gui_html_viewer_widget_load_anchor (GebrGuiHtmlViewerWidget *self,
 	const gchar *uri = webkit_web_view_get_uri(WEBKIT_WEB_VIEW(priv->web_view));
 	gchar *new_uri;
 
-	gchar *find = g_strrstr(uri, "#");
-	if (find)
-		find[0] = '\0';
+	if (!uri)
+		return;
 
-	new_uri = g_strdup_printf("%s#%d", uri, anchor);
+	gchar *find = g_strrstr(uri, "#");
+	if (find) {
+		if (atoi(find+1) == anchor)
+			return;
+		find[0] = '\0';
+	}
+	else if (anchor == -1)
+		return;
+
+	if (anchor >= 0)
+		new_uri = g_strdup_printf("%s#%d", uri, anchor);
+	else
+		new_uri = g_strdup(uri);
 
 	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(priv->web_view), new_uri);
+
+	g_free(new_uri);
 }

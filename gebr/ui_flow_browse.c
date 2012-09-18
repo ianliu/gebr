@@ -2501,6 +2501,9 @@ static void flow_browse_load(void)
 		}
 	}
 
+	if (type == STRUCT_TYPE_FLOW || type == STRUCT_TYPE_IO)
+		gebr_gui_html_viewer_widget_load_anchor(GEBR_GUI_HTML_VIEWER_WIDGET(gebr.ui_flow_browse->html_parameters), -1);
+
 	if (type == STRUCT_TYPE_PROGRAM || type == STRUCT_TYPE_IO)
 		nrows = 1;
 
