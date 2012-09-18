@@ -106,7 +106,6 @@ parameters_configure_setup_ui(void)
 	gchar *name = NULL;
 	GebrMaestroServerGroupType type = 0;
 	gdouble speed = gebr_interface_get_execution_speed();
-	//gebr_flow_browse_get_current_group(gebr.ui_flow_browse, &type, &name);
 
 	gebr_ui_flow_update_prog_mpi_nprocess(gebr.program, maestro, speed, name, type);
 
@@ -114,7 +113,7 @@ parameters_configure_setup_ui(void)
 						      FALSE, gebr.validator, info, FALSE);
 
 	GtkWidget *hbox_buttons = gtk_hbox_new(FALSE, 0);
-	GtkWidget *button_default = gtk_button_new_with_mnemonic(_(" _Default "));
+	GtkWidget *button_default = gtk_button_new_with_mnemonic(_(" Reset "));
 	GtkWidget *button_help = gtk_button_new_with_mnemonic(_(" _Help "));
 
 	g_signal_connect(program_edit->widget, "event", G_CALLBACK(on_parameters_key_press), program_edit);
