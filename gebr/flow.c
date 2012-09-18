@@ -1269,7 +1269,7 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_parallel"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive);
@@ -1325,8 +1325,8 @@ gebr_flow_set_toolbar_sensitive(void)
 
 			else{
 				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
-						"Click on <i>New Flow</i> to create a new one\n"
-						"or import one through the <i>Import Flow</i> icon."));
+						"Click on <i>New Flow</i> to create one\n"
+						"or import through the <i>Import Flow</i> icon."));
 				gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 			}
 			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), label_msg);
