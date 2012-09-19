@@ -3400,8 +3400,16 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 					     "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-flow-review.css\" />",
 						  LIBGEBR_STYLES_DIR, LIBGEBR_DATA_DIR);
 
-	g_string_append_printf(prog_content, "  </head>\n"
-					     "  <body oncontextmenu=\"return false;\"/>\n");
+	gboolean debug_is_on = FALSE;
+#ifdef DEBUG
+	debug_is_on = TRUE;
+#endif
+	if (debug_is_on)
+		g_string_append_printf(prog_content, "  </head>\n"
+						     "  <body>\n");
+	else
+		g_string_append_printf(prog_content, "  </head>\n"
+						     "  <body oncontextmenu=\"return false;\"/>\n");
 
 	gebr_flow_generate_io_table(flow, prog_content);
 	gebr_flow_generate_parameter_value_table(flow, prog_content, NULL, TRUE);

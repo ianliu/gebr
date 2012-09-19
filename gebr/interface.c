@@ -464,7 +464,7 @@ void gebr_setup_ui(void)
 	g_signal_connect(action, "toggled", G_CALLBACK(on_flow_component_status_activate), NULL);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui();
-	insert_more_button_flows (toolbar);
+	insert_more_button_flows (GTK_TOOLBAR(toolbar));
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
