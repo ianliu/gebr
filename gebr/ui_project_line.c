@@ -1694,13 +1694,9 @@ static void project_line_load(void)
 		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, &child);
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &project_filename, -1);
-		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_view, _("View Line Report"));
-		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_edit, _("Edit Line comments"));
 	} else {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &project_filename, -1);
-		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_view, _("View Project Report"));
-		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_edit, _("Edit Project comments"));
 	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,

@@ -934,7 +934,7 @@ popup_position(GtkMenu *m, gint *xp, gint *yp, gboolean *push_in, gpointer user_
 void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu)
 {
 	gtk_widget_show_all(GTK_WIDGET(menu));
-	gtk_menu_popup(menu, NULL, NULL, popup_position, NULL, 0, gtk_get_current_event_time());
+	gtk_menu_popup(menu, NULL, NULL, popup_position, widget, 0, gtk_get_current_event_time());
 }
 
 struct GebrGuiDropDownData {
