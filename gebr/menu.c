@@ -312,12 +312,13 @@ void __menu_list_populate(const gchar *path,
 				file = g_strdup(menus_list[j]);
 			}
 			title = g_key_file_get_string(menu_key_file, menus_list[j], "title", NULL);
-			gchar *escaped_title = g_markup_escape_text(title, -1);
 			desc = g_key_file_get_string(menu_key_file, menus_list[j], "description", NULL);
+
+			gchar *escaped_title = g_markup_printf_escaped("%s\n<small>%s</small>", title, desc);
+
 			gtk_tree_store_append(gebr.ui_flow_browse->menu_store, &child, &iter);
 			gtk_tree_store_set(gebr.ui_flow_browse->menu_store, &child,
 					   MENU_TITLE_COLUMN, escaped_title,
-					   MENU_DESC_COLUMN, desc,
 					   MENU_FILEPATH_COLUMN, file,
 					   -1);
 			g_free(escaped_title);

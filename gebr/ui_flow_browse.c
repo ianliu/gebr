@@ -116,7 +116,7 @@ menu_search_func(GtkTreeModel *model,
 		 GtkTreeIter *iter,
 		 gpointer data)
 {
-	gchar *title, *desc;
+	gchar *title, *desc, *text;
 	gchar *lt, *ld, *lk; // Lower case strings
 	gboolean match;
 
@@ -124,9 +124,12 @@ menu_search_func(GtkTreeModel *model,
 		return FALSE;
 
 	gtk_tree_model_get(model, iter,
-			   MENU_TITLE_COLUMN, &title,
-			   MENU_DESC_COLUMN, &desc,
+			   MENU_TITLE_COLUMN, &text,
 			   -1);
+
+	gchar **parts = g_strsplit(text, "\n", -1);
+	title = g_strdup(parts[0]);
+	desc = g_strdup(parts[1]);
 
 	lt = title ? g_utf8_strdown(title, -1) : g_strdup("");
 	ld = desc ?  g_utf8_strdown(desc, -1)  : g_strdup("");
@@ -136,9 +139,11 @@ menu_search_func(GtkTreeModel *model,
 
 	g_free(title);
 	g_free(desc);
+	g_free(text);
 	g_free(lt);
 	g_free(ld);
 	g_free(lk);
+	g_strfreev(parts);
 
 	return !match;
 }
@@ -1559,16 +1564,11 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	GtkCellRenderer *renderer;
 	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Title"), renderer, NULL);
+	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->menu_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "markup", MENU_TITLE_COLUMN);
 	gtk_tree_view_column_set_sort_column_id(col, MENU_TITLE_COLUMN);
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
-
-	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Description"), renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->menu_view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_DESC_COLUMN);
 
 	/*
 	 * Add Flow Page on GêBR window
