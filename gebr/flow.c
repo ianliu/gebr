@@ -1163,6 +1163,7 @@ void flow_paste(void)
 	if (!project_line_get_selected(NULL, LineSelection))
 		return;
 
+	GtkTreeIter iter;
 	for (i = g_list_first(gebr.flow_clipboard); i != NULL; i = g_list_next(i)) {
 		GebrGeoXmlDocument *flow;
 
@@ -1172,9 +1173,9 @@ void flow_paste(void)
 		}
 
 		document_import(flow, TRUE);
-		line_append_flow_iter(GEBR_GEOXML_FLOW(flow),
-				      GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
-											 gebr_geoxml_document_get_filename(flow))));
+		iter = line_append_flow_iter(GEBR_GEOXML_FLOW(flow),
+		                             GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
+		                                                                                gebr_geoxml_document_get_filename(flow))));
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 		gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), gebr.validator);
@@ -1183,6 +1184,7 @@ void flow_paste(void)
 
 	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 	project_line_info_update();
+	flow_browse_select_iter(&iter);
 }
 
 void flow_program_copy(void)
@@ -1261,19 +1263,19 @@ gebr_flow_set_toolbar_sensitive(void)
 
 
 	// Set sensitive for page Flows
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_new"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"), sensitive_exec_slider);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), sensitive_exec_slider);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive_exec_slider);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive_exec_slider);
 
 	GtkTreeSelection *flows_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gint flows_nrows = gtk_tree_selection_count_selected_rows(flows_selection);
@@ -1325,8 +1327,9 @@ gebr_flow_set_toolbar_sensitive(void)
 
 			else{
 				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
-						"Click on <i>New Flow</i> to create one\n"
-						"or import through the <i>Import Flow</i> icon."));
+						"Two options are avaiable:\n"
+						"- Click on <i>New</i> to create a Flow or\n"
+						"- Import a Flow through the <i>Import Flow</i> on More options."));
 				gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 			}
 			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), label_msg);
