@@ -73,14 +73,16 @@ struct _GebrJobControlPriv {
 	gboolean use_filter_status;
 	gboolean use_filter_servers;
 	gboolean use_filter_flow;
+	gboolean use_automatic_filter;
 
+	GebrGeoXmlFlow *automatic_flow;
 	gboolean restore_mode;
 	gboolean automatic_filter;
 	GebrCommJobStatus user_status_filter_id;
 	GebrMaestroServerGroupType user_server_type_filter;
 	gchar *user_server_name_filter;
 	gchar *user_server_filter_id;
-	gchar *user_flow_filter_id;
+	gchar *user_flow_filter_name;
 
 	struct {
 		gchar **servers;
@@ -276,12 +278,12 @@ on_select_non_single_job(GebrJobControl *jc,
 
 static gboolean
 get_flow_iter(GebrJobControl *jc,
-              const gchar *flow_id,
+              const gchar *flow_name,
               GtkTreeIter *iter)
 {
 	GtkTreeIter i;
 	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->flow_filter);
-	gchar *id;
+	gchar *name;
 
 	gboolean valid = gtk_tree_model_get_iter_first(model, &i);
 
@@ -290,16 +292,16 @@ get_flow_iter(GebrJobControl *jc,
 
 	while (valid) {
 		gtk_tree_model_get(model, &i,
-		                   1, &id,
+		                   0, &name,
 		                   -1);
 
-		if (g_strcmp0(id, flow_id) == 0) {
+		if (g_strcmp0(name, flow_name) == 0) {
 			if (iter)
 				*iter = i;
-			g_free(id);
+			g_free(name);
 			return TRUE;
 		}
-		g_free(id);
+		g_free(name);
 		valid = gtk_tree_model_iter_next(model, &i);
 	}
 
@@ -339,52 +341,49 @@ get_server_group_iter(GebrJobControl *jc, const gchar *group, const gchar *type_
 	return FALSE;
 }
 
+static void
+clean_automatic_filter(GebrJobControl *jc)
+{
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
+	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
+
+	for (GList *i = labels; i; i = i->next)
+		if (g_str_has_prefix(gtk_label_get_text(i->data), "Flow:"))
+			gtk_widget_destroy(GTK_WIDGET(i->data));
+	g_list_free(box);
+	g_list_free(labels);
+
+	jc->priv->automatic_flow = NULL;
+	jc->priv->use_automatic_filter = FALSE;
+}
+
 static gboolean
 jobs_visible_for_flow(GtkTreeModel *model,
-			 GtkTreeIter *iter,
-			 GebrJobControl *jc)
+                      GtkTreeIter *iter,
+                      const gchar *flow_id,
+                      const gchar *flow_name,
+                      GebrJobControl *jc)
 {
-	GtkTreeIter active;
-	gchar *flow_id;
-	gchar *flow_name;
 	gboolean visible = FALSE;
-
-	if (!gtk_combo_box_get_active_iter (jc->priv->flow_combo, &active))
-		return TRUE;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->flow_filter), &active,
-			   0, &flow_name,
-	                   1, &flow_id, -1);
-
-	gchar *tmp = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(jc->priv->flow_filter),
-							 &active);
-	gint index = atoi(tmp);
-	g_free(tmp);
 
 	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
 	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
 	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
 	labels = labels->next;
 
-	if (index == 0) { // Any
-		jc->priv->use_filter_flow = FALSE;
-		for (GList *i = labels; i; i = i->next)
-			if (g_str_has_prefix(gtk_label_get_text(i->data), "Flow:"))
-				gtk_widget_destroy(GTK_WIDGET(i->data));
-		g_list_free(box);
-		g_list_free(labels);
-		return TRUE;
-	}
-
-	if (!jc->priv->use_filter_flow) {
+	if (!jc->priv->use_automatic_filter) {
 		gchar *text = g_markup_printf_escaped("<span size='x-small'>Flow: %s</span>", flow_name);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_label_set_ellipsize(GTK_LABEL(label), PANGO_ELLIPSIZE_END);
 		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
-		jc->priv->use_filter_flow = TRUE;
+		jc->priv->use_automatic_filter = TRUE;
 		g_free(text);
+
+		gtk_widget_show_all(jc->priv->filter_info_bar);
+		g_debug("Create filter info");
 	} else {
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
@@ -398,7 +397,6 @@ jobs_visible_for_flow(GtkTreeModel *model,
 
 	g_list_free(box);
 	g_list_free(labels);
-	g_free(flow_name);
 
 	GebrJob *job;
 	const gchar *id;
@@ -423,7 +421,91 @@ jobs_visible_for_flow(GtkTreeModel *model,
 	if (!g_strcmp0(flow_id, id))
 		visible = TRUE;
 
-	g_free(flow_id);
+	return visible;
+}
+
+static gboolean
+jobs_visible_for_flow_name(GtkTreeModel *model,
+                           GtkTreeIter *iter,
+                           GebrJobControl *jc)
+{
+	GtkTreeIter active;
+	gchar *flow_name;
+	gboolean visible = FALSE;
+
+	if (!gtk_combo_box_get_active_iter (jc->priv->flow_combo, &active))
+		return TRUE;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->flow_filter), &active,
+			   0, &flow_name, -1);
+
+	gchar *tmp = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(jc->priv->flow_filter),
+							 &active);
+	gint index = atoi(tmp);
+	g_free(tmp);
+
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
+	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
+	labels = labels->next;
+
+	if (index == 0) { // Any
+		jc->priv->use_filter_flow = FALSE;
+		for (GList *i = labels; i; i = i->next)
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Flow name:"))
+				gtk_widget_destroy(GTK_WIDGET(i->data));
+		g_list_free(box);
+		g_list_free(labels);
+		return TRUE;
+	}
+
+	if (!jc->priv->use_filter_flow) {
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Flow name: %s</span>", flow_name);
+		GtkWidget *label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(label), text);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_label_set_ellipsize(GTK_LABEL(label), PANGO_ELLIPSIZE_END);
+		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
+		jc->priv->use_filter_flow = TRUE;
+		g_free(text);
+	} else {
+		for (GList *i = labels; i; i = i->next) {
+			const gchar *filter = gtk_label_get_text(i->data);
+			if (g_str_has_prefix(filter, "Flow name:")) {
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Flow name: %s</span>", flow_name);
+				gtk_label_set_markup(i->data, new_text);
+				g_free(new_text);
+			}
+		}
+	}
+
+	g_list_free(box);
+	g_list_free(labels);
+
+	GebrJob *job;
+	const gchar *name;
+	gboolean control;
+
+	gtk_tree_model_get(model, iter,
+	                   JC_STRUCT, &job,
+	                   JC_IS_CONTROL, &control,
+	                   -1);
+
+	if (control)
+		return TRUE;
+
+	if (!job)
+		return FALSE;
+
+	if (!flow_name)
+		return TRUE;
+
+	name = gebr_job_get_title(job);
+
+	if (!g_strcmp0(flow_name, name))
+		visible = TRUE;
+
+	g_free(flow_name);
 
 	return visible;
 }
@@ -661,13 +743,19 @@ jobs_visible_func(GtkTreeModel *model,
 	if (control)
 		return jobs_control_visible(model, iter, jc);
 
+	if (jc->priv->automatic_flow) {
+		const gchar *flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(jc->priv->automatic_flow));
+		const gchar *flow_name = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(jc->priv->automatic_flow));
+		return jobs_visible_for_flow(model, iter, flow_id, flow_name, jc);
+	}
+
 	if (!jobs_visible_for_status(model, iter, jc))
 		visible = FALSE;
 
 	if (!jobs_visible_for_servers(model, iter, jc))
 		visible = FALSE;
 
-	if (!jobs_visible_for_flow(model, iter, jc))
+	if (!jobs_visible_for_flow_name(model, iter, jc))
 		visible = FALSE;
 
 	return visible;
@@ -677,6 +765,9 @@ static void
 on_cb_changed(GtkComboBox *combo,
 	      GebrJobControl *jc)
 {
+	if (jc->priv->automatic_flow)
+		clean_automatic_filter(jc);
+
 	GtkTreeModel *sort = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
 	GtkTreeModel *filter = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(sort));
 	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(filter));
@@ -687,9 +778,8 @@ on_cb_changed(GtkComboBox *combo,
 		gtk_widget_hide(jc->priv->filter_info_bar);
 	} else {
 		gtk_widget_show_all(jc->priv->filter_info_bar);
-		if (!jc->priv->automatic_filter && !jc->priv->restore_mode) {
+		if (!jc->priv->automatic_filter && !jc->priv->restore_mode)
 			update_user_defined_filters(jc);
-		}
 	}
 
 	on_select_non_single_job(jc, NULL);
@@ -1886,7 +1976,7 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 	gchar *prev_selected = NULL;
 	if (gtk_combo_box_get_active_iter(combo, &active))
 		gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->flow_filter), &active,
-		                   1, &prev_selected, -1);
+		                   0, &prev_selected, -1);
 
 	gtk_list_store_clear(jc->priv->flow_filter);
 
@@ -1913,7 +2003,7 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 		flow_id = gebr_job_get_flow_id(job);
 		flow_name = gebr_job_get_title(job);
 
-		if (get_flow_iter(jc, flow_id, &iter))
+		if (get_flow_iter(jc, flow_name, &iter))
 			continue;
 
 		gtk_list_store_append(jc->priv->flow_filter, &iter);
@@ -1931,18 +2021,18 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 	if (prev_selected) {
 		GtkTreeModel *flows_model = GTK_TREE_MODEL(jc->priv->flow_filter);
 		gebr_gui_gtk_tree_model_foreach_hyg(new_it, flows_model, combo) {
-			gchar *id;
+			gchar *name;
 
 			gtk_tree_model_get(flows_model, &new_it,
-			                   1, &id, -1);
+			                   0, &name, -1);
 
-			if (g_strcmp0(id, prev_selected) == 0) {
+			if (g_strcmp0(name, prev_selected) == 0) {
 				find_index = TRUE;
 				select_index = index;
 				break;
 			}
 			index++;
-			g_free(id);
+			g_free(name);
 		}
 	}
 	gtk_combo_box_set_active(jc->priv->flow_combo, select_index);
@@ -2173,10 +2263,11 @@ gebr_job_control_new(void)
 	jc->priv->use_filter_flow = FALSE;
 	jc->priv->use_filter_servers = FALSE;
 	jc->priv->use_filter_status = FALSE;
+	jc->priv->use_automatic_filter = FALSE;
 
 	jc->priv->user_server_name_filter = NULL;
 	jc->priv->user_server_filter_id = NULL;
-	jc->priv->user_flow_filter_id = NULL;
+	jc->priv->user_flow_filter_name = NULL;
 
 	jc->priv->restore_mode = FALSE;
 
@@ -2748,7 +2839,7 @@ restore_user_defined_filters(GebrJobControl *jc)
 	gboolean valid = FALSE;
 	gboolean got_row = FALSE;
 	GtkTreeModel *model;
-	gchar *flow_id;
+	gchar *flow_name;
 
 	jc->priv->restore_mode = TRUE;
 
@@ -2762,12 +2853,12 @@ restore_user_defined_filters(GebrJobControl *jc)
 
 	while (valid) {
 		gtk_tree_model_get(model, &iter,
-				   1, &flow_id,
+				   0, &flow_name,
 				   -1);
 
-		if (!jc->priv->user_flow_filter_id && !flow_id)
+		if (!jc->priv->user_flow_filter_name && !flow_name)
 			got_row = TRUE;
-		else if (g_strcmp0(jc->priv->user_flow_filter_id, flow_id) == 0)
+		else if (g_strcmp0(jc->priv->user_flow_filter_name, flow_name) == 0)
 			got_row = TRUE;
 
 		if (got_row) {
@@ -2877,11 +2968,11 @@ update_user_defined_filters(GebrJobControl *jc)
 
 	//Flow
 	if (gtk_combo_box_get_active_iter(jc->priv->flow_combo, &active)) {
-		gchar *id;
+		gchar *name;
 		gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->flow_filter), &active,
-				   1, &id,
+				   0, &name,
 				   -1);
-		jc->priv->user_flow_filter_id = g_strdup(id);
+		jc->priv->user_flow_filter_name = g_strdup(name);
 	}
 
 	//Status
@@ -3015,13 +3106,17 @@ gebr_job_control_apply_flow_filter(GebrGeoXmlFlow *flow,
 		                   1, &id,
 		                   -1);
 
-		if (!g_strcmp0(id, flow_id)) {
-			gtk_combo_box_set_active_iter(jc->priv->flow_combo, &iter);
+		if (!g_strcmp0(id, flow_id))
 			break;
-		}
+
 		g_free(id);
 	}
-	on_maestro_flow_filter_changed(jc->priv->flow_combo, jc);
+
+	jc->priv->automatic_flow = flow;
+
+	GtkTreeModel *sort = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
+	GtkTreeModel *filter = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(sort));
+	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(filter));
 }
 
 void
@@ -3029,13 +3124,16 @@ gebr_job_control_free_user_defined_filter(GebrJobControl *jc)
 {
 	jc->priv->user_status_filter_id = -1;
 	g_free(jc->priv->user_server_name_filter);
-	g_free(jc->priv->user_flow_filter_id);
+	g_free(jc->priv->user_flow_filter_name);
 }
 
 void
 gebr_job_control_reset_filters(GebrJobControl *jc)
 {
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
+
+	if (jc->priv->automatic_flow)
+		clean_automatic_filter(jc);
 
 	gtk_combo_box_set_active(jc->priv->status_combo, 0);
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
