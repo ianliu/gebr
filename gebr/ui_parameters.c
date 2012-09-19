@@ -113,8 +113,8 @@ parameters_configure_setup_ui(void)
 						      FALSE, gebr.validator, info, FALSE);
 
 	GtkWidget *hbox_buttons = gtk_hbox_new(FALSE, 0);
-	GtkWidget *button_default = gtk_button_new_with_mnemonic(_(" Reset "));
-	GtkWidget *button_help = gtk_button_new_with_mnemonic(_(" _Help "));
+	GtkWidget *button_default = gtk_button_new_with_mnemonic(_("Reset"));
+	GtkWidget *button_help = gtk_button_new_with_mnemonic(_("_Help"));
 
 	g_signal_connect(program_edit->widget, "event", G_CALLBACK(on_parameters_key_press), program_edit);
 	g_signal_connect(button_default, "clicked", G_CALLBACK(on_parameters_default_button_clicked), program_edit);
