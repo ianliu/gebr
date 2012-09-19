@@ -1190,8 +1190,8 @@ flow_browse_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter
  * \internal
  */
 static gboolean
-flow_browse_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
-		     GtkTreeViewDropPosition drop_position, GebrUiFlowBrowse *fb)
+reorder_flows_or_programs(GtkTreeView *tree_view, GtkTreeIter *iter, GtkTreeIter *position,
+		          GtkTreeViewDropPosition drop_position, GebrUiFlowBrowse *fb)
 {
 	gpointer ui_struct, ui_struct_dest;
 	GebrUiFlowBrowseType type, type_dest;
@@ -1383,7 +1383,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 						  (GebrGuiGtkPopupCallback) flow_browse_popup_menu, ui_flow_browse);
 
 	gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_flow_browse->view),
-	                                            (GebrGuiGtkTreeViewReorderCallback) flow_browse_reorder,
+	                                            (GebrGuiGtkTreeViewReorderCallback) reorder_flows_or_programs,
 	                                            (GebrGuiGtkTreeViewReorderCallback) flow_browse_may_reorder,
 	                                            ui_flow_browse);
 
