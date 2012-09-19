@@ -190,7 +190,6 @@ gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program) {
 GtkMenu *
 gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 {
-	GtkWidget * menu_item;
 	GtkAction * action;
 
 	if (!program)
@@ -219,8 +218,6 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
 
-	menu_item = gtk_separator_menu_item_new();
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_flow_edition, "flow_edition_copy")));
