@@ -401,8 +401,6 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"))), -1);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
-
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"))),
@@ -441,6 +439,10 @@ void gebr_setup_ui(void)
 	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
 	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"))), -1);
 
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"))), -1);
+
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
@@ -450,12 +452,6 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
 	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details"))), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
 
