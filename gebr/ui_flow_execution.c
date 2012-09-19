@@ -37,6 +37,7 @@ struct _GebrUiFlowExecutionPriv {
 	GtkAdjustment *speed_adjustment;
 	GtkComboBox *server_combo;
 	GtkComboBox *queue_combo;
+	GtkToggleButton *save_default_button;
 	GtkWidget *window;
 };
 
@@ -834,16 +835,11 @@ on_help_button_clicked(GtkButton *button,
 }
 
 static void
-on_save_default_button_clicked(GtkButton *button,
-			       GebrUiFlowExecution *ui_flow_execution)
-{
-	gebr_ui_flow_execution_save_default(ui_flow_execution);
-}
-
-static void
 on_run_button_clicked(GtkButton *button,
 		      GebrUiFlowExecution *ui_flow_execution)
 {
+	if (gtk_toggle_button_get_active(ui_flow_execution->priv->save_default_button))
+		gebr_ui_flow_execution_save_default(ui_flow_execution);
 	gebr_ui_flow_run(ui_flow_execution, FALSE, TRUE);
 }
 
@@ -965,33 +961,6 @@ priority_button_toggled(GtkToggleButton *b1,
 	}
 }
 
-void
-gebr_ui_flow_execution_priority_setup_ui(GebrUiFlowExecution *ui_flow_execution,
-                                         GtkWidget **priority_buttons)
-{
-	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
-
-	GtkWidget *high = gtk_toggle_button_new_with_label(_("High priority"));
-	GtkWidget *low = gtk_toggle_button_new_with_label(_("Low priority"));
-	gtk_widget_set_can_focus(high, FALSE);
-	gtk_widget_set_can_focus(low, FALSE);
-	gtk_button_set_relief(GTK_BUTTON(high), GTK_RELIEF_HALF);
-	gtk_button_set_relief(GTK_BUTTON(low), GTK_RELIEF_HALF);
-	gtk_widget_set_tooltip_text(high, _("Share available resources"));
-	gtk_widget_set_tooltip_text(low, _("Wait for free resources"));
-	g_object_set_data(G_OBJECT(high), "nice", GINT_TO_POINTER(0));
-	g_object_set_data(G_OBJECT(low), "nice", GINT_TO_POINTER(19));
-	g_signal_connect(high, "toggled", G_CALLBACK(priority_button_toggled), low);
-	g_signal_connect(low, "toggled", G_CALLBACK(priority_button_toggled), high);
-	gtk_box_pack_end(GTK_BOX(hbox), high, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), low, TRUE, TRUE, 0);
-
-	ui_flow_execution->priv->nice_button_high = GTK_WIDGET(high);
-	ui_flow_execution->priv->nice_button_low = GTK_WIDGET(low);
-
-	*priority_buttons = hbox;
-	return;
-}
 GebrUiFlowExecution *
 gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 {
@@ -1003,24 +972,29 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	                                               GEBR_GLADE_DIR "/gebr-execution-details.glade",
 	                                               NULL), NULL);
 
-	GtkWidget *main_dialog = GTK_WIDGET(gtk_builder_get_object(builder, "main_dialog"));
+	GtkWidget *main_dialog = GTK_WIDGET(gtk_builder_get_object(builder, "single_execution_dialog"));
 	ui_flow_execution->priv->window = main_dialog;
+
+	GtkSizeGroup *single_size_group = GTK_SIZE_GROUP(gtk_builder_get_object(builder, "single_size_group"));
 
 	GtkWidget *maestro_box = GTK_WIDGET(gtk_builder_get_object(builder, "maestro_box"));
 	GtkWidget *order_box = GTK_WIDGET(gtk_builder_get_object(builder, "order_box"));
 	GtkWidget *dispersion_box = GTK_WIDGET(gtk_builder_get_object(builder, "dispersion_box"));
-	GtkWidget *priority_box = GTK_WIDGET(gtk_builder_get_object(builder, "priority_box"));
 
 	GtkWidget *run_button = GTK_WIDGET(gtk_builder_get_object(builder, "run_button"));
 	GtkWidget *cancel_button = GTK_WIDGET(gtk_builder_get_object(builder, "cancel_button"));
-	GtkWidget *default_button = GTK_WIDGET(gtk_builder_get_object(builder, "default_button"));
 	GtkWidget *help_button = GTK_WIDGET(gtk_builder_get_object(builder, "help_button"));
+	GtkWidget *high = GTK_WIDGET(gtk_builder_get_object(builder, "high_priority_button"));
+	GtkWidget *low = GTK_WIDGET(gtk_builder_get_object(builder, "low_priority_button"));
+
+	ui_flow_execution->priv->save_default_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "save_default_button"));
+	ui_flow_execution->priv->nice_button_high = GTK_WIDGET(high);
+	ui_flow_execution->priv->nice_button_low = GTK_WIDGET(low);
 
 	gtk_window_set_title(GTK_WINDOW(main_dialog), _("Run"));
 
-	GtkWidget *speed_slider, *priority_buttons;
+	GtkWidget *speed_slider;
 	gebr_ui_flow_execution_slider_setup_ui(ui_flow_execution, gebr.config.flow_exec_speed, &speed_slider);
-	gebr_ui_flow_execution_priority_setup_ui(ui_flow_execution, &priority_buttons);
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	GtkTreeModel *servers_model = gebr_maestro_server_get_groups_model(maestro);
@@ -1051,11 +1025,13 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(servers_combo), renderer, TRUE);
 	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(servers_combo), renderer,
 	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(maestro_box), servers_combo);
-	gtk_container_add(GTK_CONTAINER(order_box), queue_combo);
+	gtk_box_pack_start(GTK_BOX(maestro_box), servers_combo, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(order_box), queue_combo, FALSE, FALSE, 5);
+
+	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(servers_combo));
+	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(queue_combo));
 
 	gtk_container_add(GTK_CONTAINER(dispersion_box), speed_slider);
-	gtk_container_add(GTK_CONTAINER(priority_box), priority_buttons);
 
 	gtk_widget_set_sensitive(speed_slider, slider_sensitiviness);
 
@@ -1065,7 +1041,7 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), ui_flow_execution);
 	g_signal_connect(GTK_BUTTON(cancel_button), "clicked", G_CALLBACK(on_cancel_button_clicked), main_dialog);
 	g_signal_connect(GTK_BUTTON(help_button), "clicked", G_CALLBACK(on_help_button_clicked), NULL);
-	g_signal_connect(GTK_BUTTON(default_button), "clicked", G_CALLBACK(on_save_default_button_clicked), ui_flow_execution);
+	//g_signal_connect(GTK_BUTTON(default_button), "clicked", G_CALLBACK(on_save_default_button_clicked), ui_flow_execution);
 
 	gtk_window_set_modal(GTK_WINDOW(main_dialog), TRUE);
 	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
