@@ -151,6 +151,7 @@ static void gebr_jc_update_status_and_time(GebrJobControl *jc,
                                            GebrCommJobStatus status);
 
 static void on_maestro_flow_filter_changed(GtkComboBox *combo,
+                                           gboolean use_automatic,
                                            GebrJobControl *jc);
 
 static void on_maestro_server_filter_changed(GtkComboBox *combo,
@@ -1904,7 +1905,7 @@ on_job_define(GebrMaestroController *mc,
 {
 	gebr_job_control_add(jc, job);
 	on_maestro_server_filter_changed(jc->priv->server_combo, jc);
-	on_maestro_flow_filter_changed(jc->priv->flow_combo, jc);
+	on_maestro_flow_filter_changed(jc->priv->flow_combo, FALSE, jc);
 }
 
 
@@ -1968,15 +1969,20 @@ servers_filter_sort_func(GtkTreeModel *model,
 
 static void
 on_maestro_flow_filter_changed(GtkComboBox *combo,
+                               gboolean use_automatic,
                                GebrJobControl *jc)
 {
 	g_signal_handlers_block_by_func(combo, on_cb_changed, jc);
 	GtkTreeIter iter, it, active;
 
 	gchar *prev_selected = NULL;
-	if (gtk_combo_box_get_active_iter(combo, &active))
-		gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->flow_filter), &active,
-		                   0, &prev_selected, -1);
+	if (gtk_combo_box_get_active_iter(combo, &active)) {
+		if (!use_automatic)
+			gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->flow_filter), &active,
+			                   0, &prev_selected, -1);
+		else
+			prev_selected = g_strdup(gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(jc->priv->automatic_flow)));
+	}
 
 	gtk_list_store_clear(jc->priv->flow_filter);
 
@@ -2021,18 +2027,30 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 	if (prev_selected) {
 		GtkTreeModel *flows_model = GTK_TREE_MODEL(jc->priv->flow_filter);
 		gebr_gui_gtk_tree_model_foreach_hyg(new_it, flows_model, combo) {
-			gchar *name;
+			gchar *name, *id, *compare;
 
 			gtk_tree_model_get(flows_model, &new_it,
-			                   0, &name, -1);
+			                   0, &name,
+			                   1, &id,
+			                   -1);
 
-			if (g_strcmp0(name, prev_selected) == 0) {
+			if (!use_automatic)
+				compare = g_strdup(name);
+			else
+				compare = g_strdup(id);
+
+			if (g_strcmp0(compare, prev_selected) == 0) {
 				find_index = TRUE;
 				select_index = index;
+				g_free(name);
+				g_free(id);
+				g_free(compare);
 				break;
 			}
 			index++;
 			g_free(name);
+			g_free(id);
+			g_free(compare);
 		}
 	}
 	gtk_combo_box_set_active(jc->priv->flow_combo, select_index);
@@ -2041,6 +2059,8 @@ on_maestro_flow_filter_changed(GtkComboBox *combo,
 		on_reset_filter(NULL, jc);
 
 	g_signal_handlers_unblock_by_func(combo, on_cb_changed, jc);
+
+	g_free(prev_selected);
 }
 
 static void
@@ -3047,7 +3067,10 @@ gebr_job_control_remove(GebrJobControl *jc,
 	gtk_list_store_remove(jc->priv->store, gebr_job_get_iter(job));
 
 	on_maestro_server_filter_changed(jc->priv->server_combo, jc);
-	on_maestro_flow_filter_changed(jc->priv->flow_combo, jc);
+	if (jc->priv->automatic_flow)
+		on_maestro_flow_filter_changed(jc->priv->flow_combo, TRUE, jc);
+	else
+		on_maestro_flow_filter_changed(jc->priv->flow_combo, FALSE, jc);
 }
 
 GtkTreeModel *
