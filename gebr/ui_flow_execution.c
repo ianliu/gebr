@@ -33,12 +33,13 @@
 
 struct _GebrUiFlowExecutionPriv {
 	GtkWidget *nice_button_high;
-	GtkWidget *nice_button_low;
 	GtkAdjustment *speed_adjustment;
 	GtkComboBox *server_combo;
 	GtkComboBox *queue_combo;
+	GtkToggleButton *parallelism_button;
 	GtkToggleButton *save_default_button;
 	GtkWidget *window;
+	GtkLabel *number_cores_label;
 };
 
 G_DEFINE_TYPE(GebrUiFlowExecution, gebr_ui_flow_execution, G_TYPE_OBJECT);
@@ -872,8 +873,6 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution)
 
 	/* Priority */
 	if (gebr.config.niceness == 19)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_low), TRUE);
-	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_high), TRUE);
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->save_default_button), gebr.config.save_preferences);
@@ -949,6 +948,38 @@ gebr_ui_flow_execution_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
 	ui_flow_execution->priv->speed_adjustment = flow_exec_adjustment;
 }
 
+gint
+get_number_of_cores(GtkWidget *servers_combo)
+{
+	gebr_maestro_controller_get_servers_model(gebr.maestro_controller);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	gint cores;
+	GtkTreeIter iter;
+	gchar *name;
+	GebrMaestroServerGroupType type;
+	GtkTreeModel *servers_model = gtk_combo_box_get_model(GTK_COMBO_BOX(servers_combo));
+
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(servers_combo), &iter)) {
+		gtk_tree_model_get(servers_model, &iter,
+				   MAESTRO_SERVER_NAME, &name,
+				   MAESTRO_SERVER_TYPE, &type,
+				   -1);
+
+		cores = gebr_maestro_server_get_ncores_for_group(maestro, NULL,
+								 name, type);
+	}
+	return cores;
+}
+
+void on_servers_combo_changed (GtkComboBox *widget,
+			       GebrUiFlowExecution *ui_flow_execution)
+{
+	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>This set of nodes has %d</small>"),
+							       get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo)));
+	gtk_label_set_markup(ui_flow_execution->priv->number_cores_label, number_cores_markup);
+
+}
 GtkWidget *create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_execution,
 						   GebrMaestroServer *maestro)
 {
@@ -967,6 +998,7 @@ GtkWidget *create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(servers_combo), renderer, TRUE);
 	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(servers_combo), renderer,
 	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
+	g_signal_connect(servers_combo, "changed", G_CALLBACK(on_servers_combo_changed), ui_flow_execution);
 	return servers_combo;
 }
 
@@ -1032,7 +1064,6 @@ GebrUiFlowExecution *
 gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 					gboolean multiple)
 {
-	g_debug("On '%s', line '%d', function: '%s', execução %s", __FILE__, __LINE__, __func__, multiple ? "multiplo" : "singular"); 
 	GtkBuilder *builder = gtk_builder_new();
 
 	GebrUiFlowExecution *ui_flow_execution = g_object_new(GEBR_TYPE_UI_FLOW_EXECUTION, NULL);
@@ -1054,7 +1085,8 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 
 	ui_flow_execution->priv->save_default_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "save_default_button"));
 	ui_flow_execution->priv->nice_button_high = GTK_WIDGET(gtk_builder_get_object(builder, "high_priority_button")); 
-	ui_flow_execution->priv->nice_button_low = GTK_WIDGET(gtk_builder_get_object(builder, "low_priority_button")); 
+	ui_flow_execution->priv->parallelism_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "parallelism_button")); 
+	ui_flow_execution->priv->number_cores_label = GTK_LABEL(gtk_builder_get_object(builder, "number_cores_label")); 
 
 	gtk_window_set_title(GTK_WINDOW(main_dialog), _("Run"));
 

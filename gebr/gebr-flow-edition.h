@@ -68,7 +68,6 @@ struct _GebrFlowEdition {
 
 	GtkWidget *speed_slider;
 	GtkWidget *nice_button_high;
-	GtkWidget *nice_button_low;
 	GtkWidget *speed_button;
 	GtkWidget *ruler;
 };

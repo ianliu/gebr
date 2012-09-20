@@ -612,6 +612,9 @@ parse_messages(GebrCommServer *comm_server,
 			cpu_model = g_list_nth_data(arguments, 6);
 			memory =    g_list_nth_data(arguments, 7);
 
+			g_debug("On '%s', line '%d', function: '%s', daemon:%s, cores:%s",
+				__FILE__, __LINE__, __func__, addr->str, ncores->str); 
+
 			g_debug("Daemon state change (%s) %s", addr->str, ssta->str);
 
 			GtkTreeIter iter;
@@ -1704,7 +1707,7 @@ gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
 
 	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
 		daemon = get_daemon_from_address(maestro, group, NULL);
-		if (gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
+		if (!mpi_flavor || gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
 			return gebr_daemon_server_get_ncores(daemon);
 		else
 			return 0;
@@ -1716,7 +1719,7 @@ gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
 
 	gebr_gui_gtk_tree_model_foreach(iter, m) {
 		gtk_tree_model_get(m, &iter, 0, &daemon, -1);
-		if (gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
+		if (!mpi_flavor || gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
 			sum += gebr_daemon_server_get_ncores(daemon);
 	}
 
