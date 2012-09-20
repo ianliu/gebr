@@ -171,7 +171,6 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 	menu_item = gtk_menu_item_new_with_label(_("Expand all"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), view->priv->tree_view);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
  out:	gtk_widget_show_all(menu);
 
