@@ -652,6 +652,10 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 			parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
 		gebr_gui_parameter_set_min_max(GTK_ENTRY(widget), parameter_widget);
 
+	GebrGuiParameterValidatedFunc func = parameter_widget->priv->signal_validated.callback;
+	if (func)
+		func(parameter_widget, parameter_widget->priv->signal_validated.user_data);
+
 	return FALSE;
 }
 
