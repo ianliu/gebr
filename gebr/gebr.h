@@ -132,6 +132,7 @@ struct gebr {
 		gint execution_server_type;
 		gdouble flow_exec_speed;
 		gint niceness;
+		gboolean save_preferences;
 
 		// Selections state
 		gint current_notebook;

@@ -406,7 +406,7 @@ void on_flow_execute_details_activate(void)
 	if (!flows_check_maestro_connected())
 		return;
 	gboolean sensitive = gebr_ui_flow_browse_update_speed_slider_sensitiveness(gebr.ui_flow_browse);
-	gebr.ui_flow_execution = gebr_ui_flow_execution_details_setup_ui(sensitive);
+	gebr.ui_flow_execution = gebr_ui_flow_execution_details_setup_ui(sensitive, FALSE);
 }
 
 void

@@ -2,75 +2,56 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkDialog" id="single_execution_dialog">
+  <object class="GtkDialog" id="execution_dialog">
     <property name="border_width">5</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="single">
+      <object class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
         <child>
-          <object class="GtkVBox" id="vbox1">
+          <object class="GtkVBox" id="vbox6">
             <property name="visible">True</property>
             <property name="spacing">14</property>
             <child>
-              <object class="GtkHBox" id="hbox4">
+              <object class="GtkVBox" id="parallelism_box">
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkLabel" id="label15">
-                    <property name="width_request">10</property>
-                    <property name="visible">True</property>
-                    <property name="label"> </property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkVBox" id="vbox12">
+                  <object class="GtkHBox" id="hbox21">
                     <property name="visible">True</property>
                     <child>
-                      <object class="GtkHBox" id="hbox5">
+                      <object class="GtkLabel" id="parallelism_label">
                         <property name="visible">True</property>
-                        <child>
-                          <object class="GtkArrow" id="arrow1">
-                            <property name="visible">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label1">
-                            <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Execute this task &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after another task&lt;/i&gt;?</property>
-                            <property name="use_markup">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">&lt;b&gt;The tasks of this lot should be executed &lt;i&gt;simultaneously&lt;/i&gt;
+ or &lt;i&gt;one after another&lt;/i&gt;?&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkHBox" id="hbox19">
+                    <property name="visible">True</property>
                     <child>
-                      <object class="GtkHBox" id="hbox6">
-                        <property name="width_request">50</property>
+                      <object class="GtkVBox" id="vbox11">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkLabel" id="label11">
-                            <property name="width_request">22</property>
+                          <object class="GtkRadioButton" id="simultaneous_button">
+                            <property name="label" translatable="yes">Simultaneously</property>
                             <property name="visible">True</property>
-                            <property name="label"> </property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">low_priority_button</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -79,25 +60,77 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="order_box">
+                          <object class="GtkRadioButton" id="after_another_button">
+                            <property name="label" translatable="yes">One after another</property>
                             <property name="visible">True</property>
-                            <child>
-                              <placeholder/>
-                            </child>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
                           </object>
                           <packing>
+                            <property name="expand">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="position">1</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox7">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkHBox" id="hbox3">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkLabel" id="order_label">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label">#&lt;b&gt;Execute this lot &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after another task&lt;/i&gt;?&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">0</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkHBox" id="hbox13">
+                    <property name="width_request">50</property>
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkHBox" id="order_box">
+                        <property name="visible">True</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -105,47 +138,39 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
-              <object class="GtkNotebook" id="notebook1">
+              <object class="GtkNotebook" id="notebook2">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tab_pos">bottom</property>
                 <property name="tab_border">0</property>
                 <property name="tab_hborder">0</property>
+                <property name="tab_vborder">0</property>
                 <child>
-                  <object class="GtkVBox" id="vbox3">
+                  <object class="GtkVBox" id="vbox8">
                     <property name="visible">True</property>
                     <property name="border_width">5</property>
                     <property name="spacing">20</property>
                     <child>
-                      <object class="GtkVBox" id="vbox4">
+                      <object class="GtkVBox" id="vbox9">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkHBox" id="hbox7">
+                          <object class="GtkHBox" id="hbox14">
                             <property name="visible">True</property>
                             <child>
-                              <object class="GtkArrow" id="arrow2">
+                              <object class="GtkLabel" id="servers_label">
                                 <property name="visible">True</property>
+                                <property name="xalign">0</property>
+                                <property name="label">#&lt;b&gt;In which set of nodes this lot should be executed?&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
                                 <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label3">
-                                <property name="visible">True</property>
-                                <property name="xalign">0</property>
-                                <property name="label" translatable="yes">In which set of nodes this task should be executed?</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">1</property>
                               </packing>
                             </child>
                           </object>
@@ -156,52 +181,43 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox10">
+                          <object class="GtkHBox" id="hbox15">
                             <property name="visible">True</property>
                             <child>
-                              <object class="GtkLabel" id="label12">
-                                <property name="width_request">20</property>
-                                <property name="visible">True</property>
-                                <property name="label"> </property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkVBox" id="vbox14">
+                              <object class="GtkVBox" id="vbox10">
                                 <property name="visible">True</property>
                                 <child>
-                                  <object class="GtkHBox" id="maestro_box">
+                                  <object class="GtkHBox" id="servers_box">
                                     <property name="visible">True</property>
                                     <child>
                                       <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
+                                    <property name="fill">False</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="number_cores_label">
                                     <property name="visible">True</property>
-                                    <property name="xalign">0</property>
                                     <property name="label">#&lt;small&gt;This set of nodes has 15 cores&lt;/small&gt;</property>
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
+                                    <property name="fill">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
                               <packing>
-                                <property name="position">1</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                           </object>
                           <packing>
+                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -213,32 +229,22 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkVBox" id="vbox5">
+                      <object class="GtkVBox" id="dispersion_enclosure_box">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkHBox" id="hbox8">
+                          <object class="GtkHBox" id="hbox16">
                             <property name="visible">True</property>
                             <child>
-                              <object class="GtkArrow" id="arrow3">
-                                <property name="visible">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label4">
+                              <object class="GtkLabel" id="dispersion_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">This task can be divided to speed up its execution.
-In how many parts it should be splitted?</property>
+                                <property name="label">#&lt;b&gt;There are tasks in this lot that can be divided to speed up their
+ execution. In how many parts they should be splitted?&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="position">1</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                           </object>
@@ -248,20 +254,8 @@ In how many parts it should be splitted?</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox11">
+                          <object class="GtkHBox" id="hbox17">
                             <property name="visible">True</property>
-                            <child>
-                              <object class="GtkLabel" id="label13">
-                                <property name="width_request">20</property>
-                                <property name="visible">True</property>
-                                <property name="label"> </property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
                             <child>
                               <object class="GtkHBox" id="dispersion_box">
                                 <property name="visible">True</property>
@@ -270,7 +264,8 @@ In how many parts it should be splitted?</property>
                                 </child>
                               </object>
                               <packing>
-                                <property name="position">1</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                           </object>
@@ -288,29 +283,20 @@ In how many parts it should be splitted?</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkVBox" id="vbox2">
+                      <object class="GtkVBox" id="vbox15">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkHBox" id="hbox9">
+                          <object class="GtkHBox" id="hbox18">
                             <property name="visible">True</property>
                             <child>
-                              <object class="GtkArrow" id="arrow4">
-                                <property name="visible">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label5">
+                              <object class="GtkLabel" id="priority_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">How this task must compete with other processes?</property>
+                                <property name="label" translatable="yes">#&lt;b&gt;How these tasks must compete with other processes?&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
                               </object>
                               <packing>
-                                <property name="position">1</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                           </object>
@@ -319,16 +305,19 @@ In how many parts it should be splitted?</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox2">
+                          <object class="GtkHBox" id="hbox20">
                             <property name="visible">True</property>
                             <child>
-                              <object class="GtkHBox" id="hbox12">
+                              <object class="GtkVBox" id="vbox16">
                                 <property name="visible">True</property>
                                 <child>
-                                  <object class="GtkLabel" id="label14">
-                                    <property name="width_request">20</property>
+                                  <object class="GtkRadioButton" id="high_priority_button">
+                                    <property name="label" translatable="yes">Share available resources</property>
                                     <property name="visible">True</property>
-                                    <property name="label"> </property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">low_priority_button</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -337,52 +326,27 @@ In how many parts it should be splitted?</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkVBox" id="vbox13">
+                                  <object class="GtkRadioButton" id="low_priority_button">
+                                    <property name="label" translatable="yes">Wait for free resources</property>
                                     <property name="visible">True</property>
-                                    <child>
-                                      <object class="GtkRadioButton" id="high_priority_button">
-                                        <property name="label" translatable="yes">Share available resources</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="xalign">1</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">low_priority_button</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="low_priority_button">
-                                        <property name="label" translatable="yes">Wait for free resources</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
                               <packing>
+                                <property name="fill">False</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -402,7 +366,7 @@ In how many parts it should be splitted?</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
                     <child>
-                      <object class="GtkLabel" id="label16">
+                      <object class="GtkLabel" id="label20">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">&lt;small&gt;Save preferences&lt;/small&gt;</property>
                         <property name="use_markup">True</property>
@@ -416,7 +380,7 @@ In how many parts it should be splitted?</property>
               </object>
               <packing>
                 <property name="padding">5</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -425,7 +389,7 @@ In how many parts it should be splitted?</property>
           </packing>
         </child>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
+          <object class="GtkHButtonBox" id="dialog-action_area4">
             <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>
@@ -485,324 +449,11 @@ In how many parts it should be splitted?</property>
       <action-widget response="0">help_button</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkDialog" id="multiple_execution_dialog">
-    <property name="border_width">5</property>
-    <property name="type_hint">normal</property>
-    <property name="has_separator">False</property>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox2">
-        <property name="visible">True</property>
-        <property name="spacing">2</property>
-        <child>
-          <object class="GtkVBox" id="vbox6">
-            <property name="visible">True</property>
-            <property name="spacing">5</property>
-            <child>
-              <object class="GtkVBox" id="vbox11">
-                <property name="visible">True</property>
-                <child>
-                  <object class="GtkLabel" id="label9">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Execute this task &lt;i&gt;simultaneously&lt;/i&gt; or &lt;i&gt;one after another&lt;/i&gt;?</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHBox" id="order_box2">
-                    <property name="visible">True</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label10">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes"> </property>
-                  </object>
-                  <packing>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label2">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">Execute this task &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after another task&lt;/i&gt;?</property>
-                <property name="use_markup">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkHBox" id="order_box1">
-                <property name="visible">True</property>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkNotebook" id="notebook2">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="tab_pos">bottom</property>
-                <child>
-                  <object class="GtkVBox" id="vbox7">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkVBox" id="vbox8">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkLabel" id="label6">
-                            <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">In which set of nodes this task should be executed?</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="number_cores_label1">
-                            <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label">#This set of nodes has 15 cores</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkHBox" id="maestro_box1">
-                            <property name="visible">True</property>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkVBox" id="vbox9">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkLabel" id="label7">
-                            <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">This task can be divided to speed up its execution. In how many parts it should be splitted?</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkVBox" id="dispersion_box1">
-                            <property name="visible">True</property>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkVBox" id="vbox10">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkLabel" id="label8">
-                            <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">How this task must compete with other processes?</property>
-                          </object>
-                          <packing>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkHBox" id="hbox1">
-                            <property name="visible">True</property>
-                            <child>
-                              <object class="GtkRadioButton" id="high_priority_button1">
-                                <property name="label" translatable="yes">Share available resources</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="xalign">1</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="pack_type">end</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkHBox" id="hbox3">
-                            <property name="visible">True</property>
-                            <child>
-                              <object class="GtkRadioButton" id="low_priority_button1">
-                                <property name="label" translatable="yes">Wait for free resources</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="pack_type">end</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="pack_type">end</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                  </object>
-                </child>
-                <child type="tab">
-                  <object class="GtkCheckButton" id="set_default_check1">
-                    <property name="label" translatable="yes">Save preferences</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="tab_fill">False</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="position">3</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
-            <property name="visible">True</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button2">
-                <property name="label">gtk-cancel</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="run_button1">
-                <property name="label">Run</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="help_button1">
-                <property name="label">gtk-help</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
-                <property name="secondary">True</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="0">button2</action-widget>
-      <action-widget response="0">run_button1</action-widget>
-      <action-widget response="0">help_button1</action-widget>
-    </action-widgets>
+  <object class="GtkSizeGroup" id="multiple_size_group">
+    <widgets>
+      <widget name="high_priority_button"/>
+      <widget name="low_priority_button"/>
+    </widgets>
   </object>
   <object class="GtkSizeGroup" id="single_size_group"/>
-  <object class="GtkSizeGroup" id="multiple_size_group"/>
 </interface>

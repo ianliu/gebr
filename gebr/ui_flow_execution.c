@@ -670,7 +670,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 			if (name && *name)
 				txt = name;
 			else
-				txt = gebr_maestro_server_get_display_address(maestro);
+				txt = _("Choose automatically");
 		} else  {
 			txt = gebr_daemon_server_get_hostname(daemon);
 			if (!txt || !*txt)
@@ -838,8 +838,12 @@ static void
 on_run_button_clicked(GtkButton *button,
 		      GebrUiFlowExecution *ui_flow_execution)
 {
-	if (gtk_toggle_button_get_active(ui_flow_execution->priv->save_default_button))
+	if (gtk_toggle_button_get_active(ui_flow_execution->priv->save_default_button)) {
 		gebr_ui_flow_execution_save_default(ui_flow_execution);
+		gebr.config.save_preferences = TRUE;
+	} else {
+		gebr.config.save_preferences = FALSE;
+	}
 	gebr_ui_flow_run(ui_flow_execution, FALSE, TRUE);
 }
 
@@ -872,6 +876,7 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution)
 	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_high), TRUE);
 
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->save_default_button), gebr.config.save_preferences);
 	/* Server */
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
@@ -944,25 +949,47 @@ gebr_ui_flow_execution_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
 	ui_flow_execution->priv->speed_adjustment = flow_exec_adjustment;
 }
 
-void
-priority_button_toggled(GtkToggleButton *b1,
-			GtkToggleButton *b2)
+GtkWidget *create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_execution,
+						   GebrMaestroServer *maestro)
 {
-	gboolean active = gtk_toggle_button_get_active(b1);
+	/*Server combobox*/
+	GtkTreeModel *servers_model = gebr_maestro_server_get_groups_model(maestro);
+	GtkWidget *servers_combo = gtk_combo_box_new_with_model(servers_model);
+	ui_flow_execution->priv->server_combo = GTK_COMBO_BOX(servers_combo);
+	GtkCellRenderer *renderer = gtk_cell_renderer_pixbuf_new();
 
-	if (active) {
-		g_signal_handlers_block_by_func(b2, priority_button_toggled, b1);
-		gtk_toggle_button_set_active(b2, FALSE);
-		g_signal_handlers_unblock_by_func(b2, priority_button_toggled, b1);
-	} else {
-		g_signal_handlers_block_by_func(b1, priority_button_toggled, b2);
-		gtk_toggle_button_set_active(b1, TRUE);
-		g_signal_handlers_unblock_by_func(b1, priority_button_toggled, b2);
-	}
+	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(servers_combo), renderer, FALSE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(servers_combo), renderer,
+	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(servers_combo), renderer, TRUE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(servers_combo), renderer,
+	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
+	return servers_combo;
+}
+
+GtkWidget *create_detailed_execution_queue_combo(GebrUiFlowExecution *ui_flow_execution,
+						 GebrMaestroServer *maestro)
+{
+
+	GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro);
+	GtkWidget *queue_combo = gtk_combo_box_new_with_model(queue_model);
+	ui_flow_execution->priv->queue_combo = GTK_COMBO_BOX(queue_combo);
+
+	GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
+	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combo), renderer, TRUE);
+
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(queue_combo), renderer,
+	                                   on_queue_set_text, NULL, NULL);
+	return queue_combo;
 }
 
 GebrUiFlowExecution *
-gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
+gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
+					gboolean multiple)
 {
 	GtkBuilder *builder = gtk_builder_new();
 
@@ -972,24 +999,21 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	                                               GEBR_GLADE_DIR "/gebr-execution-details.glade",
 	                                               NULL), NULL);
 
-	GtkWidget *main_dialog = GTK_WIDGET(gtk_builder_get_object(builder, "single_execution_dialog"));
+	GtkWidget *main_dialog = GTK_WIDGET(gtk_builder_get_object(builder, "execution_dialog"));
 	ui_flow_execution->priv->window = main_dialog;
 
-	GtkSizeGroup *single_size_group = GTK_SIZE_GROUP(gtk_builder_get_object(builder, "single_size_group"));
 
-	GtkWidget *maestro_box = GTK_WIDGET(gtk_builder_get_object(builder, "maestro_box"));
+	GtkWidget *servers_box = GTK_WIDGET(gtk_builder_get_object(builder, "servers_box"));
 	GtkWidget *order_box = GTK_WIDGET(gtk_builder_get_object(builder, "order_box"));
 	GtkWidget *dispersion_box = GTK_WIDGET(gtk_builder_get_object(builder, "dispersion_box"));
 
 	GtkWidget *run_button = GTK_WIDGET(gtk_builder_get_object(builder, "run_button"));
 	GtkWidget *cancel_button = GTK_WIDGET(gtk_builder_get_object(builder, "cancel_button"));
 	GtkWidget *help_button = GTK_WIDGET(gtk_builder_get_object(builder, "help_button"));
-	GtkWidget *high = GTK_WIDGET(gtk_builder_get_object(builder, "high_priority_button"));
-	GtkWidget *low = GTK_WIDGET(gtk_builder_get_object(builder, "low_priority_button"));
 
 	ui_flow_execution->priv->save_default_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "save_default_button"));
-	ui_flow_execution->priv->nice_button_high = GTK_WIDGET(high);
-	ui_flow_execution->priv->nice_button_low = GTK_WIDGET(low);
+	ui_flow_execution->priv->nice_button_high = GTK_WIDGET(gtk_builder_get_object(builder, "high_priority_button")); 
+	ui_flow_execution->priv->nice_button_low = GTK_WIDGET(gtk_builder_get_object(builder, "low_priority_button")); 
 
 	gtk_window_set_title(GTK_WINDOW(main_dialog), _("Run"));
 
@@ -997,42 +1021,18 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	gebr_ui_flow_execution_slider_setup_ui(ui_flow_execution, gebr.config.flow_exec_speed, &speed_slider);
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	GtkTreeModel *servers_model = gebr_maestro_server_get_groups_model(maestro);
-	GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro);
 
-	GtkWidget *servers_combo = gtk_combo_box_new_with_model(servers_model);
-	GtkWidget *queue_combo = gtk_combo_box_new_with_model(queue_model);
+	GtkWidget *servers_combo = create_detailed_execution_servers_combo(ui_flow_execution, maestro);
+	GtkWidget *queue_combo = create_detailed_execution_queue_combo(ui_flow_execution, maestro);
 
-	ui_flow_execution->priv->server_combo = GTK_COMBO_BOX(servers_combo);
-	ui_flow_execution->priv->queue_combo = GTK_COMBO_BOX(queue_combo);
-
-	GtkCellRenderer *renderer;
-	/*Queue combobox*/
-	renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combo), renderer, TRUE);
-
-	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(queue_combo), renderer,
-	                                   on_queue_set_text, NULL, NULL);
-
-	/*Server combobox*/
-	renderer = gtk_cell_renderer_pixbuf_new();
-	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(servers_combo), renderer, FALSE);
-	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(servers_combo), renderer,
-	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(servers_combo), renderer, TRUE);
-	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(servers_combo), renderer,
-	                                   on_server_disconnected_set_row_insensitive, NULL, NULL);
-	gtk_box_pack_start(GTK_BOX(maestro_box), servers_combo, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(servers_box), servers_combo, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(order_box), queue_combo, FALSE, FALSE, 5);
 
+	GtkSizeGroup *single_size_group = GTK_SIZE_GROUP(gtk_builder_get_object(builder, "single_size_group"));
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(servers_combo));
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(queue_combo));
 
 	gtk_container_add(GTK_CONTAINER(dispersion_box), speed_slider);
-
 	gtk_widget_set_sensitive(speed_slider, slider_sensitiviness);
 
 	execution_details_restore_default_values(ui_flow_execution);
@@ -1041,7 +1041,6 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness)
 	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), ui_flow_execution);
 	g_signal_connect(GTK_BUTTON(cancel_button), "clicked", G_CALLBACK(on_cancel_button_clicked), main_dialog);
 	g_signal_connect(GTK_BUTTON(help_button), "clicked", G_CALLBACK(on_help_button_clicked), NULL);
-	//g_signal_connect(GTK_BUTTON(default_button), "clicked", G_CALLBACK(on_save_default_button_clicked), ui_flow_execution);
 
 	gtk_window_set_modal(GTK_WINDOW(main_dialog), TRUE);
 	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
