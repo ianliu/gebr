@@ -991,6 +991,7 @@ GebrUiFlowExecution *
 gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 					gboolean multiple)
 {
+	g_debug("On '%s', line '%d', function: '%s', execução %s", __FILE__, __LINE__, __func__, multiple ? "multiplo" : "singular"); 
 	GtkBuilder *builder = gtk_builder_new();
 
 	GebrUiFlowExecution *ui_flow_execution = g_object_new(GEBR_TYPE_UI_FLOW_EXECUTION, NULL);
@@ -1001,7 +1002,6 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 
 	GtkWidget *main_dialog = GTK_WIDGET(gtk_builder_get_object(builder, "execution_dialog"));
 	ui_flow_execution->priv->window = main_dialog;
-
 
 	GtkWidget *servers_box = GTK_WIDGET(gtk_builder_get_object(builder, "servers_box"));
 	GtkWidget *order_box = GTK_WIDGET(gtk_builder_get_object(builder, "order_box"));

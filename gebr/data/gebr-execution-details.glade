@@ -67,6 +67,7 @@
                             <property name="receives_default">False</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
+                            <property name="group">simultaneous_button</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -449,11 +450,11 @@
       <action-widget response="0">help_button</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkSizeGroup" id="multiple_size_group">
+  <object class="GtkSizeGroup" id="single_size_group">
     <widgets>
+      <widget name="dispersion_box"/>
       <widget name="high_priority_button"/>
       <widget name="low_priority_button"/>
     </widgets>
   </object>
-  <object class="GtkSizeGroup" id="single_size_group"/>
 </interface>

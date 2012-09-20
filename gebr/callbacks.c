@@ -406,7 +406,20 @@ void on_flow_execute_details_activate(void)
 	if (!flows_check_maestro_connected())
 		return;
 	gboolean sensitive = gebr_ui_flow_browse_update_speed_slider_sensitiveness(gebr.ui_flow_browse);
-	gebr.ui_flow_execution = gebr_ui_flow_execution_details_setup_ui(sensitive, FALSE);
+
+	//FIXME: change selection to just one flow
+
+	/* Count the number of Flows selected*/
+	GtkTreeSelection *selection;
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gint n = gtk_tree_selection_count_selected_rows(selection);
+
+	if (n == 0)
+		return;
+
+	gboolean multiple = (n == 1) ? FALSE : TRUE;
+
+	gebr.ui_flow_execution = gebr_ui_flow_execution_details_setup_ui(sensitive, multiple);
 }
 
 void
