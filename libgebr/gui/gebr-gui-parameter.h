@@ -25,13 +25,15 @@
 
 #include "gebr-gui-file-entry.h"
 #include "gebr-gui-value-sequence-edit.h"
-#include "gebr-gui-program-edit.h"
 #include "gebr-gui-validatable-widget.h"
 #include <libgebr/gebr-maestro-info.h>
 
 G_BEGIN_DECLS
 
 typedef struct gebr_gui_parameter_widget GebrGuiParameterWidget;
+
+typedef void (*GebrGuiParameterValidatedFunc) (GebrGuiParameterWidget *widget,
+					       gpointer user_data);
 
 typedef void (*changed_callback) (GebrGuiParameterWidget *widget, gpointer user_data);
 
