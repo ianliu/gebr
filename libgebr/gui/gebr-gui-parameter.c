@@ -36,7 +36,10 @@
 
 struct _GebrGuiParameterWidgetPriv
 {
-	int slot;
+	struct {
+		GebrGuiParameterValidatedFunc callback;
+		gpointer user_data;
+	} signal_validated;
 };
 
 /* Prototypes {{{1 */
@@ -1830,4 +1833,12 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
 		gtk_image_clear(GTK_IMAGE(icon));
 
 	return invalid;
+}
+
+void
+gebr_gui_parameter_widget_set_validated_callback(GebrGuiParameterWidget *widget,
+		GebrGuiParameterValidatedFunc callback, gpointer user_data)
+{
+	widget->priv->signal_validated.callback = callback;
+	widget->priv->signal_validated.user_data = user_data;
 }

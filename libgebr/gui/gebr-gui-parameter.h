@@ -160,5 +160,13 @@ void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
  */
 gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSequence *instance, GtkWidget *icon);
 
+/**
+ * gebr_gui_parameter_widget_set_validated_callback:
+ *
+ * Registers @callback to be called when this parameter validates.
+ */
+void gebr_gui_parameter_widget_set_validated_callback(GebrGuiParameterWidget *widget,
+		GebrGuiParameterValidatedFunc callback, gpointer user_data);
+
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H
