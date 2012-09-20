@@ -81,12 +81,15 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gboolean add_title)
 {
 	GebrGuiProgramEdit *program_edit;
+	GebrGuiProgramEditPriv *priv = g_new0(GebrGuiProgramEditPriv, 1);
+
 	GtkWidget *vbox;
 	GtkWidget *title_label;
 	GtkWidget *hbox;
 	GtkWidget *scrolled_window;
 
 	program_edit = g_new(GebrGuiProgramEdit, 1);
+	program_edit->priv = priv;
 	program_edit->program = program;
 	program_edit->parameter_widget_data = parameter_widget_data;
 	program_edit->use_default = use_default;
@@ -152,6 +155,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)
 {
 	gtk_widget_destroy(program_edit->widget);
+	g_free(program_edit->priv);
 	g_free(program_edit);
 }
 
