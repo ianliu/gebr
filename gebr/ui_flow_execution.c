@@ -1013,10 +1013,20 @@ gebr_ui_flow_execution_details_single_execution_phrases(GtkBuilder *builder, gbo
 		gtk_label_set_markup (ser_label, server_text);
 		gtk_label_set_markup (dis_label, dispersion_text);
 		gtk_label_set_markup (pri_label, priority_text);
+		g_free(order_text);
+		g_free(server_text);
+		g_free(dispersion_text);
+		g_free(priority_text);
 
 	}
 	return;
 
+}
+static void
+gebr_ui_flow_execution_details_sensitive_slider_box (GtkBuilder *builder, gboolean sensitive){
+	GtkBox *dispersion_box = GTK_BOX(gtk_builder_get_object(builder, "dispersion_enclosure_box"));
+	gtk_widget_set_sensitive(GTK_WIDGET(dispersion_box),sensitive);
+	return;
 }
 GebrUiFlowExecution *
 gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
@@ -1064,8 +1074,7 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(queue_combo));
 
 	gtk_container_add(GTK_CONTAINER(dispersion_box), speed_slider);
-	gtk_widget_set_sensitive(speed_slider, slider_sensitiviness);
-
+	gebr_ui_flow_execution_details_sensitive_slider_box(builder,slider_sensitiviness);
 	execution_details_restore_default_values(ui_flow_execution);
 	gebr_ui_flow_execution_details_single_execution_phrases(builder, multiple);
 	g_signal_connect(main_dialog, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
