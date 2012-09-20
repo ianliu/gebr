@@ -239,7 +239,7 @@
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
                                 <property name="label">&lt;b&gt;There are tasks in this lot that can be divided to speed up their
- execution. In how many parts they should be splitted?&lt;/b&gt;</property>
+ execution. How many parts should they be splitted?&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -451,8 +451,8 @@
   </object>
   <object class="GtkSizeGroup" id="multiple_size_group">
     <widgets>
-      <widget name="low_priority_button"/>
       <widget name="high_priority_button"/>
+      <widget name="low_priority_button"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="single_size_group"/>

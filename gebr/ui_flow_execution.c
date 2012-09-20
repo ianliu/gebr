@@ -1007,7 +1007,7 @@ gebr_ui_flow_execution_details_single_execution_phrases(GtkBuilder *builder, gbo
 		GtkLabel *pri_label = GTK_LABEL(gtk_builder_get_object(builder, "priority_label"));
 		gchar *order_text = g_markup_printf_escaped(_("<b>Execute this task <i>immediatelly</i> or <i>after another task</i>?</b>"));
 		gchar *server_text = g_markup_printf_escaped(_("<b>In which set of nodes this task should be executed?</b>"));
-		gchar *dispersion_text = g_markup_printf_escaped(_("<b>This task can be divided to speed up its execution. In how many parts it should be splitted?</b>"));
+		gchar *dispersion_text = g_markup_printf_escaped(_("<b>This task can be divided to speed up its execution. How many parts should it be splitted?</b>"));
 		gchar *priority_text = g_markup_printf_escaped(_("<b>How this task must compete with other processes?</b>"));
 		gtk_label_set_markup (ord_label, order_text);
 		gtk_label_set_markup (ser_label, server_text);
