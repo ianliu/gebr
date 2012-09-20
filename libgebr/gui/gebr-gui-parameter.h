@@ -37,9 +37,13 @@ typedef void (*GebrGuiParameterValidatedFunc) (GebrGuiParameterWidget *widget,
 
 typedef void (*changed_callback) (GebrGuiParameterWidget *widget, gpointer user_data);
 
+typedef struct _GebrGuiParameterWidgetPriv GebrGuiParameterWidgetPriv;
+
 struct gebr_gui_parameter_widget
 {
 	GebrGuiValidatableWidget parent;
+
+	GebrGuiParameterWidgetPriv *priv;
 
 	/*< private >*/
 	GebrValidator *validator;

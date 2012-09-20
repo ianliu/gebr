@@ -34,6 +34,11 @@
 #define DOUBLE_MAX +999999999
 #define DOUBLE_MIN -999999999
 
+struct _GebrGuiParameterWidgetPriv
+{
+	int slot;
+};
+
 /* Prototypes {{{1 */
 static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget,
 								GtkEntry *entry);
@@ -1626,6 +1631,7 @@ static void
 parameter_widget_free(GebrGuiParameterWidget *self)
 {
 	gebr_geoxml_object_unref(self->parameter);
+	g_free(self->priv);
 	g_free(self);
 }
 
@@ -1636,8 +1642,11 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 						      gpointer             data)
 {
 	GebrGuiParameterWidget *self;
+	GebrGuiParameterWidgetPriv *priv;
 
+	priv = g_new0(GebrGuiParameterWidgetPriv, 1);
 	self = g_new(GebrGuiParameterWidget, 1);
+	self->priv = priv;
 
 	/* GebrGuiValidatable interface implementation */
 	self->parent.set_icon = parameter_widget_set_icon;
