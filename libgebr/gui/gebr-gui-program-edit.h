@@ -30,7 +30,12 @@
 
 G_BEGIN_DECLS
 
+typedef struct _GebrGuiProgramEdit GebrGuiProgramEdit;
+typedef struct _GebrGuiProgramEditPriv GebrGuiProgramEditPriv;
+
 typedef struct {
+	GebrGuiProgramEditPriv *priv;
+
 	GebrGeoXmlProgram *program;
 
 	GtkWidget *widget;

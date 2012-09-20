@@ -31,6 +31,11 @@
  * Prototypes
  */
 
+struct _GebrGuiProgramEditPriv
+{
+	int slot;
+};
+
 typedef struct {
 	GtkBox * group_vbox;
 	GList * instances_list;
