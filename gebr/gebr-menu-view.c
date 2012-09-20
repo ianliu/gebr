@@ -220,7 +220,7 @@ gebr_menu_view_init(GebrMenuView *view)
 	                                            G_TYPE_STRING,
 	                                            G_TYPE_STRING);
 	view->priv->vbox = gtk_vbox_new(FALSE, 5);
-	gtk_widget_set_size_request(GTK_WIDGET(view->priv->vbox), 500, 500);
+	gtk_widget_set_size_request(GTK_WIDGET(view->priv->vbox), 500, 450);
 
 	gtk_tree_view_set_model(view->priv->tree_view,
 	                        GTK_TREE_MODEL(view->priv->tree_store));
@@ -245,13 +245,15 @@ gebr_menu_view_init(GebrMenuView *view)
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *col;
 
-	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	col = gtk_tree_view_column_new();
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view->priv->tree_view), col);
 
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "markup", MENU_TITLE_COLUMN);
-	gtk_tree_view_column_set_sort_column_id(col, MENU_TITLE_COLUMN);
-	gtk_tree_view_column_set_sort_indicator(col, TRUE);
+	g_object_set(renderer, "ypad", 2, NULL);
+	g_object_set(renderer, "wrap-mode", PANGO_WRAP_WORD_CHAR, "wrap-width", 490, NULL);
+
 
 	/*
 	 * Create search entry
