@@ -37,6 +37,7 @@
 #include "ui_flow_program.h"
 #include "ui_flows_io.h"
 #include "interface.h"
+#include "gebr-menu-view.h"
 
 #define JOB_BUTTON_SIZE 120
 
@@ -64,8 +65,6 @@ static void on_job_info_status_changed(GebrJob *job,
                                        GebrCommJobStatus new_status,
                                        const gchar *parameter,
                                        GtkWidget *container);
-
-static void flow_browse_menu_add(void);
 
 void gebr_flow_browse_cursor_changed(GtkTreeView *tree_view,
                                      GebrUiFlowBrowse *fb);
@@ -109,101 +108,28 @@ gebr_flow_browse_update_server(GebrUiFlowBrowse *fb,
 /*
  * Methods of Menu View
  */
-static gboolean
-menu_search_func(GtkTreeModel *model,
-		 gint column,
-		 const gchar *key,
-		 GtkTreeIter *iter,
-		 gpointer data)
-{
-	gchar *title, *desc, *text;
-	gchar *lt, *ld, *lk; // Lower case strings
-	gboolean match;
 
-	if (!key)
-		return FALSE;
-
-	gtk_tree_model_get(model, iter,
-			   MENU_TITLE_COLUMN, &text,
-			   -1);
-
-	gchar **parts = g_strsplit(text, "\n", -1);
-	title = g_strdup(parts[0]);
-	desc = g_strdup(parts[1]);
-
-	lt = title ? g_utf8_strdown(title, -1) : g_strdup("");
-	ld = desc ?  g_utf8_strdown(desc, -1)  : g_strdup("");
-	lk = g_utf8_strdown(key, -1);
-
-	match = gebr_utf8_strstr(lt, lk) || gebr_utf8_strstr(ld, lk);
-
-	g_free(title);
-	g_free(desc);
-	g_free(text);
-	g_free(lt);
-	g_free(ld);
-	g_free(lk);
-	g_strfreev(parts);
-
-	return !match;
-}
-
-static gboolean flow_browse_get_selected_menu(GtkTreeIter * iter, gboolean warn_unselected)
-{
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->menu_view));
-	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
-		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No menu selected."));
-		return FALSE;
-	}
-	if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(gebr.ui_flow_browse->menu_store), iter)) {
-		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category."));
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-static void flow_browse_menu_add(void)
+static void
+gebr_flow_browse_on_add_menu(GebrMenuView *view,
+                             const gchar *menu_path,
+                             GebrUiFlowBrowse *fb)
 {
 	GtkTreeIter iter, parent;
-	gchar *name;
-	gchar *filename;
 	GebrGeoXmlFlow *menu;
 	GebrGeoXmlSequence *program;
 	GebrGeoXmlSequence *menu_programs;
 	gint menu_programs_index;
 
-	if (!flow_browse_get_selected(NULL, TRUE))
-		return;
-
-	if (!flow_browse_get_selected_menu(&iter, FALSE)) {
-		GtkTreePath *path;
-		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->menu_store), &iter);
-		if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(gebr.ui_flow_browse->menu_view), path))
-			gtk_tree_view_collapse_row(GTK_TREE_VIEW(gebr.ui_flow_browse->menu_view), path);
-		else
-			gtk_tree_view_expand_row(GTK_TREE_VIEW(gebr.ui_flow_browse->menu_view), path, FALSE);
-		gtk_tree_path_free(path);
-		return;
-	}
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->menu_store), &iter,
-	                   MENU_TITLE_COLUMN, &name, MENU_FILEPATH_COLUMN, &filename, -1);
-	menu = menu_load_path(filename);
+	menu = menu_load_path(menu_path);
 	if (menu == NULL)
-		goto out;
+		return;
 
 	/* set parameters' values of menus' programs to default
 	 * note that menu changes aren't saved to disk
 	 */
 	GebrGeoXmlProgramControl c1, c2;
 	GebrGeoXmlProgram *first_prog = NULL;
-	GtkTreeModel *model = GTK_TREE_MODEL (gebr.ui_flow_browse->store);
+	GtkTreeModel *model = GTK_TREE_MODEL (fb->store);
 
 	gebr_geoxml_flow_get_program(menu, &program, 0);
 
@@ -214,6 +140,7 @@ static void flow_browse_menu_add(void)
 			break;
 		valid = gtk_tree_model_iter_next(model, &parent);
 	}
+
 	GebrUiFlowBrowseType type;
 	GebrUiFlowProgram *ui_program;
 	while (valid) {
@@ -240,7 +167,7 @@ static void flow_browse_menu_add(void)
 	if (c1 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY && c2 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
 		document_free(GEBR_GEOXML_DOC(menu));
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, _("This Flow already contains a loop"));
-		goto out;
+		return;
 	}
 
 	for (; program != NULL; gebr_geoxml_sequence_next(&program))
@@ -263,85 +190,6 @@ static void flow_browse_menu_add(void)
 	flow_add_program_sequence_to_view(menu_programs, TRUE, TRUE);
 
 	document_free(GEBR_GEOXML_DOC(menu));
- out:	g_free(name);
-	g_free(filename);
-}
-
-static void flow_browse_menu_show_help(void)
-{
-	GtkTreeIter iter;
-	gchar *menu_filename;
-	GebrGeoXmlFlow *menu;
-
-	if (!flow_browse_get_selected_menu(&iter, TRUE))
-		return;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->menu_store), &iter,
-			   MENU_FILEPATH_COLUMN, &menu_filename, -1);
-
-	menu = menu_load_path(menu_filename);
-	if (menu == NULL)
-		goto out;
-	gebr_help_show(GEBR_GEOXML_OBJECT(menu), TRUE);
-
-out:	g_free(menu_filename);
-}
-
-static GtkMenu *flow_browse_menu_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *fb)
-{
-	GtkTreeIter iter;
-	GtkWidget *menu;
-	GtkWidget *menu_item;
-
-	menu = gtk_menu_new();
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group_flow_edition, "flow_edition_refresh")));
-
-	if (!flow_browse_get_selected_menu(&iter, FALSE)) {
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-		menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), fb->menu_view);
-		menu_item = gtk_menu_item_new_with_label(_("Expand all"));
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), fb->menu_view);
-		goto out;
-	}
-
-	/* add */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate", G_CALLBACK(flow_browse_menu_add), NULL);
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), fb->menu_view);
-	menu_item = gtk_menu_item_new_with_label(_("Expand all"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), fb->menu_view);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-
-	/* help */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate", G_CALLBACK(flow_browse_menu_show_help), NULL);
-	gchar *menu_filename;
-	gtk_tree_model_get(GTK_TREE_MODEL(fb->menu_store), &iter,
-			   MENU_FILEPATH_COLUMN, &menu_filename, -1);
-	GebrGeoXmlDocument *xml = GEBR_GEOXML_DOCUMENT(menu_load_path(menu_filename));
-	gchar *tmp_help = gebr_geoxml_document_get_help(xml);
-	if (xml != NULL && strlen(tmp_help) <= 1)
-		gtk_widget_set_sensitive(menu_item, FALSE);
-	if (xml)
-		document_free(xml);
-	g_free(menu_filename);
-	g_free(tmp_help);
-
- out:	gtk_widget_show_all(menu);
-
-	return GTK_MENU(menu);
 }
 
 /* End of Menu's methods */
@@ -1536,47 +1384,15 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_widget_reparent(output_view, ui_flow_browse->context[CONTEXT_JOBS]);
 
 	/*
-	 * Menu list context
-	 */
-	ui_flow_browse->context[CONTEXT_MENU] = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "menu_box"));
-
-	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
-	                               GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(ui_flow_browse->context[CONTEXT_MENU]), scrolled_window);
-
-	ui_flow_browse->menu_store = gtk_tree_store_new(MENU_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_flow_browse->menu_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
-
-	ui_flow_browse->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_browse->menu_store));
-	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->menu_view);
-
-	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->menu_view),
-	                                          (GebrGuiGtkPopupCallback) flow_browse_menu_popup_menu,
-	                                          ui_flow_browse);
-	g_signal_connect(ui_flow_browse->menu_view, "key-press-event",
-	                 G_CALLBACK(flow_browse_component_key_pressed), ui_flow_browse);
-	g_signal_connect(GTK_OBJECT(ui_flow_browse->menu_view), "row-activated",
-	                 G_CALLBACK(flow_browse_menu_add), ui_flow_browse);
-	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_flow_browse->menu_view), MENU_TITLE_COLUMN);
-	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(ui_flow_browse->menu_view),
-	                                    menu_search_func, NULL, NULL);
-
-	GtkCellRenderer *renderer;
-	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_browse->menu_view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "markup", MENU_TITLE_COLUMN);
-	gtk_tree_view_column_set_sort_column_id(col, MENU_TITLE_COLUMN);
-	gtk_tree_view_column_set_sort_indicator(col, TRUE);
-
-	/*
 	 * Add Flow Page on GêBR window
 	 */
 	gtk_box_pack_start(GTK_BOX(infopage), infopage_flow, TRUE, TRUE, 0);
 
 	/* Create Hash Table */
 	ui_flow_browse->flow_jobs = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	/* Connect on add-menu of Menu Class */
+	g_signal_connect(gebr.menu_view, "add-menu", G_CALLBACK(gebr_flow_browse_on_add_menu), ui_flow_browse);
 
 	return ui_flow_browse;
 }
@@ -2546,8 +2362,10 @@ static void flow_browse_load(void)
 	}
 
 	/* Set correct view */
+	//TODO: Update to new class
 	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
-		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
+		g_debug("NEW MENU!");
+//		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
 	} else {
 		if (type == STRUCT_TYPE_FLOW) {
 			GebrGeoXmlFlow *flow;
@@ -2567,8 +2385,9 @@ static void flow_browse_load(void)
 				}
 			}
 		} else {
-			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
-			    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
+			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]))
+//			    && !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU]))
+			{
 				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
 					gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 				else
@@ -2676,8 +2495,10 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
+	//TODO: Update to new menu
 	if (type == STRUCT_TYPE_FLOW) {
-		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, fb);
+		g_debug("NEW MENU");
+//		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, fb);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrGuiProgramEdit *program_edit = parameters_configure_setup_ui();
@@ -3379,9 +3200,11 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	if (!flow)
 		return;
 
+	//TODO: Update to new menu
 	if (same_flow) {
-		if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]) &&
-		    !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU])) {
+		if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]))
+//		    && !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU]))
+		{
 			if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
 				gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 			else

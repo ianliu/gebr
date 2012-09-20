@@ -37,6 +37,7 @@
 #include "callbacks.h"
 #include "menu.h"
 #include "ui_flow_execution.h"
+#include "gebr-menu-view.h"
 
 #define SLIDER_MAX 8.0
 #define SLIDER_100 5.0
@@ -183,116 +184,129 @@ static const GtkToggleActionEntry status_action_entries[] = {
 static void assembly_menus(GtkMenuBar * menu_bar);
 
 /*
- * Inserts more buttons inside the toolbar of Project and Lines tab.
+ * Inserts View MenuList button inside the toolbar of Flows tab.
  */
 static void
-insert_more_button_project_line (GtkToolbar *toolbar)
+insert_popup_menulist (GtkToolbar *toolbar)
 {
-	GtkToolItem *more_item = gtk_tool_item_new();
-	GtkWidget *more_button = gebr_gui_tool_button_new();
-	gtk_button_set_relief(GTK_BUTTON(more_button), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(more_button), gtk_label_new("More"));
+	GtkToolItem *menu_item = gtk_tool_item_new();
+	GtkWidget *menu_button = gebr_gui_tool_button_new();
+	GtkWidget *image = gtk_image_new();
 
-	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
-	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+	gtk_button_set_relief(GTK_BUTTON(menu_button), GTK_RELIEF_NONE);
+	gtk_image_set_from_stock(GTK_IMAGE(image), "menu-list-icon", GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add(GTK_CONTAINER(menu_button), image);
+	gtk_widget_set_can_focus(menu_button, FALSE);
+	gtk_widget_set_tooltip_text(menu_button, "View Menu list");
 
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	GtkWidget *menu_view = gebr_menu_view_get_widget(gebr.menu_view);
+	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(menu_button), menu_view);
+	gtk_widget_show_all(menu_view);
 
-	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_widget_show_all(menu_button);
+	gtk_container_add(GTK_CONTAINER(menu_item), menu_button);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), menu_item, -1);
+}
 
-	GtkWidget *dictionary = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"));
-	GtkWidget *view_report = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"));
-	GtkWidget *edit_report = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"));
-	GtkWidget *import = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"));
-	GtkWidget *export = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"));
+static GtkWidget *
+add_more_project_line_options(GtkWidget *widget)
+{
+	GtkWidget *menu;
 
-	gtk_widget_set_can_focus(more_button, FALSE);
-	gtk_widget_set_can_focus(dictionary, FALSE);
-	gtk_widget_set_can_focus(view_report, FALSE);
-	gtk_widget_set_can_focus(edit_report, FALSE);
-	gtk_widget_set_can_focus(import, FALSE);
-	gtk_widget_set_can_focus(export, FALSE);
+	menu = gtk_menu_new();
 
-	gtk_box_pack_start(GTK_BOX(hbox), dictionary, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(gtk_separator_tool_item_new()), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), view_report, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), edit_report, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(gtk_separator_tool_item_new()), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), import, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), export, TRUE, TRUE, 0);
+	GtkWidget *dictionary = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(dictionary), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), dictionary);
 
-	gebr.ui_project_line->info.help_edit = GTK_TOOL_ITEM(edit_report);
-	gebr.ui_project_line->info.help_view = GTK_TOOL_ITEM(view_report);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	GtkWidget *view_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(view_report), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), view_report);
 
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_widget_show_all(vbox);
-	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(more_button), vbox);
+	GtkWidget *edit_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(edit_report), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), edit_report);
 
-	gtk_widget_show_all(more_button);
-	gtk_container_add(GTK_CONTAINER(more_item), more_button);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), more_item, -1);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *import = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(import), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), import);
+
+	GtkWidget *export = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(export), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), export);
+
+	return menu;
+}
+
+static GtkWidget *
+add_more_flows_options(GtkWidget *widget)
+{
+	GtkWidget *menu;
+
+	menu = gtk_menu_new();
+
+	GtkWidget *copy = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(copy), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), copy);
+
+	GtkWidget *paste = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(paste), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), paste);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *dictionary = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(dictionary), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), dictionary);
+
+	GtkWidget *snapshot = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(snapshot), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), snapshot);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *view_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(view_report), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), view_report);
+
+	GtkWidget *edit_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(edit_report), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), edit_report);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *import = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(import), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), import);
+
+	GtkWidget *export = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(export), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), export);
+
+	return menu;
 }
 
 /*
- * Inserts more buttons inside the toolbar of Flows tab.
+ * Inserts more buttons inside the toolbar of Project and Lines tab.
  */
 static void
-insert_more_button_flows (GtkToolbar *toolbar)
+insert_more_button (GtkToolbar *toolbar,
+                    gboolean is_flows)
 {
-	GtkToolItem *more_item = gtk_tool_item_new();
-	GtkWidget *more_button = gebr_gui_tool_button_new();
-	gtk_button_set_relief(GTK_BUTTON(more_button), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(more_button), gtk_label_new("More"));
+	GtkToolItem *more_item = gtk_tool_button_new(NULL, _("More"));
 
-	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
-	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+	if (!is_flows)
+		gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(more_item)),
+		                                                (GebrGuiDropDownFunc)add_more_project_line_options, NULL);
+	else
+		gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(more_item)),
+		                                                (GebrGuiDropDownFunc)add_more_flows_options, NULL);
 
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-
-	GtkWidget *copy = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"));
-	GtkWidget *paste = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"));
-	GtkWidget *dictionary = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"));
-	GtkWidget *snapshot = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
-	GtkWidget *view_report = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"));
-	GtkWidget *edit_report = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"));
-	GtkWidget *import = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"));
-	GtkWidget *export = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"));
-
-	gtk_widget_set_can_focus(more_button, FALSE);
-	gtk_widget_set_can_focus(copy, FALSE);
-	gtk_widget_set_can_focus(paste, FALSE);
-	gtk_widget_set_can_focus(snapshot, FALSE);
-	gtk_widget_set_can_focus(dictionary, FALSE);
-	gtk_widget_set_can_focus(view_report, FALSE);
-	gtk_widget_set_can_focus(edit_report, FALSE);
-	gtk_widget_set_can_focus(import, FALSE);
-	gtk_widget_set_can_focus(export, FALSE);
-
-	gtk_box_pack_start(GTK_BOX(hbox), copy, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), paste, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(gtk_separator_tool_item_new()), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), dictionary, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), snapshot, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(gtk_separator_tool_item_new()), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), view_report, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), edit_report, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(gtk_separator_tool_item_new()), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), import, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), export, TRUE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_widget_show_all(vbox);
-	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(more_button), vbox);
-
-	gtk_widget_show_all(more_button);
-	gtk_container_add(GTK_CONTAINER(more_item), more_button);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), more_item, -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(more_item), -1);
 }
 
 /*
@@ -381,6 +395,11 @@ void gebr_setup_ui(void)
 	gtk_widget_show(gebr.notebook);
 
 	/*
+	 * Create Menu View
+	 */
+	gebr.menu_view = gebr_menu_view_new();
+
+	/*
 	 * Notebook's page "Projects and Lines"
 	 */
 	toolbar = gtk_toolbar_new();
@@ -399,17 +418,16 @@ void gebr_setup_ui(void)
 			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"))), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"))),
 			   -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
 
 	gebr.ui_project_line = project_line_setup_ui();
-	insert_more_button_project_line (GTK_TOOLBAR(toolbar));
+	insert_more_button (GTK_TOOLBAR(toolbar), FALSE);
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_project_line->widget, TRUE, TRUE, 0);
@@ -436,12 +454,12 @@ void gebr_setup_ui(void)
 	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_new"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
-	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"))), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"))), -1);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
+	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
 
@@ -460,7 +478,12 @@ void gebr_setup_ui(void)
 	g_signal_connect(action, "toggled", G_CALLBACK(on_flow_component_status_activate), NULL);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui();
-	insert_more_button_flows (GTK_TOOLBAR(toolbar));
+
+	insert_popup_menulist (GTK_TOOLBAR(toolbar));
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
+
+	insert_more_button (GTK_TOOLBAR(toolbar), TRUE);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -469,7 +492,6 @@ void gebr_setup_ui(void)
 	gtk_widget_show_all(vbox);
 
 	gtk_widget_hide(gebr.ui_flow_browse->info_jobs);
-	gtk_widget_hide(gebr.ui_flow_browse->context[CONTEXT_MENU]);
 
 	/*
 	 * Notebook's page "Job control"

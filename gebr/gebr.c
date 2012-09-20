@@ -332,6 +332,7 @@ gebr_config_load(void)
 	gebr.config.execution_server_name = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "execution_server_name", "");
 	GString *execution_server_type = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "execution_server_type", "group");
 	gebr.config.execution_server_type = (gint) gebr_maestro_server_group_str_to_enum(execution_server_type->str);
+	gebr.config.save_preferences = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "save_preferences", TRUE);
 	gebr.config.detailed_flow_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", "gebr-report.css");
 	gebr.config.detailed_line_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "gebr-report.css");
 
@@ -488,6 +489,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "native_editor", gebr.config.native_editor);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "save_preferences", gebr.config.save_preferences);
 	g_key_file_set_string(gebr.config.key_file, "general", "version", GEBR_VERSION);
 
 	GString *home_variable;

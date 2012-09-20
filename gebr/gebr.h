@@ -38,6 +38,7 @@
 #include "ui_preferences.h"
 #include "ui_project_line.h"
 #include "ui_flow_execution.h"
+#include "gebr-menu-view.h"
 
 #include "gebr-maestro-controller.h"
 
@@ -81,6 +82,8 @@ struct gebr {
 	GHashTable * xmls_by_filename;
 
 	GebrValidator *validator;
+
+	GebrMenuView *menu_view;
 
 	GebrGeoXmlDocument *project_line;
 	GebrGeoXmlProject *project;
@@ -132,6 +135,7 @@ struct gebr {
 		gint execution_server_type;
 		gdouble flow_exec_speed;
 		gint niceness;
+		gboolean save_preferences;
 
 		// Selections state
 		gint current_notebook;

@@ -70,9 +70,10 @@ void gebr_ui_flow_update_prog_mpi_nprocess(GebrGeoXmlProgram *prog,
 /*
  * gebr_ui_flow_execution_details_setup_ui:
  *
- * Create an interface of the execution details
+ * Create the interface of the execution details
  * */
-GebrUiFlowExecution *gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness);
+GebrUiFlowExecution *gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
+							     gboolean multiple);
 
 gdouble gebr_ui_flow_execution_calculate_speed_from_slider_value(gdouble x);
 
@@ -82,6 +83,7 @@ void gebr_ui_flow_execution_get_current_group(GtkComboBox *combo,
 					      GebrMaestroServerGroupType *type,
 					      gchar **name,
 					      GebrMaestroServer *maestro);
+
 const gchar *gebr_ui_flow_execution_get_selected_queue(GtkComboBox *combo,
 						       GebrMaestroServer *maestro);
 

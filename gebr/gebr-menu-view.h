@@ -37,20 +37,42 @@ typedef struct _GebrMenuViewPriv GebrMenuViewPriv;
 typedef struct _GebrMenuViewClass GebrMenuViewClass;
 
 struct _GebrMenuView {
-	GtkVBox parent;
+	GObject parent;
 	GebrMenuViewPriv *priv;
 };
 
 struct _GebrMenuViewClass {
-	GtkVBoxClass parent_class;
+	GObjectClass parent_class;
 
 	/* Signals */
-	void (*add_menu) (GebrMenuView *menuView, const gchar *menuPath);
+	void (*add_menu) (GebrMenuView *menuView,
+			  const gchar *menuPath);
+};
+
+enum {
+	MENU_TITLE_COLUMN = 0,
+	MENU_FILEPATH_COLUMN,
+	MENU_N_COLUMN
 };
 
 GType gebr_menu_view_get_type(void) G_GNUC_CONST;
 
-GtkWidget *gebr_menu_view_new(void);
+GebrMenuView *gebr_menu_view_new(void);
+
+/**
+ * gebr_menu_view_get_model:
+ * @view:
+ *
+ * Returns model os menu view
+ */
+GtkTreeStore *gebr_menu_view_get_model(GebrMenuView *view);
+
+/**
+ * gebr_menu_view_get_widget:
+ *
+ * Returns a widget of menu list
+ */
+GtkWidget *gebr_menu_view_get_widget(GebrMenuView *view);
 
 G_END_DECLS
 

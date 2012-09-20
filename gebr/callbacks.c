@@ -58,9 +58,10 @@ void on_new_activate(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 		                   FB_STRUCT_TYPE, &type, -1);
 
-		if (type ==  STRUCT_TYPE_PROGRAM)
-			gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
-		else
+		//TODO: Update to new menu
+//		if (type == STRUCT_TYPE_PROGRAM)
+//			gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
+//		else
 			flow_new();
 		break;
 	}
@@ -95,7 +96,8 @@ void on_new_line_activate(void)
 
 void on_new_program_activate(void)
 {
-	gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
+	//TODO: Update to new menu
+//	gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
 }
 
 void on_copy_activate(void)
@@ -406,7 +408,20 @@ void on_flow_execute_details_activate(void)
 	if (!flows_check_maestro_connected())
 		return;
 	gboolean sensitive = gebr_ui_flow_browse_update_speed_slider_sensitiveness(gebr.ui_flow_browse);
-	gebr.ui_flow_execution = gebr_ui_flow_execution_details_setup_ui(sensitive);
+
+	//FIXME: change selection to just one flow
+
+	/* Count the number of Flows selected*/
+	GtkTreeSelection *selection;
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gint n = gtk_tree_selection_count_selected_rows(selection);
+
+	if (n == 0)
+		return;
+
+	gboolean multiple = (n == 1) ? FALSE : TRUE;
+
+	gebr.ui_flow_execution = gebr_ui_flow_execution_details_setup_ui(sensitive, multiple);
 }
 
 void
