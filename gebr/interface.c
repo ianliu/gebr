@@ -37,6 +37,7 @@
 #include "callbacks.h"
 #include "menu.h"
 #include "ui_flow_execution.h"
+#include "gebr-menu-view.h"
 
 #define SLIDER_MAX 8.0
 #define SLIDER_100 5.0
@@ -188,19 +189,23 @@ static void assembly_menus(GtkMenuBar * menu_bar);
 static void
 insert_popup_menulist (GtkToolbar *toolbar)
 {
-	GtkToolItem *more_item = gtk_tool_item_new();
-	GtkWidget *more_button = gebr_gui_tool_button_new();
+	GtkToolItem *menu_item = gtk_tool_item_new();
+	GtkWidget *menu_button = gebr_gui_tool_button_new();
 	GtkWidget *image = gtk_image_new();
 
-	gtk_button_set_relief(GTK_BUTTON(more_button), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(menu_button), GTK_RELIEF_NONE);
 	gtk_image_set_from_stock(GTK_IMAGE(image), "menu-list-icon", GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_container_add(GTK_CONTAINER(more_button), image);
-	gtk_widget_set_can_focus(more_button, FALSE);
-	gtk_widget_set_tooltip_text(more_button, "View Menu list");
+	gtk_container_add(GTK_CONTAINER(menu_button), image);
+	gtk_widget_set_can_focus(menu_button, FALSE);
+	gtk_widget_set_tooltip_text(menu_button, "View Menu list");
 
-	gtk_widget_show_all(more_button);
-	gtk_container_add(GTK_CONTAINER(more_item), more_button);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), more_item, -1);
+	GtkWidget *menu_view = gebr_menu_view_get_widget(gebr.menu_view);
+	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(menu_button), menu_view);
+	gtk_widget_show_all(menu_view);
+
+	gtk_widget_show_all(menu_button);
+	gtk_container_add(GTK_CONTAINER(menu_item), menu_button);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), menu_item, -1);
 }
 
 static GtkWidget *
@@ -390,6 +395,11 @@ void gebr_setup_ui(void)
 	gtk_widget_show(gebr.notebook);
 
 	/*
+	 * Create Menu View
+	 */
+	gebr.menu_view = gebr_menu_view_new();
+
+	/*
 	 * Notebook's page "Projects and Lines"
 	 */
 	toolbar = gtk_toolbar_new();
@@ -482,7 +492,6 @@ void gebr_setup_ui(void)
 	gtk_widget_show_all(vbox);
 
 	gtk_widget_hide(gebr.ui_flow_browse->info_jobs);
-	gtk_widget_hide(gebr.ui_flow_browse->context[CONTEXT_MENU]);
 
 	/*
 	 * Notebook's page "Job control"

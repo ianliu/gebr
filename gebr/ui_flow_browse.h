@@ -50,14 +50,6 @@ typedef enum {
 	STRUCT_TYPE_COLUMN
 } GebrUiFlowBrowseType;
 
-/**
- * Menu store fields
- */
-enum {
-	MENU_TITLE_COLUMN = 0,
-	MENU_FILEPATH_COLUMN,
-	MENU_N_COLUMN
-};
 
 /**
  * Context Types
@@ -66,7 +58,6 @@ typedef enum {
 	CONTEXT_FLOW,
 	CONTEXT_SNAPSHOTS,
 	CONTEXT_JOBS,
-	CONTEXT_MENU,
 	CONTEXT_PARAMETERS,
 	CONTEXT_N_TYPES
 } GebrUiFlowBrowseContext;
@@ -85,9 +76,6 @@ typedef struct {
 	GtkCellRenderer *action_renderer;
 
 	GebrGuiProgramEdit *program_edit;
-
-	GtkTreeStore *menu_store;
-	GtkWidget *menu_view;
 
 	GtkWidget *info_window;
 	GtkWidget *warn_window;

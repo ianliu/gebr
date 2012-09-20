@@ -207,17 +207,6 @@
       </packing>
     </child>
     <child>
-      <object class="GtkVBox" id="menu_box">
-        <property name="visible">True</property>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-      <packing>
-        <property name="position">4</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkVBox" id="info_jobs_box">
         <child>
         	 <object class="GtkInfoBar" id="info_run">
@@ -289,12 +278,11 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">False</property>
-        <property name="position">6</property>
+        <property name="position">4</property>
       </packing>
     </child>
     <child>
-      <object class="GtkVBox" id="parameters_ctx_box">
-      </object>
+      <object class="GtkVBox" id="parameters_ctx_box"/>
       <packing>
         <property name="position">5</property>
       </packing>
