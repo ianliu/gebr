@@ -256,23 +256,20 @@ find_or_add_category(const gchar *title,
 	gchar **category_tree = g_strsplit(title, "|", 0);
 	GString *category_name = g_string_new("");
 	for (int i = 0; category_tree[i] != NULL; ++i) {
-		GString *bold = g_string_new(NULL);
 		gchar *escaped_title = g_markup_escape_text(category_tree[i], -1);
-		g_string_printf(bold, "<b>%s</b>", escaped_title);
-		g_free(escaped_title);
 
 		g_string_append_printf(category_name, "|%s", category_tree[i]);
 		GtkTreeIter * category_iter = g_hash_table_lookup(categories_hash, category_name->str);
 		if (category_iter == NULL) {
 			gtk_tree_store_append(menu_store, &iter, i > 0 ? &parent : NULL);
 			gtk_tree_store_set(menu_store, &iter,
-					   MENU_TITLE_COLUMN, bold->str, -1);
+					   MENU_TITLE_COLUMN, escaped_title, -1);
 			g_hash_table_insert(categories_hash, g_strdup(category_name->str), gtk_tree_iter_copy(&iter));
 		} else
 			iter = *category_iter;
 
 		parent = iter;
-		g_string_free(bold, TRUE);
+		g_free(escaped_title);
 	}
 	g_string_free(category_name, TRUE);
 	g_strfreev(category_tree);
@@ -321,14 +318,12 @@ void __menu_list_populate(const gchar *path,
 			title = g_key_file_get_string(menu_key_file, menus_list[j], "title", NULL);
 			desc = g_key_file_get_string(menu_key_file, menus_list[j], "description", NULL);
 
-			gchar *escaped_title = g_markup_printf_escaped("%s\n<small>%s</small>", title, desc);
-
 			gtk_tree_store_append(menu_store, &child, &iter);
 			gtk_tree_store_set(menu_store, &child,
-					   MENU_TITLE_COLUMN, escaped_title,
+					   MENU_TITLE_COLUMN, title,
+					   MENU_DESCRIPTION_COLUMN, desc,
 					   MENU_FILEPATH_COLUMN, file,
 					   -1);
-			g_free(escaped_title);
 			g_free(title);
 			g_free(desc);
 			g_free(file);

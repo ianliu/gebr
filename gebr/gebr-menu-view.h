@@ -51,6 +51,7 @@ struct _GebrMenuViewClass {
 
 enum {
 	MENU_TITLE_COLUMN = 0,
+	MENU_DESCRIPTION_COLUMN,
 	MENU_FILEPATH_COLUMN,
 	MENU_N_COLUMN
 };
