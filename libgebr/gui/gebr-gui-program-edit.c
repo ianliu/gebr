@@ -33,7 +33,10 @@
 
 struct _GebrGuiProgramEditPriv
 {
-	int slot;
+	struct {
+		GebrGuiParameterValidatedFunc callback;
+		gpointer user_data;
+	} signal_validated;
 };
 
 typedef struct {
@@ -150,6 +153,14 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window), vbox1);
 
 	return program_edit;
+}
+
+void
+gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_edit,
+		GebrGuiParameterValidatedFunc callback, gpointer user_data)
+{
+	program_edit->priv->signal_validated.callback = callback;
+	program_edit->priv->signal_validated.user_data = user_data;
 }
 
 void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)
