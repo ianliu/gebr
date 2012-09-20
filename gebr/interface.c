@@ -182,6 +182,27 @@ static const GtkToggleActionEntry status_action_entries[] = {
 
 static void assembly_menus(GtkMenuBar * menu_bar);
 
+/*
+ * Inserts View MenuList button inside the toolbar of Flows tab.
+ */
+static void
+insert_popup_menulist (GtkToolbar *toolbar)
+{
+	GtkToolItem *more_item = gtk_tool_item_new();
+	GtkWidget *more_button = gebr_gui_tool_button_new();
+	GtkWidget *image = gtk_image_new();
+
+	gtk_button_set_relief(GTK_BUTTON(more_button), GTK_RELIEF_NONE);
+	gtk_image_set_from_stock(GTK_IMAGE(image), "menu-list-icon", GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add(GTK_CONTAINER(more_button), image);
+	gtk_widget_set_can_focus(more_button, FALSE);
+	gtk_widget_set_tooltip_text(more_button, "View Menu list");
+
+	gtk_widget_show_all(more_button);
+	gtk_container_add(GTK_CONTAINER(more_item), more_button);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), more_item, -1);
+}
+
 static GtkWidget *
 add_more_project_line_options(GtkWidget *widget)
 {
@@ -447,6 +468,11 @@ void gebr_setup_ui(void)
 	g_signal_connect(action, "toggled", G_CALLBACK(on_flow_component_status_activate), NULL);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui();
+
+	insert_popup_menulist (GTK_TOOLBAR(toolbar));
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
+
 	insert_more_button (GTK_TOOLBAR(toolbar), TRUE);
 
 	vbox = gtk_vbox_new(FALSE, 0);

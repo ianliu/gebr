@@ -116,6 +116,7 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/kontact_todo.png	\
 	16x16/stock/detailed_execution.png	\
     16x16/stock/document_comment.png \
+    16x16/stock/menu-list-icon.png \
 	16x16/stock/flow-icon.png \
 	16x16/stock/document_review.png
 	
@@ -216,6 +217,7 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/kontact_todo.png	\
     22x22/stock/detailed_execution.png	\
     22x22/stock/document_comment.png \
+    22x22/stock/menu-list-icon.png \
 	22x22/stock/flow-icon.png \
 	22x22/stock/document_review.png
 
@@ -316,6 +318,7 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/kontact_todo.png	\
     48x48/stock/detailed_execution.png	\
     48x48/stock/document_comment.png \
+    48x48/stock/menu-list-icon.png \
 	48x48/stock/flow-icon.png \
 	48x48/stock/document_review.png
 	
