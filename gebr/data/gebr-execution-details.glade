@@ -67,7 +67,6 @@
                             <property name="receives_default">False</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
-                            <property name="group">simultaneous_button</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -100,7 +99,7 @@
                       <object class="GtkLabel" id="order_label">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label">#&lt;b&gt;Execute this lot &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after another task&lt;/i&gt;?&lt;/b&gt;</property>
+                        <property name="label">&lt;b&gt;Execute this lot &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after another task&lt;/i&gt;?&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -165,7 +164,7 @@
                               <object class="GtkLabel" id="servers_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label">#&lt;b&gt;In which set of nodes this lot should be executed?&lt;/b&gt;</property>
+                                <property name="label">&lt;b&gt;In which set of nodes this lot should be executed?&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -239,7 +238,7 @@
                               <object class="GtkLabel" id="dispersion_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label">#&lt;b&gt;There are tasks in this lot that can be divided to speed up their
+                                <property name="label">&lt;b&gt;There are tasks in this lot that can be divided to speed up their
  execution. In how many parts they should be splitted?&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
@@ -293,7 +292,7 @@
                               <object class="GtkLabel" id="priority_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">#&lt;b&gt;How these tasks must compete with other processes?&lt;/b&gt;</property>
+                                <property name="label" translatable="yes">&lt;b&gt;How these tasks must compete with other processes?&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -450,11 +449,11 @@
       <action-widget response="0">help_button</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkSizeGroup" id="single_size_group">
+  <object class="GtkSizeGroup" id="multiple_size_group">
     <widgets>
-      <widget name="dispersion_box"/>
-      <widget name="high_priority_button"/>
       <widget name="low_priority_button"/>
+      <widget name="high_priority_button"/>
     </widgets>
   </object>
+  <object class="GtkSizeGroup" id="single_size_group"/>
 </interface>

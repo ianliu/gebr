@@ -986,7 +986,38 @@ GtkWidget *create_detailed_execution_queue_combo(GebrUiFlowExecution *ui_flow_ex
 	                                   on_queue_set_text, NULL, NULL);
 	return queue_combo;
 }
+static void
+gebr_ui_flow_execution_details_hide_single (GtkBuilder *builder, gboolean multiple){
+	GtkBox *multiple_flows = GTK_BOX(gtk_builder_get_object(builder, "parallelism_box"));
+	if (multiple)
+		gtk_widget_show(GTK_WIDGET(multiple_flows));
 
+	else
+		gtk_widget_hide(GTK_WIDGET(multiple_flows));
+
+	return;
+}
+static void
+gebr_ui_flow_execution_details_single_execution_phrases(GtkBuilder *builder, gboolean multiple){
+
+	if(!multiple){
+		GtkLabel *ord_label = GTK_LABEL(gtk_builder_get_object(builder, "order_label"));
+		GtkLabel *ser_label = GTK_LABEL(gtk_builder_get_object(builder, "servers_label"));
+		GtkLabel *dis_label = GTK_LABEL(gtk_builder_get_object(builder, "dispersion_label"));
+		GtkLabel *pri_label = GTK_LABEL(gtk_builder_get_object(builder, "priority_label"));
+		gchar *order_text = g_markup_printf_escaped(_("<b>Execute this task <i>immediatelly</i> or <i>after another task</i>?</b>"));
+		gchar *server_text = g_markup_printf_escaped(_("<b>In which set of nodes this task should be executed?</b>"));
+		gchar *dispersion_text = g_markup_printf_escaped(_("<b>This task can be divided to speed up its execution. In how many parts it should be splitted?</b>"));
+		gchar *priority_text = g_markup_printf_escaped(_("<b>How this task must compete with other processes?</b>"));
+		gtk_label_set_markup (ord_label, order_text);
+		gtk_label_set_markup (ser_label, server_text);
+		gtk_label_set_markup (dis_label, dispersion_text);
+		gtk_label_set_markup (pri_label, priority_text);
+
+	}
+	return;
+
+}
 GebrUiFlowExecution *
 gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 					gboolean multiple)
@@ -1036,7 +1067,7 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	gtk_widget_set_sensitive(speed_slider, slider_sensitiviness);
 
 	execution_details_restore_default_values(ui_flow_execution);
-
+	gebr_ui_flow_execution_details_single_execution_phrases(builder, multiple);
 	g_signal_connect(main_dialog, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), ui_flow_execution);
 	g_signal_connect(GTK_BUTTON(cancel_button), "clicked", G_CALLBACK(on_cancel_button_clicked), main_dialog);
@@ -1046,6 +1077,7 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
 
 	gtk_widget_show_all(main_dialog);
+	gebr_ui_flow_execution_details_hide_single(builder,multiple);
 
 	return ui_flow_execution;
 }
