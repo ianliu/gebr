@@ -317,6 +317,50 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 	return frame;
 }
 
+static GebrGuiParameterWidget *
+create_parameter_widget(GebrGuiProgramEdit *program_edit,
+		GebrGeoXmlParameter *parameter,
+		GebrGeoXmlParameterType type)
+{
+	GebrGuiParameterWidget *widget;
+
+	if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		widget = gebr_gui_parameter_widget_new(parameter,
+					program_edit->validator,
+					program_edit->info,
+					program_edit->use_default,
+					NULL);
+	} else {
+		widget = gebr_gui_parameter_widget_new(parameter,
+				program_edit->validator,
+				program_edit->info,
+				program_edit->use_default,
+				program_edit->parameter_widget_data);
+
+
+		GebrGeoXmlDocument *line;
+		gebr_validator_get_documents(widget->validator, NULL, &line, NULL);
+
+		const gchar *value = gtk_entry_get_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(widget->value_widget)->entry));
+
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
+		gchar *mount_point;
+		if (widget->info)
+			mount_point = gebr_maestro_info_get_home_mount_point(widget->info);
+		else
+			mount_point = NULL;
+		gchar *path = gebr_relativise_path(value, mount_point, paths);
+
+		gtk_entry_set_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(widget->value_widget)->entry), path);
+
+		g_free(path);
+		g_free(mount_point);
+		gebr_pairstrfreev(paths);
+	}
+
+	return widget;
+}
+
 static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *program_edit,
 						       GebrGeoXmlParameter *parameter,
 						       GSList             **radio_group)
@@ -463,40 +507,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		gtk_widget_show(hbox);
 
 		/* input widget */
-		if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-			gebr_gui_parameter_widget =
-			    gebr_gui_parameter_widget_new(parameter,
-							  program_edit->validator,
-							  program_edit->info,
-							  program_edit->use_default,
-							  NULL);
-		} else {
-			gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(parameter,
-										  program_edit->validator,
-										  program_edit->info,
-										  program_edit->use_default,
-										  program_edit->parameter_widget_data);
-
-
-			GebrGeoXmlDocument *line;
-			gebr_validator_get_documents(gebr_gui_parameter_widget->validator, NULL, &line, NULL);
-
-			const gchar *value = gtk_entry_get_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(gebr_gui_parameter_widget->value_widget)->entry));
-
-			gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
-			gchar *mount_point;
-			if (gebr_gui_parameter_widget->info)
-				mount_point = gebr_maestro_info_get_home_mount_point(gebr_gui_parameter_widget->info);
-			else
-				mount_point = NULL;
-			gchar *path = gebr_relativise_path(value, mount_point, paths);
-
-			gtk_entry_set_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(gebr_gui_parameter_widget->value_widget)->entry), path);
-
-			g_free(path);
-			g_free(mount_point);
-			gebr_pairstrfreev(paths);
-		}
+		gebr_gui_parameter_widget = create_parameter_widget(program_edit, parameter, type);
 
 		gebr_gui_parameter_widget->group_warning_widget = program_edit->group_warning_widget;
 		gtk_widget_show(gebr_gui_parameter_widget->widget);
