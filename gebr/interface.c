@@ -183,6 +183,14 @@ static const GtkToggleActionEntry status_action_entries[] = {
 
 static void assembly_menus(GtkMenuBar * menu_bar);
 
+static gboolean
+on_menu_button_clicked(GtkWidget   *widget,
+		       GdkEventKey *event)
+{
+       menu_list_populate();
+       return FALSE;
+}
+
 /*
  * Inserts View MenuList button inside the toolbar of Flows tab.
  */
@@ -199,6 +207,11 @@ insert_popup_menulist (GtkToolbar *toolbar)
 	gtk_container_add(GTK_CONTAINER(menu_button), image);
 	gtk_widget_set_can_focus(menu_button, FALSE);
 	gtk_widget_set_tooltip_text(menu_button, "View Menu list");
+
+       g_signal_connect(menu_button, "button-press-event",
+                        G_CALLBACK(on_menu_button_clicked), NULL);
+       g_signal_connect(menu_button, "key-press-event",
+                        G_CALLBACK(on_menu_button_clicked), NULL);
 
 	GtkWidget *menu_view = gebr_menu_view_get_widget(gebr.menu_view);
 	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(menu_button), menu_view);
