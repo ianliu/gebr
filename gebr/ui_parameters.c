@@ -79,6 +79,16 @@ on_parameters_help_button_clicked(GtkButton *button,
 	gebr_help_show(GEBR_GEOXML_OBJECT(program_edit->program), FALSE);
 
 }
+
+static void
+on_validated(GebrGuiParameterWidget *widget,
+	     gpointer user_data)
+{
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
+	flow_browse_validate_io(gebr.ui_flow_browse);
+	flow_browse_info_update();
+}
+
 /* Public functions {{{1*/
 GebrGuiProgramEdit *
 parameters_configure_setup_ui(void)
@@ -111,6 +121,7 @@ parameters_configure_setup_ui(void)
 
 	program_edit = gebr_gui_program_edit_setup_ui(gebr.program, NULL,
 						      FALSE, gebr.validator, info, FALSE);
+	gebr_gui_program_edit_set_validated_callback(program_edit, on_validated, NULL);
 
 	GtkWidget *hbox_buttons = gtk_hbox_new(FALSE, 0);
 	GtkWidget *button_default = gtk_button_new_with_mnemonic(_("Reset"));
