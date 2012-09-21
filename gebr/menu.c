@@ -263,7 +263,9 @@ find_or_add_category(const gchar *title,
 		if (category_iter == NULL) {
 			gtk_tree_store_append(menu_store, &iter, i > 0 ? &parent : NULL);
 			gtk_tree_store_set(menu_store, &iter,
-					   MENU_TITLE_COLUMN, escaped_title, -1);
+					   MENU_TITLE_COLUMN, escaped_title,
+					   MENU_VISIBLE_COLUMN, TRUE,
+					   -1);
 			g_hash_table_insert(categories_hash, g_strdup(category_name->str), gtk_tree_iter_copy(&iter));
 		} else
 			iter = *category_iter;
@@ -323,6 +325,7 @@ void __menu_list_populate(const gchar *path,
 					   MENU_TITLE_COLUMN, title,
 					   MENU_DESCRIPTION_COLUMN, desc,
 					   MENU_FILEPATH_COLUMN, file,
+					   MENU_VISIBLE_COLUMN, TRUE,
 					   -1);
 			g_free(title);
 			g_free(desc);

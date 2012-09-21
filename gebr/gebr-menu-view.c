@@ -165,11 +165,11 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 
 
 static gboolean
-on_menu_visible_func(GtkTreeModel *model,
-                     GtkTreeIter *iter,
-                     GebrMenuView *view)
+gebr_menu_view_visible_func(GtkTreeModel *model,
+                            GtkTreeIter *iter,
+                            const gchar *key,
+                            GebrMenuView *view)
 {
-	const gchar *key = gtk_entry_get_text(GTK_ENTRY(view->priv->entry));
 	if (!key || !*key)
 		return TRUE;
 
@@ -182,24 +182,6 @@ on_menu_visible_func(GtkTreeModel *model,
 	                   MENU_DESCRIPTION_COLUMN, &desc,
 	                   -1);
 
-	if (gtk_tree_store_iter_depth(GTK_TREE_STORE(model), iter) == 0) {
-		GtkTreeIter child;
-		gboolean valid;
-
-		valid = gtk_tree_model_iter_children(model, &child, iter);
-		while (valid) {
-			if (on_menu_visible_func(model, &child, view)) {
-				GtkTreePath *path = gtk_tree_model_get_path(model, iter);
-				gtk_tree_view_expand_row(view->priv->tree_view, path, TRUE);
-				gtk_tree_path_free(path);
-				match = TRUE;
-				break;
-			}
-			valid = gtk_tree_model_iter_next(model, &child);
-		}
-		goto out;
-	}
-
 	lt = title ? g_utf8_strdown(title, -1) : g_strdup("");
 	ld = desc ? g_utf8_strdown(desc, -1) : g_strdup("");
 	lk = g_utf8_strdown(key, -1);
@@ -209,7 +191,6 @@ on_menu_visible_func(GtkTreeModel *model,
 	g_free(lt);
 	g_free(ld);
 	g_free(lk);
-out:
 	g_free(title);
 	g_free(desc);
 
@@ -246,6 +227,51 @@ on_search_entry_press(GtkEntry *entry,
 }
 
 static void
+update_menus_visibility(GebrMenuView *view,
+                        const gchar *key)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(view->priv->tree_store);
+	gboolean valid;
+
+	valid = gtk_tree_model_get_iter_first(model, &iter);
+	while (valid) {
+		gboolean has_visible_child = FALSE;
+		GtkTreeIter child;
+		gboolean was_visible;
+
+		valid = gtk_tree_model_iter_children(model, &child, &iter);
+		while (valid) {
+			gboolean visible = gebr_menu_view_visible_func(model, &child, key, view);
+			if (visible && !has_visible_child)
+				has_visible_child = TRUE;
+
+			gtk_tree_model_get(model, &child, MENU_VISIBLE_COLUMN, &was_visible, -1);
+
+			if (was_visible != visible)
+				gtk_tree_store_set(view->priv->tree_store, &child,
+						   MENU_VISIBLE_COLUMN, visible,
+						   -1);
+			valid = gtk_tree_model_iter_next(model, &child);
+		}
+
+		gtk_tree_model_get(model, &iter, MENU_VISIBLE_COLUMN, &was_visible, -1);
+		if (was_visible != has_visible_child)
+			gtk_tree_store_set(view->priv->tree_store, &iter,
+					   MENU_VISIBLE_COLUMN, has_visible_child,
+					   -1);
+
+		if (has_visible_child) {
+			GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+			gtk_tree_view_expand_row(view->priv->tree_view, path, TRUE);
+			gtk_tree_path_free(path);
+		}
+
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
+}
+
+static void
 on_search_entry(GtkWidget *widget,
                 GebrMenuView *view)
 {
@@ -265,7 +291,7 @@ on_search_entry(GtkWidget *widget,
 		gtk_entry_set_icon_sensitive(GTK_ENTRY(view->priv->entry), GTK_ENTRY_ICON_SECONDARY, FALSE);
 	}
 
-	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(view->priv->filter));
+	update_menus_visibility(view, key);
 }
 
 static void
@@ -308,14 +334,13 @@ gebr_menu_view_init(GebrMenuView *view)
 	view->priv->tree_store = gtk_tree_store_new(MENU_N_COLUMN,
 	                                            G_TYPE_STRING,
 	                                            G_TYPE_STRING,
-	                                            G_TYPE_STRING);
+	                                            G_TYPE_STRING,
+	                                            G_TYPE_BOOLEAN);
 	view->priv->vbox = gtk_vbox_new(FALSE, 5);
 	gtk_widget_set_size_request(GTK_WIDGET(view->priv->vbox), 500, 450);
 
 	view->priv->filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(view->priv->tree_store), NULL);
-	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(view->priv->filter),
-	                                       (GtkTreeModelFilterVisibleFunc)on_menu_visible_func,
-	                                       view, NULL);
+	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(view->priv->filter), MENU_VISIBLE_COLUMN);
 
 	gtk_tree_view_set_model(view->priv->tree_view,
 	                        GTK_TREE_MODEL(view->priv->filter));
@@ -353,7 +378,6 @@ gebr_menu_view_init(GebrMenuView *view)
 	 * Create search entry
 	 */
 	view->priv->entry = gtk_entry_new();
-	gtk_widget_set_size_request(view->priv->entry, 200, -1);
 
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(view->priv->entry),
 	                              GTK_ENTRY_ICON_PRIMARY,
