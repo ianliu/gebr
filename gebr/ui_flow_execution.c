@@ -435,18 +435,35 @@ gebr_ui_flow_run(GebrUiFlowExecution *ui_flow_execution,
 	GList *rows;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
+	GtkTreeIter iter;
+	GtkTreePath *path;
 	const gchar *id = NULL;
+	gint nrows;
+	GebrUiFlowBrowseType type;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
+	nrows = gtk_tree_selection_count_selected_rows(selection);
+
+	/*Verify if the selection has a program*/
+	path = rows->data;
+	gtk_tree_model_get_iter(model, &iter, path);
+	gtk_tree_model_get(model, &iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   -1);
+
+	if (nrows > 1 && type == STRUCT_TYPE_PROGRAM) {
+		gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+		rows = gtk_tree_selection_get_selected_rows(selection, &model);
+	}
 
 	gint n = g_list_length(rows);
 
 	for (GList *i = rows; i; i = i->next) {
-		GtkTreePath *path = i->data;
+		path = i->data;
 		GebrGeoXmlFlow *flow;
-		GtkTreeIter iter;
-		GebrUiFlowBrowseType type;
+
 		GebrUiFlow *ui_flow;
 
 		gtk_tree_model_get_iter(model, &iter, path);
