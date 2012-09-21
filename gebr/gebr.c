@@ -294,6 +294,7 @@ gebr_config_load(void)
 	gboolean has_config;
 	gchar *usermenus = g_strdup_printf("%s/GeBR-Menus", g_get_home_dir());
 	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
+	double tmp;
 
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
@@ -327,7 +328,10 @@ gebr_config_load(void)
 	gebr.config.detailed_line_include_flow_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
 	gebr.config.detailed_line_include_revisions_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_revisions_report", FALSE);
 	gebr.config.detailed_line_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_line_parameter_table", GEBR_PARAM_TABLE_ONLY_CHANGED);
-	gebr.config.flow_exec_speed = g_key_file_get_double(gebr.config.key_file, "general", "flow_exec_speed", NULL);
+	tmp = g_key_file_get_double(gebr.config.key_file, "general", "flow_exec_speed", NULL);
+	if (tmp == 0.0){
+		gebr.config.flow_exec_speed = 5.00;
+	}
 	gebr.config.niceness = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "niceness", 1);
 	gebr.config.execution_server_name = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "execution_server_name", "");
 	GString *execution_server_type = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "execution_server_type", "group");
