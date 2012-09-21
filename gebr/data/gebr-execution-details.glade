@@ -258,6 +258,7 @@
                             <property name="visible">True</property>
                             <child>
                               <object class="GtkHBox" id="dispersion_box">
+                                <property name="width_request">200</property>
                                 <property name="visible">True</property>
                                 <child>
                                   <placeholder/>
@@ -451,8 +452,8 @@
   </object>
   <object class="GtkSizeGroup" id="multiple_size_group">
     <widgets>
-      <widget name="high_priority_button"/>
       <widget name="low_priority_button"/>
+      <widget name="high_priority_button"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="single_size_group"/>

@@ -612,9 +612,6 @@ parse_messages(GebrCommServer *comm_server,
 			cpu_model = g_list_nth_data(arguments, 6);
 			memory =    g_list_nth_data(arguments, 7);
 
-			g_debug("On '%s', line '%d', function: '%s', daemon:%s, cores:%s",
-				__FILE__, __LINE__, __func__, addr->str, ncores->str); 
-
 			g_debug("Daemon state change (%s) %s", addr->str, ssta->str);
 
 			GtkTreeIter iter;

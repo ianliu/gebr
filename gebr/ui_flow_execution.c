@@ -33,6 +33,7 @@
 
 struct _GebrUiFlowExecutionPriv {
 	GtkWidget *nice_button_high;
+	GtkWidget *speed_slider;
 	GtkAdjustment *speed_adjustment;
 	GtkComboBox *server_combo;
 	GtkComboBox *queue_combo;
@@ -917,9 +918,8 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution)
 }
 
 void
-gebr_ui_flow_execution_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
-                                       gdouble speed,
-                                       GtkWidget **speed_slider)
+speed_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
+		      gdouble speed)
 {
 	GtkAdjustment *flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, SLIDER_MAX, 0.1, 1, 0.1));
 
@@ -927,15 +927,15 @@ gebr_ui_flow_execution_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_scale_set_digits(GTK_SCALE(scale), 1);
 
-	gdouble med = SLIDER_100 / 2.0;
-	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), (med/2), GTK_POS_LEFT, "");
-	gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), ((med+SLIDER_100)/2), GTK_POS_LEFT, "");
-	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_100+1), GTK_POS_LEFT, "");
-	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_MAX-1), GTK_POS_LEFT, "");
-	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
+	//gdouble med = SLIDER_100 / 2.0;
+	//gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
+	//gtk_scale_add_mark(GTK_SCALE(scale), (med/2), GTK_POS_LEFT, "");
+	//gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
+	//gtk_scale_add_mark(GTK_SCALE(scale), ((med+SLIDER_100)/2), GTK_POS_LEFT, "");
+	//gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
+	//gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_100+1), GTK_POS_LEFT, "");
+	//gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_MAX-1), GTK_POS_LEFT, "");
+	//gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
 
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
 
@@ -943,9 +943,33 @@ gebr_ui_flow_execution_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
 	g_signal_connect(scale, "query-tooltip", G_CALLBACK(speed_controller_query_tooltip), NULL);
 	g_signal_connect(scale, "map", G_CALLBACK(on_show_scale), NULL);
 
-	*speed_slider = scale;
-
+	ui_flow_execution->priv->speed_slider = GTK_WIDGET(scale);
 	ui_flow_execution->priv->speed_adjustment = flow_exec_adjustment;
+}
+
+void
+update_speed_slider(GtkScale *scale, gint ncores)
+{
+	gtk_scale_clear_marks(scale);
+
+	gchar *half_cores = g_markup_printf_escaped("<span size='x-small'>%d</span>", ncores/2);
+	gchar *total_cores = g_markup_printf_escaped("<span size='x-small'>%d</span>", ncores);
+	gchar *over_cores = g_markup_printf_escaped("<span size='x-small'>%d</span>", 4*ncores);
+
+	gdouble med = SLIDER_100 / 2.0;
+	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), (med/2), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, half_cores);
+	gtk_scale_add_mark(GTK_SCALE(scale), ((med+SLIDER_100)/2), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, total_cores);
+	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_100+1), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_MAX-1), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, over_cores);
+
+	g_free(half_cores);
+	g_free(total_cores);
+	g_free(over_cores);
+
 }
 
 gint
@@ -975,10 +999,11 @@ get_number_of_cores(GtkWidget *servers_combo)
 void on_servers_combo_changed (GtkComboBox *widget,
 			       GebrUiFlowExecution *ui_flow_execution)
 {
+	gint ncores = get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo));
 	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>This set of nodes has %d</small>"),
-							       get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo)));
+							     ncores);
 	gtk_label_set_markup(ui_flow_execution->priv->number_cores_label, number_cores_markup);
-
+	update_speed_slider(GTK_SCALE(ui_flow_execution->priv->speed_slider), ncores);
 }
 GtkWidget *create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_execution,
 						   GebrMaestroServer *maestro)
@@ -1090,8 +1115,7 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 
 	gtk_window_set_title(GTK_WINDOW(main_dialog), _("Run"));
 
-	GtkWidget *speed_slider;
-	gebr_ui_flow_execution_slider_setup_ui(ui_flow_execution, gebr.config.flow_exec_speed, &speed_slider);
+	speed_slider_setup_ui(ui_flow_execution, gebr.config.flow_exec_speed);
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
@@ -1105,7 +1129,7 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(servers_combo));
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(queue_combo));
 
-	gtk_container_add(GTK_CONTAINER(dispersion_box), speed_slider);
+	gtk_container_add(GTK_CONTAINER(dispersion_box), ui_flow_execution->priv->speed_slider);
 	gebr_ui_flow_execution_details_sensitive_slider_box(builder,slider_sensitiviness);
 	execution_details_restore_default_values(ui_flow_execution);
 	gebr_ui_flow_execution_details_single_execution_phrases(builder, multiple);
