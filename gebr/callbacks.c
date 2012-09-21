@@ -40,6 +40,7 @@
 #include "ui_project_line.h"
 #include "gebr-job-control.h"
 #include "ui_help.h"
+#include "gebr-gui-tool-button.h"
 
 static gboolean line_check_maestro_connected(void);
 
@@ -50,6 +51,7 @@ void on_new_activate(void)
 	case NOTEBOOK_PAGE_FLOW_BROWSE :{
 		if (!flow_browse_get_selected(&iter, FALSE)) {
 			flow_new();
+			gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
 			return;
 		}
 
@@ -58,11 +60,12 @@ void on_new_activate(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 		                   FB_STRUCT_TYPE, &type, -1);
 
-		//TODO: Update to new menu
-//		if (type == STRUCT_TYPE_PROGRAM)
-//			gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
-//		else
+		if (type == STRUCT_TYPE_PROGRAM)
+			gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
+		else {
 			flow_new();
+			gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
+		}
 		break;
 	}
 	default:
@@ -96,8 +99,7 @@ void on_new_line_activate(void)
 
 void on_new_program_activate(void)
 {
-	//TODO: Update to new menu
-//	gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
+	gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
 }
 
 void on_copy_activate(void)
@@ -456,6 +458,8 @@ void on_flow_component_delete_activate(void)
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :
 		flow_program_remove();
+		if(gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+			gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
 		break;
 	default:
 		break;

@@ -57,6 +57,14 @@ GtkWidget *gebr_gui_tool_button_new(void);
 void gebr_gui_tool_button_add(GebrGuiToolButton *button,
 			      GtkWidget *widget);
 
+/**
+ * gebr_gui_tool_button_toggled_active:
+ *
+ * Calls a inner function to show the popup widget
+ */
+void
+gebr_gui_tool_button_toggled_active(GtkToggleButton *toggle, gboolean close_popup);
+
 G_END_DECLS
 
 #endif /* __LIBGEBR_GUI_TOOL_BUTTON_H__ */

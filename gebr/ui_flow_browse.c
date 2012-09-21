@@ -38,6 +38,7 @@
 #include "ui_flows_io.h"
 #include "interface.h"
 #include "gebr-menu-view.h"
+#include "gebr-gui-tool-button.h"
 
 #define JOB_BUTTON_SIZE 120
 
@@ -308,6 +309,7 @@ on_job_button_clicked(GtkButton *button,
 	gebr_job_control_reset_filters(gebr.job_control);
 	gebr_job_control_apply_flow_filter(gebr.flow, gebr.job_control);
 	gebr_job_control_select_job(gebr.job_control, job);
+	gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), NOTEBOOK_PAGE_JOB_CONTROL);
 }
 
@@ -2362,37 +2364,35 @@ static void flow_browse_load(void)
 	}
 
 	/* Set correct view */
-	//TODO: Update to new class
-	if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
-		g_debug("NEW MENU!");
-//		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, gebr.ui_flow_browse);
+	if (type == STRUCT_TYPE_FLOW) {
+		GebrGeoXmlFlow *flow;
+		GebrUiFlow *ui_flow;
+
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT, &ui_flow,
+		                   -1);
+
+		flow = gebr_ui_flow_get_flow(ui_flow);
+
+		if (flow != old_flow || !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_FLOW])) {
+			if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+				gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
+			else if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_SNAPSHOTS])) {
+				gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
+			}
+		}
+
+		if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE && gebr_geoxml_flow_get_programs_number(flow) == 0 && flow != old_flow)
+			gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
+		else
+			gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
 	} else {
-		if (type == STRUCT_TYPE_FLOW) {
-			GebrGeoXmlFlow *flow;
-			GebrUiFlow *ui_flow;
-
-			gtk_tree_model_get(model, &iter,
-			                   FB_STRUCT, &ui_flow,
-			                   -1);
-
-			flow = gebr_ui_flow_get_flow(ui_flow);
-
-			if (flow != old_flow || !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_FLOW])) {
-				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-					gebr_flow_browse_load_parameters_review(flow, gebr.ui_flow_browse, FALSE);
-				else if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_SNAPSHOTS])) {
-					gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
-				}
-			}
-		} else {
-			if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]))
-//			    && !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU]))
-			{
-				if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
-					gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
-				else
-					gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
-			}
+		if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]))
+		{
+			if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
+				gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+			else
+				gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 		}
 	}
 
@@ -2495,12 +2495,7 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-	//TODO: Update to new menu
-	if (type == STRUCT_TYPE_FLOW) {
-		g_debug("NEW MENU");
-//		gebr_flow_browse_define_context_to_show(CONTEXT_MENU, fb);
-	}
-	else if (type == STRUCT_TYPE_PROGRAM) {
+	if (type == STRUCT_TYPE_PROGRAM) {
 		GebrGuiProgramEdit *program_edit = parameters_configure_setup_ui();
 
 		if (program_edit) {
@@ -2734,8 +2729,15 @@ gebr_flow_browse_hide(GebrUiFlowBrowse *self)
 void
 gebr_flow_browse_show(GebrUiFlowBrowse *self)
 {
-    if (gebr.last_notebook == NOTEBOOK_PAGE_JOB_CONTROL)
-        gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+	if (gebr.last_notebook != NOTEBOOK_PAGE_FLOW_BROWSE) {
+		flow_browse_load();
+		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+		if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+			gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
+		else
+			gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
+
+	}
 
 	if (gebr.line)
 		gebr_flow_set_toolbar_sensitive();
@@ -3200,10 +3202,8 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	if (!flow)
 		return;
 
-	//TODO: Update to new menu
 	if (same_flow) {
 		if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]))
-//		    && !gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_MENU]))
 		{
 			if (gtk_toggle_button_get_active(gebr.ui_flow_browse->properties_ctx_button))
 				gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);

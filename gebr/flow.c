@@ -57,6 +57,8 @@ static void on_properties_response(gboolean accept)
 {
 	if (!accept)
 		flow_delete(FALSE);
+	else
+		gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
 }
 
 void flow_new (void)

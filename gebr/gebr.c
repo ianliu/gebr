@@ -381,6 +381,7 @@ restore_project_line_flow_selection(void)
 		    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &flow_iter,
 							gebr.config.flow_treepath_string->str))
 		{
+			gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 			flow_browse_select_iter(&flow_iter);
 		}

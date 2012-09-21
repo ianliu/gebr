@@ -84,6 +84,7 @@ struct gebr {
 	GebrValidator *validator;
 
 	GebrMenuView *menu_view;
+	GtkToggleButton *menu_button;
 
 	GebrGeoXmlDocument *project_line;
 	GebrGeoXmlProject *project;

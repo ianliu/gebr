@@ -905,6 +905,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 	}
 
 	gdk_threads_enter();
+	gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), NOTEBOOK_PAGE_PROJECT_LINE);
 	gdk_threads_leave();
 
@@ -1764,6 +1765,7 @@ static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath *
 		return;
 	}
 
+	gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 	gebr.config.current_notebook = 1;
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 }

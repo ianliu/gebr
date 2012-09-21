@@ -191,6 +191,7 @@ insert_popup_menulist (GtkToolbar *toolbar)
 {
 	GtkToolItem *menu_item = gtk_tool_item_new();
 	GtkWidget *menu_button = gebr_gui_tool_button_new();
+	gebr.menu_button = GTK_TOGGLE_BUTTON(menu_button);
 	GtkWidget *image = gtk_image_new();
 
 	gtk_button_set_relief(GTK_BUTTON(menu_button), GTK_RELIEF_NONE);
@@ -603,6 +604,7 @@ gebr_interface_get_niceness(void)
 void
 gebr_interface_change_tab(enum NOTEBOOK_PAGE page)
 {
+	gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), page);
 }
 
