@@ -1048,6 +1048,8 @@ void flow_program_remove(void)
 	GebrGeoXmlProgram *program;
 	GebrUiFlowBrowseType type;
 
+	gebr_flow_browse_escape_context(gebr.ui_flow_browse);
+
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 		                   FB_STRUCT_TYPE, &type,
