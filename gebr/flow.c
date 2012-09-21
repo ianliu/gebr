@@ -1247,6 +1247,7 @@ gebr_flow_set_toolbar_sensitive(void)
 	gboolean sensitive_exec_slider;
 	gboolean maestro_disconnected = FALSE;
 	gboolean line_selected = TRUE;
+	gboolean sensitive_edit;
 
 	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED) {
 		sensitive = FALSE;
@@ -1258,28 +1259,34 @@ gebr_flow_set_toolbar_sensitive(void)
 		line_selected = FALSE;
 	}
 
-	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 )
+	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0 ) {
 		sensitive_exec_slider = FALSE;
-	else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
+		sensitive_edit = FALSE;
+	}
+	else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
 		sensitive_exec_slider = FALSE;
-	else
+		sensitive_edit = TRUE;
+	}
+	else {
 		sensitive_exec_slider = sensitive;
+		sensitive_edit = sensitive;
+	}
 
 
 	// Set sensitive for page Flows
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_new"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"), sensitive_exec_slider);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_new"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"), sensitive_edit);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive_exec_slider);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive_exec_slider);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive_edit);
 
 	GtkTreeSelection *flows_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 	gint flows_nrows = gtk_tree_selection_count_selected_rows(flows_selection);
