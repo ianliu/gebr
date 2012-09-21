@@ -619,11 +619,11 @@ const gchar *
 gebr_ui_flow_execution_set_text_for_performance(gdouble value)
 {
 	if (value <= 0.1)
-	    return _(g_strdup_printf("1 core"));
+	    return _(g_strdup_printf("1 process"));
 	else if (value < (SLIDER_100))
-	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*20));
+	    return _(g_strdup_printf("%.0lf%% of nominal capacity", value*20));
 	else if (value <= 400)
-	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*100 - 400));
+	    return _(g_strdup_printf("%.0lf%% of nominal capacity", value*100 - 400));
 	else
 		g_return_val_if_reached(NULL);
 }
@@ -1000,7 +1000,7 @@ void on_servers_combo_changed (GtkComboBox *widget,
 			       GebrUiFlowExecution *ui_flow_execution)
 {
 	gint ncores = get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo));
-	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>This set of nodes has %d</small>"),
+	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>This set of nodes has %d cores</small>"),
 							     ncores);
 	gtk_label_set_markup(ui_flow_execution->priv->number_cores_label, number_cores_markup);
 	update_speed_slider(GTK_SCALE(ui_flow_execution->priv->speed_slider), ncores);
@@ -1062,10 +1062,10 @@ gebr_ui_flow_execution_details_single_execution_phrases(GtkBuilder *builder, gbo
 		GtkLabel *ser_label = GTK_LABEL(gtk_builder_get_object(builder, "servers_label"));
 		GtkLabel *dis_label = GTK_LABEL(gtk_builder_get_object(builder, "dispersion_label"));
 		GtkLabel *pri_label = GTK_LABEL(gtk_builder_get_object(builder, "priority_label"));
-		gchar *order_text = g_markup_printf_escaped(_("<b>Execute this task <i>immediatelly</i> or <i>after another task</i>?</b>"));
-		gchar *server_text = g_markup_printf_escaped(_("<b>In which set of nodes this task should be executed?</b>"));
-		gchar *dispersion_text = g_markup_printf_escaped(_("<b>This task can be divided to speed up its execution. \nHow many parts should it be splitted?</b>"));
-		gchar *priority_text = g_markup_printf_escaped(_("<b>How this task must compete with other processes?</b>"));
+		gchar *order_text = g_markup_printf_escaped(_("Execute this task <i>immediately</i> or <i>after another task</i>?"));
+		gchar *server_text = g_markup_printf_escaped(_("In which set of nodes this task should be executed?"));
+		gchar *dispersion_text = g_markup_printf_escaped(_("This task can be divided to speed up its execution. \nHow many parts should it be splitted?"));
+		gchar *priority_text = g_markup_printf_escaped(_("How this task must compete with other processes?"));
 		gtk_label_set_markup (ord_label, order_text);
 		gtk_label_set_markup (ser_label, server_text);
 		gtk_label_set_markup (dis_label, dispersion_text);
