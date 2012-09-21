@@ -33,10 +33,7 @@
 
 struct _GebrGuiProgramEditPriv
 {
-	struct {
-		GebrGuiParameterValidatedFunc callback;
-		gpointer user_data;
-	} signal_validated;
+	GList *widgets;
 };
 
 typedef struct {
@@ -159,13 +156,14 @@ void
 gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_edit,
 		GebrGuiParameterValidatedFunc callback, gpointer user_data)
 {
-	program_edit->priv->signal_validated.callback = callback;
-	program_edit->priv->signal_validated.user_data = user_data;
+	for (GList *i = program_edit->priv->widgets; i; i = i->next)
+		gebr_gui_parameter_widget_set_validated_callback(i->data, callback, user_data);
 }
 
 void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)
 {
 	gtk_widget_destroy(program_edit->widget);
+	g_list_free(program_edit->priv->widgets);
 	g_free(program_edit->priv);
 	g_free(program_edit);
 }
@@ -337,7 +335,6 @@ create_parameter_widget(GebrGuiProgramEdit *program_edit,
 				program_edit->use_default,
 				program_edit->parameter_widget_data);
 
-
 		GebrGeoXmlDocument *line;
 		gebr_validator_get_documents(widget->validator, NULL, &line, NULL);
 
@@ -357,6 +354,8 @@ create_parameter_widget(GebrGuiProgramEdit *program_edit,
 		g_free(mount_point);
 		gebr_pairstrfreev(paths);
 	}
+
+	program_edit->priv->widgets = g_list_prepend(program_edit->priv->widgets, widget);
 
 	return widget;
 }
