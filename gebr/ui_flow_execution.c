@@ -893,7 +893,9 @@ restore_execution_servers(GebrUiFlowExecution *ui_flow_execution, GebrMaestroSer
 
 
 static void
-execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution, GtkBuilder *builder)
+execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution,
+                                         GtkBuilder *builder,
+                                         gboolean slider_sensitiviness)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "after_another_button")), TRUE);
 
@@ -909,6 +911,13 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution,
 	                         speed_value);
 
 	gtk_adjustment_value_changed(flow_exec_adjustment);
+
+	if (!slider_sensitiviness) {
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(builder, "dispersion_enclosure_box")),
+		                         FALSE);
+//		gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(builder, "dispersion_label")),
+//		                     _("These tasks are not divisible"));
+	}
 
 	/* Priority */
 	if (gebr.config.niceness == 0)
@@ -1128,10 +1137,11 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(servers_combo));
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(queue_combo));
 
-	gtk_widget_set_sensitive(GTK_WIDGET(dispersion_box), slider_sensitiviness);
 	gtk_container_add(GTK_CONTAINER(dispersion_box), ui_flow_execution->priv->speed_slider);
 
-	execution_details_restore_default_values(ui_flow_execution, builder);
+	execution_details_restore_default_values(ui_flow_execution, builder, slider_sensitiviness);
+
+	gtk_widget_show_all(main_dialog);
 
 	if(!multiple)
 		set_single_execution_dialog(builder);
@@ -1143,8 +1153,6 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 
 	gtk_window_set_modal(GTK_WINDOW(main_dialog), TRUE);
 	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
-
-	gtk_widget_show_all(main_dialog);
 
 	return ui_flow_execution;
 }
