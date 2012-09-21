@@ -2226,8 +2226,6 @@ static void flow_browse_load(void)
 		g_free(line_title);
 	}
 
-	gebr_flow_set_toolbar_sensitive();
-
 	GtkTreePath *curr_path = NULL;
 	gtk_tree_view_get_cursor(GTK_TREE_VIEW(gebr.ui_flow_browse->view), &curr_path, NULL);
 	if (curr_path) {
@@ -2396,6 +2394,7 @@ static void flow_browse_load(void)
 		}
 	}
 
+	gebr_flow_set_toolbar_sensitive();
 	flow_browse_info_update();
 
 	gebr_geoxml_document_unref(GEBR_GEOXML_DOCUMENT(old_flow));
