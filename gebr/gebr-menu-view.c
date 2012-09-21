@@ -35,8 +35,6 @@ struct _GebrMenuViewPriv {
 	GtkWidget *entry;
 
 	GtkWidget *vbox;
-
-	gboolean do_expand;
 };
 
 enum {
@@ -175,23 +173,25 @@ on_menu_visible_func(GtkTreeModel *model,
 	if (!key || !*key)
 		return TRUE;
 
-	gchar *title, *desc, *filepath;
+	gchar *title, *desc;
 	gchar *lt, *ld, *lk; // Lower case strings
 	gboolean match = FALSE;
 
 	gtk_tree_model_get(model, iter,
 	                   MENU_TITLE_COLUMN, &title,
 	                   MENU_DESCRIPTION_COLUMN, &desc,
-	                   MENU_FILEPATH_COLUMN, &filepath,
 	                   -1);
 
-	if (!filepath) {
+	if (gtk_tree_store_iter_depth(GTK_TREE_STORE(model), iter) == 0) {
 		GtkTreeIter child;
 		gboolean valid;
 
 		valid = gtk_tree_model_iter_children(model, &child, iter);
 		while (valid) {
 			if (on_menu_visible_func(model, &child, view)) {
+				GtkTreePath *path = gtk_tree_model_get_path(model, iter);
+				gtk_tree_view_expand_row(view->priv->tree_view, path, TRUE);
+				gtk_tree_path_free(path);
 				match = TRUE;
 				break;
 			}
@@ -209,7 +209,6 @@ on_menu_visible_func(GtkTreeModel *model,
 	g_free(lt);
 	g_free(ld);
 	g_free(lk);
-	g_free(filepath);
 out:
 	g_free(title);
 	g_free(desc);
@@ -251,16 +250,10 @@ on_search_entry(GtkWidget *widget,
                 GebrMenuView *view)
 {
 	const gchar *key = gtk_entry_get_text(GTK_ENTRY(widget));
-
-	if (!view->priv->do_expand)
-		view->priv->do_expand = TRUE;
-
-	if (view->priv->do_expand)
-		gtk_tree_view_expand_all(view->priv->tree_view);
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(view->priv->tree_view);
 
 	if (key && *key) {
 		GtkTreeIter iter, child;
-		GtkTreeSelection *selection = gtk_tree_view_get_selection(view->priv->tree_view);
 		if (gtk_tree_model_get_iter_first(view->priv->filter, &iter)) {
 			if (gtk_tree_model_iter_children(view->priv->filter, &child, &iter))
 				gtk_tree_selection_select_iter(selection, &child);
@@ -269,7 +262,6 @@ on_search_entry(GtkWidget *widget,
 		}
 		gtk_entry_set_icon_sensitive(GTK_ENTRY(view->priv->entry), GTK_ENTRY_ICON_SECONDARY, TRUE);
 	} else {
-		view->priv->do_expand = FALSE;
 		gtk_entry_set_icon_sensitive(GTK_ENTRY(view->priv->entry), GTK_ENTRY_ICON_SECONDARY, FALSE);
 	}
 
@@ -311,8 +303,6 @@ gebr_menu_view_init(GebrMenuView *view)
 	view->priv = G_TYPE_INSTANCE_GET_PRIVATE(view,
 			GEBR_TYPE_MENU_VIEW,
 			GebrMenuViewPriv);
-
-	view->priv->do_expand = FALSE;
 
 	view->priv->tree_view = GTK_TREE_VIEW(gtk_tree_view_new());
 	view->priv->tree_store = gtk_tree_store_new(MENU_N_COLUMN,
