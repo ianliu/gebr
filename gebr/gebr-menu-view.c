@@ -48,24 +48,18 @@ guint signals[LAST_SIGNAL] = { 0, };
  * Private methods
  */
 static gboolean
-gebr_menu_view_get_selected_menu(GtkTreeIter * iter,
-                                 gboolean warn_unselected,
-                                 GebrMenuView *view)
+gebr_menu_view_get_selected_menu(GebrMenuView *view, GtkTreeIter *iter)
 {
-	GtkTreeSelection *selection;
 	GtkTreeModel *model;
+	GtkTreeSelection *selection;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view->priv->tree_view));
-	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE) {
-		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No menu selected."));
+	selection = gtk_tree_view_get_selection(view->priv->tree_view);
+
+	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE)
 		return FALSE;
-	}
-	if (gtk_tree_model_iter_has_child(model, iter)) {
-		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Select a menu instead of a category."));
+
+	if (gtk_tree_model_iter_has_child(model, iter))
 		return FALSE;
-	}
 
 	return TRUE;
 }
@@ -82,7 +76,7 @@ gebr_menu_view_add(GtkTreeView *tree_view,
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 
-	if (!gebr_menu_view_get_selected_menu(&iter, FALSE, view)) {
+	if (!gebr_menu_view_get_selected_menu(view, &iter)) {
 		if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(tree_view), path))
 			gtk_tree_view_collapse_row(GTK_TREE_VIEW(tree_view), path);
 		else
@@ -113,7 +107,7 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_flow_edition, "flow_edition_refresh")));
 
-	if (!gebr_menu_view_get_selected_menu(&iter, FALSE, view)) {
+	if (!gebr_menu_view_get_selected_menu(view, &iter)) {
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 		menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
