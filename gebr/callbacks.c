@@ -381,6 +381,9 @@ static gboolean flows_check_before_execution(void)
 		else
 			flow = gebr_ui_flow_get_flow(ui_flow);
 
+		if (g_list_length(rows) == 1)
+			flow_browse_revalidate_programs(gebr.ui_flow_browse);
+
 		if (flow_check_before_execution(flow, FALSE))
 			continue;
 
