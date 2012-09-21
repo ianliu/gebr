@@ -102,7 +102,7 @@ get_line_paths(GebrGeoXmlLine *line)
 
 static gboolean
 is_group_connected(GtkTreeModel *model,
-		   const gchar *group)
+                   const gchar *group)
 {
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
@@ -118,7 +118,7 @@ is_group_connected(GtkTreeModel *model,
 
 static gboolean
 is_address_connected(GtkTreeModel *model,
-		     const gchar *address)
+                     const gchar *address)
 {
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
@@ -133,8 +133,8 @@ is_address_connected(GtkTreeModel *model,
 
 static gboolean
 has_connected_server(GebrMaestroServer *maestro,
-		     GebrMaestroServerGroupType type,
-		     const gchar *name)
+                     GebrMaestroServerGroupType type,
+                     const gchar *name)
 {
 	gboolean result = FALSE;
 	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
@@ -201,7 +201,7 @@ run_flow(GebrUiFlowExecution *ui_flow_execution,
          GebrGeoXmlFlow *flow,
          const gchar *after,
          const gchar *snapshot_id,
-	 gboolean is_detailed)
+         gboolean is_detailed)
 {
 	gchar *snapshot_title = NULL;
 	if (!flow_browse_get_selected(NULL, TRUE))
@@ -253,12 +253,12 @@ run_flow(GebrUiFlowExecution *ui_flow_execution,
 
 	GebrMaestroServerGroupType type;
 	gchar *name, *host = NULL;
-	
+
 	if (is_detailed) {
 		gebr_ui_flow_execution_get_current_group(ui_flow_execution->priv->server_combo,
-							 &type,
-							 &name,
-							 maestro);
+		                                         &type,
+		                                         &name,
+		                                         maestro);
 	} else {
 		name = g_strdup(gebr.config.execution_server_name->str);
 		type = (GebrMaestroServerGroupType) gebr.config.execution_server_type;
@@ -284,7 +284,7 @@ run_flow(GebrUiFlowExecution *ui_flow_execution,
 				                   -1);
 
 				if (type == gebr.config.execution_server_type &&
-				    !g_strcmp0(name, gebr.config.execution_server_name->str)) {
+						!g_strcmp0(name, gebr.config.execution_server_name->str)) {
 					find_host = TRUE;
 					host = hostname;
 				}
@@ -337,12 +337,12 @@ run_flow(GebrUiFlowExecution *ui_flow_execution,
 				new_name = g_strdup(name);
 
 			msg = g_markup_printf_escaped(_("<span size='large' weight='bold'>Execution error</span>\n\n"
-							"There are no connected nodes on group <b>%s</b>."), new_name);
+					"There are no connected nodes on group <b>%s</b>."), new_name);
 			g_free(new_name);
 			break;
 		case MAESTRO_SERVER_TYPE_DAEMON:
 			msg = g_markup_printf_escaped(_("<span size='large' weight='bold'>Execution error</span>\n\n"
-							"The selected node (<b>%s</b>) is not connected."), name);
+					"The selected node (<b>%s</b>) is not connected."), name);
 			break;
 		default:
 			msg = g_strdup("");
@@ -350,7 +350,7 @@ run_flow(GebrUiFlowExecution *ui_flow_execution,
 		}
 
 		GtkWidget *dialog  = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window),
-									GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		                                                        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 		                                                        NULL);
 
@@ -467,8 +467,8 @@ gebr_ui_flow_run(GebrUiFlowExecution *ui_flow_execution,
 				const gchar *filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
 				if (g_list_find_custom(gebr.ui_flow_browse->select_flows, filename, (GCompareFunc)g_strcmp0)) {
 					gchar *str = g_strdup_printf("run\b%s\b%s\n",
-								     is_parallel? "parallel" : "single",
-								     is_detailed ? "detailed" : "default");
+					                             is_parallel? "parallel" : "single",
+					                        		     is_detailed ? "detailed" : "default");
 					GString *action = g_string_new(str);
 
 					if (gebr_comm_process_write_stdin_string(gebr.ui_flow_browse->graph_process, action) == 0)
@@ -510,7 +510,7 @@ gebr_ui_flow_run_snapshots(GebrUiFlowExecution *ui_flow_execution,
                            GebrGeoXmlFlow *flow,
                            const gchar *snapshots,
                            gboolean is_parallel,
-			   gboolean is_detailed)
+                           gboolean is_detailed)
 {
 	GebrGeoXmlRevision *rev;
 	gchar **snaps = g_strsplit(snapshots, ",", -1);
@@ -550,11 +550,11 @@ gebr_ui_flow_run_snapshots(GebrUiFlowExecution *ui_flow_execution,
 		if (is_parallel)
 			id = run_flow(ui_flow_execution,
 			              GEBR_GEOXML_FLOW(snap_flow),
-				      NULL, snapshot_id, is_detailed);
+			              NULL, snapshot_id, is_detailed);
 		else
 			id = run_flow(ui_flow_execution,
 			              GEBR_GEOXML_FLOW(snap_flow),
-				      id, snapshot_id, is_detailed);
+			              id, snapshot_id, is_detailed);
 
 		gebr_flow_browse_append_job_on_flow(flow, id, gebr.ui_flow_browse);
 
@@ -619,36 +619,36 @@ const gchar *
 gebr_ui_flow_execution_set_text_for_performance(gdouble value)
 {
 	if (value <= 0.1)
-	    return _(g_strdup_printf("1 process"));
+		return _(g_strdup_printf("1 process"));
 	else if (value < (SLIDER_100))
-	    return _(g_strdup_printf("%.0lf%% of nominal capacity", value*20));
+		return _(g_strdup_printf("%.0lf%% of nominal capacity", value*20));
 	else if (value <= 400)
-	    return _(g_strdup_printf("%.0lf%% of nominal capacity", value*100 - 400));
+		return _(g_strdup_printf("%.0lf%% of nominal capacity", value*100 - 400));
 	else
 		g_return_val_if_reached(NULL);
 }
 
 static void
 on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
-					   GtkCellRenderer *cell,
-					   GtkTreeModel    *tree_model,
-					   GtkTreeIter     *iter,
-					   gpointer         data)
+                                           GtkCellRenderer *cell,
+                                           GtkTreeModel    *tree_model,
+                                           GtkTreeIter     *iter,
+                                           gpointer         data)
 {
 	gchar *name;
 	GebrMaestroServerGroupType type;
 
 	gtk_tree_model_get(tree_model, iter,
-			   MAESTRO_SERVER_TYPE, &type,
-			   MAESTRO_SERVER_NAME, &name,
-			   -1);
+	                   MAESTRO_SERVER_TYPE, &type,
+	                   MAESTRO_SERVER_NAME, &name,
+	                   -1);
 
 	GebrDaemonServer *daemon = NULL;
 	GebrMaestroServer *maestro;
 	gboolean is_connected = TRUE;
 
 	maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
-							       gebr.line);
+	                                                       gebr.line);
 
 	if (!maestro) {
 		if (GTK_IS_CELL_RENDERER_TEXT(cell))
@@ -698,11 +698,11 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 
 static gboolean
 speed_controller_query_tooltip(GtkWidget  *widget,
-			       gint        x,
-			       gint        y,
-			       gboolean    keyboard_mode,
-			       GtkTooltip *tooltip,
-			       gpointer    user_data)
+                               gint        x,
+                               gint        y,
+                               gboolean    keyboard_mode,
+                               GtkTooltip *tooltip,
+                               gpointer    user_data)
 {
 	GtkRange *scale = GTK_RANGE(widget);
 	gdouble value = gtk_range_get_value(scale);
@@ -728,8 +728,8 @@ on_queue_set_text(GtkCellLayout   *cell_layout,
 		name_queue = g_strdup(_("Immediately"));
 	else
 		name_queue = g_strdup_printf(_("After %s #%s"),
-					     gebr_job_get_title(job),
-					     gebr_job_get_job_counter(job));
+		                             gebr_job_get_title(job),
+		                             gebr_job_get_job_counter(job));
 
 	g_object_set(cell, "text", name_queue, NULL);
 	g_free(name_queue);
@@ -737,8 +737,8 @@ on_queue_set_text(GtkCellLayout   *cell_layout,
 
 void
 gebr_ui_flow_execution_get_server_hostname(GtkComboBox *combo,
-					   GebrMaestroServer *maestro,
-					   gchar **host)
+                                           GebrMaestroServer *maestro,
+                                           gchar **host)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
@@ -747,15 +747,15 @@ gebr_ui_flow_execution_get_server_hostname(GtkComboBox *combo,
 		gtk_tree_model_get_iter_first(model, &iter);
 
 	gtk_tree_model_get(model, &iter,
-			   MAESTRO_SERVER_HOST, host,
-			   -1);
+	                   MAESTRO_SERVER_HOST, host,
+	                   -1);
 }
 
 void
 gebr_ui_flow_execution_get_current_group(GtkComboBox *combo,
-					 GebrMaestroServerGroupType *type,
-					 gchar **name,
-					 GebrMaestroServer *maestro)
+                                         GebrMaestroServerGroupType *type,
+                                         gchar **name,
+                                         GebrMaestroServer *maestro)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
@@ -764,14 +764,14 @@ gebr_ui_flow_execution_get_current_group(GtkComboBox *combo,
 		gtk_tree_model_get_iter_first(model, &iter);
 
 	gtk_tree_model_get(model, &iter,
-			   MAESTRO_SERVER_TYPE, type,
-			   MAESTRO_SERVER_NAME, name,
-			   -1);
+	                   MAESTRO_SERVER_TYPE, type,
+	                   MAESTRO_SERVER_NAME, name,
+	                   -1);
 }
 
 const gchar *
 gebr_ui_flow_execution_get_selected_queue(GtkComboBox *combo,
-					  GebrMaestroServer *maestro)
+                                          GebrMaestroServer *maestro)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model = gebr_maestro_server_get_queues_model(maestro);
@@ -817,28 +817,28 @@ gebr_ui_flow_execution_save_default(GebrUiFlowExecution *ui_flow_execution)
 
 void
 on_execution_details_destroy (GtkWidget *widget,
-			      gpointer   user_data)
+                              gpointer   user_data)
 {
 	gtk_widget_destroy(widget);
 }
 
 void
 on_cancel_button_clicked(GtkButton *button,
-			 GtkWidget *window)
+                         GtkWidget *window)
 {
 	gtk_widget_destroy(window);
 }
 
 static void
 on_help_button_clicked(GtkButton *button,
-		       gpointer pointer)
+                       gpointer pointer)
 {
 	gebr_gui_help_button_clicked("", NULL);
 }
 
 static void
 on_run_button_clicked(GtkButton *button,
-		      GebrUiFlowExecution *ui_flow_execution)
+                      GebrUiFlowExecution *ui_flow_execution)
 {
 	if (gtk_toggle_button_get_active(ui_flow_execution->priv->save_default_button)) {
 		gebr_ui_flow_execution_save_default(ui_flow_execution);
@@ -846,43 +846,23 @@ on_run_button_clicked(GtkButton *button,
 	} else {
 		gebr.config.save_preferences = FALSE;
 	}
-	gebr_ui_flow_run(ui_flow_execution, FALSE, TRUE);
+
+	gebr_ui_flow_run(ui_flow_execution, gtk_toggle_button_get_active(ui_flow_execution->priv->parallelism_button), TRUE);
 }
 
 static void 
 on_show_scale(GtkWidget * scale)
 {
 	gtk_range_set_value(GTK_RANGE(scale),
-			    gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed));
+	                    gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed));
 }
 
 static void
-execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution)
+restore_execution_servers(GebrUiFlowExecution *ui_flow_execution, GebrMaestroServer *maestro)
 {
-	/* Speed */
-	gdouble speed_value;
-	GtkAdjustment *flow_exec_adjustment = ui_flow_execution->priv->speed_adjustment;
-
-	if (gebr.config.flow_exec_speed != -1) {
-		speed_value = gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed);
-	}
-
-	gtk_adjustment_set_value(flow_exec_adjustment,
-				 speed_value); 
-
-	gtk_adjustment_value_changed(flow_exec_adjustment);
-
-	/* Priority */
-	if (gebr.config.niceness == 19)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_high), TRUE);
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->save_default_button), gebr.config.save_preferences);
-	/* Server */
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
 	GtkComboBox *combo = ui_flow_execution->priv->server_combo;
 	GtkTreeIter iter;
-
 	gchar *name = gebr.config.execution_server_name->str;
 	gint type = gebr.config.execution_server_type;
 
@@ -894,9 +874,9 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution)
 		gchar *tname;
 
 		gtk_tree_model_get(model, &iter,
-				   MAESTRO_SERVER_TYPE, &ttype,
-				   MAESTRO_SERVER_NAME, &tname,
-				   -1);
+		                   MAESTRO_SERVER_TYPE, &ttype,
+		                   MAESTRO_SERVER_NAME, &tname,
+		                   -1);
 		if (g_strcmp0(tname, name) == 0 && ttype == type) {
 			g_free(tname);
 			break;
@@ -909,34 +889,57 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution)
 		gtk_combo_box_set_active_iter(combo, &iter);
 	else if (gtk_tree_model_get_iter_first(model, &iter))
 		gtk_tree_model_get_iter_first(model, &iter);
-
-	/* Queue */
-	model = gebr_maestro_server_get_queues_model(maestro);
-	if (gtk_tree_model_get_iter_first(model, &iter)) {
-		gtk_combo_box_set_active_iter(ui_flow_execution->priv->queue_combo, &iter);
-	}
 }
 
-void
+
+static void
+execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution, GtkBuilder *builder)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "after_another_button")), TRUE);
+
+	/* Speed */
+	gdouble speed_value;
+	GtkAdjustment *flow_exec_adjustment = ui_flow_execution->priv->speed_adjustment;
+
+	if (gebr.config.flow_exec_speed != -1) {
+		speed_value = gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed);
+	}
+
+	gtk_adjustment_set_value(flow_exec_adjustment,
+	                         speed_value);
+
+	gtk_adjustment_value_changed(flow_exec_adjustment);
+
+	/* Priority */
+	if (gebr.config.niceness == 0)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_high), TRUE);
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "low_priority_button")), TRUE);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	/* Server */
+	restore_execution_servers(ui_flow_execution, maestro);
+
+	/* Queue */
+	GtkTreeIter iter;
+	GtkTreeModel *model = gebr_maestro_server_get_queues_model(maestro);
+	if (gtk_tree_model_get_iter_first(model, &iter))
+		gtk_combo_box_set_active_iter(ui_flow_execution->priv->queue_combo, &iter);
+
+	/* Preferences*/
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->save_default_button), gebr.config.save_preferences);
+}
+
+static void
 speed_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
-		      gdouble speed)
+                      gdouble speed)
 {
 	GtkAdjustment *flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, SLIDER_MAX, 0.1, 1, 0.1));
 
 	GtkWidget *scale = gtk_hscale_new(flow_exec_adjustment);
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_scale_set_digits(GTK_SCALE(scale), 1);
-
-	//gdouble med = SLIDER_100 / 2.0;
-	//gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
-	//gtk_scale_add_mark(GTK_SCALE(scale), (med/2), GTK_POS_LEFT, "");
-	//gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
-	//gtk_scale_add_mark(GTK_SCALE(scale), ((med+SLIDER_100)/2), GTK_POS_LEFT, "");
-	//gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
-	//gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_100+1), GTK_POS_LEFT, "");
-	//gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_MAX-1), GTK_POS_LEFT, "");
-	//gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
-
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
 
 	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
@@ -969,10 +972,9 @@ update_speed_slider(GtkScale *scale, gint ncores)
 	g_free(half_cores);
 	g_free(total_cores);
 	g_free(over_cores);
-
 }
 
-gint
+static gint
 get_number_of_cores(GtkWidget *servers_combo)
 {
 	gebr_maestro_controller_get_servers_model(gebr.maestro_controller);
@@ -986,29 +988,32 @@ get_number_of_cores(GtkWidget *servers_combo)
 
 	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(servers_combo), &iter)) {
 		gtk_tree_model_get(servers_model, &iter,
-				   MAESTRO_SERVER_NAME, &name,
-				   MAESTRO_SERVER_TYPE, &type,
-				   -1);
+		                   MAESTRO_SERVER_NAME, &name,
+		                   MAESTRO_SERVER_TYPE, &type,
+		                   -1);
 
 		cores = gebr_maestro_server_get_ncores_for_group(maestro, NULL,
-								 name, type);
+		                                                 name, type);
 	}
 	return cores;
 }
 
-void on_servers_combo_changed (GtkComboBox *widget,
-			       GebrUiFlowExecution *ui_flow_execution)
+void
+on_servers_combo_changed(GtkComboBox *widget,
+                         GebrUiFlowExecution *ui_flow_execution)
 {
 	gint ncores = get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo));
 	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>This set of nodes has %d cores</small>"),
-							     ncores);
+	                                                     ncores);
 	gtk_label_set_markup(ui_flow_execution->priv->number_cores_label, number_cores_markup);
 	update_speed_slider(GTK_SCALE(ui_flow_execution->priv->speed_slider), ncores);
 }
-GtkWidget *create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_execution,
-						   GebrMaestroServer *maestro)
+
+static GtkWidget *
+create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_execution,
+                                        GebrMaestroServer *maestro)
 {
-	/*Server combobox*/
+	/*Server combo*/
 	GtkTreeModel *servers_model = gebr_maestro_server_get_groups_model(maestro);
 	GtkWidget *servers_combo = gtk_combo_box_new_with_model(servers_model);
 	ui_flow_execution->priv->server_combo = GTK_COMBO_BOX(servers_combo);
@@ -1027,10 +1032,10 @@ GtkWidget *create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_
 	return servers_combo;
 }
 
-GtkWidget *create_detailed_execution_queue_combo(GebrUiFlowExecution *ui_flow_execution,
-						 GebrMaestroServer *maestro)
+static GtkWidget *
+create_detailed_execution_queue_combo(GebrUiFlowExecution *ui_flow_execution,
+                                       GebrMaestroServer *maestro)
 {
-
 	GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro);
 	GtkWidget *queue_combo = gtk_combo_box_new_with_model(queue_model);
 	ui_flow_execution->priv->queue_combo = GTK_COMBO_BOX(queue_combo);
@@ -1043,51 +1048,45 @@ GtkWidget *create_detailed_execution_queue_combo(GebrUiFlowExecution *ui_flow_ex
 	                                   on_queue_set_text, NULL, NULL);
 	return queue_combo;
 }
+
+
 static void
-gebr_ui_flow_execution_details_hide_single (GtkBuilder *builder, gboolean multiple){
-	GtkBox *multiple_flows = GTK_BOX(gtk_builder_get_object(builder, "parallelism_box"));
-	if (multiple)
-		gtk_widget_show(GTK_WIDGET(multiple_flows));
+set_single_execution_labels(GtkBuilder *builder){
+	gchar *order_text = g_markup_printf_escaped(
+			_("Execute this task <i>immediately</i> or <i>after another task</i>?"));
+	gchar *server_text = g_markup_printf_escaped(
+			_("In which set of nodes this task should be executed?"));
+	gchar *dispersion_text = g_markup_printf_escaped(
+			_("This task can be divided to speed up its execution.\n"
+					"How many parts should it be split?"));
+	gchar *priority_text = g_markup_printf_escaped(_("How this task must compete with other processes?"));
 
-	else
-		gtk_widget_hide(GTK_WIDGET(multiple_flows));
+	gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(builder, "order_label")),
+	                     order_text);
+	gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(builder, "servers_label")),
+	                     server_text);
+	gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(builder, "dispersion_label")),
+	                     dispersion_text);
+	gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(builder, "priority_label")),
+	                     priority_text);
 
-	return;
+	g_free(order_text);
+	g_free(server_text);
+	g_free(dispersion_text);
+	g_free(priority_text);
 }
+
 static void
-gebr_ui_flow_execution_details_single_execution_phrases(GtkBuilder *builder, gboolean multiple){
-
-	if(!multiple){
-		GtkLabel *ord_label = GTK_LABEL(gtk_builder_get_object(builder, "order_label"));
-		GtkLabel *ser_label = GTK_LABEL(gtk_builder_get_object(builder, "servers_label"));
-		GtkLabel *dis_label = GTK_LABEL(gtk_builder_get_object(builder, "dispersion_label"));
-		GtkLabel *pri_label = GTK_LABEL(gtk_builder_get_object(builder, "priority_label"));
-		gchar *order_text = g_markup_printf_escaped(_("Execute this task <i>immediately</i> or <i>after another task</i>?"));
-		gchar *server_text = g_markup_printf_escaped(_("In which set of nodes this task should be executed?"));
-		gchar *dispersion_text = g_markup_printf_escaped(_("This task can be divided to speed up its execution. \nHow many parts should it be splitted?"));
-		gchar *priority_text = g_markup_printf_escaped(_("How this task must compete with other processes?"));
-		gtk_label_set_markup (ord_label, order_text);
-		gtk_label_set_markup (ser_label, server_text);
-		gtk_label_set_markup (dis_label, dispersion_text);
-		gtk_label_set_markup (pri_label, priority_text);
-		g_free(order_text);
-		g_free(server_text);
-		g_free(dispersion_text);
-		g_free(priority_text);
-
-	}
-	return;
-
+set_single_execution_dialog(GtkBuilder *builder)
+{
+	set_single_execution_labels(builder);
+	GtkWidget *parallelism_box = GTK_WIDGET(gtk_builder_get_object(builder, "parallelism_box"));
+	gtk_widget_hide(GTK_WIDGET(parallelism_box));
 }
-static void
-gebr_ui_flow_execution_details_sensitive_slider_box (GtkBuilder *builder, gboolean sensitive){
-	GtkBox *dispersion_box = GTK_BOX(gtk_builder_get_object(builder, "dispersion_enclosure_box"));
-	gtk_widget_set_sensitive(GTK_WIDGET(dispersion_box),sensitive);
-	return;
-}
+
 GebrUiFlowExecution *
 gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
-					gboolean multiple)
+                                        gboolean multiple)
 {
 	GtkBuilder *builder = gtk_builder_new();
 
@@ -1110,7 +1109,7 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 
 	ui_flow_execution->priv->save_default_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "save_default_button"));
 	ui_flow_execution->priv->nice_button_high = GTK_WIDGET(gtk_builder_get_object(builder, "high_priority_button")); 
-	ui_flow_execution->priv->parallelism_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "parallelism_button")); 
+	ui_flow_execution->priv->parallelism_button = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "simultaneous_button"));
 	ui_flow_execution->priv->number_cores_label = GTK_LABEL(gtk_builder_get_object(builder, "number_cores_label")); 
 
 	gtk_window_set_title(GTK_WINDOW(main_dialog), _("Run"));
@@ -1129,10 +1128,14 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(servers_combo));
 	gtk_size_group_add_widget(single_size_group, GTK_WIDGET(queue_combo));
 
+	gtk_widget_set_sensitive(GTK_WIDGET(dispersion_box), slider_sensitiviness);
 	gtk_container_add(GTK_CONTAINER(dispersion_box), ui_flow_execution->priv->speed_slider);
-	gebr_ui_flow_execution_details_sensitive_slider_box(builder,slider_sensitiviness);
-	execution_details_restore_default_values(ui_flow_execution);
-	gebr_ui_flow_execution_details_single_execution_phrases(builder, multiple);
+
+	execution_details_restore_default_values(ui_flow_execution, builder);
+
+	if(!multiple)
+		set_single_execution_dialog(builder);
+
 	g_signal_connect(main_dialog, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), ui_flow_execution);
 	g_signal_connect(GTK_BUTTON(cancel_button), "clicked", G_CALLBACK(on_cancel_button_clicked), main_dialog);
@@ -1142,7 +1145,6 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
 
 	gtk_widget_show_all(main_dialog);
-	gebr_ui_flow_execution_details_hide_single(builder,multiple);
 
 	return ui_flow_execution;
 }
