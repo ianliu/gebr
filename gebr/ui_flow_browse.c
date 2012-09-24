@@ -2073,6 +2073,9 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 {
 	GtkTreeIter iter, parent;
 
+	if (!gebr.flow)
+		return;
+
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	/* Update interface */
