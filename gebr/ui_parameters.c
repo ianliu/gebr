@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/gui/gui.h>
@@ -30,9 +31,12 @@
 #include "flow.h"
 #include "document.h"
 #include "ui_help.h"
-#include "ui_flow.h"
+#include "ui_flow_execution.h"
+#include "ui_flow_browse.h"
+#include "ui_flow_program.h"
 
 /* Prototypes {{{1 */
+/*
 static void	parameters_actions			(GtkDialog          *dialog,
 							 gint                arg1,
 							 GebrGuiProgramEdit *program_edit);
@@ -40,35 +44,67 @@ static void	parameters_actions			(GtkDialog          *dialog,
 static gboolean	parameters_on_delete_event		(GtkDialog          *dialog,
 							 GdkEventAny        *event,
 							 GebrGuiProgramEdit *program_edit);
+							 */
+
+static gboolean
+on_parameters_key_press(GtkWidget *widget,
+                        GdkEvent *event,
+                        GebrGuiProgramEdit *program_edit)
+{
+	if (event->key.keyval == GDK_Return) {
+		flow_browse_revalidate_programs(gebr.ui_flow_browse);
+		flow_browse_validate_io(gebr.ui_flow_browse);
+		flow_browse_info_update();
+	}
+
+	return FALSE;
+}
+
+static void
+on_parameters_default_button_clicked(GtkButton *button,
+				     GebrGuiProgramEdit *program_edit)
+{
+	GebrGeoXmlParameters *params;
+	params = gebr_geoxml_program_get_parameters(program_edit->program);
+	gebr_geoxml_parameters_reset_to_default(params);
+	gebr_gui_program_edit_reload(program_edit, NULL);
+	gebr_geoxml_object_unref(params);
+	return;
+}
+
+static void
+on_parameters_help_button_clicked(GtkButton *button,
+				  GebrGuiProgramEdit *program_edit)
+{
+	gebr_help_show(GEBR_GEOXML_OBJECT(program_edit->program), FALSE);
+
+}
+
+static void
+on_validated(GebrGuiParameterWidget *widget,
+	     gpointer user_data)
+{
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
+	flow_browse_validate_io(gebr.ui_flow_browse);
+	flow_browse_info_update();
+}
 
 /* Public functions {{{1*/
-void
+GebrGuiProgramEdit *
 parameters_configure_setup_ui(void)
 {
-	GtkWidget *dialog;
-	GtkWidget *button;
 	GebrGuiProgramEdit *program_edit;
 
-	if (flow_edition_get_selected_component(NULL, FALSE) == FALSE)
-		return;
+	GtkTreeIter iter;
+	if (flow_browse_get_selected(&iter, FALSE) == FALSE)
+		return NULL;
 
-	dialog = gtk_dialog_new_with_buttons(_("Parameters"),
-					     GTK_WINDOW(gebr.window),
-					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					     NULL);
+	GebrUiFlowBrowseType row_type;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+	                   FB_STRUCT_TYPE, &row_type, -1);
 
-	g_object_set(dialog, "type-hint", GDK_WINDOW_TYPE_HINT_NORMAL, NULL);
-	button = gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
-	gchar *tmp_help_p = gebr_geoxml_program_get_help(gebr.program);
-	if (strlen(tmp_help_p) == 0)	
-		gtk_widget_set_sensitive(button, FALSE);
-	g_free(tmp_help_p);
-
-	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Default"), GTK_RESPONSE_APPLY);
-	g_object_set(G_OBJECT(button), "image",
-		     gtk_image_new_from_stock(GTK_STOCK_REVERT_TO_SAVED, GTK_ICON_SIZE_BUTTON), NULL);
-	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
-	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
+	if (row_type != STRUCT_TYPE_PROGRAM)
+		return NULL;
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line );
 	GebrMaestroInfo *info;
@@ -77,51 +113,59 @@ parameters_configure_setup_ui(void)
 	else
 		info = NULL;
 
-	GebrGeoXmlSequence *clone = gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program));
-
-	gchar *name;
-	GebrMaestroServerGroupType type;
+	gchar *name = NULL;
+	GebrMaestroServerGroupType type = 0;
 	gdouble speed = gebr_interface_get_execution_speed();
-	gebr_flow_browse_get_current_group(gebr.ui_flow_browse, &type, &name);
 
-	gebr_ui_flow_update_prog_mpi_nprocess(GEBR_GEOXML_PROGRAM(clone), maestro, speed, name, type);
+	gebr_ui_flow_update_prog_mpi_nprocess(gebr.program, maestro, speed, name, type);
 
-	program_edit = gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(clone), NULL,
-						      FALSE, gebr.validator, info);
+	program_edit = gebr_gui_program_edit_setup_ui(gebr.program, NULL,
+						      FALSE, gebr.validator, info, FALSE);
+	gebr_gui_program_edit_set_validated_callback(program_edit, on_validated, NULL);
 
-	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), program_edit);
-	g_signal_connect(dialog, "delete-event", G_CALLBACK(parameters_on_delete_event), program_edit);
+	GtkWidget *hbox_buttons = gtk_hbox_new(FALSE, 0);
+	GtkWidget *button_default = gtk_button_new_with_mnemonic(_("Reset"));
+	GtkWidget *button_help = gtk_button_new_with_mnemonic(_("_Help"));
 
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), program_edit->widget, TRUE, TRUE, 0);
-	gtk_widget_show(dialog);
+	g_signal_connect(program_edit->widget, "event", G_CALLBACK(on_parameters_key_press), program_edit);
+	g_signal_connect(button_default, "clicked", G_CALLBACK(on_parameters_default_button_clicked), program_edit);
+	g_signal_connect(button_help, "clicked", G_CALLBACK(on_parameters_help_button_clicked), program_edit);
+ 
+	gtk_box_pack_end(GTK_BOX(hbox_buttons), button_help, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_buttons), button_default, FALSE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(program_edit->widget), hbox_buttons, FALSE, TRUE, 5);
 
-	/* adjust window size to fit parameters horizontally */
-	gdouble width;
-	width = GTK_BIN(GTK_BIN(program_edit->scrolled_window)->child)->child->allocation.width + 30;
-	if (width >= gdk_screen_get_width(gdk_screen_get_default()))
-		gtk_window_maximize(GTK_WINDOW(dialog));
-	else
-		gtk_widget_set_size_request(dialog, width, 500);
+	gtk_widget_show_all(program_edit->widget);
+	return program_edit;
 }
 
 gboolean
 validate_selected_program(GError **error)
 {
 	GtkTreeIter iter;
-	flow_edition_get_selected_component(&iter, FALSE);
+	if (!flow_browse_get_selected(&iter, FALSE))
+		return FALSE;
 	return validate_program_iter(&iter, error);
 }
 
 gboolean
 validate_program_iter(GtkTreeIter *iter, GError **error)
 {
+	GebrUiFlowBrowseType type;
+	GebrUiFlowProgram *ui_program;
 	gboolean never_opened;
 	GebrGeoXmlProgram *program;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
-			   FSEQ_GEBR_GEOXML_POINTER, &program,
-			   FSEQ_NEVER_OPENED, &never_opened,
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), iter,
+			   FB_STRUCT_TYPE, &type,
+	                   FB_STRUCT, &ui_program,
 			   -1);
+
+	if (type != STRUCT_TYPE_PROGRAM)
+		return FALSE;
+
+	never_opened = gebr_ui_flow_program_get_flag_opened(ui_program);
+	program = gebr_ui_flow_program_get_xml(ui_program);
 
 	if (never_opened)
 		return FALSE;
@@ -129,88 +173,5 @@ validate_program_iter(GtkTreeIter *iter, GError **error)
 	if (gebr_geoxml_program_is_valid(program, gebr.validator, error))
 		return TRUE;
 
-	return FALSE;
-}
-
-/* Private functions {{{1*/
-static void
-parameters_actions(GtkDialog *dialog, gint response, GebrGuiProgramEdit *program_edit)
-{
-	switch (response) {
-	case GTK_RESPONSE_OK:{
-		GtkTreeIter iter;
-		const gchar * icon;
-
-		gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(program_edit->program),
-						 GEBR_GEOXML_SEQUENCE(gebr.program));
-		gebr_geoxml_object_ref(gebr.program);
-		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(gebr.program));
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
-
-		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program_edit->program));
-
-		/* Update interface */
-		flow_edition_get_selected_component(&iter, FALSE);
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-				   FSEQ_GEBR_GEOXML_POINTER, program_edit->program,
-				   FSEQ_ICON_COLUMN, icon,
-				   FSEQ_NEVER_OPENED, FALSE,
-				   -1);
-		flow_edition_select_component_iter(&iter);
-
-		GebrGeoXmlProgram *program = program_edit->program;
-		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-			if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
-				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
-				GebrGeoXmlSequence *parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-				gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
-			} else {
-				gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
-				GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
-				const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
-				gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
-			}
-		}
-
-		if (validate_selected_program(NULL))
-			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
-		else
-			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
-
-		flow_edition_set_io();
-		gebr_flow_edition_update_speed_slider_sensitiveness(gebr.ui_flow_edition);
-
-		/* Update parameters review on Flow Browse */
-		gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse);
-
-		break;
-	}
-	case GTK_RESPONSE_APPLY: {
-		GebrGeoXmlParameters *params;
-		params = gebr_geoxml_program_get_parameters(program_edit->program);
-		gebr_geoxml_parameters_reset_to_default(params);
-		gebr_gui_program_edit_reload(program_edit, NULL);
-		gebr_geoxml_object_unref(params);
-		return;
-	}
-	case GTK_RESPONSE_HELP:
-		gebr_help_show_selected_program_help();
-		return;
-	case GTK_RESPONSE_CANCEL:
-	default:
-		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program_edit->program));
-		break;
-	}
-
-	gebr_gui_program_edit_destroy(program_edit);
-	gtk_widget_destroy(GTK_WIDGET(dialog));
-}
-
-static gboolean
-parameters_on_delete_event(GtkDialog *dialog,
-			   GdkEventAny *event,
-			   GebrGuiProgramEdit *program_edit)
-{
-	parameters_actions(dialog, GTK_RESPONSE_CANCEL, program_edit);
 	return FALSE;
 }

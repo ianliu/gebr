@@ -39,12 +39,12 @@
 
 #include "ui_parameters.h"
 #include "ui_document.h"
-#include "gebr-flow-edition.h"
 #include "gebr.h"
 #include "flow.h"
 #include "ui_help.h"
 #include "document.h"
 #include "ui_project_line.h"
+#include "ui_flow_browse.h"
 #include "ui_paths.h"
 #include "line.h"
 #include "gebr-expr.h"
@@ -556,7 +556,7 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 static void
 close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *data)
 {
-	flow_edition_revalidate_programs();
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GebrGeoXmlSequence *i_parameter;
@@ -573,7 +573,7 @@ close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *da
 	}
 
 	if (gebr.flow)
-		flow_edition_set_io();
+		flow_browse_validate_io(gebr.ui_flow_browse);
 
 	gtk_widget_destroy(dialog);
 
@@ -672,7 +672,7 @@ void document_dict_edit_setup_ui(void)
 	gebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
 
 	dialog_title = g_string_new(NULL);
-	g_string_printf(dialog_title, _("Variables dictionary for %s \"%s\""),
+	g_string_printf(dialog_title, _("Dictionary of variables for %s \"%s\""),
 			document_get_name_from_type(document, FALSE), gebr_geoxml_document_get_title(document));
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 					     GTK_WINDOW(gebr.window),
@@ -847,61 +847,6 @@ void document_dict_edit_setup_ui(void)
 	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), data);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	g_string_free(dialog_title, TRUE);
-}
-
-static GList *program_list_from_used_variables(const gchar *var_name)
-{
-	GtkTreeIter iter;
-	GList *list = NULL;
-	gboolean valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
-	for(; valid; valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter)) {
-		GebrGeoXmlProgram *program;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
-		if (!program)
-			continue;
-
-//FIXME: Warnings on loop
-		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
-			continue;
-
-		if (gebr_geoxml_program_is_var_used(program, var_name))
-			list = g_list_prepend(list, gtk_tree_iter_copy(&iter));
-	}
-	return list;
-}
-
-static void program_list_warn_undefined_variable(GList * program_list, gboolean var_exists)
-{
-	GebrGeoXmlProgram *program;
-
-	for (GList *i = program_list; i; i = i->next) {
-		GtkTreeIter *it = i->data;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), it,
-		                   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
-		if (!var_exists) {
-			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
-			gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_UNDEF_VAR);
-		} else {
-			if (validate_program_iter(it, NULL))
-				flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, it);
-			else
-				flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
-		}
-	}
-}
-
-static void program_list_free(GList * program_list)
-{
-	g_list_foreach(program_list,(GFunc)gtk_tree_iter_free, NULL);
-	g_list_free(program_list);
-}
-
-void dict_edit_check_programs_using_variables(const gchar *var_name, gboolean var_exists)
-{
-	GList *list = program_list_from_used_variables(var_name);
-	program_list_warn_undefined_variable(list, var_exists);
-	program_list_free(list);
 }
 
 //==============================================================================
@@ -1454,7 +1399,6 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 	else
 		data->is_inserting_new = FALSE;
 
-	//dict_edit_check_programs_using_variables(new_text, TRUE);
 }
 
 /*
@@ -1738,9 +1682,6 @@ save_document_properties(GebrPropertiesData *data)
 		project_line_info_update();
 		break;
 	} case GEBR_GEOXML_DOCUMENT_TYPE_FLOW: {
-		flow_browse_get_selected(&iter, FALSE);
-		gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
-				   FB_TITLE, gebr_geoxml_document_get_title(data->document), -1);
 		flow_browse_info_update();
 		break;
 	} default:

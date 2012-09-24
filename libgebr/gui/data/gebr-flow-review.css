@@ -9,18 +9,22 @@
 */
 .programs .title {
 	font-size: 14px;
-	padding-left: 4px;
+	padding-left: 10px;
+	padding-bottom: 0px;
+
 }
 .programs .description {
-	font-size: 12px;
-	padding-left: 2px;
+	font-size: 11px;
+	font-style: italic;
+	padding-left: 10px;
 	padding-bottom: 2px;
 }
 .parameters {
-	font-size: 12px;
+	font-size: 11px;
 	margin-top: 10px;
 	margin-right: 10px;
-	margin-left: 10px;
+	margin-left: 30px;
+	background: #ffffff;
 }
 .parameters caption {
 	display:none;
@@ -31,12 +35,19 @@
 	content: \"I/O Table\";
 }
 .io table {
-	font-size: 12px;
+	font-size: 11px;
 	text-align: left;
 	margin-top: 15px;
 	margin-right: 10px;
 	margin-left: 15px;
+	background: #ffffff;
 }
 .io caption {
 	display:none;
+}
+
+body {
+    background-attachment: fixed;
+    background: #f9f5f3 url('pixmaps/flows-review-bg.png') top right repeat-x;
+    margin-top: 40px;
 }

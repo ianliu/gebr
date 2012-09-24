@@ -39,6 +39,7 @@ glade_DATA = \
 	gebr-connections-settings.glade \
 	flow-properties.glade \
 	snapshot-revert.glade\
+	gebr-execution-details.glade\
 	l.png \
 	$(NULL)
 

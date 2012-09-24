@@ -758,38 +758,76 @@ gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError **
 	return TRUE;
 }
 
-gchar *
-gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2)
+gdouble
+gebr_get_lower_bound_for_type(TimesType type)
 {
-	glong time_diff = time2->tv_sec - time1->tv_sec;
-	if ( time_diff < 0) 
+	if (type == TIME_MOMENTS_AGO)
+		return -100;
+	if (type == TIME_HOURS_AGO)
+		return 3600;
+	if (type == TIME_DAYS_AGO)
+		return 86400;
+	if (type == TIME_WEEKS_AGO)
+		return 86400*7;
+	if (type == TIME_MONTHS_AGO)
+		return 2678400;
+	if (type == TIME_YEARS_AGO)
+		return 32140800;
+
+	return 0;
+}
+
+gchar *
+gebr_get_control_text_for_type(TimesType type)
+{
+	if (type == TIME_MOMENTS_AGO)
+		return g_strdup(_("Moments ago"));
+	if (type == TIME_HOURS_AGO)
+		return g_strdup(_("Hours ago"));
+	if (type == TIME_DAYS_AGO)
+		return g_strdup(_("Days ago"));
+	if (type == TIME_WEEKS_AGO)
+		return g_strdup(_("Weeks ago"));
+	if (type == TIME_MONTHS_AGO)
+		return g_strdup(_("Months ago"));
+	if (type == TIME_YEARS_AGO)
+		return g_strdup(_("Years ago"));
+
+	return NULL;
+}
+
+gchar *
+gebr_calculate_relative_time (GTimeVal *time1,
+                              GTimeVal *time2,
+                              TimesType *_type,
+                              gdouble *delta)
+{
+	TimesType type;
+	gdouble time_diff = (time2->tv_sec - time1->tv_sec) + (time2->tv_usec - time1->tv_usec)/1000000.0;
+
+	if ( time_diff < 0)
 		return NULL;
-	else if ( time_diff < 5)
-		return (g_strdup(_("A moment")));
-	else if ( time_diff < 60)
-		return (g_strdup_printf(_("%ld seconds"), time_diff));
-	else if ( time_diff < 60*2)
-		return (g_strdup(_("1 minute")));
-	else if ( time_diff < 3600)
-		return (g_strdup_printf(_("%ld minutes"), (time_diff)/60));
-	else if ( time_diff < 3600*2)
-		return (g_strdup_printf(_("1 hour")));
+
+	if (delta)
+		*delta = time_diff;
+
+	if ( time_diff < 3600)
+		type = TIME_MOMENTS_AGO;
 	else if ( time_diff < 86400)
-		return (g_strdup_printf(_("%ld hours"), (time_diff)/3600));
-	else if ( time_diff < 86400*2)
-		return (g_strdup_printf(_("1 day")));
-	else if ( time_diff < 604800)
-		return (g_strdup_printf(_("%ld days"), (time_diff)/86400));
-	else if ( time_diff < 604800*2)
-		return (g_strdup_printf(_("1 week")));
+		type = TIME_HOURS_AGO;
+	else if ( time_diff < 86400*7)
+		type = TIME_DAYS_AGO;
 	else if ( time_diff < 2678400)
-		return (g_strdup_printf(_("%ld weeks"), (time_diff)/604800));
-	else if ( time_diff < 2678400*2)
-		return (g_strdup_printf(_("1 month")));
+		type = TIME_WEEKS_AGO;
 	else if ( time_diff < 32140800)
-		return (g_strdup_printf(_("%ld months"), (time_diff)/2678400));
-	else 
-		return (g_strdup(_("More than a year")));
+		type = TIME_MONTHS_AGO;
+	else
+		type = TIME_YEARS_AGO;
+
+	if (_type)
+		*_type = type;
+
+	return gebr_get_control_text_for_type(type);
 }
 
 gchar *
@@ -1207,7 +1245,7 @@ gebr_validate_path(const gchar *path,
 		   gchar ***pvector,
 		   gchar **err_msg)
 {
-	if (!*path)
+	if (!path || !*path)
 		return TRUE;
 
 	for (int i = 0; pvector[i]; i++) {
@@ -1218,9 +1256,9 @@ gebr_validate_path(const gchar *path,
 	if (*path != '/') {
 		if (err_msg) {
 			if (*path == '<')
-				*err_msg = g_strdup(_("The specified line path does not exist"));
+				*err_msg = g_markup_escape_text(_("The specified line path does not exist"), -1);
 			else
-				*err_msg = g_strdup(_("The path must either start with < or /"));
+				*err_msg = g_markup_escape_text(_("The path must either start with < or /"), -1);
 		}
 		return FALSE;
 	}

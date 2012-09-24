@@ -101,6 +101,7 @@ void on_flow_delete_activate(void);
 
 void on_flow_execute_activate(void);
 
+void on_flow_execute_details_activate(void);
 /** 
  * Call #flow_revision_save
  */
@@ -123,14 +124,6 @@ void on_flow_component_properties_activate(void);
  *
  */
 void on_flow_component_refresh_activate(void);
-
-/**
- * on_flow_component_refresh_activate:
- *
- * Call #flow_edition_status_changed
- */
-void on_flow_component_status_activate(GtkAction *action,
-				       gpointer user_data);
 
 void on_flow_component_move_top(void);
 
@@ -222,6 +215,14 @@ void on_server_common_stop(void);
  * Open url of gebrproject to install SU samples
  */
 void open_url_on_press_event(void);
+
+/*
+ * Function: on_flows_escape_context
+ * Return to Flows context on Flow Browse
+ */
+void on_flows_escape_context(void);
+
+void on_flow_component_status_activate(GtkToggleAction *toggleaction);
 
 G_END_DECLS
 

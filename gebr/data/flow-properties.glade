@@ -207,17 +207,6 @@
       </packing>
     </child>
     <child>
-      <object class="GtkVBox" id="menu_box">
-        <property name="visible">True</property>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-      <packing>
-        <property name="position">4</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkVBox" id="info_jobs_box">
         <child>
         	 <object class="GtkInfoBar" id="info_run">
@@ -292,10 +281,15 @@
         <property name="position">5</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkVBox" id="parameters_ctx_box"/>
+      <packing>
+        <property name="position">4</property>
+      </packing>
+    </child>
   </object>
   <object class="GtkVBox" id="main_rev">
     <property name="visible">True</property>
-    <property name="border_width">5</property>
     <child>
       <object class="GtkVBox" id="revisions_main">
         <property name="visible">True</property>
@@ -305,7 +299,6 @@
             <child>
               <object class="GtkVBox" id="graph_box">
                 <property name="visible">True</property>
-                <property name="border_width">5</property>
                 <child>
                   <placeholder/>
                 </child>

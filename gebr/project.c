@@ -150,7 +150,6 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&line), line_source, &project_iter, FALSE);
 		gchar *proj_maestro = gebr_geoxml_line_get_maestro(line);
 		if (g_strcmp0(proj_maestro, "") == 0) {
-			g_debug("................................ SEM MAETRO");
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 			if (maestro) {
 				const gchar *actual_maestro_addr = gebr_maestro_server_get_address(maestro);
@@ -195,8 +194,7 @@ void project_list_populate(void)
 
 	/* free previous selection path */
 	gtk_tree_store_clear(gebr.ui_project_line->store);
-	gtk_list_store_clear(gebr.ui_flow_browse->store);
-	gtk_list_store_clear(gebr.ui_flow_edition->fseq_store);
+	gtk_tree_store_clear(gebr.ui_flow_browse->store);
 
 	project_line_free();
 

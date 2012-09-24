@@ -31,12 +31,13 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
 
-#include "gebr-flow-edition.h"
 #include "interface.h"
 #include "gebr.h"
 #include "flow.h"
 #include "callbacks.h"
 #include "menu.h"
+#include "ui_flow_execution.h"
+#include "gebr-menu-view.h"
 
 #define SLIDER_MAX 8.0
 #define SLIDER_100 5.0
@@ -84,8 +85,8 @@ static const GtkActionEntry actions_entries_project_line[] = {
 		"Delete", N_("Delete selected Projects and Lines"), G_CALLBACK(on_project_line_delete_activate)},
 	{"project_line_properties", "kontact_todo", N_("Properties"),
 		NULL, N_("Edit properties"), G_CALLBACK(on_document_properties_activate)},
-	{"project_line_dict_edit", "accessories-dictionary", N_("Variables dictionary"),
-		NULL, N_("Edit variables dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
+	{"project_line_dict_edit", "accessories-dictionary", N_("Dictionary of variables"),
+		NULL, N_("Edit dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
 	{"project_line_import", "document-import", N_("Import"),
 		NULL, N_("Import Projects or Lines"), G_CALLBACK(on_project_line_import_activate)},
 	{"project_line_export", "document-export", N_("Export"),
@@ -104,12 +105,12 @@ static const GtkActionEntry actions_entries_flow[] = {
 		"<Control>F", N_("New"), G_CALLBACK(on_new_activate)},
 	{"flow_new_program", GTK_STOCK_NEW, N_("New Program"),
 		NULL, NULL, G_CALLBACK(on_new_program_activate)},
-	{"flow_delete", GTK_STOCK_DELETE, NULL, "Delete",
-		N_("Delete"), G_CALLBACK(on_flow_delete_activate)},
+	{"flow_delete", GTK_STOCK_DELETE, NULL,
+		NULL, N_("Delete"), G_CALLBACK(on_flow_delete_activate)},
 	{"flow_properties", "kontact_todo", N_("Properties"),
 		NULL, N_("Edit properties"), G_CALLBACK(on_document_properties_activate)},
-	{"flow_dict_edit", "accessories-dictionary", N_("Variables dictionary"),
-		NULL, N_("Edit variables dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
+	{"flow_dict_edit", "accessories-dictionary", N_("Dictionary of variables"),
+		NULL, N_("Edit dictionary of variables"), G_CALLBACK(on_document_dict_edit_activate)},
 	{"flow_change_revision", "document-open-recent", N_("Take a Snapshot"),
 		"<Control>S", N_("Take a snapshot"), G_CALLBACK(on_flow_revision_save_activate)},
 	{"flow_import", "document-import", N_("Import"), NULL,
@@ -118,6 +119,8 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("Export selected Flows"), G_CALLBACK(on_flow_export_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL,
 		"<Control>R", N_("Execute"), G_CALLBACK(on_flow_execute_activate)},
+	{"flow_execute_details", "detailed_execution", NULL,
+		NULL, N_("Execution details"), G_CALLBACK(on_flow_execute_details_activate)},
 	{"flow_execute_parallel", NULL, NULL,
 		"<Control><Shift>R", NULL, G_CALLBACK(on_flow_execute_parallel_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
@@ -137,8 +140,8 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	{"flow_edition_help", GTK_STOCK_HELP, NULL,
 		"<Control><Shift>h", N_("Show Program's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
-		"Delete", N_("Delete"), G_CALLBACK(on_flow_component_delete_activate)},
-	{"flow_edition_properties",  "kontact_todo", N_("Properties"),
+		NULL, N_("Delete"), G_CALLBACK(on_flow_component_delete_activate)},
+	{"flow_edition_properties",  "kontact_todo", N_("Edit Parameters"),
 		NULL, N_("Edit the Program's parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
 		NULL, N_("Refresh Menu list"), G_CALLBACK(on_flow_component_refresh_activate)},
@@ -152,6 +155,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
 		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_execute_activate)},
+	{"escape", "escape", NULL, "Escape", NULL, G_CALLBACK(on_flows_escape_context)}
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {
@@ -168,13 +172,9 @@ static const GtkActionEntry actions_entries_job_control[] = {
 		NULL, N_("Filter jobs by group, node and status"), NULL},
 };
 
-static const GtkActionEntry status_action_entries[] = {
-	{"flow_edition_status_configured", NULL, N_("Configured"),
-		NULL, N_("Change the selected Programs status to configured"), NULL},
-	{"flow_edition_status_disabled", NULL, N_("Disabled"),
-		NULL, N_("Change the selected Programs status to disabled"), NULL},
-	{"flow_edition_status_unconfigured", NULL, N_("Not configured"),
-		NULL, N_("Change the selected Programs status to not configured"), NULL}
+static const GtkToggleActionEntry status_action_entries[] = {
+	{"flow_edition_toggle_status", NULL, N_("Enabled"),
+		NULL, N_("Toggle the status of the selected programs"), NULL}
 };
 
 /*
@@ -183,219 +183,144 @@ static const GtkActionEntry status_action_entries[] = {
 
 static void assembly_menus(GtkMenuBar * menu_bar);
 
-static gdouble
-calculate_speed_from_slider_value(gdouble x)
-{
-	if (x > SLIDER_100)
-		return (VALUE_MAX - SLIDER_100) / (SLIDER_MAX - SLIDER_100) * (x - SLIDER_100) + SLIDER_100;
-	else
-		return x;
-}
-
-gdouble
-gebr_interface_calculate_slider_from_speed(gdouble speed)
-{
-	if (speed > SLIDER_100)
-		return (SLIDER_MAX - SLIDER_100) * (speed - SLIDER_100) / (VALUE_MAX - SLIDER_100) + SLIDER_100;
-	else
-		return speed;
-}
-
-static void
-adjustment_value_changed(GtkAdjustment *adj)
-{
-	gdouble value = gtk_adjustment_get_value(adj);
-	gebr.config.flow_exec_speed = calculate_speed_from_slider_value(value);
-}
-
-static void
-value_changed(GtkRange *range, gpointer user_data)
-{
-	GtkWidget *speed_button = user_data;
-	GtkImage *speed_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(speed_button)));
-	gdouble value = gtk_range_get_value(range);
-	const gchar *icon = gebr_interface_get_speed_icon(value);
-	if (icon)
-		gtk_image_set_from_stock(speed_button_image, icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
-}
-
 static gboolean
-change_value(GtkRange *range, GtkScrollType scroll, gdouble value)
+on_menu_button_clicked(GtkWidget   *widget,
+		       GdkEventKey *event)
 {
-	GtkAdjustment *adj = gtk_range_get_adjustment(range);
-	gdouble min, max;
-
-	min = gtk_adjustment_get_lower(adj);
-	max = gtk_adjustment_get_upper(adj);
-
-	gdouble speed = CLAMP (value, min, max);
-
-	gtk_adjustment_set_value(adj, speed);
-
-	return TRUE;
-}
-
-const gchar *
-gebr_interface_set_text_for_performance(gdouble value)
-{
-	if (value <= 0.1)
-	    return _(g_strdup_printf("1 core"));
-	else if (value < (SLIDER_100))
-	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*20));
-	else if (value <= 400)
-	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*100 - 400));
-	else
-		g_return_val_if_reached(NULL);
-}
-
-static gboolean
-speed_controller_query_tooltip(GtkWidget  *widget,
-			       gint        x,
-			       gint        y,
-			       gboolean    keyboard_mode,
-			       GtkTooltip *tooltip,
-			       gpointer    user_data)
-{
-	GtkRange *scale = GTK_RANGE(widget);
-	gdouble value = gtk_range_get_value(scale);
-	const gchar *text_tooltip;
-	text_tooltip = gebr_interface_set_text_for_performance(value);
-	gtk_tooltip_set_text (tooltip, text_tooltip);
-	return TRUE;
-}
-
-static gboolean
-speed_button_tooltip (GtkWidget  *widget,
-                      gint        x,
-                      gint        y,
-                      gboolean    keyboard_mode,
-                      GtkTooltip *tooltip,
-                      gpointer    user_data)
-{
-	gdouble value = gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed);
-
-	const gchar *speed;
-	speed = gebr_interface_set_text_for_performance(value);
-	const gchar * text_tooltip = g_strdup_printf(_("Execution dispersion: %s"), speed);
-	gtk_tooltip_set_text (tooltip, text_tooltip);
-
-	return TRUE;
-}
-
-static void
-priority_button_toggled(GtkToggleButton *b1,
-			GtkToggleButton *b2)
-{
-	gboolean active = gtk_toggle_button_get_active(b1);
-
-	if (active) {
-		g_signal_handlers_block_by_func(b2, priority_button_toggled, b1);
-		gtk_toggle_button_set_active(b2, FALSE);
-		g_signal_handlers_unblock_by_func(b2, priority_button_toggled, b1);
-		gebr.config.niceness = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(b1), "nice"));
-	} else {
-		g_signal_handlers_block_by_func(b1, priority_button_toggled, b2);
-		gtk_toggle_button_set_active(b1, TRUE);
-		g_signal_handlers_unblock_by_func(b1, priority_button_toggled, b2);
-	}
+       menu_list_populate();
+       return FALSE;
 }
 
 /*
- * Updates the value of the scale
+ * Inserts View MenuList button inside the toolbar of Flows tab.
  */
-static void 
-on_show_scale(GtkWidget * scale)
+static void
+insert_popup_menulist (GtkToolbar *toolbar)
 {
-	gtk_range_set_value(GTK_RANGE(scale),
-			    gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed));
+	GtkToolItem *menu_item = gtk_tool_item_new();
+	GtkWidget *menu_button = gebr_gui_tool_button_new();
+	gebr.menu_button = GTK_TOGGLE_BUTTON(menu_button);
+	GtkWidget *image = gtk_image_new();
+
+	gtk_button_set_relief(GTK_BUTTON(menu_button), GTK_RELIEF_NONE);
+	gtk_image_set_from_stock(GTK_IMAGE(image), "menu-list-icon", GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add(GTK_CONTAINER(menu_button), image);
+	gtk_widget_set_can_focus(menu_button, FALSE);
+	gtk_widget_set_tooltip_text(menu_button, "View Menu list");
+
+       g_signal_connect(menu_button, "button-press-event",
+                        G_CALLBACK(on_menu_button_clicked), NULL);
+       g_signal_connect(menu_button, "key-press-event",
+                        G_CALLBACK(on_menu_button_clicked), NULL);
+
+	GtkWidget *menu_view = gebr_menu_view_get_widget(gebr.menu_view);
+	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(menu_button), menu_view);
+	gtk_widget_show_all(menu_view);
+
+	gtk_widget_show_all(menu_button);
+	gtk_container_add(GTK_CONTAINER(menu_item), menu_button);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), menu_item, -1);
+}
+
+static GtkWidget *
+add_more_project_line_options(GtkWidget *widget)
+{
+	GtkWidget *menu;
+
+	menu = gtk_menu_new();
+
+	GtkWidget *dictionary = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(dictionary), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), dictionary);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *view_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(view_report), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), view_report);
+
+	GtkWidget *edit_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(edit_report), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), edit_report);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *import = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(import), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), import);
+
+	GtkWidget *export = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(export), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), export);
+
+	return menu;
+}
+
+static GtkWidget *
+add_more_flows_options(GtkWidget *widget)
+{
+	GtkWidget *menu;
+
+	menu = gtk_menu_new();
+
+	GtkWidget *copy = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(copy), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), copy);
+
+	GtkWidget *paste = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(paste), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), paste);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *dictionary = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(dictionary), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), dictionary);
+
+	GtkWidget *snapshot = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(snapshot), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), snapshot);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *view_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(view_report), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), view_report);
+
+	GtkWidget *edit_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(edit_report), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), edit_report);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	GtkWidget *import = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(import), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), import);
+
+	GtkWidget *export = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"));
+	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(export), TRUE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), export);
+
+	return menu;
 }
 
 /*
- * Inserts a speed controler inside a toolbar,
- * which is a GtkScale to control the performance of flow execution.
+ * Inserts more buttons inside the toolbar of Project and Lines tab.
  */
 static void
-insert_speed_controler(GtkToolbar *toolbar,
-		       GtkWidget **toggle_high,
-		       GtkWidget **toggle_low,
-		       GtkWidget **speed,
-		       GtkWidget **speed_slider,
-		       GtkWidget **ruler
-		       )
+insert_more_button (GtkToolbar *toolbar,
+                    gboolean is_flows)
 {
-	if (!gebr.flow_exec_adjustment) {
-		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, SLIDER_MAX, 0.1, 1, 0.1));
-		g_signal_connect(gebr.flow_exec_adjustment, "value-changed", G_CALLBACK(adjustment_value_changed), NULL);
-	}
+	GtkToolItem *more_item = gtk_tool_button_new(NULL, _("More"));
 
-	GtkToolItem *speed_item = gtk_tool_item_new();
-	GtkWidget *speed_button = gebr_gui_tool_button_new();
-	GtkWidget *h_separator = gtk_hseparator_new();
-	gtk_button_set_relief(GTK_BUTTON(speed_button), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(speed_button), gtk_image_new());
+	if (!is_flows)
+		gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(more_item)),
+		                                                (GebrGuiDropDownFunc)add_more_project_line_options, NULL);
+	else
+		gebr_gui_gtk_widget_set_drop_down_menu_on_click(gtk_bin_get_child(GTK_BIN(more_item)),
+		                                                (GebrGuiDropDownFunc)add_more_flows_options, NULL);
 
-	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
-	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
-	GtkWidget *scale = gtk_hscale_new(gebr.flow_exec_adjustment);
-	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
-	gtk_scale_set_digits(GTK_SCALE(scale), 1);
-
-	gdouble med = SLIDER_100 / 2.0;
-	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), (med/2), GTK_POS_LEFT, "");
-	gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), ((med+SLIDER_100)/2), GTK_POS_LEFT, "");
-	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_100+1), GTK_POS_LEFT, "");
-	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_MAX-1), GTK_POS_LEFT, "");
-	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
-
-	g_object_set(scale, "has-tooltip",TRUE, NULL);
-
-	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
-	g_signal_connect(scale, "value-changed", G_CALLBACK(value_changed), speed_button);
-	g_signal_connect(scale, "query-tooltip", G_CALLBACK(speed_controller_query_tooltip), NULL);
-	g_signal_connect(scale, "map", G_CALLBACK(on_show_scale), NULL);
-
-	gtk_box_pack_start(GTK_BOX(hbox), scale, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), h_separator, FALSE, FALSE, 0);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-
-	GtkWidget *high = gtk_toggle_button_new_with_label(_("High priority"));
-	GtkWidget *low = gtk_toggle_button_new_with_label(_("Low priority"));
-	gtk_widget_set_can_focus(high, FALSE);
-	gtk_widget_set_can_focus(low, FALSE);
-	gtk_button_set_relief(GTK_BUTTON(high), GTK_RELIEF_NONE);
-	gtk_button_set_relief(GTK_BUTTON(low), GTK_RELIEF_NONE);
-	gtk_widget_set_tooltip_text(high, _("Share available resources"));
-	gtk_widget_set_tooltip_text(low, _("Wait for free resources"));
-	g_object_set_data(G_OBJECT(high), "nice", GINT_TO_POINTER(0));
-	g_object_set_data(G_OBJECT(low), "nice", GINT_TO_POINTER(19));
-	g_signal_connect(high, "toggled", G_CALLBACK(priority_button_toggled), low);
-	g_signal_connect(low, "toggled", G_CALLBACK(priority_button_toggled), high);
-	gtk_box_pack_end(GTK_BOX(hbox), high, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), low, TRUE, TRUE, 0);
-
-	*toggle_high = high;
-	*toggle_low = low;
-	*speed = speed_button;
-	*speed_slider = scale;
-	*ruler = h_separator;
-
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_widget_show_all(vbox);
-	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(speed_button), vbox);
-
-	g_object_set(speed_button, "has-tooltip",TRUE, NULL);
-	g_signal_connect(speed_button, "query-tooltip", G_CALLBACK(speed_button_tooltip), NULL);
-
-	gtk_widget_show_all(speed_button);
-	gtk_container_add(GTK_CONTAINER(speed_item), speed_button);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), speed_item, -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(more_item), -1);
 }
 
 /*
@@ -409,11 +334,9 @@ void gebr_setup_ui(void)
 {
 	GtkWidget *main_vbox;
 	GtkWidget *menu_bar;
-	GtkWidget *navigation_hbox;
 
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
-	GtkAction *action;
 
 	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment for\nseismic processing tools"));
 
@@ -458,7 +381,7 @@ void gebr_setup_ui(void)
 
 	gebr.action_group_status = gtk_action_group_new("Status");
 	gtk_action_group_set_translation_domain(gebr.action_group_status, GETTEXT_PACKAGE);
-	gtk_action_group_add_actions(gebr.action_group_status, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
+	gtk_action_group_add_toggle_actions(gebr.action_group_status, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
 	gebr.accel_group_array[ACCEL_STATUS] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_status, gebr.accel_group_array[ACCEL_STATUS]);
 
@@ -479,21 +402,16 @@ void gebr_setup_ui(void)
 	gtk_widget_show_all(menu_bar);
 
 	/*
-	 * Create navigation bar
-	 */
-	navigation_hbox = gtk_hbox_new(FALSE, 2);
-	gtk_box_pack_start(GTK_BOX(main_vbox), navigation_hbox, FALSE, FALSE, 4);
-	gebr.navigation_box_label = gtk_label_new(NULL);
-	gtk_box_pack_start(GTK_BOX(navigation_hbox), gebr.navigation_box_label, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(navigation_hbox);
-
-	/*
 	 * Notebook
 	 */
 	gebr.notebook = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(main_vbox), gebr.notebook, TRUE, TRUE, 0);
 	gtk_widget_show(gebr.notebook);
+
+	/*
+	 * Create Menu View
+	 */
+	gebr.menu_view = gebr_menu_view_new();
 
 	/*
 	 * Notebook's page "Projects and Lines"
@@ -514,44 +432,21 @@ void gebr_setup_ui(void)
 			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"))),
 			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"))),
-			   -1);
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
 
-	GtkToolItem *help_view = GTK_TOOL_ITEM(gtk_action_create_tool_item
-				(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view")));
-	GtkToolItem *help_edit = GTK_TOOL_ITEM(gtk_action_create_tool_item
-				(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit")));
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(help_view), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(help_edit), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"))), -1);
-
 	gebr.ui_project_line = project_line_setup_ui();
+	insert_more_button (GTK_TOOLBAR(toolbar), FALSE);
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_project_line->widget, TRUE, TRUE, 0);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Projects and Lines")));
 	gtk_widget_show_all(vbox);
-
-	gebr.ui_project_line->info.help_edit = help_edit;
-	gebr.ui_project_line->info.help_view = help_view;
-
 
 	/* Hide line and project properties */
 	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(gebr.ui_project_line->info.builder_proj, "main")));
@@ -561,7 +456,6 @@ void gebr_setup_ui(void)
 	 * Create Structure of Job Control (to use on Flows)
 	 */
 	gebr.job_control = gebr_job_control_new();
-	gebr.ui_flow_edition = flow_edition_setup_ui();
 
 	/*
 	 * Notebook's page "Flows"
@@ -570,57 +464,40 @@ void gebr_setup_ui(void)
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_new"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"))), -1);
+	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
+	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_new"))), -1);
+
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-		                   GTK_TOOL_ITEM(gtk_action_create_tool_item
-		                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"))), -1);
+
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
-	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"))), -1);
+	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_view"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"))), -1);
 
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_import"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_export"))), -1);
+	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
+	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
 
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
+	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
+
+	GtkAction *action;
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_toggle_status");
+	g_signal_connect(action, "toggled", G_CALLBACK(on_flow_component_status_activate), NULL);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui();
 
-	insert_speed_controler(GTK_TOOLBAR(toolbar),
-			       &gebr.ui_flow_browse->nice_button_high,
-			       &gebr.ui_flow_browse->nice_button_low,
-			       &gebr.ui_flow_browse->speed_button,
-			       &gebr.ui_flow_browse->speed_slider,
-			       &gebr.ui_flow_browse->ruler);
+	insert_popup_menulist (GTK_TOOLBAR(toolbar));
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
+
+	insert_more_button (GTK_TOOLBAR(toolbar), TRUE);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -629,53 +506,6 @@ void gebr_setup_ui(void)
 	gtk_widget_show_all(vbox);
 
 	gtk_widget_hide(gebr.ui_flow_browse->info_jobs);
-	gtk_widget_hide(gebr.ui_flow_browse->prog_window);
-	gtk_widget_hide(gebr.ui_flow_browse->menu_window);
-
-	/*
-	 * Notebook's page "Flow edition"
-	 */
-	toolbar = gtk_toolbar_new();
-	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_copy"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_paste"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_delete"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_properties"))),
-			   -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"))), -1);
-
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
-	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED));
-
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_disabled");
-	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_DISABLED));
-
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_unconfigured");
-	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED));
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
-
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"))), -1);
-
-	insert_speed_controler(GTK_TOOLBAR(toolbar),
-			       &gebr.ui_flow_edition->nice_button_high,
-			       &gebr.ui_flow_edition->nice_button_low,
-			       &gebr.ui_flow_edition->speed_button,
-			       &gebr.ui_flow_edition->speed_slider,
-			       &gebr.ui_flow_edition->ruler);
 
 	/*
 	 * Notebook's page "Job control"
@@ -787,6 +617,7 @@ gebr_interface_get_niceness(void)
 void
 gebr_interface_change_tab(enum NOTEBOOK_PAGE page)
 {
+	gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), page);
 }
 
@@ -807,28 +638,4 @@ gebr_interface_get_speed_icon(gdouble value)
 		return "gebr-speed-veryhigh";
 	else
 		g_return_val_if_reached(NULL);
-}
-
-void
-gebr_interface_update_speed_sensitiveness(GtkWidget *button,
-					  GtkWidget *slider,
-					  GtkWidget *ruler,
-					  gboolean sensitive)
-{
-	GtkWidget *child = gtk_bin_get_child(GTK_BIN(button));
-
-	g_return_if_fail(GTK_IS_IMAGE(child) == TRUE);
-
-	if (!sensitive) {
-		gtk_image_set_from_stock(GTK_IMAGE(child), gebr_interface_get_speed_icon(0),
-					 GTK_ICON_SIZE_LARGE_TOOLBAR);
-		gtk_widget_hide(slider);
-		gtk_widget_hide(ruler);
-	} else {
-		gdouble speed = gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed);
-		gtk_image_set_from_stock(GTK_IMAGE(child), gebr_interface_get_speed_icon(speed),
-					 GTK_ICON_SIZE_LARGE_TOOLBAR);
-		gtk_widget_show(slider);
-		gtk_widget_show(ruler);
-	}
 }

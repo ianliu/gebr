@@ -113,6 +113,7 @@ __gtk_tree_view_on_button_pressed(GtkTreeView * tree_view, GdkEventButton * even
 		if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view),
 						  (gint) event->x, (gint) event->y, &path, NULL, NULL, NULL)) {
 			gtk_tree_selection_unselect_all(selection);
+			gtk_tree_view_set_cursor(tree_view, path, NULL, FALSE);
 			gtk_tree_selection_select_path(selection, path);
 			gtk_tree_path_free(path);
 		}
@@ -349,12 +350,12 @@ gboolean gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * i
 	return TRUE;
 }
 
-gulong gebr_gui_gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter)
+gulong gebr_gui_gtk_list_store_get_iter_index(GtkTreeStore * store, GtkTreeIter * iter)
 {
 	gchar *node;
 	gulong index;
 
-	node = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(list_store), iter);
+	node = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(store), iter);
 	index = (gulong) atol(node);
 	g_free(node);
 
@@ -618,8 +619,8 @@ out:	g_list_foreach(list, (GFunc) gtk_tree_iter_free, NULL);
 
 void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
-	GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(tree_view);
-	gtk_tree_selection_unselect_all(tree_selection);
+//	GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(tree_view);
+//	gtk_tree_selection_unselect_all(tree_selection);
 	if (iter == NULL)
 		return;
 
@@ -627,7 +628,7 @@ void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * i
 
 	GtkTreePath * tree_path;
 	tree_path = gtk_tree_model_get_path(gtk_tree_view_get_model(tree_view), iter);
-	gtk_tree_view_set_cursor(tree_view, tree_path, gtk_tree_view_get_column(tree_view, 0), FALSE);
+	gtk_tree_view_set_cursor(tree_view, tree_path, NULL, FALSE);
 	gtk_tree_path_free(tree_path);
 
 	gebr_gui_gtk_tree_view_scroll_to_iter_cell(tree_view, iter);
@@ -933,7 +934,7 @@ popup_position(GtkMenu *m, gint *xp, gint *yp, gboolean *push_in, gpointer user_
 void gebr_gui_gtk_widget_drop_down_menu(GtkWidget * widget, GtkMenu * menu)
 {
 	gtk_widget_show_all(GTK_WIDGET(menu));
-	gtk_menu_popup(menu, NULL, NULL, popup_position, NULL, 0, gtk_get_current_event_time());
+	gtk_menu_popup(menu, NULL, NULL, popup_position, widget, 0, gtk_get_current_event_time());
 }
 
 struct GebrGuiDropDownData {

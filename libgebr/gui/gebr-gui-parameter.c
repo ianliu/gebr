@@ -34,6 +34,14 @@
 #define DOUBLE_MAX +999999999
 #define DOUBLE_MIN -999999999
 
+struct _GebrGuiParameterWidgetPriv
+{
+	struct {
+		GebrGuiParameterValidatedFunc callback;
+		gpointer user_data;
+	} signal_validated;
+};
+
 /* Prototypes {{{1 */
 static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget,
 								GtkEntry *entry);
@@ -643,6 +651,10 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 			parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
 		gebr_gui_parameter_set_min_max(GTK_ENTRY(widget), parameter_widget);
+
+	GebrGuiParameterValidatedFunc func = parameter_widget->priv->signal_validated.callback;
+	if (func)
+		func(parameter_widget, parameter_widget->priv->signal_validated.user_data);
 
 	return FALSE;
 }
@@ -1626,6 +1638,7 @@ static void
 parameter_widget_free(GebrGuiParameterWidget *self)
 {
 	gebr_geoxml_object_unref(self->parameter);
+	g_free(self->priv);
 	g_free(self);
 }
 
@@ -1636,8 +1649,11 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 						      gpointer             data)
 {
 	GebrGuiParameterWidget *self;
+	GebrGuiParameterWidgetPriv *priv;
 
+	priv = g_new0(GebrGuiParameterWidgetPriv, 1);
 	self = g_new(GebrGuiParameterWidget, 1);
+	self->priv = priv;
 
 	/* GebrGuiValidatable interface implementation */
 	self->parent.set_icon = parameter_widget_set_icon;
@@ -1821,4 +1837,12 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
 		gtk_image_clear(GTK_IMAGE(icon));
 
 	return invalid;
+}
+
+void
+gebr_gui_parameter_widget_set_validated_callback(GebrGuiParameterWidget *widget,
+		GebrGuiParameterValidatedFunc callback, gpointer user_data)
+{
+	widget->priv->signal_validated.callback = callback;
+	widget->priv->signal_validated.user_data = user_data;
 }

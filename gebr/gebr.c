@@ -92,6 +92,7 @@ gebr_init(gboolean has_config)
 	gebr.flow = NULL;
 	gebr.program = NULL;
 	gebr.flow_clipboard = NULL;
+	gebr.ui_flow_execution = NULL;
 
 	gebr.current_report.report_wind = NULL;
 	gebr.current_report.report_group = NULL;
@@ -140,10 +141,6 @@ gebr_init(gboolean has_config)
 
 	gebr_post_config(has_config);
 
-	gtk_adjustment_set_value(gebr.flow_exec_adjustment,
-				 gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed));
-	gtk_adjustment_value_changed(gebr.flow_exec_adjustment);
-
 	/* check for a menu list change */
 	//TODO: DO IT!
 //	if (menu_refresh_needed() == TRUE)
@@ -182,7 +179,9 @@ gboolean gebr_quit(gboolean save_config)
 	flow_free();
 	project_line_free();
 
-	gebr_comm_process_kill(gebr.ui_flow_browse->graph_process);
+	if (gebr.ui_flow_browse->graph_process)
+		gebr_comm_process_kill(gebr.ui_flow_browse->graph_process);
+
 	g_list_free(gebr.ui_flow_browse->select_flows);
 	g_hash_table_foreach(gebr.ui_flow_browse->flow_jobs, (GHFunc)free_flow_jobs_list, NULL);
 	g_hash_table_destroy(gebr.ui_flow_browse->flow_jobs);
@@ -207,6 +206,10 @@ gboolean gebr_quit(gboolean save_config)
 	g_slist_foreach(gebr.tmpfiles, (GFunc) g_free, NULL);
 	g_slist_free(gebr.tmpfiles);
 
+	GString *path = g_string_new(NULL);
+	g_string_printf(path, "%s/.gebr/tmp/*.html", g_get_home_dir());
+	gebr_temp_directory_destroy(path);
+
 	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("Finalizing GêBR..."));
 	gebr_log_close(gebr.log);
 
@@ -223,7 +226,8 @@ gboolean gebr_quit(gboolean save_config)
 
 	g_free(gebr.ui_project_line);
 	g_free(gebr.ui_flow_browse);
-	g_free(gebr.ui_flow_edition);
+	//FIXME: SegFault when chaning the Maestro of the LIne and when closing GeBR
+	//g_free(gebr.ui_flow_execution);
 	gebr_job_control_free(gebr.job_control);
 	g_free(gebr.ui_server_list);
 
@@ -290,6 +294,7 @@ gebr_config_load(void)
 	gboolean has_config;
 	gchar *usermenus = g_strdup_printf("%s/GeBR-Menus", g_get_home_dir());
 	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
+	double tmp;
 
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
@@ -323,8 +328,15 @@ gebr_config_load(void)
 	gebr.config.detailed_line_include_flow_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
 	gebr.config.detailed_line_include_revisions_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_revisions_report", FALSE);
 	gebr.config.detailed_line_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_line_parameter_table", GEBR_PARAM_TABLE_ONLY_CHANGED);
-	gebr.config.flow_exec_speed = g_key_file_get_double(gebr.config.key_file, "general", "flow_exec_speed", NULL);
+	tmp = g_key_file_get_double(gebr.config.key_file, "general", "flow_exec_speed", NULL);
+	if (tmp == 0.0){
+		gebr.config.flow_exec_speed = 5.00;
+	}
 	gebr.config.niceness = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "niceness", 1);
+	gebr.config.execution_server_name = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "execution_server_name", "");
+	GString *execution_server_type = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "execution_server_type", "group");
+	gebr.config.execution_server_type = (gint) gebr_maestro_server_group_str_to_enum(execution_server_type->str);
+	gebr.config.save_preferences = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "save_preferences", TRUE);
 	gebr.config.detailed_flow_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", "gebr-report.css");
 	gebr.config.detailed_line_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "gebr-report.css");
 
@@ -367,13 +379,15 @@ restore_project_line_flow_selection(void)
 
 	if (project_line_selected) {
 		project_line_select_iter(&iter);
+		GtkTreeIter flow_iter;
 
 		if (gebr.config.flow_treepath_string->len &&
-		    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+		    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &flow_iter,
 							gebr.config.flow_treepath_string->str))
 		{
-			flow_browse_select_iter(&iter);
+			gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
+			flow_browse_select_iter(&flow_iter);
 		}
 	}
 }
@@ -480,6 +494,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "native_editor", gebr.config.native_editor);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "save_preferences", gebr.config.save_preferences);
 	g_key_file_set_string(gebr.config.key_file, "general", "version", GEBR_VERSION);
 
 	GString *home_variable;
@@ -513,6 +528,8 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_integer (gebr.config.key_file, "general", "detailed_line_parameter_table", gebr.config.detailed_line_parameter_table);
 	g_key_file_set_double (gebr.config.key_file, "general", "flow_exec_speed", gebr.config.flow_exec_speed);
 	g_key_file_set_integer(gebr.config.key_file, "general", "niceness", gebr.config.niceness);
+	g_key_file_set_string(gebr.config.key_file, "general", "execution_server_name", gebr.config.execution_server_name->str);
+	g_key_file_set_string(gebr.config.key_file, "general", "execution_server_type", gebr_maestro_server_group_enum_to_str(gebr.config.execution_server_type));
 
 	g_key_file_set_integer(gebr.config.key_file, "state", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
 
@@ -524,7 +541,11 @@ void gebr_config_save(gboolean verbose)
 		g_free(str);
 
 		if (flow_browse_get_selected(&iter, FALSE)) {
-			g_string_assign(gebr.config.flow_treepath_string, gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter));
+			GtkTreeIter parent;
+			if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent, &iter))
+				g_string_assign(gebr.config.flow_treepath_string, gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent));
+			else
+				g_string_assign(gebr.config.flow_treepath_string, gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter));
 			g_key_file_set_string(gebr.config.key_file, "state", "flow_treepath_string", gebr.config.flow_treepath_string->str);
 		}
 	}

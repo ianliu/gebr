@@ -62,6 +62,8 @@ libgebr_la_SOURCES =		\
 	gebr-maestro-server.h	\
 	gebr-marshal.c		\
 	gebr-marshal.h		\
+	gebr-menu-view.c	\
+	gebr-menu-view.h	\
 	gebr.c			\
 	gebr.h			\
 	interface.c		\
@@ -76,6 +78,12 @@ libgebr_la_SOURCES =		\
 	ui_document.h		\
 	ui_flow.c		\
 	ui_flow.h		\
+	ui_flows_io.c		\
+	ui_flows_io.h		\
+	ui_flow_program.c	\
+	ui_flow_program.h	\
+	ui_flow_execution.c	\
+	ui_flow_execution.h	\
 	ui_flow_browse.c	\
 	ui_flow_browse.h	\
 	ui_help.c		\

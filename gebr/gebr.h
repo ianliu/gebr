@@ -32,12 +32,13 @@
 #include "interface.h"
 #include "ui_flow.h"
 #include "ui_flow_browse.h"
-#include "gebr-flow-edition.h"
 #include "ui_help.h"
 #include "gebr-job-control.h"
 #include "ui_log.h"
 #include "ui_preferences.h"
 #include "ui_project_line.h"
+#include "ui_flow_execution.h"
+#include "gebr-menu-view.h"
 
 #include "gebr-maestro-controller.h"
 
@@ -80,9 +81,10 @@ struct gebr {
 	GHashTable * help_edit_windows;
 	GHashTable * xmls_by_filename;
 
-	GtkAdjustment *flow_exec_adjustment;
-
 	GebrValidator *validator;
+
+	GebrMenuView *menu_view;
+	GtkToggleButton *menu_button;
 
 	GebrGeoXmlDocument *project_line;
 	GebrGeoXmlProject *project;
@@ -100,10 +102,11 @@ struct gebr {
 	GtkWidget *navigation_box_label;
 	struct ui_project_line *ui_project_line;
 	GebrUiFlowBrowse *ui_flow_browse;
-	GebrFlowEdition *ui_flow_edition;
 	GebrJobControl *job_control;
 	struct ui_log *ui_log;
 	struct ui_server_list *ui_server_list;
+
+	GebrUiFlowExecution *ui_flow_execution;
 
 	struct gebr_config {
 		GKeyFile *key_file;
@@ -128,8 +131,12 @@ struct gebr {
 		gboolean job_log_auto_scroll;
 		gboolean native_editor;
 
+		// Execution details
+		GString *execution_server_name;
+		gint execution_server_type;
 		gdouble flow_exec_speed;
 		gint niceness;
+		gboolean save_preferences;
 
 		// Selections state
 		gint current_notebook;

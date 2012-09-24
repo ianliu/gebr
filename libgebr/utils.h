@@ -25,6 +25,17 @@
 
 G_BEGIN_DECLS
 
+typedef enum {
+	TIME_NONE,
+	TIME_MOMENTS_AGO,
+	TIME_HOURS_AGO,
+	TIME_DAYS_AGO,
+	TIME_WEEKS_AGO,
+	TIME_MONTHS_AGO,
+	TIME_YEARS_AGO,
+	TIME_N_TYPES,
+} TimesType;
+
 /**
  * gebr_g_string_replace:
  * @string: The string to with the text.
@@ -193,11 +204,32 @@ gboolean gebr_str_canonical_var_name(const gchar * keyword,
  * gebr_calculate_relative_time:
  * @time1: The first date to compare 
  * @time2: The second date to compare 
+ * @type:
+ * @delta:
  *
  * Returns: A message (string) of the relative time and NULL if time2 is older
  * than time1.
  */
-gchar *gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
+gchar *gebr_calculate_relative_time (GTimeVal *time1,
+                                     GTimeVal *time2,
+                                     TimesType *type,
+                                     gdouble *delta);
+
+/**
+ * gebr_get_lower_bound_for_type:
+ * @type:
+ *
+ * Returns:
+ */
+gdouble gebr_get_lower_bound_for_type(TimesType type);
+
+/**
+ * gebr_get_control_text_for_type:
+ * @type:
+ *
+ * Return:
+ */
+gchar *gebr_get_control_text_for_type(TimesType type);
 
 /**
  * gebr_calculate_relative_time:

@@ -36,6 +36,7 @@
 #include "gebr.h"
 #include "document.h"
 #include "callbacks.h"
+#include "gebr-menu-view.h"
 
 /**
  * \internal
@@ -187,8 +188,10 @@ menu_list_populate(void)
 	gchar *filename;
 	gchar *gebr_home = g_build_filename(g_get_home_dir(), ".gebr", "gebr", NULL);
 
+	GtkTreeStore *menu_store = gebr_menu_view_get_model(gebr.menu_view);
+
 	GHashTable *categories_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)gtk_tree_iter_free);
-	gtk_tree_store_clear(gebr.ui_flow_browse->menu_store);
+	gtk_tree_store_clear(menu_store);
 
 	for (gint i = 0; directory_list[i]; i++) {
 		if (i > 0 && gebr_realpath_equal (directory_list[i], directory_list[0]))
@@ -248,26 +251,27 @@ find_or_add_category(const gchar *title,
 	GtkTreeIter parent;
 	GtkTreeIter iter;
 
+	GtkTreeStore *menu_store = gebr_menu_view_get_model(gebr.menu_view);
+
 	gchar **category_tree = g_strsplit(title, "|", 0);
 	GString *category_name = g_string_new("");
 	for (int i = 0; category_tree[i] != NULL; ++i) {
-		GString *bold = g_string_new(NULL);
 		gchar *escaped_title = g_markup_escape_text(category_tree[i], -1);
-		g_string_printf(bold, "<b>%s</b>", escaped_title);
-		g_free(escaped_title);
 
 		g_string_append_printf(category_name, "|%s", category_tree[i]);
 		GtkTreeIter * category_iter = g_hash_table_lookup(categories_hash, category_name->str);
 		if (category_iter == NULL) {
-			gtk_tree_store_append(gebr.ui_flow_browse->menu_store, &iter, i > 0 ? &parent : NULL);
-			gtk_tree_store_set(gebr.ui_flow_browse->menu_store, &iter,
-					   MENU_TITLE_COLUMN, bold->str, -1);
+			gtk_tree_store_append(menu_store, &iter, i > 0 ? &parent : NULL);
+			gtk_tree_store_set(menu_store, &iter,
+					   MENU_TITLE_COLUMN, escaped_title,
+					   MENU_VISIBLE_COLUMN, TRUE,
+					   -1);
 			g_hash_table_insert(categories_hash, g_strdup(category_name->str), gtk_tree_iter_copy(&iter));
 		} else
 			iter = *category_iter;
 
 		parent = iter;
-		g_string_free(bold, TRUE);
+		g_free(escaped_title);
 	}
 	g_string_free(category_name, TRUE);
 	g_strfreev(category_tree);
@@ -296,6 +300,8 @@ void __menu_list_populate(const gchar *path,
 	if (index_menu && !g_key_file_load_from_file(menu_key_file, index_menu, G_KEY_FILE_NONE, NULL))
 		goto out;
 
+	GtkTreeStore *menu_store = gebr_menu_view_get_model(gebr.menu_view);
+
 	category_list = g_key_file_get_groups(category_key_file, &category_list_length);
 	for (int i = 0; category_list[i]; i++) {
 		gchar ** menus_list;
@@ -312,15 +318,15 @@ void __menu_list_populate(const gchar *path,
 				file = g_strdup(menus_list[j]);
 			}
 			title = g_key_file_get_string(menu_key_file, menus_list[j], "title", NULL);
-			gchar *escaped_title = g_markup_escape_text(title, -1);
 			desc = g_key_file_get_string(menu_key_file, menus_list[j], "description", NULL);
-			gtk_tree_store_append(gebr.ui_flow_browse->menu_store, &child, &iter);
-			gtk_tree_store_set(gebr.ui_flow_browse->menu_store, &child,
-					   MENU_TITLE_COLUMN, escaped_title,
-					   MENU_DESC_COLUMN, desc,
+
+			gtk_tree_store_append(menu_store, &child, &iter);
+			gtk_tree_store_set(menu_store, &child,
+					   MENU_TITLE_COLUMN, title,
+					   MENU_DESCRIPTION_COLUMN, desc,
 					   MENU_FILEPATH_COLUMN, file,
+					   MENU_VISIBLE_COLUMN, TRUE,
 					   -1);
-			g_free(escaped_title);
 			g_free(title);
 			g_free(desc);
 			g_free(file);

@@ -138,6 +138,7 @@ struct ui_project_line *project_line_setup_ui(void)
 						    G_TYPE_STRING,
 						    G_TYPE_POINTER,
 						    G_TYPE_BOOLEAN);
+
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (ui_project_line->view));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
@@ -599,7 +600,6 @@ void project_line_info_update(void)
 	if (!gebr.project_line) {
 		gtk_widget_hide(GTK_WIDGET(infopage_proj));
 		gtk_widget_hide(GTK_WIDGET(infopage_line));
-		navigation_bar_update();
 		return;
 	}
 
@@ -612,8 +612,6 @@ void project_line_info_update(void)
 		gtk_widget_hide(GTK_WIDGET(infopage_proj));
 		gtk_widget_show(GTK_WIDGET(infopage_line));
 	}
-
-	navigation_bar_update();
 }
 
 gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType check_type)
@@ -907,6 +905,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 	}
 
 	gdk_threads_enter();
+	gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), NOTEBOOK_PAGE_PROJECT_LINE);
 	gdk_threads_leave();
 
@@ -1569,7 +1568,7 @@ void project_line_free(void)
 
 	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_browse->view), NULL);
-	gtk_list_store_clear(gebr.ui_flow_browse->store);
+	gtk_tree_store_clear(gebr.ui_flow_browse->store);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_browse->view), model);
 	flow_free();
 
@@ -1696,13 +1695,9 @@ static void project_line_load(void)
 		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, &child);
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &project_filename, -1);
-		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_view, _("View Line Report"));
-		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_edit, _("Edit Line comments"));
 	} else {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &project_filename, -1);
-		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_view, _("View Project Report"));
-		gtk_tool_item_set_tooltip_text(gebr.ui_project_line->info.help_edit, _("Edit Project comments"));
 	}
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
@@ -1716,14 +1711,12 @@ static void project_line_load(void)
 		if (maestro) {
 			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 				gtk_widget_show(gebr.ui_flow_browse->view);
-				gtk_widget_show(gebr.ui_flow_browse->prog_window);
 				line_load_flows();
 				if (gebr_geoxml_line_get_flows_number(gebr.line) < 1)
 					flow_browse_reload_selected();
 			}
 			else {
 				gtk_widget_hide(gebr.ui_flow_browse->view);
-				gtk_widget_hide(gebr.ui_flow_browse->prog_window);
 			}
 		}
 	} else {
@@ -1772,6 +1765,7 @@ static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath *
 		return;
 	}
 
+	gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 	gebr.config.current_notebook = 1;
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 }

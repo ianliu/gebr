@@ -68,7 +68,7 @@ gboolean gebr_gui_gtk_list_store_move_down(GtkListStore * store, GtkTreeIter * i
 /**
  * Returns the index of the row pointed by \p iter in \p list_store.
  */
-gulong gebr_gui_gtk_list_store_get_iter_index(GtkListStore * list_store, GtkTreeIter * iter);
+gulong gebr_gui_gtk_list_store_get_iter_index(GtkTreeStore * store, GtkTreeIter * iter);
 
 /**
  * Checks if row pointed by \p iter can move upwards.

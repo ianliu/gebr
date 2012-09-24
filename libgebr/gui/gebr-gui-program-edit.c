@@ -31,6 +31,11 @@
  * Prototypes
  */
 
+struct _GebrGuiProgramEditPriv
+{
+	GList *widgets;
+};
+
 typedef struct {
 	GtkBox * group_vbox;
 	GList * instances_list;
@@ -72,15 +77,19 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gpointer parameter_widget_data,
 			       gboolean use_default,
 			       GebrValidator *validator,
-			       GebrMaestroInfo *info)
+			       GebrMaestroInfo *info,
+			       gboolean add_title)
 {
 	GebrGuiProgramEdit *program_edit;
+	GebrGuiProgramEditPriv *priv = g_new0(GebrGuiProgramEditPriv, 1);
+
 	GtkWidget *vbox;
 	GtkWidget *title_label;
 	GtkWidget *hbox;
 	GtkWidget *scrolled_window;
 
 	program_edit = g_new(GebrGuiProgramEdit, 1);
+	program_edit->priv = priv;
 	program_edit->program = program;
 	program_edit->parameter_widget_data = parameter_widget_data;
 	program_edit->use_default = use_default;
@@ -95,73 +104,78 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 		program_edit->mpi_params = NULL;
 
 	program_edit->info = info;
-	gtk_widget_show(vbox);
-	program_edit->title_label = title_label = gtk_label_new(NULL);
-	gtk_widget_show(title_label);
-	gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, TRUE, 5);
-	gtk_misc_set_alignment(GTK_MISC(title_label), 0.5, 0);
+
+	if (add_title) {
+		program_edit->title_label = title_label = gtk_label_new(NULL);
+		gtk_widget_show(title_label);
+		gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, TRUE, 5);
+		gtk_misc_set_alignment(GTK_MISC(title_label), 0.5, 0);
+
+		gchar *markup = g_markup_printf_escaped("<big><b>%s</b></big>", gebr_geoxml_program_get_title(program));
+		gtk_label_set_markup(GTK_LABEL(title_label), markup);
+		g_free(markup);
+
+		GtkWidget *description_label = gtk_label_new(NULL);
+		gtk_widget_show(description_label);
+		gtk_box_pack_start(GTK_BOX(vbox), description_label, FALSE, TRUE, 5);
+		gtk_misc_set_alignment(GTK_MISC(description_label), 0.5, 0);
+
+		gtk_label_set_text(GTK_LABEL(description_label), gebr_geoxml_program_get_description(program));
+	} else {
+		program_edit->title_label = NULL;
+	}
+
 	program_edit->hbox = hbox = gtk_hbox_new(FALSE, 3);
 	gtk_widget_show(hbox);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
 
 	program_edit->scrolled_window = scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_widget_show(scrolled_window);
-	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 5);
+	gtk_widget_show_all(scrolled_window);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	gebr_gui_program_edit_reload(program_edit, NULL);
+	gtk_widget_show_all(vbox);
+	GtkWidget *vbox1 = gtk_vbox_new(FALSE, 5);
+	GtkWidget *widget;
+
+	if (program_edit->mpi_params) {
+		widget = gebr_gui_program_edit_load(program_edit, program_edit->mpi_params);
+		gtk_box_pack_start(GTK_BOX(vbox1), widget, FALSE, TRUE, 0);
+	}
+	widget = gebr_gui_program_edit_load(program_edit, gebr_geoxml_program_get_parameters(program_edit->program));
+	gtk_box_pack_start(GTK_BOX(vbox1), widget, TRUE, TRUE, 0);
+	gtk_widget_show(vbox1);
+
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window), vbox1);
 
 	return program_edit;
+}
+
+void
+gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_edit,
+		GebrGuiParameterValidatedFunc callback, gpointer user_data)
+{
+	for (GList *i = program_edit->priv->widgets; i; i = i->next)
+		gebr_gui_parameter_widget_set_validated_callback(i->data, callback, user_data);
 }
 
 void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)
 {
 	gtk_widget_destroy(program_edit->widget);
+	g_list_free(program_edit->priv->widgets);
+	g_free(program_edit->priv);
 	g_free(program_edit);
 }
 
 void gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlProgram * program)
 {
-	GtkWidget *label;
 	GtkWidget *widget;
-	gchar *markup;
-	const gchar *uri;
 
 	if (program != NULL)
 		program_edit->program = program;
 
-	markup = g_markup_printf_escaped("<big><b>%s</b></big>", gebr_geoxml_program_get_title(program_edit->program));
-	gtk_label_set_markup(GTK_LABEL(program_edit->title_label), markup);
-	g_free(markup);
-
 	gtk_container_foreach(GTK_CONTAINER(program_edit->hbox), (GtkCallback) gtk_widget_destroy, NULL);
-	label = gtk_label_new(gebr_geoxml_program_get_description(program_edit->program));
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(program_edit->hbox), label, FALSE, TRUE, 5);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-
-	uri = gebr_geoxml_program_get_url(program_edit->program);
-	if (strlen(uri)) {
-		GtkWidget *alignment;
-		GtkWidget *button;
-		GString *full_uri;
-
-		alignment = gtk_alignment_new(1, 0, 0, 0);
-		gtk_box_pack_start(GTK_BOX(program_edit->hbox), alignment, TRUE, TRUE, 5);
-
-		full_uri = g_string_new(NULL);
-		if (g_str_has_prefix(uri, "http://"))
-			g_string_assign(full_uri, uri);
-		else
-			g_string_printf(full_uri, "http://%s", uri);
-
-		button = gtk_link_button_new_with_label(full_uri->str, _("Link"));
-		gtk_container_add(GTK_CONTAINER(alignment), button);
-		gtk_widget_show_all(alignment);
-		gtk_misc_set_alignment(GTK_MISC(label), 1, 0);
-		g_string_free(full_uri, TRUE);
-	}
 
 	gtk_container_foreach(GTK_CONTAINER(program_edit->scrolled_window), (GtkCallback) gtk_widget_destroy, NULL);
 
@@ -299,6 +313,51 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 	}
 
 	return frame;
+}
+
+static GebrGuiParameterWidget *
+create_parameter_widget(GebrGuiProgramEdit *program_edit,
+		GebrGeoXmlParameter *parameter,
+		GebrGeoXmlParameterType type)
+{
+	GebrGuiParameterWidget *widget;
+
+	if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		widget = gebr_gui_parameter_widget_new(parameter,
+					program_edit->validator,
+					program_edit->info,
+					program_edit->use_default,
+					NULL);
+	} else {
+		widget = gebr_gui_parameter_widget_new(parameter,
+				program_edit->validator,
+				program_edit->info,
+				program_edit->use_default,
+				program_edit->parameter_widget_data);
+
+		GebrGeoXmlDocument *line;
+		gebr_validator_get_documents(widget->validator, NULL, &line, NULL);
+
+		const gchar *value = gtk_entry_get_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(widget->value_widget)->entry));
+
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
+		gchar *mount_point;
+		if (widget->info)
+			mount_point = gebr_maestro_info_get_home_mount_point(widget->info);
+		else
+			mount_point = NULL;
+		gchar *path = gebr_relativise_path(value, mount_point, paths);
+
+		gtk_entry_set_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(widget->value_widget)->entry), path);
+
+		g_free(path);
+		g_free(mount_point);
+		gebr_pairstrfreev(paths);
+	}
+
+	program_edit->priv->widgets = g_list_prepend(program_edit->priv->widgets, widget);
+
+	return widget;
 }
 
 static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *program_edit,
@@ -447,40 +506,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		gtk_widget_show(hbox);
 
 		/* input widget */
-		if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-			gebr_gui_parameter_widget =
-			    gebr_gui_parameter_widget_new(parameter,
-							  program_edit->validator,
-							  program_edit->info,
-							  program_edit->use_default,
-							  NULL);
-		} else {
-			gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(parameter,
-										  program_edit->validator,
-										  program_edit->info,
-										  program_edit->use_default,
-										  program_edit->parameter_widget_data);
-
-
-			GebrGeoXmlDocument *line;
-			gebr_validator_get_documents(gebr_gui_parameter_widget->validator, NULL, &line, NULL);
-
-			const gchar *value = gtk_entry_get_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(gebr_gui_parameter_widget->value_widget)->entry));
-
-			gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
-			gchar *mount_point;
-			if (gebr_gui_parameter_widget->info)
-				mount_point = gebr_maestro_info_get_home_mount_point(gebr_gui_parameter_widget->info);
-			else
-				mount_point = NULL;
-			gchar *path = gebr_relativise_path(value, mount_point, paths);
-
-			gtk_entry_set_text(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(gebr_gui_parameter_widget->value_widget)->entry), path);
-
-			g_free(path);
-			g_free(mount_point);
-			gebr_pairstrfreev(paths);
-		}
+		gebr_gui_parameter_widget = create_parameter_widget(program_edit, parameter, type);
 
 		gebr_gui_parameter_widget->group_warning_widget = program_edit->group_warning_widget;
 		gtk_widget_show(gebr_gui_parameter_widget->widget);

@@ -26,11 +26,17 @@
 
 #include <gebr-validator.h>
 #include <libgebr/gebr-maestro-info.h>
+#include <libgebr/gui/gebr-gui-parameter.h>
 #include <geoxml.h>
 
 G_BEGIN_DECLS
 
-typedef struct {
+typedef struct _GebrGuiProgramEdit GebrGuiProgramEdit;
+typedef struct _GebrGuiProgramEditPriv GebrGuiProgramEditPriv;
+
+struct _GebrGuiProgramEdit {
+	GebrGuiProgramEditPriv *priv;
+
 	GebrGeoXmlProgram *program;
 
 	GtkWidget *widget;
@@ -47,7 +53,7 @@ typedef struct {
 
 	//MPI parameters
 	GebrGeoXmlParameters *mpi_params;
-} GebrGuiProgramEdit;
+};
 
 /**
  * Setup UI for \p program.
@@ -57,7 +63,17 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gpointer parameter_widget_data,
 			       gboolean use_default,
 			       GebrValidator *validator,
-			       GebrMaestroInfo *info);
+			       GebrMaestroInfo *info,
+			       gboolean add_title);
+
+/**
+ * gebr_gui_program_edit_set_validated_callback:
+ *
+ * Sets @callback to be called if any parameter in this program edit had been
+ * validated.
+ */
+void gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_edit,
+		GebrGuiParameterValidatedFunc callback, gpointer user_data);
 
 /**
  * \internal

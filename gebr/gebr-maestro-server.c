@@ -213,7 +213,7 @@ unmount_gvfs(GebrMaestroServer *maestro,
 {
 	if (!maestro->priv->has_connected_daemon) {
 		if (quit)
-			gebr_quit(TRUE);
+			gebr_quit(FALSE);
 		else
 			return;
 	}
@@ -233,7 +233,7 @@ unmount_gvfs(GebrMaestroServer *maestro,
 	maestro->priv->mount_location = NULL;
 
 	if (quit)
-		gebr_quit(TRUE);
+		gebr_quit(FALSE);
 }
 
 static void
@@ -1446,8 +1446,8 @@ gebr_maestro_server_get_display_address(GebrMaestroServer *maestro)
 static gboolean
 foreach_maestro_server_func(gpointer key, gpointer value, gpointer data)
 {
-	GList *groups = data;
-	groups = g_list_prepend(groups, g_strdup((gchar*)(key)));
+	GList **groups = data;
+	*groups = g_list_prepend(*groups, g_strdup((gchar*)(key)));
 	return FALSE;
 }
 
@@ -1468,7 +1468,7 @@ gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 			g_tree_insert(tree, i->data, GUINT_TO_POINTER(TRUE));
 	}
 
-	g_tree_foreach(tree, foreach_maestro_server_func, groups);
+	g_tree_foreach(tree, foreach_maestro_server_func, &groups);
 	g_object_unref(daemons);
 	g_tree_unref(tree);
 	return groups;
@@ -1486,6 +1486,12 @@ gebr_maestro_server_disconnect(GebrMaestroServer *maestro,
 {
 	gebr_comm_server_disconnect(maestro->priv->server);
 	unmount_gvfs(maestro, quit);
+
+	/* Reset group option of execution */
+	if (gebr.config.execution_server_name->len)
+		g_string_free(gebr.config.execution_server_name, TRUE);
+	gebr.config.execution_server_name = g_string_new("");
+	gebr.config.execution_server_type = MAESTRO_SERVER_TYPE_GROUP;
 }
 
 void
@@ -1698,7 +1704,7 @@ gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
 
 	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
 		daemon = get_daemon_from_address(maestro, group, NULL);
-		if (gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
+		if (!mpi_flavor || gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
 			return gebr_daemon_server_get_ncores(daemon);
 		else
 			return 0;
@@ -1710,7 +1716,7 @@ gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
 
 	gebr_gui_gtk_tree_model_foreach(iter, m) {
 		gtk_tree_model_get(m, &iter, 0, &daemon, -1);
-		if (gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
+		if (!mpi_flavor || gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
 			sum += gebr_daemon_server_get_ncores(daemon);
 	}
 
@@ -1826,3 +1832,18 @@ gebr_maestro_server_reset_daemons_timeout(GebrMaestroServer *maestro)
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 }
+
+gchar *
+gebr_maestro_server_translate_error(const gchar *error_type,
+                                    const gchar *error_msg)
+{
+	gchar *message = NULL;
+
+	if (g_strcmp0(error_type, "error:protocol") == 0)
+		message = g_strdup_printf(_("Maestro protocol version mismatch: %s"), error_msg);
+	else if (g_strcmp0(error_type, "error:ssh") == 0)
+		message = g_strdup(error_msg);
+
+	return message;
+}
+

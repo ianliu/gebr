@@ -27,7 +27,10 @@
 
 #include <libgebr/geoxml/geoxml.h>
 #include "libgebr/comm/gebr-comm-process.h"
+#include <libgebr/gui/gebr-gui-program-edit.h>
 #include "gebr-maestro-server.h"
+#include "ui_flows_io.h"
+#include "ui_flow_program.h"
 
 G_BEGIN_DECLS
 
@@ -35,46 +38,44 @@ G_BEGIN_DECLS
  * Store fields
  */
 enum {
-	FB_TITLE = 0,
-	FB_FILENAME,
-	FB_LINE_FLOW_POINTER,
-	FB_XMLPOINTER,
-	FB_LAST_QUEUES,
-	FB_SNP_LAST_MODIF,
+	FB_STRUCT_TYPE = 0,
+	FB_STRUCT,
 	FB_N_COLUMN
 };
 
+typedef enum {
+	STRUCT_TYPE_FLOW,
+	STRUCT_TYPE_PROGRAM,
+	STRUCT_TYPE_IO,
+	STRUCT_TYPE_COLUMN
+} GebrUiFlowBrowseType;
+
+
 /**
- * Menu store fields
+ * Context Types
  */
-enum {
-	MENU_TITLE_COLUMN = 0,
-	MENU_DESC_COLUMN,
-	MENU_FILEPATH_COLUMN,
-	MENU_N_COLUMN
-};
+typedef enum {
+	CONTEXT_FLOW,
+	CONTEXT_SNAPSHOTS,
+	CONTEXT_JOBS,
+	CONTEXT_PARAMETERS,
+	CONTEXT_N_TYPES
+} GebrUiFlowBrowseContext;
 
 /**
  */
 typedef struct {
 	GtkWidget *widget;
-	GtkListStore *store;
+
+	GtkTreeStore *store;
 	GtkWidget *view;
+	GtkWidget *flows_line_label;
+	GtkWidget *left_panel;
 	GtkCellRenderer *icon_renderer;
 	GtkCellRenderer *text_renderer;
-	GtkCellRenderer *snap_renderer;
+	GtkCellRenderer *action_renderer;
 
-	GtkWidget *queue_combobox;
-	GtkWidget *server_combobox;
-	gchar *name;
-	GebrMaestroServerGroupType type;
-
-	GtkWidget *menu_window;
-	GtkTreeStore *menu_store;
-	GtkWidget *menu_view;
-
-	GtkWidget *prog_window;
-	GtkWidget *prog_frame;
+	GebrGuiProgramEdit *program_edit;
 
 	GtkWidget *info_window;
 	GtkWidget *warn_window;
@@ -91,18 +92,18 @@ typedef struct {
 
 	/* Context Actions */
 	GtkToggleButton *properties_ctx_button;
-	GtkWidget *properties_ctx_box;
 	GtkWidget *html_parameters;
 
 	GtkToggleButton *snapshots_ctx_button;
-	GtkWidget *snapshots_ctx_box;
-
-	GtkWidget *jobs_ctx_box;
 
 	/* Info Bar */
 	GtkWidget *info_jobs;
 	GtkWidget *jobs_status_box;
 	gint last_info_width;
+
+	GtkWidget *context[CONTEXT_N_TYPES];
+
+	GHashTable *flow_jobs;
 
 	struct ui_flow_browse_info {
 		GtkBuilder *builder_flow;
@@ -112,17 +113,8 @@ typedef struct {
 
 		GtkWidget *modified;
 		GtkWidget *lastrun;
-
-		GtkWidget *help_view;
 	} info;
 
-	GHashTable *flow_jobs;
-
-	GtkWidget *nice_button_high;
-	GtkWidget *nice_button_low;
-	GtkWidget *speed_button;
-	GtkWidget *speed_slider;
-	GtkWidget *ruler;
 } GebrUiFlowBrowse;
 
 /**
@@ -170,14 +162,25 @@ void gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
                                   GtkTreeIter *iter,
                                   gpointer data);
 
-void gebr_flow_browse_snapshot_icon (GtkTreeViewColumn *tree_column,
-                                     GtkCellRenderer *cell,
-                                     GtkTreeModel *model,
-                                     GtkTreeIter *iter,
-                                     gpointer data);
+void gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
+                                   GtkCellRenderer *cell,
+                                   GtkTreeModel *model,
+                                   GtkTreeIter *iter,
+                                   gpointer data);
+
+void gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
+                           GtkCellRenderer *cell,
+                           GtkTreeModel *model,
+                           GtkTreeIter *iter,
+                           gpointer data);
+
+void gebr_flow_browse_select_file_column(GtkTreeView *tree_view,
+                                                GtkTreeIter *iter,
+                                                GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
-                                             GebrUiFlowBrowse *ui_flow_browse);
+                                             GtkTreeIter *iter,
+                                             GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_select_job(GebrUiFlowBrowse *fb);
 
@@ -196,10 +199,12 @@ void gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
                                            GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
-                                             GebrUiFlowBrowse *fb);
+                                             GebrUiFlowBrowse *fb,
+                                             gboolean same_flow);
 
 void gebr_flow_browse_info_job(GebrUiFlowBrowse *fb,
-                               const gchar *job_id);
+                               const gchar *job_id,
+                               gboolean select);
 
 const gchar *gebr_flow_browse_get_selected_queue(GebrUiFlowBrowse *fb);
 
@@ -217,12 +222,60 @@ void flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
                                                gboolean sensitive,
                                                gboolean maestro_err);
 
-void gebr_flow_browse_show_menu_list(GebrUiFlowBrowse *fb);
-
 gint gebr_flow_browse_calculate_n_max(GebrUiFlowBrowse *fb);
 
 void gebr_flow_browse_select_job_output(const gchar *job_id,
                                         GebrUiFlowBrowse *fb);
+
+void flow_browse_revalidate_programs(GebrUiFlowBrowse *fb);
+
+void flow_browse_program_check_sensitiveness(void);
+
+void  flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
+                                     GtkTreeIter *iter,
+                                     GebrUiFlowBrowse *fb);
+
+gboolean gebr_flow_browse_get_io_iter(GtkTreeModel *model,
+                                      GtkTreeIter *io_iter,
+                                      GebrUiFlowsIoType io_type);
+
+void flow_browse_status_changed(guint status);
+
+/**
+ * flow_add_program_sequence_to_view:
+ * @program: A #GebrGeoXmlSequence of #GebrGeoXmlProgram to be added to the view.
+ * @select_last: Whether to select the last program.
+ *
+ * Adds all programs in the sequence @program into the flow edition view.
+ */
+void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
+				       gboolean select_last,
+				       gboolean never_opened);
+
+/**
+ * flow_browse_toggle_selected_program_status:
+ *
+ * Toggles the status for the selected program.
+ * If no program is selected, nothing is done.
+ */
+void flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb);
+
+void flow_browse_validate_io(GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,
+                                             GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_escape_context(GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_block_changed_signal(GebrUiFlowBrowse *fb);
+
+void gebr_flow_browse_unblock_changed_signal(GebrUiFlowBrowse *fb);
+
+void flow_edition_component_activated(void);
+
+gboolean flow_browse_static_info_update(void);
+
+gboolean gebr_ui_flow_browse_update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

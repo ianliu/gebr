@@ -174,3 +174,13 @@ gebr_gui_tool_button_add(GebrGuiToolButton *button,
 	child = gtk_bin_get_child(GTK_BIN(button->priv->popup));
 	gtk_container_add(GTK_CONTAINER(child), widget);
 }
+
+void
+gebr_gui_tool_button_toggled_active(GtkToggleButton *toggle, gboolean close_popup)
+{
+	if (!close_popup)
+		gtk_toggle_button_set_active(toggle, TRUE);
+	else
+		gtk_toggle_button_set_active(toggle, FALSE);
+	gebr_gui_tool_button_toggled(toggle);
+}

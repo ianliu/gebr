@@ -25,7 +25,6 @@
 
 #include "gebr-gui-file-entry.h"
 #include "gebr-gui-value-sequence-edit.h"
-#include "gebr-gui-program-edit.h"
 #include "gebr-gui-validatable-widget.h"
 #include <libgebr/gebr-maestro-info.h>
 
@@ -33,11 +32,18 @@ G_BEGIN_DECLS
 
 typedef struct gebr_gui_parameter_widget GebrGuiParameterWidget;
 
+typedef void (*GebrGuiParameterValidatedFunc) (GebrGuiParameterWidget *widget,
+					       gpointer user_data);
+
 typedef void (*changed_callback) (GebrGuiParameterWidget *widget, gpointer user_data);
+
+typedef struct _GebrGuiParameterWidgetPriv GebrGuiParameterWidgetPriv;
 
 struct gebr_gui_parameter_widget
 {
 	GebrGuiValidatableWidget parent;
+
+	GebrGuiParameterWidgetPriv *priv;
 
 	/*< private >*/
 	GebrValidator *validator;
@@ -153,6 +159,14 @@ void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
  * gebr_gui_group_instance_validate:
  */
 gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSequence *instance, GtkWidget *icon);
+
+/**
+ * gebr_gui_parameter_widget_set_validated_callback:
+ *
+ * Registers @callback to be called when this parameter validates.
+ */
+void gebr_gui_parameter_widget_set_validated_callback(GebrGuiParameterWidget *widget,
+		GebrGuiParameterValidatedFunc callback, gpointer user_data);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H
