@@ -67,6 +67,9 @@ static void on_preferences_destroy(GtkWidget *window,
 static void on_assistant_destroy(GtkWidget *window,
                                  struct ui_preferences *up);
 
+static void on_assistant_prepare(GtkAssistant *assistant,
+				 GtkWidget *current_page,
+				 struct ui_preferences *up);
 static void create_maestro_chooser_model(GtkListStore *model,
 					 GebrMaestroServer *maestro);
 
@@ -1018,6 +1021,33 @@ on_preferences_button_clicked (GtkButton *button, gpointer pointer)
 	}
 }
 
+static void
+assistant_set_initial_labels(GtkBuilder *builder)
+{
+	GtkLabel *review_orientations_label = GTK_LABEL(gtk_builder_get_object(builder, "review_orientation"));
+	GtkImage *review_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_img"));
+
+	GtkLabel *review_pref_label = GTK_LABEL(gtk_builder_get_object(builder, "review_pref_label"));
+	GtkImage *review_pref_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_pref_img"));
+	GtkImage *review_servers_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_servers_img"));
+	GtkLabel *review_servers_label = GTK_LABEL(gtk_builder_get_object(builder, "review_servers_label"));
+	GtkLabel *review_maestro_label = GTK_LABEL(gtk_builder_get_object(builder, "review_maestro_label"));
+	GtkImage *review_maestro_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_maestro_img"));
+	GtkImage *review_gvfs_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_gvfs_img"));
+	GtkLabel *review_gvfs_label = GTK_LABEL(gtk_builder_get_object(builder, "review_gvfs_label"));
+
+	gtk_label_set_markup(review_orientations_label, _("GêBR is unable to proceed without this configuration."));
+	gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
+	gtk_label_set_markup(review_pref_label, _("<i>Done.</i>"));
+	gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
+	gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
+	gtk_label_set_markup(review_maestro_label, _("<i>Not connected.</i>"));
+	gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
+	gtk_label_set_markup(review_servers_label, _("<i>None connected.</i>"));
+	gtk_image_set_from_stock(GTK_IMAGE(review_gvfs_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
+	gtk_label_set_markup(review_gvfs_label, _("<i>Disabled.</i>"));
+}
+
 /**
  * Assembly preference window.
  *
@@ -1050,6 +1080,7 @@ preferences_setup_ui(gboolean first_run,
 	gtk_builder_add_from_file(builder, glade_file, NULL);
 
 	ui_preferences->builder = builder;
+	assistant_set_initial_labels(builder);
 
 	GtkWidget *page_intro  = GTK_WIDGET(gtk_builder_get_object(builder, "intro"));
 	GtkWidget *page_preferences = GTK_WIDGET(gtk_builder_get_object(builder, "main_preferences"));
