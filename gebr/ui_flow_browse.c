@@ -2385,10 +2385,13 @@ static void flow_browse_load(void)
 			}
 		}
 
-		if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE && gebr_geoxml_flow_get_programs_number(flow) == 0 && flow != old_flow)
-			gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
-		else
-			gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
+		if (!multiple_selection) {
+			if (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE &&
+					gebr_geoxml_flow_get_programs_number(flow) == 0 && flow != old_flow)
+				gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
+			else
+				gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
+		}
 	} else {
 		if (!gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_JOBS]))
 		{
