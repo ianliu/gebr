@@ -188,10 +188,10 @@ menu_list_populate(void)
 	gchar *filename;
 	gchar *gebr_home = g_build_filename(g_get_home_dir(), ".gebr", "gebr", NULL);
 
-	GtkTreeStore *menu_store = gebr_menu_view_get_model(gebr.menu_view);
-
+	static gboolean first_time = TRUE;
+	gboolean need_update = FALSE;
+	gboolean clear_model = FALSE;
 	GHashTable *categories_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)gtk_tree_iter_free);
-	gtk_tree_store_clear(menu_store);
 
 	for (gint i = 0; directory_list[i]; i++) {
 		if (i > 0 && gebr_realpath_equal (directory_list[i], directory_list[0]))
@@ -203,13 +203,22 @@ menu_list_populate(void)
 			if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
 				if (!menu_path_has_index(path, &index_menu, &index_category)) {
 					if (menu_path_internal_index_is_valid(path, gebr_home, &index_menu, &index_category)) {
+						need_update = TRUE;
 						if (!menu_list_create_index(path, &index_menu, &index_category, FALSE)) {
 							g_warning("Could not create index for %s", path);
 							continue;
 						}
 					}
 				}
-				__menu_list_populate(path, index_menu, index_category, categories_hash);
+				if (need_update || first_time) {
+					if (!clear_model) {
+						GtkTreeStore *menu_store = gebr_menu_view_get_model(gebr.menu_view);
+						gtk_tree_store_clear(menu_store);
+						clear_model = TRUE;
+					}
+					__menu_list_populate(path, index_menu, index_category, categories_hash);
+				}
+
 				g_free(index_menu);
 				g_free(index_category);
 			}
@@ -219,13 +228,16 @@ menu_list_populate(void)
 
 
 	/* Scan debr installed menus and create index */
+	need_update = FALSE;
 	GString *path = g_string_new(NULL);
 	g_string_printf(path, "%s/.gebr/gebr/menus", g_get_home_dir());
 
 	if (menu_path_internal_index_is_valid(path->str, gebr_home, &index_menu, &index_category)) {
+		need_update = TRUE;
 		menu_list_create_index(path->str, &index_menu, &index_category, FALSE);
 	}
-	__menu_list_populate(NULL, index_menu, index_category, categories_hash);
+	if (need_update || first_time)
+		__menu_list_populate(NULL, index_menu, index_category, categories_hash);
 
 	g_free(index_menu);
 	g_free(index_category);
@@ -233,10 +245,16 @@ menu_list_populate(void)
 
 	/* Scan user's folder and create index */
 
+	need_update = FALSE;
 	if (menu_path_internal_index_is_valid(gebr.config.usermenus->str, gebr_home, &index_menu, &index_category)) {
+		need_update = TRUE;
 		menu_list_create_index(gebr.config.usermenus->str, &index_menu, &index_category, FALSE);
 	}
-	__menu_list_populate(NULL, index_menu, index_category, categories_hash);
+	if (need_update || first_time)
+		__menu_list_populate(NULL, index_menu, index_category, categories_hash);
+
+	first_time = FALSE;
+
 	g_free(index_menu);
 	g_free(index_category);
 
