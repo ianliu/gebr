@@ -2,15 +2,19 @@
 [encoding: UTF-8]
 callbacks.c
 cmdline.c
+data/connect-maestro-dialog.glade
 data/document-properties.glade
+data/flow-properties.glade
+data/gebr-connections-settings.glade
+data/gebr-execution-details.glade
 data/gebr-job-control.glade
 data/gebr-maestro-dialog.glade
+data/gebr-xdot-graph.py
 data/gebr.desktop.in.in
 data/line-properties.glade
 data/mpi-parameters-help.glade
 data/project-properties.glade
-data/flow-properties.glade
-data/gebr-xdot-graph.py
+data/snapshot-revert.glade
 document.c
 flow.c
 gebr-daemon-server.c
@@ -19,6 +23,7 @@ gebr-job-control.c
 gebr-job.c
 gebr-maestro-controller.c
 gebr-maestro-server.c
+gebr-menu-view.c
 gebr.c
 interface.c
 line.c
@@ -28,12 +33,12 @@ project.c
 ui_document.c
 ui_flow.c
 ui_flow_browse.c
+ui_flow_execution.c
+ui_flow_program.c
+ui_flows_io.c
 ui_help.c
 ui_log.c
 ui_parameters.c
 ui_paths.c
 ui_preferences.c
 ui_project_line.c
-data/gebr-connections-settings.glade
-data/connect-maestro-dialog.glade
-data/snapshot-revert.glade
