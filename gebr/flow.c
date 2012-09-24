@@ -1242,7 +1242,9 @@ void flow_program_paste(void)
 void
 gebr_flow_set_toolbar_sensitive(void)
 {
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	GebrMaestroServer *maestro = NULL;
+	if (gebr.line)
+		maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 
 	gboolean sensitive = TRUE;
 	gboolean sensitive_exec_slider;

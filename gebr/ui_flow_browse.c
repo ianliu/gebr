@@ -2738,10 +2738,8 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 
 	}
 
-	if (gebr.line)
-		gebr_flow_set_toolbar_sensitive();
-
 	flow_browse_info_update();
+	gebr_flow_set_toolbar_sensitive();
 
 	GtkWidget *output_view = gebr_job_control_get_output_view(gebr.job_control);
 	gtk_widget_reparent(output_view, self->context[CONTEXT_JOBS]);
