@@ -335,6 +335,7 @@ gebr_menu_view_init(GebrMenuView *view)
 
 	view->priv->filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(view->priv->tree_store), NULL);
 	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(view->priv->filter), MENU_VISIBLE_COLUMN);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(view->priv->tree_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
 
 	gtk_tree_view_set_model(view->priv->tree_view,
 	                        GTK_TREE_MODEL(view->priv->filter));

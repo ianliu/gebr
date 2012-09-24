@@ -242,6 +242,7 @@ void flow_delete(gboolean confirm)
 		flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, FALSE, FALSE);
 
 	flow_browse_info_update();
+	gebr_flow_set_toolbar_sensitive();
 
 	project_line_info_update();
 }
@@ -1275,16 +1276,16 @@ gebr_flow_set_toolbar_sensitive(void)
 
 	// Set sensitive for page Flows
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), sensitive_edit);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_new"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_new"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"), sensitive_edit);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), sensitive_edit);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), sensitive_edit);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_import"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_export"), sensitive_edit);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details"), sensitive_exec_slider);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"), sensitive_edit);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive_edit);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive_edit);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive_edit);
 
