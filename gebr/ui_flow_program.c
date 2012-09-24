@@ -205,7 +205,6 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 		break;
 	case GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED:
 	case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
-	case GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN:
 		active = FALSE;
 		break;
 	}

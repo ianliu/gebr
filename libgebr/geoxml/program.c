@@ -259,22 +259,21 @@ gboolean gebr_geoxml_program_get_stderr(GebrGeoXmlProgram * program)
 
 GebrGeoXmlProgramStatus gebr_geoxml_program_get_status(GebrGeoXmlProgram * program)
 {
-	GebrGeoXmlProgramStatus ret = GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN;
+	GebrGeoXmlProgramStatus ret;
 	gchar *status;
 
-	if (program == NULL)
-		return GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN;
+	g_return_val_if_fail(program != NULL, GEBR_GEOXML_PROGRAM_STATUS_DISABLED);
 
 	status = __gebr_geoxml_get_attr_value((GdomeElement *) program, "status");
 
 	if (!strcmp(status, "unconfigured"))
 		ret = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
-
-	if (!strcmp(status, "configured"))
+	else if (!strcmp(status, "configured"))
 		ret = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
-
-	if (!strcmp(status, "disabled"))
+	else if (!strcmp(status, "disabled"))
 		ret = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
+	else
+		g_return_val_if_reached(GEBR_GEOXML_PROGRAM_STATUS_DISABLED);
 
 	g_free(status);
 

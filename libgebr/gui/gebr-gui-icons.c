@@ -136,8 +136,7 @@ const gchar * gebr_gui_get_program_icon(GebrGeoXmlProgram * program)
 	GebrGeoXmlProgramStatus status;
 
 	status = gebr_geoxml_program_get_status(program);
-	if (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED ||
-	    status == GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN)
+	if (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return GTK_STOCK_DIALOG_WARNING;
 
 	switch(status) {
