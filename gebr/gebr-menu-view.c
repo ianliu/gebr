@@ -428,10 +428,65 @@ gebr_menu_view_new(void)
 	return g_object_new(GEBR_TYPE_MENU_VIEW, NULL);
 }
 
-GtkTreeStore *
-gebr_menu_view_get_model(GebrMenuView *view)
+void
+gebr_menu_view_clear_model(GebrMenuView *view)
 {
-	return view->priv->tree_store;
+	gtk_tree_store_clear(view->priv->tree_store);
+}
+
+GtkTreeIter
+gebr_menu_view_find_or_add_category(const gchar *title,
+                                    GHashTable *categories_hash,
+                                    GebrMenuView *view)
+{
+	GtkTreeIter parent;
+	GtkTreeIter iter;
+
+	GtkTreeStore *menu_store = view->priv->tree_store;
+
+	gchar **category_tree = g_strsplit(title, "|", 0);
+	GString *category_name = g_string_new("");
+	for (int i = 0; category_tree[i] != NULL; ++i) {
+		gchar *escaped_title = g_markup_escape_text(category_tree[i], -1);
+
+		g_string_append_printf(category_name, "|%s", category_tree[i]);
+		GtkTreeIter * category_iter = g_hash_table_lookup(categories_hash, category_name->str);
+		if (category_iter == NULL) {
+			gtk_tree_store_append(menu_store, &iter, i > 0 ? &parent : NULL);
+			gtk_tree_store_set(menu_store, &iter,
+					   MENU_TITLE_COLUMN, escaped_title,
+					   MENU_VISIBLE_COLUMN, TRUE,
+					   -1);
+			g_hash_table_insert(categories_hash, g_strdup(category_name->str), gtk_tree_iter_copy(&iter));
+		} else
+			iter = *category_iter;
+
+		parent = iter;
+		g_free(escaped_title);
+	}
+	g_string_free(category_name, TRUE);
+	g_strfreev(category_tree);
+
+	return iter;
+}
+
+void
+gebr_menu_view_add_menu(GtkTreeIter *parent,
+                        const gchar *title,
+                        const gchar *desc,
+                        const gchar *file,
+                        GebrMenuView *view)
+{
+	GtkTreeIter child;
+	GtkTreeStore *menu_store = view->priv->tree_store;
+
+	gtk_tree_store_append(menu_store, &child, parent);
+	gtk_tree_store_set(menu_store, &child,
+	                   MENU_TITLE_COLUMN, title,
+	                   MENU_DESCRIPTION_COLUMN, desc,
+	                   MENU_FILEPATH_COLUMN, file,
+	                   MENU_VISIBLE_COLUMN, TRUE,
+	                   -1);
 }
 
 GtkWidget *

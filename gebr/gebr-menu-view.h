@@ -62,13 +62,38 @@ GType gebr_menu_view_get_type(void) G_GNUC_CONST;
 GebrMenuView *gebr_menu_view_new(void);
 
 /**
- * gebr_menu_view_get_model:
+ * gebr_menu_view_clear_model:
  * @view:
  *
- * Returns model os menu view
  */
-GtkTreeStore *gebr_menu_view_get_model(GebrMenuView *view);
+void gebr_menu_view_clear_model(GebrMenuView *view);
 
+/**
+ * gebr_menu_view_find_or_add_category:
+ * @title:
+ * @categories_hash:
+ * @view:
+ *
+ * Returns: A iter of category with @title
+ */
+GtkTreeIter gebr_menu_view_find_or_add_category(const gchar *title,
+                                                GHashTable *categories_hash,
+                                                GebrMenuView *view);
+
+/**
+ * gebr_menu_view_add_menu:
+ * @parent:
+ * @title:
+ * @desc:
+ * @file:
+ * @view:
+ *
+ */
+void gebr_menu_view_add_menu(GtkTreeIter *parent,
+                             const gchar *title,
+                             const gchar *desc,
+                             const gchar *file,
+                             GebrMenuView *view);
 /**
  * gebr_menu_view_get_widget:
  *
