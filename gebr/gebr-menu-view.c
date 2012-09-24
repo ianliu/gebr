@@ -272,20 +272,23 @@ on_search_entry(GtkWidget *widget,
 	const gchar *key = gtk_entry_get_text(GTK_ENTRY(widget));
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(view->priv->tree_view);
 
+	update_menus_visibility(view, key);
+
 	if (key && *key) {
 		GtkTreeIter iter, child;
 		if (gtk_tree_model_get_iter_first(view->priv->filter, &iter)) {
-			if (gtk_tree_model_iter_children(view->priv->filter, &child, &iter))
+			if (gtk_tree_model_iter_children(view->priv->filter, &child, &iter)) {
 				gtk_tree_selection_select_iter(selection, &child);
-			else
+				gebr_gui_gtk_tree_view_scroll_to_iter_cell(view->priv->tree_view, &child);
+			} else {
 				gtk_tree_selection_select_iter(selection, &iter);
+				gebr_gui_gtk_tree_view_scroll_to_iter_cell(view->priv->tree_view, &iter);
+			}
 		}
 		gtk_entry_set_icon_sensitive(GTK_ENTRY(view->priv->entry), GTK_ENTRY_ICON_SECONDARY, TRUE);
 	} else {
 		gtk_entry_set_icon_sensitive(GTK_ENTRY(view->priv->entry), GTK_ENTRY_ICON_SECONDARY, FALSE);
 	}
-
-	update_menus_visibility(view, key);
 }
 
 static void
