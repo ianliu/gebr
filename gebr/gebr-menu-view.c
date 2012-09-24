@@ -278,6 +278,9 @@ on_search_entry(GtkWidget *widget,
 		GtkTreeIter iter, child;
 		if (gtk_tree_model_get_iter_first(view->priv->filter, &iter)) {
 			if (gtk_tree_model_iter_children(view->priv->filter, &child, &iter)) {
+				GtkTreePath *path = gtk_tree_model_get_path(view->priv->filter, &iter);
+				if (!gtk_tree_view_row_expanded(view->priv->tree_view, path))
+					gtk_tree_view_expand_row(view->priv->tree_view, path, TRUE);
 				gtk_tree_selection_select_iter(selection, &child);
 				gebr_gui_gtk_tree_view_scroll_to_iter_cell(view->priv->tree_view, &child);
 			} else {
