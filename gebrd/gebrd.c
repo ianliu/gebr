@@ -466,10 +466,3 @@ GebrValidator *gebrd_get_validator(GebrdApp *self)
 
 	return self->validator;
 }
-
-gint
-gebrd_app_set_heuristic_aggression(GebrdApp *self,
-				   gdouble aggressive)
-{
-	return gebr_calculate_number_of_processors(self->nprocs, aggressive);
-}
