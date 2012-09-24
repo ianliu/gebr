@@ -1156,10 +1156,8 @@ on_view_key_release_event(GtkWidget   *widget,
                           GebrUiFlowBrowse *fb)
 {
 	if (event->keyval == GDK_Shift_L ||
-	    event->keyval == GDK_Shift_R) {
+	    event->keyval == GDK_Shift_R)
 		fb->shift_pressed = FALSE;
-		g_debug("SHIFT RELESED!");
-	}
 
 	return FALSE;
 }
@@ -1169,11 +1167,11 @@ on_view_key_press_event(GtkWidget   *widget,
                         GebrUiFlowBrowse *fb)
 {
 	if (event->keyval == GDK_Shift_L ||
-	    event->keyval == GDK_Shift_R) {
+	    event->keyval == GDK_Shift_R)
 		fb->shift_pressed = TRUE;
-		g_debug("SHIFT PRESSED!");
-	}
-	else if (fb->shift_pressed && event->keyval == GDK_Down) {
+
+
+	if (fb->shift_pressed && event->keyval == GDK_Down) {
 		GtkTreeIter iter;
 		GtkTreeModel *model;
 
@@ -2229,7 +2227,7 @@ flow_browse_on_multiple_selection(GtkTreeModel *model,
 				                   FB_STRUCT_TYPE, &each_type,
 				                   -1);
 
-				if (fb->shift_pressed)
+				if (each_type == STRUCT_TYPE_FLOW && fb->shift_pressed)
 					break;
 
 				if (last_type == STRUCT_TYPE_IO) {
