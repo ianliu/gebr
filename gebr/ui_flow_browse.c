@@ -565,8 +565,7 @@ flow_browse_popup_menu(GtkWidget *widget,
 		return NULL;
 
 	GtkTreeIter iter;
-	if (g_list_length(rows) > 1)
-		flow_browse_single_selection();
+	gboolean multiple = g_list_length(rows) > 1;
 
 	GebrUiFlowBrowseType type;
 	gtk_tree_model_get_iter(model, &iter, rows->data);
@@ -580,10 +579,13 @@ flow_browse_popup_menu(GtkWidget *widget,
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
-		menu = gebr_ui_flow_popup_menu(ui_flow);
+		menu = gebr_ui_flow_popup_menu(ui_flow, multiple);
 	}
 	else if (type == STRUCT_TYPE_IO) {
 		GebrUiFlowsIo *ui_io;
+
+		if (multiple)
+			flow_browse_single_selection();
 
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_io,
@@ -597,7 +599,7 @@ flow_browse_popup_menu(GtkWidget *widget,
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_program,
 		                   -1);
-		menu = gebr_ui_flow_program_popup_menu(ui_program);
+		menu = gebr_ui_flow_program_popup_menu(ui_program, multiple);
 	}
 	return menu;
 }

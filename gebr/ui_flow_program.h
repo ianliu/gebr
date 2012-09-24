@@ -73,7 +73,7 @@ const gchar *gebr_ui_flow_program_get_tooltip(GebrUiFlowProgram *program);
 
 void gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program);
 
-GtkMenu *gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program);
+GtkMenu *gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program, gboolean multiple);
 
 G_END_DECLS
 

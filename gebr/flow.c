@@ -1364,6 +1364,7 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_top"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_bottom"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"), sensitive_exec_slider);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_parallel"), sensitive_exec_slider);
 }
 
 static void append_parameter_row(GebrGeoXmlParameter * parameter,
