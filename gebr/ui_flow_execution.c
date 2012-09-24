@@ -1084,7 +1084,7 @@ set_single_execution_labels(GtkBuilder *builder){
 			_("In which set of nodes this task should be executed?"));
 	gchar *dispersion_text = g_markup_printf_escaped(
 			_("This task can be divided to speed up its execution.\n"
-					"How many parts should it be split?"));
+					"In how many parts should it be split?"));
 	gchar *priority_text = g_markup_printf_escaped(_("How this task must compete with other processes?"));
 
 	gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(builder, "order_label")),
