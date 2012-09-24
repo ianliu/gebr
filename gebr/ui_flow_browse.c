@@ -1150,6 +1150,59 @@ view_selection_func(GtkTreeSelection *selection,
 	return TRUE;
 }
 
+static gboolean
+on_view_key_release_event(GtkWidget   *widget,
+                          GdkEventKey *event,
+                          GebrUiFlowBrowse *fb)
+{
+	if (event->keyval == GDK_Shift_L ||
+	    event->keyval == GDK_Shift_R) {
+		fb->shift_pressed = FALSE;
+		g_debug("SHIFT RELESED!");
+	}
+
+	return FALSE;
+}
+static gboolean
+on_view_key_press_event(GtkWidget   *widget,
+                        GdkEventKey *event,
+                        GebrUiFlowBrowse *fb)
+{
+	if (event->keyval == GDK_Shift_L ||
+	    event->keyval == GDK_Shift_R) {
+		fb->shift_pressed = TRUE;
+		g_debug("SHIFT PRESSED!");
+	}
+	else if (fb->shift_pressed && event->keyval == GDK_Down) {
+		GtkTreeIter iter;
+		GtkTreeModel *model;
+
+		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view));
+		GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+		if (g_list_length(rows) > 1)
+			return FALSE;
+
+		GebrUiFlowBrowseType type;
+
+		gtk_tree_model_get_iter(model, &iter, rows->data);
+		gtk_tree_model_get(model, &iter,
+		                   FB_STRUCT_TYPE, &type,
+		                   -1);
+
+		if (type == STRUCT_TYPE_FLOW) {
+			GtkTreePath *start_path = gtk_tree_model_get_path(model, &iter);
+			if (gtk_tree_model_iter_next(model, &iter)) {
+				GtkTreePath *end_path = gtk_tree_model_get_path(model, &iter);
+				gtk_tree_selection_select_range(selection, start_path, end_path);
+			}
+		}
+	}
+
+
+	return FALSE;
+}
+
 static void
 on_line_back_clicked(GtkButton *button,
                      GebrUiFlowBrowse *fb)
@@ -1227,6 +1280,9 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(ui_flow_browse->view), TRUE);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
 	gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
+
+	g_signal_connect(ui_flow_browse->view, "key-press-event", G_CALLBACK(on_view_key_press_event), ui_flow_browse);
+	g_signal_connect(ui_flow_browse->view, "key-release-event", G_CALLBACK(on_view_key_release_event), ui_flow_browse);
 
 	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
 	gtk_widget_modify_base(ui_flow_browse->view, GTK_STATE_NORMAL, &(style->bg[GTK_STATE_NORMAL]));
@@ -2173,6 +2229,9 @@ flow_browse_on_multiple_selection(GtkTreeModel *model,
 				                   FB_STRUCT_TYPE, &each_type,
 				                   -1);
 
+				if (fb->shift_pressed)
+					break;
+
 				if (last_type == STRUCT_TYPE_IO) {
 					change_type = TRUE;
 					last_type = STRUCT_TYPE_PROGRAM;
@@ -2197,13 +2256,7 @@ flow_browse_on_multiple_selection(GtkTreeModel *model,
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
 	g_list_free(rows);
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	rows = gtk_tree_selection_get_selected_rows(selection, NULL);
-
 	gebr_flow_browse_unblock_changed_signal(fb);
-
-	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
-	g_list_free(rows);
 
 	return n_rows > 1;
 }
