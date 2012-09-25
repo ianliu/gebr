@@ -982,11 +982,9 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	const gchar *snapshot_title	= gebr_comm_uri_get_param(uri, "snapshot_title");
 	const gchar *snapshot_id	= gebr_comm_uri_get_param(uri, "snapshot_id");
 
-	if (temp_parent) {
+	if (temp_parent)
 		parent_id = gebrm_client_get_job_id_from_temp(client,
 							      temp_parent);
-		g_debug("Got parent_id %s from temp id %s", parent_id, temp_parent);
-	}
 
 	GebrCommJsonContent *json = gebr_comm_json_content_new(request->content->str);
 	GString *value = gebr_comm_json_content_to_gstring(json);
@@ -1042,7 +1040,6 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	GebrmJob *job = gebrm_job_new();
 
 	gebrm_client_add_temp_id(client, temp_id, gebrm_job_get_id(job));
-	g_debug("Associating temp_id %s with id %s", temp_id, gebrm_job_get_id(job));
 
 	g_signal_connect(job, "status-change",
 			 G_CALLBACK(gebrm_app_job_controller_on_status_change), app);
@@ -1111,25 +1108,22 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		aap->job = job;
 		gebr_comm_runner_set_ran_func(runner, on_execution_response, aap);
 
-		g_debug("Queue: '%s'", parent_id);
-		gboolean immed = FALSE;
 		GebrmJob *parent;
+		gboolean run_immediately = FALSE;
 
-		if (parent_id[0]) {
-			parent = gebrm_app_job_controller_find(app, parent_id);
+		parent = gebrm_app_job_controller_find(app, parent_id);
+		if (parent) {
 			GebrCommJobStatus status = gebrm_job_get_status(parent);
-			immed = status != JOB_STATUS_QUEUED && status != JOB_STATUS_RUNNING;
+			run_immediately = status != JOB_STATUS_QUEUED && status != JOB_STATUS_RUNNING && status != JOB_STATUS_INITIAL;
 		}
 
-		if (!parent_id || !*parent_id || immed) {
-			g_debug("Running immediately");
+		if (!parent || run_immediately) {
 			g_queue_push_head(app->priv->job_def_queue, job);
 			if (g_queue_is_empty(app->priv->job_run_queue)
 			    && !gebr_comm_runner_run_async(runner))
 				gebrm_job_kill_immediately(job);
 			g_queue_push_tail(app->priv->job_run_queue, runner);
 		} else {
-
 			GList *parent_on_queue = g_queue_find(app->priv->job_def_queue, parent);
 			if (parent_on_queue)
 				g_queue_insert_after(app->priv->job_def_queue, parent_on_queue, job);
