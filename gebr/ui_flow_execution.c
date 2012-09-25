@@ -41,6 +41,7 @@ struct _GebrUiFlowExecutionPriv {
 	GtkToggleButton *save_default_button;
 	GtkWidget *window;
 	GtkLabel *number_cores_label;
+	gdouble exec_speed;
 };
 
 G_DEFINE_TYPE(GebrUiFlowExecution, gebr_ui_flow_execution, G_TYPE_OBJECT);
@@ -825,7 +826,8 @@ gebr_ui_flow_execution_save_default(GebrUiFlowExecution *ui_flow_execution)
 	}
 
 	/* Set speed*/
-	gebr.config.flow_exec_speed = gebr_ui_flow_execution_calculate_speed_from_slider_value(gtk_adjustment_get_value(ui_flow_execution->priv->speed_adjustment));
+	if (gtk_widget_get_sensitive(GTK_WIDGET(ui_flow_execution->priv->speed_slider)))
+		gebr.config.flow_exec_speed = gebr_ui_flow_execution_calculate_speed_from_slider_value(gtk_adjustment_get_value(ui_flow_execution->priv->speed_adjustment));
 
 	/* Set niceness*/
 	gboolean active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_flow_execution->priv->nice_button_high));
@@ -868,10 +870,11 @@ on_run_button_clicked(GtkButton *button,
 }
 
 static void 
-on_show_scale(GtkWidget * scale)
+on_show_scale(GtkWidget * scale,
+              GebrUiFlowExecution *ui_flow_execution)
 {
 	gtk_range_set_value(GTK_RANGE(scale),
-	                    gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed));
+	                    gebr_ui_flow_execution_calculate_slider_from_speed(ui_flow_execution->priv->exec_speed));
 }
 
 static void
@@ -920,21 +923,18 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution,
 	gdouble speed_value;
 	GtkAdjustment *flow_exec_adjustment = ui_flow_execution->priv->speed_adjustment;
 
-	if (gebr.config.flow_exec_speed != -1) {
-		speed_value = gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed);
-	}
-
-	gtk_adjustment_set_value(flow_exec_adjustment,
-	                         speed_value);
-
-	gtk_adjustment_value_changed(flow_exec_adjustment);
-
 	if (!slider_sensitiviness) {
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(builder, "dispersion_enclosure_box")),
 		                         FALSE);
-//		gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(builder, "dispersion_label")),
-//		                     _("These tasks are not divisible"));
+		gtk_widget_set_sensitive(ui_flow_execution->priv->speed_slider, FALSE);
+		speed_value = 0.0;
+	} else {
+		speed_value = gebr.config.flow_exec_speed;
+		speed_value = gebr_ui_flow_execution_calculate_slider_from_speed(gebr.config.flow_exec_speed);
 	}
+	ui_flow_execution->priv->exec_speed = speed_value;
+	gtk_adjustment_set_value(flow_exec_adjustment, speed_value);
+	gtk_adjustment_value_changed(flow_exec_adjustment);
 
 	/* Priority */
 	if (gebr.config.niceness == 0)
@@ -970,7 +970,7 @@ speed_slider_setup_ui(GebrUiFlowExecution *ui_flow_execution,
 
 	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
 	g_signal_connect(scale, "query-tooltip", G_CALLBACK(speed_controller_query_tooltip), NULL);
-	g_signal_connect(scale, "map", G_CALLBACK(on_show_scale), NULL);
+	g_signal_connect(scale, "map", G_CALLBACK(on_show_scale), ui_flow_execution);
 
 	ui_flow_execution->priv->speed_slider = GTK_WIDGET(scale);
 	ui_flow_execution->priv->speed_adjustment = flow_exec_adjustment;
@@ -982,7 +982,7 @@ update_speed_slider(GtkScale *scale, gint ncores)
 	gtk_scale_clear_marks(scale);
 
 	gchar *half_cores = g_markup_printf_escaped("<span size='x-small'>%d</span>", ncores/2);
-	gchar *total_cores = g_markup_printf_escaped("<span size='x-small'>%d</span>", ncores);
+	gchar *total_cores = g_markup_printf_escaped("<span size='x-small' font_weight='bold'>%d</span>", ncores);
 	gchar *over_cores = g_markup_printf_escaped("<span size='x-small'>%d</span>", 4*ncores);
 
 	gdouble med = SLIDER_100 / 2.0;
@@ -1029,7 +1029,7 @@ on_servers_combo_changed(GtkComboBox *widget,
                          GebrUiFlowExecution *ui_flow_execution)
 {
 	gint ncores = get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo));
-	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>This set of nodes has %d cores</small>"),
+	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>The nominal capacity of this group of nodes is %d</small>"),
 	                                                     ncores);
 	gtk_label_set_markup(ui_flow_execution->priv->number_cores_label, number_cores_markup);
 	update_speed_slider(GTK_SCALE(ui_flow_execution->priv->speed_slider), ncores);
@@ -1157,9 +1157,14 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 
 	gtk_container_add(GTK_CONTAINER(dispersion_box), ui_flow_execution->priv->speed_slider);
 
-	execution_details_restore_default_values(ui_flow_execution, builder, slider_sensitiviness);
 
+	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
+
+	gtk_window_set_position(GTK_WINDOW(main_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+	gtk_window_set_modal(GTK_WINDOW(main_dialog), TRUE);
 	gtk_widget_show_all(main_dialog);
+
+	execution_details_restore_default_values(ui_flow_execution, builder, slider_sensitiviness);
 
 	if(!multiple)
 		set_single_execution_dialog(builder);
@@ -1168,9 +1173,6 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), ui_flow_execution);
 	g_signal_connect(GTK_BUTTON(cancel_button), "clicked", G_CALLBACK(on_cancel_button_clicked), main_dialog);
 	g_signal_connect(GTK_BUTTON(help_button), "clicked", G_CALLBACK(on_help_button_clicked), NULL);
-
-	gtk_window_set_modal(GTK_WINDOW(main_dialog), TRUE);
-	gtk_window_set_transient_for(GTK_WINDOW(main_dialog), GTK_WINDOW(gebr.window));
 
 	return ui_flow_execution;
 }

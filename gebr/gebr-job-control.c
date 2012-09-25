@@ -1475,9 +1475,12 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 
 		parent = gebr_job_control_find(jc, gebr_job_get_queue(job));
 		if (parent) {
+			const gchar *j_counter = gebr_job_get_job_counter(parent);
+			const gchar *j_title = gebr_job_get_title(parent);
+			gchar *j_text = g_strdup_printf("%s #%s", j_title, j_counter);
 			gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
 			gtk_image_set_from_stock(wait_img, job_control_get_icon_for_job(parent), GTK_ICON_SIZE_BUTTON);
-			gtk_label_set_text(wait_label, gebr_job_get_title(parent));
+			gtk_label_set_text(wait_label, j_text);
 			gtk_widget_show(GTK_WIDGET(queued_button));
 		}
 	}
