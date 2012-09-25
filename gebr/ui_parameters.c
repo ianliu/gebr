@@ -35,16 +35,15 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_program.h"
 
-/* Prototypes {{{1 */
-/*
-static void	parameters_actions			(GtkDialog          *dialog,
-							 gint                arg1,
-							 GebrGuiProgramEdit *program_edit);
 
-static gboolean	parameters_on_delete_event		(GtkDialog          *dialog,
-							 GdkEventAny        *event,
-							 GebrGuiProgramEdit *program_edit);
-							 */
+static void
+validate_and_save_flow()
+{
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
+	flow_browse_validate_io(gebr.ui_flow_browse);
+	flow_browse_info_update();
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+}
 
 static gboolean
 on_parameters_key_press(GtkWidget *widget,
@@ -52,11 +51,8 @@ on_parameters_key_press(GtkWidget *widget,
                         GebrGuiProgramEdit *program_edit)
 {
 	if (event->key.keyval == GDK_Return ||
-	    event->key.keyval == GDK_KP_Enter) {
-		flow_browse_revalidate_programs(gebr.ui_flow_browse);
-		flow_browse_validate_io(gebr.ui_flow_browse);
-		flow_browse_info_update();
-	}
+	    event->key.keyval == GDK_KP_Enter)
+		validate_and_save_flow();
 
 	return FALSE;
 }
@@ -78,16 +74,13 @@ on_parameters_help_button_clicked(GtkButton *button,
 				  GebrGuiProgramEdit *program_edit)
 {
 	gebr_help_show(GEBR_GEOXML_OBJECT(program_edit->program), FALSE);
-
 }
 
 static void
 on_validated(GebrGuiParameterWidget *widget,
 	     gpointer user_data)
 {
-	flow_browse_revalidate_programs(gebr.ui_flow_browse);
-	flow_browse_validate_io(gebr.ui_flow_browse);
-	flow_browse_info_update();
+	validate_and_save_flow();
 }
 
 /* Public functions {{{1*/
