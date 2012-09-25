@@ -122,6 +122,13 @@ gebr_gui_html_viewer_widget_get_related_object (GebrGuiHtmlViewerWidget *self);
 void gebr_gui_html_viewer_widget_load_anchor (GebrGuiHtmlViewerWidget *self,
                                               gint anchor);
 
+/**
+ * gebr_gui_html_viewer_widget_set_is_menu:
+ * @is_menu: Flag to set if help is a menu
+ */
+void gebr_gui_html_viewer_widget_set_is_menu(GebrGuiHtmlViewerWidget * self,
+                                             gboolean is_menu);
+
 
 G_END_DECLS
 
