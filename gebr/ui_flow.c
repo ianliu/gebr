@@ -147,8 +147,9 @@ gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow, gboolean multiple)
 
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new_program")));
+	if (!multiple)
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new_program")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy")));
 	gtk_container_add(GTK_CONTAINER(menu),
