@@ -344,6 +344,7 @@ gebr_menu_view_init(GebrMenuView *view)
 	gtk_tree_view_set_model(view->priv->tree_view,
 	                        GTK_TREE_MODEL(view->priv->filter));
 	gtk_tree_view_set_headers_visible(view->priv->tree_view, FALSE);
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(view->priv->tree_view), FALSE);
 
 	GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
