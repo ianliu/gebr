@@ -320,6 +320,7 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	{
 	case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
 	case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
+	case GEBR_GEOXML_FLOW_ERROR_PROGRAM:
 		if (is_snapshot) {
 			gdk_threads_enter();
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);

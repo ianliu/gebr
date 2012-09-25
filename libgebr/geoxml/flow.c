@@ -822,6 +822,16 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 		    || gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
 			continue;
 
+		if (gebr_geoxml_program_get_error_id(prog, NULL)) {
+			g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+			            GEBR_GEOXML_FLOW_ERROR_PROGRAM,
+			            _("There are erroneous program(s) in Flow \"%s\"."),
+			            flow_title);
+			gebr_geoxml_object_unref(seq);
+			gebr_pairstrfreev(pvector);
+			return FALSE;
+		}
+
 		if (last_configured)
 			gebr_geoxml_object_unref(last_configured);
 		last_configured = prog;
