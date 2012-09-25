@@ -2792,7 +2792,6 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-	GdkColor color;
 	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
 
 	if (type == STRUCT_TYPE_FLOW) {
@@ -2825,8 +2824,7 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		const gchar *icon = gebr_gui_get_program_icon(program);
 
 		g_object_set(cell, "stock-id", icon, NULL);
-		gtk_style_lookup_color(style, "base_color", &color);
-		g_object_set(cell, "cell-background-gdk", &color, NULL);
+		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
 	}
 	else if (type == STRUCT_TYPE_IO) {
 		GebrUiFlowsIo *ui_io;
@@ -2837,8 +2835,7 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		const gchar *icon = gebr_ui_flows_io_get_stock_id(ui_io);
 
 		g_object_set(cell, "stock-id", icon, NULL);
-		gtk_style_lookup_color(style, "base_color", &color);
-		g_object_set(cell, "cell-background-gdk", &color, NULL);
+		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
 	}
 }
 
@@ -2855,7 +2852,6 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 	                   -1);
 
 	gchar *title = NULL;
-	GdkColor color;
 	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
 
 	if (type == STRUCT_TYPE_FLOW) {
@@ -2880,6 +2876,7 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "editable", FALSE, NULL);
 		g_object_set(cell, "cell-background-gdk", &(style->bg[GTK_STATE_NORMAL]), NULL);
+		g_object_set(cell, "foreground-gdk", &(style->fg[GTK_STATE_NORMAL]), NULL);
 	}
 	else if (type == STRUCT_TYPE_IO) {
 
@@ -2904,8 +2901,8 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 			g_free(title);
 			title = g_strdup(gebr_ui_flows_io_get_label_markup(io));
 		}
-		gtk_style_lookup_color(style, "base_color", &color);
-		g_object_set(cell, "cell-background-gdk", &color, NULL);
+		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
+		g_object_set(cell, "foreground-gdk", &style->black, NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *program;
@@ -2919,8 +2916,8 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 
 		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "editable", FALSE, NULL);
-		gtk_style_lookup_color(style, "base_color", &color);
-		g_object_set(cell, "cell-background-gdk", &color, NULL);
+		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
+		g_object_set(cell, "foreground-gdk", &style->black, NULL);
 	}
 
 	g_object_set(cell, "markup", title, NULL);
@@ -2941,7 +2938,6 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-	GdkColor color;
 	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
 
 	if (type == STRUCT_TYPE_FLOW) {
@@ -2961,8 +2957,7 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 	}
 	else if (type == STRUCT_TYPE_IO) {
 		g_object_set(cell, "stock-id", GTK_STOCK_DIRECTORY, NULL);
-		gtk_style_lookup_color(style, "base_color", &color);
-		g_object_set(cell, "cell-background-gdk", &color, NULL);
+		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
 
 		GebrUiFlowsIo *ui_io;
 		gtk_tree_model_get(model, iter,
@@ -2975,8 +2970,7 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		g_object_set(cell, "stock-id", NULL, NULL);
-		gtk_style_lookup_color(style, "base_color", &color);
-		g_object_set(cell, "cell-background-gdk", &color, NULL);
+		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
 	}
 }
 
