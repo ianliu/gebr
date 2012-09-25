@@ -170,8 +170,10 @@ gebr_flow_browse_on_add_menu(GebrMenuView *view,
 		return;
 	}
 
-	for (; program != NULL; gebr_geoxml_sequence_next(&program))
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 		gebr_geoxml_parameters_reset_to_default(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
+	}
 
 	menu_programs_index = gebr_geoxml_flow_get_programs_number(gebr.flow);
 	/* add it to the file */
