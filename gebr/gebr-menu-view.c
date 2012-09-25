@@ -295,7 +295,7 @@ on_menu_view_data_func(GtkTreeViewColumn *tree_column,
 	                   -1);
 
 	// Category
-	if (gtk_tree_store_iter_depth(GTK_TREE_STORE(model), iter) == 0) {
+	if (!desc) {
 		escape_text = g_markup_printf_escaped("<b>%s</b>", title);
 		g_object_set(cell, "markup", escape_text, NULL);
 	} else {
