@@ -251,8 +251,7 @@ void flow_browse_status_changed(guint status);
  * Adds all programs in the sequence @program into the flow edition view.
  */
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
-				       gboolean select_last,
-				       gboolean never_opened);
+				       gboolean select_last);
 
 /**
  * flow_browse_toggle_selected_program_status:
@@ -278,6 +277,8 @@ void flow_edition_component_activated(void);
 gboolean flow_browse_static_info_update(void);
 
 gboolean gebr_ui_flow_browse_update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb);
+
+gboolean gebr_flow_browse_selection_has_disabled_program(GebrUiFlowBrowse *fb);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

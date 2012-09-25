@@ -30,7 +30,7 @@
 #include <gebr/ui_flow_program.h>
 #include <libgebr/comm/gebr-comm.h>
 #include <callbacks.h>
-
+#include "ui_flow_browse.h"
 
 struct _GebrUiFlowProgramPriv {
 	GebrGeoXmlProgram *program;
@@ -183,24 +183,15 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program, gboolean multiple)
 		return NULL;
 
 	GtkWidget *menu = gtk_menu_new();
-	gboolean active;
-	
-	switch (gebr_ui_flow_program_get_status(program))
-	{
-	case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
-		active = TRUE;
-		break;
-	case GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED:
-	case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
-		active = FALSE;
-		break;
-	}
+	gboolean has_disabled;
 
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_toggle_status");
+	has_disabled = gebr_flow_browse_selection_has_disabled_program(gebr.ui_flow_browse);
+	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_change_status");
 
-	g_signal_handlers_block_by_func(action, on_flow_component_status_activate, NULL);
-	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), active);
-	g_signal_handlers_unblock_by_func(action, on_flow_component_status_activate, NULL);
+	if (has_disabled)
+		gtk_action_set_label(action, _("Enable"));
+	else
+		gtk_action_set_label(action, _("Disable"));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_action_create_menu_item(action));
 

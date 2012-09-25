@@ -1230,7 +1230,7 @@ void flow_program_paste(void)
 		gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 	}
 
-	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE, FALSE);
+	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE);
 	flow_browse_program_check_sensitiveness();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 	flow_browse_revalidate_programs(gebr.ui_flow_browse);

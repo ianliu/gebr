@@ -668,12 +668,5 @@ on_flows_escape_context(void)
 
 void on_flow_component_status_activate(GtkToggleAction *toggleaction)
 {
-	if (gtk_toggle_action_get_active(toggleaction))
-		flow_browse_status_changed(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
-	else
-		flow_browse_status_changed(GEBR_GEOXML_PROGRAM_STATUS_DISABLED);
-	flow_browse_validate_io(gebr.ui_flow_browse);
-	flow_browse_static_info_update();
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
+	flow_browse_toggle_selected_program_status(gebr.ui_flow_browse);
 }
-

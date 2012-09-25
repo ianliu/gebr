@@ -253,7 +253,6 @@ gboolean gebr_quit(gboolean save_config)
 	g_object_unref(gebr.action_group_flow);
 	g_object_unref(gebr.action_group_flow_edition);
 	g_object_unref(gebr.action_group_job_control);
-	g_object_unref(gebr.action_group_status);
 
 	gtk_main_quit();
 

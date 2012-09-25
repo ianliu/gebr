@@ -83,8 +83,7 @@ static void create_programs_view(GtkTreeIter *parent,
                                  GebrUiFlowBrowse *fb);
 
 void flow_add_program_to_flow(GebrGeoXmlSequence *program,
-                              GtkTreeIter *flow_iter,
-                              gboolean never_opened);
+                              GtkTreeIter *flow_iter);
 
 void
 gebr_flow_browse_update_server(GebrUiFlowBrowse *fb,
@@ -188,7 +187,7 @@ gebr_flow_browse_on_add_menu(GebrMenuView *view,
 
 	/* and to the GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
-	flow_add_program_sequence_to_view(menu_programs, TRUE, TRUE);
+	flow_add_program_sequence_to_view(menu_programs, TRUE);
 
 	document_free(GEBR_GEOXML_DOC(menu));
 }
@@ -853,27 +852,24 @@ flow_browse_component_key_pressed(GtkWidget *view, GdkEventKey *key, GebrUiFlowB
 
 	return FALSE;
 }
-	
-void
-flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
-{
-	GList			* listiter;
-	GList			* paths;
-	GebrGeoXmlProgram	* program;
-	GebrGeoXmlProgramStatus	  status;
-	GtkTreeIter		  iter;
-	GtkTreeModel		* model;
-	GtkTreeSelection	* selection;
-	gboolean		  has_disabled = FALSE;
 
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (fb->view));
-	paths = gtk_tree_selection_get_selected_rows (selection, &model);
+gboolean
+gebr_flow_browse_selection_has_disabled_program(GebrUiFlowBrowse *fb)
+{
+	GtkTreeModel *model;
+	GList *paths, *listiter;
+	GtkTreeSelection *selection;
+	gboolean has_disabled = FALSE;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW (fb->view));
+	paths = gtk_tree_selection_get_selected_rows(selection, &model);
 
 	if (!paths)
-		return;
+		return FALSE;
 
 	listiter = paths;
 	do {
+		GtkTreeIter iter;
 		GebrUiFlowBrowseType type;
 		GebrUiFlowProgram *ui_program;
 
@@ -888,9 +884,8 @@ flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 			continue;
 		}
 
-		program = gebr_ui_flow_program_get_xml(ui_program);
-
-		status = gebr_geoxml_program_get_status (program);
+		GebrGeoXmlProgram *program = gebr_ui_flow_program_get_xml(ui_program);
+		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(program);
 
 		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 		{
@@ -900,6 +895,33 @@ flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 
 		listiter = listiter->next;
 	} while (listiter);
+
+	g_list_foreach(paths, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(paths);
+
+	return has_disabled;
+}
+	
+void
+flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
+{
+	GList			* listiter;
+	GList			* paths;
+	GebrGeoXmlProgramStatus	  status;
+	GtkTreeIter		  iter;
+	GtkTreeModel		* model;
+	GtkTreeSelection	* selection;
+	gboolean		  has_disabled;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (fb->view));
+	paths = gtk_tree_selection_get_selected_rows (selection, &model);
+
+	if (!paths)
+		return;
+
+	listiter = paths;
+
+	has_disabled = gebr_flow_browse_selection_has_disabled_program(fb);
 
 	if (has_disabled)
 		status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
@@ -2302,7 +2324,6 @@ static void flow_browse_load(void)
 		}
 
 	} else if (type == STRUCT_TYPE_PROGRAM) {
-		gboolean has_error;
 		GtkAction * action;
 
 		GebrUiFlowProgram *ui_program;
@@ -2311,11 +2332,6 @@ static void flow_browse_load(void)
 		                   -1);
 
 		gebr.program = gebr_ui_flow_program_get_xml(ui_program);
-
-		/* If the program has an error, disable the 'Configured' status */
-		action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_toggle_status");
-		has_error = gebr_geoxml_program_get_error_id(gebr.program, NULL);
-		gtk_action_set_sensitive(action, !has_error);
 
 		action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help");
 		gchar *tmp_help_p = gebr_geoxml_program_get_help(gebr.program);
@@ -2543,8 +2559,7 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 
 void
 flow_add_program_to_flow(GebrGeoXmlSequence *program,
-                         GtkTreeIter *flow_iter,
-                         gboolean never_opened)
+                         GtkTreeIter *flow_iter)
 {
        gebr_geoxml_object_ref(program);
        GebrUiFlowProgram *ui_program = gebr_ui_flow_program_new(GEBR_GEOXML_PROGRAM(program));
@@ -2555,8 +2570,7 @@ flow_add_program_to_flow(GebrGeoXmlSequence *program,
 }
 
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
-                                      gboolean select_last,
-                                      gboolean never_opened)
+                                      gboolean select_last)
 {
        GtkTreeIter iter, parent;
        GebrGeoXmlProgramControl control;
@@ -2626,14 +2640,13 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
                } else
                        gtk_tree_store_insert_before(gebr.ui_flow_browse->store, &iter, &parent, &output_iter);
 
-               flow_add_program_to_flow(program, &iter, never_opened);
+               flow_add_program_to_flow(program, &iter);
 
                GebrIExprError undef;
                gebr_geoxml_program_get_error_id(GEBR_GEOXML_PROGRAM(program), &undef);
-               if (never_opened || undef == GEBR_IEXPR_ERROR_PATH)
-                       continue;
 
-               gebr_geoxml_program_is_valid(GEBR_GEOXML_PROGRAM(program), gebr.validator, NULL);
+               if (undef != GEBR_IEXPR_ERROR_PATH)
+		       gebr_geoxml_program_is_valid(GEBR_GEOXML_PROGRAM(program), gebr.validator, NULL);
        }
 
        if (select_last)

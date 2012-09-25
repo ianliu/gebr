@@ -64,7 +64,6 @@ struct gebr {
 	GtkActionGroup *action_group_flow;
 	GtkActionGroup *action_group_flow_edition;
 	GtkActionGroup *action_group_job_control;
-	GtkActionGroup *action_group_status;
 
 	gboolean restore_selection;
 	gboolean populate_list;

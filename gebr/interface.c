@@ -156,8 +156,11 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_execute_activate)},
-	{"escape", "escape", NULL, "Escape", NULL, G_CALLBACK(on_flows_escape_context)}
+		"<Control>R", N_("Execute this Flow"), G_CALLBACK(on_flow_execute_activate)},
+	{"escape", "escape", NULL, "Escape",
+		NULL, G_CALLBACK(on_flows_escape_context)},
+	{"flow_edition_change_status", NULL, N_("Enable"),
+		NULL, N_("Toggle the status of the selected programs"), G_CALLBACK(on_flow_component_status_activate)},
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {
@@ -172,11 +175,6 @@ static const GtkActionEntry actions_entries_job_control[] = {
 		NULL, N_("Ask node to cancel the selected Job"), G_CALLBACK(on_job_control_stop)},
 	{"job_control_filter", "filter", N_("Filter"),
 		NULL, N_("Filter jobs by group, node and status"), NULL},
-};
-
-static const GtkToggleActionEntry status_action_entries[] = {
-	{"flow_edition_toggle_status", NULL, N_("Enabled"),
-		NULL, N_("Toggle the status of the selected programs"), NULL}
 };
 
 /*
@@ -381,12 +379,6 @@ void gebr_setup_ui(void)
 	gebr.accel_group_array[ACCEL_JOB_CONTROL] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_job_control, gebr.accel_group_array[ACCEL_JOB_CONTROL]);
 
-	gebr.action_group_status = gtk_action_group_new("Status");
-	gtk_action_group_set_translation_domain(gebr.action_group_status, GETTEXT_PACKAGE);
-	gtk_action_group_add_toggle_actions(gebr.action_group_status, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
-	gebr.accel_group_array[ACCEL_STATUS] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_status, gebr.accel_group_array[ACCEL_STATUS]);
-
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event", G_CALLBACK(on_quit_activate), NULL);
 
@@ -488,10 +480,6 @@ void gebr_setup_ui(void)
 	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
-
-	GtkAction *action;
-	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_toggle_status");
-	g_signal_connect(action, "toggled", G_CALLBACK(on_flow_component_status_activate), NULL);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui();
 
