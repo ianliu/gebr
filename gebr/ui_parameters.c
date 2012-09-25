@@ -153,7 +153,6 @@ validate_program_iter(GtkTreeIter *iter, GError **error)
 {
 	GebrUiFlowBrowseType type;
 	GebrUiFlowProgram *ui_program;
-	gboolean never_opened;
 	GebrGeoXmlProgram *program;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), iter,
@@ -164,11 +163,7 @@ validate_program_iter(GtkTreeIter *iter, GError **error)
 	if (type != STRUCT_TYPE_PROGRAM)
 		return FALSE;
 
-	never_opened = gebr_ui_flow_program_get_flag_opened(ui_program);
 	program = gebr_ui_flow_program_get_xml(ui_program);
-
-	if (never_opened)
-		return FALSE;
 
 	if (gebr_geoxml_program_is_valid(program, gebr.validator, error))
 		return TRUE;

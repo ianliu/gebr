@@ -719,21 +719,15 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 			if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 				goto next;
 
-			if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+				validate_program_iter(&iter, NULL);
+			else {
 				if (validate_program_iter(&iter, NULL))
-					gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+					flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter, fb);
 				else
-					gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-
-				goto update;
+					flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter, fb);
 			}
 
-			if (validate_program_iter(&iter, NULL))
-				flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter, fb);
-			else
-				flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter, fb);
-
-		update:
 			/* update icon on interface */
 			path = gtk_tree_model_get_path(model, &iter);
 			gtk_tree_model_row_changed(model, path, &iter);
@@ -757,51 +751,35 @@ flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
                                GtkTreeIter *iter,
                                GebrUiFlowBrowse *fb)
 {
-	GtkTreeModel *model;
-	model = GTK_TREE_MODEL (fb->store);
-
 	GebrUiFlowBrowseType type;
+	GtkTreeModel *model = GTK_TREE_MODEL (fb->store);
 
-	gtk_tree_model_get(model, iter,
-	                   FB_STRUCT_TYPE, &type,
-	                   -1);
+	gtk_tree_model_get(model, iter, FB_STRUCT_TYPE, &type, -1);
 
 	if (type != STRUCT_TYPE_PROGRAM)
 		return;
 
-
-	gboolean has_error;
 	GebrGeoXmlProgram *program;
-	gboolean never_opened;
-
 	GebrUiFlowProgram *ui_program;
-	gtk_tree_model_get(model, iter,
-	                   FB_STRUCT, &ui_program,
-	                   -1);
 
-	never_opened = gebr_ui_flow_program_get_flag_opened(ui_program);
+	gtk_tree_model_get(model, iter, FB_STRUCT, &ui_program, -1);
+
 	program = gebr_ui_flow_program_get_xml(ui_program);
 
 	gboolean is_control = (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR);
 	if (gebr_geoxml_program_get_status(program) == status) {
+		// FIXME: Do we need the if below?
 		// If program is control, it may invalidate other programs but not itself
 		if (is_control)
 			flow_browse_revalidate_programs(fb);
 		return;
 	}
 
-	if (never_opened) {
-		gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
-		validate_program_iter(iter, NULL);
-	}
-	has_error = gebr_geoxml_program_get_error_id(program, NULL);
-
-	if (has_error && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-		status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
-
 	gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status);
 
-	if (is_control) {
+	if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED && !is_control)
+		validate_program_iter(iter, NULL);
+	else if (is_control) {
 		GebrGeoXmlSequence *parameter;
 
 		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
@@ -2107,9 +2085,6 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 
 	gebr_ui_flow_program_set_xml(ui_program, program_edit->program);
 
-	if (gebr_ui_flow_program_get_flag_opened(ui_program))
-		gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
-
 	GebrGeoXmlProgram *program = program_edit->program;
 
 	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
@@ -2515,13 +2490,6 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 
 			gtk_container_add(GTK_CONTAINER(fb->context[CONTEXT_PARAMETERS]), program_edit->widget);
 			gebr_flow_browse_define_context_to_show(CONTEXT_PARAMETERS, fb);
-
-			if (gebr_ui_flow_program_get_flag_opened(ui_program)) {
-				gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
-				flow_browse_revalidate_programs(gebr.ui_flow_browse);
-				flow_browse_validate_io(gebr.ui_flow_browse);
-				flow_browse_info_update();
-			}
 		}
 	}
 }
@@ -2533,7 +2501,6 @@ flow_add_program_to_flow(GebrGeoXmlSequence *program,
 {
        gebr_geoxml_object_ref(program);
        GebrUiFlowProgram *ui_program = gebr_ui_flow_program_new(GEBR_GEOXML_PROGRAM(program));
-       gebr_ui_flow_program_set_flag_opened(ui_program, never_opened);
        gtk_tree_store_set(gebr.ui_flow_browse->store, flow_iter,
                           FB_STRUCT_TYPE, STRUCT_TYPE_PROGRAM,
                           FB_STRUCT, ui_program,
@@ -3370,8 +3337,6 @@ void flow_edition_component_activated(void)
 	GebrGuiProgramEdit *program_edit = parameters_configure_setup_ui();
 
 	if (program_edit) {
-		gebr_ui_flow_program_set_flag_opened(ui_program, FALSE);
-
 		GtkTreeIter parent;
 		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent, &iter);
 		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &parent);

@@ -99,19 +99,6 @@ gebr_ui_flow_program_get_xml(GebrUiFlowProgram *program)
 }
 
 void
-gebr_ui_flow_program_set_flag_opened(GebrUiFlowProgram *program,
-				     gboolean never_opened)
-{
-	program->priv->never_opened = never_opened;
-}
-
-gboolean
-gebr_ui_flow_program_get_flag_opened(GebrUiFlowProgram *program)
-{
-	return program->priv->never_opened;
-}
-
-void
 gebr_ui_flow_program_set_status(GebrUiFlowProgram *program,
 				GebrGeoXmlProgramStatus status)
 {
