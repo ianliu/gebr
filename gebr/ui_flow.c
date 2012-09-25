@@ -174,7 +174,7 @@ gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow, gboolean multiple)
 	} else {
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
-		menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"));
+		menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_sequentially"));
 		gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
 		menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_parallel"));

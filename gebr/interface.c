@@ -121,6 +121,8 @@ static const GtkActionEntry actions_entries_flow[] = {
 		"<Control>R", N_("Execute"), G_CALLBACK(on_flow_execute_activate)},
 	{"flow_execute_details", "detailed_execution", NULL,
 		NULL, N_("Execution details"), G_CALLBACK(on_flow_execute_details_activate)},
+	{"flow_execute_sequentially", GTK_STOCK_EXECUTE, N_("Execute sequentially"),
+		"<Control>R", N_("Execute sequentially"), G_CALLBACK(on_flow_execute_activate)},
 	{"flow_execute_parallel", GTK_STOCK_EXECUTE, N_("Execute parallely"),
 		"<Control><Shift>R", N_("Execute parallely"), G_CALLBACK(on_flow_execute_parallel_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
