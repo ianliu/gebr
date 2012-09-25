@@ -2032,7 +2032,7 @@ gboolean menu_create_from_flow (const gchar *path, gboolean use_value)
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
 		flow_export_parameters_cleanup(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)),
 					       use_value);
-		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	}
 
 	gebr_geoxml_flow_io_set_input(GEBR_GEOXML_FLOW (flow), "");

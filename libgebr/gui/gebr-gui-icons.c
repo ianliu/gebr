@@ -136,10 +136,12 @@ const gchar * gebr_gui_get_program_icon(GebrGeoXmlProgram * program)
 	GebrGeoXmlProgramStatus status;
 
 	status = gebr_geoxml_program_get_status(program);
-	if (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
+
+	if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED
+	    && gebr_geoxml_program_get_error_id(program, NULL))
 		return GTK_STOCK_DIALOG_WARNING;
 
-	switch(status) {
+	switch (status) {
 	case GEBR_GEOXML_PROGRAM_STATUS_DISABLED:
 		postfix = "disabled";
 		break;

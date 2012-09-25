@@ -567,7 +567,7 @@ flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter,
 		}
 		if (data->set_programs_unconfigured && cleaned) {
 			GebrGeoXmlProgram *program = gebr_geoxml_parameter_get_program(parameter);
-			gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			//gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 			gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_PATH);
 			gebr_geoxml_object_unref(program);
 			return FALSE;

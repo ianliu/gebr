@@ -719,14 +719,7 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 			if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 				goto next;
 
-			if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
-				validate_program_iter(&iter, NULL);
-			else {
-				if (validate_program_iter(&iter, NULL))
-					flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter, fb);
-				else
-					flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter, fb);
-			}
+			validate_program_iter(&iter, NULL);
 
 			/* update icon on interface */
 			path = gtk_tree_model_get_path(model, &iter);
@@ -881,7 +874,6 @@ flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 	do {
 		GebrUiFlowBrowseType type;
 		GebrUiFlowProgram *ui_program;
-		gboolean has_error;
 
 		gtk_tree_model_get_iter (model, &iter, listiter->data);
 		gtk_tree_model_get (model, &iter,
@@ -897,10 +889,8 @@ flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 		program = gebr_ui_flow_program_get_xml(ui_program);
 
 		status = gebr_geoxml_program_get_status (program);
-		has_error = gebr_geoxml_program_get_error_id(program, NULL);
 
-		if ((status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) ||
-		    (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED && !has_error))
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 		{
 			has_disabled = TRUE;
 			break;
@@ -909,11 +899,10 @@ flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 		listiter = listiter->next;
 	} while (listiter);
 
-	if (has_disabled) {
+	if (has_disabled)
 		status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
-	} else {
+	else
 		status = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
-	}
 
 	listiter = paths;
 	while (listiter) {
@@ -933,6 +922,7 @@ flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 	}
 
 	flow_browse_program_check_sensitiveness();
+	// FIXME: Is this necessary?
 	flow_browse_revalidate_programs(fb);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
@@ -2100,11 +2090,9 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 		}
 	}
 
-	if (validate_selected_program(NULL))
-		flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter, gebr.ui_flow_browse);
-	else
-		flow_browse_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter, gebr.ui_flow_browse);
+	validate_selected_program(NULL);
 
+	// FIXME: Is this necessary? validate_program_iter
 	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 	flow_browse_validate_io(gebr.ui_flow_browse);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);

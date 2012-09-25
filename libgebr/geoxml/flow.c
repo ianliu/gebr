@@ -355,7 +355,7 @@ GebrGeoXmlProgram *gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow)
 	gebr_geoxml_program_set_stdin((GebrGeoXmlProgram *) element, FALSE);
 	gebr_geoxml_program_set_stdout((GebrGeoXmlProgram *) element, FALSE);
 	gebr_geoxml_program_set_stderr((GebrGeoXmlProgram *) element, FALSE);
-	gebr_geoxml_program_set_status((GebrGeoXmlProgram *) element, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+	gebr_geoxml_program_set_status((GebrGeoXmlProgram *) element, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	gdome_el_unref(__gebr_geoxml_insert_new_element(element, "title", NULL), &exception);
 	gdome_el_unref(__gebr_geoxml_insert_new_element(element, "binary", NULL), &exception);
 	gdome_el_unref(__gebr_geoxml_insert_new_element(element, "description", NULL), &exception);
@@ -1225,10 +1225,7 @@ gebr_geoxml_flow_revalidate(GebrGeoXmlFlow *flow, GebrValidator *validator)
 		prog = GEBR_GEOXML_PROGRAM(seq);
 		if (gebr_geoxml_program_get_status(prog) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 			continue;
-		if (!gebr_geoxml_program_is_valid(prog, validator, NULL))
-			gebr_geoxml_program_set_status(prog, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-		else
-			gebr_geoxml_program_set_status(prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+		gebr_geoxml_program_is_valid(prog, validator, NULL);
 	}
 }
 

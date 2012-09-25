@@ -57,10 +57,6 @@ void gebr_ui_flow_program_set_xml (GebrUiFlowProgram *program, GebrGeoXmlProgram
 
 GebrGeoXmlProgram *gebr_ui_flow_program_get_xml (GebrUiFlowProgram *program);
 
-void gebr_ui_flow_program_set_flag_opened (GebrUiFlowProgram *program, gboolean is_never_opened);
-
-gboolean gebr_ui_flow_program_get_flag_opened (GebrUiFlowProgram *program);
-
 void gebr_ui_flow_program_set_status (GebrUiFlowProgram *program, GebrGeoXmlProgramStatus status);
 
 GebrGeoXmlProgramStatus gebr_ui_flow_program_get_status (GebrUiFlowProgram *program);
