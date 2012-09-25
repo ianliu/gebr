@@ -122,7 +122,7 @@ gebr_ui_flow_set_is_selected(GebrUiFlow *ui_flow,
 
 
 GtkMenu *
-gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow)
+gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow, gboolean multiple)
 {
 	GtkWidget *menu;
 	GtkWidget *menu_item;
@@ -147,27 +147,43 @@ gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow)
 
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new_program")));
+	if (!multiple)
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_new_program")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_copy")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_delete")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_view")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit")));
 
-	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
-	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+	if (!multiple) {
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties")));
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_view")));
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit")));
 
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute")));
+		menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
+		gtk_container_add(GTK_CONTAINER(menu), menu_item);
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+		gtk_container_add(GTK_CONTAINER(menu),
+					  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute")));
+	} else {
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+		menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_sequentially"));
+		gtk_container_add(GTK_CONTAINER(menu), menu_item);
+
+		menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_parallel"));
+		gtk_container_add(GTK_CONTAINER(menu), menu_item);
+	}
+
+
+
 
  out:	gtk_widget_show_all(menu);
 

@@ -220,6 +220,8 @@ void gebr_maestro_server_reset_daemons_timeout(GebrMaestroServer *maestro);
 
 gchar *gebr_maestro_server_translate_error(const gchar *error_type, const gchar *error_msg);
 
+GtkTreeModel *gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

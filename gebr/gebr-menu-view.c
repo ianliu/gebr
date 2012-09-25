@@ -32,6 +32,11 @@ struct _GebrMenuViewPriv {
 	GtkTreeView *tree_view;
 	GtkTreeModel *filter;
 
+	GtkListStore *flat_store;
+	GtkTreeModel *flat_filter;
+
+	GHashTable *menus_added;
+
 	GtkWidget *entry;
 
 	GtkWidget *vbox;
@@ -58,8 +63,10 @@ gebr_menu_view_get_selected_menu(GebrMenuView *view, GtkTreeIter *iter)
 	if (gtk_tree_selection_get_selected(selection, &model, iter) == FALSE)
 		return FALSE;
 
-	if (gtk_tree_model_iter_has_child(model, iter))
-		return FALSE;
+	if (gtk_tree_view_get_model(view->priv->tree_view) == view->priv->filter) {
+		if (gtk_tree_model_iter_has_child(model, iter))
+			return FALSE;
+	}
 
 	return TRUE;
 }
@@ -84,7 +91,9 @@ gebr_menu_view_add(GtkTreeView *tree_view,
 		return;
 	}
 
-	gtk_tree_model_get(GTK_TREE_MODEL(view->priv->filter), &iter,
+	GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
+
+	gtk_tree_model_get(model, &iter,
 	                   MENU_FILEPATH_COLUMN, &filename,
 	                   -1);
 
@@ -225,42 +234,21 @@ update_menus_visibility(GebrMenuView *view,
                         const gchar *key)
 {
 	GtkTreeIter iter;
-	GtkTreeModel *model = GTK_TREE_MODEL(view->priv->tree_store);
+	GtkTreeModel *model = GTK_TREE_MODEL(view->priv->flat_store);
 	gboolean valid;
 
 	valid = gtk_tree_model_get_iter_first(model, &iter);
 	while (valid) {
-		gboolean has_visible_child = FALSE;
-		GtkTreeIter child;
 		gboolean was_visible;
 
-		valid = gtk_tree_model_iter_children(model, &child, &iter);
-		while (valid) {
-			gboolean visible = gebr_menu_view_visible_func(model, &child, key, view);
-			if (visible && !has_visible_child)
-				has_visible_child = TRUE;
-
-			gtk_tree_model_get(model, &child, MENU_VISIBLE_COLUMN, &was_visible, -1);
-
-			if (was_visible != visible)
-				gtk_tree_store_set(view->priv->tree_store, &child,
-						   MENU_VISIBLE_COLUMN, visible,
-						   -1);
-			valid = gtk_tree_model_iter_next(model, &child);
-		}
+		gboolean visible = gebr_menu_view_visible_func(model, &iter, key, view);
 
 		gtk_tree_model_get(model, &iter, MENU_VISIBLE_COLUMN, &was_visible, -1);
-		if (was_visible != has_visible_child)
-			gtk_tree_store_set(view->priv->tree_store, &iter,
-					   MENU_VISIBLE_COLUMN, has_visible_child,
-					   -1);
 
-		if (has_visible_child) {
-			GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-			gtk_tree_view_expand_row(view->priv->tree_view, path, TRUE);
-			gtk_tree_path_free(path);
-		}
-
+		if (was_visible != visible)
+			gtk_list_store_set(view->priv->flat_store, &iter,
+			                   MENU_VISIBLE_COLUMN, visible,
+			                   -1);
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 }
@@ -272,20 +260,23 @@ on_search_entry(GtkWidget *widget,
 	const gchar *key = gtk_entry_get_text(GTK_ENTRY(widget));
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(view->priv->tree_view);
 
+	update_menus_visibility(view, key);
+
 	if (key && *key) {
-		GtkTreeIter iter, child;
-		if (gtk_tree_model_get_iter_first(view->priv->filter, &iter)) {
-			if (gtk_tree_model_iter_children(view->priv->filter, &child, &iter))
-				gtk_tree_selection_select_iter(selection, &child);
-			else
-				gtk_tree_selection_select_iter(selection, &iter);
+		if (gtk_tree_view_get_model(view->priv->tree_view) != view->priv->flat_filter)
+			gtk_tree_view_set_model(view->priv->tree_view, view->priv->flat_filter);
+
+		GtkTreeIter iter;
+		if (gtk_tree_model_get_iter_first(view->priv->flat_filter, &iter)) {
+			gtk_tree_selection_select_iter(selection, &iter);
+			gebr_gui_gtk_tree_view_scroll_to_iter_cell(view->priv->tree_view, &iter);
 		}
 		gtk_entry_set_icon_sensitive(GTK_ENTRY(view->priv->entry), GTK_ENTRY_ICON_SECONDARY, TRUE);
 	} else {
+		if (gtk_tree_view_get_model(view->priv->tree_view) != view->priv->filter)
+			gtk_tree_view_set_model(view->priv->tree_view, view->priv->filter);
 		gtk_entry_set_icon_sensitive(GTK_ENTRY(view->priv->entry), GTK_ENTRY_ICON_SECONDARY, FALSE);
 	}
-
-	update_menus_visibility(view, key);
 }
 
 static void
@@ -324,21 +315,36 @@ gebr_menu_view_init(GebrMenuView *view)
 			GEBR_TYPE_MENU_VIEW,
 			GebrMenuViewPriv);
 
+	view->priv->menus_added = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
 	view->priv->tree_view = GTK_TREE_VIEW(gtk_tree_view_new());
 	view->priv->tree_store = gtk_tree_store_new(MENU_N_COLUMN,
 	                                            G_TYPE_STRING,
 	                                            G_TYPE_STRING,
 	                                            G_TYPE_STRING,
 	                                            G_TYPE_BOOLEAN);
+
+	view->priv->flat_store = gtk_list_store_new(MENU_N_COLUMN,
+	                                            G_TYPE_STRING,
+	                                            G_TYPE_STRING,
+	                                            G_TYPE_STRING,
+	                                            G_TYPE_BOOLEAN);
+
 	view->priv->vbox = gtk_vbox_new(FALSE, 5);
 	gtk_widget_set_size_request(GTK_WIDGET(view->priv->vbox), 500, 450);
 
 	view->priv->filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(view->priv->tree_store), NULL);
 	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(view->priv->filter), MENU_VISIBLE_COLUMN);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(view->priv->tree_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
+
+	view->priv->flat_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(view->priv->flat_store), NULL);
+	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(view->priv->flat_filter), MENU_VISIBLE_COLUMN);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(view->priv->flat_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
 
 	gtk_tree_view_set_model(view->priv->tree_view,
 	                        GTK_TREE_MODEL(view->priv->filter));
 	gtk_tree_view_set_headers_visible(view->priv->tree_view, FALSE);
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(view->priv->tree_view), FALSE);
 
 	GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
@@ -411,6 +417,14 @@ gebr_menu_view_class_init(GebrMenuViewClass *klass)
 	g_type_class_add_private(klass, sizeof(GebrMenuViewPriv));
 }
 
+static gboolean
+menu_already_added(const gchar *file,
+                   GebrMenuView *view)
+{
+	gpointer has_menu = g_hash_table_lookup(view->priv->menus_added, file);
+	return GPOINTER_TO_UINT(has_menu);
+}
+
 /*
  * Public Methods
  */
@@ -421,10 +435,82 @@ gebr_menu_view_new(void)
 	return g_object_new(GEBR_TYPE_MENU_VIEW, NULL);
 }
 
-GtkTreeStore *
-gebr_menu_view_get_model(GebrMenuView *view)
+void
+gebr_menu_view_clear_model(GebrMenuView *view)
 {
-	return view->priv->tree_store;
+	gtk_tree_store_clear(view->priv->tree_store);
+	gtk_list_store_clear(view->priv->flat_store);
+	g_hash_table_remove_all(view->priv->menus_added);
+}
+
+GtkTreeIter
+gebr_menu_view_find_or_add_category(const gchar *title,
+                                    GHashTable *categories_hash,
+                                    GebrMenuView *view)
+{
+	GtkTreeIter parent;
+	GtkTreeIter iter;
+
+	GtkTreeStore *menu_store = view->priv->tree_store;
+
+	gchar **category_tree = g_strsplit(title, "|", 0);
+	GString *category_name = g_string_new("");
+	for (int i = 0; category_tree[i] != NULL; ++i) {
+		gchar *escaped_title = g_markup_escape_text(category_tree[i], -1);
+
+		g_string_append_printf(category_name, "|%s", category_tree[i]);
+		GtkTreeIter * category_iter = g_hash_table_lookup(categories_hash, category_name->str);
+		if (category_iter == NULL) {
+			gtk_tree_store_append(menu_store, &iter, i > 0 ? &parent : NULL);
+			gtk_tree_store_set(menu_store, &iter,
+					   MENU_TITLE_COLUMN, escaped_title,
+					   MENU_VISIBLE_COLUMN, TRUE,
+					   -1);
+			g_hash_table_insert(categories_hash, g_strdup(category_name->str), gtk_tree_iter_copy(&iter));
+		} else
+			iter = *category_iter;
+
+		parent = iter;
+		g_free(escaped_title);
+	}
+	g_string_free(category_name, TRUE);
+	g_strfreev(category_tree);
+
+	return iter;
+}
+
+void
+gebr_menu_view_add_menu(GtkTreeIter *parent,
+                        const gchar *title,
+                        const gchar *desc,
+                        const gchar *file,
+                        GebrMenuView *view)
+{
+	GtkTreeIter child, iter;
+	GtkTreeStore *menu_store = view->priv->tree_store;
+	GtkListStore *flat_store = view->priv->flat_store;
+
+	// Add menu to view with categories
+	gtk_tree_store_append(menu_store, &child, parent);
+	gtk_tree_store_set(menu_store, &child,
+	                   MENU_TITLE_COLUMN, title,
+	                   MENU_DESCRIPTION_COLUMN, desc,
+	                   MENU_FILEPATH_COLUMN, file,
+	                   MENU_VISIBLE_COLUMN, TRUE,
+	                   -1);
+
+	// Add menu to view without categories (only when filter view)
+	if (!menu_already_added(file, view)) {
+		gtk_list_store_append(flat_store, &iter);
+		gtk_list_store_set(flat_store, &iter,
+		                   MENU_TITLE_COLUMN, title,
+		                   MENU_DESCRIPTION_COLUMN, desc,
+		                   MENU_FILEPATH_COLUMN, file,
+		                   MENU_VISIBLE_COLUMN, TRUE,
+		                   -1);
+
+		g_hash_table_insert(view->priv->menus_added, g_strdup(file), GUINT_TO_POINTER(TRUE));
+	}
 }
 
 GtkWidget *

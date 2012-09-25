@@ -55,6 +55,7 @@ struct _GebrGuiHtmlViewerWidgetPrivate {
 	GebrGuiHtmlViewerCustomTab callback;
 	gchar * label;
 	GString *content;
+	gboolean is_menu;
 };
 
 #define GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HTML_VIEWER_WIDGET, GebrGuiHtmlViewerWidgetPrivate))
@@ -132,6 +133,7 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 	priv->content = g_string_new (NULL);
 	tmp_file = gebr_make_temp_filename("XXXXXX.html");
 	priv->tmp_file = g_string_free (tmp_file, FALSE);
+	priv->is_menu = FALSE;
 
 	g_signal_connect(priv->web_view, "load-finished", G_CALLBACK(on_load_finished), self);
 
@@ -253,9 +255,9 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 			const gchar *uri = gebr_geoxml_program_get_url(GEBR_GEOXML_PROGRAM(priv->object));
 			help = gebr_geoxml_document_get_help (menu);
 
-			if (strlen(help) > 0 && strlen(uri) > 0) {
+			if (priv->is_menu && strlen(uri) > 0) {
 				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu'], ['<b>More Info</b>', 'gebr://link']]", TRUE);
-			} else if(strlen(help) > 0)
+			} else if(priv->is_menu)
 				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
 			else if (strlen(uri) > 0)
 				generate_links_index(context, "[['<b>More Info</b>', 'gebr://link']]", TRUE);
@@ -465,6 +467,18 @@ void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 #else
 	gebr_gui_show_uri (priv->tmp_file);
 #endif
+}
+
+void gebr_gui_html_viewer_widget_set_is_menu(GebrGuiHtmlViewerWidget * self,
+                                             gboolean is_menu)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	priv->is_menu = is_menu;
 }
 
 void gebr_gui_html_viewer_widget_show_html(GebrGuiHtmlViewerWidget * self, const gchar * content)

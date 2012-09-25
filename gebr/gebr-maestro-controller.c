@@ -441,9 +441,19 @@ on_server_group_remove(GtkMenuItem *menuitem,
                        GebrMaestroController *mc)
 {
 	const gchar *tag = g_object_get_data(G_OBJECT(menuitem), "tag");
-	GebrDaemonServer *daemon = g_object_get_data(G_OBJECT(menuitem), "daemon");
+	GList *daemons = g_object_get_data(G_OBJECT(menuitem), "daemon");
 
-	gebr_maestro_server_remove_tag_from(mc->priv->maestro, daemon, tag);
+	for (GList *i = daemons; i; i = i->next) {
+		GebrDaemonServer *daemon = i->data;
+		gebr_maestro_server_remove_tag_from(mc->priv->maestro, daemon, tag);
+	}
+}
+
+static void
+free_list_daemons(GList *daemons)
+{
+	g_list_foreach(daemons, (GFunc)g_object_unref, NULL);
+	g_list_free(daemons);
 }
 
 static GtkMenu *
@@ -458,7 +468,7 @@ server_group_popup_menu(GtkWidget * widget,
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
 	rows = gtk_tree_selection_get_selected_rows (selection, &model);
 
-	if (!rows || g_list_length(rows) > 1)
+	if (!rows)
 		return NULL;
 
 	GtkWidget *parent = gtk_widget_get_parent(widget);
@@ -468,12 +478,17 @@ server_group_popup_menu(GtkWidget * widget,
 
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
+	GList *daemons = NULL;
 
-	gtk_tree_model_get_iter(model, &iter, rows->data);
-	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+	for (GList *i = rows; i; i = i->next) {
+		gtk_tree_model_get_iter(model, &iter, i->data);
+		gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
 
-	if (!daemon)
-		return NULL;
+		if (!daemon)
+			return NULL;
+
+		daemons = g_list_prepend(daemons, daemon);
+	}
 
 	menu = gtk_menu_new ();
 
@@ -487,14 +502,34 @@ server_group_popup_menu(GtkWidget * widget,
 	g_object_set_data(G_OBJECT(item), "tag", tagdup);
 	g_object_weak_ref(G_OBJECT(item), (GWeakNotify)g_free, tagdup);
 
-	g_object_set_data(G_OBJECT(item), "daemon", daemon);
-	g_object_weak_ref(G_OBJECT(item), (GWeakNotify)g_object_unref, tagdup);
+	g_object_set_data(G_OBJECT(item), "daemon", daemons);
+	g_object_weak_ref(G_OBJECT(item), (GWeakNotify)free_list_daemons, tagdup);
 
 	gtk_widget_show_all (menu);
 	g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
 	g_list_free (rows);
 
 	return GTK_MENU (menu);
+}
+
+static gboolean
+groups_selection_func(GtkTreeSelection *selection,
+                      GtkTreeModel *model,
+                      GtkTreePath *path,
+                      gboolean path_currently_selected)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+
+	gtk_tree_model_get_iter(model, &iter, path);
+	gtk_tree_model_get(model, &iter,
+	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
+	                   -1);
+
+	if (!daemon)
+		return FALSE;
+
+	return TRUE;
 }
 
 static void
@@ -522,8 +557,10 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 		GtkTreeModel *new_model = copy_model_for_groups(model);
 
 		GtkWidget *view = gtk_tree_view_new_with_model(new_model);
-		gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (view)),
-		                             GTK_SELECTION_MULTIPLE);
+		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+		gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
+		gtk_tree_selection_set_select_function(selection, (GtkTreeSelectionFunc)groups_selection_func,
+		                                       NULL, NULL);
 
 		GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
@@ -1960,6 +1997,32 @@ on_mpi_change(GebrMaestroServer *maestro,
 		gebr_daemon_server_set_mpi_flavors(daemon, mpi_flavor);
 }
 
+static gboolean
+nodes_selection_func(GtkTreeSelection *selection,
+                     GtkTreeModel *model,
+                     GtkTreePath *path,
+                     gboolean path_currently_selected)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+
+	gtk_tree_model_get_iter(model, &iter, path);
+	gtk_tree_model_get(model, &iter,
+	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
+	                   -1);
+
+	if (gtk_tree_selection_count_selected_rows(selection) < 1)
+		return TRUE;
+
+	if (!daemon) {
+		if (path_currently_selected)
+			return TRUE;
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 static void
 update_maestro_view(GebrMaestroController *mc,
                     GebrMaestroServer *maestro,
@@ -1982,6 +2045,9 @@ update_maestro_view(GebrMaestroController *mc,
 	}
 
 	gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(view);
+	gtk_tree_selection_set_select_function(selection, (GtkTreeSelectionFunc)nodes_selection_func,
+	                                       NULL, NULL);
 }
 
 static void

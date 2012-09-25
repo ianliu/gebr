@@ -175,7 +175,7 @@ gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program) {
 }
 
 GtkMenu *
-gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
+gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program, gboolean multiple)
 {
 	GtkAction * action;
 
@@ -213,12 +213,14 @@ gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program)
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_flow_edition, "flow_edition_delete")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group_flow_edition, "flow_edition_properties")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group_flow_edition, "flow_edition_help")));
+	if (!multiple) {
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action
+		                                              (gebr.action_group_flow_edition, "flow_edition_properties")));
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action
+		                                              (gebr.action_group_flow_edition, "flow_edition_help")));
+	}
 
 	gtk_widget_show_all(menu);
 

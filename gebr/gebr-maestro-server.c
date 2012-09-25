@@ -1847,3 +1847,28 @@ gebr_maestro_server_translate_error(const gchar *error_type,
 	return message;
 }
 
+GtkTreeModel *
+gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model)
+{
+	GtkTreeIter iter, new_iter;
+	GtkListStore *new_model;
+	gboolean valid = FALSE;
+
+	new_model = gtk_list_store_new(1,
+	                               GEBR_TYPE_JOB);
+
+	 valid = gtk_tree_model_get_iter_first(orig_model, &iter);
+
+	 while (valid) {
+		 GebrJob *job;
+		 gtk_tree_model_get(orig_model, &iter, 0, &job, -1);
+
+		 gtk_list_store_append(new_model, &new_iter);
+		 gtk_list_store_set(new_model, &new_iter,
+		                    0, job,
+		                    -1);
+
+		 valid = gtk_tree_model_iter_next(orig_model, &iter);
+	 }
+	 return GTK_TREE_MODEL(new_model);
+}

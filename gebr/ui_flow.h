@@ -68,7 +68,7 @@ gboolean gebr_ui_flow_get_is_selected(GebrUiFlow *ui_flow);
 void gebr_ui_flow_set_is_selected(GebrUiFlow *ui_flow,
                                   gboolean is_selected);
 
-GtkMenu *gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow);
+GtkMenu *gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow, gboolean multiple);
 
 G_END_DECLS
 

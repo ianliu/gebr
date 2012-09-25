@@ -75,6 +75,8 @@ typedef struct {
 	GtkCellRenderer *text_renderer;
 	GtkCellRenderer *action_renderer;
 
+	gboolean shift_pressed;
+
 	GebrGuiProgramEdit *program_edit;
 
 	GtkWidget *info_window;

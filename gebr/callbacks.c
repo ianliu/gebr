@@ -60,12 +60,9 @@ void on_new_activate(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 		                   FB_STRUCT_TYPE, &type, -1);
 
-		if (type == STRUCT_TYPE_PROGRAM)
-			gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
-		else {
-			flow_new();
-			gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
-		}
+
+		flow_new();
+		gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
 		break;
 	}
 	default:

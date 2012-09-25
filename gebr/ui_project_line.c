@@ -1780,6 +1780,9 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 
 	menu = gtk_menu_new();
 
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_project_line->view));
+	gboolean multiple_selection = gtk_tree_selection_count_selected_rows(selection) > 1;
+
 	/* new project */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
@@ -1802,24 +1805,28 @@ static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_li
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_project_line, "project_line_new_line")));
+
 	/* properties */
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group_project_line, "project_line_properties")));
+	if (!multiple_selection)
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action
+		                                              (gebr.action_group_project_line, "project_line_properties")));
 	/* delete */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_project_line, "project_line_delete")));
 
 	/* view report */
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group_project_line, "project_line_view")));
+	if (!multiple_selection)
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action
+		                                              (gebr.action_group_project_line, "project_line_view")));
 
 	/* edit report */
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group_project_line, "project_line_edit")));
+	if (!multiple_selection)
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action
+		                                              (gebr.action_group_project_line, "project_line_edit")));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 

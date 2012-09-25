@@ -101,6 +101,10 @@ void on_flow_delete_activate(void);
 
 void on_flow_execute_activate(void);
 
+void on_flow_execute_sequentially_activate(void);
+
+void on_flow_execute_parallely_activate(void);
+
 void on_flow_execute_details_activate(void);
 /** 
  * Call #flow_revision_save

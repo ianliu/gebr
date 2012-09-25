@@ -36,6 +36,7 @@
 
 struct _GebrGuiParameterWidgetPriv
 {
+	gboolean last_status;
 	struct {
 		GebrGuiParameterValidatedFunc callback;
 		gpointer user_data;
@@ -651,10 +652,6 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 			parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
 		gebr_gui_parameter_set_min_max(GTK_ENTRY(widget), parameter_widget);
-
-	GebrGuiParameterValidatedFunc func = parameter_widget->priv->signal_validated.callback;
-	if (func)
-		func(parameter_widget, parameter_widget->priv->signal_validated.user_data);
 
 	return FALSE;
 }
@@ -1654,6 +1651,7 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	priv = g_new0(GebrGuiParameterWidgetPriv, 1);
 	self = g_new(GebrGuiParameterWidget, 1);
 	self->priv = priv;
+	self->priv->last_status = TRUE;
 
 	/* GebrGuiValidatable interface implementation */
 	self->parent.set_icon = parameter_widget_set_icon;
@@ -1708,6 +1706,8 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
 
 gboolean gebr_gui_parameter_widget_validate(GebrGuiParameterWidget *self)
 {
+	gboolean validate;
+
 	if (self->group_warning_widget) {
 		GebrGeoXmlParameterGroup *group;
 		GebrGeoXmlSequence *instance;
@@ -1720,9 +1720,18 @@ gboolean gebr_gui_parameter_widget_validate(GebrGuiParameterWidget *self)
 	if (!__parameter_accepts_expression(self))
 		return TRUE;
 
-	return gebr_gui_validatable_widget_validate(GEBR_GUI_VALIDATABLE_WIDGET(self),
-						    self->validator,
-						    self->parameter);
+	validate = gebr_gui_validatable_widget_validate(GEBR_GUI_VALIDATABLE_WIDGET(self),
+	                                                self->validator,
+	                                                self->parameter);
+
+	if (validate != self->priv->last_status) {
+		self->priv->last_status = validate;
+		GebrGuiParameterValidatedFunc func = self->priv->signal_validated.callback;
+		if (func)
+			func(self, self->priv->signal_validated.user_data);
+	}
+
+	return validate;
 }
 
 void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget *parameter_widget)
