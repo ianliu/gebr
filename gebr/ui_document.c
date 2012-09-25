@@ -575,12 +575,12 @@ close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *da
 	if (gebr.flow)
 		flow_browse_validate_io(gebr.ui_flow_browse);
 
-	gtk_widget_destroy(dialog);
-
 	for (int i = 0; data->documents[i] != NULL; ++i)
 		document_save(data->documents[i], TRUE, FALSE);
 
 	g_free(data);
+
+	gtk_widget_destroy(dialog);
 
 	/* restore binding sets */
 	GtkWidget *entry_for_binding = gtk_entry_new();
@@ -605,6 +605,7 @@ parameters_actions(GtkDialog *dialog, gint response, gpointer pointer)
 			g_free(error);
 		}
 		return;
+	case GTK_RESPONSE_DELETE_EVENT:
 	case GTK_RESPONSE_CLOSE:
 		close_and_destroy_dictionary_dialog(GTK_WIDGET(dialog), data);
 		break;
