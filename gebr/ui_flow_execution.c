@@ -209,7 +209,7 @@ run_flow(GebrUiFlowExecution *ui_flow_execution,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-	const gchar *parent_rid = is_detailed? gebr_ui_flow_execution_get_selected_queue(ui_flow_execution->priv->queue_combo, maestro) : "";
+	const gchar *parent_rid = is_detailed ? gebr_ui_flow_execution_get_selected_queue(ui_flow_execution->priv->queue_combo, maestro) : "";
 
 	gdouble speed;
 	if (!gebr_geoxml_flow_is_single_core(flow, gebr.validator)) {
@@ -791,7 +791,7 @@ gebr_ui_flow_execution_get_selected_queue(GtkComboBox *combo,
                                           GebrMaestroServer *maestro)
 {
 	GtkTreeIter iter;
-	GtkTreeModel *model = gebr_maestro_server_get_queues_model(maestro);
+	GtkTreeModel *model = gtk_combo_box_get_model(combo);
 
 	if (!gtk_combo_box_get_active_iter(combo, &iter))
 		return "";
@@ -949,7 +949,7 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution,
 
 	/* Queue */
 	GtkTreeIter iter;
-	GtkTreeModel *model = gebr_maestro_server_get_queues_model(maestro);
+	GtkTreeModel *model = gtk_combo_box_get_model(ui_flow_execution->priv->queue_combo);
 	if (gtk_tree_model_get_iter_first(model, &iter))
 		gtk_combo_box_set_active_iter(ui_flow_execution->priv->queue_combo, &iter);
 
@@ -1062,7 +1062,8 @@ static GtkWidget *
 create_detailed_execution_queue_combo(GebrUiFlowExecution *ui_flow_execution,
                                        GebrMaestroServer *maestro)
 {
-	GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro);
+	GtkTreeModel *queue_model_orig = gebr_maestro_server_get_queues_model(maestro);
+	GtkTreeModel *queue_model = gebr_maestro_server_copy_queues_model(queue_model_orig);
 	GtkWidget *queue_combo = gtk_combo_box_new_with_model(queue_model);
 	ui_flow_execution->priv->queue_combo = GTK_COMBO_BOX(queue_combo);
 

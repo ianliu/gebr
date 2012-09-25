@@ -1112,8 +1112,16 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		gebr_comm_runner_set_ran_func(runner, on_execution_response, aap);
 
 		g_debug("Queue: '%s'", parent_id);
+		gboolean immed = FALSE;
+		GebrmJob *parent;
 
-		if (parent_id[0] == '\0') {
+		if (parent_id[0]) {
+			parent = gebrm_app_job_controller_find(app, parent_id);
+			GebrCommJobStatus status = gebrm_job_get_status(parent);
+			immed = status != JOB_STATUS_QUEUED && status != JOB_STATUS_RUNNING;
+		}
+
+		if (!parent_id || !*parent_id || immed) {
 			g_debug("Running immediately");
 			g_queue_push_head(app->priv->job_def_queue, job);
 			if (g_queue_is_empty(app->priv->job_run_queue)
@@ -1121,7 +1129,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 				gebrm_job_kill_immediately(job);
 			g_queue_push_tail(app->priv->job_run_queue, runner);
 		} else {
-			GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
+
 			GList *parent_on_queue = g_queue_find(app->priv->job_def_queue, parent);
 			if (parent_on_queue)
 				g_queue_insert_after(app->priv->job_def_queue, parent_on_queue, job);
