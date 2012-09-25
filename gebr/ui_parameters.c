@@ -51,7 +51,8 @@ on_parameters_key_press(GtkWidget *widget,
                         GdkEvent *event,
                         GebrGuiProgramEdit *program_edit)
 {
-	if (event->key.keyval == GDK_Return) {
+	if (event->key.keyval == GDK_Return ||
+	    event->key.keyval == GDK_KP_Enter) {
 		flow_browse_revalidate_programs(gebr.ui_flow_browse);
 		flow_browse_validate_io(gebr.ui_flow_browse);
 		flow_browse_info_update();
@@ -135,7 +136,8 @@ parameters_configure_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(hbox_buttons), button_default, FALSE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(program_edit->widget), hbox_buttons, FALSE, TRUE, 5);
 
-	gtk_widget_show_all(program_edit->widget);
+	gtk_widget_show(hbox_buttons);
+	gtk_widget_show(program_edit->widget);
 	return program_edit;
 }
 
