@@ -117,7 +117,7 @@ gebr_ui_flow_program_get_tooltip(GebrUiFlowProgram *program)
 		GebrIExprError errorid;
 
 		if (!gebr_geoxml_program_get_error_id(program->priv->program, &errorid))
-			return "";
+			return NULL;
 
 		switch (errorid) {
 		case GEBR_IEXPR_ERROR_SYNTAX:
