@@ -35,8 +35,6 @@
 struct _GebrUiFlowProgramPriv {
 	GebrGeoXmlProgram *program;
 	gboolean never_opened;
-	GebrIExprError error_id;
-	gchar *tooltip;
 	// inserir ID que deve ser um indentificador unico de um programa
 };
 
@@ -74,8 +72,6 @@ gebr_ui_flow_program_new(GebrGeoXmlProgram *program)
 	GebrUiFlowProgram *ui_prog = g_object_new(GEBR_TYPE_UI_FLOW_PROGRAM, NULL);
 
 	ui_prog->priv->program = program;
-	gebr_geoxml_program_get_error_id(program, &(ui_prog->priv->error_id));
-	gebr_ui_flow_program_update_tooltip(ui_prog);
 
 	return ui_prog;
 }
@@ -111,32 +107,17 @@ gebr_ui_flow_program_get_status(GebrUiFlowProgram *program)
 	return gebr_geoxml_program_get_status(program->priv->program);
 }
 
-void
-gebr_ui_flow_program_set_error_id(GebrUiFlowProgram *program,
-				  GebrIExprError error_id)
-{
-	program->priv->error_id = error_id;
-}
-
-GebrIExprError
-gebr_ui_flow_program_get_error_id (GebrUiFlowProgram *program)
-{
-	return program->priv->error_id;
-}
-
 const gchar *
 gebr_ui_flow_program_get_tooltip(GebrUiFlowProgram *program)
 {
-	return program->priv->tooltip;
-}
-
-void
-gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program) {
 	const gchar *tooltip;
 	if (gebr_ui_flow_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
 		tooltip =  _("This program needs to be configured");
 	} else {
-		GebrIExprError errorid = program->priv->error_id;
+		GebrIExprError errorid;
+
+		if (!gebr_geoxml_program_get_error_id(program->priv->program, &errorid))
+			return "";
 
 		switch (errorid) {
 		case GEBR_IEXPR_ERROR_SYNTAX:
@@ -169,9 +150,7 @@ gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program) {
 		}
 	}
 
-	if (program->priv->tooltip)
-		g_free(program->priv->tooltip);
-	program->priv->tooltip = g_strdup(tooltip);
+	return tooltip;
 }
 
 GtkMenu *

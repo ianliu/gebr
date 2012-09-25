@@ -61,13 +61,7 @@ void gebr_ui_flow_program_set_status (GebrUiFlowProgram *program, GebrGeoXmlProg
 
 GebrGeoXmlProgramStatus gebr_ui_flow_program_get_status (GebrUiFlowProgram *program);
 
-void gebr_ui_flow_program_set_error_id (GebrUiFlowProgram *program, GebrIExprError error_id);
-
-GebrIExprError gebr_ui_flow_program_get_error_id (GebrUiFlowProgram *program);
-
 const gchar *gebr_ui_flow_program_get_tooltip(GebrUiFlowProgram *program);
-
-void gebr_ui_flow_program_update_tooltip(GebrUiFlowProgram *program);
 
 GtkMenu *gebr_ui_flow_program_popup_menu(GebrUiFlowProgram *program, gboolean multiple);
 
