@@ -1540,7 +1540,7 @@ print_format(GebrGeoXmlFlow *flow, gchar *id, GString *graph, gboolean is_head,
 				fontsize);
 	}
 
-	graph =  g_string_append(graph, format_node);
+	g_string_append(graph, format_node);
 
 	g_string_free(final_comment, TRUE);
 	if (has_id) {
@@ -1569,7 +1569,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
         GString *graph = g_string_new("");
 	const gchar *head = "head";
 
-	graph =  g_string_append(graph, ("digraph { graph [bgcolor=white]"));
+	g_string_append(graph, ("digraph { graph [bgcolor=white]"));
 	GList *parents = g_hash_table_get_keys(hash);
 
 
@@ -1584,7 +1584,7 @@ gebr_geoxml_flow_create_dot_code(GebrGeoXmlFlow *flow, GHashTable *hash)
 		g_string_append_printf(graph, "%s->%s[style=filled]", parent_id, head);
 
 	g_hash_table_foreach(hash, (GHFunc) print_edges, graph);
-        graph =  g_string_append(graph, ("}\n"));
+        g_string_append(graph, ("}\n"));
 
 	g_free(parent_id);
 	g_list_free(parents);
