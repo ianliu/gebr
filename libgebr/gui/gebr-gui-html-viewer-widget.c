@@ -439,6 +439,17 @@ GtkWidget *gebr_gui_html_viewer_widget_new(void)
 	return  g_object_new(GEBR_GUI_TYPE_HTML_VIEWER_WIDGET, NULL);
 }
 
+void gebr_gui_html_viewer_widget_search (GebrGuiHtmlViewerWidget *self,
+                                         const gchar *text)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	webkit_web_view_search_text(WEBKIT_WEB_VIEW(priv->web_view), text, FALSE, TRUE, TRUE);
+}
+
 void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)
 {
 	GebrGuiHtmlViewerWidgetPrivate * priv;

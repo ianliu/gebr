@@ -28,6 +28,7 @@
 #include "gebr-gui-save-dialog.h"
 #include "gebr-gui-utils.h"
 
+#include <gdk/gdkkeysyms.h>
 #include <glib.h>
 
 typedef struct _GebrGuiHtmlViewerWindowPrivate GebrGuiHtmlViewerWindowPrivate;
@@ -35,6 +36,8 @@ typedef struct _GebrGuiHtmlViewerWindowPrivate GebrGuiHtmlViewerWindowPrivate;
 struct _GebrGuiHtmlViewerWindowPrivate {
 	GtkWidget *viewer_widget;
 	GtkUIManager * manager;
+	gboolean start_find;
+	GtkWidget *find;
 };
 
 #define GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(o) \
@@ -49,6 +52,16 @@ static void on_save_activate (GtkAction * action, GebrGuiHtmlViewerWindow * self
 
 static void on_print_activate (GtkAction * action, GebrGuiHtmlViewerWindow * self);
 
+static void on_find_activate (GtkAction *action, GebrGuiHtmlViewerWindow *self);
+
+static void on_search_close_button(GtkButton *button, GebrGuiHtmlViewerWindow *self);
+
+static void on_web_view_search(GtkWidget *entry, GebrGuiHtmlViewerWindow *self);
+
+static gboolean on_web_view_search_escape(GtkWidget *widget,
+                                          GdkEventKey *key,
+                                          GebrGuiHtmlViewerWindow *self);
+
 static void on_quit_activate (GtkAction * action, GebrGuiHtmlViewerWindow * self);
 
 G_DEFINE_TYPE(GebrGuiHtmlViewerWindow, gebr_gui_html_viewer_window, GTK_TYPE_WINDOW);
@@ -61,7 +74,9 @@ static GtkActionEntry actions[] = {
 	{"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
 		N_("Print content"), G_CALLBACK (on_print_activate)},
 	{"CloseAction", GTK_STOCK_CLOSE, NULL, NULL,
-		N_("Close this window"), G_CALLBACK (on_quit_activate)}
+		N_("Close this window"), G_CALLBACK (on_quit_activate)},
+	{"FindAction", GTK_STOCK_FIND, NULL, "<Control>f",
+		N_("Find on file"), G_CALLBACK (on_find_activate)}
 };
 
 static guint n_actions = G_N_ELEMENTS (actions);
@@ -71,6 +86,7 @@ static gchar * uidef =
 " <menubar name='" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "'>"
 "  <menu action='FileAction'>"
 "   <menuitem action='SaveAction' />"
+"   <menuitem action='FindAction' />"
 "   <separator />"
 "   <menuitem action='PrintAction' />"
 "   <separator />"
@@ -105,6 +121,26 @@ static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 	priv->viewer_widget = gebr_gui_html_viewer_widget_new();
 	priv->manager = gtk_ui_manager_new ();
 
+	priv->find = gtk_hbox_new(FALSE, 5);
+
+	GtkWidget *label = gtk_label_new(_("Search:"));
+
+	GtkWidget *entry = gtk_entry_new();
+	priv->start_find = FALSE;
+	g_signal_connect(entry, "changed", G_CALLBACK(on_web_view_search), self);
+	g_signal_connect(entry, "activate", G_CALLBACK(on_web_view_search), self);
+	g_signal_connect(entry, "key-press-event", G_CALLBACK(on_web_view_search_escape), self);
+
+	GtkWidget *close_button = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(close_button), GTK_RELIEF_NONE);
+	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_BUTTON);
+	gtk_button_set_image(GTK_BUTTON(close_button), image);
+	g_signal_connect(close_button, "clicked", G_CALLBACK(on_search_close_button), self);
+
+	gtk_box_pack_start(GTK_BOX(priv->find), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(priv->find), entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(priv->find), close_button, FALSE, FALSE, 0);
+
 	group = gtk_action_group_new ("Actions");
 	gtk_action_group_set_translation_domain (group, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions (group, actions, n_actions, self);
@@ -121,6 +157,7 @@ static void gebr_gui_html_viewer_window_init(GebrGuiHtmlViewerWindow * self)
 	vbox = gtk_vbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, TRUE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), priv->viewer_widget, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), priv->find, FALSE, TRUE, 0);
 
 	gtk_window_set_default_size (GTK_WINDOW (self), 800, 600);
 	gtk_window_add_accel_group (GTK_WINDOW (self), gtk_ui_manager_get_accel_group (priv->manager));
@@ -184,6 +221,58 @@ static void on_print_activate (GtkAction *action, GebrGuiHtmlViewerWindow * self
 	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 
 	gebr_gui_html_viewer_widget_print(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget));
+}
+
+static void on_search_close_button(GtkButton *button,
+                                   GebrGuiHtmlViewerWindow *self)
+{
+	GebrGuiHtmlViewerWindowPrivate * priv;
+
+	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
+
+	priv->start_find = FALSE;
+	gtk_widget_hide(priv->find);
+}
+
+static gboolean on_web_view_search_escape(GtkWidget *widget,
+                                          GdkEventKey *key,
+                                          GebrGuiHtmlViewerWindow *self)
+{
+	if (key->keyval != GDK_Escape)
+		return FALSE;
+
+	on_search_close_button(NULL, self);
+
+	return TRUE;
+}
+
+static void on_web_view_search(GtkWidget *entry,
+                               GebrGuiHtmlViewerWindow *self)
+{
+	GebrGuiHtmlViewerWindowPrivate * priv;
+
+	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
+
+	gebr_gui_html_viewer_widget_search(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget),
+	                                   gtk_entry_get_text(GTK_ENTRY(entry)));
+
+}
+
+static void on_find_activate (GtkAction *action, GebrGuiHtmlViewerWindow *self)
+{
+	GebrGuiHtmlViewerWindowPrivate * priv;
+
+	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
+
+	if (priv->start_find) {
+		priv->start_find = FALSE;
+		gtk_widget_hide(priv->find);
+	} else {
+		priv->start_find = TRUE;
+		GList *childs = gtk_container_get_children(GTK_CONTAINER(priv->find));
+		gtk_widget_grab_focus(childs->next->data);
+		gtk_widget_show_all(priv->find);
+	}
 }
 
 static void on_quit_activate (GtkAction *action, GebrGuiHtmlViewerWindow * self)
