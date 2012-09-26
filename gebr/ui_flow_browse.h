@@ -89,6 +89,8 @@ typedef struct {
 	GtkWidget *revpage_warn_label;
 	gboolean update_graph;
 	GebrCommProcess *graph_process;
+	GtkWidget *label;
+	GtkWidget *socket;
 
 	GList *select_flows;
 

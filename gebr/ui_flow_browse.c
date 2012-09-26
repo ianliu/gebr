@@ -255,7 +255,7 @@ on_context_button_toggled(GtkToggleButton *button,
 		gtk_toggle_button_set_active(fb->properties_ctx_button, !active);
 
 		if (!gtk_widget_get_visible(fb->context[CONTEXT_SNAPSHOTS])) {
-			if (gebr_geoxml_flow_get_revisions_number(gebr.flow) > 1) {
+			if (fb->graph_process && gebr_geoxml_flow_get_revisions_number(gebr.flow) > 1) {
 				GString *cmd = g_string_new("unselect-all\bNone\n");
 				gebr_comm_process_write_stdin_string(fb->graph_process, cmd);
 				g_string_free(cmd, TRUE);
@@ -1751,8 +1751,14 @@ flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
 			gchar *command = g_strdup_printf("draw\b%s\b%s\b", flow_filename, keep_selection? "yes" : "no");
 			g_string_prepend(file, command);
 
-			if (gebr_comm_process_write_stdin_string(fb->graph_process, file) == 0)
+			if (gebr_comm_process_write_stdin_string(fb->graph_process, file) == 0) {
 				g_debug("Can't create dotfile.");
+				gtk_widget_hide(fb->socket);
+				gtk_widget_show(fb->label);
+			} else {
+				gtk_widget_show(fb->socket);
+				gtk_widget_hide(fb->label);
+			}
 
 			g_string_free(file, TRUE);
 			g_free(flow_filename);
@@ -1803,16 +1809,22 @@ gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
 
 	GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(fb->info.builder_flow, "graph_box"));
 
-	GtkWidget *socket = gtk_socket_new();
-	gtk_box_pack_start(GTK_BOX(box), socket, TRUE, TRUE, 0);
-	GdkNativeWindow socket_id = gtk_socket_get_id(GTK_SOCKET(socket));
-	g_signal_connect(socket, "plug-removed", G_CALLBACK(on_socket_plug_removed), fb);
+	fb->socket = gtk_socket_new();
+	gtk_box_pack_start(GTK_BOX(box), fb->socket, TRUE, TRUE, 0);
+	GdkNativeWindow socket_id = gtk_socket_get_id(GTK_SOCKET(fb->socket));
+	g_signal_connect(fb->socket, "plug-removed", G_CALLBACK(on_socket_plug_removed), fb);
+	gtk_widget_show(fb->socket);
+
+	fb->label = gtk_label_new(_("The graph can't be created."));
+	gtk_widget_set_sensitive(fb->label, FALSE);
+	gtk_box_pack_start(GTK_BOX(box), fb->label, TRUE, TRUE, 0);
+	gtk_widget_hide(fb->label);
 
 	g_debug("SOCKET ID %d", socket_id);
 
 	gebr_flow_browse_create_python_process(socket_id, fb);
 
-	gtk_widget_show_all(socket);
+	gtk_widget_show_all(fb->socket);
 }
 
 /* End of Snapshots methods */
