@@ -4,14 +4,15 @@ import xdot
 import gettext
 import gtk.keysyms
 
-class MyDotWindow(xdot.DotWindow):
+class MyDotWidget(xdot.DotWidget):
     def __init__(self):
-        xdot.DotWindow.__init__(self)
-        self.widget.connect('clicked', self.on_url_clicked)
-        self.widget.connect('activate', self.on_url_activate)
-        self.widget.connect('select', self.on_url_select)
-        self.widget.connect('unselect-all', self.on_url_unselect_all)
-        self.widget.connect('key-press-event', self.on_url_key_press)
+        xdot.DotWidget.__init__(self)
+        
+        self.connect('clicked', self.on_url_clicked)
+        self.connect('activate', self.on_url_activate)
+        self.connect('select', self.on_url_select)
+        self.connect('unselect-all', self.on_url_unselect_all)
+        self.connect('key-press-event', self.on_url_key_press)
         
         self.flows = {}
         self.current_flow = None
@@ -23,14 +24,9 @@ class MyDotWindow(xdot.DotWindow):
 
         self.plug = gtk.Plug(Wid)
 
-        self.container = gtk.VBox(True, 0)
-        self.widget.reparent(self.container)
-
-        self.plug.add(self.container)
+        self.plug.add(self)
         self.plug.show_all()
 
-        self.window.destroy()
-        
         gettext.install("gebr", locale_dir)
         
     def on_url_key_press(self, widget, event):
@@ -72,8 +68,8 @@ class MyDotWindow(xdot.DotWindow):
        if not self.flows or not self.flows.has_key(self.current_flow):
            return
        for snapshot in self.flows[self.current_flow]:
-           node = self.widget.graph.get_node_by_url(snapshot)
-           self.widget.on_area_unselect_node(node)
+           node = self.graph.get_node_by_url(snapshot)
+           self.on_area_unselect_node(node)
        self.flows[self.current_flow] = []
        sys.stderr.write("unselect:")
     
@@ -220,6 +216,7 @@ class MyDotWindow(xdot.DotWindow):
                dotfile = info[3]
                
                self.set_dotcode(dotfile)
+               self.zoom_to_fit()
                
                if keep_selection == "no":
                    self.on_url_unselect_all(None, None, None)
@@ -227,8 +224,8 @@ class MyDotWindow(xdot.DotWindow):
                # Set on dictionary a dotfile with id of flow
                if self.flows.has_key(id_flow):
                    for snapshot in self.flows[id_flow]:
-                       node = self.widget.graph.get_node_by_url(snapshot)
-                       self.widget.on_area_select_node(node, True)
+                       node = self.graph.get_node_by_url(snapshot)
+                       self.on_area_select_node(node, True)
                else:
                    self.flows[id_flow] = []
                 
@@ -237,13 +234,11 @@ class MyDotWindow(xdot.DotWindow):
            return True
 
 def main():
-    window = MyDotWindow()
+    widget = MyDotWidget()
 
     glib.io_add_watch(sys.stdin, # FILE DESCRIPTOR
                       glib.IO_IN,  # CONDITION
-                      window.on_input_response) # CALLBACK
-
-    window.connect('destroy', gtk.main_quit)
+                      widget.on_input_response) # CALLBACK
 
     gtk.main()
 
