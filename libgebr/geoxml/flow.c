@@ -818,8 +818,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			return FALSE;
 		}
 
-		if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED
-		    || gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+		/* Skip to next program when a disabled program is found */
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 			continue;
 
 		if (gebr_geoxml_program_get_error_id(prog, NULL)) {
@@ -831,6 +831,10 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			gebr_pairstrfreev(pvector);
 			return FALSE;
 		}
+
+		/* Program Loop doesn't have IO, so skip to the next program */
+		if (gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+			continue;
 
 		if (last_configured)
 			gebr_geoxml_object_unref(last_configured);
