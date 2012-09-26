@@ -1873,11 +1873,9 @@ flow_browse_static_info_update(void)
 	gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
 	if (error) {
 		status_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "22x22", "stock", "dialog-warning.png", NULL);
-		gtk_widget_set_tooltip_text(gebr.ui_flow_browse->info.status, error->message);
 		g_clear_error(&error);
 	} else {
 		status_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "22x22", "stock", "gtk-apply.png", NULL);
-		gtk_widget_set_tooltip_text(gebr.ui_flow_browse->info.status, _("Ready to execute"));
 	}
 	GIcon *status_icon = g_icon_new_for_string(status_icon_path, NULL);
 	GEmblem *status_emblem = g_emblem_new(status_icon);
@@ -2720,9 +2718,18 @@ flow_browse_on_query_tooltip(GtkTreeView * treeview,
 		                   -1);
 
 		GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
-		gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
-		message = g_markup_printf_escaped(_("Flow <i>%s</i>"), flow_title);
-		g_free(flow_title);
+
+		GError *error = NULL;
+		gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
+		if (error) {
+			message = g_markup_printf_escaped(_("<i>%s</i>"), error->message);
+			g_clear_error(&error);
+		} else {
+			gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
+			message = g_markup_printf_escaped(_("Flow <i>%s</i> is ready to execute"),flow_title);
+			g_free(flow_title);
+		}
+
 	} else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *ui_program;
 		gtk_tree_model_get(model, &iter,
