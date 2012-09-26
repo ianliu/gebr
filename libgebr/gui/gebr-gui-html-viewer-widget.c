@@ -57,7 +57,10 @@ struct _GebrGuiHtmlViewerWidgetPrivate {
 	gchar * label;
 	GString *content;
 	gboolean is_menu;
+
+	// For search bar
 	GtkWidget *find;
+	GtkWidget *find_entry;
 };
 
 #define GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HTML_VIEWER_WIDGET, GebrGuiHtmlViewerWidgetPrivate))
@@ -73,8 +76,19 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 
 static void on_search_close_button(GtkButton *button, GebrGuiHtmlViewerWidget *self);
 
+static gboolean on_web_view_search_key_press(GtkWidget *widget, GdkEventKey *key,
+                                             GebrGuiHtmlViewerWidget *self);
+
 static gboolean on_web_view_search_escape(GtkWidget *widget, GdkEventKey *key,
                                           GebrGuiHtmlViewerWidget *self);
+
+static void gebr_gui_html_viewer_widget_search (GebrGuiHtmlViewerWidget *self,
+                                                const gchar *text,
+                                                gboolean backward);
+
+static void on_web_view_search_backward(GtkButton *button, GebrGuiHtmlViewerWidget *self);
+
+static void on_web_view_search_foward(GtkButton *button, GebrGuiHtmlViewerWidget *self);
 
 static void on_web_view_search(GtkWidget *entry, GebrGuiHtmlViewerWidget *self);
 
@@ -144,16 +158,31 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 	priv->tmp_file = g_string_free (tmp_file, FALSE);
 	priv->is_menu = FALSE;
 
+	/*
+	 * Create search bar
+	 */
 	priv->find = gtk_hbox_new(FALSE, 5);
+	g_signal_connect(priv->find, "key-press-event", G_CALLBACK(on_web_view_search_escape), self);
 
 	GtkWidget *label = gtk_label_new(_("Search:"));
 	gtk_widget_show(label);
 
-	GtkWidget *entry = gtk_entry_new();
-	gtk_widget_show(entry);
-	g_signal_connect(entry, "changed", G_CALLBACK(on_web_view_search), self);
-	g_signal_connect(entry, "activate", G_CALLBACK(on_web_view_search), self);
-	g_signal_connect(entry, "key-press-event", G_CALLBACK(on_web_view_search_escape), self);
+	priv->find_entry = gtk_entry_new();
+	gtk_widget_show(priv->find_entry);
+	g_signal_connect(priv->find_entry, "changed", G_CALLBACK(on_web_view_search), self);
+	g_signal_connect(priv->find_entry, "key-press-event", G_CALLBACK(on_web_view_search_key_press), self);
+
+	GtkWidget *arrow_up = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(arrow_up), GTK_RELIEF_NONE);
+	gtk_container_add(GTK_CONTAINER(arrow_up), gtk_arrow_new(GTK_ARROW_UP, GTK_SHADOW_NONE));
+	g_signal_connect(arrow_up, "clicked", G_CALLBACK(on_web_view_search_backward), self);
+	gtk_widget_show_all(arrow_up);
+
+	GtkWidget *arrow_down = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(arrow_down), GTK_RELIEF_NONE);
+	gtk_container_add(GTK_CONTAINER(arrow_down), gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE));
+	g_signal_connect(arrow_down, "clicked", G_CALLBACK(on_web_view_search_foward), self);
+	gtk_widget_show_all(arrow_down);
 
 	GtkWidget *close_button = gtk_button_new();
 	gtk_button_set_relief(GTK_BUTTON(close_button), GTK_RELIEF_NONE);
@@ -163,9 +192,14 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 	gtk_widget_show_all(close_button);
 
 	gtk_box_pack_start(GTK_BOX(priv->find), label, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(priv->find), entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(priv->find), priv->find_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(priv->find), arrow_up, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(priv->find), arrow_down, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(priv->find), close_button, FALSE, FALSE, 0);
 	gtk_widget_set_no_show_all(priv->find, TRUE);
+	/*
+	 * End of search bar
+	 */
 
 	g_signal_connect(priv->web_view, "load-finished", G_CALLBACK(on_load_finished), self);
 
@@ -204,6 +238,57 @@ static void on_search_close_button(GtkButton *button,
 	gtk_widget_hide(priv->find);
 }
 
+static void gebr_gui_html_viewer_widget_search (GebrGuiHtmlViewerWidget *self,
+                                                const gchar *text,
+                                                gboolean backward)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	webkit_web_view_search_text(WEBKIT_WEB_VIEW(priv->web_view), text, FALSE, !backward, TRUE);
+}
+
+static void on_web_view_search_backward(GtkButton *button,
+                                        GebrGuiHtmlViewerWidget *self)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	gebr_gui_html_viewer_widget_search(self, gtk_entry_get_text(GTK_ENTRY(priv->find_entry)), TRUE);
+}
+
+static void on_web_view_search_foward(GtkButton *button,
+                                      GebrGuiHtmlViewerWidget *self)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	gebr_gui_html_viewer_widget_search(self, gtk_entry_get_text(GTK_ENTRY(priv->find_entry)), FALSE);
+}
+
+static gboolean on_web_view_search_key_press(GtkWidget *widget,
+                                             GdkEventKey *key,
+                                             GebrGuiHtmlViewerWidget *self)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	if (key->keyval == GDK_KP_Enter ||
+	    key->keyval == GDK_Return) {
+		gebr_gui_html_viewer_widget_search(self, gtk_entry_get_text(GTK_ENTRY(priv->find_entry)),
+		                                   key->state & GDK_SHIFT_MASK);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static gboolean on_web_view_search_escape(GtkWidget *widget,
                                           GdkEventKey *key,
                                           GebrGuiHtmlViewerWidget *self)
@@ -212,7 +297,6 @@ static gboolean on_web_view_search_escape(GtkWidget *widget,
 		return FALSE;
 
 	on_search_close_button(NULL, self);
-
 	return TRUE;
 }
 
@@ -224,8 +308,7 @@ static void on_web_view_search(GtkWidget *entry,
 
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
-	gebr_gui_html_viewer_widget_search(self, gtk_entry_get_text(GTK_ENTRY(entry)));
-
+	gebr_gui_html_viewer_widget_search(self, gtk_entry_get_text(GTK_ENTRY(entry)), FALSE);
 }
 
 static void create_generate_links_index_function(JSContextRef context)
@@ -507,17 +590,6 @@ GtkWidget *gebr_gui_html_viewer_widget_new(void)
 	return  g_object_new(GEBR_GUI_TYPE_HTML_VIEWER_WIDGET, NULL);
 }
 
-void gebr_gui_html_viewer_widget_search (GebrGuiHtmlViewerWidget *self,
-                                         const gchar *text)
-{
-	GebrGuiHtmlViewerWidgetPrivate * priv;
-	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
-
-	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
-
-	webkit_web_view_search_text(WEBKIT_WEB_VIEW(priv->web_view), text, FALSE, TRUE, TRUE);
-}
-
 void gebr_gui_html_viewer_show_search_bar(GebrGuiHtmlViewerWidget *self)
 {
 	GebrGuiHtmlViewerWidgetPrivate * priv;
@@ -528,8 +600,7 @@ void gebr_gui_html_viewer_show_search_bar(GebrGuiHtmlViewerWidget *self)
 	if (gtk_widget_get_visible(priv->find)) {
 		gtk_widget_hide(priv->find);
 	} else {
-		GList *childs = gtk_container_get_children(GTK_CONTAINER(priv->find));
-		gtk_widget_grab_focus(childs->next->data);
+		gtk_widget_grab_focus(priv->find_entry);
 		gtk_widget_show(priv->find);
 	}
 }

@@ -66,15 +66,6 @@ GtkWidget * gebr_gui_html_viewer_widget_new();
 void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self);
 
 /**
- * gebr_gui_html_viewer_widget_search:
- * @text: A text to be search
- *
- * Search a @text on a html viewer widget
- */
-void gebr_gui_html_viewer_widget_search (GebrGuiHtmlViewerWidget *self,
-                                         const gchar *text);
-
-/**
  * gebr_gui_html_viewer_show_search_bar:
  *
  * Show a search bar if it is not visible, otherwise, hide the bar
