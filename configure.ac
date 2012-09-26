@@ -42,6 +42,14 @@ AC_CONFIG_HEADERS([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 dnl ============================================================================
+dnl Check for python stuff
+dnl ============================================================================
+AM_PATH_PYTHON([2.6])
+GEBR_PYTHON_CHECK([glib])
+GEBR_PYTHON_CHECK([gtk])
+GEBR_PYTHON_CHECK([pygtk])
+
+dnl ============================================================================
 dnl Defining the library version information
 dnl ============================================================================
 m4_define([lt_current], [m4_eval(100 * gebr_minor_version + gebr_micro_version - gebr_interface_age)])
