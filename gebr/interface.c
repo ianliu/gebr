@@ -102,7 +102,7 @@ static const GtkActionEntry actions_entries_flow[] = {
 	 * Flow
 	 */
 	{"flow_new", GTK_STOCK_NEW, N_("New Flow"),
-		"<Control>F", N_("New"), G_CALLBACK(on_new_activate)},
+		"<Control>F", N_("New Flow"), G_CALLBACK(on_new_activate)},
 	{"flow_new_program", GTK_STOCK_NEW, N_("New Program"),
 		NULL, NULL, G_CALLBACK(on_new_program_activate)},
 	{"flow_delete", GTK_STOCK_DELETE, NULL,

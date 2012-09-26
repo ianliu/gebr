@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 15:56-0300\n"
+"POT-Creation-Date: 2012-09-26 09:59-0300\n"
 "PO-Revision-Date: 2011-09-08 03:57-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -26,92 +26,91 @@ msgstr "DéBR"
 msgid "Enhance GêBR with new functionalities"
 msgstr "Aprimora a GêBR com novas funcionalidades"
 
-#: ../data/debr.desktop.in.in.h:3
-#: ../debr-interface.c:181
+#: ../data/debr.desktop.in.in.h:3 ../debr-interface.c:181
 msgid "Menu designer for GêBR"
 msgstr "Designer de menus para GêBR"
 
-#: ../debr-callbacks.c:165
 #. create file chooser
+#: ../debr-callbacks.c:173
 msgid "Open menu"
 msgstr "Abrir menu"
 
-#: ../debr-callbacks.c:175
-#: ../debr-menu.c:599
+#: ../debr-callbacks.c:180 ../debr-menu.c:612
 msgid "Menu files (*.mnu)"
 msgstr "Arquivos de menu (*.mnu)"
 
-#: ../debr-callbacks.c:188
+#: ../debr-callbacks.c:193
 #, c-format
 msgid "Menu \"%s\" opened."
 msgstr "Menu \"%s\" aberto"
 
-#: ../debr-callbacks.c:222
+#: ../debr-callbacks.c:227
 msgid "Revert changes"
 msgstr "Reverter alterações"
 
-#: ../debr-callbacks.c:223
+#: ../debr-callbacks.c:228
 msgid ""
 "All unsaved changes will be lost. Are you sure you want to revert selected "
 "menu(s)?"
-msgstr "Todas as modificações não salvas serão perdidas. Tem certeza que quer "
+msgstr ""
+"Todas as modificações não salvas serão perdidas. Tem certeza que quer "
 "reverter o(s) menu(s) selecionado(s)?"
 
-#: ../debr-callbacks.c:235
+#: ../debr-callbacks.c:240
 msgid "Menu was not saved yet."
 msgstr "O menu ainda não foi salvo."
 
-#: ../debr-callbacks.c:253
+#: ../debr-callbacks.c:258
 msgid "Menu reverted."
 msgstr "Menu revertido."
 
-#: ../debr-callbacks.c:265
+#: ../debr-callbacks.c:270
 msgid "Delete menu"
 msgstr "Apagar menu"
 
-#: ../debr-callbacks.c:265
+#: ../debr-callbacks.c:270
 msgid "Are you sure you want to delete selected menu(s)?"
 msgstr "Tem certeza que quer apagar o(s) menu(s) selecionado(s)?"
 
-#: ../debr-callbacks.c:285
+#: ../debr-callbacks.c:290
 #, c-format
 msgid "Could not delete menu '%s'."
 msgstr "Não foi possível apagar o menu '%s'."
 
-#: ../debr-callbacks.c:307
+#.
 #. * Open flow.
+#.
+#: ../debr-callbacks.c:312
 msgid "Choose flow to open"
 msgstr "Escolher fluxo a ser aberto"
 
-#: ../debr-callbacks.c:311
+#: ../debr-callbacks.c:316
 msgid "Flow files (*.flw, *.flwz, *.flwx)"
 msgstr "Arquivos de fluxo (*.flw, *.flwz, *.flwx)"
 
-#: ../debr-callbacks.c:320
+#: ../debr-callbacks.c:325
 msgid "Default values"
 msgstr "Valor padrão"
 
-#: ../debr-callbacks.c:321
+#: ../debr-callbacks.c:326
 msgid "Do you want to use your parameter's values as default values?"
-msgstr "Você gostaria de utilizar os seus valores de parâmetros como valores padrão?"
+msgstr ""
+"Você gostaria de utilizar os seus valores de parâmetros como valores padrão?"
 
-#: ../debr-callbacks.c:329
-#: ../debr-callbacks.c:334
+#: ../debr-callbacks.c:334 ../debr-callbacks.c:339
 #, c-format
 msgid "Could not create menu from flow file %s"
 msgstr "Impossível criar um Menu a partir do arquivo '%s'."
 
-#: ../debr-callbacks.c:347
+#: ../debr-callbacks.c:352
 msgid "Choose a folder"
 msgstr "Escolher uma pasta"
 
-#: ../debr-enumoptionedit.c:267
-#: ../debr-enumoptionedit.c:304
+#: ../debr-enumoptionedit.c:267 ../debr-enumoptionedit.c:304
 msgid "value"
 msgstr "valor"
 
-#: ../debr-enumoptionedit.c:274
-#: ../debr-enumoptionedit.c:302
+#: ../debr-enumoptionedit.c:274 ../debr-enumoptionedit.c:302
 msgid "label"
 msgstr "rótulo"
 
@@ -123,19 +122,13 @@ msgstr "Categoria Vazia"
 msgid ""
 "You can't add an empty category name (remember to take care with the '|' "
 "hierarchy separator)."
-msgstr "Não é permitido incluir categorias vazias (cuidado com o caracter '|' "
+msgstr ""
+"Não é permitido incluir categorias vazias (cuidado com o caracter '|' "
 "separador de hierarquia)."
 
-#: ../debr-categoryedit.c:596
+#: ../debr-categoryedit.c:599
 msgid "Category already exists"
 msgstr "Categoria já existente"
-
-#: ../debr-categoryedit.c:597
-#, c-format
-msgid ""
-"The category <i>%s</i> already exists in the list, the operation will be "
-"cancelled."
-msgstr "A categoria <i>%s</i> já existe na lista, a operação será cancelada."
 
 #: ../debr-help.c:71
 msgid "_Jump To"
@@ -149,26 +142,22 @@ msgstr "Atualizar o conteúdo do editor com dados do menu"
 msgid "Revert help content to the saved state"
 msgstr "Reverter conteúdo de ajuda para a última versão salva"
 
-#: ../debr-help.c:146
-#: ../debr-help.c:849
+#: ../debr-help.c:146 ../debr-help.c:849
 #, c-format
 msgid "Help of the program \"%s\""
 msgstr "Ajuda do programa \"%s\""
 
-#: ../debr-help.c:148
-#: ../debr-help.c:851
+#: ../debr-help.c:148 ../debr-help.c:851
 #, c-format
 msgid "Help of the program"
 msgstr "Ajuda do programa"
 
-#: ../debr-help.c:153
-#: ../debr-help.c:855
+#: ../debr-help.c:153 ../debr-help.c:855
 #, c-format
 msgid "Help of the menu \"%s\""
 msgstr "Ajuda do menu \"%s\""
 
-#: ../debr-help.c:155
-#: ../debr-help.c:857
+#: ../debr-help.c:155 ../debr-help.c:857
 #, c-format
 msgid "Help of the menu"
 msgstr "Ajuda do menu"
@@ -187,22 +176,23 @@ msgstr "Menu: %s"
 msgid ""
 "<span font_weight='bold' size='large'>Do you really want to revert this help?"
 "</span>"
-msgstr "<span font_weight='bold' size='large'>Você realmente deseja reverter esse "
+msgstr ""
+"<span font_weight='bold' size='large'>Você realmente deseja reverter esse "
 "componente?</span>"
 
 #: ../debr-help.c:734
 msgid ""
 "By choosing yes, you will lose all modifications made after the associated "
 "menu was saved."
-msgstr "Ao escolher sim, serão perdidas todas as modificações feitas após o menu ter "
+msgstr ""
+"Ao escolher sim, serão perdidas todas as modificações feitas após o menu ter "
 "sido salvo"
 
 #: ../debr-help.c:789
 msgid "Unable to open template. Please check your installation."
 msgstr "Não foi possível abrir o modelo. Por favor verifique sua instalação."
 
-#: ../debr-help.c:928
-#: ../debr-help.c:948
+#: ../debr-help.c:928 ../debr-help.c:948
 msgid "Unable to create temporary file."
 msgstr "Não foi possível criar um arquivo temporário."
 
@@ -234,8 +224,7 @@ msgstr "Criar menu à partir de um fluxo"
 msgid "Edit menu properties"
 msgstr "Editar propriedades do menu"
 
-#: ../debr-interface.c:54
-#: ../debr-interface.c:459
+#: ../debr-interface.c:54 ../debr-interface.c:459
 msgid "Validate"
 msgstr "Validar"
 
@@ -315,9 +304,7 @@ msgstr "Desselecionar todos"
 msgid "Unselect all menus"
 msgstr "Desselecionar todos os menus"
 
-#: ../debr-interface.c:77
-#: ../debr-interface.c:100
-#: ../debr-menu.c:247
+#: ../debr-interface.c:77 ../debr-interface.c:100 ../debr-menu.c:247
 #: ../debr-program.c:188
 msgid "View Help"
 msgstr "Visualizar Ajuda"
@@ -326,9 +313,7 @@ msgstr "Visualizar Ajuda"
 msgid "View the help related to menu"
 msgstr "Visualizar o documento de ajuda, relativo ao menu"
 
-#: ../debr-interface.c:79
-#: ../debr-interface.c:102
-#: ../debr-menu.c:244
+#: ../debr-interface.c:79 ../debr-interface.c:102 ../debr-menu.c:244
 #: ../debr-program.c:186
 msgid "Edit Help"
 msgstr "Editar Ajuda"
@@ -349,8 +334,7 @@ msgstr "Apagar programa atual"
 msgid "Edit program properties"
 msgstr "Editar propriedades do programa"
 
-#: ../debr-interface.c:90
-#: ../debr-interface.c:91
+#: ../debr-interface.c:90 ../debr-interface.c:91
 msgid "Preview parameters in GêBR"
 msgstr "Prévisualização de parâmetros na GêBR"
 
@@ -362,8 +346,7 @@ msgstr "Mover o programa para o topo"
 msgid "Move program to bottom"
 msgstr "Mover o programa para o final"
 
-#: ../debr-interface.c:96
-#: ../debr-interface.c:120
+#: ../debr-interface.c:96 ../debr-interface.c:120
 msgid "Copy"
 msgstr "Copiar"
 
@@ -371,8 +354,7 @@ msgstr "Copiar"
 msgid "Copy selected program(s) to clipboard"
 msgstr "Copiar programa(s) selecionado(s) para a área de transferência"
 
-#: ../debr-interface.c:98
-#: ../debr-interface.c:122
+#: ../debr-interface.c:98 ../debr-interface.c:122
 msgid "Paste"
 msgstr "Colar"
 
@@ -388,8 +370,8 @@ msgstr "Visualizar o documento de ajuda relacionado ao programa"
 msgid "Edit the help related to program"
 msgstr "Editar o documento de ajuda relacionado ao programa"
 
-#: ../debr-interface.c:108
 #. "paramter_new" is a special button, where a popup menu is created on its bottom.
+#: ../debr-interface.c:108
 msgid "Delete current parameter"
 msgstr "Apagar parâmetro atual"
 
@@ -409,8 +391,7 @@ msgstr "Mover o parâmetro para o final"
 msgid "Change type"
 msgstr "Mudar tipo"
 
-#: ../debr-interface.c:116
-#: ../debr-interface.c:446
+#: ../debr-interface.c:116 ../debr-interface.c:446
 msgid "Change parameter type"
 msgstr "Mudar tipo do parâmetro"
 
@@ -438,58 +419,53 @@ msgstr "Fecha relatórios selecionados"
 msgid "Close all reports"
 msgstr "Fecha todos os relatórios"
 
-#: ../debr-interface.c:141
-#: ../debr-parameter.c:55
+#: ../debr-interface.c:141 ../debr-parameter.c:55
 msgid "real"
 msgstr "real"
 
-#: ../debr-interface.c:142
-#: ../debr-parameter.c:56
+#: ../debr-interface.c:142 ../debr-parameter.c:56
 msgid "integer"
 msgstr "inteiro"
 
-#: ../debr-interface.c:143
-#: ../debr-parameter.c:57
+#: ../debr-interface.c:143 ../debr-parameter.c:57
 msgid "range"
 msgstr "intervalo"
 
-#: ../debr-interface.c:144
-#: ../debr-parameter.c:58
+#: ../debr-interface.c:144 ../debr-parameter.c:58
 msgid "flag"
 msgstr "flag"
 
-#: ../debr-interface.c:145
-#: ../debr-parameter.c:59
+#: ../debr-interface.c:145 ../debr-parameter.c:59
 msgid "text"
 msgstr "texto"
 
-#: ../debr-interface.c:146
-#: ../debr-parameter.c:60
+#: ../debr-interface.c:146 ../debr-parameter.c:60
 msgid "enum"
 msgstr "enum"
 
-#: ../debr-interface.c:147
-#: ../debr-parameter.c:61
+#: ../debr-interface.c:147 ../debr-parameter.c:61
 msgid "file"
 msgstr "arquivo"
 
-#: ../debr-interface.c:148
-#: ../debr-parameter.c:62
+#: ../debr-interface.c:148 ../debr-parameter.c:62
 msgid "group"
 msgstr "grupo"
 
-#: ../debr-interface.c:269
+#.
 #. * Menu: Actions
+#.
+#: ../debr-interface.c:269
 msgid "_Actions"
 msgstr "_Ações"
 
-#: ../debr-interface.c:284
+#.
 #. * Menu: Help
+#.
+#: ../debr-interface.c:284
 msgid "_Help"
 msgstr "A_juda"
 
-#: ../debr-interface.c:301
-#: ../debr-menu.c:151
+#: ../debr-interface.c:301 ../debr-menu.c:151
 msgid "Menu"
 msgstr "Menu"
 
@@ -501,8 +477,7 @@ msgstr "Programa"
 msgid "Parameter"
 msgstr "Parâmetro"
 
-#: ../debr-interface.c:403
-#: ../debr-program.c:709
+#: ../debr-interface.c:403 ../debr-program.c:709
 msgid "Create a new parameter"
 msgstr "Criar um novo parâmetro"
 
@@ -510,8 +485,7 @@ msgstr "Criar um novo parâmetro"
 msgid "<i>Others</i>"
 msgstr "<i>Outros</i>"
 
-#: ../debr-menu.c:178
-#: ../debr-program.c:710
+#: ../debr-menu.c:178 ../debr-program.c:710
 msgid "Details"
 msgstr "Detalhes"
 
@@ -530,243 +504,256 @@ msgstr "Menu não nomeado %d"
 msgid "Could not load menu at '%s': %s."
 msgstr "Não foi possível carregar menu em '%s': %s."
 
-#: ../debr-menu.c:504
+#: ../debr-menu.c:512
 msgid "Could not save the menu"
 msgstr "Não foi possível salvar o menu"
 
-#: ../debr-menu.c:505
+#: ../debr-menu.c:513
 msgid ""
 "You do not have necessary permissions to save the menu. Please check the "
 "provided location is correct and try again."
-msgstr "Você não tem permissões necessárias para salvar o menu. Por favor, "
+msgstr ""
+"Você não tem permissões necessárias para salvar o menu. Por favor, "
 "certifique-se que a pasta fornecida está correta e tente novamente."
 
-#: ../debr-menu.c:508
+#: ../debr-menu.c:516
 msgid "Permission denied."
 msgstr "Permissão negada."
 
-#: ../debr-menu.c:529
+#: ../debr-menu.c:537
 #, c-format
 msgid "Menu \"%s\" saved."
 msgstr "Menu \"%s\" salvo."
 
-#: ../debr-menu.c:575
+#: ../debr-menu.c:591
 #, c-format
 msgid "Choose file for \"%s\""
 msgstr "Escolher arquivo para \"%s\""
 
-#: ../debr-menu.c:716
+#: ../debr-menu.c:729
 msgid "There are unsaved menus. You need to save then before install."
 msgstr "Existem menus não salvos. É necessário salvá-los antes da instalação."
 
-#: ../debr-menu.c:744
+#: ../debr-menu.c:757
 msgid ""
 "\n"
 " - No categories set"
-msgstr "\n"
+msgstr ""
+"\n"
 " - Nenhuma categoria definida"
 
-#: ../debr-menu.c:747
+#: ../debr-menu.c:760
 msgid ""
 "\n"
 " - Menu with no programs"
-msgstr "\n"
+msgstr ""
+"\n"
 " - Este menu não tem programas"
 
-#: ../debr-menu.c:750
+#: ../debr-menu.c:763
 msgid ""
 "\n"
 " - Menu has no title"
-msgstr "\n"
+msgstr ""
+"\n"
 " - Menu não possui título"
 
-#: ../debr-menu.c:753
+#: ../debr-menu.c:766
 msgid ""
 "\n"
 " - At least one program has no title"
-msgstr "\n"
+msgstr ""
+"\n"
 " - Pelo menos um programa não possui título"
 
-#: ../debr-menu.c:756
+#: ../debr-menu.c:769
 msgid "Unable to install menu "
 msgstr "Falha ao instalar o menu "
 
-#: ../debr-menu.c:757
+#: ../debr-menu.c:770
 #, c-format
 msgid ""
 "The menu %s can not be installed,\n"
 "and has the following problems:%s"
-msgstr "O menu %s não pode ser instalado,\n"
+msgstr ""
+"O menu %s não pode ser instalado,\n"
 "e possui os seguintes problemas:%s"
 
-#: ../debr-menu.c:772
+#: ../debr-menu.c:785
 #, c-format
 msgid ""
 "Menu '%s' already exists on destination folder. Do you want to overwrite it?"
 msgstr "Menu '%s' já existe. Deseja sobrescrevê-lo?"
 
-#: ../debr-menu.c:774
+#: ../debr-menu.c:787
 msgid "Don't overwrite"
 msgstr "Não sobrescreva"
 
-#: ../debr-menu.c:775
+#: ../debr-menu.c:788
 msgid "Overwrite"
 msgstr "Sobrescrever"
 
-#: ../debr-menu.c:776
+#: ../debr-menu.c:789
 msgid "Overwrite all"
 msgstr "Sobrescrever todos"
 
-#: ../debr-menu.c:790
+#: ../debr-menu.c:803
 #, c-format
 msgid "Failed to install menu '%s'"
 msgstr "Falha ao instalar o menu '%s'"
 
-#: ../debr-menu.c:792
+#: ../debr-menu.c:805
 msgid "A problem occurred when copying the menu into GêBR's folder."
 msgstr "Um problema ocorreu ao copiar o menu para a pasta da GêBR."
 
-#: ../debr-menu.c:825
+#: ../debr-menu.c:838
 #, c-format
 msgid "Menu \"%s\" closed."
 msgstr "O menu \"%s\" foi fechado."
 
-#: ../debr-menu.c:827
 # Corrigi aqui
+#: ../debr-menu.c:840
 msgid "Menu closed."
 msgstr "O menu foi fechado."
 
-#: ../debr-menu.c:1155
+#: ../debr-menu.c:1168
 msgid "Edit menu"
 msgstr "Editar menu"
 
-#: ../debr-menu.c:1172
-#: ../debr-program.c:496
+#.
 #. * Title
+#.
+#: ../debr-menu.c:1185 ../debr-program.c:496
 msgid "Title:"
 msgstr "Título:"
 
-#: ../debr-menu.c:1187
-#: ../debr-program.c:561
+#.
 #. * Description
+#.
+#: ../debr-menu.c:1200 ../debr-program.c:561
 msgid "Description:"
 msgstr "Descrição:"
 
-#: ../debr-menu.c:1202
+#.
 #. * Author
+#.
+#: ../debr-menu.c:1215
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../debr-menu.c:1217
+#.
 #. * Email
+#.
+#: ../debr-menu.c:1230
 msgid "Email:"
 msgstr "E-mail:"
 
-#: ../debr-menu.c:1232
+#.
 #. * Categories
+#.
+#: ../debr-menu.c:1245
 msgid "Categories:"
 msgstr "Categorias:"
 
-#: ../debr-menu.c:1346
+#: ../debr-menu.c:1359
 msgid "Please select a menu."
 msgstr "Por favor selecione um menu."
 
-#: ../debr-menu.c:1390
+#: ../debr-menu.c:1403
 #, c-format
 msgid "This menu has no programs"
 msgstr "Este menu não tem programas"
 
-#: ../debr-menu.c:1393
+#: ../debr-menu.c:1406
 #, c-format
 msgid "This menu has 1 program"
 msgstr "Este menu tem 1 programa"
 
-#: ../debr-menu.c:1396
+#: ../debr-menu.c:1409
 #, c-format
 msgid "This menu has %li programs"
 msgstr "Este menu tem %li programas"
 
-#: ../debr-menu.c:1402
+#: ../debr-menu.c:1415
 msgid "Created: "
 msgstr "Criado: "
 
-#: ../debr-menu.c:1406
+#: ../debr-menu.c:1419
 msgid "Modified: "
 msgstr "Modificado: "
 
-#: ../debr-menu.c:1416
+#: ../debr-menu.c:1429
 msgid "Categories: "
 msgstr "Categorias: "
 
-#: ../debr-menu.c:1434
-#: ../debr-program.c:40
 #. There is no category, put "None"
+#: ../debr-menu.c:1447 ../debr-program.c:40
 msgid "None"
 msgstr "Nenhum"
 
-#: ../debr-menu.c:1469
+#: ../debr-menu.c:1482
 msgid "<b>Others</b>"
 msgstr "<b>Outros</b>"
 
-#: ../debr-menu.c:1471
+#: ../debr-menu.c:1484
 msgid ""
 "<i>This folder lists the menus which are not in any configured folder "
 "through users' preferences.</i>"
-msgstr "<i>Esta pasta lista os menus que não estão em qualquer pasta configurada "
+msgstr ""
+"<i>Esta pasta lista os menus que não estão em qualquer pasta configurada "
 "pelas preferências do usuário.</i>"
 
-#: ../debr-menu.c:1489
+#: ../debr-menu.c:1502
 #, c-format
 msgid "This folder has no menu"
 msgstr "Esta pasta não tem menus"
 
-#: ../debr-menu.c:1492
+#: ../debr-menu.c:1505
 #, c-format
 msgid "This folder has 1 menu"
 msgstr "Esta pasta tem 1 menu"
 
-#: ../debr-menu.c:1495
+#: ../debr-menu.c:1508
 #, c-format
 msgid "This folder has %d menus"
 msgstr "Esta pasta tem %d menus"
 
-#: ../debr-menu.c:1848
+#: ../debr-menu.c:1863
 msgid "Collapse all"
 msgstr "Colapsar todos"
 
-#: ../debr-menu.c:1851
+#: ../debr-menu.c:1866
 msgid "Expand all"
 msgstr "Expandir todos"
 
-#: ../debr-menu.c:1856
+#: ../debr-menu.c:1871
 msgid "Sort by"
 msgstr "Ordenado por"
 
-#: ../debr-menu.c:1869
-#: ../debr-preferences.c:61
 #. Name
+#: ../debr-menu.c:1884 ../debr-preferences.c:61
 msgid "Name"
 msgstr "Nome"
 
-#: ../debr-menu.c:1875
+#: ../debr-menu.c:1890
 msgid "Modified date"
 msgstr "Data em que foi modificado"
 
-#: ../debr-menu.c:1940
+#: ../debr-menu.c:1955
 msgid "Menu Help"
 msgstr "Ajuda de Menu"
 
-#: ../debr-menu.c:2012
+#: ../debr-menu.c:2027
 #, c-format
 msgid "Could not load flow at '%s'"
 msgstr "Não foi possível carregar fluxo em '%s'"
 
-#: ../debr-menu.c:2034
+#: ../debr-menu.c:2049
 #, c-format
 msgid "Flow '%s' imported as menu."
 msgstr "Fluxo '%s' importado como menu."
 
-#: ../debr-menu.c:2295
+#: ../debr-menu.c:2312
 msgid "All menus were saved."
 msgstr "Todos os menus foram salvos."
 
@@ -790,8 +777,7 @@ msgstr "Apagar parâmetro"
 msgid "Are you sure you want to delete the selected parameter(s)?"
 msgstr "Tem certeza que quer apagar o(s) parâmetro(s) selecionado(s)?"
 
-#: ../debr-parameter.c:452
-#: ../debr-parameter.c:475
+#: ../debr-parameter.c:452 ../debr-parameter.c:475
 msgid "Could not paste parameter."
 msgstr "Não foi possível colar o parâmetro."
 
@@ -799,9 +785,10 @@ msgstr "Não foi possível colar o parâmetro."
 msgid "No parameter is selected."
 msgstr "Nenhum parâmetro está selecionado."
 
-#: ../debr-parameter.c:763
-#: ../debr-parametergroup.c:100
+#.
 #. * Label
+#.
+#: ../debr-parameter.c:763 ../debr-parametergroup.c:100
 msgid "Label:"
 msgstr "Rótulo:"
 
@@ -812,15 +799,18 @@ msgid ""
 "<i>_Title</i>, then pressing ALT-T will place the cursor ready to start "
 "editing this parameter. \n"
 "If you need a literal underscore character, use '__' (two underscores)."
-msgstr "Caracteres precedidos por um underscore serão sublinhados e o primeiro, será "
+msgstr ""
+"Caracteres precedidos por um underscore serão sublinhados e o primeiro, será "
 "usados como tecla de atalho para acessar este parâmetro. Por exemplo, se o "
 "rótulo é <i>_Título</i>, então pressionando ALT-T posicionará o cursor de "
 "modo a iniciar a edição do parâmetro.\n"
 "Caso seja necessário um caracter underscore literal, use '__' (dois "
 "underscores). "
 
-#: ../debr-parameter.c:786
+#.
 #. * Keyword
+#.
+#: ../debr-parameter.c:786
 msgid "Keyword:"
 msgstr "Palavra-chave:"
 
@@ -860,41 +850,56 @@ msgstr "(enum)"
 msgid "(reference)"
 msgstr "(referência)"
 
-#: ../debr-parameter.c:843
+#.
 #. * Required
+#.
+#: ../debr-parameter.c:843
 msgid "Required:"
 msgstr "Obrigatório:"
 
-#: ../debr-parameter.c:859
+#.
 #. * Is List
+#.
+#: ../debr-parameter.c:859
 msgid "List:"
 msgstr "Lista:"
 
-#: ../debr-parameter.c:875
+#.
 #. * List separator
+#.
+#: ../debr-parameter.c:875
 msgid ""
 "List-item\n"
 "separator:"
-msgstr "Separador de \n"
+msgstr ""
+"Separador de \n"
 "ítens da lista:"
 
-#: ../debr-parameter.c:892
+#.
 #. * Comma Separator
+#.
+#: ../debr-parameter.c:892
 msgid "Comma"
 msgstr "Vírgula"
 
-#: ../debr-parameter.c:899
+#.
 #. * Space Separator
+#.
+#: ../debr-parameter.c:899
 msgid "Space"
 msgstr "Espaço"
 
-#: ../debr-parameter.c:906
+#.
 #. * Other Separator
+#.
+#: ../debr-parameter.c:906
 msgid "Other:"
 msgstr "Outro:"
 
-#: ../debr-parameter.c:938
+#.
 #. * Type
+#.
+#: ../debr-parameter.c:938
 msgid "Type:"
 msgstr "Tipo:"
 
@@ -906,8 +911,10 @@ msgstr "Arquivo"
 msgid "Directory"
 msgstr "Diretório"
 
-#: ../debr-parameter.c:962
+#.
 #. * Filter
+#.
+#: ../debr-parameter.c:962
 msgid "Filter file types:"
 msgstr "Tipos de filtros de arquivos:"
 
@@ -919,33 +926,45 @@ msgstr "nome"
 msgid "pattern (eg. *.jpg *.png)"
 msgstr "padrão (ex. *.jpg *.png)"
 
-#: ../debr-parameter.c:1012
+#.
 #. * Minimum
+#.
+#: ../debr-parameter.c:1012
 msgid "Minimum:"
 msgstr "Mínimo:"
 
-#: ../debr-parameter.c:1030
+#.
 #. * Maximum
+#.
+#: ../debr-parameter.c:1030
 msgid "Maximum:"
 msgstr "Máximo:"
 
-#: ../debr-parameter.c:1057
+#.
 #. * Increment
+#.
+#: ../debr-parameter.c:1057
 msgid "Increment:"
 msgstr "Incremento:"
 
-#: ../debr-parameter.c:1075
+#.
 #. * Digits
+#.
+#: ../debr-parameter.c:1075
 msgid "Digits:"
 msgstr "Dígitos:"
 
-#: ../debr-parameter.c:1104
+#.
 #. * Options
+#.
+#: ../debr-parameter.c:1104
 msgid "Options:"
 msgstr "Opções:"
 
-#: ../debr-parameter.c:1132
+#.
 #. * Default value
+#.
+#: ../debr-parameter.c:1132
 msgid "Default value:"
 msgstr "Valor padrão:"
 
@@ -961,7 +980,8 @@ msgstr "Separador"
 msgid ""
 "You've marked this parameter as a list but no separator was selected.\n"
 "Please select the list separator."
-msgstr "Este parâmetro foi definido como uma lista, mas nenhum separador foi "
+msgstr ""
+"Este parâmetro foi definido como uma lista, mas nenhum separador foi "
 "definido.\n"
 "Por favor, selecione um separador para os elementos da lista."
 
@@ -994,23 +1014,31 @@ msgstr " e não exclusivo"
 msgid "Edit parameter (group)"
 msgstr "Editar parâmetro (grupo)"
 
-#: ../debr-parametergroup.c:114
+#.
 #. * Expanded by default
+#.
+#: ../debr-parametergroup.c:114
 msgid "Expanded by default:"
 msgstr "Expandida por padrão:"
 
-#: ../debr-parametergroup.c:129
+#.
 #. * Instantiable
+#.
+#: ../debr-parametergroup.c:129
 msgid "Instantiable:"
 msgstr "Instanciável:"
 
-#: ../debr-parametergroup.c:144
+#.
 #. * Exclusive
+#.
+#: ../debr-parametergroup.c:144
 msgid "Exclusive:"
 msgstr "É exclusivo:"
 
-#: ../debr-parametergroup.c:163
+#.
 #. * Instances
+#.
+#: ../debr-parametergroup.c:163
 msgid "Instances:"
 msgstr "Instâncias:"
 
@@ -1032,8 +1060,8 @@ msgstr "Preferências"
 msgid "You should know your name"
 msgstr "Você deveria saber seu nome"
 
-#: ../debr-preferences.c:73
 #. Email
+#: ../debr-preferences.c:73
 msgid "Email"
 msgstr "E-mail"
 
@@ -1041,8 +1069,8 @@ msgstr "E-mail"
 msgid "Your email address"
 msgstr "Seu endereço de e-mail"
 
-#: ../debr-preferences.c:85
 #. Editor
+#: ../debr-preferences.c:85
 msgid "HTML editor"
 msgstr "Editor HTML"
 
@@ -1066,9 +1094,8 @@ msgstr "OpenMPI"
 msgid "MPICH2"
 msgstr "MPICH2"
 
-#: ../debr-program.c:242
-#: ../debr-program.c:268
 #. default settings
+#: ../debr-program.c:242 ../debr-program.c:268
 #, c-format
 msgid "New program %d"
 msgstr "Novo programa %d"
@@ -1109,23 +1136,31 @@ msgstr "escreve na saída padrão"
 msgid "appends to standard error"
 msgstr "acrescenta à saída de erro padrão"
 
-#: ../debr-program.c:512
+#.
 #. * Binary
+#.
+#: ../debr-program.c:512
 msgid "Executable:"
 msgstr "Executável:"
 
-#: ../debr-program.c:528
+#.
 #. * Version
+#.
+#: ../debr-program.c:528
 msgid "Version:"
 msgstr "Versão:"
 
-#: ../debr-program.c:544
+#.
 #. * mpi
+#.
+#: ../debr-program.c:544
 msgid "MPI:"
 msgstr "MPI:"
 
-#: ../debr-program.c:577
+#.
 #. * URL
+#.
+#: ../debr-program.c:577
 msgid "URL:"
 msgstr "URL:"
 
@@ -1133,9 +1168,9 @@ msgstr "URL:"
 msgid "No program is selected"
 msgstr "Nenhum programa está selecionado"
 
-#: ../debr-program.c:697
 #. Comentary for translators: Tooltip shown in 'New' button in Parameters page, when no programs are
 #. * selected
+#: ../debr-program.c:697
 msgid "There are no programs selected"
 msgstr "Nenhum programa está selecionado"
 
@@ -1201,7 +1236,8 @@ msgstr "Editar"
 msgid ""
 "<span weight=\"bold\" size=\"large\">There are menus with unsaved changes. "
 "Save changes before closing?</span>"
-msgstr "<span weight=\"bold\" size=\"large\">Existem menus modificados não salvos. "
+msgstr ""
+"<span weight=\"bold\" size=\"large\">Existem menus modificados não salvos. "
 "Deseja salva-los antes de fechar?</span>"
 
 #: ../menu-dialog-save-ui.glade.h:2
@@ -1210,9 +1246,15 @@ msgstr "_Fechar sem salvar"
 
 #: ../menu-dialog-save-ui.glade.h:3
 msgid "If you don't save, all your changes will be permanently lost."
-msgstr "Se você não salvar, todas as alterações serão perdidas permanentemente."
+msgstr ""
+"Se você não salvar, todas as alterações serão perdidas permanentemente."
 
 #: ../menu-dialog-save-ui.glade.h:4
 msgid "Select the menus you want to save:"
 msgstr "Selecione os menus que você deseja salvar:"
 
+#~ msgid ""
+#~ "The category <i>%s</i> already exists in the list, the operation will be "
+#~ "cancelled."
+#~ msgstr ""
+#~ "A categoria <i>%s</i> já existe na lista, a operação será cancelada."

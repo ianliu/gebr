@@ -1342,7 +1342,7 @@ gebr_flow_set_toolbar_sensitive(void)
 			else{
 				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
 						"Two options are avaiable:\n"
-						"- Click on <i>New</i> to create a Flow or\n"
+						"- Click on <i>New Fow</i> to create a Flow or\n"
 						"- Import a Flow through the <i>Import Flow</i> on More options."));
 				gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 			}

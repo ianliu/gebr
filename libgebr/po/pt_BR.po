@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-09 15:18-0300\n"
+"POT-Creation-Date: 2012-09-26 11:14-0300\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -177,7 +177,7 @@ msgstr "Endereço destino desconhecido\n"
 msgid "Channel created successful. Forwarding connections...\n"
 msgstr "Canal criado com sucesso. Encaminhando conexões...\n"
 
-#: ../date.c:75
+#: ../date.c:76
 msgid "Unknown"
 msgstr "Desconhecida"
 
@@ -363,11 +363,11 @@ msgstr "%s INVÁLIDO: %s"
 msgid "%s valid!\n"
 msgstr "%s válido!\n"
 
-#: ../geoxml/document.c:946 ../geoxml/program.c:637
+#: ../geoxml/document.c:948 ../geoxml/program.c:636
 msgid "MPI Parameters"
 msgstr "Parâmetros do MPI"
 
-#: ../geoxml/document.c:952 ../geoxml/program.c:643
+#: ../geoxml/document.c:954 ../geoxml/program.c:642
 msgid "Number of process to start"
 msgstr "Número de processos a começar"
 
@@ -514,52 +514,62 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../geoxml/flow.c:783 ../geoxml/flow.c:900
+#: ../geoxml/flow.c:783 ../geoxml/flow.c:919
 #, c-format
 msgid "No configured or enabled Programs found in Flow \"%s\"."
 msgstr "Nenhum Programa habilitado ou configurado encontrado no Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:826
+#: ../geoxml/flow.c:814
+#, c-format
+msgid "There are unconfigured program(s) in Flow \"%s\"."
+msgstr "Existe(m) programa(s) não configurado(s) no Fluxo \"%s\"."
+
+#: ../geoxml/flow.c:828
+#, c-format
+msgid "There are erroneous program(s) in Flow \"%s\"."
+msgstr "Existe(m) programa(s) errôneo(s) no Fluxo \"%s\"."
+
+#: ../geoxml/flow.c:846
 #, c-format
 msgid "No input file was specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Nenhum arquivo de entrada foi especificado para o Programa \"%s\" no Fluxo "
 "\"%s\"."
 
-#: ../geoxml/flow.c:839 ../geoxml/flow.c:852
+#: ../geoxml/flow.c:859 ../geoxml/flow.c:871
 #, c-format
 msgid "Invalid input file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Arquivo de entrada especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:871
+#: ../geoxml/flow.c:890
 #, c-format
 msgid "The Flow \"%s\" expects an input file."
 msgstr "O Fluxo \"%s\" espera um arquivo de entrada."
 
-#: ../geoxml/flow.c:881
+#: ../geoxml/flow.c:900
 #, c-format
 msgid "Unexpected output file for the Flow \"%s\"."
 msgstr "Arquivo de saída inexperado para o Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:928 ../geoxml/flow.c:942
+#: ../geoxml/flow.c:947 ../geoxml/flow.c:961
 #, c-format
 msgid "Invalid output file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr "Arquivo de saída inválido para o Programa \"%s\" no Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:971 ../geoxml/flow.c:984
+#: ../geoxml/flow.c:990 ../geoxml/flow.c:1002
 #, c-format
 msgid "Invalid error file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Arquivo de log especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:1058
+#: ../geoxml/flow.c:1076
 msgid "Loop iteration counter"
 msgstr "Contador de iterações do Loop"
 
-#: ../geoxml/flow.c:1508
+#: ../geoxml/flow.c:1519
 msgid "Now"
 msgstr "Atual"
 
@@ -826,33 +836,21 @@ msgstr "Escolha um arquivo"
 msgid "Choose directory"
 msgstr "Escolha um diretório"
 
-#: ../gui/gebr-gui-help-edit-window.c:80
+#: ../gui/gebr-gui-help-edit-window.c:78
 #: ../gui/gebr-gui-html-viewer-window.c:57
 msgid "_File"
 msgstr "_Arquivo"
 
-#: ../gui/gebr-gui-help-edit-window.c:81
-msgid "_Edit"
-msgstr "_Editar"
-
-#: ../gui/gebr-gui-help-edit-window.c:84
+#: ../gui/gebr-gui-help-edit-window.c:80
 msgid "Print the content of this window"
 msgstr "Imprime o conteúdo dessa janela"
 
-#: ../gui/gebr-gui-help-edit-window.c:86
+#: ../gui/gebr-gui-help-edit-window.c:82
 #: ../gui/gebr-gui-html-viewer-window.c:64
 msgid "Close this window"
 msgstr "Sai desta janela"
 
-#: ../gui/gebr-gui-help-edit-window.c:92
-msgid "Preview"
-msgstr "Pré-visualização"
-
-#: ../gui/gebr-gui-help-edit-window.c:93
-msgid "Toggle between edit and preview modes"
-msgstr "Alterna entre o modo de visualização e de edição"
-
-#: ../gui/gebr-gui-help-edit-window.c:344
+#: ../gui/gebr-gui-help-edit-window.c:301
 msgid ""
 "<span size='larger' weight='bold'>There are unsaved changes. Do you want to "
 "save them now?</span>"
@@ -860,24 +858,26 @@ msgstr ""
 "<span size='larger' weight='bold'>Há mudanças não salvas. Você deseja salva-"
 "las agora?</span>"
 
-#: ../gui/gebr-gui-help-edit-window.c:354
+#: ../gui/gebr-gui-help-edit-window.c:311
 msgid "If you do not save the changes, they will be permanently lost."
 msgstr "Se você não salvar as mudanças, elas serão perdidas permanentemente."
 
-#: ../gui/gebr-gui-html-viewer-widget.c:300
-#: ../gui/gebr-gui-html-viewer-widget.c:308
-#: ../gui/gebr-gui-html-viewer-widget.c:317
-#: ../gui/gebr-gui-html-viewer-widget.c:335
+#: ../gui/gebr-gui-html-viewer-widget.c:313
+#: ../gui/gebr-gui-html-viewer-widget.c:321
+#: ../gui/gebr-gui-html-viewer-widget.c:339
+#: ../gui/gebr-gui-html-viewer-widget.c:348
+#: ../gui/gebr-gui-html-viewer-widget.c:366
 msgid "Invalid link"
 msgstr "Link inválido"
 
-#: ../gui/gebr-gui-html-viewer-widget.c:300
-#: ../gui/gebr-gui-html-viewer-widget.c:308
-#: ../gui/gebr-gui-html-viewer-widget.c:335
+#: ../gui/gebr-gui-html-viewer-widget.c:313
+#: ../gui/gebr-gui-html-viewer-widget.c:321
+#: ../gui/gebr-gui-html-viewer-widget.c:339
+#: ../gui/gebr-gui-html-viewer-widget.c:366
 msgid "Sorry, couldn't reach link."
 msgstr "Sinto muito, não consegui atingir o link."
 
-#: ../gui/gebr-gui-html-viewer-widget.c:317
+#: ../gui/gebr-gui-html-viewer-widget.c:348
 msgid "Sorry, couldn't find program."
 msgstr "Sinto muito, não consegui encontrar o programa."
 
@@ -906,31 +906,27 @@ msgstr ""
 "Você não tem a permissão necessária para salvar o arquivo %s. Verifique se "
 "você escolheu a localização corretamente."
 
-#: ../gui/gebr-gui-parameter.c:255
+#: ../gui/gebr-gui-parameter.c:264
 msgid "All"
 msgstr "Todos"
 
-#: ../gui/gebr-gui-parameter.c:946
+#: ../gui/gebr-gui-parameter.c:955
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../gui/gebr-gui-parameter.c:1091
+#: ../gui/gebr-gui-parameter.c:1100
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-parameter.c:1816
+#: ../gui/gebr-gui-parameter.c:1841
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-parameter.c:1818
+#: ../gui/gebr-gui-parameter.c:1843
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
-
-#: ../gui/gebr-gui-program-edit.c:159
-msgid "Link"
-msgstr "Link"
 
 #: ../gui/gebr-gui-save-dialog.c:194
 #, c-format
@@ -954,11 +950,11 @@ msgstr ""
 msgid "\\u2205"
 msgstr "\\u2205"
 
-#: ../gui/gebr-gui-utils.c:1216
+#: ../gui/gebr-gui-utils.c:1227
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
 
-#: ../gui/gebr-gui-utils.c:1251
+#: ../gui/gebr-gui-utils.c:1262
 #, c-format
 msgid ""
 "The presented files are from your <b>local machine</b> and may not represent "
@@ -967,149 +963,130 @@ msgstr ""
 "Os arquivos apresentados são de sua <b>máquina local</b> e podem não "
 "representar os arquivos nas <b>máquinas de processamento</b>."
 
-#: ../gui/gebr-gui-utils.c:1429
+#: ../gui/gebr-gui-utils.c:1440
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se de que ele está instalado."
 
-#: ../utils.c:768
-msgid "A moment"
-msgstr "Um momento"
-
-#: ../utils.c:770 ../utils.c:836
-#, c-format
-msgid "%ld seconds"
-msgstr "%ld segundos"
-
-#: ../utils.c:772 ../utils.c:832
-msgid "1 minute"
-msgstr "1 minuto"
-
-#: ../utils.c:774 ../utils.c:834
-#, c-format
-msgid "%ld minutes"
-msgstr "%ld minutos"
-
-#: ../utils.c:776
-#, c-format
-msgid "1 hour"
-msgstr "1 hora"
-
-#: ../utils.c:778 ../utils.c:830
-#, c-format
-msgid "%ld hours"
-msgstr "%ld horas"
-
-#: ../utils.c:780
-#, c-format
-msgid "1 day"
-msgstr "1 dia"
-
-#: ../utils.c:782
-#, c-format
-msgid "%ld days"
-msgstr "%ld dias"
-
 #: ../utils.c:784
-#, c-format
-msgid "1 week"
-msgstr "1 semana"
+msgid "Moments ago"
+msgstr "Momentos atrás"
 
 #: ../utils.c:786
-#, c-format
-msgid "%ld weeks"
-msgstr "%ld semanas"
+msgid "Hours ago"
+msgstr "Horas atrás"
 
 #: ../utils.c:788
-#, c-format
-msgid "1 month"
-msgstr "1 mês"
+msgid "Days ago"
+msgstr "Dias atrás"
 
 #: ../utils.c:790
-#, c-format
-msgid "%ld months"
-msgstr "%ld meses"
+msgid "Weeks ago"
+msgstr "Semanas atrás"
 
 #: ../utils.c:792
-msgid "More than a year"
-msgstr "Mais de um ano"
+msgid "Months ago"
+msgstr "Meses atrás"
 
-#: ../utils.c:806
+#: ../utils.c:794
+msgid "Years ago"
+msgstr "Anos atrás"
+
+#: ../utils.c:844
 msgid "1 hour, 1 minute and 1 second"
 msgstr "1 hora, 1 minuto e 1 segundo"
 
-#: ../utils.c:808
+#: ../utils.c:846
 #, c-format
 msgid "1 hour, 1 minute and %ld seconds"
 msgstr "1 hora, 1 minuto e %ld segundos"
 
-#: ../utils.c:810
+#: ../utils.c:848
 #, c-format
 msgid "1 hour, %ld minute and 1 second"
 msgstr "1 hora, %ld minutos e 1 segundo"
 
-#: ../utils.c:812
+#: ../utils.c:850
 #, c-format
 msgid "1 hour, %ld minutes and %ld seconds"
 msgstr "1 hora, %ld minutos e %ld segundos"
 
-#: ../utils.c:814
+#: ../utils.c:852
 #, c-format
 msgid "%ld hours, %ld minutes and %ld seconds"
 msgstr "%ld horas, %ld minutos e %ld segundos"
 
-#: ../utils.c:816
+#: ../utils.c:854
 #, c-format
 msgid "%ld hours and %ld minutes"
 msgstr "%ld horas e %ld minutos"
 
-#: ../utils.c:818
+#: ../utils.c:856
 msgid "1 minute and 1 second"
 msgstr "1 minuto e 1 segundo"
 
-#: ../utils.c:820
+#: ../utils.c:858
 #, c-format
 msgid "1 minute and %ld seconds"
 msgstr "1 minuto e %ld segundos"
 
-#: ../utils.c:822
+#: ../utils.c:860
 #, c-format
 msgid "%ld minutes and 1 second"
 msgstr "%ld minutos e 1 segundo"
 
-#: ../utils.c:824
+#: ../utils.c:862
 #, c-format
 msgid "%ld minutes and %ld seconds"
 msgstr "%ld minutos e %ld segundos"
 
-#: ../utils.c:826
+#: ../utils.c:864
 #, c-format
 msgid "1 hour and %ld seconds"
 msgstr "1 hora e %ld segundos"
 
-#: ../utils.c:828
+#: ../utils.c:866
 #, c-format
 msgid "%ld hours and %ld seconds"
 msgstr "%ld horas e %ld segundos"
 
-#: ../utils.c:838
+#: ../utils.c:868
+#, c-format
+msgid "%ld hours"
+msgstr "%ld horas"
+
+#: ../utils.c:870
+msgid "1 minute"
+msgstr "1 minuto"
+
+#: ../utils.c:872
+#, c-format
+msgid "%ld minutes"
+msgstr "%ld minutos"
+
+#: ../utils.c:874
+#, c-format
+msgid "%ld seconds"
+msgstr "%ld segundos"
+
+#: ../utils.c:876
 msgid "1 second"
 msgstr "1 segundo"
 
-#: ../utils.c:840
+#: ../utils.c:878
 msgid "1 milisecond"
 msgstr "1 milissegundo"
 
-#: ../utils.c:842
+#: ../utils.c:880
 #, c-format
 msgid "%ld miliseconds"
 msgstr "%ld milessegundos"
 
-#: ../utils.c:1221
+#: ../utils.c:1259
 msgid "The specified line path does not exist"
 msgstr "O caminho de linha específico não existe"
 
-#: ../utils.c:1223
+#: ../utils.c:1261
 msgid "The path must either start with < or /"
 msgstr "O caminho deve começar com < ou /"
 
@@ -1198,15 +1175,15 @@ msgstr ""
 msgid "Parameter keyword should not be empty."
 msgstr "Palavra-chave de parâmetro não deve ser vazia."
 
-#: ../validate.c:292
+#: ../validate.c:298
 msgid "<b>No automatic fix available</b>"
 msgstr "<b>Correção automática não disponível</b>"
 
-#: ../validate.c:294
+#: ../validate.c:300
 msgid "<b>Click on the icon to fix:</b>"
 msgstr "<b>Clique no ícone para corrigir:</b>"
 
-#: ../validate.c:296
+#: ../validate.c:302
 msgid ""
 "\n"
 " - Capitalize first letter"
@@ -1214,7 +1191,7 @@ msgstr ""
 "\n"
 " - Tornar primeira letra maiúscula"
 
-#: ../validate.c:298
+#: ../validate.c:304
 msgid ""
 "\n"
 " - Remove spaces at the beginning/end"
@@ -1222,7 +1199,7 @@ msgstr ""
 "\n"
 " - Remover espaços no começo/fim"
 
-#: ../validate.c:300
+#: ../validate.c:306
 msgid ""
 "\n"
 " - Remove multiples spaces"
@@ -1230,7 +1207,7 @@ msgstr ""
 "\n"
 " - Remover múltiplos espaços"
 
-#: ../validate.c:302
+#: ../validate.c:308
 msgid ""
 "\n"
 " - Remove final punctuation character"
@@ -1238,7 +1215,7 @@ msgstr ""
 "\n"
 " - Remover caracteres de pontuação final"
 
-#: ../validate.c:304
+#: ../validate.c:310
 msgid ""
 "\n"
 " - Add URL scheme"
@@ -1246,7 +1223,7 @@ msgstr ""
 "\n"
 " - Adicionar esquema de URL"
 
-#: ../validate.c:306
+#: ../validate.c:312
 msgid ""
 "\n"
 " - Replace tabs by space"
@@ -1254,11 +1231,11 @@ msgstr ""
 "\n"
 " - Substituir tabulações por espaço"
 
-#: ../validate.c:319
+#: ../validate.c:325
 msgid "<b>Error(s) found:</b>"
 msgstr "<b>Erro(s) encontrado(s):</b>"
 
-#: ../validate.c:321
+#: ../validate.c:327
 msgid ""
 "\n"
 " - The field is not filled in"
@@ -1266,7 +1243,7 @@ msgstr ""
 "\n"
 " - O campo não está preenchido"
 
-#: ../validate.c:323
+#: ../validate.c:329
 msgid ""
 "\n"
 " - First letter should be capitalized"
@@ -1274,7 +1251,7 @@ msgstr ""
 "\n"
 " - Primeira letra deve ser maiúscula"
 
-#: ../validate.c:325
+#: ../validate.c:331
 msgid ""
 "\n"
 " - There are spaces at the beginning/end"
@@ -1282,7 +1259,7 @@ msgstr ""
 "\n"
 " - Existem espaços no começo/fim"
 
-#: ../validate.c:327
+#: ../validate.c:333
 msgid ""
 "\n"
 " - There are multiples spaces"
@@ -1290,7 +1267,7 @@ msgstr ""
 "\n"
 " - Existem espaços múltiplos"
 
-#: ../validate.c:329
+#: ../validate.c:335
 msgid ""
 "\n"
 " - This field should not have a final punctuation"
@@ -1298,7 +1275,7 @@ msgstr ""
 "\n"
 " - Este campo não deve ter uma pontuação final"
 
-#: ../validate.c:331
+#: ../validate.c:337
 msgid ""
 "\n"
 " - Invalid email address"
@@ -1306,7 +1283,7 @@ msgstr ""
 "\n"
 " - Endereço de email inválido"
 
-#: ../validate.c:333
+#: ../validate.c:339
 msgid ""
 "\n"
 " - Invalid menu filename"
@@ -1314,7 +1291,7 @@ msgstr ""
 "\n"
 " - Nome de arquivo de menu inválido"
 
-#: ../validate.c:335
+#: ../validate.c:341
 msgid ""
 "\n"
 " - Duplicated hotkey"
@@ -1322,7 +1299,7 @@ msgstr ""
 "\n"
 " - Atalho de teclado duplicado"
 
-#: ../validate.c:337
+#: ../validate.c:343
 msgid ""
 "\n"
 " - URL scheme is missing"
@@ -1330,22 +1307,10 @@ msgstr ""
 "\n"
 " - Esquema de URL está faltando"
 
-#: ../validate.c:339
+#: ../validate.c:345
 msgid ""
 "\n"
 " - There are tabs"
 msgstr ""
 "\n"
 " - Existem tabulações"
-
-#~ msgid ""
-#~ "Titles should not start with spaces or end with punctuation characters."
-#~ msgstr ""
-#~ "Títulos não devem começar com espaços ou terminar com caracteres de "
-#~ "pontuação."
-
-#~ msgid "Program titles should not have extra spaces."
-#~ msgstr "Títulos de programa não devem ter espaços extras."
-
-#~ msgid "- - - -"
-#~ msgstr "- - - -"
