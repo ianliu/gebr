@@ -385,7 +385,7 @@ gebr_menu_view_init(GebrMenuView *view)
 
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(view->priv->entry),
 	                              GTK_ENTRY_ICON_SECONDARY,
-	                              GTK_STOCK_CLOSE);
+	                              "edit-clear-entry");
 	gtk_entry_set_icon_sensitive(GTK_ENTRY(view->priv->entry), GTK_ENTRY_ICON_SECONDARY, FALSE);
 
 	g_signal_connect(view->priv->entry, "icon-press", G_CALLBACK(on_search_entry_press), view);

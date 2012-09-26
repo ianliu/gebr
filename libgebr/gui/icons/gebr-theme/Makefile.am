@@ -34,6 +34,7 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/document-save-as.png	\
 	16x16/stock/document-save.png	\
 	16x16/stock/edit-clear.png	\
+	16x16/stock/edit-clear-entry.png	\
 	16x16/stock/edit-copy.png	\
 	16x16/stock/edit-cut.png	\
 	16x16/stock/edit-delete.png	\
@@ -112,11 +113,11 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/window-close.png	\
 	16x16/stock/group.png		\
 	16x16/stock/photos.png	\
-    16x16/stock/utilities-terminal.png \
+    	16x16/stock/utilities-terminal.png \
 	16x16/stock/kontact_todo.png	\
 	16x16/stock/detailed_execution.png	\
-    16x16/stock/document_comment.png \
-    16x16/stock/menu-list-icon.png \
+	16x16/stock/document_comment.png \
+	16x16/stock/menu-list-icon.png \
 	16x16/stock/flow-icon.png \
 	16x16/stock/document_review.png
 	
@@ -137,6 +138,7 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/document-save.png	\
 	22x22/stock/execute-warn.png	\
 	22x22/stock/edit-clear.png	\
+	22x22/stock/edit-clear-entry.png	\
 	22x22/stock/edit-copy.png	\
 	22x22/stock/edit-cut.png	\
 	22x22/stock/edit-delete.png	\
@@ -237,6 +239,7 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/document-save.png	\
 	48x48/stock/execute-warn.png	\
 	48x48/stock/edit-clear.png	\
+	48x48/stock/edit-clear-entry.png	\
 	48x48/stock/edit-copy.png	\
 	48x48/stock/edit-cut.png	\
 	48x48/stock/edit-delete.png	\
