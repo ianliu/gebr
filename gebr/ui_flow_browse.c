@@ -1194,6 +1194,19 @@ on_view_key_press_event(GtkWidget   *widget,
 }
 
 static void
+on_view_style_change(GtkWidget *widget,
+                     GtkStyle  *previous_style,
+                     GebrUiFlowBrowse *fb)
+{
+	g_signal_handlers_block_by_func(widget, on_view_style_change, fb);
+
+	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
+	gtk_widget_modify_base(widget, GTK_STATE_NORMAL, &(style->bg[GTK_STATE_NORMAL]));
+
+	g_signal_handlers_unblock_by_func(widget, on_view_style_change, fb);
+}
+
+static void
 on_line_back_clicked(GtkButton *button,
                      GebrUiFlowBrowse *fb)
 {
@@ -1271,11 +1284,12 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_browse->view);
 	gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 
-	g_signal_connect(ui_flow_browse->view, "key-press-event", G_CALLBACK(on_view_key_press_event), ui_flow_browse);
-	g_signal_connect(ui_flow_browse->view, "key-release-event", G_CALLBACK(on_view_key_release_event), ui_flow_browse);
-
 	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
 	gtk_widget_modify_base(ui_flow_browse->view, GTK_STATE_NORMAL, &(style->bg[GTK_STATE_NORMAL]));
+
+	g_signal_connect(ui_flow_browse->view, "style-set", G_CALLBACK(on_view_style_change), ui_flow_browse);
+	g_signal_connect(ui_flow_browse->view, "key-press-event", G_CALLBACK(on_view_key_press_event), ui_flow_browse);
+	g_signal_connect(ui_flow_browse->view, "key-release-event", G_CALLBACK(on_view_key_release_event), ui_flow_browse);
 
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)),
 				    GTK_SELECTION_MULTIPLE);
@@ -1749,21 +1763,10 @@ flow_browse_add_revisions_graph(GebrGeoXmlFlow *flow,
 }
 
 static void
-gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
+gebr_flow_browse_create_python_process(GdkNativeWindow socket_id,
+                                       GebrUiFlowBrowse *fb)
 {
-	if (fb->graph_process)
-		return;
-
-	fb->update_graph = TRUE;
 	fb->graph_process = gebr_comm_process_new();
-
-	GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(fb->info.builder_flow, "graph_box"));
-
-	GtkWidget *socket = gtk_socket_new();
-	gtk_box_pack_start(GTK_BOX(box), socket, TRUE, TRUE, 0);
-	GdkNativeWindow socket_id = gtk_socket_get_id(GTK_SOCKET(socket));
-
-	g_debug("SOCKET ID %d", socket_id);
 
 	gchar *cmd_line = g_strdup_printf("python %s/gebr-xdot-graph.py %d %s", GEBR_PYTHON_DIR, socket_id, PACKAGE_LOCALE_DIR);
 	GString *cmd = g_string_new(cmd_line);
@@ -1774,11 +1777,44 @@ gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
 	if (!gebr_comm_process_start(fb->graph_process, cmd))
 		g_debug("FAIL");
 
-	gtk_widget_show_all(socket);
-
 	g_free(cmd_line);
 	g_string_free(cmd, TRUE);
 }
+
+static void
+on_socket_plug_removed(GtkSocket *socket,
+                       GebrUiFlowBrowse *fb)
+{
+	GdkNativeWindow socket_id = gtk_socket_get_id(socket);
+
+	gebr_flow_browse_create_python_process(socket_id, fb);
+	gtk_widget_show_all(GTK_WIDGET(socket));
+
+	flow_browse_reload_selected();
+}
+
+static void
+gebr_flow_browse_create_graph(GebrUiFlowBrowse *fb)
+{
+	if (fb->graph_process)
+		return;
+
+	fb->update_graph = TRUE;
+
+	GtkWidget *box = GTK_WIDGET(gtk_builder_get_object(fb->info.builder_flow, "graph_box"));
+
+	GtkWidget *socket = gtk_socket_new();
+	gtk_box_pack_start(GTK_BOX(box), socket, TRUE, TRUE, 0);
+	GdkNativeWindow socket_id = gtk_socket_get_id(GTK_SOCKET(socket));
+	g_signal_connect(socket, "plug-removed", G_CALLBACK(on_socket_plug_removed), fb);
+
+	g_debug("SOCKET ID %d", socket_id);
+
+	gebr_flow_browse_create_python_process(socket_id, fb);
+
+	gtk_widget_show_all(socket);
+}
+
 /* End of Snapshots methods */
 
 static void
