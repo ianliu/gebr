@@ -2569,6 +2569,7 @@ flow_add_program_to_flow(GebrGeoXmlSequence *program,
                           FB_STRUCT_TYPE, STRUCT_TYPE_PROGRAM,
                           FB_STRUCT, ui_program,
                           -1);
+       flow_browse_program_check_sensitiveness();
 }
 
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
