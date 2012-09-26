@@ -3412,3 +3412,9 @@ void flow_edition_component_activated(void)
 	}
 	g_free(title);
 }
+
+void
+flow_browse_show_search_bar(GebrUiFlowBrowse *fb)
+{
+	gebr_gui_html_viewer_show_search_bar(GEBR_GUI_HTML_VIEWER_WIDGET(fb->html_parameters));
+}

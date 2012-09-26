@@ -581,12 +581,19 @@ void import_demo(GtkWidget *menu_item, const gchar *path)
 	project_line_import_path(path);
 }
 
-void on_flow_browse_show_help(void) {
+void on_flow_browse_show_help(void)
+{
     flow_browse_show_help();
 }
 
-void on_flow_browse_edit_help(void) {
+void on_flow_browse_edit_help(void)
+{
     flow_browse_edit_help();
+}
+
+void on_flow_browse_show_search_bar(void)
+{
+	flow_browse_show_search_bar(gebr.ui_flow_browse);
 }
 
 void on_project_line_show_help (void)

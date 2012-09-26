@@ -75,6 +75,13 @@ void gebr_gui_html_viewer_widget_search (GebrGuiHtmlViewerWidget *self,
                                          const gchar *text);
 
 /**
+ * gebr_gui_html_viewer_show_search_bar:
+ *
+ * Show a search bar if it is not visible, otherwise, hide the bar
+ */
+void gebr_gui_html_viewer_show_search_bar(GebrGuiHtmlViewerWidget *self);
+
+/**
  * gebr_gui_html_viewer_widget_show_html:
  *
  * Show the html content

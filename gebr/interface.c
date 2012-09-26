@@ -102,9 +102,9 @@ static const GtkActionEntry actions_entries_flow[] = {
 	 * Flow
 	 */
 	{"flow_new", GTK_STOCK_NEW, N_("New Flow"),
-		"<Control>F", N_("New Flow"), G_CALLBACK(on_new_activate)},
+		"<Control>N", N_("New Flow"), G_CALLBACK(on_new_activate)},
 	{"flow_new_program", GTK_STOCK_NEW, N_("New Program"),
-		NULL, NULL, G_CALLBACK(on_new_program_activate)},
+		"<control>M", NULL, G_CALLBACK(on_new_program_activate)},
 	{"flow_delete", GTK_STOCK_DELETE, NULL,
 		NULL, N_("Delete"), G_CALLBACK(on_flow_delete_activate)},
 	{"flow_properties", "kontact_todo", N_("Properties"),
@@ -133,6 +133,8 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("View report"), G_CALLBACK(on_flow_browse_show_help)},
 	{"flow_edit", "document_comment", N_("Edit Comments"),
 		NULL, N_("Edit comments"), G_CALLBACK(on_flow_browse_edit_help)},
+	{"flow_find", NULL, NULL,
+		"<control>F", NULL, G_CALLBACK(on_flow_browse_show_search_bar)},
 };
 
 static const GtkActionEntry actions_entries_flow_edition[] = {

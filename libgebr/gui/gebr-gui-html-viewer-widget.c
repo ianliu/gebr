@@ -22,6 +22,7 @@
 
 #include "../libgebr-gettext.h"
 
+#include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
 #include <glib.h>
 #include <glib/gi18n-lib.h>
@@ -56,6 +57,7 @@ struct _GebrGuiHtmlViewerWidgetPrivate {
 	gchar * label;
 	GString *content;
 	gboolean is_menu;
+	GtkWidget *find;
 };
 
 #define GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_GUI_TYPE_HTML_VIEWER_WIDGET, GebrGuiHtmlViewerWidgetPrivate))
@@ -68,6 +70,13 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 
 static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
 							WebKitNetworkRequest *request, GebrGuiHtmlViewerWidget *self);
+
+static void on_search_close_button(GtkButton *button, GebrGuiHtmlViewerWidget *self);
+
+static gboolean on_web_view_search_escape(GtkWidget *widget, GdkEventKey *key,
+                                          GebrGuiHtmlViewerWidget *self);
+
+static void on_web_view_search(GtkWidget *entry, GebrGuiHtmlViewerWidget *self);
 
 static void gebr_gui_html_viewer_widget_finalize (GObject *object);
 
@@ -135,11 +144,35 @@ static void gebr_gui_html_viewer_widget_init(GebrGuiHtmlViewerWidget * self)
 	priv->tmp_file = g_string_free (tmp_file, FALSE);
 	priv->is_menu = FALSE;
 
+	priv->find = gtk_hbox_new(FALSE, 5);
+
+	GtkWidget *label = gtk_label_new(_("Search:"));
+	gtk_widget_show(label);
+
+	GtkWidget *entry = gtk_entry_new();
+	gtk_widget_show(entry);
+	g_signal_connect(entry, "changed", G_CALLBACK(on_web_view_search), self);
+	g_signal_connect(entry, "activate", G_CALLBACK(on_web_view_search), self);
+	g_signal_connect(entry, "key-press-event", G_CALLBACK(on_web_view_search_escape), self);
+
+	GtkWidget *close_button = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(close_button), GTK_RELIEF_NONE);
+	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_BUTTON);
+	gtk_button_set_image(GTK_BUTTON(close_button), image);
+	g_signal_connect(close_button, "clicked", G_CALLBACK(on_search_close_button), self);
+	gtk_widget_show_all(close_button);
+
+	gtk_box_pack_start(GTK_BOX(priv->find), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(priv->find), entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(priv->find), close_button, FALSE, FALSE, 0);
+	gtk_widget_set_no_show_all(priv->find, TRUE);
+
 	g_signal_connect(priv->web_view, "load-finished", G_CALLBACK(on_load_finished), self);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), priv->web_view);
 	gtk_box_pack_start(GTK_BOX(self), scrolled_window, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(self), priv->find, FALSE, FALSE, 5);
 	gtk_widget_show_all(scrolled_window);
 }
 
@@ -160,6 +193,41 @@ static void gebr_gui_html_viewer_widget_finalize(GObject *object)
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
+static void on_search_close_button(GtkButton *button,
+                                   GebrGuiHtmlViewerWidget *self)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	gtk_widget_hide(priv->find);
+}
+
+static gboolean on_web_view_search_escape(GtkWidget *widget,
+                                          GdkEventKey *key,
+                                          GebrGuiHtmlViewerWidget *self)
+{
+	if (key->keyval != GDK_Escape)
+		return FALSE;
+
+	on_search_close_button(NULL, self);
+
+	return TRUE;
+}
+
+static void on_web_view_search(GtkWidget *entry,
+                               GebrGuiHtmlViewerWidget *self)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	gebr_gui_html_viewer_widget_search(self, gtk_entry_get_text(GTK_ENTRY(entry)));
+
+}
+
 static void create_generate_links_index_function(JSContextRef context)
 {
 	static const gchar * script =
@@ -448,6 +516,22 @@ void gebr_gui_html_viewer_widget_search (GebrGuiHtmlViewerWidget *self,
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
 	webkit_web_view_search_text(WEBKIT_WEB_VIEW(priv->web_view), text, FALSE, TRUE, TRUE);
+}
+
+void gebr_gui_html_viewer_show_search_bar(GebrGuiHtmlViewerWidget *self)
+{
+	GebrGuiHtmlViewerWidgetPrivate * priv;
+	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
+
+	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
+
+	if (gtk_widget_get_visible(priv->find)) {
+		gtk_widget_hide(priv->find);
+	} else {
+		GList *childs = gtk_container_get_children(GTK_CONTAINER(priv->find));
+		gtk_widget_grab_focus(childs->next->data);
+		gtk_widget_show(priv->find);
+	}
 }
 
 void gebr_gui_html_viewer_widget_print(GebrGuiHtmlViewerWidget * self)

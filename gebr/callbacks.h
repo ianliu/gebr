@@ -190,6 +190,8 @@ void on_flow_browse_show_help(void);
 
 void on_flow_browse_edit_help(void);
 
+void on_flow_browse_show_search_bar(void);
+
 void on_project_line_show_help (void);
 
 void on_project_line_edit_help (void);
