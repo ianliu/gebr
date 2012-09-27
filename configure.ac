@@ -48,6 +48,7 @@ AM_PATH_PYTHON([2.6])
 GEBR_PYTHON_CHECK([glib])
 GEBR_PYTHON_CHECK([gtk])
 GEBR_PYTHON_CHECK([pygtk])
+AC_DEFINE_UNQUOTED(PYTHON, ["$PYTHON"], [Python full path binary])
 
 dnl ============================================================================
 dnl Defining the library version information

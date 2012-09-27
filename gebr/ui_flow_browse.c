@@ -16,6 +16,10 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#if HAVE_CONFIG
+#include <config.h>
+#endif
+
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
@@ -1774,7 +1778,7 @@ gebr_flow_browse_create_python_process(GdkNativeWindow socket_id,
 {
 	fb->graph_process = gebr_comm_process_new();
 
-	gchar *cmd_line = g_strdup_printf("python %s/gebr-xdot-graph.py %d %s", GEBR_PYTHON_DIR, socket_id, PACKAGE_LOCALE_DIR);
+	gchar *cmd_line = g_strdup_printf(PYTHON " %s/gebr-xdot-graph.py %d %s", GEBR_PYTHON_DIR, socket_id, PACKAGE_LOCALE_DIR);
 	GString *cmd = g_string_new(cmd_line);
 
 	g_signal_connect(fb->graph_process, "ready-read-stderr", G_CALLBACK(graph_process_read_stderr), fb);
