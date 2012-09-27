@@ -46,6 +46,10 @@ gebr_gui_tool_button_toggled(GtkToggleButton *toggle)
 	gtk_widget_get_allocation(widget, &a);
 
 	GdkWindow *window = gtk_widget_get_window(widget);
+
+	if (!window)
+		return;
+
 	gdk_window_get_origin(window, &x, &y);
 	GdkScreen *my_screen = gdk_drawable_get_screen(GDK_DRAWABLE(window));
 	gint dx = x + a.x;
