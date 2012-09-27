@@ -1006,7 +1006,7 @@ get_number_of_cores(GtkWidget *servers_combo)
 	gebr_maestro_controller_get_servers_model(gebr.maestro_controller);
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-	gint cores;
+	gint cores = 0;
 	GtkTreeIter iter;
 	gchar *name;
 	GebrMaestroServerGroupType type;

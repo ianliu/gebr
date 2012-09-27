@@ -282,7 +282,7 @@ gebr_ui_flows_io_load_from_xml(GebrUiFlowsIo *io,
 {
 	GError *err = NULL;
 	gchar *err_msg = NULL, *result = NULL, *tmp = NULL, *mount_point = NULL, *path = NULL, *path_real = NULL, *resolved_path = NULL;
-	const gchar *aux;
+	const gchar *aux = NULL;
 
 	gchar ***paths = gebr_geoxml_line_get_paths(line);
 
