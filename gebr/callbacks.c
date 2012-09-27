@@ -46,21 +46,8 @@ static gboolean line_check_maestro_connected(void);
 
 void on_new_activate(void)
 {
-	GtkTreeIter iter;
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
-	case NOTEBOOK_PAGE_FLOW_BROWSE :{
-		if (!flow_browse_get_selected(&iter, FALSE)) {
-			flow_new();
-			gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
-			return;
-		}
-
-		GebrUiFlowBrowseType type;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-		                   FB_STRUCT_TYPE, &type, -1);
-
-
+	case NOTEBOOK_PAGE_FLOW_BROWSE: {
 		flow_new();
 		gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
 		break;
@@ -462,8 +449,6 @@ void on_flow_component_delete_activate(void)
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_FLOW_BROWSE :
 		flow_program_remove();
-		if(gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
-			gebr_gui_tool_button_toggled_active(gebr.menu_button, FALSE);
 		break;
 	default:
 		break;
