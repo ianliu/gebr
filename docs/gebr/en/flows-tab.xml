@@ -304,20 +304,12 @@
 		<title>Flow execution</title>
 
 		Once assembled a Flow, it can be executed.
+		
 
 		<figure>
 			<title>Flows tab</title>
 			<mediaobject>
-				<caption>In the Flows tab, the user is able to execute several
-					Flows sequentially by selecting the Flows that he or she wishes
-					to use, and then click on
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon>.
+				<caption>The user can execute many Flows at once.
 				</caption>
 				<imageobject>
 					<imagedata fileref="../images/GeBR_flow_browser.png"  contentwidth="604px" contentdepth="379px" />
@@ -325,15 +317,23 @@
 			</mediaobject>
 		</figure>
 
-		<para>In GêBR, the user can select more than one Flow, so he can execute them all. To make a
+		<para>In GêBR, the user can select more than one Flow, and then execute them all. To make a
 			multiple selection, click over the Flows, while <keycap>Ctrl</keycap> is pressed or use
 			the arrow keys while <keycap>Shift</keycap> is pressed.
+			The set of Flows can be executed sequentially by clicking on the icon
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>.
 		</para>
 
 			<important>
 				<para>When executig many Flows, the configurations of
 					the first flow on the list will determine the
-					others'.
+					others.
 				</para>
 			</important>
 
@@ -341,7 +341,7 @@
 				The Flows can be executed in two ways:
 				<itemizedlist>
 					<listitem>
-						Detailedly (
+						Advanced (
 						<guiicon>
 							<inlinemediaobject>
 								<imageobject>
@@ -351,7 +351,7 @@
 						</guiicon>). 
 					</listitem>
 					<listitem>
-						Directly (
+						Basic (
 						<guiicon>
 							<inlinemediaobject>
 								<imageobject>
@@ -366,7 +366,8 @@
 			<section xml:id="flows_browser_detailed_execution">
 				<title>Detailed Execution</title>
 				<para>
-					The user can set many execution details before triggering a Job. 
+					The user can set many execution details before triggering a Job and then he or she just have to
+					click on Run to execute the Job. 
 				</para>
 				<figure>
 					<title>Detailed execution</title>
@@ -391,29 +392,29 @@
 					<procedure>
 						<step>
 							Whether he wants to queue its Jobs or not. This option just appear if the user selects
-							multiple Jobs for running (multiple execution).  Flows can be executed one after another, in
+							multiple Jobs for running (multiple execution). Flows can be executed one after another, in
 							the order they are on the Flows list.
 							Each Flow waits for the end of the previous job, to be
-							executed. During this time, the waiting flow shows an icon
-							of "Waiting for job". If the user wishes to execute in a specific
-							order, just reorder the Flows by Drag and Drop. In the second option, simultaneously,
-							Flows are executed parallely. It is just possible if
-							happens when there is no dependency between Flows.
+							executed. During this time, the waiting Flow shows an icon
+							of "Waiting for job". If the user wishes to execute the set of Flows in a specific
+							order, he or she just has to reorder the Flows by Drag and Drop. In the second option
+							Flows are executed parallely, all of them at the same time. It is just possible if
+							there is no dependency between Flows.
 						</step>
 						<step>
-							Whether the Jobs must wait for some Job or not. The user can trigger the Jobs after
-							another Job or all together. For more information, consult
+							Whether the Jobs must wait for some task or not. The user can trigger the Jobs after
+							the ending of another task or immediately after clicking the execution button. For more information, consult
 							<xref linkend="flow_editor_execute_flow"/>.
 						</step>
 						<step>
-							Where he wants to dispatch the Jobs. The user can choose the nodes which he wants to
-							process the Jobs. A special option is the automatic choice (Choose automatically), that
-							lets the Maestro search for the least loaded nodes. As the user changes this parameter,
+							Where he wants to dispatch the Jobs. The user can choose the nodes or the set of nodes which he wants to
+							process the Jobs. A special option is the Choose automatically, that
+							permits the Maestro to search for the least loaded nodes or set of nodes. As the user changes this parameter,
 							GêBR presents the number of cores of the choosen group. For more information, consult
 							<xref linkend="flow_editor_execute_flow"/>.
 						</step>
 						<step>
-							The number of parts he wants to split the Jobs. This parameter is valid just in the case
+							The number of parts the user wants to split the Jobs. This parameter is valid just in the case
 							there is a parallelizable Job among the selected Jobs. The nominal capacity is given by
 							the number of cores, according to the choice of the group of nodes. For
 							non-parallelizable Jobs, this parameter is automatically set to 1. For more
@@ -421,7 +422,7 @@
 						</step>
 						<step>
 							How the Job must compete with the other processes of the system. In very loaded nodes,
-							it can make all the difference because your Jobs will have less precedence than the
+							this tool can make all the difference because the Jobs will have less precedence than the
 							other processes running on the system. For more
 							information, consult <xref linkend="flow_editor_priority_execution"/>.
 						</step>
@@ -457,7 +458,7 @@
 							Saved group of nodes
 						</step>
 						<step>
-							Saved number of parts (if appicable)
+							Saved number of parts (if applicable)
 						</step>
 						<step>
 							Saved priority
@@ -469,7 +470,7 @@
 				</para>
 				<note>
 					Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected Flows
-					(one after another, if multiple execution); <keycap>Ctrl+Shift+R</keycap> runs the
+					one after another; <keycap>Ctrl+Shift+R</keycap> runs the
 					selected Flows parallely (keybind activated just if multiple Flows are selected).
 				</note>
 			</section>
