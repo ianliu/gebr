@@ -21,7 +21,7 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_PACKAGE
 /** @brief the program name */
-#define CMDLINE_PARSER_PACKAGE "GêBR"
+#define CMDLINE_PARSER_PACKAGE "GÃªBR"
 #endif
 
 #ifndef CMDLINE_PARSER_VERSION

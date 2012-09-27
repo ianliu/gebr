@@ -23,7 +23,7 @@
 
 const char *ggopt_purpose = "Seismic processing environment";
 
-const char *ggopt_usage = "Usage: GêBR [OPTIONS]...";
+const char *ggopt_usage = "Usage: GÃªBR [OPTIONS]...";
 
 const char *ggopt_description = "";
 
