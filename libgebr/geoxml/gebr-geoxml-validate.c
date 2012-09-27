@@ -180,7 +180,7 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 	if (validate->options.category) {
 		gebr_geoxml_flow_get_category(menu, &seq, 0);
 		if (seq == NULL)
-			validate_append_item_with_check(validate, _("Category:      "), "", GEBR_VALIDATE_CHECK_EMPTY);
+			validate_append_item_with_check(validate, _("Category:      "), "", GEBR_VALIDATE_CASE_CATEGORY);
 		else
 			for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 				validate_append_item_with_check(validate, _("Category:      "),
