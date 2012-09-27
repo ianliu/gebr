@@ -190,6 +190,7 @@ on_menu_button_clicked(GtkWidget   *widget,
 		       GdkEventKey *event)
 {
        menu_list_populate();
+       gebr_menu_view_set_focus_on_entry(gebr.menu_view);
        return FALSE;
 }
 
