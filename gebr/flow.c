@@ -1386,6 +1386,8 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter,
 		str_value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
                 default_value = gebr_geoxml_program_parameter_get_string_value(program, TRUE);
 
+                gboolean is_required = gebr_geoxml_program_parameter_get_required(program);
+
                 if (!flow_review) {
                 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
                 	case NOTEBOOK_PAGE_PROJECT_LINE:
@@ -1404,7 +1406,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter,
 
 		if (((radio_value == GEBR_PARAM_TABLE_ONLY_CHANGED) && (g_strcmp0(str_value->str, default_value->str) != 0)) ||
 		    ((radio_value == GEBR_PARAM_TABLE_ONLY_FILLED) && (str_value->len > 0)) ||
-		    ((radio_value == GEBR_PARAM_TABLE_ALL)))
+		    ((radio_value == GEBR_PARAM_TABLE_ALL)) || is_required)
 		{
 			/* Translating enum values to labels */
 			GebrGeoXmlSequence *enum_option = NULL;
