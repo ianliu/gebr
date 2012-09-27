@@ -307,6 +307,7 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 
 	GError *error = NULL;
 	GebrGeoXmlFlowError error_code;
+	GString *message = g_string_new("");
 
 	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 	gebr_geoxml_flow_validate(flow, gebr.validator, &error);
@@ -314,6 +315,8 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 
 	if (!error)
 		return TRUE;
+
+	g_string_append_printf(message, "%s in Flow %s", error->message, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
 
 	error_code = error->code;
 	switch (error_code)
@@ -323,10 +326,10 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	case GEBR_GEOXML_FLOW_ERROR_PROGRAM:
 		if (is_snapshot) {
 			gdk_threads_enter();
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), message->str);
 			gdk_threads_leave();
 		} else {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), message->str);
 		}
 		break;
 	case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
@@ -337,15 +340,16 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
 		if (is_snapshot) {
 			gdk_threads_enter();
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), error->message);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), message->str);
 			gdk_threads_leave();
 		} else {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), error->message);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), message->str);
 		}
 
 		break;
 	}
 
+	g_string_free(message, TRUE);
 	g_clear_error(&error);
 	return FALSE;
 }

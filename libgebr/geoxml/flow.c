@@ -780,8 +780,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	{
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			    GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
-			    _("No configured or enabled Programs found in Flow \"%s\"."),
-			    flow_title);
+			    _("No configured or enabled Programs found"));
 		return FALSE;
 	}
 
@@ -811,8 +810,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 		if (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
 			g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			            GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
-			            _("There are unconfigured program(s) in Flow \"%s\"."),
-			            flow_title);
+			            _("There are unconfigured program(s)"));
 			gebr_geoxml_object_unref(seq);
 			gebr_pairstrfreev(pvector);
 			return FALSE;
@@ -825,8 +823,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 		if (gebr_geoxml_program_get_error_id(prog, NULL)) {
 			g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			            GEBR_GEOXML_FLOW_ERROR_PROGRAM,
-			            _("There are erroneous program(s) in Flow \"%s\"."),
-			            flow_title);
+			            _("The program %s has error"),
+			            gebr_geoxml_program_get_title(prog));
 			gebr_geoxml_object_unref(seq);
 			gebr_pairstrfreev(pvector);
 			return FALSE;
@@ -848,8 +846,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_INFILE,
 					    _("No input file was specified for the Program "
-					      "\"%s\" in Flow \"%s\"."),
-					    program_title, flow_title);
+					      "\"%s\""),
+					    program_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
@@ -861,8 +859,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE,
 					    _("Invalid input file specified for the Program "
-					      "\"%s\" in Flow \"%s\"."),
-					    program_title, flow_title);
+					      "\"%s\""),
+					    program_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
@@ -873,8 +871,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 				            GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE,
 				            _("Invalid input file specified for the Program "
-				        		    "\"%s\" in Flow \"%s\"."),
-				        		    program_title, flow_title);
+				        		    "\"%s\""),
+				        		    program_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
@@ -891,8 +889,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			case 1:	/* Previous does not write to stdin but current expect something */
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_INPUT,
-					    _("The Flow \"%s\" expects an input file."),
-					    flow_title);
+					    _("An input file is expected"));
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
@@ -901,8 +898,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			case 2:	/* Previous does write to stdin but current does not care about */
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
-					    _("Unexpected output file for the Flow \"%s\"."),
-					    flow_title);
+					    _("Unexpected output file"));
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
@@ -920,8 +916,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	if (first) {
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			    GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
-			    _("No configured or enabled Programs found in Flow \"%s\"."),
-			    flow_title);
+			    _("No enabled Programs found"));
 		gebr_geoxml_object_unref(last_configured);
 		gebr_pairstrfreev(pvector);
 		return FALSE;
@@ -949,8 +944,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			    GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE,
 			    _("Invalid output file specified for"
-			      " the Program \"%s\" in Flow \"%s\"."),
-			    program_title, flow_title);
+			      " the Program \"%s\""),
+			    program_title);
 		gebr_geoxml_object_unref(last_configured);
 		gebr_pairstrfreev(pvector);
 		g_free(resolved_output);
@@ -963,8 +958,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 		            GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE,
 		            _("Invalid output file specified for"
-		        		    " the Program \"%s\" in Flow \"%s\"."),
-		        		    program_title, flow_title);
+		        		    " the Program \"%s\""),
+		        		    program_title);
 		gebr_geoxml_object_unref(last_configured);
 		gebr_pairstrfreev(pvector);
 		g_free(resolved_output);
@@ -991,8 +986,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	{
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			    GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE,
-			    _("Invalid error file specified for the Program \"%s\" in Flow \"%s\"."),
-			    program_title, flow_title);
+			    _("Invalid error file specified for the Program \"%s\""),
+			    program_title);
 		gebr_geoxml_object_unref(last_configured);
 		gebr_pairstrfreev(pvector);
 		return FALSE;
@@ -1003,8 +998,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	{
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 		            GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE,
-		            _("Invalid error file specified for the Program \"%s\" in Flow \"%s\"."),
-		            program_title, flow_title);
+		            _("Invalid error file specified for the Program \"%s\""),
+		            program_title);
 		gebr_geoxml_object_unref(last_configured);
 		gebr_pairstrfreev(pvector);
 		g_free(resolved_error);

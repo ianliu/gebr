@@ -1911,30 +1911,6 @@ flow_browse_static_info_update(void)
 		return FALSE;
 	}
 
-	/* Status Icon */
-	gchar *flow_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "48x48", "stock", "flow-icon.png", NULL);
-	GIcon *flow_icon = g_icon_new_for_string(flow_icon_path, NULL);
-
-	gchar *status_icon_path;
-
-	GError *error = NULL;
-	gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
-	if (error) {
-		status_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "22x22", "stock", "dialog-warning.png", NULL);
-		g_clear_error(&error);
-	} else {
-		status_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "22x22", "stock", "gtk-apply.png", NULL);
-	}
-	GIcon *status_icon = g_icon_new_for_string(status_icon_path, NULL);
-	GEmblem *status_emblem = g_emblem_new(status_icon);
-
-	GIcon *icon = g_emblemed_icon_new(flow_icon, status_emblem);
-
-	gtk_image_set_from_gicon(GTK_IMAGE(gebr.ui_flow_browse->info.status), icon, GTK_ICON_SIZE_DIALOG);
-
-	g_free(flow_icon_path);
-	g_free(status_icon_path);
-
 	gchar *markup;
 
 	/* Description */
@@ -1962,7 +1938,14 @@ flow_browse_static_info_update(void)
 
 	gchar *last_text = NULL;
 	gchar *last_run_date = gebr_geoxml_flow_get_date_last_run(gebr.flow);
-	if (!last_run_date || !*last_run_date) {
+
+	GError *error = NULL;
+	gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
+
+	if (error) {
+		last_text = g_markup_printf_escaped(_("<i>%s</i>"), error->message);
+		g_clear_error(&error);
+	} else if (!last_run_date || !*last_run_date) {
 		last_text = g_strdup(_("This flow was never executed"));
 	} else {
 		const gchar *last_run = gebr_localized_date(last_run_date);
