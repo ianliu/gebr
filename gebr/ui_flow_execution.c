@@ -1029,7 +1029,7 @@ on_servers_combo_changed(GtkComboBox *widget,
                          GebrUiFlowExecution *ui_flow_execution)
 {
 	gint ncores = get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo));
-	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>The nominal capacity of this group of nodes is %d</small>"),
+	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>The nominal capacity of this group of nodes is %d cores</small>"),
 	                                                     ncores);
 	gtk_label_set_markup(ui_flow_execution->priv->number_cores_label, number_cores_markup);
 	update_speed_slider(GTK_SCALE(ui_flow_execution->priv->speed_slider), ncores);
