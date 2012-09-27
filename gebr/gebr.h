@@ -68,6 +68,7 @@ struct gebr {
 	gboolean restore_selection;
 	gboolean populate_list;
 	gboolean quit;
+	gboolean update_usermenus;
 
 	struct gebr_report {
 		GtkWidget *report_wind;

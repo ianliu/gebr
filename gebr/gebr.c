@@ -98,6 +98,7 @@ gebr_init(gboolean has_config)
 	gebr.current_report.report_group = NULL;
 
 	gebr.quit = FALSE;
+	gebr.update_usermenus = FALSE;
 
 	/* check/create config dir */
 	if (gebr_create_config_dirs() == FALSE) {

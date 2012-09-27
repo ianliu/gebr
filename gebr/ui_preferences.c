@@ -88,7 +88,8 @@ save_preferences_configuration(struct ui_preferences *up)
 	g_string_assign(gebr.config.username, gtk_entry_get_text(GTK_ENTRY(up->username)));
 	g_string_assign(gebr.config.email, gtk_entry_get_text(GTK_ENTRY(up->email)));
 
-	if (g_strcmp0(gebr.config.usermenus->str, tmp) != 0){
+	if (g_strcmp0(gebr.config.usermenus->str, tmp) != 0) {
+		gebr.update_usermenus = TRUE;
 		g_string_assign(gebr.config.usermenus, tmp);
 		gebr_config_apply();
 	}

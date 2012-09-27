@@ -180,6 +180,21 @@ menu_path_internal_index_is_valid(const gchar *path,
 	return need;
 }
 
+typedef struct {
+	gchar *path;
+	gchar *index_menu;
+	gchar *index_category;
+} MenuInfo;
+
+static void
+free_menu_info(MenuInfo *info)
+{
+	g_free(info->path);
+	g_free(info->index_category);
+	g_free(info->index_menu);
+	g_free(info);
+}
+
 void
 menu_list_populate(void)
 {
@@ -187,6 +202,8 @@ menu_list_populate(void)
 	gchar *index_category = NULL;
 	gchar *filename;
 	gchar *gebr_home = g_build_filename(g_get_home_dir(), ".gebr", "gebr", NULL);
+
+	GList *insert_menus = NULL;
 
 	static gboolean first_time = TRUE;
 	gboolean need_update = FALSE;
@@ -215,8 +232,13 @@ menu_list_populate(void)
 						gebr_menu_view_clear_model(gebr.menu_view);
 						clear_model = TRUE;
 					}
-					__menu_list_populate(path, index_menu, index_category, categories_hash);
 				}
+
+				MenuInfo *info = g_new(MenuInfo, 1);
+				info->path = g_strdup(path);
+				info->index_menu = g_strdup(index_menu);
+				info->index_category = g_strdup(index_category);
+				insert_menus = g_list_prepend(insert_menus, info);
 
 				g_free(index_menu);
 				g_free(index_category);
@@ -235,8 +257,17 @@ menu_list_populate(void)
 		need_update = TRUE;
 		menu_list_create_index(path->str, &index_menu, &index_category, FALSE);
 	}
-	if (need_update || first_time)
-		__menu_list_populate(NULL, index_menu, index_category, categories_hash);
+	if (need_update || first_time) {
+		if (!clear_model) {
+			gebr_menu_view_clear_model(gebr.menu_view);
+			clear_model = TRUE;
+		}
+	}
+	MenuInfo *info = g_new(MenuInfo, 1);
+	info->path = NULL;
+	info->index_menu = g_strdup(index_menu);
+	info->index_category = g_strdup(index_category);
+	insert_menus = g_list_prepend(insert_menus, info);
 
 	g_free(index_menu);
 	g_free(index_category);
@@ -249,10 +280,28 @@ menu_list_populate(void)
 		need_update = TRUE;
 		menu_list_create_index(gebr.config.usermenus->str, &index_menu, &index_category, FALSE);
 	}
-	if (need_update || first_time)
-		__menu_list_populate(NULL, index_menu, index_category, categories_hash);
+	if (need_update || first_time || gebr.update_usermenus) {
+		if (!clear_model) {
+			gebr_menu_view_clear_model(gebr.menu_view);
+			clear_model = TRUE;
+		}
+		gebr.update_usermenus = FALSE;
+	}
+	info = g_new(MenuInfo, 1);
+	info->path = NULL;
+	info->index_menu = g_strdup(index_menu);
+	info->index_category = g_strdup(index_category);
+	insert_menus = g_list_prepend(insert_menus, info);
+
+	for (GList *i = insert_menus; i && clear_model; i = i->next) {
+		MenuInfo *info = i->data;
+		__menu_list_populate(info->path, info->index_menu, info->index_category, categories_hash);
+	}
 
 	first_time = FALSE;
+
+	g_list_foreach(insert_menus, (GFunc)free_menu_info, NULL);
+	g_list_free(insert_menus);
 
 	g_free(index_menu);
 	g_free(index_category);
