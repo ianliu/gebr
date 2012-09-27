@@ -14,6 +14,7 @@ BuildRequires: glib2-devel >= 2.22.0
 BuildRequires: gdome2-devel >= 0.8.0
 BuildRequires: WebKit-gtk-devel >= 1.0.1
 BuildRequires: libtidy-devel intltool docbook-xsl libxslt gtk-doc
+BuildRequires: pygtk2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 
 %description
