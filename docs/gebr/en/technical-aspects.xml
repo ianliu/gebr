@@ -156,47 +156,26 @@
       the recent machines. The execution of repetitive flows can be
       optimized by this resource. If the Flow has Loops and is
       parallelizable (given some criteria, shown below), then the user can
-      adjust the execution's degree of performance based on the number
+      adjust the execution performance based on the number
       of processors.</para>
 
     <para>To be considered parallelizable, besides having a loop, a
       Flow must achieve one, and just one, of these criteria:</para>
     <itemizedlist>
-      <listitem>The Flow does not have an output file or, if the output file exists, it has to depend on the variable iter;</listitem>
+			<listitem>The Flow does not have an output file or, if the output file exists,
+				it has to depend on the variable iter;</listitem>
       <listitem>The output of each step of the loop is not the input
         of any other step of the loop.</listitem>
     </itemizedlist>
-    <para>
-      The user can choose the amount of processors through an adjustment bar,
-      accessible via
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/gebr-speed-one-core.png"/>
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon>
-      beside the Run button.
-    </para>
 
-    <figure>
-      <title>Execution speed</title>
-      <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png"  contentwidth="733px" contentdepth="481px" />
-      <caption>
-	GêBR offers the possibility to adjust the execution
-	settings. Through the slider, it is possible  instruct to
-	GêBR to do not fragment the job, therefore using only one
-	core, to fragment the job in such a way that all available
-	cores will be used (100%), or even to fragment the job in a way
-	that all cores get overloaded ( > 100%).
-      </caption>
-    </figure>
-    <para>Each level of the adjustment bar corresponds to a a number
-      of cores used by the job.</para>
+    <para>
+			The <emphasis>degree of parallelism</emphasis> of a (parallelizable) Job execution can be adjusted by the Advanced
+			Execution settings (see <xref linkend="flows_browser_detailed_execution"/>).
+		</para>
+
     <note>
     <para>
-      GêBR does not show this speedometer for non-parallelizable flows
-      (it will just show the Priority of Execution).
+      GêBR automatically sets the level of parallelism of non parallelizable Jobs to one.
     </para>
     </note>
   </section>
@@ -213,41 +192,38 @@
       due to multitasking, by enabling the execution of the Flows in
       a <emphasis>Low Priority</emphasis> state:</para>
 
-    <figure>
-      <title>Priority of Execution</title>
-      <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png"  contentwidth="817px" contentdepth="490px" />
-      <caption>
-	GêBR offers two possibilities of priority of execution: Low
-	and High Priority.
-      </caption>
-    </figure>
-    <para>Two options are available: </para>
+    <para>Two options are available  (see <xref linkend="flows_browser_detailed_execution"/>): </para>
     <itemizedlist>
       <listitem>
         <para>
-          Low priority (the Flow is going to wait its turn to execute
+					<guilabel>Wait for free resources</guilabel> (the Flow is
+					going to wait its turn to execute
           and try not to overload the system).
         </para>
       </listitem>
       <listitem>
         <para>
-          High priority (the execution of the Flow is going to dispute
+					<guilabel>Share available resources </guilabel> (the
+					execution of the Flow is going to dispute
           for the computer resources with the other active programs).
         </para>
       </listitem>
     </itemizedlist>
-    <para>Technically, when running in "Low Priority" mode, GêBR will
-      reduce the run priority of the task, meaning it will tell the
+		<para>Technically, when running in <guilabel>Wait for free resources</guilabel> mode,
+			GêBR will
+      reduce the execution priority of the task, meaning it will tell the
       computer that "it can wait more important things to be done".
       This is the case when the user has other things to do while waits
-      the calculations to be done.  The "High Priority" mode means
+			the calculations to be done.  The <guilabel>Share available resources</guilabel>
+			mode means
       GêBR will use greater run priority for the task, and that
       implies it will act as a foreground process, demanding more
-      resources. It's the "I need this done now" mode, when the user needs the
-      job to be finished as soon as possible, and the user doesn't care if it
+			resources. It's the "I need this done now" mode, when the
+			user needs the job to be finished as soon as possible,
+			and the user doesn't care if it
       will fight for resources with other programs.</para>
 
-    <para>If GêBR is the only program executing on the machine, i.e.,
+    <para>If GêBR is the only program executing on the node, i.e.,
       it doesn't have a challenger for the computer resources, then
       both states corresponds to the same situation.  This is the
       "nightly job" situation, when (theoretically) no one is using
