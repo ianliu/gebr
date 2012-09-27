@@ -2290,6 +2290,12 @@ flow_browse_on_multiple_selection(GtkTreeModel *model,
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
 	g_list_free(rows);
 
+	rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	n_rows = g_list_length(rows);
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+
 	gebr_flow_browse_unblock_changed_signal(fb);
 
 	return n_rows > 1;
