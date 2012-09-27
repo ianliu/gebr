@@ -1628,11 +1628,14 @@ on_maestro_state_change(GebrMaestroController *mc,
 static void
 update_control_sensitive(GebrUiProjectLine *upl)
 {
-	gboolean sensitive = TRUE;
+	gboolean has_maestro = TRUE;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(upl->view));
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+	gboolean is_multiple;
+	guint len = g_list_length(rows);
 
+	is_multiple = len > 1;
 	if (!rows)
 		return;
 
@@ -1645,7 +1648,7 @@ update_control_sensitive(GebrUiProjectLine *upl)
 			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
 			if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED) {
-				sensitive = FALSE;
+				has_maestro = FALSE;
 				break;
 			}
 		}
@@ -1655,12 +1658,21 @@ update_control_sensitive(GebrUiProjectLine *upl)
 	g_list_free(rows);
 
 	// Set sensitive for tab Projects and Lines
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"), sensitive);
+	if (has_maestro) {
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"), has_maestro);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"), !is_multiple);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"), !is_multiple);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"), has_maestro);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), !is_multiple);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"), !is_multiple);
+	} else {
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"), FALSE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"), FALSE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"), FALSE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"), FALSE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), FALSE);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"), FALSE);
+	}
 
 	project_line_load();
 }
