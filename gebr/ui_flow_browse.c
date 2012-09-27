@@ -52,6 +52,11 @@
 
 static void selection_changed_signal(void);
 
+static void update_flow_actions_sensitiveness(GtkTreeSelection *selection,
+					      GtkTreePath *start_path,
+					      GtkTreePath *end_path,
+					      GebrUiFlowBrowse *fb);
+
 static void flow_browse_load(void);
 
 static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
@@ -1317,6 +1322,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
 	g_signal_connect(selection, "changed", G_CALLBACK(selection_changed_signal), NULL);
+	g_signal_connect(selection, "changed", G_CALLBACK(update_flow_actions_sensitiveness), ui_flow_browse);
 
 	gtk_tree_selection_set_select_function(selection, (GtkTreeSelectionFunc)view_selection_func, ui_flow_browse, NULL);
 
@@ -2288,6 +2294,33 @@ flow_browse_on_multiple_selection(GtkTreeModel *model,
 static void selection_changed_signal(void)
 {
 	flow_browse_load();
+}
+
+static void
+update_flow_actions_sensitiveness(GtkTreeSelection *selection,
+				  GtkTreePath *start_path,
+				  GtkTreePath *end_path,
+				  GebrUiFlowBrowse *fb)
+{
+	guint len;
+	GList *rows;
+	gboolean is_multiple;
+
+	rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	len = g_list_length(rows);
+	is_multiple = len > 1;
+
+	if (len == 0)
+		return;
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), !is_multiple);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), !is_multiple);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), !is_multiple);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), !is_multiple);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), !is_multiple);
 }
 
 /**
