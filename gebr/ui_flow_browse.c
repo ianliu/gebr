@@ -200,6 +200,8 @@ gebr_flow_browse_on_add_menu(GebrMenuView *view,
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
 	flow_add_program_sequence_to_view(menu_programs, TRUE);
 
+	gebr_flow_browse_load_parameters_review(gebr.flow, fb, TRUE);
+
 	document_free(GEBR_GEOXML_DOC(menu));
 }
 
