@@ -129,7 +129,7 @@ parameters_configure_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(hbox_buttons), button_default, FALSE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(program_edit->widget), hbox_buttons, FALSE, TRUE, 5);
 
-	gtk_widget_show(hbox_buttons);
+	gtk_widget_show_all(hbox_buttons);
 	gtk_widget_show(program_edit->widget);
 	return program_edit;
 }
