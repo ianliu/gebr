@@ -153,5 +153,7 @@ int main(int argc, gchar *argv[])
 
 	g_hash_table_destroy(categ_hash);
 	g_free(menu_key_file_str);
+	g_free(categ_key_file_str);
 	g_key_file_free(menu_key_file);
+	g_key_file_free(categ_key_file);
 }
