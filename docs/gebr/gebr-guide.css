@@ -8,6 +8,12 @@
 
 .guilabel { font-variant:small-caps; }
 
+.subsubsection { font-variant:small-caps;
+     padding: 10pt;
+     padding-left: 20pt;
+     padding-top: 0pt;
+}
+
 body { margin: 25px; }
 
 .chapter h2 { color: #000060; 

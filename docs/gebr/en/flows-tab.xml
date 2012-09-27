@@ -300,84 +300,194 @@
   </section>
 
 
-  <section xml:id="flows_browser_execute_flow">
-    <title>Executing a Flow</title>
-    <para>This command is present in the tab 
-      <guilabel>Flows</guilabel> and in the tab 
-      <guilabel>Flow editor</guilabel> through the button 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon>. 
-      <figure>
-  <title>Flows tab</title>
-        <mediaobject>
-          <caption>In the tab Flows, the user is able to execute several
-            Flows sequentially by selecting the Flows that he or she wishes
-            to use, and then click on
-            <guiicon>
-              <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-                </imageobject>
-              </inlinemediaobject>
-          </guiicon>.</caption>
-          <imageobject>
-            <imagedata fileref="../images/GeBR_flow_browser.png"  contentwidth="733px" contentdepth="485px" />
-          </imageobject>
-        </mediaobject>
-    </figure></para>
-   
-    <para>In GêBR, it's possible to execute a set of Flows. This
-    operation is called <emphasis role="bold">multiple
-    execution</emphasis>. The user can do it by two different ways:
-      </para>
-    <itemizedlist>
-      <listitem>
-	<para><emphasis>Sequentially</emphasis>: Flows are executed in the order
-          they are on the Flows List, on the left side of the window.
-          Each Flow waits for the end of the previous job, to be
-          executed. During this time, the waiting flow shows an icon
-          of "Waiting for job". If the user wishes to execute in a specific
-          order, just reorder the Flows by Drag and Drop.  To execute
-          on this mode, click on
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-            </imageobject>
-          </inlinemediaobject>
-        </guiicon> or use Ctrl+R.</para>
-      </listitem>
-      <listitem>
-	<para><emphasis>Parallely</emphasis>: Flows are executed simultaneously. It
-          happens when there is no dependency between Flows. To,
-          execute on this mode use Ctrl+Shift+R.</para>
-      </listitem>
-    </itemizedlist>
-   
-    <important>
-      <para>When executig many Flows, the configurations of
-	the first flow on the list will determine the
-	others'.</para>
-    </important>
-  </section>
-  
-  <section xml:id="flows_browser_speed_execution">
-    <title>Execution speed</title>
-    <para>The Flow's execution speed is determined by the number of
-     processors and priority of execution. It's possible to configure
-     these parameters, as detailed in
-     <xref linkend="flow_editor_multicores"/> and
-     <xref linkend="flow_editor_priority_execution"/>.
-     </para>
-   </section>
+	<section xml:id="flows_browser_execute_flow">
+		<title>Flow execution</title>
 
-  
-  <section xml:id="flows_browser_edit_comments_flow">
+		Once assembled a Flow, it can be executed.
+
+		<figure>
+			<title>Flows tab</title>
+			<mediaobject>
+				<caption>In the Flows tab, the user is able to execute several
+					Flows sequentially by selecting the Flows that he or she wishes
+					to use, and then click on
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>.
+				</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_flow_browser.png"  contentwidth="604px" contentdepth="379px" />
+				</imageobject>
+			</mediaobject>
+		</figure>
+
+		<para>In GêBR, the user can select more than one Flow, so he can execute them all. To make a
+			multiple selection, click over the Flows, while <keycap>Ctrl</keycap> is pressed or use
+			the arrow keys while <keycap>Shift</keycap> is pressed.
+		</para>
+
+			<important>
+				<para>When executig many Flows, the configurations of
+					the first flow on the list will determine the
+					others'.
+				</para>
+			</important>
+
+			<para>
+				The Flows can be executed in two ways:
+				<itemizedlist>
+					<listitem>
+						Detailedly (
+						<guiicon>
+							<inlinemediaobject>
+								<imageobject>
+									<imagedata fileref="../../common-images/detailed_execution.png" />
+								</imageobject>
+							</inlinemediaobject>
+						</guiicon>). 
+					</listitem>
+					<listitem>
+						Directly (
+						<guiicon>
+							<inlinemediaobject>
+								<imageobject>
+									<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+								</imageobject>
+							</inlinemediaobject>
+						</guiicon>). 
+					</listitem>
+				</itemizedlist>
+			</para>
+
+			<section xml:id="flows_browser_detailed_execution">
+				<title>Detailed Execution</title>
+				<para>
+					The user can set many execution details before triggering a Job. 
+				</para>
+				<figure>
+					<title>Detailed execution</title>
+					<mediaobject>
+						<caption>Execution settings window.
+						</caption>
+						<imageobject>
+							<imagedata fileref="../images/GeBR_flows_detailed_execution_multiple.png"  contentwidth="309px" contentdepth="397px" />
+						</imageobject>
+					</mediaobject>
+				</figure>
+				<para>
+					By clicking over 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/detailed_execution.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>, the user can set:
+
+					<procedure>
+						<step>
+							Whether he wants to queue its Jobs or not. This option just appear if the user selects
+							multiple Jobs for running (multiple execution).  Flows can be executed one after another, in
+							the order they are on the Flows list.
+							Each Flow waits for the end of the previous job, to be
+							executed. During this time, the waiting flow shows an icon
+							of "Waiting for job". If the user wishes to execute in a specific
+							order, just reorder the Flows by Drag and Drop. In the second option, simultaneously,
+							Flows are executed parallely. It is just possible if
+							happens when there is no dependency between Flows.
+						</step>
+						<step>
+							Whether the Jobs must wait for some Job or not. The user can trigger the Jobs after
+							another Job or all together. For more information, consult
+							<xref linkend="flow_editor_execute_flow"/>.
+						</step>
+						<step>
+							Where he wants to dispatch the Jobs. The user can choose the nodes which he wants to
+							process the Jobs. A special option is the automatic choice (Choose automatically), that
+							lets the Maestro search for the least loaded nodes. As the user changes this parameter,
+							GêBR presents the number of cores of the choosen group. For more information, consult
+							<xref linkend="flow_editor_execute_flow"/>.
+						</step>
+						<step>
+							The number of parts he wants to split the Jobs. This parameter is valid just in the case
+							there is a parallelizable Job among the selected Jobs. The nominal capacity is given by
+							the number of cores, according to the choice of the group of nodes. For
+							non-parallelizable Jobs, this parameter is automatically set to 1. For more
+							information, consult <xref linkend="flow_editor_multicores"/>.
+						</step>
+						<step>
+							How the Job must compete with the other processes of the system. In very loaded nodes,
+							it can make all the difference because your Jobs will have less precedence than the
+							other processes running on the system. For more
+							information, consult <xref linkend="flow_editor_priority_execution"/>.
+						</step>
+					</procedure>
+				</para>
+
+				<note>
+					The user can save itens 3, 4 and 5 for future executions by checking <guilabel>Save Preferences</guilabel>.
+				</note>
+			</section>
+
+			<section xml:id="flows_browser_quick_execution">
+				<title>Quick execution</title>
+				<para>
+					By clicking on 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon> 
+					, the Job will be triggered with the following settings:
+
+					<procedure>
+						<step>
+							Sequentially
+						</step>
+						<step>
+							Immediatelly
+						</step>
+						<step>
+							Saved group of nodes
+						</step>
+						<step>
+							Saved number of parts (if appicable)
+						</step>
+						<step>
+							Saved priority
+						</step>
+					</procedure>
+				</para>
+				<para>
+					It is a fast way to execute, skipping the configurations of the Detailed Execution.
+				</para>
+				<note>
+					Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected Flows
+					(one after another, if multiple execution); <keycap>Ctrl+Shift+R</keycap> runs the
+					selected Flows parallely (keybind activated just if multiple Flows are selected).
+				</note>
+			</section>
+
+		</section>
+
+		<section xml:id="flows_browser_speed_execution">
+			<title>Execution speed</title>
+			<para>The Flow's execution speed is determined by the number of
+				processors and priority of execution. It's possible to configure
+				these parameters, as detailed in
+				<xref linkend="flow_editor_multicores"/> and
+				<xref linkend="flow_editor_priority_execution"/>.
+			</para>
+		</section>
+
+
+		<section xml:id="flows_browser_edit_comments_flow">
     <title>Editing comments</title>
     <para>This button appears in the <guilabel>Projects and
     Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
