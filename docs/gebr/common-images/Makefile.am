@@ -37,6 +37,7 @@ common_images_DATA =				\
 	botao_salvar_log.png			\
 	botao_terminar_tarefa.png		\
 	chronometer.png				\
+	detailed_execution.png			\
 	filter.png				\
 	gebr-speed-one-core.png			\
 	gebr-speed-verylow.png			\
