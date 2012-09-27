@@ -101,6 +101,13 @@ void gebr_menu_view_add_menu(GtkTreeIter *parent,
  */
 GtkWidget *gebr_menu_view_get_widget(GebrMenuView *view);
 
+/**
+ * gebr_menu_view_set_focus_on_entry:
+ *
+ * Set focus on search entry
+ */
+void gebr_menu_view_set_focus_on_entry(GebrMenuView *view);
+
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_MENU_VIEW_H__ */

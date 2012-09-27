@@ -518,3 +518,9 @@ gebr_menu_view_get_widget(GebrMenuView *view)
 {
 	return view->priv->vbox;
 }
+
+void
+gebr_menu_view_set_focus_on_entry(GebrMenuView *view)
+{
+	gtk_widget_grab_focus(view->priv->entry);
+}
