@@ -163,13 +163,16 @@
       Flow must achieve one, and just one, of these criteria:</para>
     <itemizedlist>
 			<listitem>The Flow does not have an output file or, if the output file exists,
-				it has to depend on the variable iter;</listitem>
+				it has to depend on the variable iter (see
+				<xref linkend="flow_editor_loop"/>);</listitem>
       <listitem>The output of each step of the loop is not the input
         of any other step of the loop.</listitem>
+			<listitem>Flows with MPI programs (see section
+				<xref linkend="additional_features_mpi_support"/>).</listitem>
     </itemizedlist>
 
     <para>
-			The <emphasis>degree of parallelism</emphasis> of a (parallelizable) Job execution can be adjusted by the Advanced
+			The <emphasis>level of parallelism</emphasis> of a Job execution can be adjusted by the Advanced
 			Execution settings (see <xref linkend="flows_browser_detailed_execution"/>).
 		</para>
 
@@ -190,7 +193,7 @@
 
     <para>GêBR has a feature that overcomes the issue of overloading
       due to multitasking, by enabling the execution of the Flows in
-      a <emphasis>Low Priority</emphasis> state:</para>
+      a <guilabel>Wait for free resources</guilabel> state:</para>
 
     <para>Two options are available  (see <xref linkend="flows_browser_detailed_execution"/>): </para>
     <itemizedlist>
@@ -500,9 +503,9 @@
     <figure>
       <title>MPI settings</title>
       <imagedata fileref="../images/GeBR_programs_mpi_parameters.png"  contentwidth="473px" contentdepth="352px" />
-      <caption>Double clicking over an MPI program the user can set
-	the <emphasis>number of process</emphasis> parameter of
-	MPI.</caption>
+			<caption>The <guilabel>np</guilabel> value is set according
+				to the speed value set in the Advanced Execution dialog (see
+				<xref linkend="flows_browser_detailed_execution"/>).</caption>
     </figure>
 
   </section>
