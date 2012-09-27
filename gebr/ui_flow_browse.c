@@ -1388,6 +1388,9 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/* Last execution */
 	ui_flow_browse->info.lastrun = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_jobs_label"));
 
+	/* Flow warning icon */
+	ui_flow_browse->info.warn_img = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_warn_image"));
+
 	/*
 	 * Set button and box context
 	 */
@@ -1948,12 +1951,15 @@ flow_browse_static_info_update(void)
 
 	if (error) {
 		last_text = g_markup_printf_escaped(_("<i>%s</i>"), error->message);
+		gtk_widget_show(gebr.ui_flow_browse->info.warn_img);
 		g_clear_error(&error);
 	} else if (!last_run_date || !*last_run_date) {
 		last_text = g_strdup(_("This flow was never executed"));
+		gtk_widget_hide(gebr.ui_flow_browse->info.warn_img);
 	} else {
 		const gchar *last_run = gebr_localized_date(last_run_date);
 		last_text = g_markup_printf_escaped(_("Submitted on %s"), last_run);
+		gtk_widget_hide(gebr.ui_flow_browse->info.warn_img);
 	}
 	g_free(last_run_date);
 

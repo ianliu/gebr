@@ -51,3 +51,11 @@ body {
     background: #f9f5f3 url('pixmaps/flows-review-bg.png') top right repeat-x;
     margin-top: 40px;
 }
+
+.program .error {
+	font-size: 11px;
+	text-align: left;
+	margin-top: 15px;
+	margin-right: 10px;
+	background-color: #FFFFE0;
+}

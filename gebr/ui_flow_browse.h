@@ -117,6 +117,7 @@ typedef struct {
 
 		GtkWidget *modified;
 		GtkWidget *lastrun;
+		GtkWidget *warn_img;
 	} info;
 
 } GebrUiFlowBrowse;

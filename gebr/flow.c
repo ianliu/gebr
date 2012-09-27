@@ -1780,6 +1780,10 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 			gchar *title = gebr_geoxml_program_get_title(prog);
 			gchar *description = gebr_geoxml_program_get_description(prog);
 
+			GebrUiFlowProgram *ui_program = gebr_ui_flow_program_new(prog);
+
+			gchar *error_message = g_strdup(gebr_ui_flow_program_get_tooltip(ui_program));
+
 			gchar *link = g_strdup_printf("%s%s%d",
 			                              has_index? index : "",
 	                        		      has_index? "." : "",
@@ -1788,9 +1792,17 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 			g_string_append_printf(single_prog,
 			                       "  <div class=\"program\">\n"
 			                       "    <a name=\"%s\"></a>\n"
-			                       "    <div class=\"title\">%s</div>\n"
-			                       "    <div class=\"description\">%s</div>\n",
-			                       link, title, description);
+			                       "    <span class=\"title\">%s</span>",
+			                       link, title);
+
+			if (error_message)
+				g_string_append_printf(single_prog,
+				                       "    <span class=\"error\">%s</span>",
+				                       error_message);
+
+			g_string_append_printf(single_prog,
+			                       "\n    <div class=\"description\">%s</div>\n",
+			                       description);
 
 			gebr_program_generate_parameter_value_table(prog, single_prog, flow_review);
 
@@ -1807,6 +1819,7 @@ gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
 			g_free(title);
 			g_free(description);
 			g_free(link);
+			g_free(error_message);
 		}
 
 		gebr_geoxml_sequence_next(&sequence);
