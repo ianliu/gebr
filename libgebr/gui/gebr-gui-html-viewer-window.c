@@ -198,7 +198,7 @@ static void on_find_activate (GtkAction *action, GebrGuiHtmlViewerWindow *self)
 
 	priv = GEBR_GUI_HTML_VIEWER_WINDOW_GET_PRIVATE(self);
 
-	gebr_gui_html_viewer_show_search_bar(priv->viewer_widget);
+	gebr_gui_html_viewer_show_search_bar(GEBR_GUI_HTML_VIEWER_WIDGET(priv->viewer_widget));
 }
 
 static void on_quit_activate (GtkAction *action, GebrGuiHtmlViewerWindow * self)
