@@ -1295,7 +1295,7 @@ gebr_flow_set_toolbar_sensitive(void)
 	gint flows_nrows = gtk_tree_selection_count_selected_rows(flows_selection);
 
 	if (flows_nrows > 1) {
-		GebrUiFlowsIoType type;
+		GebrUiFlowBrowseType type;
 		GtkTreeIter iter;
 		GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
 
