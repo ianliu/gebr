@@ -772,7 +772,6 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	gchar ***pvector = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
 
 	const gchar *program_title;
-	const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 
 	/* Checking if flow has only the for loop */
 	if (gebr_geoxml_flow_get_programs_number(flow) == 1
