@@ -21,6 +21,7 @@
 #include "gebr-menu-view.h"
 #include "gebr.h"
 
+#include "menu.h"
 #include <libgebr/utils.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
@@ -103,6 +104,51 @@ gebr_menu_view_add(GtkTreeView *tree_view,
 	g_free(filename);
 }
 
+static void
+gebr_menu_view_activate_add(GebrMenuView *view)
+{
+	GtkTreeModel *model;
+	GtkTreePath *path = NULL;
+	GtkTreeIter iter;
+
+	if (!flow_browse_get_selected(NULL, TRUE))
+		return;
+
+	model = gtk_tree_view_get_model(view->priv->tree_view);
+
+	if (gebr_menu_view_get_selected_menu(view, &iter))
+		path = gtk_tree_model_get_path(model, &iter);
+
+	gebr_menu_view_add(view->priv->tree_view, path, NULL, view);
+
+	gtk_tree_path_free(path);
+}
+
+//static void
+//gebr_menu_view_show_help(GebrMenuView *view)
+//{
+//	GtkTreeIter iter;
+//	gchar *menu_filename;
+//	GebrGeoXmlFlow *menu;
+//
+//	if (!gebr_menu_view_get_selected_menu(view, &iter))
+//		return;
+//
+//	GtkTreeModel *model;
+//	model = gtk_tree_view_get_model(view->priv->tree_view);
+//
+//	gtk_tree_model_get(model, &iter,
+//			   MENU_FILEPATH_COLUMN, &menu_filename,
+//			   -1);
+//
+//	menu = menu_load_path(menu_filename);
+//	if (menu == NULL)
+//		goto out;
+//	gebr_help_show(GEBR_GEOXML_OBJECT(menu), TRUE);
+//
+//out:	g_free(menu_filename);
+//}
+
 static GtkMenu *
 gebr_menu_view_popup_menu(GtkWidget * widget,
                           GebrMenuView *view)
@@ -111,13 +157,16 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 	GtkWidget *menu;
 	GtkWidget *menu_item;
 
+	gboolean filtered = FALSE;
+	if (gtk_tree_view_get_model(view->priv->tree_view) == view->priv->flat_filter)
+		filtered = TRUE;
+
 	menu = gtk_menu_new();
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group_flow_edition, "flow_edition_refresh")));
 
 	if (!gebr_menu_view_get_selected_menu(view, &iter)) {
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+		if (filtered)
+			return NULL;
+
 		menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), view->priv->tree_view);
@@ -130,7 +179,15 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 	/* add */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_add), NULL);
+	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_activate_add), view);
+
+	/* Help */
+//	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
+//	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+//	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_show_help), view);
+
+	if (filtered)
+		goto out;
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
@@ -144,28 +201,6 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 
 	return GTK_MENU(menu);
 }
-
-//static void
-//gebr_menu_view_show_help(void)
-//{
-//	GtkTreeIter iter;
-//	gchar *menu_filename;
-//	GebrGeoXmlFlow *menu;
-//
-//	if (!flow_browse_get_selected_menu(&iter, TRUE))
-//		return;
-//
-//	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->menu_store), &iter,
-//			   MENU_FILEPATH_COLUMN, &menu_filename, -1);
-//
-//	menu = menu_load_path(menu_filename);
-//	if (menu == NULL)
-//		goto out;
-//	gebr_help_show(GEBR_GEOXML_OBJECT(menu), TRUE);
-//
-//out:	g_free(menu_filename);
-//}
-
 
 static gboolean
 gebr_menu_view_visible_func(GtkTreeModel *model,
