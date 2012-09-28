@@ -395,6 +395,8 @@ gebr_menu_view_init(GebrMenuView *view)
 	view->priv->menus_added = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	view->priv->tree_view = GTK_TREE_VIEW(gtk_tree_view_new());
+	gtk_widget_set_can_focus(GTK_WIDGET(view->priv->tree_view), FALSE);
+
 	view->priv->tree_store = gtk_tree_store_new(MENU_N_COLUMN,
 	                                            G_TYPE_STRING,
 	                                            G_TYPE_STRING,
