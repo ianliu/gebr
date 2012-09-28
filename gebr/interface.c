@@ -209,7 +209,7 @@ insert_popup_menulist (GtkToolbar *toolbar)
 	gtk_image_set_from_stock(GTK_IMAGE(image), "menu-list-icon", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_container_add(GTK_CONTAINER(menu_button), image);
 	gtk_widget_set_can_focus(menu_button, FALSE);
-	gtk_widget_set_tooltip_text(menu_button, "View Menu list");
+	gtk_widget_set_tooltip_text(menu_button, "Menu list");
 
        g_signal_connect(menu_button, "button-press-event",
                         G_CALLBACK(on_menu_button_clicked), NULL);
