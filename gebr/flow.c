@@ -1719,8 +1719,8 @@ gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
 	gchar * output;
 	gchar * error;
 
-	input = gebr_geoxml_flow_io_get_input (flow);
-	output = gebr_geoxml_flow_io_get_output (flow);
+	input = gebr_geoxml_flow_io_get_input_real (flow);
+	output = gebr_geoxml_flow_io_get_output_real (flow);
 	error = gebr_geoxml_flow_io_get_error (flow);
 
 	input = g_markup_printf_escaped("%s",input);
