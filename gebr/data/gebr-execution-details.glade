@@ -25,8 +25,7 @@
                       <object class="GtkLabel" id="parallelism_label">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">The tasks of this lot should be executed &lt;i&gt;simultaneously&lt;/i&gt;
- or &lt;i&gt;one after another&lt;/i&gt;?</property>
+                        <property name="label" translatable="yes">Execute this batch of flows &lt;i&gt;simultaneously&lt;/i&gt; or &lt;i&gt;one after another&lt;/i&gt;?</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -102,7 +101,7 @@
                       <object class="GtkLabel" id="order_label">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label">Execute this lot &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after another task&lt;/i&gt;?</property>
+                        <property name="label" translatable="yes">Execute this batch &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after some job&lt;/i&gt;?</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -168,7 +167,7 @@
                               <object class="GtkLabel" id="servers_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label">In which set of nodes this lot should be executed?</property>
+                                <property name="label" translatable="yes">In which set of nodes should this batch be executed?</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -234,8 +233,8 @@
                               <object class="GtkLabel" id="dispersion_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label">There are tasks in this lot that can be divided to speed up their
- execution. In how many parts should they be splitted?</property>
+                                <property name="label" translatable="yes">The execution of some flows of this batch can be split to speed
+them up. In how many tasks should they be split?</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -290,7 +289,7 @@
                               <object class="GtkLabel" id="priority_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">How these tasks must compete with other processes?</property>
+                                <property name="label" translatable="yes">How should these jobs compete with other processes?</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -310,7 +309,7 @@
                                 <property name="visible">True</property>
                                 <child>
                                   <object class="GtkRadioButton" id="high_priority_button">
-                                    <property name="label" translatable="yes">Share available resources</property>
+                                    <property name="label" translatable="yes">Fight for resources</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -449,8 +448,8 @@
   </object>
   <object class="GtkSizeGroup" id="multiple_size_group">
     <widgets>
-      <widget name="high_priority_button"/>
       <widget name="low_priority_button"/>
+      <widget name="high_priority_button"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="single_size_group"/>

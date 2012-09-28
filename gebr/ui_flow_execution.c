@@ -924,8 +924,10 @@ execution_details_restore_default_values(GebrUiFlowExecution *ui_flow_execution,
 	GtkAdjustment *flow_exec_adjustment = ui_flow_execution->priv->speed_adjustment;
 
 	if (!slider_sensitiviness) {
+		GtkLabel *dispersion_label = GTK_LABEL(gtk_builder_get_object(builder, "dispersion_label"));
+		gtk_label_set_markup(dispersion_label, _("This flow execution cannot be split."));
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(builder, "dispersion_enclosure_box")),
-		                         FALSE);
+					 FALSE);
 		gtk_widget_set_sensitive(ui_flow_execution->priv->speed_slider, FALSE);
 		speed_value = 0.0;
 	} else {
@@ -1029,7 +1031,7 @@ on_servers_combo_changed(GtkComboBox *widget,
                          GebrUiFlowExecution *ui_flow_execution)
 {
 	gint ncores = get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo));
-	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>The nominal capacity of this group of nodes is %d cores</small>"),
+	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>The nominal capacity of this group of nodes is %d cores.</small>"),
 	                                                     ncores);
 	gtk_label_set_markup(ui_flow_execution->priv->number_cores_label, number_cores_markup);
 	update_speed_slider(GTK_SCALE(ui_flow_execution->priv->speed_slider), ncores);
@@ -1080,13 +1082,15 @@ create_detailed_execution_queue_combo(GebrUiFlowExecution *ui_flow_execution,
 static void
 set_single_execution_labels(GtkBuilder *builder){
 	gchar *order_text = g_markup_printf_escaped(
-			_("Execute this task <i>immediately</i> or <i>after another task</i>?"));
+			_("Execute this flow <i>immediately</i> or <i>after another job</i>?"));
 	gchar *server_text = g_markup_printf_escaped(
-			_("In which set of nodes this task should be executed?"));
+			_("In which set of nodes should this flow be executed?"));
 	gchar *dispersion_text = g_markup_printf_escaped(
-			_("This task can be divided to speed up its execution.\n"
-					"In how many parts should it be split?"));
-	gchar *priority_text = g_markup_printf_escaped(_("How this task must compete with other processes?"));
+			_("The execution of this flow can be split to speed it up.\n"
+					"Up to how many tasks should it be split?"));
+	gchar *priority_text = g_markup_printf_escaped(
+			_("How should the execution of this flow compete with\n"
+			  "other processes?"));
 
 	gtk_label_set_markup(GTK_LABEL(gtk_builder_get_object(builder, "order_label")),
 	                     order_text);
@@ -1164,10 +1168,10 @@ gebr_ui_flow_execution_details_setup_ui(gboolean slider_sensitiviness,
 	gtk_window_set_modal(GTK_WINDOW(main_dialog), TRUE);
 	gtk_widget_show_all(main_dialog);
 
-	execution_details_restore_default_values(ui_flow_execution, builder, slider_sensitiviness);
-
 	if(!multiple)
 		set_single_execution_dialog(builder);
+
+	execution_details_restore_default_values(ui_flow_execution, builder, slider_sensitiviness);
 
 	g_signal_connect(main_dialog, "destroy", G_CALLBACK(gtk_widget_destroy), NULL);
 	g_signal_connect(GTK_BUTTON(run_button), "clicked", G_CALLBACK(on_run_button_clicked), ui_flow_execution);
