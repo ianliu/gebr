@@ -25,6 +25,7 @@
 #include <libgebr/utils.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
+#include <gdk/gdkkeysyms.h>
 
 G_DEFINE_TYPE(GebrMenuView, gebr_menu_view, G_TYPE_OBJECT);
 
@@ -315,6 +316,47 @@ on_search_entry(GtkWidget *widget,
 }
 
 static void
+gebr_menu_view_select_near(GebrMenuView *view, gboolean next)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(view->priv->tree_view);
+	gboolean has_selected;
+
+	has_selected = gtk_tree_selection_get_selected(selection, &model, &iter);
+
+	if (!has_selected) {
+		if (gtk_tree_model_get_iter_first(model, &iter))
+			gtk_tree_selection_select_iter(selection, &iter);
+	} else {
+		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+		if (next)
+			gtk_tree_path_next(path);
+		else
+			gtk_tree_path_prev(path);
+		if (gtk_tree_model_get_iter(model, &iter, path))
+			gtk_tree_selection_select_iter(selection, &iter);
+		gtk_tree_path_free(path);
+	}
+}
+
+static gboolean
+on_search_entry_key_press(GtkWidget *widget,
+			  GdkEventKey *event,
+			  gpointer user_data)
+{
+	GebrMenuView *view = GEBR_MENU_VIEW(user_data);
+	if (event->keyval == GDK_Up
+	    || event->keyval == GDK_Down)
+	{
+		gebr_menu_view_select_near(view, event->keyval == GDK_Down);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
 on_menu_view_data_func(GtkTreeViewColumn *tree_column,
                        GtkCellRenderer *cell,
                        GtkTreeModel *model,
@@ -426,6 +468,7 @@ gebr_menu_view_init(GebrMenuView *view)
 	g_signal_connect(view->priv->entry, "icon-press", G_CALLBACK(on_search_entry_press), view);
 	g_signal_connect(view->priv->entry, "activate", G_CALLBACK(on_search_entry_activate), view);
 	g_signal_connect(view->priv->entry, "changed", G_CALLBACK(on_search_entry), view);
+	g_signal_connect(view->priv->entry, "key-press-event", G_CALLBACK(on_search_entry_key_press), view);
 
 	// Add Search entry
 	gtk_box_pack_start(GTK_BOX(view->priv->vbox), view->priv->entry, FALSE, FALSE, 5);
