@@ -2,7 +2,7 @@ Source: gebrproject
 Priority: extra
 Maintainer: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
 Build-Depends: debhelper (>= 7.0.50), gtk-doc-tools, docbook-xsl,
- libwebkit-dev, libgdome2-dev, libtidy-dev, bc, python-gtk2
+ libwebkit-dev, libgdome2-dev, libtidy-dev, bc, python-gtk2, graphviz
 Standards-Version: 3.7.2
 
 Package: libgebr0
