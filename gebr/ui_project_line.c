@@ -242,10 +242,21 @@ on_maestro_button_clicked(GtkButton *button,
 	GObject *change_button = gtk_builder_get_object(builder, "change_maestro");
 	GObject *connect_label = gtk_builder_get_object(builder, "label_connect_maestro");
 	GObject *change_label = gtk_builder_get_object(builder, "label_change_maestro");
-
+	GObject *head_label = gtk_builder_get_object(builder, "label_header");
 	GObject *image_change_button = gtk_builder_get_object(builder, "image_change_maestro");
 
+	const gchar *connect_addr = gebr_geoxml_line_get_maestro(gebr.line);
+
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_line_maestro), dialog);
+
+	/* Head Label */
+	gchar *new_head;
+	new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line is not handled by any maestro</span></b>"));
+
+	if (g_strcmp0(connect_addr, "") != 0)
+		new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line is handled by maestro %s</span></b>"), connect_addr);
+
+	gtk_label_set_markup(GTK_LABEL(head_label), new_head);
 
 	/* Change maestro */
 	const gchar *change_addr;
@@ -265,7 +276,6 @@ on_maestro_button_clicked(GtkButton *button,
 
 	/* Connect maestro */
 	gchar *connect_text;
-	gchar *connect_addr = gebr_geoxml_line_get_maestro(gebr.line);
 	if (g_strcmp0(connect_addr, "") != 0) {
 		connect_text = g_markup_printf_escaped(_("Connect to maestro <b>%s</b>"), connect_addr);
 		gtk_label_set_markup(GTK_LABEL(connect_label), connect_text);
@@ -280,8 +290,8 @@ on_maestro_button_clicked(GtkButton *button,
 
 	gtk_widget_destroy(GTK_WIDGET(dialog));
 	g_object_unref(builder);
+	g_free(new_head);
 	g_free(connect_text);
-	g_free(connect_addr);
 	g_free(change_text);
 }
 

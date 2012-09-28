@@ -28,10 +28,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label1">
+              <object class="GtkLabel" id="label_header">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;&lt;span size="large"&gt;A line needs a maestro.&lt;/span&gt;&lt;/b&gt;</property>
+                <property name="label">#&lt;b&gt;&lt;span size="large"&gt;This line is not handled by any maestro&lt;/span&gt;&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
