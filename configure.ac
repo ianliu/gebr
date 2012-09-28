@@ -51,6 +51,16 @@ GEBR_PYTHON_CHECK([pygtk])
 AC_DEFINE_UNQUOTED(PYTHON, ["$PYTHON"], [Python full path binary])
 
 dnl ============================================================================
+dnl Check for `dot` program
+dnl ============================================================================
+AC_ARG_VAR([DOT], [Path for dot program, usually found in graphviz package])
+AC_CHECK_PROG([DOT], [dot], [yes])
+
+if test "x$DOT" != xyes; then
+	AC_MSG_ERROR([GêBR needs dot program to work, usually found in graphviz package.])
+fi
+
+dnl ============================================================================
 dnl Defining the library version information
 dnl ============================================================================
 m4_define([lt_current], [m4_eval(100 * gebr_minor_version + gebr_micro_version - gebr_interface_age)])
