@@ -453,7 +453,7 @@ jobs_visible_for_flow_name(GtkTreeModel *model,
 	if (index == 0) { // Any
 		jc->priv->use_filter_flow = FALSE;
 		for (GList *i = labels; i; i = i->next)
-			if (g_str_has_prefix(gtk_label_get_text(i->data), "Flow name:"))
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Job name:"))
 				gtk_widget_destroy(GTK_WIDGET(i->data));
 		g_list_free(box);
 		g_list_free(labels);
@@ -461,7 +461,7 @@ jobs_visible_for_flow_name(GtkTreeModel *model,
 	}
 
 	if (!jc->priv->use_filter_flow) {
-		gchar *text = g_markup_printf_escaped("<span size='x-small'>Flow name: %s</span>", flow_name);
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Job name: %s</span>", flow_name);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -472,8 +472,8 @@ jobs_visible_for_flow_name(GtkTreeModel *model,
 	} else {
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
-			if (g_str_has_prefix(filter, "Flow name:")) {
-				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Flow name: %s</span>", flow_name);
+			if (g_str_has_prefix(filter, "Job name:")) {
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Job name: %s</span>", flow_name);
 				gtk_label_set_markup(i->data, new_text);
 				g_free(new_text);
 			}

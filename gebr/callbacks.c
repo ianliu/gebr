@@ -303,7 +303,7 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	if (!error)
 		return TRUE;
 
-	g_string_append_printf(message, "%s in Flow %s", error->message, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
+	g_string_append_printf(message, "%s in Flow %s.", error->message, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
 
 	error_code = error->code;
 	switch (error_code)
