@@ -65,6 +65,7 @@ on_parameters_default_button_clicked(GtkButton *button,
 	params = gebr_geoxml_program_get_parameters(program_edit->program);
 	gebr_geoxml_parameters_reset_to_default(params);
 	gebr_gui_program_edit_reload(program_edit, NULL);
+	validate_and_save_flow();
 	gebr_geoxml_object_unref(params);
 	return;
 }
