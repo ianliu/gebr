@@ -246,6 +246,7 @@ on_select_non_single_job(GebrJobControl *jc,
 	gint real_n = gtk_tree_model_iter_n_children(model, NULL);
 	gint virt_n = gtk_tree_model_iter_n_children(gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view)), NULL);
 
+	/* Search for time mark in whole model */
 	gint control_n = 0;
 	GtkTreeIter iter;
 	gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
@@ -261,6 +262,24 @@ on_select_non_single_job(GebrJobControl *jc,
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 	real_n -= control_n;
+
+	/* Search for time mark in filtered model */
+	gint control_n_virt = 0;
+	GtkTreeIter iterator;
+	GtkTreeModel *virt_model = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
+	valid = gtk_tree_model_get_iter_first(virt_model, &iterator);
+	while (valid && virt_n < (real_n)) {
+		gboolean controle;
+		gtk_tree_model_get(virt_model, &iterator,
+		                   JC_IS_CONTROL, &controle,
+		                   -1);
+
+		if (controle)
+			control_n_virt++;
+
+		valid = gtk_tree_model_iter_next(virt_model, &iterator);
+	}
+	virt_n -= control_n_virt;
 
 	if (!rows) {
 		if (real_n == 0)
