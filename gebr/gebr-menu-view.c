@@ -240,17 +240,17 @@ static void
 on_search_entry_activate(GtkEntry *entry,
                          GebrMenuView *view)
 {
-	const gchar *key = gtk_entry_get_text(entry);
-	if (!key || !*key)
-		return;
-
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(view->priv->tree_view);
 
 	if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
 		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-		gebr_menu_view_add(view->priv->tree_view, path, NULL, view);
+
+		if (gtk_tree_path_get_depth(path) == 0)
+			gtk_tree_view_expand_row(view->priv->tree_view, path, TRUE);
+		else
+			gebr_menu_view_add(view->priv->tree_view, path, NULL, view);
 		gtk_tree_path_free(path);
 	}
 }
