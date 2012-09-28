@@ -165,17 +165,17 @@ class MyDotWidget(xdot.DotWidget):
         # Insert execution menu
         if multiple_selection:
             # Sequentially
-            execute_single = gtk.MenuItem(_("Execute sequentially \t\tCtrl+R"))
+            execute_single = gtk.MenuItem(_("Run sequentially \t\tCtrl+R"))
             execute_single.connect("activate", self.on_execute_seq, url)
             execute_single.show()
             self.menu.append(execute_single)
             # Parallel
-            execute_paral = gtk.MenuItem(_("Execute parallelly \t\tCtrl+Shift+R"))
+            execute_paral = gtk.MenuItem(_("Run parallelly \t\tCtrl+Shift+R"))
             execute_paral.connect("activate", self.on_execute_parallel, url)
             execute_paral.show()
             self.menu.append(execute_paral)
         else:
-            execute_single = gtk.MenuItem(_("Execute \t\t\tCtrl+R"))
+            execute_single = gtk.MenuItem(_("Run \t\t\tCtrl+R"))
             execute_single.connect("activate", self.on_execute_single, url)
             execute_single.show()
             self.menu.append(execute_single)

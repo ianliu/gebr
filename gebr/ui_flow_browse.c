@@ -3390,10 +3390,10 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
 		else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
 			tooltip_disconn = _("This flow does not contain programs\nAdd at least one to execute this flow");
 		else
-			tooltip_disconn = _("Execute");
+			tooltip_disconn = _("Run");
 	}
-	tooltip_execute = _("Execute");
-	tooltip_execute_detail = _("Execution details");
+	tooltip_execute = _("Run");
+	tooltip_execute_detail = _("Setup & Run");
 
 	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
 	GtkAction *detailed_execution = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute_details");
