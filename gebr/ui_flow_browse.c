@@ -2906,6 +2906,7 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 
+		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "cell-background-gdk", &(style->bg[GTK_STATE_NORMAL]), NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
@@ -2917,6 +2918,7 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		GebrGeoXmlProgram *program = gebr_ui_flow_program_get_xml(ui_program);
 		const gchar *icon = gebr_gui_get_program_icon(program);
 
+		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "stock-id", icon, NULL);
 		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
 	}
@@ -2927,7 +2929,9 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		                   -1);
 
 		const gchar *icon = gebr_ui_flows_io_get_stock_id(ui_io);
+		gboolean activate = gebr_ui_flows_io_get_active(ui_io);
 
+		g_object_set(cell, "sensitive", activate, NULL);
 		g_object_set(cell, "stock-id", icon, NULL);
 		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
 	}
@@ -2996,7 +3000,11 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 			title = g_strdup(gebr_ui_flows_io_get_label_markup(io));
 		}
 		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
-		g_object_set(cell, "foreground-gdk", &style->black, NULL);
+
+		if (gebr_ui_flows_io_get_active(io))
+			g_object_set(cell, "foreground-gdk", &style->black, NULL);
+		else
+			g_object_set(cell, "foreground-gdk", &style->base[GTK_STATE_INSENSITIVE], NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *program;
