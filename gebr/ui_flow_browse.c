@@ -2820,22 +2820,25 @@ flow_browse_on_query_tooltip(GtkTreeView * treeview,
 			message = g_markup_printf_escaped(_("Flow <i>%s</i> is ready to execute"),flow_title);
 			g_free(flow_title);
 		}
-
+		gtk_tooltip_set_markup(tooltip, message);
 	} else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *ui_program;
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_program,
 		                   -1);
+
 		message = g_strdup(gebr_ui_flow_program_get_tooltip(ui_program));
+		gtk_tooltip_set_text(tooltip, message);
 	} else if (type == STRUCT_TYPE_IO) {
 		GebrUiFlowsIo *ui_io;
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_io,
 		                   -1);
+
 		message = g_strdup(gebr_ui_flows_io_get_tooltip(ui_io));
+		gtk_tooltip_set_markup(tooltip, message);
 	}
 
-	gtk_tooltip_set_markup(tooltip, message);
 	g_free(message);
 }
 /**
