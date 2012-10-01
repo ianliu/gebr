@@ -165,28 +165,6 @@ static void parameter_widget_set_icon(GebrGuiParameterWidget *widget,
 	}
 }
 
-static void parameter_widget_set_value(GebrGuiParameterWidget *widget,
-				       const gchar *value)
-{
-	GtkEntry *entry;
-	GebrGuiParameterWidget *self = (GebrGuiParameterWidget*)widget;
-
-	if (self->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
-		entry = GTK_ENTRY(GEBR_GUI_FILE_ENTRY(self->value_widget)->entry);
-	else
-		entry = GTK_ENTRY(self->value_widget);
-
-	switch (self->parameter_type)
-	{
-	case GEBR_GEOXML_PARAMETER_TYPE_INT:
-	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-		gtk_entry_set_text(entry, value);
-		break;
-	default:
-		break;
-	}
-}
-
 static gchar *parameter_widget_get_value(GebrGuiParameterWidget *widget)
 {
 	GString *value;
