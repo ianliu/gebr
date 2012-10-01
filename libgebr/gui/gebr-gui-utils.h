@@ -514,10 +514,6 @@ gboolean gtk_show_uri(GdkScreen *screen, const gchar *uri, guint32 timestamp, GE
 
 gboolean gebr_gui_show_uri(const gchar * uri);
 
-gboolean gebr_gui_validate_widget(GebrGuiValidatableWidget *widget,
-				  GebrGeoXmlParameter      *param,
-				  GebrValidator            *validator);
-
 gboolean gebr_file_chooser_set_warning_widget(gchar ***paths, 
                                               gchar *file,
                                               GtkWidget *chooser_dialog);
