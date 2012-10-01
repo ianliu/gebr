@@ -26,7 +26,7 @@
 
 #include <gebr-validator.h>
 #include <libgebr/gebr-maestro-info.h>
-#include <libgebr/gui/gebr-gui-parameter.h>
+#include <libgebr/gui/gebr-gui-param.h>
 #include <geoxml.h>
 
 G_BEGIN_DECLS

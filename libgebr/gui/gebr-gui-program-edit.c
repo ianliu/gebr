@@ -23,7 +23,7 @@
 #include <glib/gi18n-lib.h>
 
 #include "gebr-gui-program-edit.h"
-#include "gebr-gui-parameter.h"
+#include "gebr-gui-param.h"
 #include "gebr-gui-utils.h"
 #include "../utils.h"
 

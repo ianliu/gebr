@@ -21,7 +21,7 @@
 #include <gui/gebr-gui-sequence-edit.h>
 #include <gui/gebr-gui-icons.h>
 #include <gui/gebr-gui-pixmaps.h>
-#include <gui/gebr-gui-parameter.h>
+#include <gui/gebr-gui-param.h>
 #include <gui/gebr-gui-program-edit.h>
 #include <gui/gebr-gui-value-sequence-edit.h>
 #include <gui/gebr-gui-utils.h>

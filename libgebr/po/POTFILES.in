@@ -38,7 +38,7 @@ gui/gebr-gui-help-edit-window.c
 gui/gebr-gui-html-viewer-widget.c
 gui/gebr-gui-html-viewer-window.c
 gui/gebr-gui-icons.c
-gui/gebr-gui-parameter.c
+gui/gebr-gui-param.c
 gui/gebr-gui-pie.c
 gui/gebr-gui-pixmaps.c
 gui/gebr-gui-program-edit.c

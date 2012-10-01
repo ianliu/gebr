@@ -28,7 +28,7 @@
 
 #include "../utils.h"
 
-#include "gebr-gui-parameter.h"
+#include "gebr-gui-param.h"
 #include "gebr-gui-utils.h"
 
 #define DOUBLE_MAX +999999999

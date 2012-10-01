@@ -31,7 +31,6 @@
 #include <libgebr/gebr-validator.h>
 #include <libgebr/utils.h>
 #include <libgebr/gebr-maestro-info.h>
-#include <libgebr/gui/gebr-gui-parameter.h>
 
 struct _GebrUiFlowsIoPriv {
 	gchar *id;

@@ -25,7 +25,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/geoxml/geoxml.h>
-#include <libgebr/gui/gebr-gui-parameter.h>
+#include <libgebr/gui/gebr-gui-param.h>
 
 G_BEGIN_DECLS
 

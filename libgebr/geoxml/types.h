@@ -22,7 +22,7 @@ G_BEGIN_DECLS
 
 /**
  * \internal
- * defined in gebr-gui-parameter.c
+ * defined in gebr-gui-param.c
  */
 extern const char *parameter_type_to_str[];
 extern const int parameter_type_to_str_len;

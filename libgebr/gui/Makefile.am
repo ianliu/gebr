@@ -39,7 +39,7 @@ libgebr_gui_la_SOURCES = 		\
 	gebr-gui-html-viewer-window.c	\
 	gebr-gui-icons.c 		\
 	gebr-gui-js.c			\
-	gebr-gui-parameter.c		\
+	gebr-gui-param.c		\
 	gebr-gui-pie.c 			\
 	gebr-gui-pixmaps.c 		\
 	gebr-gui-program-edit.c		\
@@ -62,7 +62,7 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-html-viewer-window.h	\
 	gebr-gui-icons.h		\
 	gebr-gui-js.h			\
-	gebr-gui-parameter.h		\
+	gebr-gui-param.h		\
 	gebr-gui-pie.h 			\
 	gebr-gui-pixmaps.h		\
 	gebr-gui-program-edit.h		\
