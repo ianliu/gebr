@@ -1716,7 +1716,7 @@ gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
 	GebrGeoXmlProgramParameter *pparam;
 
 	type = gebr_geoxml_parameter_get_type(param);
-	expression = gebr_gui_validatable_widget_get_value(widget);
+	expression = parameter_widget_get_value(widget);
 	pparam = GEBR_GEOXML_PROGRAM_PARAMETER(param);
 
 	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(param)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)

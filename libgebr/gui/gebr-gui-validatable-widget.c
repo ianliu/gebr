@@ -20,8 +20,3 @@
 #include "gebr-gui-validatable-widget.h"
 #include "../gebr-iexpr.h"
 #include <glib/gi18n-lib.h>
-
-gchar *gebr_gui_validatable_widget_get_value(GebrGuiValidatableWidget *widget)
-{
-	return widget->get_value(widget);
-}

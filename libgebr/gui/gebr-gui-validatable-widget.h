@@ -40,8 +40,6 @@ struct _GebrGuiValidatableWidget
 			      const gchar              *value);
 };
 
-gchar *gebr_gui_validatable_widget_get_value(GebrGuiValidatableWidget *widget);
-
 G_END_DECLS
 
 #endif /* __GEBR_GUI_VALIDATABLE_WIDGET_H__ */
