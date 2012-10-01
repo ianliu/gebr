@@ -243,10 +243,7 @@
 	  Projects and Lines;
 	</listitem>
 	<listitem>
-	  <guilabel>Flows</guilabel>: for creating and executing Flows;
-	</listitem>
-	<listitem>
-	  <guilabel>Flow Editor</guilabel>: for editing and executing a Flow;
+	  <guilabel>Flows</guilabel>: for creating, editing and executing Flows;
 	</listitem>
 	<listitem>
 	  <guilabel>Jobs</guilabel>: for inspecting the results.
