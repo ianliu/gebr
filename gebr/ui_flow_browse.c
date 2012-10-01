@@ -744,6 +744,25 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 		}
 
 		if (find_programs) {
+			GebrUiFlow *ui_flow;
+			gboolean has_error;
+			GError *err = NULL;
+
+			gtk_tree_model_get(model, &parent,
+			                   FB_STRUCT, &ui_flow,
+			                   -1);
+
+			GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+			has_error = gebr_geoxml_flow_validate(flow, gebr.validator, &err);
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+
+			gebr_ui_flow_set_flow_has_error(ui_flow, has_error);
+			if (err)
+				gebr_ui_flow_set_tooltip_error(ui_flow, err->message);
+			else
+				gebr_ui_flow_set_tooltip_error(ui_flow, NULL);
+
 			path = gtk_tree_model_get_path(model, &parent);
 			gtk_tree_model_row_changed(model, path, &parent);
 			gtk_tree_path_free(path);
@@ -1396,9 +1415,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	/* Last execution */
 	ui_flow_browse->info.lastrun = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_jobs_label"));
 
-	/* Flow warning icon */
-	ui_flow_browse->info.warn_img = GTK_WIDGET(gtk_builder_get_object(ui_flow_browse->info.builder_flow, "flow_warn_image"));
-
 	/*
 	 * Set button and box context
 	 */
@@ -1954,20 +1970,11 @@ flow_browse_static_info_update(void)
 	gchar *last_text = NULL;
 	gchar *last_run_date = gebr_geoxml_flow_get_date_last_run(gebr.flow);
 
-	GError *error = NULL;
-	gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
-
-	if (error) {
-		last_text = g_markup_printf_escaped(_("<i>%s</i>"), error->message);
-		gtk_widget_show(gebr.ui_flow_browse->info.warn_img);
-		g_clear_error(&error);
-	} else if (!last_run_date || !*last_run_date) {
+	if (!last_run_date || !*last_run_date) {
 		last_text = g_strdup(_("This flow was never executed"));
-		gtk_widget_hide(gebr.ui_flow_browse->info.warn_img);
 	} else {
 		const gchar *last_run = gebr_localized_date(last_run_date);
 		last_text = g_markup_printf_escaped(_("Submitted on %s"), last_run);
-		gtk_widget_hide(gebr.ui_flow_browse->info.warn_img);
 	}
 	g_free(last_run_date);
 
@@ -2159,6 +2166,8 @@ create_programs_view(GtkTreeIter *parent,
 	                   -1);
 
 	gtk_tree_view_expand_row(GTK_TREE_VIEW(fb->view), path, TRUE);
+
+	flow_browse_revalidate_programs(fb);
 }
 
 static void
@@ -2809,12 +2818,10 @@ flow_browse_on_query_tooltip(GtkTreeView * treeview,
 		                   -1);
 
 		GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
+		const gchar *tooltip_error = gebr_ui_flow_get_tooltip_error(ui_flow);
 
-		GError *error = NULL;
-		gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
-		if (error) {
-			message = g_markup_printf_escaped(_("<i>%s</i>"), error->message);
-			g_clear_error(&error);
+		if (tooltip_error) {
+			message = g_markup_printf_escaped(_("<i>%s</i>"), tooltip_error);
 		} else {
 			gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 			message = g_markup_printf_escaped(_("Flow <i>%s</i> is ready to execute"),flow_title);
@@ -2892,22 +2899,15 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 	GtkStyle *style = gtk_rc_get_style(gebr.notebook);
 
 	if (type == STRUCT_TYPE_FLOW) {
-		GebrGeoXmlFlow * flow;
 		GebrUiFlow *ui_flow;
 		gtk_tree_model_get(model, iter,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
 
-		flow = gebr_ui_flow_get_flow(ui_flow);
-
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
-
-		if (gebr_geoxml_flow_validate(flow, gebr.validator, NULL))
+		if (gebr_ui_flow_get_flow_has_error(ui_flow))
 			g_object_set(cell, "stock-id", "flow-icon", NULL);
 		else
 			g_object_set(cell, "stock-id", GTK_STOCK_DIALOG_WARNING, NULL);
-
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 
 		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "cell-background-gdk", &(style->bg[GTK_STATE_NORMAL]), NULL);
@@ -3320,6 +3320,45 @@ gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
 }
 
 void
+gebr_flow_add_error_line(GebrGeoXmlFlow *flow,
+                         GString *prog_content,
+                         GebrUiFlowBrowse *fb)
+{
+	GtkTreeIter iter;
+
+	if (!flow_browse_get_selected(&iter, FALSE))
+		return;
+
+	GebrUiFlowBrowseType type;
+	GebrUiFlow *ui_flow;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(fb->store), &iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   FB_STRUCT, &ui_flow,
+	                   -1);
+
+	if (type != STRUCT_TYPE_FLOW) {
+		GtkTreeIter parent;
+
+		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(fb->store), &parent, &iter))
+			return;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(fb->store), &parent,
+		                   FB_STRUCT, &ui_flow,
+		                   -1);
+	}
+
+	const gchar *tooltip = gebr_ui_flow_get_tooltip_error(ui_flow);
+
+	if (tooltip)
+		g_string_append_printf(prog_content,
+		                       "<div class='flow-error'>\n"
+		                       "  <p>%s</p>\n"
+		                       "</div>\n",
+		                       tooltip);
+}
+
+void
 gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
                                         GebrUiFlowBrowse *fb,
                                         gboolean same_flow)
@@ -3359,6 +3398,7 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 		g_string_append_printf(prog_content, "  </head>\n"
 						     "  <body oncontextmenu=\"return false;\"/>\n");
 
+	gebr_flow_add_error_line(flow, prog_content, gebr.ui_flow_browse);
 	gebr_flow_generate_io_table(flow, prog_content);
 	gebr_flow_generate_parameter_value_table(flow, prog_content, NULL, TRUE);
 

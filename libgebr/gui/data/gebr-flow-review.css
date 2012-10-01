@@ -47,9 +47,8 @@
 }
 
 body {
-    background-attachment: fixed;
+	background-attachment: fixed;
     background: #f9f5f3 url('pixmaps/flows-review-bg.png') top right repeat-x;
-    margin-top: 40px;
 }
 
 .program .error {
@@ -58,4 +57,18 @@ body {
 	margin-top: 15px;
 	margin-right: 10px;
 	background-color: #FFFFE0;
+}
+
+.flow-error {
+	margin-top: 0px;
+	background-color: #FFFFE0;
+	padding: 3px 3px 3px 6px;
+	opacity: 0.6;
+}
+
+.flow-error p {
+	margin: 2px;
+	font-size: 13px;
+	text-align: left;
+	font-weight: bold;
 }
