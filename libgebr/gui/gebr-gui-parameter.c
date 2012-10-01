@@ -568,9 +568,9 @@ static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
 	if (error) {
 		// This call won't recurse since 'error' is non-NULL.
 		// Execution should never reach here anyway...
-		gebr_gui_validatable_widget_set_icon(GEBR_GUI_VALIDATABLE_WIDGET(parameter_widget),
-						     parameter_widget->parameter,
-						     error);
+		parameter_widget_set_icon(GEBR_GUI_VALIDATABLE_WIDGET(parameter_widget),
+					  parameter_widget->parameter,
+					  error);
 		g_clear_error(&error);
 		return;
 	}
@@ -1732,7 +1732,7 @@ gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
 		retval = FALSE;
 	}
 
-	gebr_gui_validatable_widget_set_icon(widget, param, error);
+	parameter_widget_set_icon(widget, param, error);
 
 	if (error)
 		g_clear_error(&error);

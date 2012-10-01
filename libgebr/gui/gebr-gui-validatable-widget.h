@@ -40,10 +40,6 @@ struct _GebrGuiValidatableWidget
 			      const gchar              *value);
 };
 
-void gebr_gui_validatable_widget_set_icon(GebrGuiValidatableWidget *widget,
-					  GebrGeoXmlParameter      *param,
-					  GError                   *error);
-
 gchar *gebr_gui_validatable_widget_get_value(GebrGuiValidatableWidget *widget);
 
 G_END_DECLS
