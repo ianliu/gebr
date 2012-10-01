@@ -70,7 +70,7 @@
       at least one Project owning one
       Line. <xref linkend="projects_lines_create_projects"/>,
       <xref linkend="projects_lines_create_lines"/> and
-      <xref linkend="flows_browser_create_flow"/> explain how this is
+      <xref linkend="flows_create_flow"/> explain how this is
       accomplished.
     </para>
 

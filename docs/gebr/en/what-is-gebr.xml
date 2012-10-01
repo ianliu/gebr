@@ -63,12 +63,12 @@
 					<listitem>
 						Improved usability of flows through the creation of 
 						a unified tab (see 
-						<xref linkend="flows_tab"/>).
+						<xref linkend="flows"/>).
 					</listitem>
 					<listitem>
 						Possibility to restore important states of the user's
 						flow (see 
-						<xref linkend="flows_tab_snapshots"/>).
+						<xref linkend="flows_snapshots"/>).
 					</listitem>
 				</itemizedlist>
 			</listitem>
