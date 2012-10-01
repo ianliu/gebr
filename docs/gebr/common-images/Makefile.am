@@ -44,6 +44,7 @@ common_images_DATA =				\
 	gtk-connect.png				\
 	gtk-dialog-warning.png			\
 	gtk-disconnect.png			\
+	group.png				\
 	icone_arquivo_entrada.png		\
 	icone_arquivo_erro.png			\
 	icone_arquivo_saida.png			\

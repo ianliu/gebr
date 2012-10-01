@@ -13,7 +13,7 @@
   <para>From the <guimenu>Actions</guimenu> menu, the user can access the
     <guimenuitem>Preferences</guimenuitem> and
 		configure the <guimenuitem>Maestro/Nodes</guimenuitem> settings. If the user's enthusiasm
-    for GêBR has lead him/her to read the whole manual, then the user has
+    for GêBR has lead to read the whole manual, then the user has
     probably used almost all available features found in these
     options. But just in case, the user will find the documentation for these options
     below.</para>
@@ -41,7 +41,7 @@
           (<filename class="extension">mnu</filename> files).</para>
       </listitem>
     </itemizedlist>
-    <figure id="maestro_server_dialog">
+    <figure id="gebr_global_preferences">
       <title>Global GêBR preferences dialog box</title>
       <mediaobject>
         <caption>Preferences menu opens a dialog box where the user edits
@@ -52,6 +52,16 @@
         </imageobject>
       </mediaobject>
     </figure>
+  </section>
+  
+  <section xml:id="additional_features_connection_assistant">
+    <title>Connection assistant</title>
+    <para>This option helps the user to configure all the necessary 
+    connections to work properly GêBR.</para>
+    <para>The connection assistant explains the user to connect to a Maestro, 
+    its servers and enable remote browsing 
+    (for more information, see <xref linkend="additional_features_maestro_servers_configuration" /> 
+    and <xref linkend="remote_browsing" />).</para>
   </section>
   
   <section xml:id="additional_features_maestro_servers_configuration">
@@ -77,7 +87,7 @@
       </listitem>
     </itemizedlist>
     
-    <figure>
+    <figure id="maestro_server_dialog">
       <title>Maestro / Nodes configuration dialog box</title>
       <mediaobject>
 				<caption>The Maestro/Nodes configuration interface is divided in three parts: maestro, list of nodes and groups of nodes.</caption>
@@ -168,8 +178,13 @@
         create/edit nodes groups. The user must Drag and Drop the
         node to create a group.</para>
       <para>To create a group, the user needs to click over a node
-        in the list and drag it to the <guiicon>+</guiicon> icon. A
-        text box will be prompted for the name of the group. Groups
+        in the list and drag it to the 
+        <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/group.png" />
+              </imageobject>
+	    </inlinemediaobject> icon.
+	    A text box will be prompted for the name of the group. Groups
         with same names are not accepted.</para>
 
       <!-- What happens when a group is created? How is it used? -->
