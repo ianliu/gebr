@@ -46,9 +46,6 @@ void gebr_gui_validatable_widget_set_icon(GebrGuiValidatableWidget *widget,
 
 gchar *gebr_gui_validatable_widget_get_value(GebrGuiValidatableWidget *widget);
 
-void gebr_gui_validatable_widget_set_value(GebrGuiValidatableWidget *widget,
-					   const gchar *validated);
-
 /**
  * gebr_gui_validatable_widget_validate:
  * @widget: A #GebrGuiValidatableWidget
