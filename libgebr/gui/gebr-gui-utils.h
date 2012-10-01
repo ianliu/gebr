@@ -23,8 +23,6 @@
 #include <geoxml/geoxml.h>
 #include <gebr-validator.h>
 
-#include "gebr-gui-validatable-widget.h"
-
 G_BEGIN_DECLS
 
 /**

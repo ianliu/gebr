@@ -47,7 +47,6 @@ libgebr_gui_la_SOURCES = 		\
 	gebr-gui-sequence-edit.c	\
 	gebr-gui-tool-button.c		\
 	gebr-gui-utils.c 		\
-	gebr-gui-validatable-widget.c	\
 	gebr-gui-value-sequence-edit.c	\
 	sexy-icon-entry.c 		\
 	$(NULL)
@@ -71,7 +70,6 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-sequence-edit.h	\
 	gebr-gui-tool-button.h		\
 	gebr-gui-utils.h		\
-	gebr-gui-validatable-widget.h	\
 	gebr-gui-value-sequence-edit.h	\
 	sexy-icon-entry.h		\
 	$(NULL)

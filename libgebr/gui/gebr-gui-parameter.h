@@ -25,7 +25,6 @@
 
 #include "gebr-gui-file-entry.h"
 #include "gebr-gui-value-sequence-edit.h"
-#include "gebr-gui-validatable-widget.h"
 #include <libgebr/gebr-maestro-info.h>
 
 G_BEGIN_DECLS
