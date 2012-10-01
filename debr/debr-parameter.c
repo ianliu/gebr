@@ -724,7 +724,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	GtkWidget *list_widget_hbox;
 
 	GebrGeoXmlProgramParameter *program_parameter;
-	GebrGuiParam *gebr_gui_parameter_widget;
+	GebrGuiParam *gebr_gui_param;
 	GebrValidateCase *validate_case;
 
 	gboolean ret = TRUE;
@@ -920,7 +920,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 
 	}
 
-	gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(ui->parameter, debr.validator, NULL, TRUE, NULL);
+	gebr_gui_param = gebr_gui_param_new(ui->parameter, debr.validator, NULL, TRUE, NULL);
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE: {
 		GtkWidget *type_label;
@@ -949,7 +949,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("File"));
 		gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), _("Directory"));
 		g_signal_connect(type_combo, "changed",
-				 G_CALLBACK(parameter_file_type_changed), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_file_type_changed), gebr_gui_param);
 
 		/* file or directory? */
 		gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo),
@@ -973,13 +973,13 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		gtk_widget_show(filter_name_entry);
 		gtk_box_pack_start(GTK_BOX(hbox), filter_name_entry, FALSE, FALSE, 0);
 		g_signal_connect(filter_name_entry, "changed",
-				 G_CALLBACK(parameter_file_filter_name_changed), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_file_filter_name_changed), gebr_gui_param);
 		filter_pattern_entry =
 			gebr_gui_enhanced_entry_new_with_empty_text(_("pattern (eg. *.jpg *.png)"));
 		gtk_widget_show(filter_pattern_entry);
 		gtk_box_pack_start(GTK_BOX(hbox), filter_pattern_entry, FALSE, FALSE, 0);
 		g_signal_connect(filter_pattern_entry, "changed",
-				 G_CALLBACK(parameter_file_filter_pattern_changed), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_file_filter_pattern_changed), gebr_gui_param);
 
 		gebr_geoxml_program_parameter_get_file_filter(program_parameter, &filter_name, &filter_pattern);
 		gebr_gui_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(filter_name_entry),
@@ -1020,9 +1020,9 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 				 (GtkAttachOptions) (0), 0, 0), ++row;
 		g_signal_connect(min_entry, "activate",
-				 G_CALLBACK(parameter_number_min_on_activate), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_number_min_on_activate), gebr_gui_param);
 		g_signal_connect(min_entry, "focus-out-event",
-				 G_CALLBACK(parameter_number_min_on_focus_out), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_number_min_on_focus_out), gebr_gui_param);
 
 		/*
 		 * Maximum
@@ -1038,9 +1038,9 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 				 (GtkAttachOptions) (0), 0, 0), ++row;
 		g_signal_connect(max_entry, "activate",
-				 G_CALLBACK(parameter_number_max_on_activate), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_number_max_on_activate), gebr_gui_param);
 		g_signal_connect(max_entry, "focus-out-event",
-				 G_CALLBACK(parameter_number_max_on_focus_out), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_number_max_on_focus_out), gebr_gui_param);
 
 		gtk_entry_set_text(GTK_ENTRY(min_entry), min_str);
 		gtk_entry_set_text(GTK_ENTRY(max_entry), max_str);
@@ -1065,9 +1065,9 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 				 (GtkAttachOptions) (0), 0, 0), ++row;
 		g_signal_connect(inc_entry, "activate",
-				 G_CALLBACK(parameter_range_inc_on_activate), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_range_inc_on_activate), gebr_gui_param);
 		g_signal_connect(inc_entry, "focus-out-event",
-				 G_CALLBACK(parameter_range_inc_on_focus_out), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_range_inc_on_focus_out), gebr_gui_param);
 
 		/*
 		 * Digits
@@ -1083,9 +1083,9 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 				 (GtkAttachOptions) (0), 0, 0), ++row;
 		g_signal_connect(digits_entry, "activate",
-				 G_CALLBACK(parameter_range_digits_on_activate), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_range_digits_on_activate), gebr_gui_param);
 		g_signal_connect(digits_entry, "focus-out-event",
-				 G_CALLBACK(parameter_range_digits_on_focus_out), gebr_gui_parameter_widget);
+				 G_CALLBACK(parameter_range_digits_on_focus_out), gebr_gui_param);
 
 		gtk_entry_set_text(GTK_ENTRY(inc_entry), inc_str);
 		gtk_entry_set_text(GTK_ENTRY(digits_entry), digits_str);
@@ -1124,7 +1124,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		break;
 	}
 
-	ui->gebr_gui_parameter_widget = gebr_gui_parameter_widget;
+	ui->gebr_gui_param = gebr_gui_param;
 
 	/*
 	 * Default value
@@ -1139,7 +1139,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	 * on the same position on the table */
 	ui->default_widget_hbox = default_widget_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(default_widget_hbox);
-	default_widget = gebr_gui_parameter_widget->widget;
+	default_widget = gebr_gui_param->widget;
 	gtk_widget_show(default_widget);
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_FLAG) {
@@ -1154,7 +1154,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 		gtk_box_pack_start(GTK_BOX(ui->default_widget_hbox), default_widget, TRUE, TRUE, 0);
 	gtk_table_attach(GTK_TABLE(table), default_widget_hbox, 1, 2, 2, 3,
 			 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);
-	gebr_gui_parameter_widget_set_auto_submit_callback(gebr_gui_parameter_widget,
+	gebr_gui_param_set_auto_submit_callback(gebr_gui_param,
 							   (changed_callback) parameter_default_widget_changed, NULL);
 
 	/*
@@ -1569,8 +1569,8 @@ parameter_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter *
  */
 static void parameter_reconfigure_default_widget(struct ui_parameter_dialog *ui)
 {
-	gebr_gui_parameter_widget_reconfigure(ui->gebr_gui_parameter_widget);
-	gtk_widget_show(ui->gebr_gui_parameter_widget->widget);
+	gebr_gui_param_reconfigure(ui->gebr_gui_param);
+	gtk_widget_show(ui->gebr_gui_param->widget);
 }
 
 /**
@@ -1643,7 +1643,7 @@ static void parameter_separator_changed_by_string(const gchar * separator, struc
 {
 	if (gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)) == TRUE){
 		gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter), separator);
-		gebr_gui_parameter_widget_update_list_separator(ui->gebr_gui_parameter_widget);
+		gebr_gui_param_update_list_separator(ui->gebr_gui_param);
 	}
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 
@@ -1710,7 +1710,7 @@ static void parameter_number_min_on_activate(GtkEntry * entry, GebrGuiParam *wid
 		gtk_spin_button_get_range(spin_button, NULL, &max);
 		gtk_spin_button_set_range(spin_button, min, max);
 	} else
-		gebr_gui_parameter_widget_validate(widget);
+		gebr_gui_param_validate(widget);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -1748,7 +1748,7 @@ static void parameter_number_max_on_activate(GtkEntry * entry, GebrGuiParam *wid
 		gtk_spin_button_get_range(spin_button, &min, NULL);
 		gtk_spin_button_set_range(spin_button, min, max);
 	} else
-		gebr_gui_parameter_widget_validate(widget);
+		gebr_gui_param_validate(widget);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }

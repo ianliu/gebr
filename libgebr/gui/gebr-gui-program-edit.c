@@ -157,7 +157,7 @@ gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_edit,
 		GebrGuiParameterValidatedFunc callback, gpointer user_data)
 {
 	for (GList *i = program_edit->priv->widgets; i; i = i->next)
-		gebr_gui_parameter_widget_set_validated_callback(i->data, callback, user_data);
+		gebr_gui_param_set_validated_callback(i->data, callback, user_data);
 }
 
 void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)
@@ -323,13 +323,13 @@ create_parameter_widget(GebrGuiProgramEdit *program_edit,
 	GebrGuiParam *widget;
 
 	if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-		widget = gebr_gui_parameter_widget_new(parameter,
+		widget = gebr_gui_param_new(parameter,
 					program_edit->validator,
 					program_edit->info,
 					program_edit->use_default,
 					NULL);
 	} else {
-		widget = gebr_gui_parameter_widget_new(parameter,
+		widget = gebr_gui_param_new(parameter,
 				program_edit->validator,
 				program_edit->info,
 				program_edit->use_default,
@@ -498,7 +498,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		return expander;
 	} else {
 		GtkWidget *hbox;
-		GebrGuiParam *gebr_gui_parameter_widget;
+		GebrGuiParam *gebr_gui_param;
 
 		GebrGeoXmlParameter *selected;
 
@@ -506,15 +506,15 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		gtk_widget_show(hbox);
 
 		/* input widget */
-		gebr_gui_parameter_widget = create_parameter_widget(program_edit, parameter, type);
+		gebr_gui_param = create_parameter_widget(program_edit, parameter, type);
 
-		gebr_gui_parameter_widget->group_warning_widget = program_edit->group_warning_widget;
-		gtk_widget_show(gebr_gui_parameter_widget->widget);
+		gebr_gui_param->group_warning_widget = program_edit->group_warning_widget;
+		gtk_widget_show(gebr_gui_param->widget);
 
-		GebrGeoXmlParameters *params = gebr_geoxml_parameter_get_parameters(gebr_gui_parameter_widget->parameter);
+		GebrGeoXmlParameters *params = gebr_geoxml_parameter_get_parameters(gebr_gui_param->parameter);
 		gboolean is_mpi = gebr_geoxml_parameters_is_mpi(params);
 		if (is_mpi)
-			gtk_widget_set_sensitive(gebr_gui_parameter_widget->value_widget, FALSE);
+			gtk_widget_set_sensitive(gebr_gui_param->value_widget, FALSE);
 		gebr_geoxml_object_unref(params);
 
 		/* exclusive? */
@@ -528,10 +528,10 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button), selected == parameter);
 			g_signal_connect(radio_button, "toggled",
-					 G_CALLBACK(gebr_gui_program_edit_change_selected), gebr_gui_parameter_widget);
+					 G_CALLBACK(gebr_gui_program_edit_change_selected), gebr_gui_param);
 
 			gtk_box_pack_start(GTK_BOX(hbox), radio_button, FALSE, FALSE, 15);
-			gtk_widget_set_sensitive(gebr_gui_parameter_widget->widget,
+			gtk_widget_set_sensitive(gebr_gui_param->widget,
 						 selected == parameter ? TRUE : FALSE);
 		}
 		if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG) {
@@ -552,21 +552,21 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 				g_free(markup);
 			} else
 				gtk_label_set_text_with_mnemonic(GTK_LABEL(label), label_str);
-			gtk_label_set_mnemonic_widget(GTK_LABEL(label), gebr_gui_parameter_widget->widget);
+			gtk_label_set_mnemonic_widget(GTK_LABEL(label), gebr_gui_param->widget);
 
 			align_vbox = gtk_vbox_new(FALSE, 0);
 			gtk_widget_show(align_vbox);
 			gtk_box_pack_start(GTK_BOX(align_vbox), label, FALSE, TRUE, 0);
 			gtk_box_pack_start(GTK_BOX(hbox), align_vbox, FALSE, TRUE, 0);
-			gtk_box_pack_end(GTK_BOX(hbox), gebr_gui_parameter_widget->widget, FALSE, TRUE, 0);
+			gtk_box_pack_end(GTK_BOX(hbox), gebr_gui_param->widget, FALSE, TRUE, 0);
 		} else {
-			g_object_set(G_OBJECT(gebr_gui_parameter_widget->value_widget),
+			g_object_set(G_OBJECT(gebr_gui_param->value_widget),
 				     "label", gebr_geoxml_parameter_get_label(parameter), NULL);
 
-			gtk_box_pack_start(GTK_BOX(hbox), gebr_gui_parameter_widget->widget, FALSE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(hbox), gebr_gui_param->widget, FALSE, FALSE, 0);
 		}
 
-		g_object_set_data(G_OBJECT(hbox), "parameter-widget", gebr_gui_parameter_widget->widget);
+		g_object_set_data(G_OBJECT(hbox), "parameter-widget", gebr_gui_param->widget);
 
 		return hbox;
 	}

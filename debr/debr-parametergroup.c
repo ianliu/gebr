@@ -276,9 +276,9 @@ static GtkWidget* parameter_group_instances_setup_ui_foreach(struct ui_parameter
 		gtk_table_attach(GTK_TABLE(table), label_widget, 0, 1, j, j + 1,
 				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 
-		widget = gebr_gui_parameter_widget_new(GEBR_GEOXML_PARAMETER(parameter), debr.validator, NULL, TRUE, NULL);
+		widget = gebr_gui_param_new(GEBR_GEOXML_PARAMETER(parameter), debr.validator, NULL, TRUE, NULL);
 		if (template)
-			gebr_gui_parameter_widget_set_readonly(widget, TRUE);
+			gebr_gui_param_set_readonly(widget, TRUE);
 		gtk_widget_show(widget->widget);
 		gtk_table_attach(GTK_TABLE(table), widget->widget, 1, 2, j, j + 1,
 				 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (0), 0, 0);

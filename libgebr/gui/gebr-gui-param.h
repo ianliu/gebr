@@ -71,7 +71,7 @@ struct _GebrGuiParam
 /**
  * Create a new parameter widget.
  */
-GebrGuiParam *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
+GebrGuiParam *gebr_gui_param_new(GebrGeoXmlParameter *parameter,
 						      GebrValidator       *validator,
 						      GebrMaestroInfo	  *info,
 						      gboolean             use_default_value,
@@ -80,21 +80,21 @@ GebrGuiParam *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
 /**
  *
  */
-void gebr_gui_parameter_widget_set_auto_submit_callback(GebrGuiParam *parameter_widget,
+void gebr_gui_param_set_auto_submit_callback(GebrGuiParam *parameter_widget,
 							changed_callback callback, gpointer user_data);
 
 /**
  *
  */
-void gebr_gui_parameter_widget_set_readonly(GebrGuiParam *parameter_widget, gboolean readonly);
+void gebr_gui_param_set_readonly(GebrGuiParam *parameter_widget, gboolean readonly);
 
 /**
  * Update input widget value from the parameter's value
  */
-void gebr_gui_parameter_widget_update(GebrGuiParam *parameter_widget);
+void gebr_gui_param_update(GebrGuiParam *parameter_widget);
 
 /**
- * gebr_gui_parameter_widget_validate:
+ * gebr_gui_param_validate:
  * @parameter_widget: The parameter widget to be validated
  *
  * Set tooltip errors and icons for @parameter_widget. If the parameter is numeric
@@ -102,19 +102,19 @@ void gebr_gui_parameter_widget_update(GebrGuiParam *parameter_widget);
  *
  * Returns: %TRUE if the parameter was valid, %FALSE otherwise.
  */
-gboolean gebr_gui_parameter_widget_validate(GebrGuiParam *parameter_widget);
+gboolean gebr_gui_param_validate(GebrGuiParam *parameter_widget);
 
 /**
  * Update UI of list with the new separator
  */
-void gebr_gui_parameter_widget_update_list_separator(GebrGuiParam *parameter_widget);
+void gebr_gui_param_update_list_separator(GebrGuiParam *parameter_widget);
 
 /**
  * Rebuild the UI.
  */
-void gebr_gui_parameter_widget_reconfigure(GebrGuiParam *parameter_widget);
+void gebr_gui_param_reconfigure(GebrGuiParam *parameter_widget);
 
-gboolean gebr_gui_parameter_widget_match_completion(GtkEntryCompletion *completion,
+gboolean gebr_gui_param_match_completion(GtkEntryCompletion *completion,
 						    const gchar *key,
 						    GtkTreeIter *iter,
 						    gpointer user_data);
@@ -158,11 +158,11 @@ void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
 gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSequence *instance, GtkWidget *icon);
 
 /**
- * gebr_gui_parameter_widget_set_validated_callback:
+ * gebr_gui_param_set_validated_callback:
  *
  * Registers @callback to be called when this parameter validates.
  */
-void gebr_gui_parameter_widget_set_validated_callback(GebrGuiParam *widget,
+void gebr_gui_param_set_validated_callback(GebrGuiParam *widget,
 		GebrGuiParameterValidatedFunc callback, gpointer user_data);
 
 G_END_DECLS
