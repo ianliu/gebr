@@ -115,8 +115,7 @@ typedef enum {
 	COMPLETION_TYPE_PATH,
 } CompletionType;
 
-/* Implementation of GebrGuiValidatableWidget interface {{{1 */
-static void parameter_widget_set_icon(GebrGuiValidatableWidget *widget,
+static void parameter_widget_set_icon(GebrGuiParameterWidget *widget,
 				      GebrGeoXmlParameter *param,
 				      GError *error)
 {
@@ -166,8 +165,8 @@ static void parameter_widget_set_icon(GebrGuiValidatableWidget *widget,
 	}
 }
 
-static void parameter_widget_set_value(GebrGuiValidatableWidget *widget,
-				   const gchar *value)
+static void parameter_widget_set_value(GebrGuiParameterWidget *widget,
+				       const gchar *value)
 {
 	GtkEntry *entry;
 	GebrGuiParameterWidget *self = (GebrGuiParameterWidget*)widget;
@@ -188,7 +187,7 @@ static void parameter_widget_set_value(GebrGuiValidatableWidget *widget,
 	}
 }
 
-static gchar *parameter_widget_get_value(GebrGuiValidatableWidget *widget)
+static gchar *parameter_widget_get_value(GebrGuiParameterWidget *widget)
 {
 	GString *value;
 	GebrGuiParameterWidget *self = (GebrGuiParameterWidget*)widget;
@@ -568,7 +567,7 @@ static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
 	if (error) {
 		// This call won't recurse since 'error' is non-NULL.
 		// Execution should never reach here anyway...
-		parameter_widget_set_icon(GEBR_GUI_VALIDATABLE_WIDGET(parameter_widget),
+		parameter_widget_set_icon(parameter_widget,
 					  parameter_widget->parameter,
 					  error);
 		g_clear_error(&error);
@@ -1653,11 +1652,6 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	self->priv = priv;
 	self->priv->last_status = TRUE;
 
-	/* GebrGuiValidatable interface implementation */
-	self->parent.set_icon = parameter_widget_set_icon;
-	self->parent.set_value = parameter_widget_set_value;
-	self->parent.get_value = parameter_widget_get_value;
-
 	gebr_geoxml_object_ref(parameter);
 	self->parameter = parameter;
 	self->validator = validator;
@@ -1705,9 +1699,9 @@ void gebr_gui_parameter_widget_update(GebrGuiParameterWidget *parameter_widget)
 }
 
 static gboolean
-gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
-				     GebrValidator            *self,
-				     GebrGeoXmlParameter      *param)
+gebr_gui_validatable_widget_validate(GebrGuiParameterWidget *widget,
+				     GebrValidator          *self,
+				     GebrGeoXmlParameter    *param)
 {
 	GError *error = NULL;
 	gchar *expression;
@@ -1756,9 +1750,7 @@ gboolean gebr_gui_parameter_widget_validate(GebrGuiParameterWidget *self)
 	if (!__parameter_accepts_expression(self))
 		return TRUE;
 
-	validate = gebr_gui_validatable_widget_validate(GEBR_GUI_VALIDATABLE_WIDGET(self),
-	                                                self->validator,
-	                                                self->parameter);
+	validate = gebr_gui_validatable_widget_validate(self, self->validator, self->parameter);
 
 	if (validate != self->priv->last_status) {
 		self->priv->last_status = validate;

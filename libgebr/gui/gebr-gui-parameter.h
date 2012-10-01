@@ -41,8 +41,6 @@ typedef struct _GebrGuiParameterWidgetPriv GebrGuiParameterWidgetPriv;
 
 struct _GebrGuiParameterWidget
 {
-	GebrGuiValidatableWidget parent;
-
 	GebrGuiParameterWidgetPriv *priv;
 
 	/*< private >*/
