@@ -132,7 +132,7 @@
       Line</emphasis>, which are
 	<emphasis>Title</emphasis>, 
 	<emphasis>Description</emphasis>,
-	<emphasis>Author</emphasis> and his or her
+	<emphasis>Author</emphasis> and
 	<emphasis>e-mail</emphasis> address.</para>
       </listitem>
       
@@ -155,8 +155,11 @@
       the main window.
     </para>
     
-    <tip>There is no limit to the number of Projects and Lines in
-      GêBR. The user can create as many as he or she wants.
+    <tip>
+    	<para>
+    		There is no limit to the number of Projects and Lines in
+        	GêBR. The user can create as many as he or she wants.
+    	</para>
     </tip>
 
     <para>GêBR allows collapsing or expanding the view of the
@@ -282,8 +285,8 @@
 
     <para>GêBR supports only one connected
     Maestro<indexterm><primary>Maestro</primary></indexterm> at
-    time. However, the user may have more than one Maestro at his or
-    her disposal.</para>
+    time. However, the user may have more than one Maestro at the 
+    user disposal.</para>
 
     <para>Whenever a Maestro is connected, all Lines associates to
       other Maestros will be unavailable for edition. The user can
@@ -347,8 +350,9 @@
 	<para>Select the Project or Line that is desired to import at window 
 	  <guilabel>Choose Project/Line to open</guilabel>. Only files
 	  with extension
-	  <filename class="extension">prjz</filename> or 
-	  <filename class="extension">lnez</filename> will be shown.</para>
+	  <filename class="extension">prjz</filename>, <filename class="extension">prjx</filename>,
+	  <filename class="extension">lnez</filename> or 
+	  <filename class="extension">lnex</filename> will be shown.</para>
       </step>
       <step>
 	<para>Click at button 
@@ -398,8 +402,8 @@
 	  <guilabel>choose the name of the file that will be
 	  saved</guilabel>; when you select a directory and type the
 	  file name, GêBR determines the extension automatically,
-	  <filename class="extension">.prjz</filename> for Projects or 
-	  <filename class="extension">.lnez</filename> for Lines.</para>
+	  <filename class="extension">.prjx</filename> for Projects or 
+	  <filename class="extension">.lnex</filename> for Lines.</para>
       </step>
       <step>
 	<para>Left-click on 
@@ -474,6 +478,9 @@
 	<para>Include the Flow's report;</para>
       </step>
       <step>
+	<para>Include the report of the snapshots of Flows;</para>
+      </step>
+      <step>
 	<para>Configure the parameter table pertaining to the Flow's
 	programs;</para>
       </step>
@@ -488,8 +495,8 @@
       <mediaobject>
 	<caption>In the <guilabel>View Report</guilabel> window, the user can print or save to a
 	  file this report. In the options menu, as is shown above,
-	  the user can include: comments, the Flow's report, the
-	  parameter table and choose from a few pre-defined styles for
+	  the user can include: comments, the Flow's report, the report of the snapshots of 
+	  Flows, the parameter table and choose from a few pre-defined styles for
 	  the report.</caption>
 	<imageobject>
 	  <imagedata fileref="../images/janela_visualizar_relatorio.png"  contentwidth="626px" contentdepth="423px" />
@@ -497,10 +504,17 @@
       </mediaobject>
     </figure>
 
-    <para><xref linkend="flows_browser_view_report_flow" /> explains
+    <para><xref linkend="flows_view_report_flow" /> explains
       in greater details the View Report tool for Flows, which is very
       similar to the Line's and Project's View Report except that in
       this one the user can add the Flow's report.</para>
-
+      
+      <note>
+      	<para> The option to include report of the snapshots of Flows are
+      	available on Line's and Flow's View Report. More information about snapshots
+      	can be found on section <xref linkend="flows_snapshots" />
+      	</para>
+      </note>
+      
   </section>
 </chapter>
