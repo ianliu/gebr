@@ -1704,6 +1704,42 @@ void gebr_gui_parameter_widget_update(GebrGuiParameterWidget *parameter_widget)
 	}
 }
 
+static gboolean
+gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
+				     GebrValidator            *self,
+				     GebrGeoXmlParameter      *param)
+{
+	GError *error = NULL;
+	gchar *expression;
+	gboolean retval;
+	GebrGeoXmlParameterType type;
+	GebrGeoXmlProgramParameter *pparam;
+
+	type = gebr_geoxml_parameter_get_type(param);
+	expression = gebr_gui_validatable_widget_get_value(widget);
+	pparam = GEBR_GEOXML_PROGRAM_PARAMETER(param);
+
+	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(param)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+		retval = gebr_validator_validate_control_parameter(self, gebr_geoxml_program_parameter_get_keyword(pparam), expression, &error);
+	else
+		retval = gebr_validator_validate_expr(self, expression, type, &error);
+
+	if (!error && !*expression && gebr_geoxml_program_parameter_get_required(pparam) && !gebr_geoxml_program_parameter_has_value(pparam)) {
+		g_set_error(&error,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_EMPTY_EXPR,
+			    _("This parameter is required"));
+		retval = FALSE;
+	}
+
+	gebr_gui_validatable_widget_set_icon(widget, param, error);
+
+	if (error)
+		g_clear_error(&error);
+
+	return retval;
+}
+
 gboolean gebr_gui_parameter_widget_validate(GebrGuiParameterWidget *self)
 {
 	gboolean validate;

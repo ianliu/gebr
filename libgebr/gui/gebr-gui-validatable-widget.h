@@ -46,19 +46,6 @@ void gebr_gui_validatable_widget_set_icon(GebrGuiValidatableWidget *widget,
 
 gchar *gebr_gui_validatable_widget_get_value(GebrGuiValidatableWidget *widget);
 
-/**
- * gebr_gui_validatable_widget_validate:
- * @widget: A #GebrGuiValidatableWidget
- * @validator: A #GebrValidator
- * @parameter: The #GebrGeoXmlParameter associated with @widget
- *
- * Returns: %TRUE if @param is valid, %FALSE otherwise.
- */
-gboolean gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
-					      GebrValidator            *validator,
-					      GebrGeoXmlParameter      *parameter);
-
-
 G_END_DECLS
 
 #endif /* __GEBR_GUI_VALIDATABLE_WIDGET_H__ */
