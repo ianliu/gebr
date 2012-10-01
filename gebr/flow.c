@@ -98,6 +98,8 @@ void flow_new (void)
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New Flow added to Line '%s'."), line_title);
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.flow), on_properties_response, TRUE);
 	project_line_info_update();
+
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 }
 
 void flow_free(void)
@@ -1089,6 +1091,7 @@ void flow_program_remove(void)
 	if (valid)
 		flow_browse_select_iter(&iter);
 
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
 }
 
@@ -1267,7 +1270,7 @@ gebr_flow_set_toolbar_sensitive(void)
 		sensitive_edit = FALSE;
 	}
 	else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0) {
-		sensitive_exec_slider = FALSE;
+		sensitive_exec_slider = TRUE;
 		sensitive_edit = TRUE;
 	}
 	else {

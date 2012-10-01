@@ -200,6 +200,7 @@ gebr_flow_browse_on_add_menu(GebrMenuView *view,
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
 	flow_add_program_sequence_to_view(menu_programs, TRUE);
 
+	flow_browse_revalidate_programs(fb);
 	gebr_flow_browse_load_parameters_review(gebr.flow, fb, TRUE);
 
 	document_free(GEBR_GEOXML_DOC(menu));
@@ -709,6 +710,7 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 
 	model = GTK_TREE_MODEL(fb->store);
 
+	gboolean find_io = FALSE;
 	gboolean find_programs = FALSE;
 	gboolean valid = gtk_tree_model_get_iter_first(model, &parent);
 	while (valid && !find_programs) {
@@ -719,6 +721,9 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 					   FB_STRUCT_TYPE, &type,
 					   FB_STRUCT, &ui_program,
 					   -1);
+
+			if (type == STRUCT_TYPE_IO)
+				find_io = TRUE;
 
 			if (type != STRUCT_TYPE_PROGRAM)
 				goto next;
@@ -743,7 +748,7 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 			valid = gtk_tree_model_iter_next(model, &iter);
 		}
 
-		if (find_programs) {
+		if (find_programs || find_io) {
 			GebrUiFlow *ui_flow;
 			gboolean has_error;
 			GError *err = NULL;
@@ -3438,8 +3443,6 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
 			tooltip_disconn = _("The Maestro of this line is disconnected.\nConnecting it to execute a flow.");
 		else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
 			tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
-		else if (gebr_geoxml_flow_get_programs_number(gebr.flow) == 0)
-			tooltip_disconn = _("This flow does not contain programs\nAdd at least one to execute this flow");
 		else
 			tooltip_disconn = _("Run");
 	}
