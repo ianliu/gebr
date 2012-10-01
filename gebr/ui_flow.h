@@ -68,6 +68,16 @@ gboolean gebr_ui_flow_get_is_selected(GebrUiFlow *ui_flow);
 void gebr_ui_flow_set_is_selected(GebrUiFlow *ui_flow,
                                   gboolean is_selected);
 
+void gebr_ui_flow_set_tooltip_error(GebrUiFlow *ui_flow,
+                                    const gchar *tooltip);
+
+const gchar *gebr_ui_flow_get_tooltip_error(GebrUiFlow *ui_flow);
+
+void gebr_ui_flow_set_flow_has_error(GebrUiFlow *ui_flow,
+                                     gboolean has_error);
+
+gboolean gebr_ui_flow_get_flow_has_error(GebrUiFlow *ui_flow);
+
 GtkMenu *gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow, gboolean multiple);
 
 G_END_DECLS

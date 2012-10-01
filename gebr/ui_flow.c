@@ -24,9 +24,12 @@ struct _GebrUiFlowPriv {
 	GebrGeoXmlFlow *flow;
 	GebrGeoXmlLineFlow *line_flow;
 	gboolean selected;
+	gboolean has_error;
 
 	gchar *filename;
 	gchar *last_modified;
+
+	gchar *tooltip_error;
 };
 
 G_DEFINE_TYPE(GebrUiFlow, gebr_ui_flow, G_TYPE_OBJECT);
@@ -39,6 +42,8 @@ gebr_ui_flow_finalize(GObject *object)
 	G_OBJECT_CLASS(gebr_ui_flow_parent_class)->finalize(object);
 
 	g_free(ui_flow->priv->filename);
+	g_free(ui_flow->priv->last_modified);
+	g_free(ui_flow->priv->tooltip_error);
 	g_free(ui_flow->priv);
 }
 
@@ -69,6 +74,7 @@ gebr_ui_flow_new(GebrGeoXmlFlow *flow,
 	ui_flow->priv->line_flow = line_flow;
 	ui_flow->priv->filename = g_strdup(gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 	ui_flow->priv->selected = FALSE;
+	ui_flow->priv->has_error = FALSE;
 
 	return ui_flow;
 }
@@ -120,6 +126,34 @@ gebr_ui_flow_set_is_selected(GebrUiFlow *ui_flow,
 	ui_flow->priv->selected = is_selected;
 }
 
+void
+gebr_ui_flow_set_tooltip_error(GebrUiFlow *ui_flow,
+                               const gchar *tooltip)
+{
+	if (ui_flow->priv->tooltip_error)
+		g_free(ui_flow->priv->tooltip_error);
+
+	ui_flow->priv->tooltip_error = g_strdup(tooltip);
+}
+
+const gchar *
+gebr_ui_flow_get_tooltip_error(GebrUiFlow *ui_flow)
+{
+	return ui_flow->priv->tooltip_error;
+}
+
+void
+gebr_ui_flow_set_flow_has_error(GebrUiFlow *ui_flow,
+                                gboolean has_error)
+{
+	ui_flow->priv->has_error = has_error;
+}
+
+gboolean
+gebr_ui_flow_get_flow_has_error(GebrUiFlow *ui_flow)
+{
+	return ui_flow->priv->has_error;
+}
 
 GtkMenu *
 gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow, gboolean multiple)
