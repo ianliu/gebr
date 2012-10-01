@@ -30,7 +30,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct gebr_gui_parameter_widget GebrGuiParameterWidget;
+typedef struct _GebrGuiParameterWidget GebrGuiParameterWidget;
 
 typedef void (*GebrGuiParameterValidatedFunc) (GebrGuiParameterWidget *widget,
 					       gpointer user_data);
@@ -39,7 +39,7 @@ typedef void (*changed_callback) (GebrGuiParameterWidget *widget, gpointer user_
 
 typedef struct _GebrGuiParameterWidgetPriv GebrGuiParameterWidgetPriv;
 
-struct gebr_gui_parameter_widget
+struct _GebrGuiParameterWidget
 {
 	GebrGuiValidatableWidget parent;
 
@@ -83,18 +83,18 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 /**
  *
  */
-void gebr_gui_parameter_widget_set_auto_submit_callback(struct gebr_gui_parameter_widget *parameter_widget,
+void gebr_gui_parameter_widget_set_auto_submit_callback(GebrGuiParameterWidget *parameter_widget,
 							changed_callback callback, gpointer user_data);
 
 /**
  *
  */
-void gebr_gui_parameter_widget_set_readonly(struct gebr_gui_parameter_widget *parameter_widget, gboolean readonly);
+void gebr_gui_parameter_widget_set_readonly(GebrGuiParameterWidget *parameter_widget, gboolean readonly);
 
 /**
  * Update input widget value from the parameter's value
  */
-void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *parameter_widget);
+void gebr_gui_parameter_widget_update(GebrGuiParameterWidget *parameter_widget);
 
 /**
  * gebr_gui_parameter_widget_validate:
@@ -105,17 +105,17 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
  *
  * Returns: %TRUE if the parameter was valid, %FALSE otherwise.
  */
-gboolean gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget);
+gboolean gebr_gui_parameter_widget_validate(GebrGuiParameterWidget *parameter_widget);
 
 /**
  * Update UI of list with the new separator
  */
-void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget *parameter_widget);
+void gebr_gui_parameter_widget_update_list_separator(GebrGuiParameterWidget *parameter_widget);
 
 /**
  * Rebuild the UI.
  */
-void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *parameter_widget);
+void gebr_gui_parameter_widget_reconfigure(GebrGuiParameterWidget *parameter_widget);
 
 gboolean gebr_gui_parameter_widget_match_completion(GtkEntryCompletion *completion,
 						    const gchar *key,

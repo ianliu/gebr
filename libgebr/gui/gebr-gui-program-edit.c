@@ -48,7 +48,7 @@ static GtkWidget *
 gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter * parameter, GSList ** radio_group);
 
 static void
-gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button, struct gebr_gui_parameter_widget *widget);
+gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button, GebrGuiParameterWidget *widget);
 
 static void
 gebr_gui_program_edit_instanciate(GtkButton * button, GebrGuiProgramEdit *program_edit);
@@ -498,7 +498,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		return expander;
 	} else {
 		GtkWidget *hbox;
-		struct gebr_gui_parameter_widget *gebr_gui_parameter_widget;
+		GebrGuiParameterWidget *gebr_gui_parameter_widget;
 
 		GebrGeoXmlParameter *selected;
 
@@ -576,7 +576,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
  * \internal
  */
 static void
-gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button, struct gebr_gui_parameter_widget *widget)
+gebr_gui_program_edit_change_selected(GtkToggleButton * toggle_button, GebrGuiParameterWidget *widget)
 {
 	gtk_widget_set_sensitive(widget->widget, gtk_toggle_button_get_active(toggle_button));
 	if (gtk_toggle_button_get_active(toggle_button))

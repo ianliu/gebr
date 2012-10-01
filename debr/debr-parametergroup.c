@@ -256,7 +256,7 @@ static GtkWidget* parameter_group_instances_setup_ui_foreach(struct ui_parameter
 	exclusive = GEBR_GEOXML_SEQUENCE(gebr_geoxml_parameters_get_default_selection(GEBR_GEOXML_PARAMETERS(instance)));
 	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
 	for (gint j = 0; parameter != NULL; ++j, gebr_geoxml_sequence_next(&parameter)) {
-		struct gebr_gui_parameter_widget *widget;
+		GebrGuiParameterWidget *widget;
 
 		if (template || exclusive == NULL) {
 			label_widget = gtk_label_new(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
