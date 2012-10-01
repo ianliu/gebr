@@ -116,28 +116,28 @@ static gboolean
 parameter_can_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
 		      GtkTreeViewDropPosition drop_position);
 
-static void parameter_default_widget_changed(GebrGuiParameterWidget *widget);
+static void parameter_default_widget_changed(GebrGuiParam *widget);
 static void parameter_required_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_is_list_changed(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_separator_changed(GtkEntry * entry, struct ui_parameter_dialog *ui);
 static void parameter_separator_changed_by_string(const gchar * separator, struct ui_parameter_dialog *ui);
-static void parameter_file_type_changed(GtkComboBox * combo, GebrGuiParameterWidget *widget);
+static void parameter_file_type_changed(GtkComboBox * combo, GebrGuiParam *widget);
 static void
-parameter_file_filter_name_changed(GebrGuiEnhancedEntry * entry, GebrGuiParameterWidget *widget);
+parameter_file_filter_name_changed(GebrGuiEnhancedEntry * entry, GebrGuiParam *widget);
 static void
-parameter_file_filter_pattern_changed(GebrGuiEnhancedEntry * entry, GebrGuiParameterWidget *widget);
-static void parameter_number_min_on_activate(GtkEntry * entry, GebrGuiParameterWidget *widget);
+parameter_file_filter_pattern_changed(GebrGuiEnhancedEntry * entry, GebrGuiParam *widget);
+static void parameter_number_min_on_activate(GtkEntry * entry, GebrGuiParam *widget);
 static gboolean
-parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParameterWidget *widget);
-static void parameter_number_max_on_activate(GtkEntry * entry, GebrGuiParameterWidget *widget);
+parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParam *widget);
+static void parameter_number_max_on_activate(GtkEntry * entry, GebrGuiParam *widget);
 static gboolean
-parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParameterWidget *widget);
-static void parameter_range_inc_on_activate(GtkEntry * entry, GebrGuiParameterWidget *widget);
+parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParam *widget);
+static void parameter_range_inc_on_activate(GtkEntry * entry, GebrGuiParam *widget);
 static gboolean
-parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParameterWidget *widget);
-static void parameter_range_digits_on_activate(GtkEntry * entry, GebrGuiParameterWidget *widget);
+parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParam *widget);
+static void parameter_range_digits_on_activate(GtkEntry * entry, GebrGuiParam *widget);
 static gboolean
-parameter_range_digits_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParameterWidget *widget);
+parameter_range_digits_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParam *widget);
 static void parameter_enum_options_changed(EnumOptionEdit * enum_option_edit, struct ui_parameter_dialog *ui);
 static void parameter_is_radio_button_comma_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
 static void parameter_is_radio_button_space_toggled(GtkToggleButton * toggle_button, struct ui_parameter_dialog *ui);
@@ -724,7 +724,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	GtkWidget *list_widget_hbox;
 
 	GebrGeoXmlProgramParameter *program_parameter;
-	GebrGuiParameterWidget *gebr_gui_parameter_widget;
+	GebrGuiParam *gebr_gui_parameter_widget;
 	GebrValidateCase *validate_case;
 
 	gboolean ret = TRUE;
@@ -1576,7 +1576,7 @@ static void parameter_reconfigure_default_widget(struct ui_parameter_dialog *ui)
 /**
  * \internal
  */
-static void parameter_default_widget_changed(GebrGuiParameterWidget *widget)
+static void parameter_default_widget_changed(GebrGuiParam *widget)
 {
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
 }
@@ -1652,7 +1652,7 @@ static void parameter_separator_changed_by_string(const gchar * separator, struc
 /**
  * \internal
  */
-static void parameter_file_type_changed(GtkComboBox * combo, GebrGuiParameterWidget *widget)
+static void parameter_file_type_changed(GtkComboBox * combo, GebrGuiParam *widget)
 {
 	gboolean is_directory;
 
@@ -1669,7 +1669,7 @@ static void parameter_file_type_changed(GtkComboBox * combo, GebrGuiParameterWid
  * \internal
  */
 static void
-parameter_file_filter_name_changed(GebrGuiEnhancedEntry * entry, GebrGuiParameterWidget *widget)
+parameter_file_filter_name_changed(GebrGuiEnhancedEntry * entry, GebrGuiParam *widget)
 {
 	gebr_geoxml_program_parameter_set_file_filter(widget->program_parameter,
 						      gebr_gui_enhanced_entry_get_text(entry), NULL);
@@ -1680,7 +1680,7 @@ parameter_file_filter_name_changed(GebrGuiEnhancedEntry * entry, GebrGuiParamete
  * \internal
  */
 static void
-parameter_file_filter_pattern_changed(GebrGuiEnhancedEntry * entry, GebrGuiParameterWidget *widget)
+parameter_file_filter_pattern_changed(GebrGuiEnhancedEntry * entry, GebrGuiParam *widget)
 {
 	gebr_geoxml_program_parameter_set_file_filter(widget->program_parameter,
 						      NULL, gebr_gui_enhanced_entry_get_text(entry));
@@ -1690,7 +1690,7 @@ parameter_file_filter_pattern_changed(GebrGuiEnhancedEntry * entry, GebrGuiParam
 /**
  * \internal
  */
-static void parameter_number_min_on_activate(GtkEntry * entry, GebrGuiParameterWidget *widget)
+static void parameter_number_min_on_activate(GtkEntry * entry, GebrGuiParam *widget)
 {
 	const gchar *min_str;
 	gdouble min;
@@ -1719,7 +1719,7 @@ static void parameter_number_min_on_activate(GtkEntry * entry, GebrGuiParameterW
  * \internal
  */
 static gboolean
-parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParameterWidget *widget)
+parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParam *widget)
 {
 	parameter_number_min_on_activate(entry, widget);
 	return FALSE;
@@ -1728,7 +1728,7 @@ parameter_number_min_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiPar
 /**
  * \internal
  */
-static void parameter_number_max_on_activate(GtkEntry * entry, GebrGuiParameterWidget *widget)
+static void parameter_number_max_on_activate(GtkEntry * entry, GebrGuiParam *widget)
 {
 	const gchar *max_str;
 	gdouble max;
@@ -1757,7 +1757,7 @@ static void parameter_number_max_on_activate(GtkEntry * entry, GebrGuiParameterW
  * \internal
  */
 static gboolean
-parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParameterWidget *widget)
+parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParam *widget)
 {
 	parameter_number_max_on_activate(entry, widget);
 	return FALSE;
@@ -1766,7 +1766,7 @@ parameter_number_max_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiPar
 /**
  * \internal
  */
-static void parameter_range_inc_on_activate(GtkEntry * entry, GebrGuiParameterWidget *widget)
+static void parameter_range_inc_on_activate(GtkEntry * entry, GebrGuiParam *widget)
 {
 	gdouble inc;
 	const gchar *min_str;
@@ -1794,7 +1794,7 @@ static void parameter_range_inc_on_activate(GtkEntry * entry, GebrGuiParameterWi
  * \internal
  */
 static gboolean
-parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParameterWidget *widget)
+parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParam *widget)
 {
 	parameter_range_inc_on_activate(entry, widget);
 	return FALSE;
@@ -1803,7 +1803,7 @@ parameter_range_inc_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiPara
 /**
  * \internal
  */
-static void parameter_range_digits_on_activate(GtkEntry * entry, GebrGuiParameterWidget *widget)
+static void parameter_range_digits_on_activate(GtkEntry * entry, GebrGuiParam *widget)
 {
 	gdouble digits;
 	const gchar *min_str;
@@ -1831,7 +1831,7 @@ static void parameter_range_digits_on_activate(GtkEntry * entry, GebrGuiParamete
  * \internal
  */
 static gboolean
-parameter_range_digits_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParameterWidget *widget)
+parameter_range_digits_on_focus_out(GtkEntry * entry, GdkEvent * event, GebrGuiParam *widget)
 {
 	parameter_range_digits_on_activate(entry, widget);
 	return FALSE;

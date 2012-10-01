@@ -78,7 +78,7 @@ on_parameters_help_button_clicked(GtkButton *button,
 }
 
 static void
-on_validated(GebrGuiParameterWidget *widget,
+on_validated(GebrGuiParam *widget,
 	     gpointer user_data)
 {
 	validate_and_save_flow();

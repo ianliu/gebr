@@ -68,7 +68,7 @@ struct ui_parameter_dialog {
 	GtkWidget *list_widget_hbox;
 
 	/** Structure built with #gebr_gui_parameter_widget_new, to construct the parameters edition UI. */
-	GebrGuiParameterWidget *gebr_gui_parameter_widget;
+	GebrGuiParam *gebr_gui_parameter_widget;
 	GtkWidget *separator_entry;
 	GtkWidget *comma_separator;
 	GtkWidget *space_separator;

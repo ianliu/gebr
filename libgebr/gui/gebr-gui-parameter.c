@@ -34,7 +34,7 @@
 #define DOUBLE_MAX +999999999
 #define DOUBLE_MIN -999999999
 
-struct _GebrGuiParameterWidgetPriv
+struct _GebrGuiParamPriv
 {
 	gboolean last_status;
 	struct {
@@ -44,27 +44,27 @@ struct _GebrGuiParameterWidgetPriv
 };
 
 /* Prototypes {{{1 */
-static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(GebrGuiParameterWidget *widget,
+static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(GebrGuiParam *widget,
 								GtkEntry *entry);
 
 static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
-								    GebrGuiParameterWidget *widget);
+								    GebrGuiParam *widget);
 
 static void on_variable_parameter_activate(GtkMenuItem * menu_item);
 
 static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle,
-				     GebrGuiParameterWidget *widget);
+				     GebrGuiParam *widget);
 
 static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
-							    GebrGuiParameterWidget *parameter_widget);
+							    GebrGuiParam *parameter_widget);
 
 static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
-				       GebrGuiParameterWidget *parameter_widget);
+				       GebrGuiParam *parameter_widget);
 
 static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget,
-							      GebrGuiParameterWidget *parameter_widget);
+							      GebrGuiParam *parameter_widget);
 
-static void on_entry_activate_add(GtkEntry *entry, GebrGuiParameterWidget *parameter_widget);
+static void on_entry_activate_add(GtkEntry *entry, GebrGuiParam *parameter_widget);
 
 static void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 					      GtkEntry     *entry);
@@ -79,7 +79,7 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 					     GtkTreeIter *iter,
 					     gpointer user_data);
 
-static GtkTreeModel *generate_completion_model(GebrGuiParameterWidget *parameter_widget);
+static GtkTreeModel *generate_completion_model(GebrGuiParam *parameter_widget);
 
 static void setup_entry_completion(GtkEntry *entry,
 				   GtkTreeModel *model,
@@ -93,34 +93,34 @@ static GList * get_compatible_variables(GebrGeoXmlParameterType type,
 					GebrGeoXmlDocument *proj);
 
 static gboolean on_spin_button_output(GtkSpinButton *spin,
-				      GebrGuiParameterWidget *widget);
+				      GebrGuiParam *widget);
 
 static gint on_spin_button_input(GtkSpinButton *spin,
 				 gdouble *rval,
-				 GebrGuiParameterWidget *widget);
+				 GebrGuiParam *widget);
 
-static GString *gebr_gui_parameter_widget_get_widget_value_full(GebrGuiParameterWidget *parameter_widget);
+static GString *gebr_gui_parameter_widget_get_widget_value_full(GebrGuiParam *parameter_widget);
 
-static gboolean on_list_value_widget_focus_out(GtkEntry *entry, GdkEventFocus *event, GebrGuiParameterWidget *self);
+static gboolean on_list_value_widget_focus_out(GtkEntry *entry, GdkEventFocus *event, GebrGuiParam *self);
 
 static void on_list_value_widget_validate(GtkEntry *entry,
-					  GebrGuiParameterWidget *parameter_widget);
+					  GebrGuiParam *parameter_widget);
 
-static void __set_type_icon(GebrGuiParameterWidget *parameter_widget);
+static void __set_type_icon(GebrGuiParam *parameter_widget);
 
-static void validate_list_value_widget(GebrGuiParameterWidget *self);
+static void validate_list_value_widget(GebrGuiParam *self);
 
 typedef enum {
 	COMPLETION_TYPE_VARIABLE,
 	COMPLETION_TYPE_PATH,
 } CompletionType;
 
-static void parameter_widget_set_icon(GebrGuiParameterWidget *widget,
+static void parameter_widget_set_icon(GebrGuiParam *widget,
 				      GebrGeoXmlParameter *param,
 				      GError *error)
 {
 	GtkEntry *entry;
-	GebrGuiParameterWidget *self = (GebrGuiParameterWidget*)widget;
+	GebrGuiParam *self = (GebrGuiParam*)widget;
 
 	if (self->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
 		entry = GTK_ENTRY(GEBR_GUI_FILE_ENTRY(self->value_widget)->entry);
@@ -165,16 +165,16 @@ static void parameter_widget_set_icon(GebrGuiParameterWidget *widget,
 	}
 }
 
-static gchar *parameter_widget_get_value(GebrGuiParameterWidget *widget)
+static gchar *parameter_widget_get_value(GebrGuiParam *widget)
 {
 	GString *value;
-	GebrGuiParameterWidget *self = (GebrGuiParameterWidget*)widget;
+	GebrGuiParam *self = (GebrGuiParam*)widget;
 	value = gebr_gui_parameter_widget_get_widget_value_full(self);
 	return g_string_free(value, FALSE);
 }
 
 /* Private Functions {{{1 */
-static gboolean __parameter_accepts_expression(GebrGuiParameterWidget *parameter_widget)
+static gboolean __parameter_accepts_expression(GebrGuiParam *parameter_widget)
 {
 	return parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
@@ -184,7 +184,7 @@ static gboolean __parameter_accepts_expression(GebrGuiParameterWidget *parameter
 }
 
 static void enum_value_to_label_set(GebrGeoXmlSequence * sequence, const gchar * label,
-				    GebrGuiParameterWidget *parameter_widget)
+				    GebrGuiParam *parameter_widget)
 {
 	GebrGeoXmlSequence *enum_option;
 
@@ -200,7 +200,7 @@ static void enum_value_to_label_set(GebrGeoXmlSequence * sequence, const gchar *
 }
 
 static const gchar *enum_value_to_label_get(GebrGeoXmlSequence * sequence,
-					    GebrGuiParameterWidget *parameter_widget)
+					    GebrGuiParam *parameter_widget)
 {
 	GebrGeoXmlSequence *enum_option;
 
@@ -213,7 +213,7 @@ static const gchar *enum_value_to_label_get(GebrGeoXmlSequence * sequence,
 }
 
 static void gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChooser * file_chooser,
-								    GebrGuiParameterWidget *parameter_widget)
+								    GebrGuiParam *parameter_widget)
 {
 	const gchar *filter_name;
 
@@ -251,7 +251,7 @@ static void gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChoos
 }
 
 static void
-gebr_gui_parameter_widget_set_non_list_widget_value(GebrGuiParameterWidget *parameter_widget,
+gebr_gui_parameter_widget_set_non_list_widget_value(GebrGuiParam *parameter_widget,
 						    const gchar * value)
 {
 	if (__parameter_accepts_expression(parameter_widget)) {
@@ -302,7 +302,7 @@ gebr_gui_parameter_widget_set_non_list_widget_value(GebrGuiParameterWidget *para
 	}
 }
 
-static GString *gebr_gui_parameter_widget_get_widget_value_full(GebrGuiParameterWidget *parameter_widget)
+static GString *gebr_gui_parameter_widget_get_widget_value_full(GebrGuiParam *parameter_widget)
 {
 	GString *value;
 
@@ -353,7 +353,7 @@ static GString *gebr_gui_parameter_widget_get_widget_value_full(GebrGuiParameter
 	return value;
 }
 
-static void gebr_gui_parameter_widget_report_change(GebrGuiParameterWidget *parameter_widget)
+static void gebr_gui_parameter_widget_report_change(GebrGuiParam *parameter_widget)
 {
 	if (parameter_widget->callback != NULL)
 		parameter_widget->callback(parameter_widget, parameter_widget->user_data);
@@ -364,7 +364,7 @@ static void gebr_gui_parameter_widget_report_change(GebrGuiParameterWidget *para
  * Update XML when user is manually editing the list
  */
 static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
-							    GebrGuiParameterWidget *parameter_widget)
+							    GebrGuiParam *parameter_widget)
 {
 	gebr_geoxml_program_parameter_set_parse_list_value(parameter_widget->program_parameter,
 							   parameter_widget->use_default_value,
@@ -378,7 +378,7 @@ static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
  *
  * Writes the input widget value into the parameter.
  */
-static void gebr_gui_parameter_widget_sync_non_list(GebrGuiParameterWidget *parameter_widget)
+static void gebr_gui_parameter_widget_sync_non_list(GebrGuiParam *parameter_widget)
 {
 	GString *value;
 
@@ -390,7 +390,7 @@ static void gebr_gui_parameter_widget_sync_non_list(GebrGuiParameterWidget *para
 }
 
 static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget,
-							      GebrGuiParameterWidget *parameter_widget)
+							      GebrGuiParam *parameter_widget)
 {
 	gebr_gui_parameter_widget_sync_non_list(parameter_widget);
 	gebr_gui_parameter_widget_report_change(parameter_widget);
@@ -401,7 +401,7 @@ static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget
  * __parameter_list_value_widget_update:
  * Update from the XML
  */
-static void __parameter_list_value_widget_update(GebrGuiParameterWidget *parameter_widget)
+static void __parameter_list_value_widget_update(GebrGuiParam *parameter_widget)
 {
 	GString *value;
 
@@ -423,7 +423,7 @@ static void __parameter_list_value_widget_update(GebrGuiParameterWidget *paramet
  * __on_edit_list_toggled:
  * Take action to start/finish editing list of parameter's values.
  */
-static void __on_edit_list_toggled(GtkToggleButton * toggle_button, GebrGuiParameterWidget *parameter_widget)
+static void __on_edit_list_toggled(GtkToggleButton * toggle_button, GebrGuiParam *parameter_widget)
 {
 	gboolean toggled;
 
@@ -471,7 +471,7 @@ static void __on_edit_list_toggled(GtkToggleButton * toggle_button, GebrGuiParam
 }
 
 static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit *gebr_gui_value_sequence_edit,
-					   GebrGuiParameterWidget *self)
+					   GebrGuiParam *self)
 {
 	GString *value;
 	GebrGeoXmlSequence *sequence;
@@ -515,7 +515,7 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit *gebr_gui_va
 }
 
 static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
-				       GebrGuiParameterWidget *parameter_widget)
+				       GebrGuiParam *parameter_widget)
 {
 	gebr_gui_parameter_widget_validate(parameter_widget);
 	__parameter_list_value_widget_update(parameter_widget);
@@ -524,7 +524,7 @@ static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
 /*
  * for parameter that accepts an expression (int and float)
  */
-static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
+static void __set_type_icon(GebrGuiParam *parameter_widget)
 {
 	gchar *result = NULL;
 	const gchar *value;
@@ -594,7 +594,7 @@ free:
 }
 
 static void
-gebr_gui_parameter_set_min_max(GtkEntry *entry, GebrGuiParameterWidget *parameter_widget)
+gebr_gui_parameter_set_min_max(GtkEntry *entry, GebrGuiParam *parameter_widget)
 {
 	const gchar *min, *max;
 	const gchar *number = gtk_entry_get_text(entry);
@@ -613,7 +613,7 @@ gebr_gui_parameter_set_min_max(GtkEntry *entry, GebrGuiParameterWidget *paramete
 	}
 }
 
-static void __on_activate(GtkEntry * entry, GebrGuiParameterWidget *parameter_widget)
+static void __on_activate(GtkEntry * entry, GebrGuiParam *parameter_widget)
 {
 	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 			parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
@@ -622,7 +622,7 @@ static void __on_activate(GtkEntry * entry, GebrGuiParameterWidget *parameter_wi
 }
 
 static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
-				     GebrGuiParameterWidget *parameter_widget)
+				     GebrGuiParam *parameter_widget)
 {
 	gebr_gui_parameter_widget_validate(parameter_widget);
 
@@ -636,7 +636,7 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 static gboolean
 __on_file_focus_out_event(GtkEntry *entry,
 			  GdkEventFocus *event,
-			  GebrGuiParameterWidget *parameter_widget)
+			  GebrGuiParam *parameter_widget)
 {
 	GebrGeoXmlDocument *line;
 	gebr_validator_get_documents(parameter_widget->validator, NULL, &line, NULL);
@@ -652,7 +652,7 @@ __on_file_focus_out_event(GtkEntry *entry,
 }
 
 static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
-				    GebrGuiParameterWidget *parameter_widget)
+				    GebrGuiParam *parameter_widget)
 {
 	GtkEntry *entry;
 	if (GEBR_GUI_IS_FILE_ENTRY(parameter_widget->value_widget)) {
@@ -671,7 +671,7 @@ static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
  * Create UI.
  */
 /* Widget construction function {{{ */
-static void gebr_gui_parameter_widget_configure(GebrGuiParameterWidget *parameter_widget)
+static void gebr_gui_parameter_widget_configure(GebrGuiParam *parameter_widget)
 {
 	gboolean may_complete;
 	GtkEntry *activatable_entry = NULL;
@@ -1044,7 +1044,7 @@ static gint compare_parameters_by_keyword(GebrGeoXmlProgramParameter * parameter
  *
  * Read dictionaries variables and build a popup menu to build expressions
  */
-static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(GebrGuiParameterWidget *widget,
+static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(GebrGuiParam *widget,
 								GtkEntry *entry)
 {
 	GebrGeoXmlDocument *flow, *line, *proj;
@@ -1059,7 +1059,7 @@ static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(GebrGuiParameter
  * Add dictionary submenu into entry popup menu
  */
 static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
-								    GebrGuiParameterWidget *widget)
+								    GebrGuiParam *widget)
 {
 	GtkWidget *menu_item;
 
@@ -1105,7 +1105,7 @@ static void on_variable_parameter_activate(GtkMenuItem * menu_item)
 	gtk_editable_set_position(GTK_EDITABLE(entry), position);
 }
 
-static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle, GebrGuiParameterWidget *widget)
+static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle, GebrGuiParam *widget)
 {
 	if (!gebr_geoxml_program_parameter_get_is_list(widget->program_parameter)) {
 		gtk_widget_mnemonic_activate(widget->value_widget, cycle);
@@ -1118,7 +1118,7 @@ static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle, GebrGuiParame
 	return TRUE;
 }
 
-static void on_entry_activate_add (GtkEntry *entry, GebrGuiParameterWidget *parameter_widget)
+static void on_entry_activate_add (GtkEntry *entry, GebrGuiParam *parameter_widget)
 {
 	if (gebr_geoxml_program_parameter_get_is_list(parameter_widget->program_parameter))
 		g_signal_emit_by_name (parameter_widget->gebr_gui_value_sequence_edit, "add-request");
@@ -1398,7 +1398,7 @@ get_compatible_variables(GebrGeoXmlParameterType type,
 	return g_list_sort(compat, (GCompareFunc) compare_parameters_by_keyword);
 }
 
-static GtkTreeModel *generate_completion_model(GebrGuiParameterWidget *widget)
+static GtkTreeModel *generate_completion_model(GebrGuiParam *widget)
 {
 	GebrGeoXmlDocument *flow, *line, *proj;
 	gebr_validator_get_documents(widget->validator, &flow, &line, &proj);
@@ -1441,7 +1441,7 @@ setup_entry_completion(GtkEntry *entry,
 }
 
 static gboolean on_spin_button_output(GtkSpinButton *spin,
-				      GebrGuiParameterWidget *widget)
+				      GebrGuiParam *widget)
 {
 	gchar *err = NULL;
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
@@ -1468,7 +1468,7 @@ static gboolean on_spin_button_output(GtkSpinButton *spin,
 
 static gint on_spin_button_input(GtkSpinButton *spin,
 				 gdouble *rval,
-				 GebrGuiParameterWidget *widget)
+				 GebrGuiParam *widget)
 {
 	gchar *err = NULL;
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
@@ -1491,19 +1491,19 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 	}
 }
 
-static gboolean on_list_value_widget_focus_out(GtkEntry *entry, GdkEventFocus *event, GebrGuiParameterWidget *self)
+static gboolean on_list_value_widget_focus_out(GtkEntry *entry, GdkEventFocus *event, GebrGuiParam *self)
 {
 	validate_list_value_widget(self);
 	return FALSE;
 }
 
-static void on_list_value_widget_validate(GtkEntry *entry, GebrGuiParameterWidget *self)
+static void on_list_value_widget_validate(GtkEntry *entry, GebrGuiParam *self)
 {
 	validate_list_value_widget(self);
 }
 
 static void
-validate_list_value_widget(GebrGuiParameterWidget *self)
+validate_list_value_widget(GebrGuiParam *self)
 {
 	GError *error = NULL;
 	gchar **exprs;
@@ -1609,24 +1609,24 @@ GtkWidget *gebr_gui_parameter_add_variables_popup(GtkEntry *entry,
 }
 
 static void
-parameter_widget_free(GebrGuiParameterWidget *self)
+parameter_widget_free(GebrGuiParam *self)
 {
 	gebr_geoxml_object_unref(self->parameter);
 	g_free(self->priv);
 	g_free(self);
 }
 
-GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
+GebrGuiParam *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
 						      GebrValidator       *validator,
 						      GebrMaestroInfo	  *info,
 						      gboolean             use_default_value,
 						      gpointer             data)
 {
-	GebrGuiParameterWidget *self;
-	GebrGuiParameterWidgetPriv *priv;
+	GebrGuiParam *self;
+	GebrGuiParamPriv *priv;
 
-	priv = g_new0(GebrGuiParameterWidgetPriv, 1);
-	self = g_new(GebrGuiParameterWidget, 1);
+	priv = g_new0(GebrGuiParamPriv, 1);
+	self = g_new(GebrGuiParam, 1);
 	self->priv = priv;
 	self->priv->last_status = TRUE;
 
@@ -1652,20 +1652,20 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	return self;
 }
 
-void gebr_gui_parameter_widget_set_auto_submit_callback(GebrGuiParameterWidget *parameter_widget,
+void gebr_gui_parameter_widget_set_auto_submit_callback(GebrGuiParam *parameter_widget,
 							changed_callback callback, gpointer user_data)
 {
 	parameter_widget->callback = callback;
 	parameter_widget->user_data = user_data;
 }
 
-void gebr_gui_parameter_widget_set_readonly(GebrGuiParameterWidget *parameter_widget, gboolean readonly)
+void gebr_gui_parameter_widget_set_readonly(GebrGuiParam *parameter_widget, gboolean readonly)
 {
 	parameter_widget->readonly = readonly;
 	gebr_gui_parameter_widget_reconfigure(parameter_widget);
 }
 
-void gebr_gui_parameter_widget_update(GebrGuiParameterWidget *parameter_widget)
+void gebr_gui_parameter_widget_update(GebrGuiParam *parameter_widget)
 {
 	if (gebr_geoxml_program_parameter_get_is_list(parameter_widget->program_parameter) == TRUE)
 		__parameter_list_value_widget_update(parameter_widget);
@@ -1677,7 +1677,7 @@ void gebr_gui_parameter_widget_update(GebrGuiParameterWidget *parameter_widget)
 }
 
 static gboolean
-gebr_gui_validatable_widget_validate(GebrGuiParameterWidget *widget,
+gebr_gui_validatable_widget_validate(GebrGuiParam *widget,
 				     GebrValidator          *self,
 				     GebrGeoXmlParameter    *param)
 {
@@ -1712,7 +1712,7 @@ gebr_gui_validatable_widget_validate(GebrGuiParameterWidget *widget,
 	return retval;
 }
 
-gboolean gebr_gui_parameter_widget_validate(GebrGuiParameterWidget *self)
+gboolean gebr_gui_parameter_widget_validate(GebrGuiParam *self)
 {
 	gboolean validate;
 
@@ -1740,12 +1740,12 @@ gboolean gebr_gui_parameter_widget_validate(GebrGuiParameterWidget *self)
 	return validate;
 }
 
-void gebr_gui_parameter_widget_update_list_separator(GebrGuiParameterWidget *parameter_widget)
+void gebr_gui_parameter_widget_update_list_separator(GebrGuiParam *parameter_widget)
 {
 	__parameter_list_value_widget_update(parameter_widget);
 }
 
-void gebr_gui_parameter_widget_reconfigure(GebrGuiParameterWidget *parameter_widget)
+void gebr_gui_parameter_widget_reconfigure(GebrGuiParam *parameter_widget)
 {
 	parameter_widget->parameter_type =
 	    gebr_geoxml_parameter_get_type(parameter_widget->parameter);
@@ -1855,7 +1855,7 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
 }
 
 void
-gebr_gui_parameter_widget_set_validated_callback(GebrGuiParameterWidget *widget,
+gebr_gui_parameter_widget_set_validated_callback(GebrGuiParam *widget,
 		GebrGuiParameterValidatedFunc callback, gpointer user_data)
 {
 	widget->priv->signal_validated.callback = callback;
