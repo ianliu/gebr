@@ -10,13 +10,15 @@
 
   <title>The <guilabel>Jobs</guilabel> tab</title>
 
-  <para>GêBr presents an interface to the organization and
+  <para>GêBR presents an interface to the organization and
   visualization of the results.</para>
 
   <para>As seen in 
     <xref linkend="flows_browser_execute_flow" />, GêBR switches to the 
-    <guilabel>Jobs</guilabel> tab whenever a Flow is
-    executed.</para>
+    <guilabel>Jobs</guilabel> tab whenever multiple Flows are
+    executed, in other cases, the user can switch through <guilabel>Flows</guilabel> tab,
+    using a arrow on info bar to fast view of jobs, localized on bottom of tab.
+    </para>
 
   <para>This tab has three sections:</para>
   <itemizedlist>
@@ -25,7 +27,7 @@
     <listitem><para>Righ Panel: Details of a selected job</para></listitem>
   </itemizedlist>
 
-  <section xml:id="sec_6_1">
+  <section xml:id="jobs_toolbar">
     <title>Toolbar</title>
     <figure>
       <title><guilabel>Jobs</guilabel> tab toolbar</title>
@@ -60,7 +62,7 @@
                 <imagedata fileref="../../common-images/trash-empty.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>). Eliminate from the Job Control the selected Job. Caution is needed because the
+          </guiicon>). Eliminate from the Jobs the selected Job. Caution is needed because the
           process is irreversible.</para>
         <para>The user can only clear jobs that are not being executed (<guiicon>
             <inlinemediaobject>
@@ -84,8 +86,21 @@
                 <imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>). The user can cancel a running or queued job. When a
-          Job is terminated in this manner, the Job will be marked
+          </guiicon>). The user can cancel a running (<guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/icone_tarefa_em_execucao.png" />
+              </imageobject>
+            </inlinemediaobject>
+          </guiicon>) 
+          or queued (<guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/chronometer.png" />
+              </imageobject>
+            </inlinemediaobject>
+          </guiicon>) job. 
+          When a Job is terminated in this manner, the Job will be marked
           with
           <guiicon>
             <inlinemediaobject>
@@ -113,7 +128,7 @@
       the mouse's right button.</para></tip>
   </section>
 
-  <section>
+  <section xml:id="jobs_left_panel">
     <title>Left Panel</title>
     <para>In the left panel, GêBR presents a list of flows executed by
       the user, ordered by moment of execution. Each exhibited Flow can be
@@ -172,14 +187,16 @@
     <caption>Screenshot of the <guilabel>Jobs</guilabel> tab list of jobs.</caption>
   </section>
 
-  <section>
+  <section xml:id="jobs_right_panel">
     <title>Right panel</title>
     <para>In the upper part, information of the selected flow is
       exhibited. More informations are shown clicking
-      over <emphasis>More Details</emphasis>. Among the exhibited
+      over <emphasis>Details</emphasis>. Among the exhibited
       information there are:</para>
     <itemizedlist>
+      <listitem><para>description of related flow</para></listitem>
       <listitem><para>moment of start/finish of the flow</para></listitem>
+      <listitem><para>elapsed time in execution</para></listitem>
       <listitem><para>input/output files</para></listitem>
       <listitem><para>the nodes group in which the flow were executed</para></listitem>
     </itemizedlist>

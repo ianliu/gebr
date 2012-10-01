@@ -35,7 +35,7 @@
   <xi:include href="flow-editor-tab.xml" />
   
   <!-- A aba Controle de Tarefas -->
-  <xi:include href="job-control-tab.xml" />
+  <xi:include href="jobs-tab.xml" />
   
   <!-- Menubar -->
   <xi:include href="menubar.xml" />  
