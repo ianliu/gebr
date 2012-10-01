@@ -798,6 +798,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 		                                     GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
 		                                     &resolved_input, NULL);
 
+	gint progs_error = 0;
 	/* Checking if the flow has at least one configured program */
 	gebr_geoxml_flow_get_program(flow, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq))
@@ -820,12 +821,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			continue;
 
 		if (gebr_geoxml_program_get_error_id(prog, NULL)) {
-			g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
-			            GEBR_GEOXML_FLOW_ERROR_PROGRAM,
-			            _("There are erroneous program(s)"));
-			gebr_geoxml_object_unref(seq);
-			gebr_pairstrfreev(pvector);
-			return FALSE;
+			progs_error++;
+			continue;
 		}
 
 		/* Program Loop doesn't have IO, so skip to the next program */
@@ -911,6 +908,16 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	}
 	g_free(resolved_input);
 	
+	if (progs_error > 0) {
+		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+		            GEBR_GEOXML_FLOW_ERROR_PROGRAM,
+		            _("There are %d %s with error"),
+		            progs_error, progs_error == 1? "program" : "programs");
+		gebr_geoxml_object_unref(seq);
+		gebr_pairstrfreev(pvector);
+		return FALSE;
+	}
+
 	if (first) {
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			    GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
