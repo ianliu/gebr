@@ -1430,11 +1430,11 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter,
 			gchar *label = gebr_geoxml_parameter_get_label(parameter);
 			str_value->str = g_markup_printf_escaped("%s",str_value->str);
 			g_string_append_printf(dump,
-			                       "      <tr class=\"param\">\n  "
+			                       "      <tr class=\"%s\">\n  "
 			                       "        <td class=\"label\">%s</td>\n"
 			                       "        <td class=\"value\">%s</td>\n"
 			                       "      </tr>\n",
-					       label, str_value->str);
+					       is_required? "param-required" : "param", label, str_value->str);
 			g_free(label);
 		}
 		g_string_free(str_value, TRUE);

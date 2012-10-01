@@ -29,6 +29,11 @@
 .parameters caption {
 	display:none;
 }
+
+.param-required {
+	font-weight: bold;
+}
+
 .io:before {
 	font-size: 12px;
 	font-weight: bold;
