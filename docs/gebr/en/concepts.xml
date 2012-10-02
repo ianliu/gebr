@@ -206,14 +206,13 @@
       Under maestro's coordination the nodes can even cooperate to conclude
       processing jobs fasters.</para>
  
-   <para>When the user decides to execute a flow, GêBR sends this
-      request to the Maestro, giving rise to
-      a <emphasis role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>. However
-      the Maestro does not execute the job itself. Indeed, it
-      dispatches the job to some of the nodes, under its
-      control. Besides, Maestro collects the results and all
-      information about the job, sending them back to GêBR, where they
-      are presented to the user.</para>
+   <para>When the user decides to execute a flow, GêBR sends this request to
+     the maestro, giving rise to a
+     <emphasis role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>.
+     However, the maestro does not execute the job itself, it dispatches the
+     job to some of the nodes under its control. All the information generated
+     by the job is collected and sent back to GêBR, where they are presented to
+     the user.</para>
 
    <para>This communication process, despite complex, is completely transparent
      to the user, which can concentrate on processing seismic data, leaving all
