@@ -164,31 +164,28 @@
     <para>The GêBR set of tools is composed by three main player
       categories: <emphasis role="bold">GêBR</emphasis><indexterm><primary>GêBR</primary><secondary>the
       interface</secondary></indexterm> (the interface
-    	itself), <emphasis role="bold">Maestros</emphasis>
+    	itself), <emphasis role="bold">maestros</emphasis>
 	    <indexterm><primary>Maestro</primary></indexterm>,
       and <emphasis role="bold">nodes
       </emphasis><indexterm><primary>Node
       </primary></indexterm>. But who are those guys?</para>
 
-    <para>The GêBR interface, sometimes referred as GêBR only, is the
-      graphical interface with whom the user interacts with to build
-      processing flows, execute them, inspect results, etc. Usually, this
-      interface is installed and is running in the machine user has
-      physical contatct with.</para>
+    <para>The GêBR interface, sometimes referred as GêBR only, is the graphical
+      interface with whom the user interacts with to build processing flows,
+      execute them, inspect results, etc. Usually, this interface is installed
+      and is running in the machine user has physical contatct with.</para>
 
-    <para>Through GêBR, it is possible to take advantage of as many
-      machines as the user has access, to run processing flows. Those
-      machines are referenced as <emphasis role="bold">nodes
-      </emphasis> . They may
-      be local, meaning the user is physically using them, or remote,
-      meaning the user has access to them through the network. No
-      matter where the machines are, they are equally treated by GêBR,
-      which means that the user does not have to care about
-      that.</para>
+    <para>Through GêBR, it is possible to take advantage of as many machines as
+      the user has access, to run processing flows. Those machines are
+      referenced as <emphasis role="bold">nodes</emphasis>. They may be
+      local, meaning the user is physically using them, or remote, meaning the
+      user has access to them through the network. No matter where the machines
+      are, they are equally treated by GêBR, which means that the user does not
+      have to care about that.</para>
 
-		<para>However, GêBR does not talk directly to the.
+		<para>However, GêBR does not talk directly to the nodes.
 			This communication is established through another
-			player, the <emphasis role="bold">Maestro</emphasis>
+			player, the <emphasis role="bold">maestro</emphasis>
 			<indexterm><primary>Maestro</primary></indexterm>. It
       acts as a coordinator of the nodes. Without
       interference, Maestro collects information about the state of
