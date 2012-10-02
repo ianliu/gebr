@@ -92,8 +92,8 @@
     <para>A <emphasis role="bold">menu</emphasis> is a representation
       of a single
       program<indexterm><primary>Program</primary></indexterm> or a
-      set of programs. This means that when the user adds a menu to a
-      flow, he or she is in fact adding one or more programs to the
+      set of programs. This means that when a menu is added to a
+      flow one or more programs might be inserted into the
       flow at once. Why is that so? Think about common tasks that are
       accomplished by a standard sequence of programs. Instead of
       building a flow by adding programs one by one, the flow could be
