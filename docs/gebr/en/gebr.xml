@@ -31,9 +31,6 @@
   <!-- A aba Fluxos -->
   <xi:include href="flows-tab.xml" />
   
-  <!-- A aba Editor de Fluxo -->
-  <xi:include href="flow-editor-tab.xml" />
-  
   <!-- A aba Controle de Tarefas -->
   <xi:include href="jobs-tab.xml" />
   

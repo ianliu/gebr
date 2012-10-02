@@ -52,6 +52,7 @@ common_images_DATA =				\
 	icone_colapsado.png			\
 	icone_configurado.png			\
 	icone_desabilitado.png			\
+	icone_prog_desabilitado.png		\
 	icone_escolher_arquivo.png		\
 	icone_expandido.png			\
 	icone_nao_configurado.png		\
