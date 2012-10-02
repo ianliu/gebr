@@ -150,10 +150,10 @@
     </itemizedlist>
 
     <tip>
-      <para>GêBR supports arithmetic expressions to define numeric
-	parameters, and text concatenation for text parameters. Besides,
-	it is possible to define quantities and operate with them 
-	to set up parameters of the programs.</para>
+      <para>GêBR supports arithmetic expressions to define numeric parameters,
+        and text concatenation for text parameters. Besides, it is possible to
+        define quantities and operate with them to set up parameters of the
+        programs.</para>
     </tip>
 
   </section>
