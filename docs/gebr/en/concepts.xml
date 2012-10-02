@@ -252,8 +252,8 @@
     </para>
     
     <para>
-      GêBR also has additional resources in menu bar, on the top of
-      the window.
+      There are also additional resources in menu bar, on the top of the
+      window:
       <itemizedlist>
         <listitem>
           Actions
@@ -267,10 +267,10 @@
             </listitem>
             <listitem>
               <guilabel>Maestro/Nodes</guilabel>: Configuration of
-              Maestro, nodes and Groups of nodes;
+              maestro, nodes and groups of nodes;
             </listitem>
             <listitem>
-              <guilabel>Quit</guilabel>: quit GêBR.
+              <guilabel>Quit</guilabel>: Quits GêBR.
             </listitem>
           </itemizedlist>
         </listitem>
@@ -278,10 +278,10 @@
           Help 
           <itemizedlist>
             <listitem>
-              <guilabel>Help</guilabel>: GêBR's documentation;
+              <guilabel>Help</guilabel>: This documentation;
             </listitem>
             <listitem>
-              <guilabel>Examples</guilabel>: examples of seismic processing;
+              <guilabel>Examples</guilabel>: Examples of seismic processing;
             </listitem>
             <listitem>
               <guilabel>About</guilabel>: GêBR's version, license and
@@ -303,4 +303,3 @@
     -->
     </section>
 </chapter>
-
