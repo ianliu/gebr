@@ -129,8 +129,8 @@
 
     <note>
       <para>Even when a menu represents more than one program, at the moment
-        the menu is added to the Flow, all programs which comprises it are
-        added independently to the Flow. This means that resulting Flow will be
+        the menu is added to the flow, all programs which comprises it are
+        added independently to the flow. This means that resulting flow will be
         the same, no matter how the programs have been added, at once or one by
         one.</para>
     </note>
@@ -142,11 +142,11 @@
       parameters<indexterm><primary>Parameters</primary><secondary>supported
       types of</secondary></indexterm> of the following types:</para>
     <itemizedlist>
-      <listitem>Number (real or integers, limited or not to a range)</listitem>
+      <listitem>Numeric</listitem>
       <listitem>Text</listitem>
       <listitem>Booleans</listitem>
       <listitem>Files</listitem>
-      <listitem>Predefined list of options</listitem>
+      <listitem>List of options</listitem>
     </itemizedlist>
 
     <tip>
