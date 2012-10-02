@@ -11,25 +11,25 @@
   <title>The <guilabel>Projects and Lines</guilabel> tab</title>
 
   <para>In the <guilabel>Projects and Lines</guilabel> tab
-  (see <xref linkend="sample_project_line_tab"/>)
-  the user can create and manage his projects and lines.</para>
+    (see <xref linkend="sample_project_line_tab"/>)
+    the user can create and manage his projects and lines.</para>
 
-    <figure id="sample_project_line_tab">
-      <title>Projects and Line tab</title>
-      <mediaobject>
-        <caption>Screenshot of the <guilabel>Projects and
-            Lines</guilabel> tab.</caption>
-        <imageobject>
-          <imagedata fileref="../images/janela_principal_1.png"  contentwidth="706px" contentdepth="426px" />
-        </imageobject>
-      </mediaobject>
-    </figure>
+  <figure id="sample_project_line_tab">
+    <title>Projects and Line tab</title>
+    <mediaobject>
+      <caption>Screenshot of the <guilabel>Projects and
+          Lines</guilabel> tab.</caption>
+      <imageobject>
+        <imagedata fileref="../images/janela_principal_1.png"  contentwidth="706px" contentdepth="426px" />
+      </imageobject>
+    </mediaobject>
+  </figure>
 
-    <para>The right side shows details about the selected
-      element (a Project or a Line) and is slightly different depending
-      on the context. Despite the nature of the selected element, there are 
-      two buttons at the bottom of the <guilabel>Details</guilabel>
-      frame edit and visualize the report.</para>
+  <para>The right side shows details about the selected
+    element (a Project or a Line) and is slightly different depending
+    on the context. Despite the nature of the selected element, there are
+    two buttons at the bottom of the <guilabel>Details</guilabel>
+    frame edit and visualize the report.</para>
     
   <tip>
     <para>Try using a <emphasis>context menu</emphasis> instead of the
