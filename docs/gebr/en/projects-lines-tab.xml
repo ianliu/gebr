@@ -25,12 +25,6 @@
     </mediaobject>
   </figure>
 
-  <para>The right side shows details about the selected
-    element (a Project or a Line) and is slightly different depending
-    on the context. Despite the nature of the selected element, there are
-    two buttons at the bottom of the <guilabel>Details</guilabel>
-    frame edit and visualize the report.</para>
-    
   <tip>
     <para>Try using a <emphasis>context menu</emphasis> instead of the
       buttons on the toolbar. To do
