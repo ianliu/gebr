@@ -118,13 +118,13 @@
           <imagedata fileref="../images/menu2.png" contentwidth="504px" contentdepth="93px" />
         </imageobject>
       </mediaobject>
-      <caption>A common flow to add header to a raw data is built by
-        the sequence of <emphasis>SU Add Header</emphasis>
-        and <emphasis>SU Set Header</emphasis>. On top, it is
-        represented the flow built from two Menus, one for <emphasis>SU
-          Add Header</emphasis> and another for <emphasis>SU Set
-          Header</emphasis>. On bottom, the same flow was built from only
-        one Menu, that encapsulates both programs.</caption>
+      <caption>A common flow to add header to a raw data is built by sequencing
+        <emphasis>SU Add Header</emphasis> and <emphasis>SU Set
+          Header</emphasis>. The top image represents the flow built from two
+        menus, one for <emphasis>SU Add Header</emphasis> and another for
+        <emphasis>SU Set Header</emphasis>. The bottom one represents the same
+        flow, but built from only one menu, that encapsulates both
+        programs.</caption>
     </figure>
 
     <note>
