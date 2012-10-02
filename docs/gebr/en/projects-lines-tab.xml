@@ -12,16 +12,18 @@
 
   <para>In the <guilabel>Projects and Lines</guilabel> tab
     (see <xref linkend="sample_project_line_tab"/>)
-    the user can create and manage his projects and lines.</para>
+    the user can create and manage his projects and lines. The right-hand side
+    of the screen shows the details of the selected item, like its name,
+    description and creation date.</para>
 
   <figure id="sample_project_line_tab">
     <title>Projects and Line tab</title>
     <mediaobject>
       <caption>Screenshot of the <guilabel>Projects and
           Lines</guilabel> tab.</caption>
-      <imageobject>
-        <imagedata fileref="../images/janela_principal_1.png"  contentwidth="706px" contentdepth="426px" />
-      </imageobject>
+      <!-- <imageobject> -->
+      <!--   <imagedata fileref="../images/janela_principal_1.png"  contentwidth="706px" contentdepth="426px" /> -->
+      <!-- </imageobject> -->
     </mediaobject>
   </figure>
 
