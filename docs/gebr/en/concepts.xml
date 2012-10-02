@@ -223,27 +223,30 @@
     <title>GêBR interface layout</title>
 
     <para>
-      The GêBR interface is intentionally simple. It is organized in tabs:
+      The GêBR interface is intentionally simple. It is organized in three main
+      tabs:
       <itemizedlist>
-	<listitem>
-	  <guilabel>Projects and Lines</guilabel>: for creating and manipulating
-	  Projects and Lines;
-	</listitem>
-	<listitem>
-	  <guilabel>Flows</guilabel>: for creating, editing and executing Flows;
-	</listitem>
-	<listitem>
-	  <guilabel>Jobs</guilabel>: for inspecting the results.
-	</listitem>
+        <listitem>
+          <guilabel>Projects and Lines</guilabel>: for creating and
+          manipulating Projects and Lines;
+        </listitem>
+        <listitem>
+          <guilabel>Flows</guilabel>: for creating, editing and executing
+          Flows;
+        </listitem>
+        <listitem>
+          <guilabel>Jobs</guilabel>: for inspecting the results.
+        </listitem>
       </itemizedlist>
+
       <!--
       <figure>
-	<mediaobject>
+        <mediaobject>
           <caption>GêBR tabs.</caption>
           <imageobject>
             <imagedata fileref="../images/GeBR_tabs.png" contentwidth="706px" contentdepth="456px" />
           </imageobject>
-	</mediaobject>
+        </mediaobject>
       </figure>
       -->
     </para>
