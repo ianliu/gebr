@@ -33,7 +33,6 @@ common_images_DATA =				\
 	botao_matar_tarefa.png			\
 	botao_mudar_estado.png			\
 	botao_salvar_estado.png			\
-	botao_salvar_estado_lista.png		\
 	botao_salvar_log.png			\
 	botao_terminar_tarefa.png		\
 	chronometer.png				\
@@ -60,6 +59,7 @@ common_images_DATA =				\
 	icone_tarefa_em_execucao.png		\
 	icone_tarefa_terminada_erro.png		\
 	integer-icon.png			\
+	photos.png						\
 	trash-empty.png				\
 	$(NULL)
 

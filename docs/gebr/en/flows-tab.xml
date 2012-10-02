@@ -512,81 +512,147 @@
   </section>
 
   <section xml:id="flows_save_state_flow">
-    <title>Saving a Flow's state</title>
-    <para>The user will find situations when working with GêBR it will be
-      useful to use an existing Flow as a basis to create new
-      Flows. For example, the user might want to experiment with Flows that
+    <title>Taking a snapshot of a flow</title>
+    <para>There are situations when working with GêBR it will be
+      useful to use an existing flow as a basis to create new
+      flows. For example, to experiment with flows that
       are only slightly different from one another, however without
-      having to discard or modify the original Flow.</para>
-
-    <para>A way to do this is to copy and paste the Flow (see the
+      having to discard or modify the original flow.
+    </para>
+    <para>A way to do this is to copy and paste the flow (see the
       section <xref linkend="flows_copy_paste_del_flows" />.
-      Another way is to save the state of the original Flow, then edit
-      it to the heart desire, and when the user wishes, he or she can return the
-      Flow to its original state. To
-      <emphasis role="bold">save the Flow's state</emphasis>:</para>
+      Another way is to take a snapshot of the original flow, then edit
+      it to the heart desire, and when the user wishes return the
+      flow to its original state.
+    </para>
+    <para> A very useful tool in GêBR is the snapshot. Through a snapshot, GêBR stores the 
+    settings of your flow so the user can come back to it later. All snapshots of the 
+    flow are presented in the flows tab. To <emphasis role="bold">take a snapshot</emphasis>
+     of a flow:</para>
     <procedure>
       <step>
-        <para>Select the Flow and left-click on 
-          <guiicon>
+        <para>Select the flow and left-click on More button on Toolbar.</para>
+      </step>
+      <step>
+       <para>Then click on 
+        <guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/botao_salvar_estado.png" />
               </imageobject>
             </inlinemediaobject>
-        </guiicon>.</para>
+        </guiicon> Take a Snapshot.</para>
       </step>
       <step>
-        <para>If the user wants, he or she can write a comment on the state in the
-        dialog box <guilabel>Save the Flow's state</guilabel>, as to
+        <para>It's really necessary to write a description of the 
+        snapshot in the dialog box <guilabel>Save the snapshot description</guilabel>, to
         identify this saved state later on.</para>
+        <figure>
+           <title>Save the snapshot description</title>
+			<mediaobject>
+				<caption>Save the snapshot description</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_snapshot_description_dialog.png"  contentwidth="419px" contentdepth="167px"/>
+				</imageobject>
+			</mediaobject>
+		</figure>
       </step>
       <step>
         <para>Left-click on 
-          <guibutton>OK</guibutton>.</para>
+          <guibutton>OK</guibutton> to save your snapshot</para>
       </step>
     </procedure>
     <note>
-      <para>There is no limit on the number of states for each
-      Flow.</para>
+      <para>Useful keybinds are available here: Ctrl+S takes a snapshot of the selected flow.</para>
+      <para>There is no limit on the number of snapshots for each flow.</para>
     </note>
-
-    <para>To open the list of saved states left-click on 
+    <para>To see the saved snapshots, just left-click on 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
-            <imagedata fileref="../../common-images/botao_salvar_estado_lista.png" />
+            <imagedata fileref="../../common-images/photos.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>, to the right of the button 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_salvar_estado.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon>, then select the state that is desired to recover. Whenever
-     the user select a saved state from the list, the dialog
-      <emphasis>Backup Current State</emphasis> will appear. If the user click on 
-      <guibutton>Yes</guibutton> the dialog <emphasis>Save the Flow's
-      State</emphasis> will appear, where the user can save this new
-      state. If the user click on <guibutton>No</guibutton>, GêBR will
-      simply revert to the chosen state without saving the current
+      </guiicon> 
+    </para>
+    <para>If a snapshot of a flow was taken and for some reason undesired modifications 
+    	 were made to it, is possible to revert to the desired snapshot through 
+     	 double-click on the snapshot that is desired to revert. Whenever a snapshot is
+    	 reverted, the dialog <emphasis>Backup Current State</emphasis> will appear. 
+    <figure>
+     <title>Dialog of Backup Current State</title>
+	 <mediaobject>
+	  <caption>Dialog of Backup Current State.</caption>
+      <imageobject>
+		<imagedata fileref="../images/GeBR_reverting_modified.png"  contentwidth="371px" contentdepth="309px" />
+	  </imageobject>
+	 </mediaobject>
+	</figure>
+      Clicking on <guibutton>Take a snapshot and proceed</guibutton> the dialog <emphasis>Save the snapshot 
+      description</emphasis> will appear, where is possible save this new
+      snapshot. Clicking on <guibutton>Proceed discarding changes</guibutton>, GêBR will
+      simply revert to the chosen snapshot without saving the current
       state.</para>
     <tip>
-      <para>If the user is sure that he or she has saved the current state, GêBR
-      recommends that the user click on <guibutton>No</guibutton>, in the
-      dialog box <emphasis>Backup Current State</emphasis>, as to
-      avoid a bloated state list.</para>
+      <para>If the current state was previously saved, GêBR
+      recommends that the user click on <guibutton>Proceed discarding changes</guibutton>, in the
+      dialog box <emphasis>Backup Current State</emphasis>, as to avoid a bloated snapshot view.</para>
     </tip>
     <caution>
       <para>GêBR continuously saves the list of Flow states. Even if
-      the user turns off the computer this list will be recovered when the user
-      opens GêBR again. However, if the user <emphasis role="bold">deletes
-      the Flow</emphasis> all the saved states
+      the computer was turned off, this list will be recovered when GêBR 
+      is opened again. However, if the <emphasis role="bold">flow was 
+      deleted</emphasis> all the saved states
       will <emphasis role="bold">immediately disappear
       forever</emphasis>.</para>
     </caution>
+    <para>Through a right-click over the target snapshot, the user has the option to execute, 
+    	delete or revert it. The right-click over the current stage (Now) allows the user to 
+    	Run the current flow or to take a snapshot thereof.
+	</para>
+	<para>In this view, also is possible use multiple selection just click over several snapshots 
+		and the actions are disposable through the right-click over a snapshot. After to choose 
+		several snapshots and the action, this action will be applied in all selected snapshots. 
+	</para>
+	<para>To deselect a snapshot is as easy as select one, the user just need to click over the 
+		undesired snapshot. Also is possible deselect all the selected snapshots by clicking 
+		on the white area in this view. 
+    </para>
+	<note>
+		<para>Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected snapshots
+			one after another; <keycap>Ctrl+Shift+R</keycap> runs the
+			selected snapshots parallely (keybind activated just if multiple snapshots are selected);
+			<keycap>Delete</keycap> delete the selected snapshots; 
+		</para>
+	</note>
+	<para>Below is an example of the snapshot use:
+	 <figure>
+      <title>Example of Snapshot use</title>
+	  <mediaobject>
+	   <caption>Example of Snapshot use.</caption>
+       <imageobject>
+		 <imagedata fileref="../images/GeBR_snapshot_example.png"  contentwidth="763px" contentdepth="634px" />
+	   </imageobject>
+	  </mediaobject>
+	 </figure>
+	</para>
+	<para>A user that uses different versions of the same flow may also be benefited 
+		by the use of snapshots. An option would be to save many different flows, one for 
+		each version, which drawback is the pollution of the flows tab. Another option, 
+		using the feature above, is taking a snapshot of each version of the flow.
+		For instance, in the figure, the user would be storing two versions derived from 'B'. 
+	</para>
+	<para>The graph indicates from which version each snapshot was derived from. 
+		For instance, in the graph of the figure, is possible to see that the snapshot 'B' was 
+		based on the snapshot 'A'. 
+	</para>
+	<note>
+		<para>GêBR deals with the idea of origin of the snapshot. In the graph of the figure, 
+			'B1' and 'B2' come from 'B' which, by its turn, comes from 'A'. If the user deletes 'B', 
+			GêBR will consider 'B1'and 'B2' as originated from 'A'. 
+		</para>
+	</note>
+	
   </section>
 
   <section xml:id="flows_import_flow">
