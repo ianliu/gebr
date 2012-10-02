@@ -44,5 +44,7 @@
 
   <!-- Index -->
   <index xmlns='http://docbook.org/ns/docbook'/>
-    
+
+  <!-- Glossary -->
+  <xi:include href='glossary.xml' />
 </book>

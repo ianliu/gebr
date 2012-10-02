@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<glossary>
+  <glossdiv>
+    <title>F</title>
+    <glossentry id="Flow">
+      <glossterm>Flow</glossterm>
+      <glossdef>
+        <para>A sequence of programs that may transform the input data.</para>
+      </glossdef>
+    </glossentry>
+  </glossdiv>
+</glossary>
