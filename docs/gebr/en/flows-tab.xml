@@ -666,7 +666,7 @@
 			</itemizedlist>
 		</para>
 		
-		<para>The user can select more than one flow, and then execute them all. To make a
+		<para>More than one flow can be selected, and then execute them all. To make a
 			multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
 			the arrow keys while <keycap>Shift</keycap> is pressed.
 		</para>
@@ -689,19 +689,18 @@
 							In case of multiple flows, the default is executing one after another.
 						</step>
 						<step>
-							The flow (or flows) selected going to be executed immediately.
+							The flow (or flows) selected is (are) going to be executed immediately.
 						</step>
 						<step>
-							If flow is parallelizable, the job will dispatch on all nodes of maestro,
-							otherwise, choose the best node.
+							If the flow is parallelizable, the job will be dispatched on all group's nodes. If not parallelizable, it's necessary to choose the best node.
 						</step>
 						<step>
-							Parallelizable flows are going to be split by nominal capacity 
-							(total number of cores), otherwise, the flow will not split.
+							Parallelizable flows are going to be splitted by nominal capacity 
+							(total number of cores). If not parallelizable, the flow will not be splitted.
 							(For more information, see <xref linkend="technical_aspects_multicores"/>).
 						</step>
 						<step>
-							The execution of flow going to dispute resources with other processes. 
+							The flow execution is going to compete for resources with other processes. 
 							(For more information, see <xref linkend="technical_aspects_priority_execution"/>).
 						</step>
 					</procedure>
@@ -712,9 +711,9 @@
 				</para>
 				
 				<note>
-					<para>The user can save some execute configuration like groups of nodes, 
-					number of parts and priority using a Setup and Run. That configuration
-					going to be a new default for basic Run.
+					<para>Some execution configuratioin (like group's nodes, number
+					 of tasks splitted and priority) can be saved using Setup and Run. That configuration
+					is going to be a new default for basic Run.
 					(For more information, see <xref linkend="flows_detailed_execution" />)</para>
 				</note>
 				
@@ -730,8 +729,7 @@
 			<section xml:id="flows_detailed_execution">
 				<title>Run and Setup</title>
 				<para>
-					The user can set many execution details before triggering a Job and then just have to
-					click on Run to execute the Job. 
+					Many execution details can be set before triggering a Job. After setting, click on Run to execute the job. 
 				</para>
 				<figure>
 					<title>Run and Setup</title>
@@ -751,18 +749,18 @@
 								<imagedata fileref="../../common-images/detailed_execution.png" />
 							</imageobject>
 						</inlinemediaobject>
-					</guiicon>, the user can set:
+					</guiicon>, it can be set:
 
 					<procedure>
 						<step>
 							How the Jobs are going to be executed. 
-							<emphasis role="bold">This option just appear if the user selects multiple 
-							Jobs for running (multiple execution).</emphasis>
+							<emphasis role="bold">This option just appear if multiple 
+							jobs are selected for running (multiple execution).</emphasis>
 							<substeps>
 								<step><guilabel>One after another:</guilabel>
 									  Flows can be executed one after another, in
 									  the order they are on the Flows list.
-									  Each Flow waits for the end of the previous job, to be
+									  Each flow awaits for the end of the previous job to be
 									  executed.
 								</step> 
 								<step><guilabel>Simultaneously:</guilabel>
@@ -773,25 +771,25 @@
 							</substeps>
 						</step>
 						<step>
-							Whether the Jobs must wait for some task or not. The user can trigger the Jobs after
-							the ending of another task or immediately after clicking the execution button.
+							Whether the Jobs must wait for some task or not. Jobs can be triggered  after
+							the ending of another task or immediately by clicking the execution button.
 						</step>
 						<step>
-							Where he wants to dispatch the Jobs. The user can choose the nodes or the set of nodes which he wants to
-							process the Jobs. A special option is the Choose automatically, that
-							permits the Maestro to search for the least loaded nodes or set of nodes. As the user changes this parameter,
-							GêBR presents the number of cores of the choosen group.
+							Where jobs must be dispatched. Nodes or set of nodes can be choosen to
+							process the Jobs. A special option is the Choose automatically. It
+							allows the Maestro to search for the least loaded nodes or set of nodes. As the user changes this parameter,
+							GêBR shows the number of cores of the choosen group.
 						</step>
 						<step>
-							The number of parts the user wants to split the Jobs. This parameter is valid just in the case
-							there is a parallelizable Job among the selected Jobs. The nominal capacity is given by
-							the number of cores, according to the choice of the group of nodes. For
-							non-parallelizable Jobs, this parameter is automatically set to 1. For more
+							The number of tasks settled to split the jobs. This parameter is valid only when
+							there is a parallelizable job among the selected jobs. The nominal capacity is given by
+							the number of cores, according to the choice of the group's nodes. For
+							non-parallelizable jobs, this parameter is automatically set to 1. For more
 							information, consult <xref linkend="technical_aspects_multicores"/>.
 						</step>
 						<step>
-							How the Job must compete with the other processes of the system. In very loaded nodes,
-							this tool can make all the difference because the Jobs will have less precedence than the
+							How the Job must compete with the processes on the system. In overloaded nodes,
+							this option can make all the difference because the jobs will have less priority than the
 							other processes running on the system. For more
 							information, consult <xref linkend="technical_aspects_priority_execution"/>.
 						</step>
@@ -799,7 +797,7 @@
 				</para>
 				<note>
 					<para>
-						The user can save itens 3, 4 and 5 for future executions by checking <guilabel>Save Preferences</guilabel>.
+						Itens 3, 4 and 5 can be saved for future executions by checking <guilabel>Save Preferences</guilabel>.
 					</para>
 				</note>
 			</section>
