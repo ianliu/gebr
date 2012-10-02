@@ -11,7 +11,7 @@
   <title>Concepts</title>
 
   <section xml:id="concepts_elements">
-    <title>Projects, Lines and Flows</title>
+    <title>Projects, lines and flows</title>
     
     <para>The processing of a seismic data is carried out
       by <emphasis>processing
@@ -25,15 +25,15 @@
       so on.</para>
 
     <para>In GêBR, processing flows are referenced
-      as <emphasis role="bold">Flows</emphasis><indexterm><primary>Flow</primary></indexterm>. The
+      as <emphasis role="bold">flows</emphasis><indexterm><primary>Flow</primary></indexterm>. The
       complete processing of a seismic data (also known as
       a <emphasis>seismic line</emphasis>, in 2D case) involves
       several processing flows. The set of processing flows is
       referenced as
-      a <emphasis role="bold">Line</emphasis><indexterm><primary>Line</primary></indexterm>
+      a <emphasis role="bold">line</emphasis><indexterm><primary>Line</primary></indexterm>
       in the GêBR interface. Furthermore, it is common to have many
       seismic lines acquired on a target area. A set of seismic lines
-      is known as a <emphasis role="bold">Project</emphasis><indexterm><primary>Project</primary></indexterm>, in
+      is known as a <emphasis role="bold">project</emphasis><indexterm><primary>Project</primary></indexterm>, in
       GêBR.</para>
 
     <para>In summary, GêBR has three levels organization, from top to
@@ -42,14 +42,14 @@
       <listitem>
 	<para>
           <emphasis role="bold">Project</emphasis>: It is a set of
-          <emphasis role="bold">Lines</emphasis>. A Project has only few
+          <emphasis role="bold">lines</emphasis>. A project has only few
 	  basic information and is used to cluster lines related
 	  somehow.</para>
       </listitem>
       <listitem>
 	<para>
           <emphasis role="bold">Line</emphasis>: It is a set of 
-          <emphasis role="bold">Flows</emphasis>. During the setup of
+          <emphasis role="bold">flows</emphasis>. During the setup of
           the Line, some important choices have to be made, mainly
           concerning the organization of the <emphasis>processing
             products</emphasis> (intermediate data, figures, tables, etc)
@@ -66,37 +66,37 @@
     </itemizedlist>
 
     <para>
-      Thus, before creating and executing Flows, it's necessary to create
+      Thus, before creating and executing flows, it's necessary to create
       at least one Project owning one
-      Line. <xref linkend="projects_lines_create_projects"/>,
+      line. <xref linkend="projects_lines_create_projects"/>,
       <xref linkend="projects_lines_create_lines"/> and
       <xref linkend="flows_create_flow"/> explain how this is
       accomplished.
     </para>
 
-    <para>To assemble a Flow, the user has not only to select
+    <para>To assemble a flow, the user has not only to select
       programs, but also configure them properly, through their
-      parameters. Once the Flow is ready, it is time to actually
+      parameters. Once the flow is ready, it is time to actually
       execute it.</para>
   </section>
 
   <section xml:id="concepts_programs_and_menus">
     <title>Menus, programs and their parameters</title>
 
-    <para>A Flow is a sequence of programs, as just explained. In
+    <para>A flow is a sequence of programs, as just explained. In
       GêBR, the user might think that there is a list of available
-      programs to assemble Flows. This is partially true only. Indeed,
-      Flows are built from <emphasis role="bold">Menus</emphasis><indexterm><primary>Menu</primary></indexterm>. But
-      what is a Menu?</para>
+      programs to assemble flows. This is partially true only. Indeed,
+      flows are built from <emphasis role="bold">menus</emphasis><indexterm><primary>Menu</primary></indexterm>. But
+      what is a menu?</para>
 
-    <para>A <emphasis role="bold">Menu</emphasis> is a representation
+    <para>A <emphasis role="bold">menu</emphasis> is a representation
       of a single
       program<indexterm><primary>Program</primary></indexterm> or a
-      set of programs. This means that when the user adds a Menu to a
-      Flow, he or she is in fact adding one or more programs to the
-      Flow at once. Why is that so? Think about common tasks that are
+      set of programs. This means that when the user adds a menu to a
+      flow, he or she is in fact adding one or more programs to the
+      flow at once. Why is that so? Think about common tasks that are
       accomplished by a standard sequence of programs. Instead of
-      building a Flow by adding programs one by one, the Flow could be
+      building a flow by adding programs one by one, the flow could be
       built from a Menu, which packs the whole set of programs. For
       example, consider the task of adding header to a raw data to
       come up with a seismic data in Seismic Unix
