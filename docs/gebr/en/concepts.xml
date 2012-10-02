@@ -194,17 +194,12 @@
     <figure xml:id="communication_diagram">
       <title>Communication layout between GêBR players</title>
       <mediaobject>
-	<imageobject>
+        <imageobject>
           <imagedata fileref="../images/gebr-connections.png" contentwidth="669px" contentdepth="272px" />
         </imageobject>
       </mediaobject>
-      <caption>GêBR has no direct access to nodes. All
-      communitation flows through the Maestro, which is responsible to
-			receive GêBR requests and inquires and root them the nodes,
-			according its own criteria, always taking performance
-      into account. Maestro also centralizes outputs from the nodes 
-      and send them back to GêBR.
-      </caption>
+      <caption>All communitation between GêBR and the nodes are intermediated
+        by the maestro.</caption>
     </figure>
   
     <para>The nodes put their computational power at
