@@ -263,7 +263,7 @@
       </step>
       <step>
         <para>Now, with all the parameters set, we can run the flow (as in section 
-          <xref linkend="flows_browser_execute_flow" />), to see in which week days the holidays are going to
+          <xref linkend="flows_execute_flow" />), to see in which week days the holidays are going to
           be for the next five years.</para>
         <figure>
           <mediaobject>

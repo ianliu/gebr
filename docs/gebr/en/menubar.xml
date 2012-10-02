@@ -61,7 +61,7 @@
     <para>The connection assistant explains the user to connect to a Maestro, 
     its servers and enable remote browsing 
     (for more information, see <xref linkend="additional_features_maestro_servers_configuration" /> 
-    and <xref linkend="remote_browsing" />).</para>
+    and <xref linkend="technical_aspects_remote_browsing" />).</para>
   </section>
   
   <section xml:id="additional_features_maestro_servers_configuration">

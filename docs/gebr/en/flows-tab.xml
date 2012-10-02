@@ -270,7 +270,7 @@
     </procedure>
   </section>
   
-  <section xml:od="flows_change_program_state">
+  <section xml:id="flows_change_program_state">
   	<title>Changing a program's state</title>
   	
   	<para>Programs can be in two states only, <emphasis role="bold">Enabled</emphasis> (
@@ -511,7 +511,7 @@
       <xref linkend="technical_aspects_dictionary_variables" />.</para>
   </section>
 
-  <section xml:id="flows_save_state_flow">
+  <section xml:id="flows_snapshots">
     <title>Taking a snapshot of a flow</title>
     <para>There are situations when working with GêBR it will be
       useful to use an existing flow as a basis to create new

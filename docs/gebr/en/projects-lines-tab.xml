@@ -252,7 +252,7 @@
 
       <para>
       This set of folders can help the user manages the data related to this
-      Line (see <xref linkend="flow_editor_edit_input_output"/>).
+      Line (see <xref linkend="flows_edit_input_output"/>).
       </para>
 
       <important>
@@ -268,7 +268,7 @@
           <emphasis>remote browse</emphasis><indexterm><primary>Remote
           browsing</primary></indexterm> feature must be enabled in
           the Maestro<indexterm><primary>Maestro</primary></indexterm>
-          of the Line (see <xref linkend="remote_browsing"/>).</para>
+          of the Line (see <xref linkend="technical_aspects_remote_browsing"/>).</para>
       </important>
 
       <note><para>Although it is not mandatory to adhere to this

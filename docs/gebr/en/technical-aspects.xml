@@ -182,7 +182,7 @@
       <listitem>The output of each step of the loop is not the input
         of any other step of the loop.</listitem>
 			<listitem>Flows with MPI programs (see section
-				<xref linkend="additional_features_mpi_support"/>).</listitem>
+				<xref linkend="technical_aspects_mpi_support"/>).</listitem>
     </itemizedlist>
 
     <para>
@@ -321,7 +321,7 @@
       <para>The dictionary validates the variables dynamically,
         revalidating them as soon as anything is changed in
         dictionary. Programs with errors are automatically revalidated
-        too (see <xref linkend="flows_change_state_program" />).
+        too (see <xref linkend="flows_change_program_state" />).
       </para>
 
       <para>The user can reorder the dictionary variables by drag and

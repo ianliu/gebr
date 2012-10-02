@@ -14,7 +14,7 @@
   visualization of the results.</para>
 
   <para>As seen in 
-    <xref linkend="flows_browser_execute_flow" />, GêBR switches to the 
+    <xref linkend="flows_execute_flow" />, GêBR switches to the 
     <guilabel>Jobs</guilabel> tab whenever multiple Flows are
     executed, in other cases, the user can switch through <guilabel>Flows</guilabel> tab,
     using a arrow on info bar to fast view of jobs, localized on bottom of tab.
