@@ -202,10 +202,9 @@
         by the maestro.</caption>
     </figure>
   
-    <para>The nodes put their computational power at
-      disposal of the Maestro. Under Maestro's coordination the
-      nodes can even cooperate to conclude processing jobs
-      fasters.</para>
+    <para>The nodes put their computational power at disposal of the maestro.
+      Under maestro's coordination the nodes can even cooperate to conclude
+      processing jobs fasters.</para>
  
    <para>When the user decides to execute a flow, GêBR sends this
       request to the Maestro, giving rise to
@@ -216,9 +215,9 @@
       information about the job, sending them back to GêBR, where they
       are presented to the user.</para>
 
-   <para>This communication process, despite complex, is completely
-     transparent to the user, which can concentrate on processing
-     seismic data, leaving all technical details to GêBR.</para>
+   <para>This communication process, despite complex, is completely transparent
+     to the user, which can concentrate on processing seismic data, leaving all
+     technical details to GêBR.</para>
   </section>
     
   <section xml:id="concepts_gebr_gui_layout">
