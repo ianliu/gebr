@@ -639,22 +639,12 @@
 
 
 	<section xml:id="flows_execute_flow">
-		<title>Executing a Flow</title>
+		<title>Executing a flow</title>
 
-		<para>Once assembled a Flow, it can be executed in two ways:
+		<para>Once assembled a flow, it can be executed in two ways:
 			<itemizedlist>
 				<listitem>
-					Advanced execution (
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/detailed_execution.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon>). 
-				</listitem>
-				<listitem>
-					Basic execution (
+					Run - Basic execution (
 					<guiicon>
 						<inlinemediaobject>
 							<imageobject>
@@ -663,22 +653,88 @@
 						</inlinemediaobject>
 					</guiicon>). 
 				</listitem>
+				<listitem>
+					Setup and Run - Advanced execution (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/detailed_execution.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>). 
+				</listitem>
 			</itemizedlist>
 		</para>
 		
-		<para>The user can select more than one Flow, and then execute them all. To make a
-			multiple selection, click over the Flows, while <keycap>Ctrl</keycap> is pressed or use
+		<para>The user can select more than one flow, and then execute them all. To make a
+			multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
 			the arrow keys while <keycap>Shift</keycap> is pressed.
 		</para>
+			<section xml:id="flows_quick_execution">
+				<title>Run</title>
 
-			<section xml:id="flows_detailed_execution">
-				<title>Advanced Execution</title>
 				<para>
-					The user can set many execution details before triggering a Job and then he or she just have to
+					By clicking on 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon> 
+					, the job will be triggered with the following settings:
+
+					<procedure>
+						<step>
+							In case of multiple flows, the default is executing one after another.
+						</step>
+						<step>
+							The flow (or flows) selected going to be executed immediately.
+						</step>
+						<step>
+							If flow is parallelizable, the job will dispatch on all nodes of maestro,
+							otherwise, choose the best node.
+						</step>
+						<step>
+							Parallelizable flows are going to be split by nominal capacity 
+							(total number of cores), otherwise, the flow will not split.
+							(For more information, see <xref linkend="technical_aspects_multicores"/>).
+						</step>
+						<step>
+							The execution of flow going to dispute resources with other processes. 
+							(For more information, see <xref linkend="technical_aspects_priority_execution"/>).
+						</step>
+					</procedure>
+
+					<para>
+						It is a fast way to execute, skipping the configurations of the Run and Setup.
+					</para>
+				</para>
+				
+				<note>
+					<para>The user can save some execute configuration like groups of nodes, 
+					number of parts and priority using a Setup and Run. That configuration
+					going to be a new default for basic Run.
+					(For more information, see <xref linkend="flows_detailed_execution" />)</para>
+				</note>
+				
+				<note>
+					<para>
+						Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected Flows
+						one after another; <keycap>Ctrl+Shift+R</keycap> runs the
+						selected Flows parallely (keybind activated just if multiple Flows are selected).
+					</para>
+				</note>
+			</section>
+			
+			<section xml:id="flows_detailed_execution">
+				<title>Run and Setup</title>
+				<para>
+					The user can set many execution details before triggering a Job and then just have to
 					click on Run to execute the Job. 
 				</para>
 				<figure>
-					<title>Advanced execution</title>
+					<title>Run and Setup</title>
 					<mediaobject>
 						<caption>Execution settings window.
 						</caption>
@@ -699,7 +755,9 @@
 
 					<procedure>
 						<step>
-							How the Jobs are going to be executed.
+							How the Jobs are going to be executed. 
+							<emphasis role="bold">This option just appear if the user selects multiple 
+							Jobs for running (multiple execution).</emphasis>
 							<substeps>
 								<step><guilabel>One after another:</guilabel>
 									  Flows can be executed one after another, in
@@ -739,61 +797,13 @@
 						</step>
 					</procedure>
 				</para>
-
-				<important>
-					<para>
-						The first option just appear if the user selects multiple Jobs for running (multiple execution).
-					</para>
-				</important>
 				<note>
 					<para>
 						The user can save itens 3, 4 and 5 for future executions by checking <guilabel>Save Preferences</guilabel>.
 					</para>
 				</note>
 			</section>
-
-			<section xml:id="flows_quick_execution">
-				<title>Basic execution</title>
-				<para>
-					By clicking on 
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon> 
-					, the Job will be triggered with the following settings:
-
-					<procedure>
-						<step>
-							Sequentially
-						</step>
-						<step>
-							Immediatelly
-						</step>
-						<step>
-							Saved group of nodes
-						</step>
-						<step>
-							Saved number of parts (if applicable)
-						</step>
-						<step>
-							Saved priority
-						</step>
-					</procedure>
-				</para>
-				<para>
-					It is a fast way to execute, skipping the configurations of the Advanced Execution.
-				</para>
-				<note>
-					<para>
-						Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected Flows
-						one after another; <keycap>Ctrl+Shift+R</keycap> runs the
-						selected Flows parallely (keybind activated just if multiple Flows are selected).
-					</para>
-				</note>
-			</section>
+			
 		</section>
 		
 	<section xml:id="flows_loop">
