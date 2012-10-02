@@ -944,6 +944,14 @@ set_servers_page(GtkBuilder *builder,
 	g_signal_connect(GTK_ENTRY(server_entry), "changed", G_CALLBACK(on_server_entry_changed), up);
 }
 
+/*
+ * create_maestro_chooser_model
+ *
+ * Read the environment variable GEBR_DEFAULT_MAESTRO
+ * and read its content, according to the following syntax:
+ * maestro1, description1; maestro2, description2
+ *
+ * */
 static void
 create_maestro_chooser_model (GtkListStore *model, GebrMaestroServer *maestro)
 {
