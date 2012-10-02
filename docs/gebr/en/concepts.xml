@@ -176,23 +176,20 @@
       and is running in the machine user has physical contatct with.</para>
 
     <para>Through GêBR, it is possible to take advantage of as many machines as
-      the user has access, to run processing flows. Those machines are
+      the user has access to run processing flows. Those machines are
       referenced as <emphasis role="bold">nodes</emphasis>. They may be
       local, meaning the user is physically using them, or remote, meaning the
       user has access to them through the network. No matter where the machines
       are, they are equally treated by GêBR, which means that the user does not
       have to care about that.</para>
 
-		<para>However, GêBR does not talk directly to the nodes.
-			This communication is established through another
-			player, the <emphasis role="bold">maestro</emphasis>
-			<indexterm><primary>Maestro</primary></indexterm>. It
-      acts as a coordinator of the nodes. Without
-      interference, Maestro collects information about the state of
-      each node and ranks them according to their
-      capabilities and available resources at time. Therefore, Maestro
-      can take smart decisions about which machines are best suited to
-      run the job.</para>
+    <para>However, GêBR does not talk directly to the nodes.  This
+      communication intermediated through another player, the
+      <emphasis role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>.
+      It acts as a coordinator of the nodes, collecting information and ranking
+      them according to their capabilities and availabities of resources.
+      Therefore, maestro can take smart decisions about which machines are best
+      suited to run the job.</para>
 
     <figure xml:id="communication_diagram">
       <title>Communication layout between GêBR players</title>
