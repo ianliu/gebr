@@ -711,7 +711,7 @@
 				</para>
 				
 				<note>
-					<para>Some execution configuratioin (like group's nodes, number
+					<para>Some execution configuration (like group's nodes, number
 					 of tasks splitted and priority) can be saved using Setup and Run. That configuration
 					is going to be a new default for basic Run.
 					(For more information, see <xref linkend="flows_detailed_execution" />)</para>
@@ -753,7 +753,7 @@
 
 					<procedure>
 						<step>
-							How the Jobs are going to be executed. 
+							How jobs are going to be executed. 
 							<emphasis role="bold">This option just appear if multiple 
 							jobs are selected for running (multiple execution).</emphasis>
 							<substeps>
@@ -771,13 +771,13 @@
 							</substeps>
 						</step>
 						<step>
-							Whether the Jobs must wait for some task or not. Jobs can be triggered  after
+							Whether jobs must wait for some task or not. Jobs can be triggered  after
 							the ending of another task or immediately by clicking the execution button.
 						</step>
 						<step>
 							Where jobs must be dispatched. Nodes or set of nodes can be choosen to
 							process the Jobs. A special option is the Choose automatically. It
-							allows the Maestro to search for the least loaded nodes or set of nodes. As the user changes this parameter,
+							allows the Maestro to search for the least overloaded nodes or set of nodes. If the use changes this parameter,
 							GêBR shows the number of cores of the choosen group.
 						</step>
 						<step>
@@ -788,8 +788,8 @@
 							information, consult <xref linkend="technical_aspects_multicores"/>.
 						</step>
 						<step>
-							How the Job must compete with the processes on the system. In overloaded nodes,
-							this option can make all the difference because the jobs will have less priority than the
+							How a job must compete with other processes on the system. In overloaded nodes,
+							this option can make all the difference because jobs will have less priority than 
 							other processes running on the system. For more
 							information, consult <xref linkend="technical_aspects_priority_execution"/>.
 						</step>
