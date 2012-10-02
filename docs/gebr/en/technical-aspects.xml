@@ -92,7 +92,8 @@
           is allowed to communicate to that Maestro. Otherwise, it
           requests for the user's password.</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_public_key_diagram.png"  contentwidth="887px" contentdepth="271px" />
+					<imagedata fileref="../images/GeBR_public_key_diagram.png"
+						contentwidth="887px" contentdepth="271px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -128,7 +129,8 @@
       <title>Remote browsing of files</title>
       <mediaobject>
 	<imageobject>
-	  <imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png"  contentwidth="813px" contentdepth="714px" />
+		<imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png"
+			contentwidth="813px" contentdepth="714px" />
 	</imageobject>
       </mediaobject>
       <caption>Example of remote browsing for an output file. Note the
@@ -150,7 +152,8 @@
   <section xml:id="flow_editor_multicores">
     <title>Multiple cores</title>
     <para>GêBR optimizes the execution of loops in multi-core
-      nodes<indexterm><primary>Node</primary><secondary>multi-core</secondary></indexterm>.</para>
+			nodes<indexterm><primary>Node</primary>
+				<secondary>multi-core</secondary></indexterm>.</para>
 
     <para>GêBR takes advantage of the multi-core feature of most of
       the recent machines. The execution of repetitive flows can be
@@ -172,13 +175,15 @@
     </itemizedlist>
 
     <para>
-			The <emphasis>level of parallelism</emphasis> of a Job execution can be adjusted by the Advanced
-			Execution settings (see <xref linkend="flows_browser_detailed_execution"/>).
+			The <emphasis>level of parallelism</emphasis> of a Job execution can
+			be adjusted by the Advanced Execution settings (see
+			<xref linkend="flows_browser_detailed_execution"/>).
 		</para>
 
     <note>
     <para>
-      GêBR automatically sets the level of parallelism of non parallelizable Jobs to one.
+			GêBR automatically sets the level of parallelism of non parallelizable
+			Jobs to one.
     </para>
     </note>
   </section>
@@ -195,7 +200,8 @@
       due to multitasking, by enabling the execution of the Flows in
       a <guilabel>Wait for free resources</guilabel> state:</para>
 
-    <para>Two options are available  (see <xref linkend="flows_browser_detailed_execution"/>): </para>
+		<para>Two options are available  (see
+			<xref linkend="flows_browser_detailed_execution"/>): </para>
     <itemizedlist>
       <listitem>
         <para>
@@ -212,7 +218,8 @@
         </para>
       </listitem>
     </itemizedlist>
-		<para>Technically, when running in <guilabel>Wait for free resources</guilabel> mode,
+		<para>Technically, when running in <guilabel>Wait for free
+				resources</guilabel> mode,
 			GêBR will
       reduce the execution priority of the task, meaning it will tell the
       computer that "it can wait more important things to be done".
@@ -283,7 +290,8 @@
           <title>Dictionary of variables</title>
           <mediaobject>
             <imageobject>
-              <imagedata fileref="../images/GeBR_dictionary_variables_example.png"  contentwidth="637px" contentdepth="441px" />
+							<imagedata fileref="../images/GeBR_dictionary_variables_example.png"
+								contentwidth="637px" contentdepth="441px" />
             </imageobject>
           </mediaobject>
           <caption>A variable with a value may be used with different
@@ -434,7 +442,8 @@
         <title>Usage of iter variable</title>
         <mediaobject>
           <imageobject>
-            <imagedata fileref="../images/GeBR_flow_editor_loop_output.png"  contentwidth="733px" contentdepth="505px" />
+						<imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
+							contentwidth="733px" contentdepth="505px" />
           </imageobject>
         </mediaobject>
         <caption>This Flow with a Loop program and number of loops
@@ -451,7 +460,8 @@
     <title>Support to MPI programs</title>
 
     <para>Some programs, known as <emphasis>parallel
-	programs</emphasis><indexterm><primary>Program</primary><secondary>parallel</secondary></indexterm>,
+				programs</emphasis><indexterm><primary>Program</primary>
+				<secondary>parallel</secondary></indexterm>,
 	deal themselves with the distribution of their computations
 	among many nodes. In this way, those programs are
 	much more efficient, exploit all available resources to run
@@ -465,8 +475,8 @@
       widely used are
       OpenMPI<indexterm><primary>MPI</primary><secondary>OpenMPI</secondary></indexterm>
       and
-      MPICH2<indexterm><primary>MPI</primary><secondary>MPICH2</secondary></indexterm>. OpenMPI
-      is an open source implementation and has influence of three
+			MPICH2<indexterm><primary>MPI</primary><secondary>MPICH2</secondary></indexterm>.
+			OpenMPI is an open source implementation and has influence of three
       earlier approaches: FT-MPI, LA-MPI and LAM/MPI. The MPICH2 is
       another widely used implementation and is based on the MPI-2.2
       standard.
@@ -488,7 +498,8 @@
 
     <figure>
       <title>Indication of MPI availability</title>
-      <imagedata fileref="../images/GeBR_servers_mpi.png"  contentwidth="633px" contentdepth="459px" />
+			<imagedata fileref="../images/GeBR_servers_mpi.png"  contentwidth="633px"
+				contentdepth="459px" />
       <caption>The second column indicates the types (flavors) of MPI
 	available in the nodes.</caption>
     </figure>
@@ -502,50 +513,13 @@
 
     <figure>
       <title>MPI settings</title>
-      <imagedata fileref="../images/GeBR_programs_mpi_parameters.png"  contentwidth="473px" contentdepth="352px" />
+			<imagedata fileref="../images/GeBR_programs_mpi_parameters.png"
+				contentwidth="473px" contentdepth="352px" />
 			<caption>The <guilabel>np</guilabel> value is set according
 				to the speed value set in the Advanced Execution dialog (see
 				<xref linkend="flows_browser_detailed_execution"/>).</caption>
     </figure>
-
   </section>
-
-<!--
-  <section xml:id="execution_log">
-    <title>The execution log</title>
-
-    <para>GêBR remembers most of the users actions, as well as the
-      results of these actions, in the <emphasis>execution
-      log</emphasis>. This log is shown at the bottom of the main
-      window, which can be presented in the collapsed form (default)
-      or the expanded form like the window below.</para>
-
-    <figure>
-      <mediaobject>
-        <caption>At the bottom of GêBR's main window the user will find the
-          execution log, which displays information on all of GêBR
-          processes.</caption>
-        <imageobject>
-          <imagedata fileref="../images/janela_log_execucao.png"  contentwidth="734px" contentdepth="571px" />
-        </imageobject>
-      </mediaobject>
-    </figure>
-
-    <tip>
-      <para>In 
-        <menuchoice>
-          <guimenu>Actions</guimenu>
-          <guimenuitem>Preferences</guimenuitem>
-        </menuchoice> at the bottom of the dialog box, the user can see the box 
-        <guilabel>Load past-execution log</guilabel>. By checking this
-        box the user chooses to exhibit the whole log, including actions from
-        past dates. By leaving the box unchecked the user chooses to have a
-        compact log, which only shows actions that have taken place
-        since GêBR's last initialization.</para>
-    </tip>
-
-  </section>
--->
 
   <section xml:id="import_samples">
     <title>Sample projects</title>
@@ -563,7 +537,8 @@
       <mediaobject>
         <caption>Screenshot of the Samples Menu.</caption>
         <imageobject>
-          <imagedata fileref="../images/samples_en.png"  contentwidth="733px" contentdepth="526px" />
+					<imagedata fileref="../images/samples_en.png"  contentwidth="733px"
+						contentdepth="526px" />
         </imageobject>
       </mediaobject>
     </figure>
