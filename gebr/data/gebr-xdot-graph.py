@@ -175,7 +175,7 @@ class MyDotWidget(xdot.DotWidget):
             execute_paral.show()
             self.menu.append(execute_paral)
         else:
-            execute_single = gtk.MenuItem(_("Run \t\t\tCtrl+R"))
+            execute_single = gtk.MenuItem(_("Run \t\t\t\tCtrl+R"))
             execute_single.connect("activate", self.on_execute_single, url)
             execute_single.show()
             self.menu.append(execute_single)
