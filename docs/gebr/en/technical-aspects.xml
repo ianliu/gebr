@@ -53,9 +53,9 @@
 
     <para>All connections are performed using Secure Shell (SSH)
       protocol. SSH is intended to provide secure encrypted
-      communication over a network. To establish such connections,
-      the user may be asked to provide his login password
-      multiple times. This can be cumbersome, if there are a lot of
+      communication over a network. A login password may be asked 
+      multiple times to establish such connections. 
+      This can be cumbersome, if there are a lot of
       nodes under the maestro domain.
     </para>
 
@@ -68,17 +68,13 @@
       knows the associated private key.
     </para>
 
-    <para>If the user chooses GêBR to use public-key authentication by
-      checking "<guimenuitem>Use encryption key to automatically
-        authenticate the next session</guimenuitem>", then GêBR will
-      create (if not existent) a private/public keys pair and will
-      keep the private key and will copy the public key to the
-      maestro. Once this operation is successfully done, the user's
-      authentication on user's maestro will be automatically done
-      through public-key. In practical terms it means the user will no
-      longer need to type the password to connect to that maestro
-      through GêBR. Analogous behaviour occurs in the connection
-      between maestros and nodes.
+    <para>By checking the option <guilabel>Use encryption key to automatically
+	    authenticate the next session</guilabel> on password dialog,
+	    GêBR will use public/private key authentication.
+	    Once this operation is successfully done, there will be no
+	    need to type the password to connect to that maestro
+	    through GêBR. Analogous behavior occurs in the connection
+	    between maestros and nodes.
     </para>
 
     <figure>
@@ -98,8 +94,8 @@
       </mediaobject>
     </figure>
 
-    <para>Alternatively, the user can create the private/public key pair
-      by himself (consult <link xlink:show="new"
+    <para>Alternatively, the private/public key pair can be created
+    without GêBR (consult <link xlink:show="new"
       xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</link>
       for more information).
     </para>
@@ -115,16 +111,13 @@
       processing files, therefore, may be on different places than
       the user's node.
     </para>
-    <para>For most of the places the user can pick a file (see window
-      below), the user will be navigating through the nodes files.
+    <para>No matter the node where the file is, it can be 
+    accessed through the remote navigation (see window below).
     </para>
-    <para>In two places of GêBR, the user will not be browsing the
+    <para>In two places GêBR will not browsing the
       nodes filesystem: <emphasis>Import/Export</emphasis> of
-      projects, lines or flows. On these cases the user may, for example,
-      keep a backup of your data on his own computer
-      and, therefore, on his own computer filesystem
-      (instead of on node's).
-    </para>
+      projects, lines or flows. On these cases, backup can
+      be saved on the local machine, instead of remote nodes.</para>
     <figure>
       <title>Remote browsing of files</title>
       <mediaobject>
@@ -138,13 +131,12 @@
     </figure>
 
     <para>GêBR puts markers (bookmarks) to the important folders of the line in
-      context (see <xref linkend="projects_lines_line_paths"/>), as the user
-      can see in the left panel of the window above. They aim to
-      facilitate the access to the files of the line.
+      context (see <xref linkend="projects_lines_line_paths"/>). 
+      They aim to facilitate the access to the files of the line.
     </para>
 
     <note>
-      <para>If the user opens an external file browser (say Nautilus), these
+      <para>In external file browser (say Nautilus), these
         bookmarks will appear there too. They disappear when GêBR is closed.</para>
     </note>
   </section>
@@ -156,9 +148,8 @@
 			of most of
       the recent machines. The execution of repetitive flows can be
       optimized by this resource. If the flow has Loops and is
-      parallelizable (given some criteria, shown below), then the user can
-      adjust the execution performance based on the number
-      of processors.</para>
+      parallelizable (given some criteria, shown below), the execution performance 
+      based on the number of processors can be adjusted.</para>
 
 		<para>GêBR also takes advantage of the number of working
 			nodes connected to the user's maestro. The resources of every
@@ -231,13 +222,15 @@
       reduce the execution priority of the task, meaning it will tell the
       computer that "it can wait more important things to be done".
       This is the case when the user has other things to do while waits
-			the calculations to be done.  The <guilabel>Share available resources</guilabel>
+			the calculations to be done.</para>
+	  
+	  <para>The <guilabel>Share available resources</guilabel>
 			mode means
       GêBR will use greater run priority for the task, and that
       implies it will act as a foreground process, demanding more
 			resources. It's the "I need this done now" mode, when the
 			user needs the job to be finished as soon as possible,
-			and the user doesn't care if it
+			and doesn't care if it
       will fight for resources with other programs.</para>
 
     <para>If GêBR is the only program executing on the node, i.e.,
@@ -278,7 +271,7 @@
           <imageobject>
             <imagedata fileref="../../common-images/botao_dicionario_projeto.png"
             /></imageobject></inlinemediaobject></guiicon>, in the
-            toolbars of the
+            <guilabel>More</guilabel> menu of toolbars of the
       <guilabel>Projects and Lines</guilabel> and <guilabel>Flows
       </guilabel> tabs.</para>
 
@@ -324,8 +317,8 @@
         too (see <xref linkend="flows_change_program_state" />).
       </para>
 
-      <para>The user can reorder the dictionary variables by drag and
-        drop. Since a variable can just use another variable above it,
+      <para>Reordering the variables of the dictionary can be done by drag and drop.
+        Since a variable can just use another variable above it,
         this feature turns the declaration of variables more flexible
         and dynamic.</para>
 
@@ -344,8 +337,8 @@
 
 
 
-      <para>Besides using variables and expressions, the user can use some
-        predefined functions:
+      <para>Besides variables and expressions, some
+        predefined functions can be used:
       </para>
 
       <table>
@@ -390,13 +383,12 @@
         </tgroup>
       </table>
       <para>
-        To see all the available variables for auto-completion, the user
-        just need to type the
-        character <emphasis role="bold">[</emphasis>' (open brackets).
+        The character <emphasis role="bold">[</emphasis>' (open brackets) 
+        is used to see all the available variables for auto-completion.
       </para>
 
     <tip>
-      <para>The user can navigate over the fields using the keys 
+      <para>Navigate over the fields can be done by using the keys 
         <keycap>Enter</keycap>, 
         <keycap>Tab</keycap> or with the 
         <mousebutton>Left button of the mouse</mousebutton>.
@@ -405,8 +397,8 @@
 
     <tip>
       <para>To use the variables in fields like
-        <guimenuitem>Text</guimenuitem>, the user must put the variable
-        name embraced by square brackets
+        <guimenuitem>Text</guimenuitem>, the variable
+        name need to be embraced by square brackets
         <emphasis role="bold">[</emphasis> name-of-the-variable
         <emphasis role="bold">]</emphasis>.
       </para>
@@ -429,7 +421,7 @@
       </para>
 
       <para>
-        For instance, the user can ouput of each step of the Loop 
+        For instance, the output of each step of the Loop can be defined 
         to a file with a name identified by the step, 
         output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see 
         <xref linkend="fig_flow_editor_loop_output"/>).</para>
@@ -438,8 +430,8 @@
         <title>Usage of iter variable</title>
         <mediaobject>
           <imageobject>
-						<imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
-							contentwidth="733px" contentdepth="505px" />
+			<imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
+				contentwidth="733px" contentdepth="505px" />
           </imageobject>
         </mediaobject>
         <caption>This flow with a Loop program and number of loops
@@ -487,9 +479,8 @@
 		<para>In the maestro/nodes interface, in the MPI column, an icon
       indicates whether the node supports MPI. Roll over
       the icon to check the flavors of MPI available on that
-      working nodes. The user will be able to run parallell program just on
-      working nodes that support the same flavor as the one used in the
-      program.
+      working nodes. The parallel program can be executed just on 
+      working nodes that support the same flavor as the one used in it.
     </para>
 
     <figure>
@@ -500,11 +491,11 @@
 	available in the nodes.</caption>
     </figure>
     
-    <para>To run an MPI program, the user must first create a menu in DêBR
+    <para>To run an MPI program, first it's necessary create a menu in DêBR
       and choose the proper MPI implementation to the
-      program. Then import it in GêBR. In the Flows tab, if the user
-      double-click over the MPI program, he will be able to set the
-      number of processes to be used by that MPI call.
+      program. Then import it in GêBR. With double-click over the MPI 
+      program in the Flows tab, the number of processes to be 
+      used by that MPI call can be seen.
     </para>
 
     <figure>
@@ -528,15 +519,17 @@
   <title> Administrative maestro suggestion </title>
 		<para>
 			GêBR verifies the existence of an environment variable
-			(GEBR_DEFAULT_MAESTRO) to suggest the user a maestro. The syntax of
-			this variable is <code>maestroA, descriptionA; maestroB,
-				descriptionB</code>.
+			(GEBR_DEFAULT_MAESTRO) to suggest a maestro. The syntax of
+			this variable is <code>maestro_A, description_A; maestro_B,
+				description_B</code>.
 		</para>
 			
 		<para>
 			For instance, if the administrator sets GEBR_DEFAULT_MAESTRO as
 			<code>127.0.0.1, My first maestro; 100.00.00.0, My second maestro;</code>
-			then, GêBR will offer for everyone that open GêBR for the first time:
+			then, on the first time or through <guilabel>Connection Assistant</guilabel>
+			(see <xref linkend="additional_features_connection_assistant" />),
+			GêBR offer the following options:
 		</para>
 
 		<itemizedlist>
@@ -583,7 +576,7 @@
     <para>In <menuchoice>
         <guimenu>Help</guimenu>
         <guimenuitem>Samples</guimenuitem>
-      </menuchoice> menu, the user can import available samples (see
+      </menuchoice> menu, there are samples to be imported (see
       figure below).</para>
 
     <figure>
