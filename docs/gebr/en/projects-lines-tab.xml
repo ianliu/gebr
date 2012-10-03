@@ -257,16 +257,16 @@
 
     <para>GêBR supports only one connected
       maestro<indexterm><primary>Maestro</primary></indexterm> at
-      time. However, the user may have more than one maestro at the user
-      disposal.</para>
+      time. However, there may be several maestros at disposal, one for the
+      University A and another for University B, for example.</para>
 
     <para>Whenever a maestro is connected, all lines associates to other
-      maestros will be unavailable for edition. The user can however migrate a
-      line from its original maestro to the connected one. To do so, the line
-      must be selected. In the <guilabel>Details</guilabel> panel, an icon in
-      the upper left corner indicates whether the maestro defined for the line
-      is connected or not. In case the original maestro is not the connected
-      one, by clicking over that icon, GêBR will offer two options:</para>
+      maestros will be unavailable for edition. However, a line can be migrated
+      from its original maestro to the connected one. To do so, the line must
+      be selected. In the right-hand side panel, an icon in the upper left
+      corner indicates whether the maestro defined for the line is connected or
+      not. In case the original maestro is not the connected one, by clicking
+      over that icon, GêBR will offer two options:</para>
 
     <itemizedlist>
       <listitem>
@@ -278,6 +278,13 @@
           associate it to the connected maestro.</para>
       </listitem>
     </itemizedlist>
+
+    <important>
+      <para>Whenever a line is migrated from one maestro to another, all data
+        in the BASE<indexterm><primary>BASE</primary></indexterm> directory and
+        in its children will remain in the nodes of the original
+        maestro.</para>
+    </important>
 
     <figure>
       <title>Dialog for lines from disconnected maestros</title>
@@ -291,12 +298,6 @@
     </figure>
 
   </section>
-
-  <important>
-    <para>When a line is migrated from one maestro to another, all data in the
-      BASE<indexterm><primary>BASE</primary></indexterm> directory and in its
-      children will remain in the nodes of the original maestro.</para>
-  </important>
 
   <section xml:id="projects_lines_import">
     <title>Importing a project or a line</title>
