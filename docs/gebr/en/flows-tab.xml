@@ -10,7 +10,7 @@
 
   <title>The <guilabel>Flows</guilabel> tab</title>
 
-  <para>In this tab, the user can manage the flows of the current
+  <para>In this tab, the user can manage the flows and related program of the current
     line. Note the similarity with the <guilabel>Projects and
     Lines</guilabel> tab.</para>
 
@@ -59,21 +59,20 @@
     <para>After a flow has been created, it will be 
       visible on the left side of the main window when the 
       <guilabel>Flows</guilabel> tab is selected. The 
-      <guilabel>Details</guilabel> box, found on the right side of the
-      main window, shows information about the selected flow. The list of menus
-      will appear automatically in a pop-up, and the user can assembling the flow 
-      (see <xref linkend="flows_assembling_flow" />).
+      <guilabel>Details</guilabel> box, found on the upper right side of the
+      main window, shows information about the selected flow and below the 
+      <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
+      contains information like input,output and log file, flow's programs 
+      and some of its parameters. 
+     </para>
+     <para>The list of menus will appear automatically in a pop-up and the user 
+      can assembling the flow (see <xref linkend="flows_assembling_flow" />).
     </para>
 
     <tip>
-      <para>The user can alter the position of the flow in the list by
+      <para>It's possible alter the position of the flow in the list by
         dragging the flow with the mouse to the desired
         position.</para>
-    </tip>
-    <tip>
-      <para>Observe that the information bar just below the menu
-        <guimenu>Actions</guimenu> shows the parents line and Project
-        of the selected flow.</para>
     </tip>
   </section>
   
@@ -82,7 +81,7 @@
     <para>In GêBR, a <emphasis>flow</emphasis> is a <emphasis>sequence
       of operations</emphasis> defined by the user. These operations, also
       called
-      flow's <emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
+      <emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
       are organized into the following <emphasis>categories</emphasis>
       according to their purpose:</para>
     <itemizedlist>
@@ -124,8 +123,8 @@
       </listitem>
     </itemizedlist>
     
-    <para>After the flow has been created and a pop-up appear with several menus,
-    the user can assemble the flow:</para>
+    <para>After the flow has been created, a pop-up appear with several menus and
+    is possible assemble the flow:</para>
     
     <procedure>
       <step>
@@ -133,8 +132,8 @@
       </step>
       
       <step>
-      	<para>If the user needs a specific order to the selected programs of the flow, 
-      	just need drag and drop the desired programs.</para>
+      	<para>To specify an order to the selected programs simply drag and drop the 
+      	desired programs.</para>
       </step>
       
       <step>
@@ -142,35 +141,15 @@
       </step>
       
       <step>
-      	<para>To better configuration of the programs or if the program have required parameters, 
-      	the user can edit their parameters (see how in <xref linkend="flows_editing_parameters" />)</para>
+      	<para>To better configuration of the programs or if there are required parameters in 
+      	the program, it's necessary edit their parameters 
+      	(see how in <xref linkend="flows_editing_parameters" />).</para>
       </step>
       
       <step>
-      	<para>To change status of a program, the user has to right-click over it and select 
+      	<para>To change status of a program just right-click over it and select 
       	the Enable, if program is disabled, or select Disable, if program is enabled 
-      	(for more information, see <xref linkend="flows_change_program_state" />)</para>
-      
-	      <tip>
-	      	<para>If the user wants to change all programs, or a few, to the
-			configured state simultaneously, he or she can select them by using
-			<keycombo>
-			  <keycap>Ctrl</keycap>
-			  <mousebutton>Click</mousebutton>
-			</keycombo>. Then right-click on one of the selected
-			programs, choose the
-			option <guilabel>Configured</guilabel> from the menu that
-			appeared. All the programs that were selected will be
-			altered to the state
-			<guiicon>
-			  <inlinemediaobject>
-			  	<imageobject>
-			      <imagedata fileref="../../common-images/icone_configurado.png" />
-			    </imageobject>
-			  </inlinemediaobject>
-			</guiicon>.</para>
-		  </tip>
-		  
+      	(for more information, see <xref linkend="flows_change_program_state" />).</para>
 		  <important>
 	        <para>To run a flow 
 	          <emphasis role="bold">all the programs</emphasis> listed in the 
@@ -184,15 +163,6 @@
 	        </guiicon>). Otherwise the flow will not be executed as
 	        expected.</para>
 	      </important>
-	      <important>
-	        <para>The state of a flow, or a set of flows, can be changed
-	          by using the
-	          hotkey <emphasis role="bold">Spacebar</emphasis>, which
-	          alters the state of the selected programs in the order
-	          <emphasis role="bold">Disabled</emphasis> and 
-	          <emphasis role="bold">Enabled</emphasis>. The meaning
-	          of these states will be further described later on.</para>
-	      </important>
 	  </step>
    </procedure>
    
@@ -204,25 +174,21 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon> to do it.</para>
-    <para>After the flow has been, it will be visible on the left
+    <para>After the flow has been assembled, it will be visible on the left
       side of the main window when the <guilabel>Flows</guilabel> tab
       is selected. The <guilabel>Details</guilabel> box, found on the
-      right side of the main window, shows information about the selected
-      flow .</para>
+      upper right side of the main window, shows information about the selected
+      flow and below the <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
+      contains information like input,output and log file, flow's programs 
+      and some of its parameters. </para>
     <tip>
     	<para>There is no limit on the number of flows 
     	that can be created inside a line.</para>
     </tip>
     <tip>
-      <para>The user can alter 
-        <emphasis role="bold">the position</emphasis> of the flow in
-        the list by <emphasis role="bold">dragging the flow with the
-          mouse</emphasis> to the desired position.</para>
-    </tip>
-    <tip>
-      <para>The <emphasis role="bold">information bar</emphasis> just bellow
-        the menu <guimenu>Actions</guimenu> shows the complete flow
-        tree of the selected flow.</para>
+      <para>To alter <emphasis role="bold">the position</emphasis> of the flow in
+        the list, simply <emphasis role="bold">drag the flow with the
+          mouse</emphasis> to desired position.</para>
     </tip>
   </section>
   
@@ -231,7 +197,7 @@
   	
   	<para>Program's parameters compose a set of initial configurations
     defined by the user.</para>
-    <para>To edit program's parameters the user must follow the steps below:</para>
+    <para>To edit program's parameters follow the steps below:</para>
     <procedure>
       <step>
         <para>Select the program from the <guilabel>Flow
@@ -244,7 +210,7 @@
             </inlinemediaobject>
           </guiicon> on the toolbar, or just double-click on the
           program. The <guilabel>Parameter</guilabel> box will
-          appear on right side of window.</para>
+          appear on right side of window over the <guilabel>Flow Review</guilabel> box.</para>
       </step>
       <step>
         <para>Edit the program's parameters. Notice that each
@@ -264,8 +230,8 @@
         </tip>
       </step>
       <step>
-        <para>All changes are saved automatically, and to close the parameter box,
-        the user just need change selection on left side.</para>
+        <para>All changes are saved automatically, and to close the <guilabel>Parameter</guilabel> box,
+        simply change selection on left side.</para>
       </step>
     </procedure>
   </section>
@@ -298,7 +264,7 @@
         </inlinemediaobject>
       </guiicon>.</para>
       
-      <para>The user can alternate between these states by using two
+      <para>Alternate between these states by using two
       methods: <mousebutton>right-clicking</mousebutton>
       on the program and then select the desired state from the context menu 
       or using the shortcut
@@ -307,7 +273,7 @@
     </keycombo> to change the state(s) of the selected programs.</para>
     
       <tip>
-      <para>The user can select several programs whose state is desired to
+      <para>It's possible select several programs whose state is desired to
         change by holding
         <keycombo>
           <keycap>Ctrl</keycap>
@@ -319,8 +285,8 @@
       </keycombo>.</para>
     </tip>
     <tip>
-      <para>Changing a program state does not alter its parameter
-        configuration. The user can safely alternate between states.</para>
+      <para>Changing a program state does not alter its parameter configuration. 
+      This way, alternate between states is an operation completely safe.</para>
     </tip>
     <important>
       <para>
@@ -339,11 +305,11 @@
   <section xml:id="flows_edit_input_output">
   	<title>Editing the flow's input and output files</title>
   	
-  	<para>In many occasions, the user will need to extract data
+  	<para>In many occasions, it's necessary to extract data
       from an input file and/or generate as a result an output file,
       or even an log file in case an error occurs.</para>
 
-    <para>To associate an input, output and error file to a flow, the user must follow this steps:</para>
+    <para>To associate an input, output and error file to a flow, follow this steps:</para>
     <figure>
       <title>Input file setting</title>
       <mediaobject>
@@ -362,7 +328,7 @@
       
       <step>
 		<para>Below of the selected flow, the programs and entries with input, output and log files
-		will be shown. The user can edit files paths by double clicking on them.
+		will be shown. It's possible edit files paths by double clicking on them.
 		</para>
       </step>
       
@@ -380,8 +346,8 @@
       </step>
     </procedure>
 
-    <para>If the user wants to use the folders associated to the line,
-      can either choose like above or the user can use the feature of
+    <para>To using the folders associated to the line,
+      can either choose like above or use the feature of
       autocomplete of the important folders of this line. 
       (For more information, see <xref linkend="projects_lines_line_paths" />).
     </para>
@@ -397,7 +363,7 @@
       </mediaobject>
     </figure>
 
-    <para>When the user chooses a path for the 
+    <para>When a path is chosen for the 
       <guilabel>flow's input/output</guilabel>, their file
       paths will appear in entries, indicated by the icons
       <guiicon>
@@ -416,7 +382,7 @@
       </guiicon>, below and above the flow's programs (if there are
       any).</para>
     <note>
-      <para>If the user wishes to <emphasis role="bold">remove a
+      <para>If necessary <emphasis role="bold">removing a
           set</emphasis> from the list, select them by pressing
         <emphasis role="bold">right-click</emphasis> and then click on 
         <guimenuitem>Exclude</guimenuitem>.</para>
@@ -471,7 +437,7 @@
     </guiicon>.</para>
 
     <tip>
-      <para>The user can handle several flows at once by holding
+      <para>It's possible handle several flows at once by holding
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Left-click</mousebutton>
@@ -702,8 +668,8 @@
 
   <section xml:id="flows_import_flow">
     <title>Importing/Exporting a flow</title>
-    <para>Although GêBR maintains all the data, the user still might wish
-      to copy the flows to file to be able to share them, for
+    <para>Although GêBR maintains all the data, can be necessary 
+      copy the flows to file to be able to share them, for
       instance.</para>
 
         <para>In the window <guilabel>Save flow</guilabel>, navigate
@@ -748,7 +714,6 @@
       created.</para>
   </section>
 
-
 	<section xml:id="flows_execute_flow">
 		<title>Executing a flow</title>
 
@@ -776,11 +741,12 @@
 				</listitem>
 			</itemizedlist>
 		</para>
-		
-		<para>More than one flow can be selected, and then execute them all. To make a
-			multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
-			the arrow keys while <keycap>Shift</keycap> is pressed.
-		</para>
+		<tip>
+			<para>More than one flow can be selected, and then execute them all. To make a
+				multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
+				the arrow keys while <keycap>Shift</keycap> is pressed.
+			</para>
+		</tip>
 			<section xml:id="flows_quick_execution">
 				<title>Run</title>
 
@@ -925,7 +891,7 @@
 	      usage compared to the remaining programs from GêBR. The user is going
 	      to see some of these differences.</para>
 	
-	      <para>When the user adds the program Loop, it always appears
+	      <para>When the program Loop is added, it always appears
 	      on the top of the flow. That happens to indicate that the flow
 	      is going to be executed more than once, according to the
 	      parameters set for the program. (see
@@ -943,8 +909,8 @@
 	    </mediaobject>
 	    </figure>
 	
-	    <para>After the <emphasis>Loop</emphasis> is added, the user has
-	      access to a new variable,
+	    <para>After the <emphasis>Loop</emphasis> is added, 
+	      a new variable is available,
 	      the <emphasis role="bold">iter</emphasis> (see
 				<xref linkend="technical_aspects_dictionary_variables" />). The value of this 
 				special variable is modified
@@ -966,9 +932,9 @@
 
 	<section xml:id="flows_edit_comments_flow">
 	    <title>Editing comments</title>
-	    <para>This button appears in the <guilabel>Projects and
+	    <para>This button appears in <guilabel>Projects and
 	    Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
-	    button allows the user to add
+	    button allows add
 	    comments<indexterm><primary>Report</primary><secondary>of a
 	    flow</secondary></indexterm> about the selected line or flow. See
 	    <xref linkend="projects_lines_edit_comments_project" />.</para>
@@ -978,7 +944,7 @@
     <title>View Report</title>
     <para>This button appears in the <guilabel>Projects and
     Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
-    button allows the user to View the Report about the line or flow
+    button allows View the Report about the line or flow
     in use. The difference is that the line's Report can include the
     flow's Report.  All other functions are described in
     <xref linkend="projects_lines_view_report_project" />.</para>
