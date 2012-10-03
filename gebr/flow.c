@@ -1337,7 +1337,7 @@ gebr_flow_set_toolbar_sensitive(void)
 				label_msg = g_markup_printf_escaped(_("%d Flows selected.\n\n"
 						"GêBR can execute them\n"
 						"- <i>sequentially</i> (Ctrl+R) or\n"
-						"- <i>parallelly</i> (Ctrl+Shift+R)"),
+						"- <i>simultaneously</i> (Ctrl+Shift+R)"),
 									flows_nrows);
 			else if (flows_nrows == 0 && total_rows > 0)
 				label_msg = g_markup_printf_escaped(_("No Flow is selected\n"));
@@ -1346,7 +1346,7 @@ gebr_flow_set_toolbar_sensitive(void)
 				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
 						"Two options are avaiable:\n"
 						"- Click on <i>New Fow</i> to create a Flow or\n"
-						"- Import a Flow through the <i>Import Flow</i> on More options."));
+						"- Import a Flow through the <i>Import</i> on More options."));
 				gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 			}
 			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), label_msg);

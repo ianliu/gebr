@@ -836,21 +836,17 @@ void line_load_flows(void)
 	for (; line_flow; gebr_geoxml_sequence_next(&line_flow)) {
 		GebrGeoXmlFlow *flow;
 
-//		GebrGeoXmlSequence * next = line_flow;
-//		gebr_geoxml_sequence_next(&next);
-
 		const gchar *filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
 		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&flow), filename, &iter, TRUE);
 		if (ret) {
-//			line_flow = next;
 			error = TRUE;
 			continue;
 		}
 
 		line_append_flow_iter(flow, GEBR_GEOXML_LINE_FLOW(line_flow));
-
-//		line_flow = next;
 	}
+
+	flow_browse_revalidate_flows(gebr.ui_flow_browse);
 
 	if (!error)
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flows loaded."));
