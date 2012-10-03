@@ -10,10 +10,52 @@
 
   <title>The <guilabel>Flows</guilabel> tab</title>
 
+
 	<para>In this tab, the user can manage the flows and the related
 		programs of the current
     line. Note the similarity with the <guilabel>Projects and
     Lines</guilabel> tab.</para>
+
+			<para>
+				The left panel contains the list of flows/programs of the
+				current line. It defines the current flow(s) of GêBR.
+			</para>
+			<para>
+				The right panel is associated to the current flow
+				and is divided in two parts:
+	    <itemizedlist>
+		  <listitem>
+				Description of the flow. Basic information such as flow title,
+				last modification date and last execution date can be
+				quickly consulted here.
+			</listitem>
+		  <listitem>
+				Context-based view. The default view is the summary of
+				the flow (see below), but
+				this view can be switched to Snapshots view or
+				Output view, according
+				to the context. Further information is available on
+				<xref linkend="flows_snapshots"/> and
+				<xref linkend="flows_execution_infobar"/>.
+			</listitem>
+	    </itemizedlist>
+			</para>
+			<para>
+				The default view of the right panel of the <guilabel>Flows</guilabel>
+				tab contains a summary of the current flow. This view presents
+				the input/output files, the programs and the parameters
+				altered by the user (different from the provided values).
+				Additionally, problems in the flow assembly
+				are warned in this window. To go to the summary view,
+				just select (single click) a flow. 
+			</para>
+			<tip>
+
+			<para>
+				The search (of a program, parameter, etc.) is activated
+				inside the summary through <keycap>Ctrl+F</keycap>.
+			</para>
+		</tip>
 
   <tip>
     <para>Instead of the toolbar buttons, try using
@@ -477,9 +519,8 @@
         </inlinemediaobject>
     </guiicon>.</para>
     <para>In the <guilabel>flows properties</guilabel> dialog box the user
-    can edit the
-    fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>, <guilabel>Author</guilabel>
-    and <guilabel>Email</guilabel>.</para>
+			can edit the fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>,
+			<guilabel>Author</guilabel> and <guilabel>Email</guilabel>.</para>
   </section>
 
   <section xml:id="flows_edit_dictionary">
@@ -983,12 +1024,13 @@
 	</para>
 
 	<para>
-		When more than one flow is dispatched for execution,
+		When multiple flows are dispatched for execution,
 		instead of staying in the same window, GêBR automatically
 		switches to the <guilabel>Jobs</guilabel> tab, where 
 		all the executions can be seen all together.
 	</para>
 	</section>
+
 	<section xml:id="flows_edit_comments_flow">
 	    <title>Editing comments</title>
 	    <para>This button appears in <guilabel>Projects and
