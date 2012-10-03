@@ -138,18 +138,16 @@
       <xi:include href="xml/gebr-gui-value-sequence-edit.xml"/>
     </chapter>
 
-    <xi:include href="xml/gebr-gui-directory-chooser.xml"/>
     <xi:include href="xml/gebr-gui-save-dialog.xml"/>
     <xi:include href="xml/gebr-gui-enhanced-entry.xml"/>
     <xi:include href="xml/gebr-gui-file-entry.xml"/>
-    <xi:include href="xml/gebr-gui-styles-combo.xml"/>
     <xi:include href="xml/macros.xml"/>
     <xi:include href="xml/clipboard.xml"/>
     <xi:include href="xml/gebr-gui-utils.xml"/>
     <xi:include href="xml/gebr-gui-program-edit.xml"/>
     <xi:include href="xml/gebr-gui-pixmaps.xml"/>
     <xi:include href="xml/gebr-gui-js.xml"/>
-    <xi:include href="xml/gebr-gui-parameter.xml"/>
+    <xi:include href="xml/gebr-gui-param.xml"/>
     <xi:include href="xml/gebr-gui-about.xml"/>
     <xi:include href="xml/gebr-gui-icons.xml"/>
   </part>
