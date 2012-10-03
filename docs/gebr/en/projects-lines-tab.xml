@@ -186,16 +186,16 @@
   <section xml:id="projects_lines_line_paths">
     <title>Important folders of a line</title>
 
-		<para>GêBR defines a directories structure to aid 
-			in the task of management of the data associated to 
-			a set of flows. This structure is defined by a top directory, known
-      as BASE<indexterm><primary>BASE</primary></indexterm>, and few
-      other nested standard directories.</para>
+    <para>GêBR defines a directory structure to aid in the task of managing the
+      data associated to a set of flows. This structure is defined by a top
+      directory, known as
+      BASE<indexterm><primary>BASE</primary></indexterm>, and few other nested
+      standard directories.</para>
 
-    <para>For instance, if the home folder of the user is
-      '/home/john', setting the BASE to
-      '/home/john/GeBR/MyFirstLine/', will have the effect to also
-      define the following directories:</para>
+    <para>For instance, if the home folder is
+      <emphasis>/home/john</emphasis>, setting the <emphasis>BASE</emphasis> to
+      <emphasis>/home/john/GeBR/MyFirstLine/</emphasis>, will have the effect
+      to also define the following directories:</para>
 
     <informaltable>
       <tbody>
@@ -231,29 +231,25 @@
     </informaltable>
 
     <para>
-      This set of folders can help the user manages the data related to this
-      line (see <xref linkend="flows_edit_input_output"/>).
+      This standard directory structure eases the task of managing the data
+      related to lines (see <xref linkend="flows_edit_input_output"/>).
     </para>
 
     <important>
       <para>Remember that the processing takes place at the 
-        <indexterm><primary>Node
-        </primary></indexterm>. So, the directory structure
-        describe above will be created there. In case the node 
-        is different from the local machine, where the GêBR
-        interface is running, the user will not see the created
-        directories by browsing the local machine's
-        filesystem.</para>
+        <indexterm><primary>node</primary></indexterm>.
+        The directory structure described above will be created there. This
+        means that these directories will not be present on the local machine
+        <emphasis>if</emphasis> the node is a remote machine.</para>
+
       <para>To be able to browse files in these directory, the
-        <emphasis>remote browse</emphasis><indexterm><primary>Remote
-            browsing</primary></indexterm> feature must be enabled in
-        the maestro<indexterm><primary>Maestro</primary></indexterm>
+        <emphasis>remote browse</emphasis><indexterm><primary>Remote browsing</primary></indexterm>
+        feature must be enabled in the maestro<indexterm><primary>Maestro</primary></indexterm>
         of the line (see <xref linkend="technical_aspects_remote_browsing"/>).</para>
     </important>
 
     <note><para>Although it is not mandatory to adhere to this
         structure, it is highly recommended to do so.</para></note>
-
   </section>
 
   <section xml:id="projects_lines_change_the_maestro_of_a_line">
