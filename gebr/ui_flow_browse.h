@@ -232,6 +232,8 @@ gint gebr_flow_browse_calculate_n_max(GebrUiFlowBrowse *fb);
 void gebr_flow_browse_select_job_output(const gchar *job_id,
                                         GebrUiFlowBrowse *fb);
 
+void flow_browse_revalidate_flows(GebrUiFlowBrowse *fb);
+
 void flow_browse_revalidate_programs(GebrUiFlowBrowse *fb);
 
 void flow_browse_program_check_sensitiveness(void);
