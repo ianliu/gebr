@@ -10,10 +10,10 @@
 
   <title>The <guilabel>Projects and Lines</guilabel> tab</title>
 
-  <para>In the <guilabel>Projects and Lines</guilabel> tab
-    the user can create and manage his projects and lines. The right-hand side
-    of the screen shows the details of the selected item, like its name,
-    description and creation date.</para>
+  <para>Projects and lines are created and managed in the <guilabel>Projects
+      and Lines</guilabel> tab. The right-hand side of the screen shows the
+    details of the selected item, like its name, description and creation
+    date.</para>
 
   <figure id="sample_project_line_tab">
     <title>Projects and Lines tab</title>
