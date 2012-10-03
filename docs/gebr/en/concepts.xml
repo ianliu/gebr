@@ -232,15 +232,15 @@
       tabs:
       <itemizedlist>
         <listitem>
-          <guilabel>Projects and Lines</guilabel>: for creating and
+          <guilabel>Projects and Lines</guilabel>: For creating and
           manipulating projects and lines;
         </listitem>
         <listitem>
-          <guilabel>Flows</guilabel>: for creating, editing and executing
+          <guilabel>Flows</guilabel>: For creating, editing and executing
           Flows;
         </listitem>
         <listitem>
-          <guilabel>Jobs</guilabel>: for inspecting the results.
+          <guilabel>Jobs</guilabel>: For inspecting the results.
         </listitem>
       </itemizedlist>
     </para>
