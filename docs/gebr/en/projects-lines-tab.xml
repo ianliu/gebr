@@ -302,39 +302,30 @@
   <section xml:id="projects_lines_import">
     <title>Importing a project or a line</title>
 
-    <para>In GêBR the user can import projects or lines that were previously
+    <para>It is possible to import projects or lines that were previously
       exported (<xref linkend="projects_lines_export" />). To do so:</para>
 
     <procedure>
       <step>
         <para>Click on the button 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/botao_importar_projeto.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon></para>
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png" /></imageobject></inlinemediaobject></guiicon>;</para>
       </step>
       <step>
-        <para>Select the desired project or line to import in the 
-          <guilabel>Choose project/line to open</guilabel> window. Only files
-          with extension
+        <para>Select the desired project or line to import in the dialog that
+          appeared.  Only files with extension
           <filename class="extension">prjz</filename>, <filename class="extension">prjx</filename>,
           <filename class="extension">lnez</filename> or 
-          <filename class="extension">lnex</filename> will be shown.</para>
+          <filename class="extension">lnex</filename> will be shown;</para>
       </step>
       <step>
-        <para>Click at button 
-          <guibutton>Open</guibutton>.</para>
+        <para>Click on the <guibutton>Open</guibutton> button.</para>
       </step>
     </procedure>
 
-    <para>The imported project is added to the list of projects, found on the
-      left of the main window. An imported line joins with the other lines of
-      the project that was selected when the line was imported, if they exist.
-      In both cases the imported item is identified with the suffix
-      <emphasis role="bold">Imported</emphasis>.</para>
+    <para>An imported project is added to the list of projects, while an
+      imported line joins the other lines of project that was selected prior to
+      this process.  In both cases the imported item is identified with the
+      suffix <emphasis role="bold">Imported</emphasis>.</para>
 
     <note>
       <para>In GêBR, lines may only exist inside a project (see this concept in
