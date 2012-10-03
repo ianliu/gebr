@@ -13,7 +13,7 @@
   <para>From the <guimenu>Actions</guimenu> menu, the user can access the
     <guimenuitem>Preferences</guimenuitem> and
 		configure the <guimenuitem>Maestro/Nodes</guimenuitem> settings. If the user's enthusiasm
-    for GêBR has lead him/her to read the whole manual, then the user has
+    for GêBR has lead to read the whole manual, then the user has
     probably used almost all available features found in these
     options. But just in case, the user will find the documentation for these options
     below.</para>
@@ -27,12 +27,12 @@
       <listitem>
         <para><guilabel>User name:</guilabel> will be used as the
           default for <guilabel>Author</guilabel>, when the user creates
-          Projects, Lines and Flows.</para>
+          projects, lines and flows.</para>
       </listitem>
       <listitem>
         <para><guilabel>Email:</guilabel> will be used as the
           default for <guilabel>Email</guilabel>, when the user creates
-          Projects, Lines and Flows.</para>
+          projects, lines and flows.</para>
       </listitem>
       <listitem>
         <para><guilabel>User's menus directory:</guilabel> will be
@@ -41,7 +41,7 @@
           (<filename class="extension">mnu</filename> files).</para>
       </listitem>
     </itemizedlist>
-    <figure id="maestro_server_dialog">
+    <figure id="gebr_global_preferences">
       <title>Global GêBR preferences dialog box</title>
       <mediaobject>
         <caption>Preferences menu opens a dialog box where the user edits
@@ -52,6 +52,16 @@
         </imageobject>
       </mediaobject>
     </figure>
+  </section>
+  
+  <section xml:id="additional_features_connection_assistant">
+    <title>Connection assistant</title>
+    <para>This option helps the user to configure all the necessary 
+    connections to work properly GêBR.</para>
+    <para>The connection assistant explains the user to connect to a maestro, 
+    its servers and enable remote browsing 
+    (for more information, see <xref linkend="additional_features_maestro_servers_configuration" /> 
+    and <xref linkend="technical_aspects_remote_browsing" />).</para>
   </section>
   
   <section xml:id="additional_features_maestro_servers_configuration">
@@ -67,17 +77,17 @@
       </listitem>
       <listitem>
         <para><guilabel>Nodes</guilabel>: choose the nodes
-          associated to the current Maestro.</para>
+          associated to the current maestro.</para>
       </listitem>
       <listitem>
         <para><guilabel>Groups</guilabel><indexterm><primary>Node
 	      </primary><secondary>group
 	      of</secondary></indexterm>: configure the groups of
-	      Nodes on the current Maestro.</para>
+	      nodes on the current maestro.</para>
       </listitem>
     </itemizedlist>
     
-    <figure>
+    <figure id="maestro_server_dialog">
       <title>Maestro / Nodes configuration dialog box</title>
       <mediaobject>
 				<caption>The Maestro/Nodes configuration interface is divided in three parts: maestro, list of nodes and groups of nodes.</caption>
@@ -94,9 +104,9 @@
 				<indexterm><primary>Maestro</primary></indexterm>/Nodes
         Interface (see <xref linkend="maestro_server_dialog" />),
         there is an entry in which the user can put the desired
-        machine to use as Maestro. A requirement is that the Maestro
+        machine to use as maestro. A requirement is that the maestro
         must be installed on that machine. The state of the connection
-        between GêBR and the Maestro is shown by the right-side icon:
+        between GêBR and the maestro is shown by the right-side icon:
       </para>
       <itemizedlist>
         <listitem><para>connected (<inlinemediaobject>
@@ -119,13 +129,13 @@
     
     <section>
       <title>Nodes</title>
-      <para>Once the Maestro has been selected and the connection has
+      <para>Once the maestro has been selected and the connection has
         been successfully established, the user can associate nodes 
         <indexterm><primary>Node
-        </primary></indexterm> to that Maestro.</para>
+        </primary></indexterm> to that maestro.</para>
 
-      <para>Each line of the Nodes window represents each machine associated to the
-        Maestro. The lines have some columns:</para>
+      <para>Each line of the nodes window represents each machine associated to the
+        maestro. The lines have some columns:</para>
       <itemizedlist>
 	<listitem>
 	  <para><guilabel>AC</guilabel>: checkbox to activate or not
@@ -159,7 +169,7 @@
     <section>
       <title>Groups</title>
       <para>The user can employ a subset of the machines associated to
-        the Maestro<indexterm><primary>Working
+        the maestro<indexterm><primary>Working
         machine</primary><secondary>group
         of</secondary></indexterm>. This can be done through the
         creation of groups of machines.</para>
@@ -168,8 +178,13 @@
         create/edit nodes groups. The user must Drag and Drop the
         node to create a group.</para>
       <para>To create a group, the user needs to click over a node
-        in the list and drag it to the <guiicon>+</guiicon> icon. A
-        text box will be prompted for the name of the group. Groups
+        in the list and drag it to the 
+        <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/group.png" />
+              </imageobject>
+	    </inlinemediaobject> icon.
+	    A text box will be prompted for the name of the group. Groups
         with same names are not accepted.</para>
 
       <!-- What happens when a group is created? How is it used? -->

@@ -386,6 +386,9 @@ static gboolean flows_check_before_execution(void)
 
 void on_flow_execute_activate(void)
 {
+	if (!gebr.flow)
+		return;
+
 	if (!flows_check_before_execution())
 		return;
 
@@ -421,6 +424,9 @@ void on_flow_execute_details_activate(void)
 void
 on_flow_execute_parallel_activate(void)
 {
+	if (!gebr.flow)
+		return;
+
 	if (!flows_check_before_execution())
 		return;
 

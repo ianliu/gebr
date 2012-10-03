@@ -6,17 +6,19 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   lang="en"
   version="5.0"
-  xml:id="controle_de_tarefas">
+  xml:id="jobs_tab">
 
   <title>The <guilabel>Jobs</guilabel> tab</title>
 
-  <para>GêBr presents an interface to the organization and
+  <para>GêBR presents an interface to the organization and
   visualization of the results.</para>
 
   <para>As seen in 
-    <xref linkend="flows_browser_execute_flow" />, GêBR switches to the 
-    <guilabel>Jobs</guilabel> tab whenever a Flow is
-    executed.</para>
+    <xref linkend="flows_execute_flow" />, GêBR switches to the 
+    <guilabel>Jobs</guilabel> tab whenever multiple flows are
+    executed, in other cases, the user can switch through <guilabel>Flows</guilabel> tab,
+    using a arrow on info bar to fast view of jobs, localized on bottom of tab.
+    </para>
 
   <para>This tab has three sections:</para>
   <itemizedlist>
@@ -25,7 +27,7 @@
     <listitem><para>Righ Panel: Details of a selected job</para></listitem>
   </itemizedlist>
 
-  <section xml:id="sec_6_1">
+  <section xml:id="jobs_toolbar">
     <title>Toolbar</title>
     <figure>
       <title><guilabel>Jobs</guilabel> tab toolbar</title>
@@ -38,7 +40,7 @@
     </figure>
     <para>In this tab the user can 
       <emphasis role="bold">follow</emphasis> and, if so desired, 
-      <emphasis role="bold">interrupt</emphasis> the Flow's execution. The available commands
+      <emphasis role="bold">interrupt</emphasis> the flow's execution. The available commands
       are:</para>
 
     <itemizedlist>
@@ -54,13 +56,13 @@
       </listitem>
 
       <listitem>
-        <para>Clear Job (<guiicon>
+        <para>Clear job (<guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/trash-empty.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>). Eliminate from the Job Control the selected Job. Caution is needed because the
+          </guiicon>). Eliminate from the Jobs the selected job. Caution is needed because the
           process is irreversible.</para>
         <para>The user can only clear jobs that are not being executed (<guiicon>
             <inlinemediaobject>
@@ -78,14 +80,27 @@
         </guiicon>).</para>
       </listitem>
       <listitem>
-        <para>Cancel this Job (<guiicon>
+        <para>Cancel this job (<guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>). The user can cancel a running or queued job. When a
-          Job is terminated in this manner, the Job will be marked
+          </guiicon>). The user can cancel a running (<guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/icone_tarefa_em_execucao.png" />
+              </imageobject>
+            </inlinemediaobject>
+          </guiicon>) 
+          or queued (<guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/chronometer.png" />
+              </imageobject>
+            </inlinemediaobject>
+          </guiicon>) job. 
+          When a job is terminated in this manner, the job will be marked
           with
           <guiicon>
             <inlinemediaobject>
@@ -97,7 +112,7 @@
       </listitem>
 
       <listitem>
-        <para>Filter Jobs (<guiicon>
+        <para>Filter jobs (<guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/filter.png" />
@@ -113,10 +128,10 @@
       the mouse's right button.</para></tip>
   </section>
 
-  <section>
+  <section xml:id="jobs_left_panel">
     <title>Left Panel</title>
     <para>In the left panel, GêBR presents a list of flows executed by
-      the user, ordered by moment of execution. Each exhibited Flow can be
+      the user, ordered by moment of execution. Each exhibited flow can be
       in one of four states:</para>
     <itemizedlist>
       <listitem>
@@ -170,22 +185,43 @@
       </mediaobject>
     </figure>
     <caption>Screenshot of the <guilabel>Jobs</guilabel> tab list of jobs.</caption>
+    
+    <para>Beside the job name, an icon (<guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/photos.png" />
+          </imageobject>
+        </inlinemediaobject>
+    </guiicon>
+    ) appears to represent that this job came 
+    from an execution of snapshot (see <xref linkend="flows_snapshots_actions" />).</para>
+    
   </section>
 
-  <section>
+  <section xml:id="jobs_right_panel">
     <title>Right panel</title>
     <para>In the upper part, information of the selected flow is
       exhibited. More informations are shown clicking
-      over <emphasis>More Details</emphasis>. Among the exhibited
+      over <emphasis>Details</emphasis>. Among the exhibited
       information there are:</para>
     <itemizedlist>
-      <listitem><para>moment of start/finish of the flow</para></listitem>
-      <listitem><para>input/output files</para></listitem>
-      <listitem><para>the nodes group in which the flow were executed</para></listitem>
+      <listitem><para>Description of related flow. If the job is from a snapshot,
+      the icon 
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/photos.png" />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon> is displayed along with the description of snapshot.</para></listitem>
+      <listitem><para>Moment of start/finish of the flow.</para></listitem>
+      <listitem><para>Elapsed time in execution</para></listitem>
+      <listitem><para>Input/output files</para></listitem>
+      <listitem><para>The nodes group in which the flow were executed</para></listitem>
     </itemizedlist>
-    <para>The user can also consult which machines were effectively used in
-      the group and how the distribution of the work was done by
-      clicking over
+    <para>Which machines were effectively used in
+      the group and how the distribution of the work was done can be
+      consulted by clicking over
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -198,7 +234,8 @@
       <title>Jobs tab Right Panel</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="../images/GeBR_jc_more_details.png"  contentwidth="733px" contentdepth="633px" />
+					<imagedata fileref="../images/GeBR_jc_more_details.png"
+						contentwidth="733px" contentdepth="633px" />
         </imageobject>
       </mediaobject>
       <caption> Job information. The user can consult detailed information
@@ -217,12 +254,13 @@
     <title>Jobs outputs</title>
     <mediaobject>
       <imageobject>
-        <imagedata fileref="../images/GeBR_jc_output.png"  contentwidth="733px" contentdepth="525px" />
+				<imagedata fileref="../images/GeBR_jc_output.png"  contentwidth="733px"
+					contentdepth="525px" />
       </imageobject>
     </mediaobject>
     <caption>Screenshot of the outputs of a job.</caption>
     </figure>
-    <para>The results (standard output) of the Flow are shown. The
+    <para>The results (standard output) of the flow are shown. The
       redirected output are not exhibited. Right-clicking on this
       window, an Options menu is exhibited, by which the user can enable
       the automatic word wrap and the automatic scroll of window as

@@ -309,7 +309,7 @@ them up. In how many tasks should they be split?</property>
                                 <property name="visible">True</property>
                                 <child>
                                   <object class="GtkRadioButton" id="high_priority_button">
-                                    <property name="label" translatable="yes">Fight for resources</property>
+                                    <property name="label" translatable="yes">Dispute resources</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>

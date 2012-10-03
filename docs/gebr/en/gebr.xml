@@ -31,11 +31,8 @@
   <!-- A aba Fluxos -->
   <xi:include href="flows-tab.xml" />
   
-  <!-- A aba Editor de Fluxo -->
-  <xi:include href="flow-editor-tab.xml" />
-  
   <!-- A aba Controle de Tarefas -->
-  <xi:include href="job-control-tab.xml" />
+  <xi:include href="jobs-tab.xml" />
   
   <!-- Menubar -->
   <xi:include href="menubar.xml" />  
@@ -47,5 +44,7 @@
 
   <!-- Index -->
   <index xmlns='http://docbook.org/ns/docbook'/>
-    
+
+  <!-- Glossary -->
+  <xi:include href='glossary.xml' />
 </book>

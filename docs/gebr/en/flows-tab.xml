@@ -10,31 +10,73 @@
 
   <title>The <guilabel>Flows</guilabel> tab</title>
 
-  <para>In this tab, the user can manage the Flows of the current
-    Line. Note the similarity with the <guilabel>Projects and
+
+	<para>In this tab, the user can manage the flows and the related
+		programs of the current
+    line. Note the similarity with the <guilabel>Projects and
     Lines</guilabel> tab.</para>
 
+			<para>
+				The left panel contains the list of flows/programs of the
+				current line. It defines the current flow(s) of GêBR.
+			</para>
+			<para>
+				The right panel is associated to the current flow
+				and is divided in two parts:
+	    <itemizedlist>
+		  <listitem>
+				Description of the flow. Basic information such as flow title,
+				last modification date and last execution date can be
+				quickly consulted here.
+			</listitem>
+		  <listitem>
+				Context-based view. The default view is the summary of
+				the flow (see below), but
+				this view can be switched to Snapshots view or
+				Output view, according
+				to the context. Further information is available on
+				<xref linkend="flows_snapshots"/> and
+				<xref linkend="flows_execution_infobar"/>.
+			</listitem>
+	    </itemizedlist>
+			</para>
+			<para>
+				The default view of the right panel of the <guilabel>Flows</guilabel>
+				tab contains a summary of the current flow. This view presents
+				the input/output files, the programs and the parameters
+				altered by the user (different from the provided values).
+				Additionally, problems in the flow assembly
+				are warned in this window. To go to the summary view,
+				just select (single click) a flow. 
+			</para>
+			<tip>
+
+			<para>
+				The search (of a program, parameter, etc.) is activated
+				inside the summary through <keycap>Ctrl+F</keycap>.
+			</para>
+		</tip>
+
   <tip>
-    <para>Instead of the buttons in toolbar, try using
+    <para>Instead of the toolbar buttons, try using
     the <emphasis role="bold">context menu</emphasis>. To do
-    so, <emphasis role="bold">right-click</emphasis> on a Flow that has been 
+    so, <emphasis role="bold">right-click</emphasis> on a flow that has been 
     created. Notice that many features can be accessed through
-    this method. For certain cases this is an easier and simpler
+    this method. For certain cases, this is an easier and simpler
     choice.</para>
   </tip>
 
-  <section xml:id="flows_browser_create_flow">
-    <title>Creating Flows</title>
+  <section xml:id="flows_create_flow">
+    <title>Creating flows</title>
 
-    <para>The third-level element of GêBR are processing flows or
-      just <emphasis>Flows</emphasis> (see
-      <xref linkend="concepts_elements" />).</para>
+		<para>The third-level element of GêBR is the <emphasis>flow</emphasis>
+			(see <xref linkend="concepts_elements" />).</para>
 
-    <para>To create a Flow, follow the steps:</para>
+    <para>To create a flow, follow the steps:</para>
 
     <procedure>
       <step><para>In the tab <guilabel>Projects and Lines</guilabel>,
-          check that some Line is selected.</para>
+          check that some line is selected.</para>
       </step>
       <step><para>Go to <guilabel>Flows</guilabel> tab, then
       left-click on
@@ -47,51 +89,371 @@
         </guiicon>.</para>
       </step>
       <step>
-        <para>A dialog box, named <guilabel>Flow "New Flow"
+        <para>A dialog box, named <guilabel>Flow
         Properties</guilabel>, will appear. Fill in the four standard fields:
           <guilabel>Title</guilabel>, <guilabel>Description</guilabel>
-          (an one-line sentence), <guilabel>Author</guilabel> and
+          (a one-line sentence), <guilabel>Author</guilabel> and
           an <guilabel>e-mail</guilabel> address. Click
           on <guibutton>OK</guibutton> when ready.</para>
       </step>
     </procedure>
 
-    <para>After a Flow has been created, it will be 
+    <para>After a flow is created, it will be 
       visible on the left side of the main window when the 
       <guilabel>Flows</guilabel> tab is selected. The 
-      <guilabel>Details</guilabel> box, found on the right side of the
-      main window, shows information about the selected Flow.
+      <guilabel>Details</guilabel> box, found on the upper right side of the
+      main window, shows information about the selected flow and below the 
+      <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
+      contains information like input, output and log file, programs 
+      and some of its parameters. 
+     </para>
+		 <para>The menus list will automatically appear in a pop-up and the
+			 user will be able to assemble the flow (see<xref
+				 linkend="flows_assembling_flow" />).
     </para>
 
     <tip>
-      <para>The user can alter the position of the Flow in the list by
-        dragging the Flow with the mouse to the desired
+      <para>It's possible to alter the position of the flow in the list by
+        dragging the flow with the mouse to the desired
         position.</para>
     </tip>
+  </section>
+  
+  <section xml:id="flows_assembling_flow">
+  	<title>Assembling the flow</title>
+    <para>In GêBR, a <emphasis>flow</emphasis> is a sequence
+      of operations defined by the user. These operations, also
+      called
+      <emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
+      are organized into the following <emphasis>categories</emphasis>
+      according to their purpose:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Data Compression</para>
+      </listitem>
+      <listitem>
+        <para>Editing, Sorting and Manipulation</para>
+      </listitem>
+      <listitem>
+        <para>File tools</para>
+      </listitem>
+      <listitem>
+        <para>Filtering, Transforms and Attributes</para>
+      </listitem>
+      <listitem>
+        <para>Gain, NMO, Stack and Standard Processes</para>
+      </listitem>
+      <listitem>
+        <para>Graphics</para>
+      </listitem>
+      <listitem>
+        <para>Import/Export</para>
+      </listitem>
+      <listitem>
+        <para>Migration and Dip Moveout</para>
+      </listitem>
+      <listitem>
+        <para>Multiple Supression</para>
+      </listitem>
+      <listitem>
+        <para>Seismic Unix</para>
+      </listitem>
+      <listitem>
+        <para>Simulation and Model Building</para>
+      </listitem>
+      <listitem>
+        <para>Utilities</para>
+      </listitem>
+    </itemizedlist>
+    
+    <para>After the flow has been created, a pop-up appears with several menus and
+    is possible assemble the flow:</para>
+    
+    <procedure>
+      <step>
+				<para>Choose one of them and include it in the flow with a
+					double-click.</para>
+      </step>
+      
+      <step>
+      	<para>To specify an order to the programs, simply drag and drop the 
+      	desired programs.</para>
+      </step>
+      
+      <step>
+				<para>Inserted program comes in an enabled state (unless they
+					have required parameters).</para>
+      </step>
+      
+      <step>
+				<para>Some programs have required parameters. To edit or to alter the
+					default parameters, consult  <xref linkend="flows_editing_parameters" />.</para>
+      </step>
+      
+      <step>
+				<para>To change the program status, right-click over it and 
+					choose the first option, <guilabel>Enable/Disable</guilabel>
+      	(for more information, see <xref linkend="flows_change_program_state" />).</para>
+		  <important>
+	        <para>To run a flow 
+	          <emphasis role="bold">all the programs</emphasis> listed in the 
+	          <guilabel>Flow Sequence</guilabel> box must be 
+	          <guilabel>Configured</guilabel> (<guiicon>
+	            <inlinemediaobject>
+	              <imageobject>
+	                <imagedata fileref="../../common-images/icone_configurado.png" />
+	              </imageobject>
+	            </inlinemediaobject>
+	        </guiicon>). Otherwise the flow will not be executed as
+	        expected.</para>
+	      </important>
+	  </step>
+   </procedure>
+   
+    <para>The flow is ready to be executed. Click on 
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+          </imageobject>
+        </inlinemediaobject>
+    </guiicon> or on
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/detailed_execution.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>
+					to do it (for more information, consult <xref
+					linkend="flows_execute_flow"/>).</para>
+    <para>After the flow has been assembled, it will be visible on the left
+      side of the main window when the <guilabel>Flows</guilabel> tab
+      is selected. The <guilabel>Details</guilabel> box, found on the
+      upper right side of the main window, shows information about the selected
+      flow. The <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
+      contains information like input,output and log file, flow's programs 
+      and some of its parameters. </para>
     <tip>
-      <para>Observe that the information bar just below the menu
-        <guimenu>Actions</guimenu> shows the parents Line and Project
-        of the selected Flow.</para>
+    	<para>There is no limit on the number of flows 
+    	that can be created inside a line.</para>
     </tip>
-
+    <tip>
+      <para>To alter <emphasis role="bold">the position</emphasis> of the flow in
+        the list, simply <emphasis role="bold">drag the flow with the
+          mouse</emphasis> to the desired position.</para>
+    </tip>
+  </section>
+  
+  <section xml:id="flows_editing_parameters">
+  	<title>Editing program's parameters</title>
+  	
+  	<para>Program's parameters compose a set of initial configurations
+    defined by the user.</para>
+    <para>To edit program's parameters follow the steps below:</para>
+    <procedure>
+      <step>
+        <para>Select the program from the <guilabel>Flow
+            sequence</guilabel> box and click on
+          <guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
+              </imageobject>
+            </inlinemediaobject>
+          </guiicon> on the toolbar, or just double-click on the
+          program. The <guilabel>Parameter</guilabel> box will
+          appear on right side of window over the <guilabel>Flow Review</guilabel> box.</para>
+      </step>
+      <step>
+        <para>Edit the program's parameters. Notice that each
+          program's parameter vary greatly both in size and
+          type.</para>
+        <tip>
+          <para>The user can click on the <guibutton>Help</guibutton> button
+            (bottom right corner of the dialog box) to view
+            the <emphasis role="bold">program's
+              documentation</emphasis>. This will be certainly useful
+            when the user is editing the programs parameters.</para>
+        </tip>
+        <tip>
+          <para>The user can click on the <guibutton>Reset</guibutton> button
+            when want the program to return to its default
+            configurations.</para>
+        </tip>
+      </step>
+      <step>
+        <para>All changes are saved automatically, and to close the <guilabel>Parameter</guilabel> box,
+        simply change selection on left side.</para>
+      </step>
+    </procedure>
+  </section>
+  
+  <section xml:id="flows_change_program_state">
+  	<title>Changing a program's state</title>
+  	
+  	<para>Programs can be in two states only, <emphasis role="bold">Enabled</emphasis> (
+  	<guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/icone_configurado.png" />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon>) or <emphasis role="bold">Disabled</emphasis> (
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/icone_prog_desabilitado.png" />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon>
+      ).
+      If a program is enabled with an error, the icon changes to 
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/gtk-dialog-warning.png" />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon>.</para>
+      
+      <para>Alternate between these states by using two
+      methods: <mousebutton>right-clicking</mousebutton>
+      on the program and then select the desired state from the context menu 
+      or using the shortcut
+      <keycombo>
+        <keycap>Spacebar</keycap>
+    </keycombo> to change the state(s) of the selected programs.</para>
+    
+      <tip>
+      <para>It's possible select several programs whose state is desired to
+        change by holding
+        <keycombo>
+          <keycap>Ctrl</keycap>
+          <mousebutton>Click</mousebutton>
+        </keycombo> or 
+        <keycombo>
+          <keycap>Shift</keycap>
+          <mousebutton>Click</mousebutton>
+      </keycombo>.</para>
+    </tip>
+    <tip>
+      <para>Changing a program state does not alter its parameter configuration. 
+      This way, alternate between states is an operation completely safe.</para>
+    </tip>
     <important>
-      <para>Performing the operations described above the user has
-      just accomplished the creation of a Flow element in the
-      interface. However, that new Flow still needs to be assembled,
-      i.e., the user needs to select which programs will be
-      chained to accomplish the purpose of the Flow. This further set
-      up is describe in <xref linkend="flow_editor_create_flow" />.</para>
+      <para>
+        <emphasis role="bold">Disabled</emphasis> programs (<guiicon>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="../../common-images/icone_prog_desabilitado.png" />
+            </imageobject>
+          </inlinemediaobject>
+        </guiicon>) will be ignored when the flow runs. This
+        way, the user can <emphasis role="bold">enable and disable parts of
+          the flow</emphasis>.</para>
     </important>
   </section>
+  
+  <section xml:id="flows_edit_input_output">
+  	<title>Editing the flow's input and output files</title>
+  	
+  	<para>In many occasions, it's necessary to extract data
+      from an input file and/or generate as a result an output file,
+      or even an log file in case an error occurs.</para>
 
-  <section xml:id="flows_browser_copy_paste_del_flows">
+    <para>To associate an input, output and error file to a flow, follow this steps:</para>
+    <figure>
+      <title>Input file setting</title>
+      <mediaobject>
+        <caption>Select the Flow Editor Tab. In the Flow Sequence box
+          the user can edit the input, output and log files for this flow
+          sequence.</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_flow_editor_input_file.png"  contentwidth="733px" contentdepth="485px" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <procedure>
+      <step>
+		<para>Select a flow, in the <guilabel>Flows</guilabel> tab.</para>
+      </step>
+      
+      <step>
+		<para>Below of the selected flow, the programs and entries with input, output and log files
+		will be shown. It's possible edit files paths by double clicking on them.
+		</para>
+      </step>
+      
+      <step>
+        <para>Type in the path or click on the icon 
+          <guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/icone_escolher_arquivo.png" />
+              </imageobject>
+            </inlinemediaobject>
+          </guiicon> to browse for the file (see
+          <xref linkend="technical_aspects_remote_browsing"/>).
+        </para>
+      </step>
+    </procedure>
 
-    <title>Coping, pasting and deleting Flows</title>
+    <para>To using the folders associated to the line,
+      can either choose like above or use the feature of
+      autocomplete of the important folders of this line. 
+      (For more information, see <xref linkend="projects_lines_line_paths" />).
+    </para>
+    <figure>
+      <title>Autocomplete of paths</title>
+      <mediaobject>
+        <caption>
+          Autocomplete feature in the Input file of a flow.
+        </caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"  contentwidth="919px" contentdepth="638px" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>When a path is chosen for the 
+      <guilabel>flow's input/output</guilabel>, their file
+      paths will appear in entries, indicated by the icons
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/icone_arquivo_entrada.png" />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon> and 
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/icone_arquivo_saida.png" />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon>, below and above the flow's programs (if there are
+      any).</para>
+    <note>
+      <para>If necessary <emphasis role="bold">removing a
+          set</emphasis> from the list, select them by pressing
+        <emphasis role="bold">right-click</emphasis> and then click on 
+        <guimenuitem>Exclude</guimenuitem>.</para>
+    </note>
+  </section>
+
+  <section xml:id="flows_copy_paste_del_flows">
+
+    <title>Copying, pasting and deleting flows and programs</title>
 
     <para>The clipboard provides the popular set of tools known as
-      <emphasis>copy and paste</emphasis>. In GêBR, a Flow (or set of
-      Flows) can be copied to the clipboard and paste back to the same
-      Line or to other Lines. To copy Flows to the clipboard, first
+      <emphasis>copy and paste</emphasis>. In GêBR, a flow (or set of
+      flows) can be copied to the clipboard and paste back to the same
+      line or to other lines. In the same manner, 
+      a program (or set of programs) can be copied to the clipboard too,
+      and can be paste to the same flow or to other flows.</para>
+      
+      <para>To copy flows or programs to the clipboard, first
       select them with the mouse, and then use the button
       <guiicon>
         <inlinemediaobject>
@@ -103,7 +465,7 @@
       <keycombo>
         <keycap>Ctrl</keycap>
         <keycap>C</keycap>
-    </keycombo>. After copying a Flow (or a set of Flows) the user can paste it
+    </keycombo>. After copying the user can paste it
       by clicking on the button
       <guiicon>
         <inlinemediaobject>
@@ -117,7 +479,8 @@
         <keycap>V</keycap>
     </keycombo>.</para>
 
-    <para>To delete a Flow (or set of Flows), select them then click on 
+    <para>To delete a flow (or set of flows) and a program (or set a programs), 
+    select them then click on 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -127,7 +490,7 @@
     </guiicon>.</para>
 
     <tip>
-      <para>The user can handle several Flows at once by holding
+      <para>It's possible handle several flows at once by holding
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Left-click</mousebutton>
@@ -137,22 +500,16 @@
           <mousebutton>Left-click</mousebutton>
       </keycombo>.</para>
     </tip>
-
-    <tip>
-      <para>Any Flow (or a set of Flows) that has been copied to the
-      clipboard can be pasted to <emphasis>any Line</emphasis>. Simply
-      switch to the
-      <guilabel>Projects and Lines</guilabel> tab, select the desired
-      Line, then go back to the <guilabel>Flows</guilabel> tab and
-      paste the Flow(s).</para>
-    </tip>
-  
-
+    
+    <caution>
+      <para>GêBR does <emphasis role="bold">not</emphasis> ask for
+        confirmation before deleting programs from a flow.</para>
+    </caution>
   </section>
 
-  <section xml:id="flows_browser_edit_properties_flow">
-    <title>Editing Flow's properties</title>
-    <para>To edit Flow's properties the user must first select the Flow,
+  <section xml:id="flows_edit_properties_flow">
+    <title>Editing flow's properties</title>
+    <para>To edit flow's properties the user must first select the flow,
     then click on
       <guiicon>
         <inlinemediaobject>
@@ -161,110 +518,220 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon>.</para>
-    <para>In the <guilabel>Flows properties</guilabel> dialog box the user
-    can edit the
-    fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>, <guilabel>Author</guilabel>
-    and <guilabel>Email</guilabel>.</para>
+    <para>In the <guilabel>flows properties</guilabel> dialog box the user
+			can edit the fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>,
+			<guilabel>Author</guilabel> and <guilabel>Email</guilabel>.</para>
   </section>
 
-  <section xml:id="flows_browser_edit_dictionary">
-    <title>Editing the Flow's parameter dictionary</title>
+  <section xml:id="flows_edit_dictionary">
+    <title>Editing the flow's parameter dictionary</title>
     <para>This feature is documented in the section 
-      <xref linkend="dictionary_variables" />.</para>
+      <xref linkend="technical_aspects_dictionary_variables" />.</para>
   </section>
 
-  <section xml:id="flows_browser_save_state_flow">
-    <title>Saving a Flow's state</title>
-    <para>The user will find situations when working with GêBR it will be
-      useful to use an existing Flow as a basis to create new
-      Flows. For example, the user might want to experiment with Flows that
+  <section xml:id="flows_snapshots">
+    <title>Snapshot of a flow</title>
+    <para>There are situations when working with GêBR it will be
+      useful to use an existing flow as a basis to create new
+      flows. For example, to experiment with flows that
       are only slightly different from one another, however without
-      having to discard or modify the original Flow.</para>
+      having to discard or modify the original flow.
+    </para>
+    <para>A way to do this is to copy and paste the flow (see the
+      section <xref linkend="flows_copy_paste_del_flows" />.
+      Another way is to take a snapshot of the original flow, through a snapshot, 
+      GêBR stores the settings of your flow so the user can come back to it later.</para>
+      
+      <section xml:id="flows_taking_snapshots">
+      	<title>Taking a snapshot</title>
+	      <para>All snapshots of the flow are presented in the flows tab. 
+	      To <emphasis role="bold">take a snapshot</emphasis> of a flow:</para>
+	    <procedure>
+	      <step>
+	        <para>Select the flow and left-click on <guilabel>More</guilabel> button on Toolbar.</para>
+	      </step>
+	      <step>
+	       <para>Then click on 
+	        <guiicon>
+	            <inlinemediaobject>
+	              <imageobject>
+	                <imagedata fileref="../../common-images/botao_salvar_estado.png" />
+	              </imageobject>
+	            </inlinemediaobject>
+	        </guiicon> to take a snapshot.</para>
+	      </step>
+	      <step>
+	        <para>It's really necessary to write a description of the 
+	        snapshot in the dialog box to
+	        identify this saved state later on.</para>
+	        <figure>
+	           <title>Save the snapshot description</title>
+				<mediaobject>
+					<caption>Save the snapshot description</caption>
+					<imageobject>
+						<imagedata fileref="../images/GeBR_snapshot_description_dialog.png"  contentwidth="419px" contentdepth="167px"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+	      </step>
+	      <step>
+	        <para>Left-click on 
+	          <guibutton>OK</guibutton> to save your snapshot</para>
+	      </step>
+	    </procedure>
+	    
+	    <tip>
+	      <para>Useful keybinds are available here: <keycap>Ctrl+S</keycap> takes a snapshot of the selected flow.</para>
+	      <para>There is no limit on the number of snapshots for each flow.</para>
+	    </tip>
+	
+	    <para>To see the saved snapshots, just left-click on 
+	      <guiicon>
+	        <inlinemediaobject>
+	          <imageobject>
+	            <imagedata fileref="../../common-images/photos.png" />
+	          </imageobject>
+	        </inlinemediaobject>
+	      </guiicon> in the details of a flow.
+	    </para>
+    </section>
+    
+    <section xml:id="flows_snapshots_actions">
+	   <title>Snapshot actions</title>
+	   
+	   <para>A user that uses different versions of the same flow may also be benefited 
+	   by the use of snapshots. An option would be to save many different flows, one for 
+	   each version, which drawback is the pollution of the flows tab.
+	   Another option, using the feature above, is taking
+	   a snapshot of each version of the flow.</para>
+      
+      	<figure>
+	      <title>Snapshots on GêBR</title>
+		  <mediaobject>
+		   <caption>In this view, the user can perform various actions in the snapshots,
+		   like revert, delete and run</caption>
+	       <imageobject>
+			 <imagedata fileref="../images/GeBR_snapshot_example.png"  contentwidth="763px" contentdepth="634px" />
+		   </imageobject>
+		  </mediaobject>
+		 </figure>
+		 
+		<para>The graph indicates from which version each snapshot was derived from. 
+			For instance, in the graph of the figure, is possible to see that the snapshot 'B' was 
+			based on the snapshot 'A'. 
+		</para>
+		 
+		 <caution>
+	      <para>GêBR continuously saves the list of flow states. Even if
+	      the computer was turned off, this list will be recovered when GêBR 
+	      is opened again. However, if the <emphasis role="bold">flow was 
+	      deleted</emphasis> all the saved states
+	      will <emphasis role="bold">immediately disappear
+	      forever</emphasis>.</para>
+	    </caution>
+	    
+		 <para>Through a right-click over the target snapshot, the user has the option to 
+		 <emphasis role="bold">Revert</emphasis>, <emphasis role="bold">Delete</emphasis> 
+	      or <emphasis role="bold">Run</emphasis> it. The right-click over the current 
+	      stage (Now) allows the user to <emphasis role="bold">Run</emphasis> the current
+	      flow or to take a snapshot thereof.
+		</para>
+		
+		<para>In this view, also is possible use multiple selection just click over several snapshots 
+			and the actions are disposable through the right-click over a snapshot. After to choose 
+			several snapshots and the action, this action will be applied in all selected snapshots. 
+		</para>
+		<para>To deselect a snapshot is as easy as select one, the user just need to click over the 
+			undesired snapshot. Also is possible deselect all the selected snapshots by clicking 
+			on the white area in this view. 
+	    </para>
+	    
+	    <itemizedlist>
+		  <listitem>
+		  	<emphasis role="bold">Revert</emphasis>
+	      	
+		    <para>If a snapshot of a flow was taken and for some reason undesired modifications 
+		    	 were made to it, is possible to revert to another one through 
+		     	 double-click on that. Whenever a snapshot is
+		    	 reverted, the dialog <emphasis>Backup Current State</emphasis> will appear. </para>
+		    	 
+		    <figure>
+		     <title>Dialog of Backup Current State</title>
+			 <mediaobject>
+			  <caption>Two option are avaliable to proceed.</caption>
+		      <imageobject>
+				<imagedata fileref="../images/GeBR_reverting_modified.png"  contentwidth="371px" contentdepth="309px" />
+			  </imageobject>
+			 </mediaobject>
+			</figure>
+	
+			<itemizedlist>
+			  <listitem>
+			    <guibutton>Take a snapshot</guibutton>: the dialog to input a description
+			    will appear, where is possible save this new snapshot.
+		      </listitem>
+		      <listitem>
+		      	<guibutton>Proceed discarding changes</guibutton>: GêBR will
+		        simply revert to the chosen snapshot without saving the current
+		        state. 
+		      </listitem>
+		    </itemizedlist>
+		    
+		    <tip>
+		      <para>If the current state was previously saved, GêBR
+		      recommends that the user click on <guibutton>Proceed discarding changes</guibutton>, in the
+		      dialog box <emphasis>Backup Current State</emphasis>, as to avoid a bloated snapshot view.</para>
+		    </tip>
+	      </listitem>
+	      
+	      <listitem>
+	        <emphasis role="bold">Delete</emphasis>
+	        
+	        <para>The delete of a snapshot is a permanently action. After do that, 
+	        this snapshot will disappear and cannot be recovered.</para>
+	        
+	        <para>GêBR deals with the idea of origin of the snapshot. In the graph of the figure, 
+				'B1' and 'B2' come from 'B' which, by its turn, comes from 'A'. If the user deletes 'B', 
+				GêBR will consider 'B1'and 'B2' as originated from 'A'. 
+			</para>
+	      </listitem>
+	      
+	      <listitem>
+	      	<emphasis role="bold">Run</emphasis>
+	      
+	      	<para>Running a snapshot is like running a flow (see <xref linkend="flows_execute_flow" />).
+	      	The advantage of doing this is the possibility of executing
+	      	a snapshot without having to revert to it. Thus, saved flows can be tested 
+	      	without changing the current one.</para>
 
-    <para>A way to do this is to copy and paste the Flow (see the
-      section <xref linkend="flows_browser_copy_paste_del_flows" />.
-      Another way is to save the state of the original Flow, then edit
-      it to the heart desire, and when the user wishes, he or she can return the
-      Flow to its original state. To
-      <emphasis role="bold">save the Flow's state</emphasis>:</para>
-    <procedure>
-      <step>
-        <para>Select the Flow and left-click on 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/botao_salvar_estado.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon>.</para>
-      </step>
-      <step>
-        <para>If the user wants, he or she can write a comment on the state in the
-        dialog box <guilabel>Save the Flow's state</guilabel>, as to
-        identify this saved state later on.</para>
-      </step>
-      <step>
-        <para>Left-click on 
-          <guibutton>OK</guibutton>.</para>
-      </step>
-    </procedure>
-    <note>
-      <para>There is no limit on the number of states for each
-      Flow.</para>
-    </note>
-
-    <para>To open the list of saved states left-click on 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_salvar_estado_lista.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon>, to the right of the button 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_salvar_estado.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon>, then select the state that is desired to recover. Whenever
-     the user select a saved state from the list, the dialog
-      <emphasis>Backup Current State</emphasis> will appear. If the user click on 
-      <guibutton>Yes</guibutton> the dialog <emphasis>Save the Flow's
-      State</emphasis> will appear, where the user can save this new
-      state. If the user click on <guibutton>No</guibutton>, GêBR will
-      simply revert to the chosen state without saving the current
-      state.</para>
-    <tip>
-      <para>If the user is sure that he or she has saved the current state, GêBR
-      recommends that the user click on <guibutton>No</guibutton>, in the
-      dialog box <emphasis>Backup Current State</emphasis>, as to
-      avoid a bloated state list.</para>
-    </tip>
-    <caution>
-      <para>GêBR continuously saves the list of Flow states. Even if
-      the user turns off the computer this list will be recovered when the user
-      opens GêBR again. However, if the user <emphasis role="bold">deletes
-      the Flow</emphasis> all the saved states
-      will <emphasis role="bold">immediately disappear
-      forever</emphasis>.</para>
-    </caution>
+	      </listitem>
+		</itemizedlist>
+	    
+	    <note>
+			<para>Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected snapshots
+				one after another; <keycap>Ctrl+Shift+R</keycap> runs the
+				selected snapshots parallely (keybind activated just if multiple snapshots are selected);
+				<keycap>Delete</keycap> delete the selected snapshots; 
+			</para>
+		</note>
+	    
+	</section>
   </section>
 
-  <section xml:id="flows_browser_import_flow">
-    <title>Importing/Exporting a Flow</title>
-    <para>Although GêBR maintains all the data, the user still might wish
-      to copy the Flows to file to be able to share them, for
+  <section xml:id="flows_import_flow">
+    <title>Importing/Exporting a flow</title>
+    <para>Although GêBR maintains all the data, can be necessary 
+      copy the flows to file to be able to share them, for
       instance.</para>
 
-        <para>In the window <guilabel>Save Flow</guilabel>, navigate
+        <para>In the window <guilabel>Save flow</guilabel>, navigate
           to a desired directory and type a name for the file
           (GêBR will automatically determine the extension
           <filename class="exension">flw</filename>). To do so:</para>
     <procedure>
       <step>
         <para> In case of Import, the user must first 
-          <emphasis role="bold">select a Flow</emphasis> (or see
+          <emphasis role="bold">select a flow</emphasis> (or see
           <xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
       </step>
       <step>
@@ -288,35 +755,24 @@
       </step>
       <step>
         <para>Navigate through the files and
-          select the Flow that is desired to be
+          select the flow that is desired to be
           imported/export.</para>
       </step>
     </procedure>
-    <para>In case of Import, the imported Flow will be
-      listed along with any other Flows of the
-      selected Line. Otherwise, in case of Export,
-      the file containing the exported Flow will be
+    <para>In case of Import, the imported flow will be
+      listed along with any other flows of the
+      selected line. Otherwise, in case of Export,
+      the file containing the exported flow will be
       created.</para>
   </section>
 
+	<section xml:id="flows_execute_flow">
+		<title>Executing a flow</title>
 
-	<section xml:id="flows_browser_execute_flow">
-		<title>Flow execution</title>
-
-		<para>Once assembled a Flow, it can be executed in two ways:
+		<para>Once assembled a flow, it can be executed in two ways:
 			<itemizedlist>
 				<listitem>
-					Advanced execution (
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/detailed_execution.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon>). 
-				</listitem>
-				<listitem>
-					Basic execution (
+					Run - Basic execution (
 					<guiicon>
 						<inlinemediaobject>
 							<imageobject>
@@ -325,22 +781,93 @@
 						</inlinemediaobject>
 					</guiicon>). 
 				</listitem>
+				<listitem>
+					Setup and Run - Advanced execution (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/detailed_execution.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>). 
+				</listitem>
 			</itemizedlist>
 		</para>
-		
-		<para>The user can select more than one Flow, and then execute them all. To make a
-			multiple selection, click over the Flows, while <keycap>Ctrl</keycap> is pressed or use
-			the arrow keys while <keycap>Shift</keycap> is pressed.
-		</para>
+			<para>
+				After being triggered, the execution can be followed in the same
+				window or, for more detailed information, in the <guilabel>Jobs</guilabel>
+				tab (see <xref linkend="flows_execution_infobar"/> and
+				<xref linkend="jobs_tab"/>).
+			</para>
+		<tip>
+			<para>More than one flow can be selected together and executed. To make a
+				multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
+				the arrow keys while <keycap>Shift</keycap> is pressed.
+			</para>
+		</tip>
+			<section xml:id="flows_quick_execution">
+				<title>Run</title>
 
-			<section xml:id="flows_browser_detailed_execution">
-				<title>Advanced Execution</title>
 				<para>
-					The user can set many execution details before triggering a Job and then he or she just have to
-					click on Run to execute the Job. 
+					By clicking on 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon> 
+					, the job will be triggered with the following settings:
+
+					<procedure>
+						<step>
+							In case of multiple flows, the default is executing one after another.
+						</step>
+						<step>
+							The flow (or flows) selected is (are) going to be executed immediately.
+						</step>
+						<step>
+							If the flow is parallelizable, the job will be dispatched on all group's nodes. If not parallelizable, it's necessary to choose the best node.
+						</step>
+						<step>
+							Parallelizable flows are going to be splitted by nominal capacity 
+							(total number of cores). If not parallelizable, the flow will not be splitted.
+							(For more information, see <xref linkend="technical_aspects_multicores"/>).
+						</step>
+						<step>
+							The flow execution is going to compete for resources with other processes. 
+							(For more information, see <xref linkend="technical_aspects_priority_execution"/>).
+						</step>
+					</procedure>
+
+					<para>
+						It is a fast way to execute, skipping the configurations of the Run and Setup.
+					</para>
+				</para>
+				
+				<note>
+					<para>Some execution configuration (like group's nodes, number
+					 of tasks splitted and priority) can be saved using Setup and Run. That configuration
+					is going to be a new default for basic Run.
+					(For more information, see <xref linkend="flows_detailed_execution" />)</para>
+				</note>
+				
+				<note>
+					<para>
+						Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected flows
+						one after another; <keycap>Ctrl+Shift+R</keycap> runs the
+						selected flows parallely (keybind activated just if multiple flows are selected).
+					</para>
+				</note>
+			</section>
+			
+			<section xml:id="flows_detailed_execution">
+				<title>Run and Setup</title>
+				<para>
+					Many execution details can be set before triggering a Job. After setting, click on Run to execute the job. 
 				</para>
 				<figure>
-					<title>Advanced execution</title>
+					<title>Run and Setup</title>
 					<mediaobject>
 						<caption>Execution settings window.
 						</caption>
@@ -357,126 +884,170 @@
 								<imagedata fileref="../../common-images/detailed_execution.png" />
 							</imageobject>
 						</inlinemediaobject>
-					</guiicon>, the user can set:
+					</guiicon>, it can be set:
 
 					<procedure>
 						<step>
-							How the Jobs are going to be executed.
+							How jobs are going to be executed. 
+							<emphasis role="bold">This option just appear if multiple 
+							jobs are selected for running (multiple execution).</emphasis>
 							<substeps>
 								<step><guilabel>One after another:</guilabel>
-									  Flows can be executed one after another, in
-									  the order they are on the Flows list.
-									  Each Flow waits for the end of the previous job, to be
+									  flows can be executed one after another, in
+									  the order they are on the flows list.
+									  Each flow awaits for the end of the previous job to be
 									  executed.
 								</step> 
 								<step><guilabel>Simultaneously:</guilabel>
-								      Flows are executed parallely, all of them 
+								      flows are executed parallely, all of them 
 								      at the same time. It is just possible if
-							          there is no dependency between Flows.
+							          there is no dependency between flows.
 							    </step> 
 							</substeps>
 						</step>
 						<step>
-							Whether the Jobs must wait for some task or not. The user can trigger the Jobs after
-							the ending of another task or immediately after clicking the execution button. For more information, consult
-							<xref linkend="flow_editor_execute_flow"/>.
+							Whether jobs must wait for some task or not. Jobs can be triggered  after
+							the ending of another task or immediately by clicking the execution button.
 						</step>
 						<step>
-							Where he wants to dispatch the Jobs. The user can choose the nodes or the set of nodes which he wants to
-							process the Jobs. A special option is the Choose automatically, that
-							permits the Maestro to search for the least loaded nodes or set of nodes. As the user changes this parameter,
-							GêBR presents the number of cores of the choosen group. For more information, consult
-							<xref linkend="flow_editor_execute_flow"/>.
+							Where jobs must be dispatched. Nodes or set of nodes can be choosen to
+							process the Jobs. A special option is the Choose automatically. It
+							allows the maestro to search for the least overloaded nodes or set of nodes. If the use changes this parameter,
+							GêBR shows the number of cores of the choosen group.
 						</step>
 						<step>
-							The number of parts the user wants to split the Jobs. This parameter is valid just in the case
-							there is a parallelizable Job among the selected Jobs. The nominal capacity is given by
-							the number of cores, according to the choice of the group of nodes. For
-							non-parallelizable Jobs, this parameter is automatically set to 1. For more
-							information, consult <xref linkend="flow_editor_multicores"/>.
+							The number of tasks settled to split the jobs. This parameter is valid only when
+							there is a parallelizable job among the selected jobs. The nominal capacity is given by
+							the number of cores, according to the choice of the group's nodes. For
+							non-parallelizable jobs, this parameter is automatically set to 1. For more
+							information, consult <xref linkend="technical_aspects_multicores"/>.
 						</step>
 						<step>
-							How the Job must compete with the other processes of the system. In very loaded nodes,
-							this tool can make all the difference because the Jobs will have less precedence than the
+							How a job must compete with other processes on the system. In overloaded nodes,
+							this option can make all the difference because jobs will have less priority than 
 							other processes running on the system. For more
-							information, consult <xref linkend="flow_editor_priority_execution"/>.
+							information, consult <xref linkend="technical_aspects_priority_execution"/>.
 						</step>
 					</procedure>
 				</para>
-
-				<important>
-					<para>
-						The first option just appear if the user selects multiple Jobs for running (multiple execution).
-					</para>
-				</important>
 				<note>
 					<para>
-						The user can save itens 3, 4 and 5 for future executions by checking <guilabel>Save Preferences</guilabel>.
+						Itens 3, 4 and 5 can be saved for future executions by checking <guilabel>Save Preferences</guilabel>.
 					</para>
 				</note>
 			</section>
-
-			<section xml:id="flows_browser_quick_execution">
-				<title>Basic execution</title>
-				<para>
-					By clicking on 
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon> 
-					, the Job will be triggered with the following settings:
-
-					<procedure>
-						<step>
-							Sequentially
-						</step>
-						<step>
-							Immediatelly
-						</step>
-						<step>
-							Saved group of nodes
-						</step>
-						<step>
-							Saved number of parts (if applicable)
-						</step>
-						<step>
-							Saved priority
-						</step>
-					</procedure>
-				</para>
-				<para>
-					It is a fast way to execute, skipping the configurations of the Advanced Execution.
-				</para>
-				<note>
-					<para>
-						Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected Flows
-						one after another; <keycap>Ctrl+Shift+R</keycap> runs the
-						selected Flows parallely (keybind activated just if multiple Flows are selected).
-					</para>
-				</note>
-			</section>
+			
 		</section>
+		
+	<section xml:id="flows_loop">
+		<title>Executing a flow multiple times</title>
+		
+		  <para>The
+	      program <emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm>
+	      (from the category
+	      <emphasis role="bold">Loops</emphasis>) has a totally different
+	      usage compared to the remaining programs from GêBR. The user is going
+	      to see some of these differences.</para>
+	
+	      <para>When the program Loop is added, it always appears
+	      on the top of the flow. That happens to indicate that the flow
+	      is going to be executed more than once, according to the
+	      parameters set for the program. (see
+	      <xref linkend="flows_editing_parameters" /> for
+	      further details).</para>
+	
+	    <figure>
+	      <title>Loop program</title>
+	    <mediaobject>
+	      <caption>Screenshot of program <emphasis>Loop</emphasis>, added
+	      to a flow and properly configured.</caption>
+	      <imageobject>
+					<imagedata fileref="../images/GeBR_flow_editor_loop.png" 
+						contentwidth="793px" contentdepth="537px" />
+	      </imageobject>
+	    </mediaobject>
+	    </figure>
+	
+	    <para>After the <emphasis>Loop</emphasis> is added, 
+	      a new variable is available,
+	      the <emphasis role="bold">iter</emphasis> (see
+				<xref linkend="technical_aspects_dictionary_variables" />). The value of this 
+				special variable is modified
+	      on each iteration (increasing or decrementing),
+	      according to the parameters set.</para>
+	
+	    <figure>
+	      <title>Loop parameters</title>
+	    <mediaobject>
+	      <caption>Screenshot of the edition from parameters
+	        of <emphasis>Loop</emphasis> program, with a simple example of
+	        parameters setting.</caption>
+	      <imageobject>
+					<imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png" 
+						contentwidth="468px" contentdepth="387px" />
+	      </imageobject>
+	    </mediaobject>
+	    </figure>
+	</section>
 
-		<section xml:id="flows_browser_edit_comments_flow">
-    <title>Editing comments</title>
-    <para>This button appears in the <guilabel>Projects and
-    Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
-    button allows the user to add
-    comments<indexterm><primary>Report</primary><secondary>of a
-    Flow</secondary></indexterm> about the selected Line or Flow. See
-    <xref linkend="projects_lines_edit_comments_project" />.</para>
+	<section xml:id="flows_execution_infobar">
+		<title>Following the execution </title>
+	<para>
+		After a flow has been sent to execution, the status and
+		output of the job can be followed in the same window, still in the
+		<guilabel>Flows</guilabel> tab. A bar in the botton of the window
+		will appear to keep a history of the last jobs dispatched for
+		execution and to switch among the results of the different jobs.
+	</para>
+	<para>
+		Each job execution is represented in the bar as a button,
+		composed by:
+		<itemizedlist>
+			<listitem>
+		an icon, that represents the status of the execution; and
+	</listitem>
+	<listitem>
+		an identifier, which is associated to the number of executions
+		of that flow.
+	</listitem>
+	</itemizedlist>
+	</para>
+		
+	<para>
+		Different from the <guilabel>Jobs</guilabel> tab, in the
+		<guilabel>Flows</guilabel> tab it is presented just a
+		quick view of the job. Indeed, the aim of this features is
+		not to present a full view of the job, but to avoid
+		the switching of tabs to follow jobs. The arrow takes to the 
+		<guilabel>Jobs</guilabel> tab, where a complete view of the
+		flow execution can be consulted.
+	</para>
+
+	<para>
+		When multiple flows are dispatched for execution,
+		instead of staying in the same window, GêBR automatically
+		switches to the <guilabel>Jobs</guilabel> tab, where 
+		all the executions can be seen all together.
+	</para>
+	</section>
+
+	<section xml:id="flows_edit_comments_flow">
+	    <title>Editing comments</title>
+	    <para>This button appears in <guilabel>Projects and
+	    Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
+	    button allows add
+	    comments<indexterm><primary>Report</primary><secondary>of a
+	    flow</secondary></indexterm> about the selected line or flow. See
+	    <xref linkend="projects_lines_edit_comments_project" />.</para>
   </section>
 
-  <section xml:id="flows_browser_view_report_flow">
+  <section xml:id="flows_view_report_flow">
     <title>View Report</title>
     <para>This button appears in the <guilabel>Projects and
     Lines</guilabel> tab and in <guilabel>Flows</guilabel> tab. This
-    button allows the user to View the Report about the Line or Flow
-    in use. The difference is that the Line's Report can include the
-    Flow's Report.  All other functions are described in
+    button allows View the Report about the line or flow
+    in use. The difference is that the line's Report can include the
+    flow's Report.  All other functions are described in
     <xref linkend="projects_lines_view_report_project" />.</para>
   </section>
 </chapter>

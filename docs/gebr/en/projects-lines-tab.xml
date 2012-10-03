@@ -10,44 +10,38 @@
 
   <title>The <guilabel>Projects and Lines</guilabel> tab</title>
 
-  <para>In the <guilabel>Projects and Lines</guilabel> tab
-  (see <xref linkend="sample_project_line_tab"/>)
-  the user can create and manage his projects and lines.</para>
+  <para>Projects and lines are created and managed in the <guilabel>Projects
+      and Lines</guilabel> tab. The right-hand side of the screen shows the
+    details of the selected item, like its name, description and creation
+    date.</para>
 
-    <figure id="sample_project_line_tab">
-      <title>Projects and Line tab</title>
-      <mediaobject>
-        <caption>Screenshot of the <guilabel>Projects and
-            Lines</guilabel> tab.</caption>
-        <imageobject>
-          <imagedata fileref="../images/janela_principal_1.png"  contentwidth="706px" contentdepth="426px" />
-        </imageobject>
-      </mediaobject>
-    </figure>
+  <figure id="sample_project_line_tab">
+    <title>Projects and Lines tab</title>
+    <mediaobject>
+      <caption>Screenshot of the <guilabel>Projects and
+          Lines</guilabel> tab.</caption>
+      <!-- <imageobject> -->
+      <!--   <imagedata fileref="../images/janela_principal_1.png"  contentwidth="706px" contentdepth="426px" /> -->
+      <!-- </imageobject> -->
+    </mediaobject>
+  </figure>
 
-    <para>The right side shows details about the selected
-      element (a Project or a Line) and is slightly different depending
-      on the context. Despite the nature of the selected element, there are 
-      two buttons at the bottom of the <guilabel>Details</guilabel>
-      frame edit and visualize the report.</para>
-    
   <tip>
-    <para>Try using a <emphasis>context menu</emphasis> instead of the
-      buttons on the toolbar. To do
-      so, <emphasis>right-click</emphasis> on one of the Projects or
-      Lines which has already been created.  Notice that many commands can be found
-      in this context menu. For certain cases this method is
-      even <emphasis>easier and faster</emphasis> then using the
-      toolbar buttons.</para>
+    <para>Try using a <emphasis>context menu</emphasis> instead of the buttons
+      on the toolbar. To do so, <emphasis>right-click</emphasis> on one of the
+      projects or lines which has already been created. Notice that many
+      commands can be found in this context menu. For certain cases this method
+      is even <emphasis>easier and faster</emphasis> then using the toolbar
+      buttons.</para>
   </tip>
 
   <section xml:id="projects_lines_create_projects">
-    <title>Creating a Project</title>
+    <title>Creating a project</title>
 
-    <para>The steps to create a Project are:</para>
+    <para>The steps to create a project are:</para>
     <procedure>
       <step>Select the tab 
-        <guilabel>Projects and Lines</guilabel>.
+        <guilabel>Projects and Lines</guilabel>;
       </step>
       <step>Left-click on 
           <guiicon>
@@ -56,60 +50,52 @@
                 <imagedata fileref="../../common-images/botao_criar_projeto.png" />
               </imageobject>
             </inlinemediaobject>
-        </guiicon>
+        </guiicon>;
       </step>
-      <step>In the 
-          <guilabel>Project properties</guilabel> dialog box, fill in the Project's 
+      <step>In the
+          <guilabel>project properties</guilabel> dialog box, fill in the project
           <emphasis>title</emphasis> (for example, 
           <userinput>My First Project</userinput>).
       </step>
-      <step>The user can also give a brief 
-          <guilabel>Description</guilabel> of the Project, the 
-          <guilabel>Author</guilabel> and an 
-          <guilabel>e-mail</guilabel> address.
+      <step>It can also be given a brief description, its author, and an e-mail
+        address;
       </step>
-      <step>Click <guibutton>OK</guibutton>.
+      <step>Click on the <guibutton>OK</guibutton> button to finish.
       </step>
     </procedure>
     <figure>
       <title>Project's properties dialog box</title>
       <mediaobject>
-        <caption>In the Project's properties dialog box, the user can edit
-          the Title, Description, Author and Email.</caption>
+        <caption>Title, description, author and e-mail are details that can be
+          edited in the project's properties dialog.</caption>
         <imageobject>
           <imagedata fileref="../images/janela_properties_project.png"  contentwidth="387px" contentdepth="215px" />
         </imageobject>
       </mediaobject>
     </figure>
 
-    <para>The Project title will appear on the left side of GêBR's
-      main window
+    <para>The project title will appear on the left side of GêBR's main window
       (see <xref linkend="sample_project_line_tab">Figure</xref>). Information
-      about the Project is shown in the
-      <guilabel>Details</guilabel> panel on the right hand side of
-      GêBR's main window. Notice that some of this information comes
-      from what the user have inserted in the
-      <guilabel>Project 'New Project' properties</guilabel> dialog box
-      when the user created the Project. Details such as creation date and
-      modified date are automatically generated by GêBR.</para>
-
+      about the project is shown on the right hand side of GêBR's main window.
+      Notice that some of this information comes from what was specified at the
+      <guilabel>project properties</guilabel> dialog, when the project was
+      created. Details such as creation date and modified date are
+      automatically generated by GêBR.</para>
   </section>
 
   <section xml:id="projects_lines_create_lines">
-    <title>Creating a Line</title>
+    <title>Creating a line</title>
 
-    <para>To create lines, GêBR must be connected to a Maestro (see
+    <para>To create lines, GêBR must be connected to a maestro (see
       <xref linkend="additional_features_maestro_servers_configuration"/>). Otherwise,
-      GêBR would not be able to submit Flows for execution, since
-      this is done through the Maestro's intervenience.</para>
+      GêBR will not be able to submit flows for running, since
+      this is done through the maestro intervenience.</para>
 
-    <para>Once there are Projects and GêBR is connected to a Maestro,
-    the user can create Lines. To add a new Line to a Project, follow the
-    steps:</para>
+    <para>Lines can be created once there are projects and GêBR is connected to
+      a maestro. To add a new line to a project, follow the steps:</para>
     <procedure>
-      <step>Select a target Project or a Line of the target
-	Project (see
-	<xref linkend="projects_lines_create_projects"/>);
+      <step>Select the project that will hold the line (see
+        <xref linkend="projects_lines_create_projects"/>);
       </step>
       <step>Click on the button 
         <guiicon>
@@ -120,387 +106,428 @@
           </inlinemediaobject>
         </guiicon>;
       </step>
-      <step>An assistant dialog will appear to guide the user through
-	  the remaining steps.
-      </step>
+      <step>A dialog will appear to assist on the remaining steps.</step>
     </procedure>
 
-    <para>Through an assistant dialog, the user will be instructed to
-      fill in the following information:</para>
+    <para>The assistant will ask the following information:</para>
+
     <itemizedlist>
-      <listitem><para><emphasis>Basic properties of the
-      Line</emphasis>, which are
-	<emphasis>Title</emphasis>, 
-	<emphasis>Description</emphasis>,
-	<emphasis>Author</emphasis> and his or her
-	<emphasis>e-mail</emphasis> address.</para>
+      <listitem>
+        <para><emphasis>Basic properties</emphasis> of the line, which are
+          <emphasis>title</emphasis>, <emphasis>description</emphasis>,
+          <emphasis>author</emphasis>, and <emphasis>e-mail</emphasis>
+          address;</para>
       </listitem>
-      
-      <listitem><para><emphasis>The BASE
-      path</emphasis><indexterm><primary>BASE</primary></indexterm>: a
-      top directory where most files referred in the Line should be
-      placed (see <xref linkend="projects_lines_line_paths"
-      />).</para>
+
+      <listitem>
+        <para>The <emphasis>BASE</emphasis><indexterm><primary>BASE</primary></indexterm>
+          path: a directory where most files referred in the line should be
+          placed (see <xref linkend="projects_lines_line_paths" />);</para>
       </listitem>
-      
-      <listitem><para><emphasis>The IMPORT
-	  path</emphasis><indexterm><primary>IMPORT</primary></indexterm>:
-	  a directory used to easily find files outside the BASE
-	  directory.</para>
+
+      <listitem>
+        <para>The <emphasis>IMPORT</emphasis><indexterm><primary>IMPORT</primary></indexterm>
+          path: a directory used to easily find files outside the BASE
+          directory.</para>
       </listitem>
     </itemizedlist>
 
-    <para>After creating a Line, the settings of the Line will be
-      shown in the <guilabel>Details</guilabel> panel, on the right of
-      the main window.
+    <para>
+      When the assistant finishes, the line will be created and shown as being
+      part of the project selected on the beginning of this process.  As with
+      projects, the line's settings are exhibited on the right-hand side of
+      GêBR's window.
     </para>
     
-    <tip>There is no limit to the number of Projects and Lines in
-      GêBR. The user can create as many as he or she wants.
+    <tip>
+      <para>There is no limit to the number of projects and lines in
+        GêBR.</para>
     </tip>
 
-    <para>GêBR allows collapsing or expanding the view of the
-    Projects. When collapsed, the Lines of a Project are hidden. When
-    the Project is expanded, the Lines become visible. To collapse the
-    view, click on the
-    icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon>
-    on the left side of the project's name. To expand, click on the
-    icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+    <tip>
+      <para>
+        GêBR allows collapsing or expanding the view of the projects. When
+        collapsed, the lines of a project are hidden. When the project is
+        expanded, the lines become visible. To collapse the view, click on the
+        icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon>
+        on the left side of the project's name. To expand, click on the icon
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.
+      </para>
+    </tip>
   </section>
 
   <section xml:id="projects_lines_delete">
-    <title>Deleting a Project or a Line</title>
+    <title>Deleting projects and lines</title>
 
-    <para>To remove a Line or Project select the Project or Line then
-    left-click on
-      <guiicon>
-	<inlinemediaobject>
-	  <imageobject>
-	    <imagedata fileref="../../common-images/botao_apagar_projeto.png" />
-	  </imageobject>
-	</inlinemediaobject>
-      </guiicon>.</para>
+    <para>To delete a line, select it and then left-click on
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
 
-    <para>When the user deletes a Line he or she are also deleting all its
-      Flows.</para>
+    <warning>
+      <para>When a line is deleted all its flows are also deleted. This
+        operation cannot be reverted.</para>
+    </warning>
 
-    <note>
-      <para>To delete a Project the user must first delete all of its
-	Lines.</para>
-    </note>
+    <para>To delete a project, it must not contain any lines, so it is
+      necessary to delete them first, and then proceed to the project. This is
+      a protection to avoid miss-clicking the delete button.</para>
   </section>
   
   <section xml:id="projects_lines_edit_properties">
     <title>Editing properties</title>
-    <para>The same settings performed during the creation of a Project
-      or Line can be altered through the Properties Editing.</para>
-    <para>To edit Project's or Line's properties, first select the
-      Project or Line and then click on the button
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon>.</para>
+
+    <para>The same settings performed during the creation of a project or line
+      can be altered through the <guilabel>Properties</guilabel> dialog.</para>
+
+    <para>To edit a project's or line's properties, first select the item and
+      then click on the button
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
   </section>
 
   <section xml:id="projects_lines_line_paths">
-    <title>Important folders of a Line</title>
+    <title>Important folders of a line</title>
 
-		<para>GêBR defines a directories structure to aid 
-			in the task of management of the data associated to 
-			a set of Flows. This structure is defined by a top directory, known
-      as BASE<indexterm><primary>BASE</primary></indexterm>, and few
-      other nested standard directories.</para>
+    <para>GêBR defines a directory structure to aid in the task of managing the
+      data associated to a set of flows. This structure is defined by a top
+      directory, known as
+      BASE<indexterm><primary>BASE</primary></indexterm>, and few other nested
+      standard directories.</para>
 
-    <para>For instance, if the home folder of the user is
-    '/home/john', setting the BASE to
-    '/home/john/GeBR/MyFirstLine/', will have the effect to also
-    define the following directories:</para>
-      <informaltable>
-	<tbody>
-	  <tr>
-	    <td>HOME:<indexterm><primary>HOME</primary></indexterm> </td>
-	    <td>/home/john/</td>
-	  </tr>
-	  <tr>
-	    <td>BASE: </td>
-	    <td>/home/john/GeBR/MyFirstLine/</td>
-	  </tr>
-	  <tr>
-	    <td>DATA:<indexterm><primary>DATA</primary></indexterm> </td>
-	    <td>/home/john/GeBR/MyFirstLine/data/</td>
-	  </tr>
-	  <tr>
-	    <td>TMP:<indexterm><primary>TMP</primary></indexterm> </td>
-	    <td>/home/john/GeBR/MyFirstLine/tmp/</td>
-	  </tr>
-	  <tr>
-	    <td>EXPORT:<indexterm><primary>EXPORT</primary></indexterm> </td>
-	    <td>/home/john/GeBR/MyFirstLine/export/</td>
-	  </tr>
-	  <tr>
-	    <td>TABLE:<indexterm><primary>TABLE</primary></indexterm> </td>
-	    <td>/home/john/GeBR/MyFirstLine/table/</td>
-	  </tr>
-	  <tr>
-	    <td>MISC:<indexterm><primary>MISC</primary></indexterm></td>
-	    <td>/home/john/GeBR/MyFirstLine/custom/</td>
-	  </tr>
-	</tbody>
-      </informaltable>
+    <para>For instance, if the home folder is
+      <emphasis>/home/john</emphasis>, setting the <emphasis>BASE</emphasis> to
+      <emphasis>/home/john/GeBR/MyFirstLine/</emphasis>, will have the effect
+      to also define the following directories:</para>
 
-      <para>
-      This set of folders can help the user manages the data related to this
-      Line (see <xref linkend="flow_editor_edit_input_output"/>).
-      </para>
+    <informaltable>
+      <tbody>
+        <tr>
+          <td>HOME:<indexterm><primary>HOME</primary></indexterm> </td>
+          <td>/home/john/</td>
+        </tr>
+        <tr>
+          <td>BASE: </td>
+          <td>/home/john/GeBR/MyFirstLine/</td>
+        </tr>
+        <tr>
+          <td>DATA:<indexterm><primary>DATA</primary></indexterm> </td>
+          <td>/home/john/GeBR/MyFirstLine/data/</td>
+        </tr>
+        <tr>
+          <td>TMP:<indexterm><primary>TMP</primary></indexterm> </td>
+          <td>/home/john/GeBR/MyFirstLine/tmp/</td>
+        </tr>
+        <tr>
+          <td>EXPORT:<indexterm><primary>EXPORT</primary></indexterm> </td>
+          <td>/home/john/GeBR/MyFirstLine/export/</td>
+        </tr>
+        <tr>
+          <td>TABLE:<indexterm><primary>TABLE</primary></indexterm> </td>
+          <td>/home/john/GeBR/MyFirstLine/table/</td>
+        </tr>
+        <tr>
+          <td>MISC:<indexterm><primary>MISC</primary></indexterm></td>
+          <td>/home/john/GeBR/MyFirstLine/custom/</td>
+        </tr>
+      </tbody>
+    </informaltable>
 
-      <important>
-	<para>Remember that the processing takes place at the 
-		<indexterm><primary>Node
-	  </primary></indexterm>. So, the directory structure
-	  describe above will be created there. In case the node 
-	  is different from the local machine, where the GêBR
-	  interface is running, the user will not see the created
-	  directories by browsing the local machine's
-	  filesystem.</para>
-	<para>To be able to browse files in these directory, the
-          <emphasis>remote browse</emphasis><indexterm><primary>Remote
-          browsing</primary></indexterm> feature must be enabled in
-          the Maestro<indexterm><primary>Maestro</primary></indexterm>
-          of the Line (see <xref linkend="remote_browsing"/>).</para>
-      </important>
+    <para>
+      This standard directory structure eases the task of managing the data
+      related to lines (see <xref linkend="flows_edit_input_output"/>).
+    </para>
 
-      <note><para>Although it is not mandatory to adhere to this
-	  structure, it is highly recommended to do so.</para></note>
+    <important>
+      <para>Remember that the processing takes place at the 
+        <indexterm><primary>node</primary></indexterm>.
+        The directory structure described above will be created there. This
+        means that these directories will not be present on the local machine
+        <emphasis>if</emphasis> the node is a remote machine.</para>
 
+      <para>To be able to browse files in these directory, the
+        <emphasis>remote browse</emphasis><indexterm><primary>Remote browsing</primary></indexterm>
+        feature must be enabled in the maestro<indexterm><primary>Maestro</primary></indexterm>
+        of the line (see <xref linkend="technical_aspects_remote_browsing"/>).</para>
+    </important>
+
+    <note><para>Although it is not mandatory to adhere to this
+        structure, it is highly recommended to do so.</para></note>
   </section>
 
   <section xml:id="projects_lines_change_the_maestro_of_a_line">
-    <title>Changing the Maestro of a Line</title>
+    <title>Changing the maestro of a line</title>
 
     <para>GêBR supports only one connected
-    Maestro<indexterm><primary>Maestro</primary></indexterm> at
-    time. However, the user may have more than one Maestro at his or
-    her disposal.</para>
+      maestro<indexterm><primary>Maestro</primary></indexterm> at
+      time. However, there may be several maestros at disposal, one for the
+      University A and another for University B, for example.</para>
 
-    <para>Whenever a Maestro is connected, all Lines associates to
-      other Maestros will be unavailable for edition. The user can
-      however migrate a Line from its original Maestro to the
-      connected one. To do so, the Line must be selected. In
-      the <guilabel>Details</guilabel> panel, an icon in the upper
-      left corner indicates whether the Maestro defined for the Line
-      is connected or not. In case the original Maestro is not the
-      connected one, by clicking over that icon, GêBR will offer two
-      options:</para>
+    <para>Whenever a maestro is connected, all lines associates to other
+      maestros will be unavailable for edition. However, a line can be migrated
+      from its original maestro to the connected one. To do so, the line must
+      be selected. In the right-hand side panel, an icon in the upper left
+      corner indicates whether the maestro defined for the line is connected or
+      not. In case the original maestro is not the connected one, by clicking
+      over that icon, GêBR will offer two options:</para>
 
     <itemizedlist>
       <listitem>
-	<para>disconnect from the current Maestro and connect
-	  to the Maestro associated to the Line; or</para>
+        <para>disconnect from the current maestro and connect
+          to the maestro associated to the line; or</para>
       </listitem>
       <listitem>
-	<para>dissociate the Line from its original Maestro and
-	  associate it to the connected Maestro.</para>
+        <para>dissociate the line from its original maestro and
+          associate it to the connected maestro.</para>
       </listitem>
     </itemizedlist>
 
+    <important>
+      <para>Whenever a line is migrated from one maestro to another, all data
+        in the BASE<indexterm><primary>BASE</primary></indexterm> directory and
+        in its children will remain in the nodes of the original
+        maestro.</para>
+    </important>
+
     <figure>
-      <title>Dialog for Lines from disconnected Maestros</title>
-    <mediaobject>
-      <caption>Options available when the user wants to edit/run a Line
-      associated to a disconnected Maestro.</caption>
-      <imageobject>
-	<imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png"  contentwidth="327px" contentdepth="287px" />
-      </imageobject>
-    </mediaobject>
+      <title>Dialog for lines from disconnected maestros</title>
+      <mediaobject>
+        <caption>Options available when the user wants to edit/run a line
+          associated to a disconnected maestro.</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png"  contentwidth="327px" contentdepth="287px" />
+        </imageobject>
+      </mediaobject>
     </figure>
 
   </section>
 
-  <important>
-    <para>When a Line is migrated from one Maestro to another, all
-    data in the BASE<indexterm><primary>BASE</primary></indexterm>
-    directory and in its children will remain in the nodes of
-    the original Maestro.
-    </para>
-  </important>
+  <section xml:id="projects_lines_export">
+    <title>Exporting a project or a line</title>
 
-  <section xml:id="projects_lines_import">
-    <title>Importing a Project or a Line</title>
-    <para>In GêBR the user can import Projects or Lines that were
-      previously exported (<xref linkend="projects_lines_export"
-      />). To do so:</para>
+    <para>Although GêBR continuously saves all data, sometimes it is desirable
+      to have copies of projects and lines in a file (for example, to share
+      with others or to make backups). To export a project or a line:</para>
+
     <procedure>
       <step>
-	<para>Click on the button 
-	  <guiicon>
-	    <inlinemediaobject>
-	      <imageobject>
-		<imagedata fileref="../../common-images/botao_importar_projeto.png" />
-	      </imageobject>
-	    </inlinemediaobject>
-	</guiicon></para>
+        <para>Select the line or project that that will be saved;</para>
       </step>
       <step>
-	<para>Select the Project or Line that is desired to import at window 
-	  <guilabel>Choose Project/Line to open</guilabel>. Only files
-	  with extension
-	  <filename class="extension">prjz</filename> or 
-	  <filename class="extension">lnez</filename> will be shown.</para>
+        <para>Left-click on
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png" /></imageobject></inlinemediaobject></guiicon>;</para>
       </step>
       <step>
-	<para>Click at button 
-	  <guibutton>Open</guibutton>.</para>
+        <para>A dialog will be shown. Choose a directory and a name for the
+          file;</para>
+      </step>
+      <step>
+        <para>Left-click on the
+          <guibutton>Save</guibutton> button to conclude the export.</para>
       </step>
     </procedure>
-    <para>The imported Project is added to the list of projects, found
-      on the left of the main window. An imported Line joins with the
-      other Lines of the Project that was selected when the Line was
-      imported, if they exist. In both cases the imported item is
-      identified with the suffix
-      <emphasis role="bold">Imported</emphasis>.</para>
 
-    <note>
-      <para>In GêBR, Lines may only exist inside a Project (see this
-	concept in
-	<xref linkend="projects_lines_create_lines"/>). Therefore to
-	import a Line the user must first select an existing Project, or
-	create a new one.
+    <tip>
+      <para>
+        GêBR determines the extension automatically, ie
+        <filename class="extension">.prjx</filename> for projects and
+        <filename class="extension">.lnex</filename> for lines.
       </para>
-    </note>
+    </tip>
+
   </section>
 
-  <section xml:id="projects_lines_export">
-    <title>Exporting a Project or a Line</title>
+  <section xml:id="projects_lines_import">
+    <title>Importing a project or a line</title>
 
-    <para>Although GêBR continuously saves all data, sometimes it is
-      desirable to have copies of Projects and Lines in a file
-      (for example, to share with others or to make backups). To
-      export a Project or a Line:</para>
+    <para>It is possible to import projects or lines that were previously
+      exported (<xref linkend="projects_lines_export" />). To do so:</para>
+
     <procedure>
       <step>
-	<para>Select the Line or Project that that will be saved.</para>
+        <para>Click on the button 
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png" /></imageobject></inlinemediaobject></guiicon>;</para>
       </step>
       <step>
-	<para>Left-click on 
-	  <guiicon>
-	    <inlinemediaobject>
-	      <imageobject>
-		<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
-	      </imageobject>
-	    </inlinemediaobject>
-	</guiicon>.</para>
+        <para>Select the desired project or line to import in the dialog that
+          appeared.  Only files with extension
+          <filename class="extension">prjz</filename>, <filename class="extension">prjx</filename>,
+          <filename class="extension">lnez</filename> or 
+          <filename class="extension">lnex</filename> will be shown;</para>
       </step>
       <step>
-	<para>A dialog box will appear and, there, tha user can 
-	  <guilabel>choose the name of the file that will be
-	  saved</guilabel>; when you select a directory and type the
-	  file name, GêBR determines the extension automatically,
-	  <filename class="extension">.prjz</filename> for Projects or 
-	  <filename class="extension">.lnez</filename> for Lines.</para>
-      </step>
-      <step>
-	<para>Left-click on 
-	  <guibutton>Save</guibutton>.</para>
+        <para>Click on the <guibutton>Open</guibutton> button.</para>
       </step>
     </procedure>
+
+    <para>An imported project is added to the list of projects, while an
+      imported line joins the other lines of project that was selected prior to
+      this process.  In both cases the imported item is identified with the
+      suffix <emphasis role="bold">Imported</emphasis>.</para>
+
+    <note>
+      <para>In GêBR, lines may only exist inside a project (see this concept in
+        <xref linkend="projects_lines_create_lines"/>). Therefore to import a
+        line the user must first select an existing project, or create a new
+        one.
+      </para>
+    </note>
   </section>
 
   <section xml:id="projects_lines_edit_comments_project">
     <title>Editing comments</title>
 
-    <para>The user can add comments on the
-      report<indexterm><primary>Report</primary><secondary>of a
-      Project</secondary></indexterm><indexterm><primary>Report</primary><secondary>of
-      a Line</secondary></indexterm> of a Project or a Line.  To do
-      so, follow the steps:</para>
+    <para>
+      Projects and lines can be commented and have an automatic report
+      <indexterm><primary>Report</primary><secondary>of a project</secondary></indexterm>
+      <indexterm><primary>Report</primary><secondary>of a line</secondary></indexterm>
+      generation. To do edit their commentaries, follow the steps:</para>
 
     <procedure>
       <step>
-	<para>Left-click on 
-	  <guibutton>Edit comments</guibutton>, which is located just below 
-	  <guilabel>Details</guilabel>, in the 
-	  <guilabel>Project's properties</guilabel> or 
-	  <guilabel>Line's Properties</guilabel> dialog box.</para>
+        <para>Choose a project or line;</para>
       </step>
       <step>
-	<para>Fill in some comment in the text editor that is presented. 
-	  When the comment is edited, save this and close the editor.</para>
-	<para>In this editor the user can save, print and pre-visualize
-	  the comments by pressing one of the icons in the tool
-	  bar, or by using the editors menu.</para>
+        <para>Click on the <guibutton>More</guibutton> button on the toolbar;</para>
+      </step>
+      <step>
+        <para>Choose <guilabel>Edit Comments</guilabel>;</para>
+      </step>
+      <step>
+        <para>Fill in some comment in the text editor that is presented;</para>
+      </step>
+      <step>
+        <para>When finished, save and close the editor.</para>
       </step>
     </procedure>
+
+    <tip>
+      <para>You can print the report by clicking
+        <menuchoice>
+          <guimenu>File</guimenu>
+          <guisubmenu>Print</guisubmenu>
+        </menuchoice>
+      </para>
+    </tip>
+
     <figure>
-      <title>Built-in report editor</title>
+      <title>Built-in comment editor</title>
       <mediaobject>
-	<caption>The comment editor window.</caption>
-	<imageobject>
-	  <imagedata fileref="../images/janela_comentarios_de_linha.png"  contentwidth="835px" contentdepth="315px" />
-	</imageobject>
+        <caption>The comment editor window.</caption>
+        <imageobject>
+          <imagedata fileref="../images/janela_comentarios_de_linha.png"  contentwidth="835px" contentdepth="315px" />
+        </imageobject>
       </mediaobject>
     </figure>
     
   </section>
 
   <section xml:id="projects_lines_view_report_project">
-    <title>View the report</title>
+    <title>Viewing reports</title>
 
     <para>As explained in the above section, the user can edit a report
-      containing additional information about the Project or Line. To
-      view the report left-click on View Report, found at the bottom
-      of the <guilabel>Details</guilabel> box, which is on the right
-      side of the main window.</para>
+      containing additional information about the project or line. To view the
+      report click on the <guibutton>More</guibutton> button on the toolbar and
+      then select <guilabel>View Report</guilabel>.</para>
 
-    <para>After clicking on <guilabel>View Report</guilabel>, a window
-    will appear, where you can:</para>
+    <para>After clicking on <guilabel>View Report</guilabel>, a window will
+      appear showing the generated report for that project or line. This window
+      has some functionalities that are mentioned below:</para>
 
-    <procedure>
-      <step>
-	<para>Save;</para>
-      </step>
-      <step>
-	<para>Print the report.</para>
-      </step>
-    </procedure>
-    <para>In the menu Options you can:</para>
-    <procedure>
-      <step>
-	<para>Include your comments;</para>
-      </step>
-      <step>
-	<para>Include the Flow's report;</para>
-      </step>
-      <step>
-	<para>Configure the parameter table pertaining to the Flow's
-	programs;</para>
-      </step>
-      <step>
-	<para>Choose the presentation style of the report, as well as
-	  include other styles.</para>
-      </step>
-    </procedure>
+    <variablelist>
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>File</guimenu>
+            <guisubmenu>Save</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Saves the report as an HTML file;</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>File</guimenu>
+            <guisubmenu>Print</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Prints the report;</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
+            <guisubmenu>Include user's commentary</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Include your comments inside the report;</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
+            <guisubmenu>Include flow's reports</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Include the reports of all flow of this line;</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
+            <guisubmenu>Include the report of the snapshots of flows;</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>This option will include reports from all snapshots of all the
+            flows that compose this line (see <xref linkend="flows_snapshots"/>);</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
+            <guisubmenu>Style;</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Change the presentation style of the report.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
 
     <figure>
       <title>Report view</title>
       <mediaobject>
-	<caption>In the <guilabel>View Report</guilabel> window, the user can print or save to a
-	  file this report. In the options menu, as is shown above,
-	  the user can include: comments, the Flow's report, the
-	  parameter table and choose from a few pre-defined styles for
-	  the report.</caption>
-	<imageobject>
-	  <imagedata fileref="../images/janela_visualizar_relatorio.png"  contentwidth="626px" contentdepth="423px" />
-	</imageobject>
+        <caption>The <guilabel>View Report</guilabel> window shows the report
+          and enables customization of its content.</caption>
+        <imageobject>
+          <imagedata fileref="../images/janela_visualizar_relatorio.png"  contentwidth="626px" contentdepth="423px" />
+        </imageobject>
       </mediaobject>
     </figure>
 
-    <para><xref linkend="flows_browser_view_report_flow" /> explains
-      in greater details the View Report tool for Flows, which is very
-      similar to the Line's and Project's View Report except that in
-      this one the user can add the Flow's report.</para>
-
+    <para><xref linkend="flows_view_report_flow" /> explains in greater details
+      the <guilabel>View Report</guilabel> tool for flows, which is very
+      similar to the line's and project's <guilabel>View Report</guilabel>
+      except that in this one the user can add the flow's report.</para>
+      
+      <note>
+        <para>The option to include report of the snapshots of flows are
+          available on line's and flow's <guilabel>View Report</guilabel>. More
+          information about snapshots can be found on section
+          <xref linkend="flows_snapshots" />
+      	</para>
+      </note>
+      
   </section>
 </chapter>
