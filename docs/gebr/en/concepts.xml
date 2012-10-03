@@ -18,7 +18,7 @@
       flows</emphasis><indexterm><primary>Processing
       flow</primary></indexterm>. A processing flow is a chain of
       programs, which sequentially operates on an input data to
-      produce an output data from it. For example, flows
+      produce an output data from it. For example, processing flows
       can be assembled to accomplish tasks like <emphasis>spike
       deconvolution</emphasis>, <emphasis>ground-roll
       atenuation</emphasis>, <emphasis>NMO correction</emphasis>, and
@@ -94,7 +94,7 @@
 
     <para>A <emphasis role="bold">menu</emphasis> is a representation
       of a single
-      program<indexterm><primary>Program</primary></indexterm> or a
+      program<emphasis><indexterm><primary>Program</primary></indexterm></emphasis> or a
       set of programs. This means that when a menu is added to a
       flow one or more programs might be inserted into the
       flow at once. Why is that so? Think about common tasks that are
@@ -140,7 +140,7 @@
 
     <para>After assembling the flow, to complete its set up, the user
       has to inspect each program of the flow and define its
-      parameters. Programs may depend on many parameters, from a
+      <emphasis>parameters</emphasis>. Programs may depend on many parameters, from a
       variety of types. GêBR support
       parameters<indexterm><primary>Parameters</primary><secondary>supported
       types of</secondary></indexterm> of the following types:</para>
@@ -173,9 +173,9 @@
       But who are those guys?</para>
 
     <para>The GêBR interface, sometimes referred as GêBR only, is the graphical
-      interface with whom the user interacts with to build processing flows,
+      interface with whom the user interacts with to build flows,
       execute them, inspect results, etc. Usually, this interface is installed
-      and is running in the machine user has physical contatct with.</para>
+      and is running in the machine user has physical contact with.</para>
 
     <para>Through GêBR, it is possible to take advantage of the amount of machines 
       the user has access to run flows. Those machines are

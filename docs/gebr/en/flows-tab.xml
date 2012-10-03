@@ -10,25 +10,25 @@
 
   <title>The <guilabel>Flows</guilabel> tab</title>
 
-  <para>In this tab, the user can manage the flows and related program of the current
+	<para>In this tab, the user can manage the flows and the related
+		programs of the current
     line. Note the similarity with the <guilabel>Projects and
     Lines</guilabel> tab.</para>
 
   <tip>
-    <para>Instead of the buttons in toolbar, try using
+    <para>Instead of the toolbar buttons, try using
     the <emphasis role="bold">context menu</emphasis>. To do
     so, <emphasis role="bold">right-click</emphasis> on a flow that has been 
     created. Notice that many features can be accessed through
-    this method. For certain cases this is an easier and simpler
+    this method. For certain cases, this is an easier and simpler
     choice.</para>
   </tip>
 
   <section xml:id="flows_create_flow">
     <title>Creating flows</title>
 
-    <para>The third-level element of GêBR are processing flows or
-      just <emphasis>flows</emphasis> (see
-      <xref linkend="concepts_elements" />).</para>
+		<para>The third-level element of GêBR is the <emphasis>flow</emphasis>
+			(see <xref linkend="concepts_elements" />).</para>
 
     <para>To create a flow, follow the steps:</para>
 
@@ -47,30 +47,31 @@
         </guiicon>.</para>
       </step>
       <step>
-        <para>A dialog box, named <guilabel>Flow "New Flow"
+        <para>A dialog box, named <guilabel>Flow
         Properties</guilabel>, will appear. Fill in the four standard fields:
           <guilabel>Title</guilabel>, <guilabel>Description</guilabel>
-          (an one-line sentence), <guilabel>Author</guilabel> and
+          (a one-line sentence), <guilabel>Author</guilabel> and
           an <guilabel>e-mail</guilabel> address. Click
           on <guibutton>OK</guibutton> when ready.</para>
       </step>
     </procedure>
 
-    <para>After a flow has been created, it will be 
+    <para>After a flow is created, it will be 
       visible on the left side of the main window when the 
       <guilabel>Flows</guilabel> tab is selected. The 
       <guilabel>Details</guilabel> box, found on the upper right side of the
       main window, shows information about the selected flow and below the 
       <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
-      contains information like input,output and log file, flow's programs 
+      contains information like input, output and log file, programs 
       and some of its parameters. 
      </para>
-     <para>The list of menus will appear automatically in a pop-up and the user 
-      can assembling the flow (see <xref linkend="flows_assembling_flow" />).
+		 <para>The menus list will automatically appear in a pop-up and the
+			 user will be able to assemble the flow (see<xref
+				 linkend="flows_assembling_flow" />).
     </para>
 
     <tip>
-      <para>It's possible alter the position of the flow in the list by
+      <para>It's possible to alter the position of the flow in the list by
         dragging the flow with the mouse to the desired
         position.</para>
     </tip>
@@ -78,8 +79,8 @@
   
   <section xml:id="flows_assembling_flow">
   	<title>Assembling the flow</title>
-    <para>In GêBR, a <emphasis>flow</emphasis> is a <emphasis>sequence
-      of operations</emphasis> defined by the user. These operations, also
+    <para>In GêBR, a <emphasis>flow</emphasis> is a sequence
+      of operations defined by the user. These operations, also
       called
       <emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
       are organized into the following <emphasis>categories</emphasis>
@@ -123,32 +124,33 @@
       </listitem>
     </itemizedlist>
     
-    <para>After the flow has been created, a pop-up appear with several menus and
+    <para>After the flow has been created, a pop-up appears with several menus and
     is possible assemble the flow:</para>
     
     <procedure>
       <step>
-      	<para>Choose one of them and include it in the flow with a double-click.</para>
+				<para>Choose one of them and include it in the flow with a
+					double-click.</para>
       </step>
       
       <step>
-      	<para>To specify an order to the selected programs simply drag and drop the 
+      	<para>To specify an order to the programs, simply drag and drop the 
       	desired programs.</para>
       </step>
       
       <step>
-      	<para>The program inserted come enabled if it doesn't have required parameters.</para>
+				<para>Inserted program comes in an enabled state (unless they
+					have required parameters).</para>
       </step>
       
       <step>
-      	<para>To better configuration of the programs or if there are required parameters in 
-      	the program, it's necessary edit their parameters 
-      	(see how in <xref linkend="flows_editing_parameters" />).</para>
+				<para>Some programs have required parameters. To edit or to alter the
+					default parameters, consult  <xref linkend="flows_editing_parameters" />.</para>
       </step>
       
       <step>
-      	<para>To change status of a program just right-click over it and select 
-      	the Enable, if program is disabled, or select Disable, if program is enabled 
+				<para>To change the program status, right-click over it and 
+					choose the first option, <guilabel>Enable/Disable</guilabel>
       	(for more information, see <xref linkend="flows_change_program_state" />).</para>
 		  <important>
 	        <para>To run a flow 
@@ -173,12 +175,21 @@
             <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-    </guiicon> to do it.</para>
+    </guiicon> or on
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/detailed_execution.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>
+					to do it (for more information, consult <xref
+					linkend="flows_execute_flow"/>).</para>
     <para>After the flow has been assembled, it will be visible on the left
       side of the main window when the <guilabel>Flows</guilabel> tab
       is selected. The <guilabel>Details</guilabel> box, found on the
       upper right side of the main window, shows information about the selected
-      flow and below the <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
+      flow. The <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
       contains information like input,output and log file, flow's programs 
       and some of its parameters. </para>
     <tip>
@@ -188,7 +199,7 @@
     <tip>
       <para>To alter <emphasis role="bold">the position</emphasis> of the flow in
         the list, simply <emphasis role="bold">drag the flow with the
-          mouse</emphasis> to desired position.</para>
+          mouse</emphasis> to the desired position.</para>
     </tip>
   </section>
   
@@ -741,8 +752,14 @@
 				</listitem>
 			</itemizedlist>
 		</para>
+			<para>
+				After being triggered, the execution can be followed in the same
+				window or, for more detailed information, in the <guilabel>Jobs</guilabel>
+				tab (see <xref linkend="flows_execution_infobar"/> and
+				<xref linkend="jobs_tab"/>).
+			</para>
 		<tip>
-			<para>More than one flow can be selected, and then execute them all. To make a
+			<para>More than one flow can be selected together and executed. To make a
 				multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
 				the arrow keys while <keycap>Shift</keycap> is pressed.
 			</para>
@@ -904,7 +921,8 @@
 	      <caption>Screenshot of program <emphasis>Loop</emphasis>, added
 	      to a flow and properly configured.</caption>
 	      <imageobject>
-	        <imagedata fileref="../images/GeBR_flow_editor_loop.png"  contentwidth="793px" contentdepth="537px" />
+					<imagedata fileref="../images/GeBR_flow_editor_loop.png" 
+						contentwidth="793px" contentdepth="537px" />
 	      </imageobject>
 	    </mediaobject>
 	    </figure>
@@ -924,12 +942,53 @@
 	        of <emphasis>Loop</emphasis> program, with a simple example of
 	        parameters setting.</caption>
 	      <imageobject>
-	        <imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png"  contentwidth="468px" contentdepth="387px" />
+					<imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png" 
+						contentwidth="468px" contentdepth="387px" />
 	      </imageobject>
 	    </mediaobject>
 	    </figure>
 	</section>
 
+	<section xml:id="flows_execution_infobar">
+		<title>Following the execution </title>
+	<para>
+		After a flow has been sent to execution, the status and
+		output of the job can be followed in the same window, still in the
+		<guilabel>Flows</guilabel> tab. A bar in the botton of the window
+		will appear to keep a history of the last jobs dispatched for
+		execution and to switch among the results of the different jobs.
+	</para>
+	<para>
+		Each job execution is represented in the bar as a button,
+		composed by:
+		<itemizedlist>
+			<listitem>
+		an icon, that represents the status of the execution; and
+	</listitem>
+	<listitem>
+		an identifier, which is associated to the number of executions
+		of that flow.
+	</listitem>
+	</itemizedlist>
+	</para>
+		
+	<para>
+		Different from the <guilabel>Jobs</guilabel> tab, in the
+		<guilabel>Flows</guilabel> tab it is presented just a
+		quick view of the job. Indeed, the aim of this features is
+		not to present a full view of the job, but to avoid
+		the switching of tabs to follow jobs. The arrow takes to the 
+		<guilabel>Jobs</guilabel> tab, where a complete view of the
+		flow execution can be consulted.
+	</para>
+
+	<para>
+		When more than one flow is dispatched for execution,
+		instead of staying in the same window, GêBR automatically
+		switches to the <guilabel>Jobs</guilabel> tab, where 
+		all the executions can be seen all together.
+	</para>
+	</section>
 	<section xml:id="flows_edit_comments_flow">
 	    <title>Editing comments</title>
 	    <para>This button appears in <guilabel>Projects and
