@@ -185,6 +185,17 @@
       </mediaobject>
     </figure>
     <caption>Screenshot of the <guilabel>Jobs</guilabel> tab list of jobs.</caption>
+    
+    <para>Beside the job name, an icon (<guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/photos.png" />
+          </imageobject>
+        </inlinemediaobject>
+    </guiicon>
+    ) appears to represent that this job came 
+    from an execution of snapshot (see <xref linkend="flows_snapshots_actions" />).</para>
+    
   </section>
 
   <section xml:id="jobs_right_panel">
@@ -194,15 +205,23 @@
       over <emphasis>Details</emphasis>. Among the exhibited
       information there are:</para>
     <itemizedlist>
-      <listitem><para>description of related flow</para></listitem>
-      <listitem><para>moment of start/finish of the flow</para></listitem>
-      <listitem><para>elapsed time in execution</para></listitem>
-      <listitem><para>input/output files</para></listitem>
-      <listitem><para>the nodes group in which the flow were executed</para></listitem>
+      <listitem><para>Description of related flow. If the job is from a snapshot,
+      the icon 
+      <guiicon>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata fileref="../../common-images/photos.png" />
+          </imageobject>
+        </inlinemediaobject>
+      </guiicon> is displayed along with the description of snapshot.</para></listitem>
+      <listitem><para>Moment of start/finish of the flow.</para></listitem>
+      <listitem><para>Elapsed time in execution</para></listitem>
+      <listitem><para>Input/output files</para></listitem>
+      <listitem><para>The nodes group in which the flow were executed</para></listitem>
     </itemizedlist>
-    <para>The user can also consult which machines were effectively used in
-      the group and how the distribution of the work was done by
-      clicking over
+    <para>Which machines were effectively used in
+      the group and how the distribution of the work was done can be
+      consulted by clicking over
       <guiicon>
         <inlinemediaobject>
           <imageobject>
