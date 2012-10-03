@@ -374,30 +374,41 @@
   <section xml:id="projects_lines_edit_comments_project">
     <title>Editing comments</title>
 
-    <para>The user can add comments on the
-      report<indexterm><primary>Report</primary><secondary>of a
-      project</secondary></indexterm><indexterm><primary>Report</primary><secondary>of
-      a line</secondary></indexterm> of a project or a line.  To do
-      so, follow the steps:</para>
+    <para>
+      Projects and lines can be commented and have an automatic report
+      <indexterm><primary>Report</primary><secondary>of a project</secondary></indexterm>
+      <indexterm><primary>Report</primary><secondary>of a line</secondary></indexterm>
+      generation. To do edit their commentaries, follow the steps:</para>
 
     <procedure>
       <step>
-        <para>Left-click on 
-          <guibutton>Edit comments</guibutton>, which is located just below 
-          <guilabel>Details</guilabel>, in the 
-          <guilabel>Project's properties</guilabel> or 
-          <guilabel>Line's Properties</guilabel> dialog box.</para>
+        <para>Choose a project or line;</para>
       </step>
       <step>
-        <para>Fill in some comment in the text editor that is presented. 
-          When the comment is edited, save this and close the editor.</para>
-        <para>In this editor the user can save, print and pre-visualize
-          the comments by pressing one of the icons in the tool
-          bar, or by using the editors menu.</para>
+        <para>Click on the <guibutton>More</guibutton> button on the toolbar;</para>
+      </step>
+      <step>
+        <para>Choose <guilabel>Edit Comments</guilabel>;</para>
+      </step>
+      <step>
+        <para>Fill in some comment in the text editor that is presented;</para>
+      </step>
+      <step>
+        <para>When finished, save and close the editor.</para>
       </step>
     </procedure>
+
+    <tip>
+      <para>You can print the report by clicking
+        <menuchoice>
+          <guimenu>File</guimenu>
+          <guisubmenu>Print</guisubmenu>
+        </menuchoice>
+      </para>
+    </tip>
+
     <figure>
-      <title>Built-in report editor</title>
+      <title>Built-in comment editor</title>
       <mediaobject>
         <caption>The comment editor window.</caption>
         <imageobject>
