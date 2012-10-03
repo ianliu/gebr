@@ -697,6 +697,48 @@ void flow_browse_program_check_sensitiveness(void)
 	gebr_geoxml_object_unref(last_program);
 }
 
+void
+flow_browse_revalidate_flows(GebrUiFlowBrowse *fb)
+{
+	GtkTreeIter parent;
+	GtkTreeModel *model;
+	GtkTreePath *path;
+	GebrUiFlow *ui_flow;
+	GebrUiFlowBrowseType type;
+
+	model = GTK_TREE_MODEL(fb->store);
+
+	gboolean valid_flow;
+	GError *err = NULL;
+
+	gboolean valid = gtk_tree_model_get_iter_first(model, &parent);
+	while (valid) {
+		gtk_tree_model_get(model, &parent,
+		                   FB_STRUCT_TYPE, &type,
+		                   FB_STRUCT, &ui_flow,
+		                   -1);
+
+		if (type != STRUCT_TYPE_FLOW)
+			goto next;
+
+		GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		valid_flow = gebr_geoxml_flow_validate(flow, gebr.validator, &err);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+
+		gebr_ui_flow_set_flow_has_error(ui_flow, !valid_flow);
+		if (err)
+			gebr_ui_flow_set_tooltip_error(ui_flow, err->message);
+		else
+			gebr_ui_flow_set_tooltip_error(ui_flow, NULL);
+
+		path = gtk_tree_model_get_path(model, &parent);
+		gtk_tree_model_row_changed(model, path, &parent);
+		gtk_tree_path_free(path);
+next:
+		valid = gtk_tree_model_iter_next(model, &parent);
+	}
+}
 
 void
 flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
@@ -750,7 +792,7 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 
 		if (find_programs || find_io) {
 			GebrUiFlow *ui_flow;
-			gboolean has_error;
+			gboolean valid_flow;
 			GError *err = NULL;
 
 			gtk_tree_model_get(model, &parent,
@@ -759,10 +801,10 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 
 			GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
 			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
-			has_error = gebr_geoxml_flow_validate(flow, gebr.validator, &err);
+			valid_flow = gebr_geoxml_flow_validate(flow, gebr.validator, &err);
 			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 
-			gebr_ui_flow_set_flow_has_error(ui_flow, has_error);
+			gebr_ui_flow_set_flow_has_error(ui_flow, !valid_flow);
 			if (err)
 				gebr_ui_flow_set_tooltip_error(ui_flow, err->message);
 			else
@@ -2909,7 +2951,7 @@ gebr_flow_browse_status_icon(GtkTreeViewColumn *tree_column,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
 
-		if (gebr_ui_flow_get_flow_has_error(ui_flow))
+		if (!gebr_ui_flow_get_flow_has_error(ui_flow))
 			g_object_set(cell, "stock-id", "flow-icon", NULL);
 		else
 			g_object_set(cell, "stock-id", GTK_STOCK_DIALOG_WARNING, NULL);
