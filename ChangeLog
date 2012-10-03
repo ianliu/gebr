@@ -1,3 +1,1036 @@
+2012-10-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed removed and renamed dev documentation references.
+	* Removed Styles Combo class since its not being used
+	* Update link to the latest online user guide.
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Escape special character on comments in GêBR
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Revalidate flows when load flows of a line
+	* Add method to revalidate flows
+
+2012-10-02  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Check only python import pygtk, because import gtk needs a valid
+	display.
+	* Stop sending errors to /dev/null.
+
+2012-10-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix sensitive of execution buttons when flow has no programs, and
+	revalidate flow after delete and insert a program
+	* Improve error message when a flow has programs with error
+	* Add new class for required parameters, and add a new style for that
+	on flow-review
+	* Move flow error message from info bar to flow review
+	* Improve cache errors of Flow creating getters/setters of
+	flow_has_error and tooltip_error
+
+2012-10-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: rename all old GebrGuiParameterWidget methods
+	* libgebr: gui: rename gebr-gui-parameter module to gebr-gui-param
+	* libgebr: gui: rename GebrGuiParameterWidget to GebrGuiParam
+	* libgebr: gui: remove unused method parameter_widget_set_value
+	* libgebr: gui: remove module gebr-gui-validatable-widget
+	* libgebr: gui: remove inheritance of ValidatableWidget in
+	ParameterWidget
+	* libgebr: gui: remove gebr_gui_validatable_widget_get_value method
+	* libgebr: gui: remove gebr_gui_validatable_widget_set_icon method
+	* libgebr: gui: move gebr_gui_validatable_widget_validate to gebr-gui-
+	parameter module
+	* libgebr: gui: remove gebr_gui_validatable_widget_set_value method
+	* libgebr: gui: remove unused method
+	* libgebr: replace "struct gebr_gui_parameter_widget" to
+	"GebrGuiParameterWidget"
+
+2012-09-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Flows: Updating sensitiveness of Edit icon on Toolbar when multiples
+	programs are selected.
+	* Jobs: Calculate correctly the number of jobs hidden by filter.
+
+2012-09-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: expand menu category when activating the filters entry
+
+2012-09-28  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Changing head label on line s maestro disconnected
+
+2012-09-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: add graphviz dependency in packages definitions
+
+2012-09-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update I/O table on flow revisions
+
+2012-09-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: disable keyboard focus in menus list
+	* gebr: pressing up/down in menus list filter walks on treeview
+
+2012-09-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set tooltip when I/O have an error
+
+2012-09-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modifications to the DetailedExecution dialog
+
+2012-09-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* build: check for dot program in configure
+
+2012-09-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Jobs: Using Job name instead of Flow name on filter for name.
+
+2012-09-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set to insensitive I/O text and icon when not activate
+
+2012-09-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving tooltips of icons on toolbar.
+
+2012-09-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validate flow when click on Reset in parameters view
+	* Change tooltip of Menu list button
+	* Fix callback when add program from context menu, and remove options
+	to Collapse/Expand All when view of menus are filtered
+
+2012-09-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix several menu index generation problems (Fixes issue 1315)
+	* Fix memory leak in menu-indices
+	* Always show a required parameters of a program in flow's revision
+	and in flow's report
+	* Update flows revision after add a new program
+	* Update number of rows value to decide if selection are multiple or
+	not on method FlowBrowse::on_multiple_selection
+	* Set focus on search entry of menu view when clicked on Menu's button
+	* Add method to set focus on search entry of Menu View
+	* Can't select program with a Flow selected and improve check of
+	multiple flows selected on method to update actions sensitiveness
+
+2012-09-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: update flows actions on multiple selection
+	* gebr: update toolbar sensitiveness on multiple project/line
+	selection
+	* gebr: only shows menus list when creating a new flow
+	* gebr: fix variable type
+
+2012-09-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change text of nominal capacity in DetailedExecution dialog
+
+2012-09-27  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Now package build depends on python-gtk2
+
+2012-09-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show program error messages on flow review context.
+
+2012-09-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* build: downgrade required python to 2.3
+
+2012-09-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor modification to the MultipleCores section of English doc
+
+2012-09-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: geoxml: remove unused variable
+
+2012-09-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve documentation of Flow Execution in english
+
+2012-09-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: use PYTHON value when building python commands
+	* libgebr: geoxml: use correct enum when validating categories
+
+2012-09-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modify sections of MultipleCores and ExecutionPriority to be in
+	accordance to the new UI
+
+2012-09-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix casting problems
+	* gebr: fix uninitialized variables
+	* gebr: fix UTF-8 characters in cmdline.[ch]
+
+2012-09-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show error message near from Flow Description.
+
+2012-09-27  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Changed the sentence What do you want to do on maestro disconnected
+
+2012-09-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add action to the button of the DetailedExecution dialog
+	* Add icon of DetailedExecution button to the Makefile
+
+2012-09-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: change context menu "New Program" to "Show menus list"
+
+2012-09-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix Criticals when GeBR opens and a Flow was previously selected
+
+2012-09-27  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* documentation improvement
+
+2012-09-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Restore buttons of parameters view (Flows tab)
+	* Add first version of DetailedExecution doc
+
+2012-09-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add label to explain if gebr can't create dotfile to show graph
+	* Improve xdot-graph module to use only a widget and stop show window
+	when start the process
+	* When change system theme, restore python plug to GêBR and modify
+	color of Flows view, according new theme
+
+2012-09-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Moving tooltip from flow description icon to flow name at left side
+	treeview.
+
+2012-09-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* build: check for python modules in configure.ac
+	* build: add m4 macro for checking python modules
+
+2012-09-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Blocking execution when program Loop is broken.
+
+2012-09-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve search bar of Flow revision and document reports
+	* Change methods to find on webkit to work on flow's revision, and
+	change some hotkeys on Flows tab
+
+2012-09-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* clean: remove unnecessary GString assignments
+
+2012-09-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Check sensitiveness when a program is added on flow.
+	* Updating some internationalization messages.
+
+2012-09-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add search mode on HtmlViewerWindow
+	* Add new icon to clear-entry and add this on search entry of menus
+
+2012-09-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add screnshots of DetailedExecution dialog of english version
+
+2012-09-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve background and foreground colors of Flows tree view (Fixes
+	issue 1306)
+
+2012-09-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hide tooltip instead to show blank tooltip when program is OK.
+
+2012-09-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed sequentially run on maestro when sent from detailed execution
+
+2012-09-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: avoid execution of flows containing erreoneous programs
+	* gebr: save flow when it gets validated
+	* gebr: fix programs tooltip
+
+2012-09-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix running Criticals of slider_sensitiviness
+
+2012-09-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: when adding menus, configure them by default
+
+2012-09-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor fixes in DetailedExecution dialog (fixes issue 1300)
+
+2012-09-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: improve context menu for changing program status
+	* Merge "unconfigured" status change
+	* Don't use unconfigured status to specify icon
+
+2012-09-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix close of dictionary with key Escape, Close button and X button
+
+2012-09-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: remove never_opened infraestructure
+
+2012-09-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disable search inside view of menus
+	* Remove option "new program" from context menu of multiple flows, and
+	New Flow always create a new flow
+	* Validate flow when each parameter change status
+	* Fix method GebrGuiValidatable:widget_validate to return FALSE when a
+	required parameter are empty
+	* Do not show all widget of parameters to fix problem on list, and add
+	KP_Enter to validate flow
+
+2012-09-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change label of sequential execution of context menu to 'Execute
+	sequentially'
+	* Add treatment to queues combo in DetailedExecution dialog to be
+	static
+
+2012-09-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use API of HtmlViewer to set if help are from menu or from program
+	* Add method to set if help of HtmlViewer is menu, and use that to
+	decide if show link to menu or not
+	* Fix method to identify category and set correct text on View
+	* Change view of menus to a flat list when start filtering, hiding
+	categories and remove duplicated menus
+
+2012-09-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add methods to clear model, add menu and find/add category on
+	GebrMenuView class (refactoring code of menu.c)
+	* Remove unused debugs and make shift treatment only in Flows
+	* Improve multiple selection when key Shift pressed on Flow's tab
+	* Do not show Menu's popup when have multiple selection of flows
+	* Expand category when their childs are not visible
+	* Add protection on method save_parameters
+
+2012-09-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bug of wrong labels in the connections-settings wizard
+
+2012-09-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to update menu list only when have some change on
+	directory
+	* Fix selection of first line when search a menu
+	* Add selection func on Nodes and Groups view and create treatment to
+	multiple selection on groups
+
+2012-09-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add treatment whether the selection is multiple or not to craate the
+	context menu
+
+2012-09-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: geoxml: remove unknown program state
+	* gebr: update POTFILES.in to include new files
+	* gebrd: remove unused heuristic method
+
+2012-09-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change popup menu to respect selection on Project/Line tab
+	* Fix update of warn_labels and sensitive of toolbar when show Flow's
+	tab
+	* Fix toolbar sensitve on Flow's tab
+
+2012-09-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor text modification to the DetailedExecution dialog
+
+2012-09-21  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixed editing a flow when not enabled
+
+2012-09-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update menu list in the button-press signal
+
+2012-09-21  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Setting the speed slider s default as one hundred per cent
+
+2012-09-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix update of toolbar sensitive
+	* Close and save parameters before remove a program
+	* Change method to update visibility of menus
+
+2012-09-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show popup menulist depending of context.
+
+2012-09-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong boxes order in flow-properties.glade
+	* Revalidate the flow programs right before execution
+	* Fix bug of running while multiple programs are selected
+
+2012-09-21  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Changed variables dictionary to dictionary of variables
+
+2012-09-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix minor bugs on the DetailedExecution dialog
+	* Add parallel execution action to the DetailedExecution dialog
+
+2012-09-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: remove warn_unselected from gebr_menu_view_get_selected_menu
+
+2012-09-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change expand-all of menu's view to expand category when are visible
+
+2012-09-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: validate flow while editing its programs
+	* libgebr: gui: ProgramEdit now maintains a list of ParameterWidget's
+
+2012-09-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change lay-out of DetailedExecution
+	* Update speed slider as we change the comboBox selection
+
+2012-09-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Apply filter on Menu's view
+	* Add word-wrap on Menu view to avoid horizontal scroll
+
+2012-09-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Little aesthetics improvements on dialog of detailed execution and
+	menu list.
+
+2012-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: extract method for creating a ParameterWidget
+	* libgebr: gui: ParameterWidget fires validated signal on focus-out
+	* libgebr: gui: add validated callback to ParameterWidget
+
+2012-09-20  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixing sentence on dispersion box
+
+2012-09-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update the number of cores label when we change the servers combobox
+	in the DetailedExecution interface
+
+2012-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: add private struct to ParameterWidget
+
+2012-09-20  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Setting slider as insensitive when a flow is not parallelizable.
+	Also, freeing markups on single execution phrases
+
+2012-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: add method for setting the validated signal
+	* libgebr: gui: add callback type for validated signal
+
+2012-09-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Implement new class GebrMenuView and add new view of menus on popup
+
+2012-09-20  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Special treatment for multiple tasks on execution details
+
+2012-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: initialize and free the private struct in ProgramEdit
+	class
+
+2012-09-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Creating View Menu List icon on toolbar of Flows tab.
+
+2012-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: Add private structure in ProgramEdit class
+
+2012-09-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Verify if it is multiple or not prior to setup the detailed
+	execution interface
+	* Add SaveDefault option to GeBR settings and refactor execution-
+	details to just one file
+
+2012-09-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remodel flow-execution-details interface to a more explanatory
+	design
+
+2012-09-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve more button on toolbar of Project/Lines and Flows to use
+	appropriate widget
+
+2012-09-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: Add stub class for GebrMenuView
+
+2012-09-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove description column of menu view and add a description below
+	title
+	* Clean automatic filter when remove all jobs on that filter
+
+2012-09-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Reordering of toolbar to group similar actions.
+
+2012-09-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve text and icons sensitive when line has no flows, and fix
+	update of tab after paste a Flow on empty Line
+	* Change filter of Flow to Flow name, and apply Flow filter only when
+	redirect through Flows to Jobs
+
+2012-09-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Enabling context menu on flow review when Debug Mode is on.
+
+2012-09-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: parameters: Remove extra spaces from button labels
+	* gebr: flow: Rename flow_browse_reorder to reorder_flows_or_programs
+	* gebr: flow: Remove separator from program's context menu
+
+2012-09-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Creating minimalist toolbar on tab Flows.
+	* Creating minimalist toolbar on tab Project and Lines.
+
+2012-09-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add anchor when click on Flow or I/O, and load parameters page only
+	when necessary (Fixes issue 1280)
+	* Fix sensitiveness of execute detailed button and improve message
+	when line has no flows
+	* Fix position of dismiss button on Issues Info Bar of Jobs
+	* Change label from Default to Reset on Parameters view
+	* Remove "Minutes ago" from Jobs tab and fix unit test for method
+	calculate_relative_time
+
+2012-09-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Reset filter when doesn't find current group or flow on options
+	(Fixes issue 1295)
+	* Improve multiple selection of programs
+	* Add protection on flow_free method to avoid invalid iters
+	* Add signal on parameters widget to capture Enter press and validate
+	programs after that
+	* Validate program when open for the first time
+	* Change method get_selected_job to public on JobControl, and fix
+	problems jobs info in Flows
+	* Fix criticals and some inconsistency on detailed execution of
+	snapshots, closing window after run all jobs
+
+2012-09-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Validating flow when enabled is clicked on context menu. (Fixes
+	issue 1294)
+
+2012-09-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix detailed execution on broken flow
+
+2012-09-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show the review context when another flow is selected.
+
+2012-09-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Translated tooltip on execution details
+
+2012-09-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding the output view when the tab selected changes from Jobs to
+	Flows.
+
+2012-09-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Execution detailed tooltip added
+
+2012-09-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Redirect to snapshot view always after take a new snapshot or delete
+	one
+	* Add key-press-event on graph to delete snapshot with shortcut
+	* Change to snapshot context always after clicked on snapshot icon
+
+2012-09-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Blocking refresh of context flow review when the same flow is
+	selected.
+
+2012-09-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Hide left panel on flow tab when deleting a flow
+
+2012-09-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove extra padding in snapshots view
+	* Update IO icon after swapping between overwrite/not overwrite
+
+2012-09-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Keep configuration of all programs when re-open GêBR (Fixes issue
+	1260)
+	* Do not show link to menu on program's help
+
+2012-09-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make treatment to always restore the execution group to Maestro when
+	we alter the Line's Maestro
+	* Remove action of the Escape key in Flows tab
+
+2012-09-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add anchor to revision flow only if the program are configured
+	* Reset server_name and server_type of execution default when change
+	maestro
+
+2012-09-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bug of Flows tab left panel hiding
+
+2012-09-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method on_execute_seq to receive just two arguments, and insert
+	default option on execute_single return (on python)
+
+2012-09-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix detailed execution of snapshots and fix selection of I/O on
+	FlowBrowse
+	* Fix create of list of snapshots id on pytjon
+	* Change method to create ui_flow_execution to return the structure
+	created
+
+2012-09-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set detailed execution button insensitive when appropriated
+
+2012-09-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug when right-clicking on a program
+
+2012-09-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add spacing to the left panel of Flows tab
+	* Hide Line button when appropriate
+
+2012-09-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Created new class GebrUiFlowExecution and move variables from
+	FlowBrowse to that structure
+
+2012-09-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix Project/Line properties activation
+
+2012-09-12  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Removing upper context line from interface. (Fixes issue 1282)
+
+2012-09-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Get hostname for daemon on default execution in method run_flow
+
+2012-09-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to save server name and type to default, and method
+	run_flow to respect is_detailed flag (Still need store hostname of
+	server on config file)
+	* Add default value when load server_type from config file
+
+2012-09-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating detailed execution icon on interface.
+
+2012-09-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Setup dialog of detailed execution
+
+2012-09-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new images for detailed execution icon.
+	* Adding new icon for detailed execution.
+
+2012-09-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix methods to order jobs with time
+	* Update static info of flow after reoder programs
+	* Add protection to method GebrJob::get_elapsed_time to use last run
+	date if start date is NULL
+	* Update flow icon when toggle program status
+	* Fix anchor on flow review to program Loop (Fixes issue 1280)
+
+2012-09-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change visualisation of Jobs view and change method
+	gebr_calculate_relative_time to new semantic. (Fixes issue 1268)
+	* Fix critical when close GeBR
+	* Fix warning in compilation
+
+2012-09-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Delete shortcut works properly in GeBR's flow tab
+
+2012-09-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Disable the status buttom on erroneous programs. (Update issue 1266)
+	* Replace buttons for changing program state (Fixes issue 1266)
+
+2012-09-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove gebr-flow-edition.[ch] files
+
+2012-09-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add anchor to program on flow's review when select one
+
+2012-09-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method to load html viewer with anchor
+	* Reset filter when hide Job Control tab to avoid output problems on
+	Flows (Fixes issue 1277)
+
+2012-09-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Persist of JobControl filter applied by the user
+
+2012-09-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to create list of groups
+
+2012-09-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Disabling context menu in flow revision view.
+
+2012-09-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move link to program's help with name "More Info" and reorder
+	buttons
+
+2012-09-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing the creating flow when line is empty.
+	* Allow to paste flows and programs when a new flow is created.
+	* Allow change of context when the same flow is clicked and menu list
+	is been shown.
+	* Editing program parameters through context menu.
+
+2012-09-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix update of right side of Flows when select multiple programs
+	* Refactor multiple selection of Flows and Programs, and fix treatment
+	of <Control>+A on I/O
+
+2012-09-04  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixed pink background on flow tab
+
+2012-09-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some update of Flows interface problem and load snapshots graph
+	when select a program
+
+2012-09-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge default into branch ui_flow_browse_refactoring
+
+2012-09-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix callback of key press on Menu's view
+	* Removed creation of clone when start the program edition
+
+2012-09-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove all nested calls in gebr
+	* Remove all nested methods in debr
+	* Remove nested methods from gebrd
+	* Remove nested methods from maestro
+	* Remove nested methods from geoxml-menu-indices
+	* Remove all nested methods from geoxml
+	* Remove all nested methods from libgebr/comm
+	* Remove all nested methods inside libgebr/gui
+	* Add some utility methods
+	* Remove nested methods in libgebr/validate.c
+
+2012-08-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Restore parameters button on Flows tab
+	* Fix invalid update of window when dismiss info bar of jobs
+	* Restore last tab selection when open GêBR
+	* Fix copy/paste of Flows and Programs, and block signal of selection
+	changed when delete multiple flows
+	* Add protection on method to select_file_column
+	* Fix update and context menu on I/O
+
+2012-08-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix update of information of flow (insert on last commit)
+	* Improve hidden of Menus,Parameters and Output context, and fix some
+	visual errors when change selection
+	* Clean methods from Flow Edition
+	* Remove method flow_edition_component_select from flow edition
+	* Fix loop on view of flows and programs to update stop condition
+	* Enable and fix snapshot when program are selected
+
+2012-08-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added cache of build dependencies on gebr-centos-install script.
+
+2012-08-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Reverting last commit.
+
+2012-08-30  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixing Werrors bugs
+
+2012-08-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove invalid selection program after save changes of last program
+
+2012-08-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Disabling snapshot button when program is selected.
+
+2012-08-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Show warn when flow browse has no lines, and improve treatment on
+	parameters_configure_setup_ui to proceed only if row of store are
+	program
+
+2012-08-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Restore previous menus search functionality
+	* Add escape key to leave Menus List
+	* Add sentinels to iters (fix segFaults)
+
+2012-08-30  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Unused variables fixed
+
+2012-08-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on the left Flows/Programs treeview
+	* Places InfoBar box to the last position of the parent Vbox
+
+2012-08-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method to show selected context
+
+2012-08-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Setting snapshot icon always sensitive.
+	* Removing Top and Bottom actions on context menu of flows and
+	programs.
+	* Enabling to paste programs in empty flows.
+	* Setting file icon insensitive when it cannot be clicked.
+
+2012-08-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix invalid alignment added on frame
+	* Fix critical when update line title in flow browse load
+
+2012-08-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Merge to the new changes
+	* Insert parameters interface to Flows tab
+
+2012-08-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add button on top of Flow list to back into their line
+	* Fix actions of buttons export and execute when program is selected,
+	and fix a segfault on context menu
+
+2012-08-29  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Merge with fixes from default.
+	* Removing temporary files of flow review when GêBR is closed.
+
+2012-08-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new method to validate I/O on Flow Browse and fix some problems
+	on method to check sensitiveness of I/O's
+	* Fix sentinel treatment on gebr_validate_path
+	* Enable drag'n drop with program into another flow, and add line
+	title in Flows view
+
+2012-08-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Preventing the inclusion of the Loop program several times.
+
+2012-08-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove method to unselect_all from
+	gebr_gui_gtk_tree_view_select_iter to fix segfault after add new
+	program
+	* Fix some criticals on Flow Browse
+	* Improve multiple selection to respect scope of programs and flows
+	* Enable drag and drop on programs and flows (not mixed yet), and
+	first version of multiple selection
+	* Add setter/getter of variable is_selected on class UiFlow
+	* Add get_type on class UiFlowProgram
+
+2012-08-27  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* No-op merge of bad head commit.
+	* Non used variable error fixed
+
+2012-08-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Habilitates tooltip in the Flows view
+
+2012-08-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enable shortcuts for programs and toolbar actions on Flow Browse tab
+	* Update flag of opened program after change a program for the first
+	time
+
+2012-08-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add protection on check_before_execution
+	* Add callbacks for I/O editing signals
+
+2012-08-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Ellipsizing title of jobs on jobs tab.
+
+2012-08-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix context menu of Programs and I/O, and move back method to view
+	if ListStore can move up or down
+
+2012-08-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix interface bug (precipitated call of method)
+	* Add method to update I/O value in the GebrUiFlowsIo class
+
+2012-08-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Ellipsizing server queue combobox.
+
+2012-08-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement treatments on integrated view of flows and programs
+	* Fix default active when load IO from flow
+
+2012-08-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add context menu on Flow, Program and IO, and improve view
+
+2012-08-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add popup menu of the IO
+	* Add source file of the previous commit (add popup menu)
+
+2012-08-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Ellipsizing flow description on Jobs and Flows tabs.
+
+2012-08-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add popup menu of the programs
+
+2012-08-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Take away gebr-flow-review.css from report options.
+
+2012-08-23  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Updating the Last Run label, on Execute pressing
+
+2012-08-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add some methods to gebr_ui_flow_program class
+
+2012-08-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement view of Flows and programs (without actions)
+
+2012-08-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix the working of hotkeys on jobcontrol tab.
+
+2012-08-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create isolated methods in ui_flows_io
+	* Remove unused statements in ui_flow_browse (to avoid compilations
+	warnings)
+
+2012-08-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* More compile warnings fixed.
+
+2012-08-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* First version of new Flow Browse view with Flows and Programs
+
+2012-08-22  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Flow-review style modified
+
+2012-08-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Create new entity GebrUiFlowProgram.
+
+2012-08-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Include geoxml library in geoxml/ui_flows_io.h
+
+2012-08-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change file ui_flow to ui_flow_execution and create new class
+	GebrUiFlow to remove old model of Flow Browse and add a new one only
+	with structures
+	* Disable fatal warning on eclipse
+
+2012-08-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create new entity GebrUiFlowsIo
+
+2012-08-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed uninitialized return.
+	* Added tag 0.19.4 for changeset 405a18057b7d
+	* Release 0.19.4: Unified Flow Browser and Editor [Sprint 62]
+
 2012-08-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Remove generated files from the tarball.

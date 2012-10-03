@@ -1,3 +1,19 @@
+2012-09-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating some internationalization messages.
+
+2012-09-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: remove unused heuristic method
+
+2012-09-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove nested methods from gebrd
+
+2012-08-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.4: Unified Flow Browser and Editor [Sprint 62]
+
 2012-08-09  Igor Nunes <igorsnunes@gebrproject.com>
 
 	* Internationalization of command lines on flow execution

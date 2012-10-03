@@ -1,3 +1,50 @@
+2012-10-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: rename all old GebrGuiParameterWidget methods
+	* libgebr: gui: rename gebr-gui-parameter module to gebr-gui-param
+	* libgebr: gui: rename GebrGuiParameterWidget to GebrGuiParam
+	* libgebr: replace "struct gebr_gui_parameter_widget" to
+	"GebrGuiParameterWidget"
+
+2012-09-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating some internationalization messages.
+
+2012-09-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Don't use unconfigured status to specify icon
+
+2012-09-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix warning in compilation
+
+2012-09-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove gebr-flow-edition.[ch] files
+
+2012-09-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove all nested methods in debr
+
+2012-08-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Insert parameters interface to Flows tab
+
+2012-08-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix context menu of Programs and I/O, and move back method to view
+	if ListStore can move up or down
+
+2012-08-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change file ui_flow to ui_flow_execution and create new class
+	GebrUiFlow to remove old model of Flow Browse and add a new one only
+	with structures
+
+2012-08-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.4: Unified Flow Browser and Editor [Sprint 62]
+
 2012-08-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.19.3: Multiple Snapshots Execution [Sprint 60] [Sprint 61]

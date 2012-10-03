@@ -1,3 +1,232 @@
+2012-10-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Removed Styles Combo class since its not being used
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Escape special character on comments in GêBR
+
+2012-10-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve error message when a flow has programs with error
+	* Add new class for required parameters, and add a new style for that
+	on flow-review
+	* Move flow error message from info bar to flow review
+
+2012-10-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: rename all old GebrGuiParameterWidget methods
+	* libgebr: gui: rename gebr-gui-parameter module to gebr-gui-param
+	* libgebr: gui: rename GebrGuiParameterWidget to GebrGuiParam
+	* libgebr: gui: remove unused method parameter_widget_set_value
+	* libgebr: gui: remove module gebr-gui-validatable-widget
+	* libgebr: gui: remove inheritance of ValidatableWidget in
+	ParameterWidget
+	* libgebr: gui: remove gebr_gui_validatable_widget_get_value method
+	* libgebr: gui: remove gebr_gui_validatable_widget_set_icon method
+	* libgebr: gui: move gebr_gui_validatable_widget_validate to gebr-gui-
+	parameter module
+	* libgebr: gui: remove gebr_gui_validatable_widget_set_value method
+	* libgebr: gui: remove unused method
+	* libgebr: replace "struct gebr_gui_parameter_widget" to
+	"GebrGuiParameterWidget"
+
+2012-09-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix memory leak in menu-indices
+
+2012-09-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show program error messages on flow review context.
+
+2012-09-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: geoxml: remove unused variable
+	* libgebr: geoxml: use correct enum when validating categories
+	* libgebr: fix casting problems
+
+2012-09-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show error message near from Flow Description.
+
+2012-09-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix Criticals when GeBR opens and a Flow was previously selected
+
+2012-09-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Blocking execution when program Loop is broken.
+
+2012-09-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve search bar of Flow revision and document reports
+	* Change methods to find on webkit to work on flow's revision, and
+	change some hotkeys on Flows tab
+
+2012-09-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* clean: remove unnecessary GString assignments
+
+2012-09-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating some internationalization messages.
+
+2012-09-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add search mode on HtmlViewerWindow
+	* Add new icon to clear-entry and add this on search entry of menus
+
+2012-09-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: avoid execution of flows containing erreoneous programs
+	* Don't use unconfigured status to specify icon
+
+2012-09-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validate flow when each parameter change status
+	* Fix method GebrGuiValidatable:widget_validate to return FALSE when a
+	required parameter are empty
+	* Add method to set if help of HtmlViewer is menu, and use that to
+	decide if show link to menu or not
+
+2012-09-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: geoxml: remove unknown program state
+
+2012-09-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show popup menulist depending of context.
+
+2012-09-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: ProgramEdit now maintains a list of ParameterWidget's
+
+2012-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: extract method for creating a ParameterWidget
+	* libgebr: gui: ParameterWidget fires validated signal on focus-out
+	* libgebr: gui: add validated callback to ParameterWidget
+	* libgebr: gui: add private struct to ParameterWidget
+	* libgebr: gui: add method for setting the validated signal
+	* libgebr: gui: add callback type for validated signal
+	* libgebr: gui: initialize and free the private struct in ProgramEdit
+	class
+
+2012-09-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Creating View Menu List icon on toolbar of Flows tab.
+
+2012-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: Add private structure in ProgramEdit class
+
+2012-09-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve more button on toolbar of Project/Lines and Flows to use
+	appropriate widget
+
+2012-09-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add anchor when click on Flow or I/O, and load parameters page only
+	when necessary (Fixes issue 1280)
+	* Remove "Minutes ago" from Jobs tab and fix unit test for method
+	calculate_relative_time
+
+2012-09-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Do not show link to menu on program's help
+
+2012-09-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating detailed execution icon on interface.
+	* Adding new images for detailed execution icon.
+	* Adding new icon for detailed execution.
+
+2012-09-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix methods to order jobs with time
+
+2012-09-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change visualisation of Jobs view and change method
+	gebr_calculate_relative_time to new semantic. (Fixes issue 1268)
+
+2012-09-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method to load html viewer with anchor
+
+2012-09-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move link to program's help with name "More Info" and reorder
+	buttons
+
+2012-09-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge default into branch ui_flow_browse_refactoring
+
+2012-09-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove nested methods from geoxml-menu-indices
+	* Remove all nested methods from geoxml
+	* Remove all nested methods from libgebr/comm
+	* Remove all nested methods inside libgebr/gui
+	* Add some utility methods
+	* Remove nested methods in libgebr/validate.c
+
+2012-08-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Insert parameters interface to Flows tab
+
+2012-08-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix actions of buttons export and execute when program is selected,
+	and fix a segfault on context menu
+
+2012-08-29  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Merge with fixes from default.
+
+2012-08-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix sentinel treatment on gebr_validate_path
+
+2012-08-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove method to unselect_all from
+	gebr_gui_gtk_tree_view_select_iter to fix segfault after add new
+	program
+
+2012-08-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Habilitates tooltip in the Flows view
+
+2012-08-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix context menu of Programs and I/O, and move back method to view
+	if ListStore can move up or down
+
+2012-08-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Take away gebr-flow-review.css from report options.
+
+2012-08-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement view of Flows and programs (without actions)
+
+2012-08-22  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Flow-review style modified
+
+2012-08-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change file ui_flow to ui_flow_execution and create new class
+	GebrUiFlow to remove old model of Flow Browse and add a new one only
+	with structures
+
+2012-08-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.4: Unified Flow Browser and Editor [Sprint 62]
+
 2012-08-20  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* Remove toolbar from the Comments GUI

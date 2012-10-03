@@ -1,3 +1,18 @@
+gebrproject (0.19.5) lucid; urgency=low
+
+  * Powered Flows Tab with:
+    * In-line flow assembly (#1262)
+    * Informative summary of the flow. (#1256)
+    * Direct access to setup of programs' parameters. (#1263)
+    * Job's output right after execution.
+    * Shortcut to execution history of the flow.
+    * Visual handling of snapshots. (#1177) (#1235) (#1236) (#1237)
+  * Express and detailed execution modes. (#1264) (#1300)
+  * Easy access to the list of menus. (#1301)
+  * Text search (ctrl+f) in Flow's report and details.(#1283)
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Wed, 03 Oct 2012 16:03:58 -0300
+
 gebrproject (0.19.4) lucid; urgency=low
 
   * Merged Flow Editor into Flow Browser tab.
