@@ -157,25 +157,19 @@
   </section>
 
   <section xml:id="projects_lines_delete">
-    <title>Deleting a project or a line</title>
+    <title>Deleting projects and lines</title>
 
-    <para>To remove a line or project select the project or line then
-      left-click on
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_apagar_projeto.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon>.</para>
+    <para>To delete a line, select it and then left-click on
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
 
-    <para>When the user deletes a line he or she are also deleting all its
-      flows.</para>
+    <warning>
+      <para>When a line is deleted all its flows are also deleted. This
+        operation cannot be reverted.</para>
+    </warning>
 
-    <note>
-      <para>To delete a project the user must first delete all of its
-        lines.</para>
-    </note>
+    <para>To delete a project, it must not contain any lines, so it is
+      necessary to delete them first, and then proceed to the project. This is
+      a protection to avoid miss-clicking the delete button.</para>
   </section>
   
   <section xml:id="projects_lines_edit_properties">
