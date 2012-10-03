@@ -74,7 +74,7 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
  * gebr_geoxml_object_get_help_content:
  * @object:
  *
- * Returns: A newly allocated string containing the content of @object<!-- --!>'s help.
+ * Returns: A newly allocated string containing the content of @object's help.
  */
 gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object);
 
