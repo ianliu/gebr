@@ -18,23 +18,26 @@
       flows</emphasis><indexterm><primary>Processing
       flow</primary></indexterm>. A processing flow is a chain of
       programs, which sequentially operates on an input data to
-      produce an output data from it. For example, processing flows
+      produce an output data from it. For example, flows
       can be assembled to accomplish tasks like <emphasis>spike
       deconvolution</emphasis>, <emphasis>ground-roll
       atenuation</emphasis>, <emphasis>NMO correction</emphasis>, and
       so on.</para>
 
     <para>In GêBR, processing flows are referenced
-      as <emphasis role="bold">flows</emphasis><indexterm><primary>Flow</primary></indexterm>. The
+			as <emphasis role="bold">flows</emphasis>
+			<indexterm><primary>Flow</primary></indexterm>. The
       complete processing of a seismic data (also known as
       a <emphasis>seismic line</emphasis>, in 2D case) involves
-      several processing flows. The set of processing flows is
+      several flows. A set of flows is
       referenced as
-      a <emphasis role="bold">line</emphasis><indexterm><primary>Line</primary></indexterm>
+			a seismic line, or <emphasis role="bold">line</emphasis>
+			<indexterm><primary>Line</primary></indexterm>
       in the GêBR interface. Furthermore, it is common to have many
-      seismic lines acquired on a target area. A set of seismic lines
-      is known as a <emphasis role="bold">project</emphasis><indexterm><primary>Project</primary></indexterm>, in
-      GêBR.</para>
+			seismic lines acquired on a target area. Finally, a set of
+			seismic lines
+			is known as a <emphasis role="bold">project</emphasis>
+			<indexterm><primary>Project</primary></indexterm>.</para>
 
     <para>In summary, GêBR has three levels organization, from top to
     bottom:</para>
@@ -42,7 +45,7 @@
       <listitem>
 	<para>
           <emphasis role="bold">Project</emphasis>: It is a set of
-          <emphasis role="bold">lines</emphasis>. A project has only few
+          <emphasis role="bold">lines</emphasis>. A project has only a few
 	  basic information and is used to cluster lines related
 	  somehow.</para>
       </listitem>
@@ -60,14 +63,14 @@
 	<para>
 	  <emphasis role="bold">Flow</emphasis>: It is a sequence of
 	  programs, designed to accomplish a specific task, in the
-	  course of the processing the seismic data.
+	  course of seismic data processing.
 	</para>
       </listitem>
     </itemizedlist>
 
     <para>
       Thus, before creating and executing flows, it's necessary to create
-      at least one Project owning one
+      at least one project owning one
       line. <xref linkend="projects_lines_create_projects"/>,
       <xref linkend="projects_lines_create_lines"/> and
       <xref linkend="flows_create_flow"/> explain how this is
@@ -76,8 +79,8 @@
 
     <para>To assemble a flow, the user has not only to select
       programs, but also configure them properly, through their
-      parameters. Once the flow is ready, it is time to actually
-      execute it.</para>
+      parameters. Once the flow is configured, it is ready to actually
+      be executed.</para>
   </section>
 
   <section xml:id="concepts_programs_and_menus">
@@ -175,20 +178,22 @@
       execute them, inspect results, etc. Usually, this interface is installed
       and is running in the machine user has physical contatct with.</para>
 
-    <para>Through GêBR, it is possible to take advantage of as many machines as
-      the user has access to run processing flows. Those machines are
+    <para>Through GêBR, it is possible to take advantage of the amount of machines 
+      the user has access to run flows. Those machines are
       referenced as <emphasis role="bold">nodes</emphasis>. They may be
-      local, meaning the user is physically using them, or remote, meaning the
+			<emphasis>local</emphasis>, meaning the user is physically using them, or
+			<emphasis>remote</emphasis>, meaning the
       user has access to them through the network. No matter where the machines
       are, they are equally treated by GêBR, which means that the user does not
       have to care about that.</para>
 
     <para>However, GêBR does not talk directly to the nodes.  This
-      communication intermediated through another player, the
-      <emphasis role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>.
+      communication is brokered by another player, the
+			<emphasis role="bold">maestro</emphasis>
+			<indexterm><primary>Maestro</primary></indexterm>.
       It acts as a coordinator of the nodes, collecting information and ranking
       them according to their capabilities and availabities of resources.
-      Therefore, maestro can take smart decisions about which machines are best
+      Therefore, the maestro can take smart decisions about which machines are best
       suited to run the job.</para>
 
     <figure xml:id="communication_diagram">
@@ -206,7 +211,7 @@
       Under maestro's coordination the nodes can even cooperate to conclude
       processing jobs fasters.</para>
  
-   <para>When the user decides to execute a flow, GêBR sends this request to
+   <para>When the user decides to execute a flow, GêBR sends the request to
      the maestro, giving rise to a
      <emphasis role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>.
      However, the maestro does not execute the job itself, it dispatches the
@@ -223,7 +228,7 @@
     <title>GêBR interface layout</title>
 
     <para>
-      The GêBR interface is intentionally simple. It is organized in three main
+      The GêBR interface is intentionally simple. It is organized in three 
       tabs:
       <itemizedlist>
         <listitem>
@@ -238,17 +243,6 @@
           <guilabel>Jobs</guilabel>: for inspecting the results.
         </listitem>
       </itemizedlist>
-
-      <!--
-      <figure>
-        <mediaobject>
-          <caption>GêBR tabs.</caption>
-          <imageobject>
-            <imagedata fileref="../images/GeBR_tabs.png" contentwidth="706px" contentdepth="456px" />
-          </imageobject>
-        </mediaobject>
-      </figure>
-      -->
     </para>
     
     <para>
@@ -281,7 +275,7 @@
               <guilabel>Help</guilabel>: This documentation;
             </listitem>
             <listitem>
-              <guilabel>Examples</guilabel>: Examples of seismic processing;
+              <guilabel>Samples</guilabel>: Examples of seismic processing;
             </listitem>
             <listitem>
               <guilabel>About</guilabel>: GêBR's version, license and
