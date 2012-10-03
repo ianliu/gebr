@@ -60,7 +60,7 @@
       <step>The user can also give a brief 
           <guilabel>Description</guilabel> of the project, the 
           <guilabel>Author</guilabel> and an 
-          <guilabel>e-mail</guilabel> address.
+          <guilabel>E-mail</guilabel> address.
       </step>
       <step>Click <guibutton>OK</guibutton>.
       </step>
@@ -69,7 +69,7 @@
       <title>Project's properties dialog box</title>
       <mediaobject>
         <caption>In the project's properties dialog box, the user can edit
-          the Title, Description, Author and Email.</caption>
+          the Title, Description, Author and E-mail.</caption>
         <imageobject>
           <imagedata fileref="../images/janela_properties_project.png"  contentwidth="387px" contentdepth="215px" />
         </imageobject>
