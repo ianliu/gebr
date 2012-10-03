@@ -420,54 +420,96 @@
   </section>
 
   <section xml:id="projects_lines_view_report_project">
-    <title>View the report</title>
+    <title>Viewing reports</title>
 
     <para>As explained in the above section, the user can edit a report
       containing additional information about the project or line. To view the
-      report left-click on View Report, found at the bottom of the
-      <guilabel>Details</guilabel> box, which is on the right side of the main
-      window.</para>
+      report click on the <guibutton>More</guibutton> button on the toolbar and
+      then select <guilabel>View Report</guilabel>.</para>
 
     <para>After clicking on <guilabel>View Report</guilabel>, a window will
-      appear, where you can:</para>
+      appear showing the generated report for that project or line. This window
+      has some functionalities that are mentioned below:</para>
 
-    <procedure>
-      <step>
-        <para>Save;</para>
-      </step>
-      <step>
-        <para>Print the report.</para>
-      </step>
-    </procedure>
-    <para>In the menu Options you can:</para>
-    <procedure>
-      <step>
-        <para>Include your comments;</para>
-      </step>
-      <step>
-        <para>Include the flow's report;</para>
-      </step>
-      <step>
-        <para>Include the report of the snapshots of flows;</para>
-      </step>
-      <step>
-        <para>Configure the parameter table pertaining to the flow's
-          programs;</para>
-      </step>
-      <step>
-        <para>Choose the presentation style of the report, as well as
-          include other styles.</para>
-      </step>
-    </procedure>
+    <variablelist>
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>File</guimenu>
+            <guisubmenu>Save</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Saves the report as an HTML file;</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>File</guimenu>
+            <guisubmenu>Print</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Prints the report;</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
+            <guisubmenu>Include user's commentary</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Include your comments inside the report;</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
+            <guisubmenu>Include flow's reports</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Include the reports of all flow of this line;</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
+            <guisubmenu>Include the report of the snapshots of flows;</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>This option will include reports from all snapshots of all the
+            flows that compose this line (see <xref linkend="flows_snapshots"/>);</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
+            <guisubmenu>Style;</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Change the presentation style of the report.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
 
     <figure>
       <title>Report view</title>
       <mediaobject>
-        <caption>In the <guilabel>View Report</guilabel> window, the user can
-          print or save to a file this report. In the options menu, as is shown
-          above, the user can include: comments, the flow's report, the report
-          of the snapshots of flows, the parameter table and choose from a few
-          pre-defined styles for the report.</caption>
+        <caption>The <guilabel>View Report</guilabel> window shows the report
+          and enables customization of its content.</caption>
         <imageobject>
           <imagedata fileref="../images/janela_visualizar_relatorio.png"  contentwidth="626px" contentdepth="423px" />
         </imageobject>
@@ -475,14 +517,15 @@
     </figure>
 
     <para><xref linkend="flows_view_report_flow" /> explains in greater details
-      the View Report tool for flows, which is very similar to the line's and
-      project's View Report except that in this one the user can add the flow's
-      report.</para>
+      the <guilabel>View Report</guilabel> tool for flows, which is very
+      similar to the line's and project's <guilabel>View Report</guilabel>
+      except that in this one the user can add the flow's report.</para>
       
       <note>
         <para>The option to include report of the snapshots of flows are
-          available on line's and flow's View Report. More information about
-          snapshots can be found on section <xref linkend="flows_snapshots" />
+          available on line's and flow's <guilabel>View Report</guilabel>. More
+          information about snapshots can be found on section
+          <xref linkend="flows_snapshots" />
       	</para>
       </note>
       
