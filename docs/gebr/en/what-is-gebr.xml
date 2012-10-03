@@ -60,6 +60,18 @@
 			<listitem>
 				Version 0.20.0 <emphasis></emphasis>
 				<itemizedlist>
+						This release of GêBR brings a lot of new and features to ease 
+						the handling and the management of flows and programs, including:
+					<listitem>
+						Joining of Program and Flow tabs navigation: now through Flows tab 
+						is possible control all the actions about flows and programs, thus 
+						the activities at GêBR are much more centralized, fast and easy.
+					</listitem>
+					<listitem>
+						New Toolbar: the new toolbar makes the GêBR interface much more clean. 
+						Just the frequently used actions are on the toolbar, the other actions 
+						are placed in More menu.
+					</listitem>
 					<listitem>
 						Improved usability of flows through the creation of 
 						a unified tab (see 
@@ -73,7 +85,7 @@
 				</itemizedlist>
 			</listitem>
 			<listitem>
-				Version 0.20.0 <emphasis>(May 24th 2012: current)</emphasis>
+				Version 0.18.0 <emphasis>(May 24th 2012: current)</emphasis>
 				<itemizedlist>
 					<listitem>
 						Prior to this version, lines could have some directories,
