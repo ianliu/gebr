@@ -168,10 +168,9 @@
       categories: <emphasis role="bold">GêBR</emphasis><indexterm><primary>GêBR</primary><secondary>the
       interface</secondary></indexterm> (the interface
     	itself), <emphasis role="bold">maestros</emphasis>
-	    <indexterm><primary>Maestro</primary></indexterm>,
-      and <emphasis role="bold">nodes
-      </emphasis><indexterm><primary>Node
-      </primary></indexterm>. But who are those guys?</para>
+      <indexterm><primary>Maestro</primary></indexterm>, and
+      <emphasis role="bold">nodes</emphasis><indexterm><primary>Node</primary></indexterm>.
+      But who are those guys?</para>
 
     <para>The GêBR interface, sometimes referred as GêBR only, is the graphical
       interface with whom the user interacts with to build processing flows,
