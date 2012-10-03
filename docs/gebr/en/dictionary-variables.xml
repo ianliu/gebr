@@ -58,7 +58,7 @@
         <para>At the window that pops up (
           <guilabel>Variables dictionary for flow</guilabel>), click on 
           <emphasis>New</emphasis> at 
-          <emphasis role="bold">Flow</emphasis> scope. Fill the field 
+          <emphasis role="bold">flow</emphasis> scope. Fill the field 
           <emphasis>keyword</emphasis> with the variable's name 
           <emphasis role="bold">var1</emphasis>. Then, press enter to proceed to the next field, 
           <emphasis>Value</emphasis>. Before filling it, you must choose a data type to your new
@@ -154,14 +154,14 @@
       <emphasis role="bold">[</emphasis>' (open brackets).</tip>
     <important>
       <para>We can define the visibility of the variables, managing them in the lists 
-        <guilabel>Project</guilabel>, 
-        <guilabel>Line</guilabel> and 
-        <guilabel>Flow</guilabel>. Variables from the list 
-        <guilabel>Project</guilabel> are visible to 
+        <guilabel>project</guilabel>, 
+        <guilabel>line</guilabel> and 
+        <guilabel>flow</guilabel>. Variables from the list 
+        <guilabel>project</guilabel> are visible to 
         <emphasis role="bold">every flow</emphasis> of every line of the chosen project.
-        <guilabel>Lines</guilabel> are visible just for the 
+        <guilabel>lines</guilabel> are visible just for the 
         <emphasis role="bold">flows of the selected flow</emphasis>. Variables from the list 
-        <guilabel>Flows</guilabel> are visible just for the 
+        <guilabel>flows</guilabel> are visible just for the 
         <emphasis role="bold">chosen flow</emphasis>.</para>
     </important>
   </section>
@@ -231,8 +231,8 @@
         </figure>
         <important>
           <para>The program 
-            <guimenuitem>Loop</guimenuitem> can only use variables defined at its Line or
-            Project.</para>
+            <guimenuitem>Loop</guimenuitem> can only use variables defined at its line or
+            project.</para>
         </important>
       </step>
       <step>

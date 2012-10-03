@@ -76,16 +76,16 @@
 				Version 0.20.0 <emphasis>(May 24th 2012: current)</emphasis>
 				<itemizedlist>
 					<listitem>
-						Prior to this version, Lines could have some directories,
-						known as <emphasis>Line's paths</emphasis>. Shortcuts to
+						Prior to this version, lines could have some directories,
+						known as <emphasis>line's paths</emphasis>. Shortcuts to
 						those directories were available in each file browse
-						dialog. From this version, to each Line it is associated a
+						dialog. From this version, to each line it is associated a
 						standard hierarchy of directories (see definition in
 						<xref linkend="projects_lines_line_paths"/> and example of
 						usage in <xref linkend="flows_edit_input_output"/>).
 					</listitem>
 					<listitem>
-						Now it's possible to change the Line's Maestro (see
+						Now it's possible to change the line's maestro (see
 						<xref linkend="projects_lines_change_the_maestro_of_a_line"/>).
 					</listitem>
 					<listitem>
@@ -97,8 +97,9 @@
 			<listitem>
 				Version 0.16.0<emphasis> (January 30th 2012)</emphasis>
 				<itemizedlist>
-					<listitem>The Maestro concept is born allowing to execute
-						GêBR jobs in multiples machines.  (see
+					<listitem>The concept of <emphasis>Maestro</emphasis> is born,
+						allowing to execute
+						jobs in multiples machines.  (see
 						<xref linkend="additional_features_maestro_servers_configuration"
 							/> and <xref linkend="technical_aspects_multicores"
 							/>).</listitem>

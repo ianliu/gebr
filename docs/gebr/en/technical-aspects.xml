@@ -137,10 +137,10 @@
       bookmarks on the <guilabel>Places</guilabel> panel.</caption>
     </figure>
 
-    <para>GêBR puts markers (bookmarks) to the important folders of the Line in
+    <para>GêBR puts markers (bookmarks) to the important folders of the line in
       context (see <xref linkend="projects_lines_line_paths"/>), as the user
       can see in the left panel of the window above. They aim to
-      facilitate the access to the files of the Line.
+      facilitate the access to the files of the line.
     </para>
 
     <note>
@@ -191,7 +191,7 @@
 			<xref linkend="flows_detailed_execution"/>).
 		</para>
 
-    <para>In case the Flow is not parallelizable (i.e., does not fit
+    <para>In case the flow is not parallelizable (i.e., does not fit
 			any of the above conditions), GêBR runs the job in the choosen node.</para>
   </section>
 
@@ -287,7 +287,7 @@
         have three levels of visibility:</para>
       <itemizedlist>
         <listitem>Project's variables are visible to all flows
-          associated to Lines of the Project;</listitem>
+          associated to lines of the project;</listitem>
         <listitem>Line's variables are visible to all its flows;</listitem>
         <listitem>Flow's variables are just visible to itself.</listitem>
       </itemizedlist>

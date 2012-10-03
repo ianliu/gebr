@@ -53,7 +53,7 @@
 	<para>
           <emphasis role="bold">Line</emphasis>: It is a set of 
           <emphasis role="bold">flows</emphasis>. During the setup of
-          the Line, some important choices have to be made, mainly
+          the line, some important choices have to be made, mainly
           concerning the organization of the <emphasis>processing
             products</emphasis> (intermediate data, figures, tables, etc)
           produced during the processing of a seismic line.
@@ -233,7 +233,7 @@
       <itemizedlist>
         <listitem>
           <guilabel>Projects and Lines</guilabel>: for creating and
-          manipulating Projects and Lines;
+          manipulating projects and lines;
         </listitem>
         <listitem>
           <guilabel>Flows</guilabel>: for creating, editing and executing

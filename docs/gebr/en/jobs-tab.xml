@@ -15,7 +15,7 @@
 
   <para>As seen in 
     <xref linkend="flows_execute_flow" />, GêBR switches to the 
-    <guilabel>Jobs</guilabel> tab whenever multiple Flows are
+    <guilabel>Jobs</guilabel> tab whenever multiple flows are
     executed, in other cases, the user can switch through <guilabel>Flows</guilabel> tab,
     using a arrow on info bar to fast view of jobs, localized on bottom of tab.
     </para>
@@ -40,7 +40,7 @@
     </figure>
     <para>In this tab the user can 
       <emphasis role="bold">follow</emphasis> and, if so desired, 
-      <emphasis role="bold">interrupt</emphasis> the Flow's execution. The available commands
+      <emphasis role="bold">interrupt</emphasis> the flow's execution. The available commands
       are:</para>
 
     <itemizedlist>
@@ -56,13 +56,13 @@
       </listitem>
 
       <listitem>
-        <para>Clear Job (<guiicon>
+        <para>Clear job (<guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/trash-empty.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>). Eliminate from the Jobs the selected Job. Caution is needed because the
+          </guiicon>). Eliminate from the Jobs the selected job. Caution is needed because the
           process is irreversible.</para>
         <para>The user can only clear jobs that are not being executed (<guiicon>
             <inlinemediaobject>
@@ -80,7 +80,7 @@
         </guiicon>).</para>
       </listitem>
       <listitem>
-        <para>Cancel this Job (<guiicon>
+        <para>Cancel this job (<guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
@@ -100,7 +100,7 @@
               </imageobject>
             </inlinemediaobject>
           </guiicon>) job. 
-          When a Job is terminated in this manner, the Job will be marked
+          When a job is terminated in this manner, the job will be marked
           with
           <guiicon>
             <inlinemediaobject>
@@ -112,7 +112,7 @@
       </listitem>
 
       <listitem>
-        <para>Filter Jobs (<guiicon>
+        <para>Filter jobs (<guiicon>
             <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/filter.png" />
@@ -131,7 +131,7 @@
   <section xml:id="jobs_left_panel">
     <title>Left Panel</title>
     <para>In the left panel, GêBR presents a list of flows executed by
-      the user, ordered by moment of execution. Each exhibited Flow can be
+      the user, ordered by moment of execution. Each exhibited flow can be
       in one of four states:</para>
     <itemizedlist>
       <listitem>
@@ -215,7 +215,8 @@
       <title>Jobs tab Right Panel</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="../images/GeBR_jc_more_details.png"  contentwidth="733px" contentdepth="633px" />
+					<imagedata fileref="../images/GeBR_jc_more_details.png"
+						contentwidth="733px" contentdepth="633px" />
         </imageobject>
       </mediaobject>
       <caption> Job information. The user can consult detailed information
@@ -234,12 +235,13 @@
     <title>Jobs outputs</title>
     <mediaobject>
       <imageobject>
-        <imagedata fileref="../images/GeBR_jc_output.png"  contentwidth="733px" contentdepth="525px" />
+				<imagedata fileref="../images/GeBR_jc_output.png"  contentwidth="733px"
+					contentdepth="525px" />
       </imageobject>
     </mediaobject>
     <caption>Screenshot of the outputs of a job.</caption>
     </figure>
-    <para>The results (standard output) of the Flow are shown. The
+    <para>The results (standard output) of the flow are shown. The
       redirected output are not exhibited. Right-clicking on this
       window, an Options menu is exhibited, by which the user can enable
       the automatic word wrap and the automatic scroll of window as
