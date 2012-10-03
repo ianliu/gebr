@@ -299,6 +299,41 @@
 
   </section>
 
+  <section xml:id="projects_lines_export">
+    <title>Exporting a project or a line</title>
+
+    <para>Although GêBR continuously saves all data, sometimes it is desirable
+      to have copies of projects and lines in a file (for example, to share
+      with others or to make backups). To export a project or a line:</para>
+
+    <procedure>
+      <step>
+        <para>Select the line or project that that will be saved;</para>
+      </step>
+      <step>
+        <para>Left-click on
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png" /></imageobject></inlinemediaobject></guiicon>;</para>
+      </step>
+      <step>
+        <para>A dialog will be shown. Choose a directory and a name for the
+          file;</para>
+      </step>
+      <step>
+        <para>Left-click on the
+          <guibutton>Save</guibutton> button to conclude the export.</para>
+      </step>
+    </procedure>
+
+    <tip>
+      <para>
+        GêBR determines the extension automatically, ie
+        <filename class="extension">.prjx</filename> for projects and
+        <filename class="extension">.lnex</filename> for lines.
+      </para>
+    </tip>
+
+  </section>
+
   <section xml:id="projects_lines_import">
     <title>Importing a project or a line</title>
 
@@ -334,41 +369,6 @@
         one.
       </para>
     </note>
-  </section>
-
-  <section xml:id="projects_lines_export">
-    <title>Exporting a project or a line</title>
-
-    <para>Although GêBR continuously saves all data, sometimes it is desirable
-      to have copies of projects and lines in a file (for example, to share
-      with others or to make backups). To export a project or a line:</para>
-
-    <procedure>
-      <step>
-        <para>Select the line or project that that will be saved;</para>
-      </step>
-      <step>
-        <para>Left-click on 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png" /></imageobject></inlinemediaobject></guiicon>;</para>
-      </step>
-      <step>
-        <para>A dialog will be shown. Choose a directory and a name for the
-          file;</para>
-      </step>
-      <step>
-        <para>Left-click on the
-          <guibutton>Save</guibutton> button to conclude the export.</para>
-      </step>
-    </procedure>
-
-    <tip>
-      <para>
-        GêBR determines the extension automatically, ie
-        <filename class="extension">.prjx</filename> for projects and
-        <filename class="extension">.lnex</filename> for lines.
-      </para>
-    </tip>
-
   </section>
 
   <section xml:id="projects_lines_edit_comments_project">
