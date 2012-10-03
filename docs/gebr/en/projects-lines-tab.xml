@@ -91,11 +91,10 @@
       GêBR will not be able to submit flows for running, since
       this is done through the maestro intervenience.</para>
 
-    <para>Once there are projects and GêBR is connected to a maestro, the user
-      can create lines. To add a new line to a project, follow the
-      steps:</para>
+    <para>Lines can be created once there are projects and GêBR is connected to
+      a maestro. To add a new line to a project, follow the steps:</para>
     <procedure>
-      <step>Select a target project or a line of the target project (see
+      <step>Select the project that will hold the line (see
         <xref linkend="projects_lines_create_projects"/>);
       </step>
       <step>Click on the button 
@@ -107,56 +106,54 @@
           </inlinemediaobject>
         </guiicon>;
       </step>
-      <step>An assistant dialog will appear to guide the user through the
-        remaining steps.
-      </step>
+      <step>A dialog will appear to assist on the remaining steps.</step>
     </procedure>
 
-    <para>Through the assistant, the user will be instructed to fill in the
-      following information:</para>
+    <para>The assistant will ask the following information:</para>
 
     <itemizedlist>
-      <listitem><para><emphasis>Basic properties of the
-            line</emphasis>, which are
-          <emphasis>Title</emphasis>, 
-          <emphasis>Description</emphasis>,
-          <emphasis>Author</emphasis> and
-          <emphasis>e-mail</emphasis> address.</para>
+      <listitem>
+        <para><emphasis>Basic properties</emphasis> of the line, which are
+          <emphasis>title</emphasis>, <emphasis>description</emphasis>,
+          <emphasis>author</emphasis>, and <emphasis>e-mail</emphasis>
+          address;</para>
       </listitem>
 
-      <listitem><para><emphasis>The BASE
-            path</emphasis><indexterm><primary>BASE</primary></indexterm>: a
-          top directory where most files referred in the line should be
-          placed (see <xref linkend="projects_lines_line_paths"
-            />).</para>
+      <listitem>
+        <para>The <emphasis>BASE</emphasis><indexterm><primary>BASE</primary></indexterm>
+          path: a directory where most files referred in the line should be
+          placed (see <xref linkend="projects_lines_line_paths" />);</para>
       </listitem>
 
-      <listitem><para><emphasis>The IMPORT
-            path</emphasis><indexterm><primary>IMPORT</primary></indexterm>:
-          a directory used to easily find files outside the BASE
+      <listitem>
+        <para>The <emphasis>IMPORT</emphasis><indexterm><primary>IMPORT</primary></indexterm>
+          path: a directory used to easily find files outside the BASE
           directory.</para>
       </listitem>
     </itemizedlist>
 
-    <para>After creating a line, the settings of the line will be
-      shown in the <guilabel>Details</guilabel> panel, on the right of
-      the main window.
+    <para>
+      When the assistant finishes, the line will be created and shown as being
+      part of the project selected on the beginning of this process.  As with
+      projects, the line's settings are exhibited on the right-hand side of
+      GêBR's window.
     </para>
     
     <tip>
-    	<para>
-    		There is no limit to the number of projects and lines in
-        	GêBR. The user can create as many as he or she wants.
-    	</para>
+      <para>There is no limit to the number of projects and lines in
+        GêBR.</para>
     </tip>
 
-    <para>GêBR allows collapsing or expanding the view of the
-    projects. When collapsed, the lines of a project are hidden. When
-    the project is expanded, the lines become visible. To collapse the
-    view, click on the
-    icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon>
-    on the left side of the project's name. To expand, click on the
-    icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+    <tip>
+      <para>
+        GêBR allows collapsing or expanding the view of the projects. When
+        collapsed, the lines of a project are hidden. When the project is
+        expanded, the lines become visible. To collapse the view, click on the
+        icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon>
+        on the left side of the project's name. To expand, click on the icon
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.
+      </para>
+    </tip>
   </section>
 
   <section xml:id="projects_lines_delete">
