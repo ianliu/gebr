@@ -174,17 +174,13 @@
   
   <section xml:id="projects_lines_edit_properties">
     <title>Editing properties</title>
-    <para>The same settings performed during the creation of a project
-      or line can be altered through the Properties Editing.</para>
-    <para>To edit project's or line's properties, first select the
-      project or line and then click on the button
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon>.</para>
+
+    <para>The same settings performed during the creation of a project or line
+      can be altered through the <guilabel>Properties</guilabel> dialog.</para>
+
+    <para>To edit a project's or line's properties, first select the item and
+      then click on the button
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
   </section>
 
   <section xml:id="projects_lines_line_paths">
