@@ -99,54 +99,36 @@
   <section xml:id="flows_create_flow">
     <title>Creating flows</title>
 
-		<para>The third-level element of GêBR is the <emphasis>flow</emphasis>
-			(see <xref linkend="concepts_elements" />).</para>
-
     <para>To create a flow, follow the steps:</para>
 
     <procedure>
       <step>
-        <para>In the tab <guilabel>Projects and Lines</guilabel>, check that
-          some line is selected.</para>
-      </step>
-      <step><para>Go to <guilabel>Flows</guilabel> tab, then
-      left-click on
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/botao_criar_fluxo.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon>.</para>
+        <para>In the <guilabel>Projects and Lines</guilabel> tab, check that
+          some line is selected;</para>
       </step>
       <step>
-        <para>A dialog box, named <guilabel>Flow
-        Properties</guilabel>, will appear. Fill in the four standard fields:
-          <guilabel>Title</guilabel>, <guilabel>Description</guilabel>
-          (a one-line sentence), <guilabel>Author</guilabel> and
-          an <guilabel>e-mail</guilabel> address. Click
-          on <guibutton>OK</guibutton> when ready.</para>
+        <para>Go to the <guilabel>Flows</guilabel> tab, then left-click on
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+      </step>
+      <step>
+        <para>The <guilabel>Flow Properties</guilabel> dialog will appear. Fill
+          in the basic information of the flow and then click
+          <guibutton>OK</guibutton>.</para>
       </step>
     </procedure>
 
-    <para>After a flow is created, it will be 
-      visible on the left side of the main window when the 
-      <guilabel>Flows</guilabel> tab is selected. The 
-      <guilabel>Details</guilabel> box, found on the upper right side of the
-      main window, shows information about the selected flow and below the 
-      <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
-      contains information like input, output and log file, programs 
-      and some of its parameters. 
+    <para>After these steps, the flow will be appear on the left side of the
+      main window. The right side will show information about this flow, like
+      its title, description and modified date.</para>
+
+     <para>The menus list will automatically appear in a pop-up and the user
+       will be able to assemble the flow (see<xref
+         linkend="flows_assembling_flow" />).
      </para>
-		 <para>The menus list will automatically appear in a pop-up and the
-			 user will be able to assemble the flow (see<xref
-				 linkend="flows_assembling_flow" />).
-    </para>
 
     <tip>
       <para>It's possible to alter the position of the flow in the list by
-        dragging the flow with the mouse to the desired
-        position.</para>
+        dragging the flow with the mouse to the desired position.</para>
     </tip>
   </section>
   
