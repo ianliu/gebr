@@ -140,6 +140,7 @@ struct ui_project_line *project_line_setup_ui(void)
 						    G_TYPE_BOOLEAN);
 
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_project_line->view), FALSE);
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (ui_project_line->view));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
