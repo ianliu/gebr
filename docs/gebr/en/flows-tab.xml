@@ -550,7 +550,7 @@
     <para>A way to do this is to copy and paste the flow (see the
       section <xref linkend="flows_copy_paste_del_flows" />.
       Another way is to take a snapshot of the original flow, through a snapshot, 
-      GêBR stores the settings of your flow so the user can come back to it later.</para>
+      GêBR stores the settings of a flow so it's easy come back to it later.</para>
       
       <section xml:id="flows_taking_snapshots">
       	<title>Taking a snapshot</title>
