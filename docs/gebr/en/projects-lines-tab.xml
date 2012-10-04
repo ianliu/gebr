@@ -70,7 +70,7 @@
           edited in the project's properties dialog.</caption>
         <imageobject>
 					<imagedata fileref="../images/janela_properties_project.png"
-						contentwidth="387px" contentdepth="215px" />
+						contentwidth="429px" contentdepth="271px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -327,7 +327,8 @@
         <caption>Options available when it's desired to edit/run a line
           associated to a disconnected maestro.</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png"  contentwidth="327px" contentdepth="287px" />
+					<imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png"
+						contentwidth="427px" contentdepth="293px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -447,7 +448,8 @@
       <mediaobject>
         <caption>The comment editor window.</caption>
         <imageobject>
-          <imagedata fileref="../images/janela_comentarios_de_linha.png"  contentwidth="835px" contentdepth="315px" />
+					<imagedata fileref="../images/janela_comentarios_de_linha.png"
+						contentwidth="802px" contentdepth="358px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -462,6 +464,18 @@
       report click on the <guibutton>More</guibutton> button on the toolbar and
       then select <guilabel>View Report</guilabel>.</para>
 
+    <figure>
+      <title>View Report</title>
+      <mediaobject>
+				<caption>The line <guilabel>report</guilabel> contains information
+					concerning the associated flows and their programs, 
+					important folders and variables.</caption>
+        <imageobject>
+					<imagedata fileref="../images/janela_visualizar_relatorio.png"
+						contentwidth="669px" contentdepth="462px" />
+        </imageobject>
+      </mediaobject>
+    </figure>
     <para>After clicking on <guilabel>View Report</guilabel>, a window will
       appear showing the generated report for that project or line. This window
       has some functionalities that are mentioned below:</para>
@@ -558,8 +572,8 @@
         <caption>The <guilabel>View Report</guilabel> window shows the report
           and enables customization of its content.</caption>
         <imageobject>
-					<imagedata fileref="../images/janela_visualizar_relatorio.png"
-						contentwidth="626px" contentdepth="423px" />
+					<imagedata fileref="../images/janela_visualizar_relatorio_menu.png"
+						contentwidth="437px" contentdepth="248px" />
         </imageobject>
       </mediaobject>
     </figure>

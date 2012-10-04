@@ -123,7 +123,7 @@
       <mediaobject>
 	<imageobject>
 		<imagedata fileref="../images/GeBR_flow_editor_remote_browsing.png"
-			contentwidth="813px" contentdepth="714px" />
+			contentwidth="535px" contentdepth="467px" />
 	</imageobject>
       </mediaobject>
       <caption>Example of remote browsing for an output file. Note the
@@ -291,7 +291,7 @@
           <mediaobject>
             <imageobject>
 							<imagedata fileref="../images/GeBR_dictionary_variables_example.png"
-								contentwidth="637px" contentdepth="441px" />
+								contentwidth="571px" contentdepth="435px" />
             </imageobject>
           </mediaobject>
           <caption>A variable with a value may be used with different
@@ -431,7 +431,7 @@
         <mediaobject>
           <imageobject>
 			<imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
-				contentwidth="733px" contentdepth="505px" />
+				contentwidth="281px" contentdepth="150px" />
           </imageobject>
         </mediaobject>
         <caption>This flow with a Loop program and number of loops
@@ -485,8 +485,8 @@
 
     <figure>
       <title>Indication of MPI availability</title>
-			<imagedata fileref="../images/GeBR_servers_mpi.png"  contentwidth="633px"
-				contentdepth="459px" />
+			<imagedata fileref="../images/GeBR_servers_mpi.png"  contentwidth="355px"
+				contentdepth="122px" />
       <caption>The second column indicates the types (flavors) of MPI
 	available in the nodes.</caption>
     </figure>
@@ -501,7 +501,7 @@
     <figure>
       <title>MPI settings</title>
 			<imagedata fileref="../images/GeBR_programs_mpi_parameters.png"
-				contentwidth="473px" contentdepth="352px" />
+				contentwidth="503px" contentdepth="121px" />
 			<caption>The <guilabel>np</guilabel> value is set according
 				to the speed value set in the Advanced Execution dialog (see
 				<xref linkend="flows_detailed_execution"/>).</caption>
@@ -587,8 +587,8 @@
       <mediaobject>
         <caption>Screenshot of the Samples Menu.</caption>
         <imageobject>
-					<imagedata fileref="../images/samples_en.png"  contentwidth="733px"
-						contentdepth="526px" />
+					<imagedata fileref="../images/samples_en.png"  contentwidth="234px"
+						contentdepth="566px" />
         </imageobject>
       </mediaobject>
     </figure>

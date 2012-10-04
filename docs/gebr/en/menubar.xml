@@ -48,7 +48,8 @@
           the user's name, e-mail, menu's directory and the HTML
           editor.</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_preferences.png"  contentwidth="407px" contentdepth="265px" />
+					<imagedata fileref="../images/GeBR_preferences.png"
+						contentwidth="403px" contentdepth="271px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -92,7 +93,8 @@
       <mediaobject>
 				<caption>The Maestro/Nodes configuration interface is divided in three parts: maestro, list of nodes and groups of nodes.</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_maestro_servers_overview.png"  contentwidth="600px" contentdepth="432px" />
+					<imagedata fileref="../images/GeBR_maestro_servers_overview.png"
+						contentwidth="371px" contentdepth="466px" />
         </imageobject>
       </mediaobject>
     </figure>

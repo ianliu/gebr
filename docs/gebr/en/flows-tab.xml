@@ -16,7 +16,17 @@
     <guilabel>Projects and Lines</guilabel> tab.
   </para>
 
-  <para>TODO: COLOCAR IMAGEM DA ABA FLOWS</para>
+    <figure>
+      <title>Flows tab</title>
+      <mediaobject>
+				<caption>Flows tab. The interface is split in two
+				parts: left and right panels.</caption>
+        <imageobject>
+					<imagedata fileref="../images/GeBR_flows_tab.png"
+						contentwidth="795px" contentdepth="535px"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
 
   <para>
     The left panel contains the list of flows that composes the selected line
@@ -89,7 +99,7 @@
           <emphasis>migration</emphasis>. All menus that have the word
           migration in its title or description are shown.</caption>
         <imageobject>
-          <imagedata fileref="../images/flows_menus_list_filter.png" />
+          <imagedata fileref="../images/flows_menus_list_filter.png" contentwidth="531px" contentdepth="257px"/>
         </imageobject>
       </mediaobject>
     </figure>
@@ -378,7 +388,8 @@
           it's possible to edit the input, output and log files for this flow
           sequence.</caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_flow_editor_input_file.png"  contentwidth="733px" contentdepth="485px" />
+					<imagedata fileref="../images/GeBR_flow_editor_input_file.png"
+						contentwidth="294px" contentdepth="120px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -421,7 +432,8 @@
 					necessary to type a &lt;.
         </caption>
         <imageobject>
-          <imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"  contentwidth="919px" contentdepth="638px" />
+					<imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"
+						contentwidth="289px" contentdepth="342px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -670,7 +682,7 @@
 			 <mediaobject>
 			  <caption>Two option are avaliable to proceed.</caption>
 		      <imageobject>
-				<imagedata fileref="../images/GeBR_reverting_modified.png"  contentwidth="371px" contentdepth="309px" />
+				<imagedata fileref="../images/GeBR_reverting_modified.png"  contentwidth="319px" contentdepth="293px" />
 			  </imageobject>
 			 </mediaobject>
 			</figure>
@@ -882,7 +894,8 @@
 						<caption>Execution settings window.
 						</caption>
 						<imageobject>
-							<imagedata fileref="../images/GeBR_flows_detailed_execution_multiple.png"  contentwidth="309px" contentdepth="397px" />
+							<imagedata fileref="../images/GeBR_flows_detailed_execution_multiple.png"
+								contentwidth="470px" contentdepth="608px" />
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -973,7 +986,7 @@
 	      to a flow and properly configured.</caption>
 	      <imageobject>
 					<imagedata fileref="../images/GeBR_flow_editor_loop.png" 
-						contentwidth="793px" contentdepth="537px" />
+						contentwidth="285px" contentdepth="147px" />
 	      </imageobject>
 	    </mediaobject>
 	    </figure>
@@ -994,7 +1007,7 @@
 	        parameters setting.</caption>
 	      <imageobject>
 					<imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png" 
-						contentwidth="468px" contentdepth="387px" />
+						contentwidth="460px" contentdepth="280px" />
 	      </imageobject>
 	    </mediaobject>
 	    </figure>
