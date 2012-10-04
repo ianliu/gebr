@@ -11,55 +11,47 @@
   <title>The <guilabel>Flows</guilabel> tab</title>
 
   <para>
-    In this tab, the user can manage the flows and the related programs of the
-    current line. Note the similarity with the <guilabel>Projects and Lines</guilabel> tab.
+    The <guilabel>Flows</guilabel> tab is used to manage the flows of a
+    particular line. Notice the similarity of this tab with the
+    <guilabel>Projects and Lines</guilabel> tab.
   </para>
 
+  <para>TODO: COLOCAR IMAGEM DA ABA FLOWS</para>
+
   <para>
-    The left panel contains the list of flows/programs of the current line. It
-    defines the current flow(s) of GêBR.
-  </para>
-  <para>
-    The right panel is associated to the current flow and is divided in two
-    parts:
+    The left panel contains the list of flows that composes the selected line
+    in the previous tab, while the right panel exhibits information of the
+    currently selected flow, divided in two parts:
     <itemizedlist>
       <listitem>
-        Description of the flow. Basic information such as flow title, last
-        modification date and last execution date can be quickly consulted
-        here.
+        On the top basic information such as flow title, last modification date
+        and last execution date can be quickly consulted;
       </listitem>
       <listitem>
-        Context-based view. The default view is the summary of the flow (see
-        below), but this view can be switched to Snapshots view or Output view,
-        according to the context. Further information is available on
+        On the bottom there is a summary of the flow (see below), but this view
+        can be switched to <guilabel>Snapshots</guilabel> view or
+        <guilabel>Output</guilabel> view, according to the context. Further
+        information is available on
         <xref linkend="flows_snapshots"/> and
         <xref linkend="flows_execution_infobar"/>.
       </listitem>
     </itemizedlist>
   </para>
+
   <para>
     The default view of the right panel of the <guilabel>Flows</guilabel> tab
     contains a summary of the current flow. This view presents the input/output
     files, the programs and the parameters altered by the user (different from
-    the provided values).  Additionally, problems in the flow assembly are
+    the provided values). Additionally, problems in the flow assembly are
     warned in this window. To go to the summary view, just select (single
     click) a flow. 
   </para>
 
   <tip>
     <para>
-      The search (of a program, parameter, etc.) is activated inside the
-      summary through <keycap>Ctrl+F</keycap>.
+      You can perform searches on the flow summary by pressing
+      <keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo>.
     </para>
-  </tip>
-
-  <tip>
-    <para>Instead of the toolbar buttons, try using
-    the <emphasis role="bold">context menu</emphasis>. To do
-    so, <emphasis role="bold">right-click</emphasis> on a flow that has been 
-    created. Notice that many features can be accessed through
-    this method. For certain cases, this is an easier and simpler
-    choice.</para>
   </tip>
 
   <section xml:id="flows_create_flow">
