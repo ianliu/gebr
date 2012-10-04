@@ -553,6 +553,7 @@
 
   <section xml:id="flows_snapshots">
     <title>Snapshot of a flow</title>
+    <indexterm><primary>Snapshot</primary><secondary>of a flow</secondary></indexterm>
     <para>There are situations when working with GêBR it will be
       useful to use an existing flow as a basis to create new
       flows. For example, to experiment with flows that
@@ -566,6 +567,7 @@
       
       <section xml:id="flows_taking_snapshots">
       	<title>Taking a snapshot</title>
+      	<indexterm><primary>Snapshot</primary><secondary>taking snapshot</secondary></indexterm>
 	      <para>All snapshots of the flow are presented in the flows tab. 
 	      To <emphasis role="bold">take a snapshot</emphasis> of a flow:</para>
 	    <procedure>
@@ -620,6 +622,7 @@
     
     <section xml:id="flows_snapshots_actions">
 	   <title>Snapshot actions</title>
+	   <indexterm><primary>Snapshot</primary><secondary>actions</secondary></indexterm>
 	   
 	   <para>A user that uses different versions of the same flow may also be benefited 
 	   by the use of snapshots. An option would be to save many different flows, one for 
@@ -790,6 +793,7 @@
 
 	<section xml:id="flows_execute_flow">
 		<title>Executing a flow</title>
+		<indexterm><primary>Flow</primary></indexterm>
 
 		<para>Once assembled a flow, it can be executed in two ways:
 			<itemizedlist>
