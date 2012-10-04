@@ -58,6 +58,7 @@ common_images_DATA =				\
 	icone_tarefa_concluida_sucesso.png	\
 	icone_tarefa_em_execucao.png		\
 	icone_tarefa_terminada_erro.png		\
+	menu-list-icon.png			\
 	integer-icon.png			\
 	photos.png						\
 	trash-empty.png				\
