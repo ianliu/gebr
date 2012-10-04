@@ -251,11 +251,7 @@
     	<para>There is no limit on the number of flows 
     	that can be created inside a line.</para>
     </tip>
-    <tip>
-      <para>To alter <emphasis role="bold">the position</emphasis> of the flow in
-        the list, simply <emphasis role="bold">drag the flow with the
-          mouse</emphasis> to the desired position.</para>
-    </tip>
+
   </section>
   
   <section xml:id="flows_editing_parameters">
@@ -283,16 +279,15 @@
           program's parameter vary greatly both in size and
           type.</para>
         <tip>
-          <para>The user can click on the <guibutton>Help</guibutton> button
+          <para>Click on the <guibutton>Help</guibutton> button
             (bottom right corner of the dialog box) to view
             the <emphasis role="bold">program's
               documentation</emphasis>. This will be certainly useful
             when the user is editing the programs parameters.</para>
         </tip>
         <tip>
-          <para>The user can click on the <guibutton>Reset</guibutton> button
-            when want the program to return to its default
-            configurations.</para>
+          <para>Click on the <guibutton>Reset</guibutton> button 
+            to return to default configurations.</para>
         </tip>
       </step>
       <step>
@@ -339,7 +334,7 @@
     </keycombo> to change the state(s) of the selected programs.</para>
     
       <tip>
-      <para>It's possible select several programs whose state is desired to
+      <para>It's possible to select several programs whose state is desired to
         change by holding
         <keycombo>
           <keycap>Ctrl</keycap>
@@ -380,7 +375,7 @@
       <title>Input file setting</title>
       <mediaobject>
         <caption>Select the Flow Editor Tab. In the Flow Sequence box
-          the user can edit the input, output and log files for this flow
+          it's possible to edit the input, output and log files for this flow
           sequence.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_flow_editor_input_file.png"  contentwidth="733px" contentdepth="485px" />
@@ -394,7 +389,7 @@
       
       <step>
 		<para>Below of the selected flow, the programs and entries with input, output and log files
-		will be shown. It's possible edit files paths by double clicking on them.
+		will be shown. To edit files paths, just double clicking on them.
 		</para>
       </step>
       
@@ -413,10 +408,9 @@
       </step>
     </procedure>
 
-    <para>To using the folders associated to the line,
-      can either choose like above or use the feature of
-      autocomplete of the important folders of this line. 
-      (For more information, see <xref linkend="projects_lines_line_paths" />).
+    <para>To using the folders associated to the line, choose them like above or use 
+    	the feature of autocomplete of the important folders of this line. 
+      	(For more information, see <xref linkend="projects_lines_line_paths" />).
     </para>
     <figure>
       <title>Autocomplete of paths</title>
