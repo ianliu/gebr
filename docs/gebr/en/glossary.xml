@@ -2,11 +2,53 @@
 
 <glossary>
   <glossdiv>
+    <title>C</title>
+    <glossentry id="Client">
+      <glossterm>Client</glossterm>
+      <glossdef>
+        <para>The machine which is running GêBR.</para>
+      </glossdef>
+    </glossentry>
+  </glossdiv>
+  <glossdiv>
+    <title>D</title>
+    <glossentry id="Dictionary">
+      <glossterm>Dictionary of variables</glossterm>
+      <glossdef>
+        <para>Where the variables are defined.</para>
+      </glossdef>
+    </glossentry>
+  </glossdiv>
+  <glossdiv>
     <title>F</title>
     <glossentry id="Flow">
       <glossterm>Flow</glossterm>
       <glossdef>
         <para>A sequence of programs that may transform the input data.</para>
+        <glossseealso otherterm="Program">Program</glossseealso>
+      </glossdef>
+    </glossentry>
+  </glossdiv>
+  <glossdiv>
+    <title>P</title>
+    <glossentry id="Parameter">
+      <glossterm>Parameter</glossterm>
+      <glossdef>
+        <para>Values ​​passed to programs to change their behavior.</para>
+        <glossseealso otherterm="Program">Program</glossseealso>
+      </glossdef>
+    </glossentry>
+	<glossentry id="Program">
+      <glossterm>Program</glossterm>
+      <glossdef>
+        <para>Operation that generates a specific result according to user-defined parameters</para>
+        <glossseealso otherterm="Parameter">Parameter</glossseealso>
+      </glossdef>
+    </glossentry>
+    <glossentry id="Project">
+      <glossterm>Project</glossterm>
+      <glossdef>
+        <para>Set that organizes and clusters seismic lines.</para>
       </glossdef>
     </glossentry>
   </glossdiv>
