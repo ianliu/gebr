@@ -69,7 +69,8 @@
         <caption>Title, description, author and e-mail are details that can be
           edited in the project's properties dialog.</caption>
         <imageobject>
-          <imagedata fileref="../images/janela_properties_project.png"  contentwidth="387px" contentdepth="215px" />
+					<imagedata fileref="../images/janela_properties_project.png"
+						contentwidth="387px" contentdepth="215px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -149,9 +150,13 @@
         GêBR allows collapsing or expanding the view of the projects. When
         collapsed, the lines of a project are hidden. When the project is
         expanded, the lines become visible. To collapse the view, click on the
-        icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon>
+				icon <guiicon><inlinemediaobject><imageobject>
+							<imagedata fileref="../../common-images/icone_expandido.png"/>
+				</imageobject></inlinemediaobject></guiicon>
         on the left side of the project's name. To expand, click on the icon
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.
+				<guiicon><inlinemediaobject><imageobject>
+							<imagedata fileref="../../common-images/icone_colapsado.png"/>
+				</imageobject></inlinemediaobject></guiicon>.
       </para>
     </tip>
   </section>
@@ -511,7 +516,8 @@
         <caption>The <guilabel>View Report</guilabel> window shows the report
           and enables customization of its content.</caption>
         <imageobject>
-          <imagedata fileref="../images/janela_visualizar_relatorio.png"  contentwidth="626px" contentdepth="423px" />
+					<imagedata fileref="../images/janela_visualizar_relatorio.png"
+						contentwidth="626px" contentdepth="423px" />
         </imageobject>
       </mediaobject>
     </figure>
