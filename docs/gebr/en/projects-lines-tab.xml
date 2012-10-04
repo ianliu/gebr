@@ -195,7 +195,35 @@
       data associated to a set of flows. This structure is defined by a top
       directory, known as
       BASE<indexterm><primary>BASE</primary></indexterm>, and few other nested
-      standard directories.</para>
+      standard directories. They are:</para>
+    <informaltable>
+      <tbody>
+        <tr>
+          <td>BASE:<indexterm><primary>DATA</primary></indexterm>  </td>
+          <td>is the top directory where most files referred in this line should be.</td>
+        </tr>
+        <tr>
+          <td>DATA:<indexterm><primary>DATA</primary></indexterm> </td>
+          <td>in this directory will be saved all the flow's results.</td>
+        </tr>
+        <tr>
+          <td>TMP:<indexterm><primary>TMP</primary></indexterm> </td>
+          <td>in this directory will be saved all the temporary files.</td>
+        </tr>
+        <tr>
+          <td>EXPORT:<indexterm><primary>EXPORT</primary></indexterm> </td>
+          <td>in this directory will be all the exporting data.</td>
+        </tr>
+        <tr>
+          <td>TABLE:<indexterm><primary>TABLE</primary></indexterm> </td>
+          <td>in this directory will be saved all the tabular data.</td>
+        </tr>
+        <tr>
+          <td>MISC:<indexterm><primary>MISC</primary></indexterm></td>
+          <td>in this directory will be saved miscellaneous data.</td>
+        </tr>
+      </tbody>
+    </informaltable>
 
     <para>For instance, if the home folder is
       <emphasis>/home/john</emphasis>, setting the <emphasis>BASE</emphasis> to
@@ -242,7 +270,7 @@
 
     <important>
       <para>Remember that the processing takes place at the 
-        <indexterm><primary>node</primary></indexterm>.
+        working node<indexterm><primary>working node</primary></indexterm>.
         The directory structure described above will be created there. This
         means that these directories will not be present on the local machine
         <emphasis>if</emphasis> the node is a remote machine.</para>
@@ -294,7 +322,7 @@
     <figure>
       <title>Dialog for lines from disconnected maestros</title>
       <mediaobject>
-        <caption>Options available when the user wants to edit/run a line
+        <caption>Options available when it's desired to edit/run a line
           associated to a disconnected maestro.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png"  contentwidth="327px" contentdepth="287px" />
@@ -370,7 +398,7 @@
     <note>
       <para>In GêBR, lines may only exist inside a project (see this concept in
         <xref linkend="projects_lines_create_lines"/>). Therefore to import a
-        line the user must first select an existing project, or create a new
+        line first select an existing project, or create a new
         one.
       </para>
     </note>
@@ -427,8 +455,8 @@
   <section xml:id="projects_lines_view_report_project">
     <title>Viewing reports</title>
 
-    <para>As explained in the above section, the user can edit a report
-      containing additional information about the project or line. To view the
+    <para>As explained in the above section, a report can be edited
+      providing additional information about the project or line. To view the
       report click on the <guibutton>More</guibutton> button on the toolbar and
       then select <guilabel>View Report</guilabel>.</para>
 
@@ -468,7 +496,7 @@
           </menuchoice>
         </term>
         <listitem>
-          <para>Include your comments inside the report;</para>
+          <para>Include comments for this line into the report;</para>
         </listitem>
       </varlistentry>
 
@@ -501,6 +529,18 @@
         <term>
           <menuchoice>
             <guimenu>Option</guimenu>
+            <guisubmenu>Parameter table;</guisubmenu>
+          </menuchoice>
+        </term>
+        <listitem>
+          <para>Allows to choose how much informations about the parameters will be shown.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <menuchoice>
+            <guimenu>Option</guimenu>
             <guisubmenu>Style;</guisubmenu>
           </menuchoice>
         </term>
@@ -521,12 +561,7 @@
         </imageobject>
       </mediaobject>
     </figure>
-
-    <para><xref linkend="flows_view_report_flow" /> explains in greater details
-      the <guilabel>View Report</guilabel> tool for flows, which is very
-      similar to the line's and project's <guilabel>View Report</guilabel>
-      except that in this one the user can add the flow's report.</para>
-      
+          
       <note>
         <para>The option to include report of the snapshots of flows are
           available on line's and flow's <guilabel>View Report</guilabel>. More
