@@ -510,7 +510,7 @@ gebr_ui_flows_io_start_editing(GebrUiFlowsIo *io,
 
 void
 gebr_ui_flows_io_edited(GebrUiFlowsIo *io,
-                        gchar *new_text)
+                        const gchar *new_text)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	gchar *mount_point;

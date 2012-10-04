@@ -846,7 +846,8 @@ void line_load_flows(void)
 		line_append_flow_iter(flow, GEBR_GEOXML_LINE_FLOW(line_flow));
 	}
 
-	flow_browse_revalidate_flows(gebr.ui_flow_browse);
+	flow_browse_revalidate_flows(gebr.ui_flow_browse,
+	                             FALSE);
 
 	if (!error)
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flows loaded."));

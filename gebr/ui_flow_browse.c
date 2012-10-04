@@ -512,6 +512,18 @@ on_size_request(GtkWidget      *widget,
 }
 
 static void
+flow_browse_update_edited_io(GebrUiFlowsIo *ui_io,
+                             const gchar *new_text,
+                             GebrUiFlowBrowse *fb)
+{
+	gebr_ui_flows_io_edited(ui_io, new_text);
+
+	flow_browse_revalidate_programs(fb);
+	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
+	flow_browse_info_update();
+}
+
+static void
 flow_browse_component_editing_started(GtkCellRenderer *renderer,
                                       GtkCellEditable *editable,
                                       gchar *path,
@@ -555,14 +567,11 @@ flow_browse_component_edited(GtkCellRendererText *renderer,
 	                   FB_STRUCT, &io,
 	                   -1);
 
-	gebr_ui_flows_io_edited(io, new_text);
+	flow_browse_update_edited_io(io, new_text, fb);
 
 	GtkTreePath *path = gtk_tree_path_new_from_string(strpath);
 	gtk_tree_model_row_changed(model, path, &iter);
 	gtk_tree_path_free(path);
-
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
-	flow_browse_info_update();
 }
 
 static GtkMenu *
@@ -698,7 +707,8 @@ void flow_browse_program_check_sensitiveness(void)
 }
 
 void
-flow_browse_revalidate_flows(GebrUiFlowBrowse *fb)
+flow_browse_revalidate_flows(GebrUiFlowBrowse *fb,
+                             gboolean validate_programs)
 {
 	GtkTreeIter parent;
 	GtkTreeModel *model;
@@ -709,10 +719,12 @@ flow_browse_revalidate_flows(GebrUiFlowBrowse *fb)
 	model = GTK_TREE_MODEL(fb->store);
 
 	gboolean valid_flow;
-	GError *err = NULL;
+	GError *err;
 
 	gboolean valid = gtk_tree_model_get_iter_first(model, &parent);
 	while (valid) {
+		err = NULL;
+
 		gtk_tree_model_get(model, &parent,
 		                   FB_STRUCT_TYPE, &type,
 		                   FB_STRUCT, &ui_flow,
@@ -723,15 +735,34 @@ flow_browse_revalidate_flows(GebrUiFlowBrowse *fb)
 
 		GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+
+		if (validate_programs) {
+			GebrGeoXmlSequence *prog;
+			gebr_geoxml_flow_get_program(flow, &prog, 0);
+			for (; prog; gebr_geoxml_sequence_next(&prog))
+				gebr_geoxml_program_is_valid(GEBR_GEOXML_PROGRAM(prog), gebr.validator, NULL);
+		}
+
 		valid_flow = gebr_geoxml_flow_validate(flow, gebr.validator, &err);
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 
 		gebr_ui_flow_set_flow_has_error(ui_flow, !valid_flow);
-		if (err)
+		if (err) {
 			gebr_ui_flow_set_tooltip_error(ui_flow, err->message);
-		else
+			g_error_free(err);
+		} else {
 			gebr_ui_flow_set_tooltip_error(ui_flow, NULL);
+		}
 
+		gboolean prog_valid;
+		GtkTreeIter child;
+		prog_valid = gtk_tree_model_iter_children(model, &child, &parent);
+		while (prog_valid) {
+			path = gtk_tree_model_get_path(model, &child);
+			gtk_tree_model_row_changed(model, path, &child);
+			gtk_tree_path_free(path);
+			prog_valid = gtk_tree_model_iter_next(model, &child);
+		}
 		path = gtk_tree_model_get_path(model, &parent);
 		gtk_tree_model_row_changed(model, path, &parent);
 		gtk_tree_path_free(path);
@@ -841,10 +872,6 @@ flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
 
 	gboolean is_control = (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR);
 	if (gebr_geoxml_program_get_status(program) == status) {
-		// FIXME: Do we need the if below?
-		// If program is control, it may invalidate other programs but not itself
-		if (is_control)
-			flow_browse_revalidate_programs(fb);
 		return;
 	}
 
@@ -863,7 +890,6 @@ flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
 			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
 			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 		}
-		flow_browse_revalidate_programs(fb);
 	}
 
 	/* Update interface */
@@ -1025,7 +1051,6 @@ flow_browse_toggle_selected_program_status(GebrUiFlowBrowse *fb)
 	}
 
 	flow_browse_program_check_sensitiveness();
-	// FIXME: Is this necessary?
 	flow_browse_revalidate_programs(fb);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
@@ -2918,6 +2943,7 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 	}
 
+	flow_browse_revalidate_flows(self, TRUE);
 	flow_browse_info_update();
 	gebr_flow_set_toolbar_sensitive();
 
@@ -3177,7 +3203,7 @@ flow_browse_open_activated(GebrUiFlowBrowse *fb,
 	if (response == GTK_RESPONSE_YES) {
 		g_object_set(fb->text_renderer, "text", new_text, NULL);
 
-		gebr_ui_flows_io_edited(ui_io, new_text);
+		flow_browse_update_edited_io(ui_io, new_text, fb);
 	}
 
 	g_free(new_text);
