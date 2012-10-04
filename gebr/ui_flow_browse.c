@@ -1765,12 +1765,10 @@ gebr_flow_browse_snapshot_revert(const gchar *rev_id)
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
+	gebr_validator_force_update(gebr.validator);
+	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 	flow_browse_load();
 
-	gtk_toggle_button_set_active(gebr.ui_flow_browse->snapshots_ctx_button, TRUE);
-
-	gebr_validator_force_update(gebr.validator);
-	flow_browse_info_update();
 	gebr_ui_flow_browse_update_speed_slider_sensitiveness(gebr.ui_flow_browse);
 	gchar *last_date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	gebr_flow_set_snapshot_last_modify_date(last_date);
