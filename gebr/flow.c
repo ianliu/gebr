@@ -1075,7 +1075,6 @@ void flow_program_remove(void)
 				GList *affected;
 				param = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
 				gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(param), &affected, &err);
-				flow_browse_revalidate_programs(gebr.ui_flow_browse);
 			}
 			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
 		}
