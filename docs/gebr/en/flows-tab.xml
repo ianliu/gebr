@@ -399,7 +399,8 @@
       </step>
       
       <step>
-        <para>Type in the path or click on the icon 
+				<para>Type in the path (important folders can be consulted/choosen by just typing &lt;)
+					or click on the icon 
           <guiicon>
             <inlinemediaobject>
               <imageobject>
@@ -421,7 +422,9 @@
       <title>Autocomplete of paths</title>
       <mediaobject>
         <caption>
-          Autocomplete feature in the Input file of a flow.
+					Autocomplete feature in the Input file of a flow. Analogous to
+					the dictionary variables, to see the available paths it is just 
+					necessary to type a &lt;.
         </caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"  contentwidth="919px" contentdepth="638px" />

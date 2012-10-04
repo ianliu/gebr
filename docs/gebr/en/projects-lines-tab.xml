@@ -20,9 +20,9 @@
     <mediaobject>
       <caption>Screenshot of the <guilabel>Projects and
           Lines</guilabel> tab.</caption>
-      <!-- <imageobject> -->
-      <!--   <imagedata fileref="../images/janela_principal_1.png"  contentwidth="706px" contentdepth="426px" /> -->
-      <!-- </imageobject> -->
+      <imageobject>
+        <imagedata fileref="../images/janela_principal_1.png"  contentwidth="729px" contentdepth="472px" />
+      </imageobject>
     </mediaobject>
   </figure>
 
@@ -265,7 +265,9 @@
 
     <para>
       This standard directory structure eases the task of managing the data
-      related to lines (see <xref linkend="flows_edit_input_output"/>).
+      related to lines.
+			In the input/ouput/log fields, this feature can be used by embracing
+			them in angle brackes (for instance, &lt;BASE&gt;). For more information, consult <xref linkend="flows_edit_input_output"/>.
     </para>
 
     <important>
