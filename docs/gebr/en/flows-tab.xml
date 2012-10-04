@@ -757,20 +757,20 @@
 	</para>
 	
 	<para>To do that, following the steps below:
-	<itemizedlist>
-		<listitem>Assemble the flow with two programs,
+	<procedure>
+		<step>Assemble the flow with two programs,
 		SU Plane and X Image.
-		</listitem>
-		<listitem>Takes a snapshot of this flow, with some description
+		</step>
+		<step>Takes a snapshot of this flow, with some description
 		like "Common offset with image plot".
-		</listitem>
-		<listitem>Remove the program X Image of the original flow,
+		</step>
+		<step>Remove the program X Image of the original flow,
 		and add a program PS Image, with some output file like "plot.ps".
-		</listitem>
-		<listitem>Takes a snapshot of this new flow, with description
+		</step>
+		<step>Takes a snapshot of this new flow, with description
 		like "Common offset with postscript image".
-		</listitem>
-	</itemizedlist>
+		</step>
+	</procedure>
 	Now, with only one flow can run two different plots 
 	for the data generated from SU Plane.
 	</para>
@@ -998,6 +998,36 @@
 				</note>
 			</section>
 			
+			<para><emphasis role="bold">Example of parallel execution</emphasis></para>
+			
+			<para>On a multi-core system, create a flow according to the following steps:</para>
+	
+			<procedure>
+				<step>Insert a loop with thirty steps</step>.
+				<step>Insert a one second sleep</step>
+				<step>Open the <guilabel>Execution detailed</guilabel> window, and set the minimum number of cores 
+				(one core) to execute the flow and Press run.</step>
+				<step>Execute step three again, but now with the maximum number of cores (nominal capacity).</step>.
+			</procedure>
+			
+			<para>It can be seen that:
+				<itemizedlist>
+					<listitem>For the minimum number of cores, the flow lasts thirty seconds to be executed.
+					That is because the only core is responsible for the thirty sleeps step.
+					</listitem>
+					
+					<listitem>For the maximum number of cores, the flow is executed much faster. 
+					For more than thirty cores, it lasts only one second. On a thirty cores system, 
+					each sleep is executed by one core, so that a fast distributed execution is possible.
+					</listitem>
+				</itemizedlist>
+			</para>
+			
+			<para>This flow is parallelizable only because one step of the loop is totally independent of another,
+			so, in a system with multiple machines and multiple cores, this flow can be divided 
+			to execute all their tasks on the same time, making the execution faster. 
+			Therefore, all flows with the same characteristic can take advantage of it.
+			</para>
 		</section>
 		
 	<section xml:id="flows_loop">
