@@ -741,6 +741,40 @@
 		</note>
 	    
 	</section>
+
+	<para><emphasis role="bold">Example to using snapshots</emphasis></para>
+
+	<para>Take the program SU Plane for that example. That program 
+	create common offset with up to 3 planes, and there are two possible 
+	output options for that flow: image plot, using program X Image
+	or postscript image, using PS Image.
+	</para>
+	
+	<para>To solve this issue (two possible outputs for a flow), 
+	without the need to create two separate flows with small differences,
+	it is possible to take two snapshots: one for image
+	plot, and the other for postscript.
+	</para>
+	
+	<para>To do that, following the steps below:
+	<itemizedlist>
+		<listitem>Assemble the flow with two programs,
+		SU Plane and X Image.
+		</listitem>
+		<listitem>Takes a snapshot of this flow, with some description
+		like "Common offset with image plot".
+		</listitem>
+		<listitem>Remove the program X Image of the original flow,
+		and add a program PS Image, with some output file like "plot.ps".
+		</listitem>
+		<listitem>Takes a snapshot of this new flow, with description
+		like "Common offset with postscript image".
+		</listitem>
+	</itemizedlist>
+	Now, with only one flow can run two different plots 
+	for the data generated from SU Plane.
+	</para>
+	
   </section>
 
   <section xml:id="flows_import_flow">
