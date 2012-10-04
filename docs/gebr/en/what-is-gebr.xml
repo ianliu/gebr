@@ -58,34 +58,57 @@
         <title>What's new</title>
     <itemizedlist>
 			<listitem>
-				Version 0.20.0 <emphasis></emphasis>
+				Version 0.20.0 <emphasis>(current)</emphasis>
+					<para>This release of GêBR brings a lot of new exciting features to ease 
+						the handling and the management of flows and programs, including:</para>
 				<itemizedlist>
-						This release of GêBR brings a lot of new and features to ease 
-						the handling and the management of flows and programs, including:
 					<listitem>
-						Joining of Program and Flow tabs navigation: now through Flows tab 
-						is possible control all the actions about flows and programs, thus 
-						the activities at GêBR are much more centralized, fast and easy.
+						<emphasis>Joining of Flow Editor and Flow Browse tabs navigation:</emphasis> now 
+						through Flows tab is possible control all the actions about flows and programs, 
+						thus the activities at GêBR are much more centralized, fast and easy 
+						(see <xref linkend="flows_tab"/>).
 					</listitem>
 					<listitem>
-						New Toolbar: the new toolbar makes the GêBR interface much more clean. 
-						Just the frequently used actions are on the toolbar, the other actions 
-						are placed in More menu.
+						<emphasis>Flows tab powered:</emphasis> the work on GêBR is wonderfully fast, because 
+						now it's possible to see in the same tab a summary information of the flow, edit 
+						programs and their parameters and also to see the output of the flow's execution. 
+						(see <xref linkend="flows_tab"/>).
 					</listitem>
 					<listitem>
-						Improved usability of flows through the creation of 
-						a unified tab (see 
-						<xref linkend="flows_tab"/>).
+						<emphasis>New Toolbar:</emphasis> the new toolbar makes the GêBR interface much 
+						more clean. Just the frequently used actions are on the toolbar, the other actions 
+						are placed in More menu (see <xref linkend="project_line"/> and 
+						see <xref linkend="flows_tab"/>).
 					</listitem>
 					<listitem>
-						Possibility to restore important states of the user's
-						flow (see 
-						<xref linkend="flows_snapshots"/>).
+						<emphasis>Quick access to Menus list:</emphasis> the new toolbar brings a new way 
+						of to access the menu list. Through the menu list icon it's possible to see all 
+						the menus and add them to the flows in few clicks 
+						(see <xref linkend="flows_tab"/>).
+					</listitem>
+					<listitem>
+						<emphasis>Execution modes:</emphasis> now there are two options of execution, it's 
+						possible run the flows directly or choose and save the preferences of execution and 
+						then run the flows. So, it's just necessary changing the preferences once or when 
+						it's desired run a flow in a different way from the standard mode 
+						(see <xref linkend="flows_execute_flow"/>).
+					</listitem>
+					<listitem>
+						<emphasis>Snapshots:</emphasis> this feature gives much more freedom to the flows, 
+						all the important status of flows can be saved and reverted anytime, thus 
+						it's possible modify loosely the flows and their programs 
+						(see <xref linkend="flows_snapshots"/>).
+					</listitem>
+					<listitem>
+						<emphasis>Search on documentation:</emphasis> never more fell lost among the 
+						documentation and reports. Starting this release of GêBR it's possible to 
+						search terms in the reports of projects, lines and flows and also in the flow 
+						summary (see <xref linkend="flows_tab"/>).
 					</listitem>
 				</itemizedlist>
 			</listitem>
 			<listitem>
-				Version 0.18.0 <emphasis>(May 24th 2012: current)</emphasis>
+				Version 0.18.0 <emphasis>(May 24th 2012)</emphasis>
 				<itemizedlist>
 					<listitem>
 						Prior to this version, lines could have some directories,
