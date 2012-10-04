@@ -54,6 +54,48 @@
     </para>
   </tip>
 
+  <section xml:id="flows_menus_list">
+    <title>The menus list</title>
+
+    <para>In <xref linkend="concepts_programs_and_menus" /> a menu was defined
+      as a set of one or more programs that can process data. These menus are
+      accessible in the <emphasis>Flows</emphasis> tab, trough the button menu
+      list
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/menu-list-icon.png"/></imageobject></inlinemediaobject></guiicon>
+      presented in the
+      toolbar.</para>
+
+    <para>After clicking the menu list button, a pop-up window is shown with a
+      list of categories. All menus registered inside GêBR are divided into
+      these categories, which can be expanded by clicking the
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>
+      icon on the left.</para>
+
+    <note>
+      <para>A menu can appear more than once in the unfiltered list, since it
+        can pertain to any number of categories.</para>
+    </note>
+
+    <para>By typing parts of the menu title or description in the text box on
+      the top, it is possible to filter the menus list. This eases the task of
+      finding or discovering a menu when its domain is known. For example, it
+      is possible to search for menus related to <emphasis>migration</emphasis>
+      (see <xref linkend="flows_menus_list_filter" />).</para>
+
+    <figure xml:id="flows_menus_list_filter">
+      <title>Filtering the menus list</title>
+      <mediaobject>
+        <caption>The image shows the menus list being filtered by
+          <emphasis>migration</emphasis>. All menus that have the word
+          migration in its title or description are shown.</caption>
+        <imageobject>
+          <imagedata fileref="../images/flows_menus_list_filter.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+  </section>
+
   <section xml:id="flows_create_flow">
     <title>Creating flows</title>
 
