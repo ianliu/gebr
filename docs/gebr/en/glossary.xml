@@ -16,15 +16,17 @@
 			<glossterm>Dictionary of variables</glossterm>
 			<glossdef>
 				<para>Where the variables are defined.</para>
+				<glossseealso otherterm="Variable">Variable</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
 	<glossdiv>
 		<title>L</title>
 		<glossentry id="Line">
-			<glossterm>""Line""</glossterm>
+			<glossterm>Line</glossterm>
 			<glossdef>
 				<para>Set that organizes and clusters seismic flows.</para>
+				<glossseealso otherterm="Flow">Flow</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -40,6 +42,17 @@
 		</glossentry>
 	</glossdiv>
 	<glossdiv>
+		<title>G</title>
+		<glossentry id="Groups">
+			<glossterm>Groups</glossterm>
+			<glossdef>
+				<para>Subset of working nodes of the maestro.</para>
+				<glossseealso otherterm="Maestro">Maestro</glossseealso>
+				<glossseealso otherterm="WorkingNodes">Working nodes</glossseealso>
+			</glossdef>
+		</glossentry>
+	</glossdiv>
+	<glossdiv>
 		<title>J</title>
 		<glossentry id="Job">
 			<glossterm>Job</glossterm>
@@ -51,19 +64,21 @@
 	<glossdiv>
 		<title>M</title>
 		<glossentry id="Maestro">
-			<glossterm>"Maestro"</glossterm>
+			<glossterm>Maestro</glossterm>
 			<glossdef>
 				<para>The manager machine of resources of the other machines running
-					GêBR (clients).</para>
-				<glossseealso otherterm="" Maestro ">"Maestro"
-				</glossseealso>
+					GêBR.
+				</para>
+				<glossseealso otherterm="Client">Client</glossseealso>
+				<glossseealso otherterm="WorkingNodes">Working nodes</glossseealso>
 			</glossdef>
 		</glossentry>
 		<glossentry id="Menu">
-			<glossterm>""Menu""</glossterm>
+			<glossterm>Menu</glossterm>
 			<glossdef>
 				<para>Representation of a single program or a set of programs.
 				</para>
+				<glossseealso otherterm="Program">Program</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -80,7 +95,8 @@
 			<glossterm>Program</glossterm>
 			<glossdef>
 				<para>Operation that generates a specific result according to
-					user-defined parameters.</para>
+					user-defined parameters.
+				</para>
 				<glossseealso otherterm="Parameter">Parameter</glossseealso>
 			</glossdef>
 		</glossentry>
@@ -88,26 +104,52 @@
 			<glossterm>Project</glossterm>
 			<glossdef>
 				<para>Set that organizes and clusters seismic lines.</para>
+				<glossseealso otherterm="Line">Line</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
 	<glossdiv>
 		<title>S</title>
 		<glossentry id="Snapshot">
-			<glossterm>"Snapshot"</glossterm>
+			<glossterm>Snapshot</glossterm>
 			<glossdef>
 				<para>Stores all the settings of a flow at the exact moment when
-					that is taken.</para>
+					that is taken.
+				</para>
+			</glossdef>
+		</glossentry>
+	</glossdiv>
+	<glossdiv>
+		<title>T</title>
+		<glossentry id="Task">
+			<glossterm>Task</glossterm>
+			<glossdef>
+				<para>A piece of job to be done</para>
+				<glossseealso otherterm="Job">Job</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
 	<glossdiv>
 		<title>V</title>
 		<glossentry id="Variable">
-			<glossterm>"Variable"</glossterm>
+			<glossterm>Variable</glossterm>
 			<glossdef>
 				<para>Storage location associated a name that keeps a value or
-					information.</para>
+					information.
+				</para>
+				<glossseealso otherterm="Dictionary">Dictionary of variables
+				</glossseealso>
+			</glossdef>
+		</glossentry>
+	</glossdiv>
+	<glossdiv>
+		<title>W</title>
+		<glossentry id="WorkingNodes">
+			<glossterm>Working nodes</glossterm>
+			<glossdef>
+				<para>Machines used by the maestro to process your tasks.</para>
+				<glossseealso otherterm="Maestro">Maestro</glossseealso>
+				<glossseealso otherterm="Task">Task</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
