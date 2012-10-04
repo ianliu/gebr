@@ -94,7 +94,7 @@
 				<caption>The Maestro/Nodes configuration interface is divided in three parts: maestro, list of nodes and groups of nodes.</caption>
         <imageobject>
 					<imagedata fileref="../images/GeBR_maestro_servers_overview.png"
-						contentwidth="371px" contentdepth="466px" />
+						contentwidth="371px" contentdepth="446px" />
         </imageobject>
       </mediaobject>
     </figure>
