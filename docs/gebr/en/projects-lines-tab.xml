@@ -272,7 +272,7 @@
 
     <important>
       <para>Remember that the processing takes place at the 
-        working node<indexterm><primary>working node</primary></indexterm>.
+        working node<indexterm><primary>Working nodes</primary></indexterm>.
         The directory structure described above will be created there. This
         means that these directories will not be present on the local machine
         <emphasis>if</emphasis> the node is a remote machine.</para>

@@ -172,7 +172,7 @@
       <title>Groups</title>
       <para>The user can employ a subset of the machines associated to
         the maestro<indexterm><primary>Working
-        machine</primary><secondary>group
+        nodes</primary><secondary>group
         of</secondary></indexterm>. This can be done through the
         creation of groups of machines.</para>
 			<para>In the bottom part of the Maestro/Nodes interface (see
