@@ -260,11 +260,6 @@
       flow. The <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
       contains information like input,output and log file, flow's programs 
       and some of its parameters. </para>
-    <tip>
-    	<para>There is no limit on the number of flows 
-    	that can be created inside a line.</para>
-    </tip>
-
   </section>
   
   <section xml:id="flows_editing_parameters">
@@ -610,7 +605,6 @@
 	    
 	    <tip>
 	      <para>Useful keybinds are available here: <keycap>Ctrl+S</keycap> takes a snapshot of the selected flow.</para>
-	      <para>There is no limit on the number of snapshots for each flow.</para>
 	    </tip>
 	
 	    <para>To see the saved snapshots, just left-click on 
