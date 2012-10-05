@@ -567,10 +567,9 @@
     </variablelist>
 
     <figure>
-      <title>Report view</title>
+      <title>Report menu</title>
       <mediaobject>
-        <caption>The <guilabel>View Report</guilabel> window shows the report
-          and enables customization of its content.</caption>
+        <caption>GêBR enables the report customization.</caption>
         <imageobject>
 					<imagedata fileref="../images/janela_visualizar_relatorio_menu.png"
 						contentwidth="437px" contentdepth="248px" />
@@ -579,7 +578,7 @@
     </figure>
           
       <note>
-        <para>The option to include report of the snapshots of flows are
+        <para>The option to include report of flows' snapshots are
           available on line's and flow's <guilabel>View Report</guilabel>. More
           information about snapshots can be found on section
           <xref linkend="flows_snapshots" />

@@ -13,6 +13,15 @@
   <para>GêBR presents an interface to the organization and
   visualization of the results.</para>
 
+    <figure>
+      <title><guilabel>Jobs</guilabel> tab</title>
+      <mediaobject>
+        <caption><guilabel>Jobs</guilabel> tab interface.</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_jobs_tab.png"  contentwidth="729px" contentdepth="513px" />
+        </imageobject>
+      </mediaobject>
+    </figure>
   <para>As seen in 
     <xref linkend="flows_execute_flow" />, GêBR switches to the 
     <guilabel>Jobs</guilabel> tab whenever multiple flows are
@@ -29,15 +38,6 @@
 
   <section xml:id="jobs_toolbar">
     <title>Toolbar</title>
-    <figure>
-      <title><guilabel>Jobs</guilabel> tab toolbar</title>
-      <mediaobject>
-        <caption>Toolbar of the <guilabel>Jobs</guilabel> tab</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_jc_toolbar.png"  contentwidth="729px" contentdepth="504px" />
-        </imageobject>
-      </mediaobject>
-    </figure>
     <para>In this tab the user can 
       <emphasis role="bold">follow</emphasis> and, if so desired, 
       <emphasis role="bold">interrupt</emphasis> the flow's execution. The available commands

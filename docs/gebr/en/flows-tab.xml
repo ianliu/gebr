@@ -71,14 +71,17 @@
       as a set of one or more programs that can process data. These menus are
       accessible in the <emphasis>Flows</emphasis> tab, trough the button menu
       list
-      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/menu-list-icon.png"/></imageobject></inlinemediaobject></guiicon>
-      presented in the
-      toolbar.</para>
+			<guiicon><inlinemediaobject><imageobject>
+						<imagedata fileref="../../common-images/menu-list-icon.png"/>
+			</imageobject></inlinemediaobject></guiicon>
+      presented in the toolbar.</para>
 
     <para>After clicking the menu list button, a pop-up window is shown with a
       list of categories. All menus registered inside GêBR are divided into
       these categories, which can be expanded by clicking the
-      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>
+			<guiicon><inlinemediaobject><imageobject>
+						<imagedata fileref="../../common-images/icone_colapsado.png"/>
+			</imageobject></inlinemediaobject></guiicon>
       icon on the left.</para>
 
     <note>
@@ -272,8 +275,7 @@
     <para>To edit program's parameters follow the steps below:</para>
     <procedure>
       <step>
-        <para>Select the program from the <guilabel>Flow
-            sequence</guilabel> box and click on
+        <para>Select the program from the list and click on
           <guiicon>
             <inlinemediaobject>
               <imageobject>
@@ -286,7 +288,7 @@
       </step>
       <step>
         <para>Edit the program's parameters. Notice that each
-          program's parameter vary greatly both in size and
+          parameter vary greatly both in size and
           type.</para>
         <tip>
           <para>Click on the <guibutton>Help</guibutton> button
@@ -341,7 +343,7 @@
       or using the shortcut
       <keycombo>
         <keycap>Spacebar</keycap>
-    </keycombo> to change the state(s) of the selected programs.</para>
+    </keycombo> to change the states of the selected programs.</para>
     
       <tip>
       <para>It's possible to select several programs whose state is desired to
@@ -380,7 +382,8 @@
       from an input file and/or generate as a result an output file,
       or even an log file in case an error occurs.</para>
 
-    <para>To associate an input, output and error file to a flow, follow this steps:</para>
+		<para>To associate an input, output and error file to a flow, follow
+			these steps:</para>
     <figure>
       <title>Input file setting</title>
       <mediaobject>
@@ -399,14 +402,15 @@
       </step>
       
       <step>
-		<para>Below of the selected flow, the programs and entries with input, output and log files
+		<para>Below the selected flow, the programs and entries with input, output and log files
 		will be shown. To edit files paths, just double clicking on them.
 		</para>
       </step>
       
       <step>
-				<para>Type in the path (important folders can be consulted/choosen by just typing &lt;)
-					or click on the icon 
+				<para>Type in the path (important folders can be consulted/choosen by
+					typing <keycap>&lt;</keycap>)
+					or click on
           <guiicon>
             <inlinemediaobject>
               <imageobject>
@@ -419,9 +423,9 @@
       </step>
     </procedure>
 
-    <para>To using the folders associated to the line, choose them like above or use 
+    <para>For using the folders associated to the line, choose them like above or use 
     	the feature of autocomplete of the important folders of this line. 
-      	(For more information, see <xref linkend="projects_lines_line_paths" />).
+      	For more information, see <xref linkend="projects_lines_line_paths" />.
     </para>
     <figure>
       <title>Autocomplete of paths</title>
@@ -429,7 +433,7 @@
         <caption>
 					Autocomplete feature in the Input file of a flow. Analogous to
 					the dictionary variables, to see the available paths it is just 
-					necessary to type a &lt;.
+					necessary to type a <keycap>&lt;</keycap>.
         </caption>
         <imageobject>
 					<imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"
@@ -469,7 +473,7 @@
     <title>Copying, pasting and deleting flows and programs</title>
 
     <para>The clipboard provides the popular set of tools known as
-      <emphasis>copy and paste</emphasis>. In GêBR, a flow (or set of
+      <emphasis>copy and paste</emphasis>. A flow (or set of
       flows) can be copied to the clipboard and paste back to the same
       line or to other lines. In the same manner, 
       a program (or set of programs) can be copied to the clipboard too,
@@ -678,21 +682,22 @@
 		    <para>If a snapshot of a flow was taken and for some reason undesired modifications 
 		    	 were made to it, is possible to revert to another one through 
 		     	 double-click on that. Whenever a snapshot is
-		    	 reverted, the dialog <emphasis>Backup Current State</emphasis> will appear. </para>
+		    	 reverted, the dialog <emphasis>Reverting modified flow</emphasis> will appear.</para>
 		    	 
 		    <figure>
-		     <title>Dialog of Backup Current State</title>
+		     <title>Dialog of Reverting modified flow</title>
 			 <mediaobject>
 			  <caption>Two option are avaliable to proceed.</caption>
 		      <imageobject>
-				<imagedata fileref="../images/GeBR_reverting_modified.png"  contentwidth="319px" contentdepth="293px" />
+						<imagedata fileref="../images/GeBR_reverting_modified.png"
+							contentwidth="319px" contentdepth="293px" />
 			  </imageobject>
 			 </mediaobject>
 			</figure>
 	
 			<itemizedlist>
 			  <listitem>
-			    <guibutton>Take a snapshot</guibutton>: the dialog to input a description
+			    <guibutton>Take a snapshot</guibutton>: a dialog to input a description
 			    will appear, where is possible save this new snapshot.
 		      </listitem>
 		      <listitem>
@@ -924,7 +929,7 @@
 			<section xml:id="flows_detailed_execution">
 				<title>Run and Setup</title>
 				<para>
-					Many execution details can be set before triggering a Job. After setting, click on Run to execute the job. 
+					Many execution details can be set before triggering a job. After setting, click on Run to execute the job. 
 				</para>
 				<figure>
 					<title>Run and Setup</title>
@@ -972,7 +977,7 @@
 						</step>
 						<step>
 							Where jobs must be dispatched. Nodes or set of nodes can be choosen to
-							process the Jobs. A special option is the Choose automatically. It
+							process the jobs. A special option is the Choose automatically. It
 							allows the maestro to search for the least overloaded nodes or set of nodes. If the use changes this parameter,
 							GêBR shows the number of cores of the choosen group.
 						</step>
