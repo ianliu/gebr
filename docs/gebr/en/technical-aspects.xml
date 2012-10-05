@@ -617,24 +617,93 @@
     <para>In <menuchoice>
         <guimenu>Help</guimenu>
         <guimenuitem>Samples</guimenuitem>
-      </menuchoice> menu, there are samples to be imported (see
-      figure below).</para>
+		</menuchoice> menu, there are samples to be imported.</para>
+		<para>
+			Here are some samples GêBR provides:
+			<itemizedlist>
+				<listitem>
+					Dip Moveout : 
+					<emphasis> Ilustrates different types of DMO processing </emphasis>
+				</listitem>
+				<listitem>
+					Velocity Analysis : 
+					<emphasis> Illustrate some velocity analysis processes </emphasis>
+				</listitem>
+				<listitem>
+					NMO : 
+					<emphasis> Illustrate normal moveout corrections and stacking </emphasis>
+				</listitem>
+				<listitem>
+					Ray Tracing : 
+					<emphasis> Illustrates different ray tracing programs </emphasis>
+				</listitem>
+				<listitem>
+					Migration Inversion : 
+					<emphasis> Illustrates different processes of migration inversion </emphasis>
+				</listitem>
+				<listitem>
+					Time Frequency Analysis : 
+					<emphasis> Illustrates chirpy data in the time-frequency domain </emphasis>
+				</listitem>
+				<listitem>
+					Deconvolution : 
+					<emphasis> Illustrate a random noise attenuation via F-X deconvolution </emphasis>
+				</listitem>
+				<listitem>
+					Filtering : 
+					<emphasis> Ilustrates different filtering processes </emphasis>
+				</listitem>
+				<listitem>
+					Trace Headers and Values : 
+					<emphasis> Illustrates several applications to the trace headers and values of keywords </emphasis>
+				</listitem>
+				<listitem>
+					Plotting : 
+					<emphasis> Illustrates different plotting programs </emphasis>
+				</listitem>
+				<listitem>
+					Velocity Profiles : 
+					<emphasis> Illustrate several types of velocity profiles </emphasis>
+				</listitem>
+				<listitem>
+					Muting : 
+					<emphasis> Illustrating a picking in a data, and your result after applied mute </emphasis>
+				</listitem>
+				<listitem>
+					Synthetic : 
+					<emphasis> Show several demonstrations about synthetic data creation </emphasis>
+				</listitem>
+				<listitem>
+					Amplitude Correction : 
+					<emphasis> Illustrates the amplitude correction on synthetic seismic data </emphasis>
+				</listitem>
+				<listitem>
+					Offset Continuation : 
+					<emphasis> Ilustrates the use of Offset Continuation method </emphasis>
+				</listitem>
+				<listitem>
+					Block : 
+					<emphasis> Creates a data set of the form required by the "block" program.	</emphasis>
+				</listitem>
+				<listitem>
+					Stacking Traces : 
+					<emphasis> Illustrating the usage phase weighted and diversity stacking </emphasis>
+				</listitem>
+				<listitem>
+					Vibroseis Sweeps : 
+					<emphasis> Illustrates using SUVIBRO </emphasis>
+				</listitem>
+				<listitem>
+					Making Data : 
+					<emphasis> Illustrating the construction of common offsets and shot gathers </emphasis>
+				</listitem>
+			</itemizedlist>
 
-    <figure>
-      <title>Sample projects in <menuchoice>
-          <guimenu>Help</guimenu>
-          <guimenuitem>Samples</guimenuitem>
-      </menuchoice></title>
-      <mediaobject>
-        <caption>Screenshot of the Samples Menu.</caption>
-        <imageobject>
-					<imagedata fileref="../images/samples_en.png"  contentwidth="234px"
-						contentdepth="566px" />
-        </imageobject>
-      </mediaobject>
-    </figure>
+		</para>
+		Once imported, the associated flows can be readily consulted or executed (consult 
+		<xref linkend="flows_execute_flow"/>).
 		<para>
 
 		</para>
-  </section>
+	</section>
 </chapter>
