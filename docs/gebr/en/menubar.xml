@@ -189,66 +189,68 @@
 	    </inlinemediaobject> icon.
 	    A text box will be prompted for the name of the group. Groups
         with same names are not allowed.</para>
-	  
-	  <para>
-		<emphasis role="bold">Example to using the groups</emphasis>
-	  </para>
-	
-	  <para>
-		Using groups is very useful when it's necessary to run a flow in
-		a subset of machines different from the default
-		(For more information, see
-		<xref linkend="flows_detailed_execution" />).
-		That's useful, Because sometimes it's desired save resources from some 
-		working node to not overload all of them.
-	  </para>
-		
-	  <para>For example:
-		<procedure>
-			<step> Choose a subset of working nodes</step>
-			<step> Create a group with them.</step>
-			<step> Give a name for the group.</step>
-			<step>
-				Create a parallelizable flow (see
-				<xref linkend="technical_aspects_multicores" />
-				).
-			</step>
-			<step>
-				Open the
-				<guilabel>Execution settings window</guilabel>
-				 on
-				<guilabel>Flows tab</guilabel>
-				(see
-				<xref linkend="flows_detailed_execution" />
-				).
-			</step>
-			<step> Set the maximum number of
-				cores (nominal capacity) to execute
-				the
-				flow.
-			</step>
-			<step> Set the group node desired.</step>
-			<step> Press run.</step>
-			<step>
-				Go to
-				<guilabel>Jobs</guilabel>
-				tab.
-			</step>
-			<step> Click on Details.</step>
-			<step>
-				See the nodes group in
-				which the flow was executed
-				(see
-				<xref linkend="jobs_right_panel" />
-				).
-			</step>
-		</procedure>
-	  </para>
-	  <para>It's easy to see that the execution was distributed
-		in the nodes of subset (group) chosen by the user and not
-		in all the working nodes.
-	  </para>
-		
+
+	<example>
+		<title>
+			<emphasis role="bold">Example to using the groups</emphasis>
+		</title>
+		<para>
+			Using groups is very useful when it's necessary to run a flow in
+			a subset of machines different from the default
+			(For more information, see
+			<xref linkend="flows_detailed_execution" />
+			).
+			That's useful, Because sometimes it's desired save resources from some
+			working node to not overload all of them.
+		</para>
+
+		<para>
+			For example:
+			<procedure>
+				<step> Choose a subset of working nodes</step>
+				<step> Create a group with them.</step>
+				<step> Give a name for the group.</step>
+				<step>
+					Create a parallelizable flow (see
+					<xref linkend="technical_aspects_multicores" />
+					).
+				</step>
+				<step>
+					Open the
+					<guilabel>Execution settings window</guilabel>
+					on
+					<guilabel>Flows tab</guilabel>
+					(see
+					<xref linkend="flows_detailed_execution" />
+					).
+				</step>
+				<step> Set the maximum number of
+					cores (nominal capacity) to execute
+					the
+					flow.
+				</step>
+				<step> Set the group node desired.</step>
+				<step> Press run.</step>
+				<step>
+					Go to
+					<guilabel>Jobs</guilabel>
+					tab.
+				</step>
+				<step> Click on Details.</step>
+				<step>
+					See the nodes group in
+					which the flow was executed
+					(see
+					<xref linkend="jobs_right_panel" />
+					).
+				</step>
+			</procedure>
+		</para>
+		<para>It's easy to see that the execution was distributed
+			in the nodes of subset (group) chosen by the user and not
+			in all the working nodes.
+		</para>
+	</example>
     </section>
   </section>
 </chapter>
