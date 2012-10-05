@@ -12,32 +12,29 @@
 
   <section xml:id="concepts_elements">
     <title>Projects, lines and flows</title>
-    
-    <para>The processing of a seismic data is carried out
-      by <emphasis>processing
-      flows</emphasis><indexterm><primary>Processing
-      flow</primary></indexterm>. A processing flow is a chain of
-      programs, which sequentially operates on an input data to
-      produce an output data from it. For example, processing flows
-      can be assembled to accomplish tasks like <emphasis>spike
-      deconvolution</emphasis>, <emphasis>ground-roll
-      atenuation</emphasis>, <emphasis>NMO correction</emphasis>, and
-      so on.</para>
 
-    <para>In GêBR, processing flows are referenced
-			as <emphasis role="bold">flows</emphasis>
-			<indexterm><primary>Flow</primary></indexterm>. The
-      complete processing of a seismic data (also known as
-      a <emphasis>seismic line</emphasis>, in 2D case) involves
-      several flows. A set of flows is
-      referenced as
-			a seismic line, or <emphasis role="bold">line</emphasis>
-			<indexterm><primary>Line</primary></indexterm>
-      in the GêBR interface. Furthermore, it is common to have many
-			seismic lines acquired on a target area. Finally, a set of
-			seismic lines
-			is known as a <emphasis role="bold">project</emphasis>
-			<indexterm><primary>Project</primary></indexterm>.</para>
+    <para>GêBR is primarily conceived to process 2D seismic data
+    lines. Data from 2D acquisition lines related somehow are usually
+    grouped in one <emphasis>seismic-data processing
+    project</emphasis>. The processing of a specific data is carried
+    out by a bunch of <emphasis>processing
+    flows</emphasis><indexterm><primary>Processing
+    flow</primary></indexterm>. Each processing flow is a chain of
+    programs, which sequentially operate on an input data to produce
+    an output data from it. For example, processing flows can be
+    assembled to accomplish tasks like <emphasis>Spike
+    Deconvolution</emphasis>, <emphasis>Noise Atenuation</emphasis>,
+    <emphasis>NMO correction</emphasis>, and so on.</para>
+
+    <para>In GêBR, a seismic-data processing project is referenced as a
+    <emphasis role="bold">project</emphasis>
+    <indexterm><primary>Project</primary></indexterm> only. Each
+    project can hold many seismic data, each one referenced as a
+    <emphasis
+    role="bold">line</emphasis><indexterm><primary>Line</primary></indexterm>. Each
+    line has its own set of processing flows or just <emphasis
+    role="bold">flows</emphasis><indexterm><primary>Flow</primary></indexterm>
+    for short.</para>
 
     <para>In summary, GêBR has three levels organization, from top to
     bottom:</para>
@@ -45,18 +42,18 @@
       <listitem>
 	<para>
           <emphasis role="bold">Project</emphasis>: It is a set of
-          <emphasis role="bold">lines</emphasis>. A project has only a few
-	  basic information and is used to cluster lines related
-	  somehow.</para>
+          <emphasis>lines</emphasis>. A project has only a few basic
+          information and is used to cluster lines related
+          somehow.</para>
       </listitem>
       <listitem>
 	<para>
-          <emphasis role="bold">Line</emphasis>: It is a set of 
-          <emphasis role="bold">flows</emphasis>. During the setup of
-          the line, some important choices have to be made, mainly
-          concerning the organization of the <emphasis>processing
-            products</emphasis> (intermediate data, figures, tables, etc)
-          produced during the processing of a seismic line.
+          <emphasis role="bold">Line</emphasis>: It is a set of
+          <emphasis>flows</emphasis>. During the setup of the line,
+          some important choices have to be made, mainly concerning
+          the organization of the <emphasis>processing
+          products</emphasis> (intermediate data, figures, tables,
+          etc) produced during the processing of the seismic data.
 	</para>
       </listitem>
       <listitem>
@@ -87,27 +84,27 @@
     <title>Menus, programs and their parameters</title>
 
     <para>A flow is a sequence of programs, as just explained. In
-      GêBR, the user might think that there is a list of available
-      programs to assemble flows. This is partially true only. Indeed,
-      flows are built from <emphasis role="bold">menus</emphasis><indexterm><primary>Menu</primary></indexterm>. But
-      what is a menu?</para>
+    GêBR, the user might think that there is a list of available
+    programs to assemble flows. This is partially true only. Indeed,
+    flows are built from
+    <emphasis>menus</emphasis><indexterm><primary>Menu</primary></indexterm>. But
+    what is a menu?</para>
 
     <para>A <emphasis role="bold">menu</emphasis> is a representation
-      of a single
-      program<emphasis><indexterm><primary>Program</primary></indexterm></emphasis> or a
-      set of programs. This means that when a menu is added to a
-      flow one or more programs might be inserted into the
-      flow at once. Why is that so? Think about common tasks that are
-      accomplished by a standard sequence of programs. Instead of
-      building a flow by adding programs one by one, the flow could be
-      built from a menu, which packs the whole set of programs. For
-      example, consider the task of adding header to a raw data to
-      come up with a seismic data in Seismic Unix
-      format. <xref linkend="program_versus_menu" /> shows two
-      possibilities to assemble the same flow, depending on how the
-      programs <emphasis>SU Add Header</emphasis> and <emphasis>SU Set
-      Header</emphasis> are represented, either as two independent
-      menus or as one menu encapsulating both programs.</para>
+    of a single
+    program<indexterm><primary>Program</primary></indexterm> or a set
+    of programs. This means that when a menu is added to a flow one or
+    more programs will be inserted into the flow at once. Why is that
+    so? Think about common tasks that are accomplished by a standard
+    sequence of programs. Instead of building a flow by adding
+    programs one by one, the flow could be built from a menu, which
+    packs the whole set of programs. For example, consider the task of
+    adding header to a raw data to come up with a seismic data in
+    Seismic Un*x format. <xref linkend="program_versus_menu" /> shows
+    two possibilities to assemble the same flow, depending on how the
+    programs <emphasis>SU Add Header</emphasis> and <emphasis>SU Set
+    Header</emphasis> are represented, either as two independent menus
+    or as one menu encapsulating both programs.</para>
 
     <figure id="program_versus_menu">
       <title>Add header flows</title>
@@ -141,7 +138,7 @@
     <para>After assembling the flow, to complete its set up, the user
       has to inspect each program of the flow and define its
       <emphasis>parameters</emphasis>. Programs may depend on many parameters, from a
-      variety of types. GêBR support
+      variety of types. GêBR supports
       parameters<indexterm><primary>Parameters</primary><secondary>supported
       types of</secondary></indexterm> of the following types:</para>
     <itemizedlist>
@@ -165,35 +162,44 @@
     <title>GêBR players</title>
 
     <para>The GêBR set of tools is composed by three main player
-      categories: <emphasis role="bold">GêBR</emphasis><indexterm><primary>GêBR</primary><secondary>the
-      interface</secondary></indexterm> (the interface
-    	itself), <emphasis role="bold">maestros</emphasis>
-      <indexterm><primary>Maestro</primary></indexterm>, and
-      <emphasis role="bold">nodes</emphasis><indexterm><primary>Node</primary></indexterm>.
-      But who are those guys?</para>
+    categories: <emphasis
+    role="bold">GêBR</emphasis><indexterm><primary>GêBR</primary><secondary>the
+    interface</secondary></indexterm> (the interface itself),
+    <emphasis
+    role="bold">maestros</emphasis><indexterm><primary>Maestro</primary></indexterm>,
+    and <emphasis
+    role="bold">nodes</emphasis><indexterm><primary>Node</primary></indexterm>.
+    But who are those guys?</para>
 
     <para>The GêBR interface, sometimes referred as GêBR only, is the graphical
       interface with whom the user interacts with to build flows,
       execute them, inspect results, etc. Usually, this interface is installed
-      and is running in the machine user has physical contact with.</para>
+      and is running in the machine the user has physical contact with.</para>
 
-    <para>Through GêBR, it is possible to take advantage of the amount of machines 
-      the user has access to run flows. Those machines are
-      referenced as <emphasis role="bold">nodes</emphasis>. They may be
-			<emphasis>local</emphasis>, meaning the user is physically using them, or
-			<emphasis>remote</emphasis>, meaning the
-      user has access to them through the network. No matter where the machines
-      are, they are equally treated by GêBR, which means that the user does not
-      have to care about that.</para>
+    <para>The user may have access to many machines, which is an usual
+    scenario for users of a computational laboratory. Through GêBR, it
+    is possible to take advantage of this set of machines to run
+    flows. Those machines, or <emphasis>processing nodes</emphasis>,
+    are simply referenced in the GêBR as <emphasis
+    role="bold">nodes</emphasis>. They may be
+    <emphasis>local</emphasis>, meaning the user is physically using
+    them, or <emphasis>remote</emphasis>, meaning the user has access
+    to them through the network. No matter where the machines are,
+    they are equally treated by GêBR, which means that the user does
+    not have to care about that.</para>
 
     <para>However, GêBR does not talk directly to the nodes.  This
-      communication is brokered by another player, the
-			<emphasis role="bold">maestro</emphasis>
-			<indexterm><primary>Maestro</primary></indexterm>.
-      It acts as a coordinator of the nodes, collecting information and ranking
-      them according to their capabilities and availabities of resources.
-      Therefore, the maestro can take smart decisions about which machines are best
-      suited to run the job.</para>
+    communication is stablished with the intervenience of another
+    player, the <emphasis
+    role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>. When
+    the user decides to execute a flow, GêBR sends the request to the
+    maestro, giving rise to a <emphasis
+    role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>.
+    The maestro acts as a coordinator of the nodes, collecting
+    information and ranking them according to their capabilities and
+    available resources. Therefore, the maestro can take smart
+    decisions about which machines are best suited to run a
+    job.</para>
 
     <figure xml:id="communication_diagram">
       <title>Communication layout between GêBR players</title>
@@ -210,13 +216,10 @@
       Under maestro's coordination the nodes can even cooperate to conclude
       processing jobs fasters.</para>
  
-   <para>When the user decides to execute a flow, GêBR sends the request to
-     the maestro, giving rise to a
-     <emphasis role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>.
-     However, the maestro does not execute the job itself, it dispatches the
-     job to some of the nodes under its control. All the information generated
-     by the job is collected and sent back to GêBR, where they are presented to
-     the user.</para>
+   <para>The maestro receives the job submission and dispatches the
+   job to some of the nodes under its control. All the information
+   generated by the job is collected and sent back to GêBR, where they
+   are presented to the user.</para>
 
    <para>This communication process, despite complex, is completely transparent
      to the user, which can concentrate on processing seismic data, leaving all
