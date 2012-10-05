@@ -170,7 +170,7 @@
 
     <section>
       <title>Groups</title>
-      <para>The user can employ a subset of the machines associated to
+      <para>It's possible to employ a subset of the machines associated to
         the maestro<indexterm><primary>Working
         nodes</primary><secondary>group
         of</secondary></indexterm>. This can be done through the
@@ -180,7 +180,7 @@
 			of the Maestro/Nodes interface (see <xref linkend="maestro_server_dialog" />). 
 		</para>
         
-        <para>To create a group, the user needs to click over a node
+        <para>To create a group, click over a node
         in the list and drag it to the  
         <inlinemediaobject>
               <imageobject>
@@ -188,13 +188,67 @@
               </imageobject>
 	    </inlinemediaobject> icon.
 	    A text box will be prompted for the name of the group. Groups
-        with same names are not accepted.</para>
-
-      <!-- What happens when a group is created? How is it used? -->
-      <para><enphasis role="bold">Example of using group</enphasis></para>
-      
-      <para>example here.</para>
-      
+        with same names are not allowed.</para>
+	<para>
+		<emphasis role="bold">Example to using the groups</emphasis>
+	</para>
+	<para>
+		Using groups is very useful when it's necessary to run a flow in
+		a
+		subset of machines different from the default
+		(see
+		<xref linkend="flows_detailed_execution" />
+		to more information
+		about running a flow with a set different from
+		default).
+		Because sometimes it's desired save resources from some the
+		working
+		node, thus do not overload all of the working nodes. For
+		example:
+		<procedure>
+			<step> Choose a subset of working nodes</step>
+			<step> Create a group with them.</step>
+			<step> Give a name for the group.</step>
+			<step>
+				Create a parallelizable flow (see
+				<xref linkend="technical_aspects_multicores" />
+				).
+			</step>
+			<step>
+				Open the
+				<guilabel>Execution settings window</guilabel>
+				 on
+				<guilabel>Flows tab</guilabel>
+				(see
+				<xref linkend="flows_detailed_execution" />
+				).
+			</step>
+			<step> Set the maximum number of
+				cores (nominal capacity) to execute
+				the
+				flow.
+			</step>
+			<step> Set the group node desired.</step>
+			<step> Press run.</step>
+			<step>
+				Go to
+				<guilabel>Jobs</guilabel>
+				tab.
+			</step>
+			<step> Click on Details.</step>
+			<step>
+				See the nodes group in
+				which the flow was executed
+				(see
+				<xref linkend="jobs_right_panel" />
+				).
+			</step>
+		</procedure>
+		<para>It's easy to see that the execution was distributed
+			in the nodes of subset (group) chosen by the user and not
+			in all the working nodes.
+		</para>
+	</para>
     </section>
   </section>
 </chapter>
