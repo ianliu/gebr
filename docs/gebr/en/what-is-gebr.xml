@@ -10,23 +10,24 @@
 
   <title>What is GêBR?</title>
   <para>GêBR is a simple graphical
-    interface<indexterm><primary>GêBR</primary><secondary>the
-    interface</secondary></indexterm> which <emphasis>facilitates
-    geophysical data processing</emphasis>. GêBR is <emphasis>not a
-    package for processing</emphasis>, it is designed
-    to <emphasis>integrate</emphasis> a large variety of free
-    processing packages, such as <emphasis>Seismic Un*x</emphasis>
-    and <emphasis>Madagascar</emphasis>.</para>
+  interface<indexterm><primary>GêBR</primary><secondary>the
+  interface</secondary></indexterm> which <emphasis>facilitates
+  geophysical data processing</emphasis>. GêBR is <emphasis>not a
+  package for processing</emphasis>. Instead it is designed to
+  <emphasis>integrate</emphasis> a large variety of free processing
+  packages, such as <emphasis>Seismic Un*x</emphasis> and
+  <emphasis>Madagascar</emphasis>.</para>
 
-  <para>GêBR can manage projects and lines, assemble and execute flows
-    and follow the results of the data processing. Everything in a
-    simple and friendly way.</para>
+  <para>GêBR manages seismic-data processing projects, dealing with
+  multiple 2D lines, each one with its own set of processing
+  flows. Through GêBR, it is possible to assemble and execute such
+  processing flows and track the outputs of the data
+  processing. Everything in a simple and friendly way.</para>
 
   <para>Being a <emphasis>free software</emphasis>, anyone can use and
-    customize GêBR for free, according to the terms of the
-    <emphasis>GNU Public License</emphasis>. That makes this software
-    very attractive for academic research and for use in
-    courses.</para>
+  customize GêBR for free, according to the terms of the <emphasis>GNU
+  Public License</emphasis>. That makes this software very attractive
+  for teaching and academic research.</para>
 
   <section>
     <title>GêBR Project</title>
@@ -57,128 +58,128 @@
   <section>
         <title>What's new</title>
     <itemizedlist>
-			<listitem>
-				Version 0.20.0 <emphasis>(current)</emphasis>
-					<para>This release of GêBR brings a lot of new exciting features to ease 
-						the handling and the management of flows and programs, including:</para>
-				<itemizedlist>
-					<listitem>
-						<emphasis>Joining of Flow Editor and Flow Browse tabs navigation:</emphasis> now 
-						through Flows tab is possible control all the actions about flows and programs, 
-						thus the activities at GêBR are much more centralized, fast and easy 
-						(see <xref linkend="flows_tab"/>).
-					</listitem>
-					<listitem>
-						<emphasis>Flows tab powered:</emphasis> the work on GêBR is wonderfully fast, because 
-						now it's possible to see in the same tab a summary information of the flow, edit 
-						programs and their parameters and also to see the output of the flow's execution. 
-						(see <xref linkend="flows_tab"/>).
-					</listitem>
-					<listitem>
-						<emphasis>New Toolbar:</emphasis> the new toolbar makes the GêBR interface much 
-						more clean. Just the frequently used actions are on the toolbar, the other actions 
-						are placed in More menu (see <xref linkend="project_line"/> and 
-						see <xref linkend="flows_tab"/>).
-					</listitem>
-					<listitem>
-						<emphasis>Quick access to Menus list:</emphasis> the new toolbar brings a new way 
-						of to access the menu list. Through the menu list icon it's possible to see all 
-						the menus and add them to the flows in few clicks 
-						(see <xref linkend="flows_menus_list"/>).
-					</listitem>
-					<listitem>
-						<emphasis>Execution modes:</emphasis> now there are two options of execution, it's 
-						possible run the flows directly or choose and save the preferences of execution and 
-						then run the flows. So, it's just necessary changing the preferences once or when 
-						it's desired run a flow in a different way from the standard mode 
-						(see <xref linkend="flows_execute_flow"/>).
-					</listitem>
-					<listitem>
-						<emphasis>Snapshots:</emphasis> this feature gives much more freedom to the flows, 
-						all the important status of flows can be saved and reverted anytime, thus 
-						it's possible modify loosely the flows and their programs 
-						(see <xref linkend="flows_snapshots"/>).
-					</listitem>
-					<listitem>
-						<emphasis>Search on documentation:</emphasis> never more fell lost among the 
-						documentation and reports. Starting this release of GêBR it's possible to 
-						search terms in the reports of projects, lines and flows and also in the flow 
-						summary (see <xref linkend="flows_tab"/>).
-					</listitem>
-				</itemizedlist>
-			</listitem>
-			<listitem>
-				Version 0.18.0 <emphasis>(May 24th 2012)</emphasis>
-				<itemizedlist>
-					<listitem>
-						Prior to this version, lines could have some directories,
-						known as <emphasis>line's paths</emphasis>. Shortcuts to
-						those directories were available in each file browse
-						dialog. From this version, to each line it is associated a
-						standard hierarchy of directories (see definition in
-						<xref linkend="projects_lines_line_paths"/> and example of
-						usage in <xref linkend="flows_edit_input_output"/>).
-					</listitem>
-					<listitem>
-						Now it's possible to change the line's maestro (see
-						<xref linkend="projects_lines_change_the_maestro_of_a_line"/>).
-					</listitem>
-					<listitem>
-						GêBR correctly displays remote folder (see
-						<xref linkend="technical_aspects_remote_browsing"/>).
-					</listitem>
-				</itemizedlist>
-			</listitem>
-			<listitem>
-				Version 0.16.0<emphasis> (January 30th 2012)</emphasis>
-				<itemizedlist>
-					<listitem>The concept of <emphasis>Maestro</emphasis> is born,
-						allowing to execute
-						jobs in multiples machines.  (see
-						<xref linkend="additional_features_maestro_servers_configuration"
-							/> and <xref linkend="technical_aspects_multicores"
-							/>).</listitem>
-					<listitem>Now it is possible to control the number of cores
-						used by the jobs of GêBR and change the priority of
-						execution of a job (see
-						<xref linkend="technical_aspects_multicores" /> and
-						<xref linkend="technical_aspects_priority_execution"
-							/>).</listitem>
-					<listitem>Renewed interface: new functionalities and
-						improved usability.</listitem>
-				</itemizedlist>
-			</listitem>
-			<para>
-			</para>
-			<listitem>
-				Version 0.14.0 <emphasis>(October 3rd 2011):</emphasis>
-				<itemizedlist>
-					<listitem>
-						The variables dictionary and the program parameters accept
-						arithmetic expressions (see section
-						<xref linkend="technical_aspects_dictionary_variables"/>).
-					</listitem>
-					<listitem>
-						Repetitive processes can be automatized by the use of
-						loops (see section <xref linkend="flows_loop"/>).
-					</listitem>
-				</itemizedlist>
-			</listitem>
+      <listitem>
+	Version 0.20.0 <emphasis>(current)</emphasis>
+	<para>This release of GêBR brings a lot of new exciting features to ease 
+	the handling and the management of flows and programs, including:</para>
+	<itemizedlist>
+	  <listitem>
+	    <emphasis>Joining of Flow Editor and Flow Browse tabs navigation:</emphasis> now 
+	    through Flows tab is possible control all actions about flows and programs, 
+	    thus the activities at GêBR are much more centralized, fast and easy 
+	    (see <xref linkend="flows_tab"/>).
+	  </listitem>
+	  <listitem>
+	    <emphasis>Flows tab powered:</emphasis> the work on GêBR is wonderfully fast, because 
+	    now it's possible to see in the same tab a summary information of the flow, edit 
+	    programs and their parameters and also to see the output of the flow's execution. 
+	    (see <xref linkend="flows_tab"/>).
+	  </listitem>
+	  <listitem>
+	    <emphasis>New Toolbar:</emphasis> the new toolbar makes the GêBR interface much 
+	    more clean. Just the frequently used actions are on the toolbar, the other actions 
+	    are placed in More menu (see <xref linkend="project_line"/> and 
+	    see <xref linkend="flows_tab"/>).
+	  </listitem>
+	  <listitem>
+	    <emphasis>Quick access to Menus list:</emphasis> the new toolbar brings a new way 
+	    of to access the menu list. Through the menu list icon it's possible to see all 
+	    the menus and add them to the flows in few clicks 
+	    (see <xref linkend="flows_menus_list"/>).
+	  </listitem>
+	  <listitem>
+	    <emphasis>Execution modes:</emphasis> now there are two options of execution, it's 
+	    possible run the flows directly or choose and save the preferences of execution and 
+	    then run the flows. So, it's just necessary changing the preferences once or when 
+	    it's desired run a flow in a different way from the standard mode 
+	    (see <xref linkend="flows_execute_flow"/>).
+	  </listitem>
+	  <listitem>
+	    <emphasis>Snapshots:</emphasis> this feature gives much more freedom to the flows, 
+	    all the important status of flows can be saved and reverted anytime, thus 
+	    it's possible modify loosely the flows and their programs 
+	    (see <xref linkend="flows_snapshots"/>).
+	  </listitem>
+	  <listitem>
+	    <emphasis>Search on documentation:</emphasis> never more fell lost among the 
+	    documentation and reports. Starting this release of GêBR it's possible to 
+	    search terms in the reports of projects, lines and flows and also in the flow 
+	    summary (see <xref linkend="flows_tab"/>).
+	  </listitem>
+	</itemizedlist>
+      </listitem>
+      <listitem>
+	Version 0.18.0 <emphasis>(May 24th 2012)</emphasis>
+	<itemizedlist>
+	  <listitem>
+	    Prior to this version, lines could have some directories,
+	    known as <emphasis>line's paths</emphasis>. Shortcuts to
+	    those directories were available in each file browse
+	    dialog. From this version, to each line it is associated a
+	    standard hierarchy of directories (see definition in
+	    <xref linkend="projects_lines_line_paths"/> and example of
+	    usage in <xref linkend="flows_edit_input_output"/>).
+	  </listitem>
+	  <listitem>
+	    Now it's possible to change the line's maestro (see
+	    <xref linkend="projects_lines_change_the_maestro_of_a_line"/>).
+	  </listitem>
+	  <listitem>
+	    GêBR correctly displays remote folder (see
+	    <xref linkend="technical_aspects_remote_browsing"/>).
+	  </listitem>
+	</itemizedlist>
+      </listitem>
+      <listitem>
+	Version 0.16.0<emphasis> (January 30th 2012)</emphasis>
+	<itemizedlist>
+	  <listitem>The concept of <emphasis>Maestro</emphasis> is born,
+	  allowing to execute
+	  jobs in multiples machines.  (see
+	  <xref linkend="additional_features_maestro_servers_configuration"
+		/> and <xref linkend="technical_aspects_multicores"
+		/>).</listitem>
+	  <listitem>Now it is possible to control the number of cores
+	  used by the jobs of GêBR and change the priority of
+	  execution of a job (see
+	  <xref linkend="technical_aspects_multicores" /> and
+	  <xref linkend="technical_aspects_priority_execution"
+		/>).</listitem>
+	  <listitem>Renewed interface: new functionalities and
+	  improved usability.</listitem>
+	</itemizedlist>
+      </listitem>
+      <para>
+      </para>
+      <listitem>
+	Version 0.14.0 <emphasis>(October 3rd 2011):</emphasis>
+	<itemizedlist>
+	  <listitem>
+	    The variables dictionary and the program parameters accept
+	    arithmetic expressions (see section
+	    <xref linkend="technical_aspects_dictionary_variables"/>).
+	  </listitem>
+	  <listitem>
+	    Repetitive processes can be automatized by the use of
+	    loops (see section <xref linkend="flows_loop"/>).
+	  </listitem>
+	</itemizedlist>
+      </listitem>
     </itemizedlist>
 
   </section>
   <section>
     <title>Technical Information</title>
     <para>This user guide is for GêBR <emphasis>version
-      0.20.0</emphasis>. The images used in this guide were captured
-      in a <emphasis>Ubuntu 10.04</emphasis> based system. Therefore, slight 
-      differences may be observed in case another
-      operating system is being used. For specific installation instructions for
-      each operating system, see the
-      <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">install
-      guide</link></emphasis>, in the
-      <emphasis><link xlink:href="http://www.gebrproject.com">project's
-      official site</link></emphasis>.</para>
+    0.20.0</emphasis>. The images in this guide were captured in a
+    <emphasis>Ubuntu 10.04</emphasis> based system. Therefore, slight
+    differences may be observed in case another operating system is
+    being used. For specific installation instructions for each
+    operating system, see the <emphasis><link
+    xlink:href="http://www.gebrproject.com/install-guide">install
+    guide</link></emphasis>, in the <emphasis><link
+    xlink:href="http://www.gebrproject.com">project's official
+    site</link></emphasis>.</para>
   </section>
   <!-- Time da GêBR (GêBR Team) -->
   <xi:include href="gebr-team.xml" />
