@@ -219,16 +219,33 @@
       </tbody>
     </informaltable>
 
-    <para>For instance, if the home folder is
-      <emphasis>/home/john</emphasis>, setting the <emphasis>BASE</emphasis> to
-      <emphasis>/home/john/GeBR/MyFirstLine/</emphasis>, will have the effect
-      to also define the following directories:</para>
+		<para>Other important folders are the HOME and IMPORT. HOME is 
+			automatically set to the path of the user area. The IMPORT, unlike
+			the previous
+			mentioned folders, is not associated to the BASE path
+			and can be independently set.
+		</para>
+
+		<para>For instance, suppose we are going to set the important
+			folders of a line. The IMPORT is totally independent and
+			can be set anywhere, e.g., <emphasis>/tmp/data</emphasis>.
+			If the home folder is <emphasis>/home/john/</emphasis>,
+			the BASE path must be set inside /home/john/.
+			Taking this into consideration, and setting the BASE path to
+			<emphasis>/home/john/GeBR/MyFirstLine/</emphasis>, this is
+			going to be the directories structure associated
+			to the current line:
+			</para>
 
     <informaltable>
       <tbody>
         <tr>
           <td>HOME:<indexterm><primary>HOME</primary></indexterm> </td>
           <td>/home/john/</td>
+        </tr>
+        <tr>
+          <td>IMPORT: </td>
+					<td>/tmp/data/</td>
         </tr>
         <tr>
           <td>BASE: </td>

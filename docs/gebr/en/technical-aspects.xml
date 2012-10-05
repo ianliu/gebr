@@ -619,7 +619,9 @@
         <guimenuitem>Samples</guimenuitem>
 		</menuchoice> menu, there are samples to be imported.</para>
 		<para>
-			Here are some samples GêBR provides:
+			GêBR offers bundled samples for download in its hostpage,
+			<link xlink:show="new" xlink:href="https://www.gebrproject.com">hostpage</link>
+		like gebr-menus-su package. Here are some samples this package provides:
 			<itemizedlist>
 				<listitem>
 					Dip Moveout : 
