@@ -750,7 +750,7 @@
 	or postscript image, using PS Image.
 	</para>
 	
-	<para>To solve this issue (two possible outputs for a flow), 
+	<para>To solve this issue (two possible outputs for a flow) 
 	without the need to create two separate flows with small differences,
 	it is possible to take two snapshots: one for image
 	plot, and the other for postscript.
@@ -1003,8 +1003,9 @@
 			<para>On a multi-core system, create a flow according to the following steps:</para>
 	
 			<procedure>
-				<step>Insert a loop with thirty steps</step>.
-				<step>Insert a one second sleep</step>
+				<step>Insert a loop with thirty steps (see <xref linkend="flows_loop" /> for
+	     			 further details about loop).</step>.
+				<step>Insert a sleep program with parameter set of one second.</step>
 				<step>Open the <guilabel>Execution detailed</guilabel> window, and set the minimum number of cores 
 				(one core) to execute the flow and Press run.</step>
 				<step>Execute step three again, but now with the maximum number of cores (nominal capacity).</step>.
