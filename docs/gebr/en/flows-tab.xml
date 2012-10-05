@@ -224,7 +224,7 @@
 	        <para>To run a flow 
 	          <emphasis role="bold">all the programs</emphasis> listed in the 
 	          <guilabel>Flow Sequence</guilabel> box must be 
-	          <guilabel>Configured</guilabel> (<guiicon>
+	          <guilabel>enabled</guilabel> (<guiicon>
 	            <inlinemediaobject>
 	              <imageobject>
 	                <imagedata fileref="../../common-images/icone_configurado.png" />
@@ -651,7 +651,7 @@
 		</para>
 		 
 		 <caution>
-	      <para>GêBR continuously saves the list of flow states. Even if
+	      <para>GêBR always preserves the setup of the flow. Even if
 	      the computer was turned off, this list will be recovered when GêBR 
 	      is opened again. However, if the <emphasis role="bold">flow was 
 	      deleted</emphasis> all the saved states
@@ -784,9 +784,8 @@
 
   <section xml:id="flows_import_flow">
     <title>Importing/Exporting a flow</title>
-    <para>Although GêBR maintains all the data, can be necessary 
-      copy the flows to file to be able to share them, for
-      instance.</para>
+    <para>Although GêBR maintains all the data, sometimes it's necessary to copy 
+    the flow to files for sharing.</para>
 
         <para>In the window <guilabel>Save flow</guilabel>, navigate
           to a desired directory and type a name for the file
