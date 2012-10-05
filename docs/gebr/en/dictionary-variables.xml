@@ -15,7 +15,7 @@
     <para>The dictionary is a very flexible feature, that can be used in many forms and to many
       ends.</para>
     <para>Now the dictionary accepts expressions as input. This way more complex variables can be
-      defined. In this section we will show some examples of variables usage in a flow.</para>
+      defined. In this section some examples of variables usage in a flow will be shown.</para>
     <para>Follow this simple example of how to define a variable in the dictionary:</para>
     <procedure>
       <step>
@@ -81,9 +81,9 @@
         </figure>
         <tip>To a better understanding about variables, check section 
           <xref linkend="definindo_variaveis" />.</tip>
-        <tip>Positioning the pointer on the icon of the variable type, we can check the solved
-          expression.</tip>
-        <tip>We can navigate over the fields using the keys 
+        <tip>Positioning the pointer on the icon of the variable type, the solved
+          expression can be seen.</tip>
+        <tip>It is possible to navigate over the fields using the keys 
           <keycap>Enter</keycap>, 
           <keycap>Tab</keycap> or with the 
           <mousebutton>Left button of the mouse</mousebutton>.</tip></step>
@@ -91,9 +91,9 @@
   </section>
   <section xml:id="definindo_variaveis">
     <title>Defining and using variables</title>
-    <para>We can use the dictionary to define more complex variables. Using the same idea from
+    <para>The dictionary can be used to define more complex variables. Using the same idea from
       the creation of variables in 
-      <xref linkend="janela_dicionario" />, we can define two more variables:</para>
+      <xref linkend="janela_dicionario" />, two more variables can be defined:</para>
     <procedure>
       <step>
         <para>Variable named 
@@ -146,14 +146,14 @@
         </figure>
       </step>
     </procedure>
-    <tip>To validate a field of an expression or a variable, you just need to use the
+    <tip>To validate a field of an expression or a variable, it is necessary to use the
       key 
       <keycap>Enter</keycap>.</tip>
-    <tip>To see all the available variables for auto-completion, we just need to type the
+    <tip>To see all the available variables for auto-completion, just type the
       character 
       <emphasis role="bold">[</emphasis>' (open brackets).</tip>
     <important>
-      <para>We can define the visibility of the variables, managing them in the lists 
+      <para>The visibility of the variables can be defined managing them in the lists 
         <guilabel>project</guilabel>, 
         <guilabel>line</guilabel> and 
         <guilabel>flow</guilabel>. Variables from the list 
@@ -169,13 +169,13 @@
     <title>The variable iter</title>
     <para>As we saw in the section 
       <xref linkend="flow_editor_loop" />, GêBR allows the use of loops, through the program 
-      <guimenuitem>Loop</guimenuitem>. With this program, we have access to a special variable
+      <guimenuitem>Loop</guimenuitem>. With this program, it is possible to access a special variable
       called 
-      <emphasis role="bold">iter</emphasis>. Then we can show an example of the use of this
+      <emphasis role="bold">iter</emphasis>. Check the example below to understand the use of this   
       variable:</para>
     <procedure>
       <step>
-        <para>Suppose we want to know in which week days the turns of the next 5 years will be. To
+        <para>Suppose it is necessary to know in which week days the turns of the next 5 years will be. To
           this end, we need the calendar of December from these 5 years. We are going to use the
           program 
           <guimenuitem>Calendar</guimenuitem> (it can be found in the 
@@ -195,8 +195,8 @@
         </figure>
       </step>
       <step>
-        <para>We can define a variable in the dictionary that represents the present year,
-          facilitating the process of year choice. We define the variable in the line, with the
+        <para>A variable in the dictionary that represents the present year can be defined to
+          facilitate the process of year choice. We define the variable in the line, with the
           name of 
           <emphasis role="bold">ano_atual</emphasis> and value 
           <emphasis role="bold">2011</emphasis>.</para>
@@ -211,14 +211,14 @@
         </figure>
       </step>
       <step>
-        <para>After defining this variable, we improve the parameters of the program 
-          <guimenuitem>Loop</guimenuitem>, so the variable 
+        <para>After defining this variable, the parameters of the program 
+          <guimenuitem>Loop</guimenuitem> is improved. So the variable 
           <emphasis role="bold">iter</emphasis> has a better behaviour on the purpose of the
           problem.</para>
-        <para>In the Initial Value we are going to include a variable 
-          <emphasis role="bold">ano_atual</emphasis>. We fill the parameter Step (step of each
-          iteration) with 1, since we look for consecutive years. We fill the parameter Total
-          number of steps with 5, so the Loop will be repeated five times, covering years 2011 to
+        <para>In the Initial Value a variable is included in 
+          <emphasis role="bold">ano_atual</emphasis>. The parameter Step is filled (step of each
+          iteration) with 1, since we look for consecutive years. The parameter Total
+          number of steps is filled with 5, so the Loop will be repeated five times, covering years 2011 to
           2016.</para>
         <figure>
           <mediaobject>
@@ -236,8 +236,8 @@
         </important>
       </step>
       <step>
-        <para>Now we open program 
-          <guimenuitem>Calendar</guimenuitem> to fill its parameters. We gonna fill only two
+        <para>Now open program 
+          <guimenuitem>Calendar</guimenuitem> to fill its parameters. Fill only two
           parameters, Month with value 
           <emphasis>December</emphasis> and Year with the variable 
           <emphasis role="bold">iter</emphasis>.</para>
@@ -250,7 +250,7 @@
             </imageobject>
           </mediaobject>
         </figure>
-        <para>We can verify the solved value of the variable 
+        <para>It is possible to see the solved value of the variable 
           <emphasis role="bold">iter</emphasis> through the tooltip of parameter Year 
           <guiicon>
             <inlinemediaobject>
@@ -262,7 +262,7 @@
           years we are walking through.</para>
       </step>
       <step>
-        <para>Now, with all the parameters set, we can run the flow (as in section 
+        <para>Now, with all the parameters set, run the flow (as in section 
           <xref linkend="flows_execute_flow" />), to see in which week days the holidays are going to
           be for the next five years.</para>
         <figure>
@@ -277,20 +277,20 @@
       </step>
     </procedure>
     <para>That was a simple example of 
-      <emphasis role="bold">iter</emphasis> variable usage in a flow. We can notice that loops and
+      <emphasis role="bold">iter</emphasis> variable usage in a flow. It is noticed that loops and
       variables ease the execution of repetitive tasks.</para>
   </section>
   <section xml:id="variaveis_recursos">
     <title>Dictionary features</title>
-    <para>The dictionary has a big list of resources that increments its functionality. We are
-      going to list some of these resources:</para>
+    <para>The dictionary has a big list of resources that increments its functionality. Some of these
+      resources are listed below:</para>
     <itemizedlist>
       <listitem>
         <para>
           <emphasis role="bold">Function</emphasis>
         </para>
-        <para>Besides using variables and expressions, we can use some predefined
-          functions:</para>
+        <para>Besides using variables and expressions, some predefined
+          functions can be used:</para>
         <table>
           <title>Available functions</title>
           <tgroup cols='2'>
@@ -346,7 +346,7 @@
         </para>
         <itemizedlist>
           <listitem>
-            <para>We can reorder the dictionary variables through the drag and drop. Since a
+            <para>Reorder the dictionary variables through the drag and drop. Since a
               variable can just use another variable above it, this features turns the declaration
               of variables more flexible and dynamic.</para>
             <figure>
@@ -367,10 +367,10 @@
         </para>
         <itemizedlist>
           <listitem>
-            <para>The dictionary validates the variables in a dynamic way, revalidating them you
-              change the name, the value and the position. On this way, it is much simpler to keep
+            <para>The dictionary validates the variables in a dynamic way. If a new name, value or position is set,
+              GêBR validates these new data dinamically. On this way, it is much simpler to keep
               everything in order.</para>
-            <para>Programs with variables with errors are automatically revalidated, changing its
+            <para>Programs with wrong variables are automatically revalidated, changing its
               state configuration (see 
               <xref linkend="flow_editor_change_state_program" />).</para>
             <figure>
