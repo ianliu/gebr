@@ -14,6 +14,7 @@ BuildRequires: automake bison bzip2 expat-devel file flex gettext gperf
 BuildRequires: gtk-doc intltool libjpeg-devel libtiff-devel openssh-clients
 BuildRequires: python-devel shared-mime-info unzip wget xauth zlib-devel
 BuildRequires: libtidy-devel procmail
+BuildRequires: pygtk2 graphviz
 %if 0%{?rhel} == 4
 BuildRequires: gcc4 gcc4-c++ xorg-x11-devel
 %else

@@ -1,8 +1,13 @@
 import pygtk
-import sys, gtk, glib
+import sys, gtk
 import xdot
 import gettext
 import gtk.keysyms
+
+try:
+    import glib
+except:
+    import gobject as glib
 
 class MyDotWidget(xdot.DotWidget):
     def __init__(self):

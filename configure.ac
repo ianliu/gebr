@@ -46,7 +46,6 @@ dnl Check for python stuff
 dnl ============================================================================
 AM_PATH_PYTHON([2.3])
 GEBR_PYTHON_CHECK([pygtk])
-GEBR_PYTHON_CHECK([glib])
 AC_DEFINE_UNQUOTED(PYTHON, ["$PYTHON"], [Python full path binary])
 
 dnl ============================================================================
