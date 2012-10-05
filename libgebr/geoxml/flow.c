@@ -911,7 +911,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	if (progs_error > 0) {
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 		            GEBR_GEOXML_FLOW_ERROR_PROGRAM,
-		            _("There are %d %s with error"),
+		            _("There %s %d %s with error"),
+		            progs_error == 1? "is": "are",
 		            progs_error, progs_error == 1? "program" : "programs");
 		gebr_geoxml_object_unref(seq);
 		gebr_pairstrfreev(pvector);
