@@ -21,16 +21,6 @@
 		</glossentry>
 	</glossdiv>
 	<glossdiv>
-		<title>L</title>
-		<glossentry id="Line">
-			<glossterm>Line</glossterm>
-			<glossdef>
-				<para>Set that organizes and clusters seismic flows.</para>
-				<glossseealso otherterm="Flow">Flow</glossseealso>
-			</glossdef>
-		</glossentry>
-	</glossdiv>
-	<glossdiv>
 		<title>F</title>
 		<glossentry id="Flow">
 			<glossterm>Flow</glossterm>
@@ -46,9 +36,9 @@
 		<glossentry id="Groups">
 			<glossterm>Groups</glossterm>
 			<glossdef>
-				<para>Subset of working nodes of the maestro.</para>
+				<para>Subset of processing nodes of the maestro.</para>
 				<glossseealso otherterm="Maestro">Maestro</glossseealso>
-				<glossseealso otherterm="WorkingNodes">Working nodes</glossseealso>
+				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -61,6 +51,16 @@
 			</glossdef>
 		</glossentry>
 	</glossdiv>
+		<glossdiv>
+		<title>L</title>
+		<glossentry id="Line">
+			<glossterm>Line</glossterm>
+			<glossdef>
+				<para>Set that organizes and clusters seismic flows.</para>
+				<glossseealso otherterm="Flow">Flow</glossseealso>
+			</glossdef>
+		</glossentry>
+	</glossdiv>
 	<glossdiv>
 		<title>M</title>
 		<glossentry id="Maestro">
@@ -70,7 +70,7 @@
 					GêBR.
 				</para>
 				<glossseealso otherterm="Client">Client</glossseealso>
-				<glossseealso otherterm="WorkingNodes">Working nodes</glossseealso>
+				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
 			</glossdef>
 		</glossentry>
 		<glossentry id="Menu">
@@ -91,6 +91,16 @@
 				<glossseealso otherterm="Program">Program</glossseealso>
 			</glossdef>
 		</glossentry>
+		<glossentry id="ProcessingNodes">
+			<glossterm>Processing nodes</glossterm>
+			<glossdef>
+				<para>Machines used by the maestro to process your tasks.</para>
+				<glossseealso otherterm="Maestro">Maestro</glossseealso>
+				<glossseealso otherterm="Task">Task</glossseealso>
+			</glossdef>
+		</glossentry>
+		
+		
 		<glossentry id="Program">
 			<glossterm>Program</glossterm>
 			<glossdef>
@@ -139,17 +149,6 @@
 				</para>
 				<glossseealso otherterm="Dictionary">Dictionary of variables
 				</glossseealso>
-			</glossdef>
-		</glossentry>
-	</glossdiv>
-	<glossdiv>
-		<title>W</title>
-		<glossentry id="WorkingNodes">
-			<glossterm>Working nodes</glossterm>
-			<glossdef>
-				<para>Machines used by the maestro to process your tasks.</para>
-				<glossseealso otherterm="Maestro">Maestro</glossseealso>
-				<glossseealso otherterm="Task">Task</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>

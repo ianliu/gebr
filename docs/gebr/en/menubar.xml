@@ -171,7 +171,7 @@
     <section>
       <title>Groups</title>
       <para>It's possible to employ a subset of the machines associated to
-        the maestro<indexterm><primary>Working
+        the maestro<indexterm><primary>Processing
         nodes</primary><secondary>group
         of</secondary></indexterm>. This can be done through the
         creation of groups of machines.</para>
@@ -192,7 +192,7 @@
 
 	<example>
 		<title>
-			<emphasis role="bold">Example to using the groups</emphasis>
+			<emphasis role="bold">Using the groups</emphasis>
 		</title>
 		<para>
 			Using groups is very useful when it's necessary to run a flow in
@@ -201,13 +201,13 @@
 			<xref linkend="flows_detailed_execution" />
 			).
 			That's useful, Because sometimes it's desired save resources from some
-			working node to not overload all of them.
+			processing nodes to not overload all of them.
 		</para>
 
 		<para>
 			For example:
 			<procedure>
-				<step> Choose a subset of working nodes</step>
+				<step> Choose a subset of processing nodes</step>
 				<step> Create a group with them.</step>
 				<step> Give a name for the group.</step>
 				<step>
@@ -248,7 +248,7 @@
 		</para>
 		<para>It's easy to see that the execution was distributed
 			in the nodes of subset (group) chosen by the user and not
-			in all the working nodes.
+			in all the processing nodes.
 		</para>
 	</example>
     </section>

@@ -14,7 +14,7 @@
     <title>Intercommunication between players</title>
 
     <para>GêBR can take benefit of the resources of multiple
-      working nodes. To handle it, GêBR is segmented in three layers:</para>
+      processing nodes. To handle it, GêBR is segmented in three layers:</para>
 
     <itemizedlist>
       <listitem>The local node (the GêBR graphical interface
@@ -29,20 +29,20 @@
       </listitem>
       <listitem>Executors (the nodes
         <indexterm><primary>Node </primary></indexterm>
-        or <emphasis>working nodes</emphasis>), where the jobs are executed.
+        or <emphasis>processing nodes</emphasis>), where the jobs are executed.
       </listitem>
     </itemizedlist>
 
     <note>
       <para>GêBR can be connected to only one maestro at once. Each
 				maestro, in turn, can be connected to many nodes.
-				However, those working nodes must share the file system
+				However, those processing nodes must share the file system
         containing the user's home directory. This is usually provided
         by Network File System (NFS) infrastructure.
       </para>
     </note>
 
-    <para>GêBR model comprises communications between working nodes (see
+    <para>GêBR model comprises communications between processing nodes (see
       <xref linkend="communication_diagram"/>), namely:
     </para>
 
@@ -151,13 +151,13 @@
       parallelizable (given some criteria, shown below), the execution performance 
       based on the number of processors can be adjusted.</para>
 
-		<para>GêBR also takes advantage of the number of working
-			nodes connected to the user's maestro. The resources of every
+		<para>GêBR also takes advantage of the number of 
+			processing nodes connected to the user's maestro. The resources of every
 			node can be effectively employed to improve the performance.</para>
 
     <para>Accordingly, GêBR can parallelize the flow if:
     <itemizedlist>
-			<listitem>the working node has a multi-core architecture or;</listitem>
+			<listitem>the processing node has a multi-core architecture or;</listitem>
 			<listitem>the maestro is connected to multiple nodes.</listitem>
 		</itemizedlist>
 		and if the flow is parallelizable.
@@ -237,7 +237,7 @@
       it doesn't have a challenger for the computer resources, then
       both states corresponds to the same situation.  This is the
       "nightly job" situation, when (theoretically) no one is using
-      the working nodes and some jobs are left to be done for the next
+      the processing nodes and some jobs are left to be done for the next
       morning.</para>
   </section>
 
@@ -534,8 +534,8 @@
 		<para>In the maestro/nodes interface, in the MPI column, an icon
       indicates whether the node supports MPI. Roll over
       the icon to check the flavors of MPI available on that
-      working nodes. The parallel program can be executed just on 
-      working nodes that support the same flavor as the one used in it.
+      processing nodes. The parallel program can be executed just on 
+      processing nodes that support the same flavor as the one used in it.
     </para>
 
     <figure>
@@ -600,7 +600,7 @@
   <section xml:id="technical_aspects_nodes_environment_variable">
   <title> Administrative nodes suggestion </title>
 		<para>
-			Additionally, GêBR can also automatically add working nodes. This
+			Additionally, GêBR can also automatically add processing nodes. This
 			configuration can be done through a file in the path
 			<code>/etc/gebr/servers.conf</code>.
 		</para>
@@ -619,7 +619,7 @@
 				]]>
 	</programlisting>
 		<para>
-			, then for every user with that maestro, the working nodes node1, node2 and node3
+			then for every user with that maestro, the processing nodes node1, node2 and node3
 			will be available.
 		</para>
 		</para>
