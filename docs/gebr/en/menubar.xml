@@ -175,12 +175,13 @@
         nodes</primary><secondary>group
         of</secondary></indexterm>. This can be done through the
         creation of groups of machines.</para>
-			<para>In the bottom part of the Maestro/Nodes interface (see
-        <xref linkend="maestro_server_dialog" />), the user can
-        create/edit nodes groups. The user must Drag and Drop the
-        node to create a group.</para>
-      <para>To create a group, the user needs to click over a node
-        in the list and drag it to the 
+		
+		<para>The administration of the groups is in the bottom part 
+			of the Maestro/Nodes interface (see <xref linkend="maestro_server_dialog" />). 
+		</para>
+        
+        <para>To create a group, the user needs to click over a node
+        in the list and drag it to the  
         <inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../../common-images/group.png" />
@@ -190,6 +191,10 @@
         with same names are not accepted.</para>
 
       <!-- What happens when a group is created? How is it used? -->
+      <para><enphasis role="bold">Example of using group</enphasis></para>
+      
+      <para>example here.</para>
+      
     </section>
   </section>
 </chapter>
