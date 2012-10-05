@@ -392,7 +392,7 @@
           sequence.</caption>
         <imageobject>
 					<imagedata fileref="../images/GeBR_flow_editor_input_file.png"
-						contentwidth="294px" contentdepth="120px" />
+						contentwidth="278px" contentdepth="129px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -437,7 +437,7 @@
         </caption>
         <imageobject>
 					<imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"
-						contentwidth="289px" contentdepth="342px" />
+						contentwidth="284px" contentdepth="362px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -1060,7 +1060,7 @@
 	      to a flow and properly configured.</caption>
 	      <imageobject>
 					<imagedata fileref="../images/GeBR_flow_editor_loop.png" 
-						contentwidth="285px" contentdepth="147px" />
+						contentwidth="277px" contentdepth="149px" />
 	      </imageobject>
 	    </mediaobject>
 	    </figure>

@@ -526,8 +526,8 @@
 
     <figure>
       <title>Indication of MPI availability</title>
-			<imagedata fileref="../images/GeBR_servers_mpi.png"  contentwidth="355px"
-				contentdepth="122px" />
+			<imagedata fileref="../images/GeBR_servers_mpi.png"
+				contentwidth="360px" contentdepth="142px" />
       <caption>The second column indicates the types (flavors) of MPI
 	available in the nodes.</caption>
     </figure>
@@ -633,5 +633,8 @@
         </imageobject>
       </mediaobject>
     </figure>
+		<para>
+
+		</para>
   </section>
 </chapter>
