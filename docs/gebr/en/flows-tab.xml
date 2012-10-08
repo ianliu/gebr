@@ -305,7 +305,7 @@
 	</section>
 
 	<section xml:id="flows_change_program_state">
-		<title>Changing a program's state</title>
+		<title>Program states</title>
 
 		<para>Programs can be in two states only, <emphasis role="bold">Enabled</emphasis> (
 			<guiicon>
@@ -922,7 +922,7 @@
 		</section>
 
 		<section xml:id="flows_detailed_execution">
-			<title>Run and Setup</title>
+			<title>Setup and run</title>
 			<para>
 				Many execution details can be set before triggering a job. After setting, click on Run to execute the job. 
 			</para>
