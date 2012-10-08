@@ -23,7 +23,7 @@
 				parts: left and right panels.</caption>
         <imageobject>
 					<imagedata fileref="../images/GeBR_flows_tab.png"
-						contentwidth="795px" contentdepth="535px"/>
+						contentwidth="820px" contentdepth="566px"/>
         </imageobject>
       </mediaobject>
     </figure>
@@ -387,7 +387,7 @@
           sequence.</caption>
         <imageobject>
 					<imagedata fileref="../images/GeBR_flow_editor_input_file.png"
-						contentwidth="278px" contentdepth="129px" />
+						contentwidth="377px" contentdepth="201px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -634,14 +634,15 @@
 		   <caption>In this view, the user can perform various actions in the snapshots,
 		   like revert, delete and run</caption>
 	       <imageobject>
-			 <imagedata fileref="../images/GeBR_snapshot_example.png"  contentwidth="763px" contentdepth="634px" />
+					 <imagedata fileref="../images/GeBR_snapshot_example.png"
+						 contentwidth="566px" contentdepth="527px" />
 		   </imageobject>
 		  </mediaobject>
 		 </figure>
 		 
 		<para>The graph indicates from which version each snapshot was derived from. 
-			For instance, in the graph of the figure, is possible to see that the snapshot 'B' was 
-			based on the snapshot 'A'. 
+			The start of arrow indicates the origin and the end indicates the modified
+			version.
 		</para>
 		 
 		 <caution>
@@ -1080,7 +1081,7 @@
 	      to a flow and properly configured.</caption>
 	      <imageobject>
 					<imagedata fileref="../images/GeBR_flow_editor_loop.png" 
-						contentwidth="277px" contentdepth="149px" />
+						contentwidth="284px" contentdepth="147px" />
 	      </imageobject>
 	    </mediaobject>
 	    </figure>

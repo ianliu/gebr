@@ -181,7 +181,7 @@
       <mediaobject>
         <imageobject>
 					<imagedata fileref="../images/GeBR_jc_left_pane.png"
-						contentwidth="247px" contentdepth="274px" />
+						contentwidth="287px" contentdepth="213px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -255,8 +255,8 @@
     <title>Jobs outputs</title>
     <mediaobject>
       <imageobject>
-				<imagedata fileref="../images/GeBR_jc_output.png"  contentwidth="503px"
-					contentdepth="336px" />
+				<imagedata fileref="../images/GeBR_jc_output.png"
+					contentwidth="546px" contentdepth="425px" />
       </imageobject>
     </mediaobject>
     <caption>Screenshot of the outputs of a job.</caption>
