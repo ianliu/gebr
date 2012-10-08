@@ -1315,7 +1315,8 @@ on_line_back_clicked(GtkButton *button,
 	gebr_interface_change_tab(NOTEBOOK_PAGE_PROJECT_LINE);
 }
 
-GebrUiFlowBrowse *flow_browse_setup_ui()
+GebrUiFlowBrowse *
+flow_browse_setup_ui()
 {
 	GebrUiFlowBrowse *ui_flow_browse;
 
@@ -1350,18 +1351,24 @@ GebrUiFlowBrowse *flow_browse_setup_ui()
 	 */
 
 	/* View with flows and programs */
-	GtkWidget* left_side = gtk_vbox_new(FALSE, 0);
+	GtkWidget *top_box = gtk_hbox_new(FALSE, 5);
+	GtkWidget *left_side = gtk_vbox_new(FALSE, 0);
 	GtkWidget *frame = gtk_frame_new(NULL);
 	GtkWidget *button = gtk_button_new();
 	GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+	GtkWidget *title_label = gtk_label_new(_("None"));
 	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_BUTTON);
 
 	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 5);
-	ui_flow_browse->flows_line_label = gtk_label_new("None");
-	ui_flow_browse->left_panel = left_side;
-	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->flows_line_label, TRUE, TRUE, 5);
 	gtk_container_add(GTK_CONTAINER(button), hbox);
-	gtk_frame_set_label_widget(GTK_FRAME(frame), button);
+
+	ui_flow_browse->flows_line_label = title_label;
+	ui_flow_browse->left_panel = left_side;
+
+	gtk_box_pack_start(GTK_BOX(top_box), button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(top_box), title_label, FALSE, FALSE, 0);
+
+	gtk_frame_set_label_widget(GTK_FRAME(frame), top_box);
 	g_signal_connect(button, "clicked", G_CALLBACK(on_line_back_clicked), ui_flow_browse);
 
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
