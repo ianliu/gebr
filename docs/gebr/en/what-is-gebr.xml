@@ -157,7 +157,7 @@
 	  <listitem>
 	    The variables dictionary and the program parameters accept
 	    arithmetic expressions (see section
-	    <xref linkend="technical_aspects_dictionary_variables"/>).
+	    <xref linkend="flows_dictionary_variables"/>).
 	  </listitem>
 	  <listitem>
 	    Repetitive processes can be automatized by the use of
