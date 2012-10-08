@@ -418,14 +418,14 @@
     </note>
   </section>
 
-  <section xml:id="projects_lines_edit_comments_project">
-    <title>Editing comments</title>
+  <section xml:id="projects_lines_report">
+    <title>Report</title>
 
     <para>
       Projects and lines can be commented and have an automatic report
       <indexterm><primary>Report</primary><secondary>of a project</secondary></indexterm>
       <indexterm><primary>Report</primary><secondary>of a line</secondary></indexterm>
-      generation. To do edit their commentaries, follow the steps:</para>
+      generation. To edit their commentaries, follow the steps:</para>
 
     <procedure>
       <step>
@@ -465,15 +465,12 @@
       </mediaobject>
     </figure>
     
-  </section>
 
-  <section xml:id="projects_lines_view_report_project">
-    <title>Viewing reports</title>
-
-    <para>As explained in the above section, a report can be edited
-      providing additional information about the project or line. To view the
-      report click on the <guibutton>More</guibutton> button on the toolbar and
-      then select <guilabel>View Report</guilabel>.</para>
+		<para>The report can be visualized by clicking over
+          <menuchoice>
+            <guimenu>More</guimenu>
+            <guisubmenu>View Report</guisubmenu>
+          </menuchoice>.</para>
 
     <figure>
       <title>View Report</title>
@@ -492,29 +489,6 @@
       has some functionalities that are mentioned below:</para>
 
     <variablelist>
-      <varlistentry>
-        <term>
-          <menuchoice>
-            <guimenu>File</guimenu>
-            <guisubmenu>Save</guisubmenu>
-          </menuchoice>
-        </term>
-        <listitem>
-          <para>Saves the report as an HTML file;</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <menuchoice>
-            <guimenu>File</guimenu>
-            <guisubmenu>Print</guisubmenu>
-          </menuchoice>
-        </term>
-        <listitem>
-          <para>Prints the report;</para>
-        </listitem>
-      </varlistentry>
-
       <varlistentry>
         <term>
           <menuchoice>
