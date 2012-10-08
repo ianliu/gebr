@@ -101,7 +101,7 @@
                       <object class="GtkLabel" id="order_label">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Execute this batch &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after some job&lt;/i&gt;?</property>
+                        <property name="label" translatable="yes">Execute this batch of flows &lt;i&gt;immediatelly&lt;/i&gt; or &lt;i&gt;after the conclusion of some job&lt;/i&gt;?</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -167,7 +167,7 @@
                               <object class="GtkLabel" id="servers_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">In which set of nodes should this batch be executed?</property>
+                                <property name="label" translatable="yes">In which group of nodes should this batch be executed?</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>

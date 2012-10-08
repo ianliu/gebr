@@ -10,14 +10,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-08 13:31-0300\n"
-"PO-Revision-Date: 2012-10-08 13:39-0300\n"
+"POT-Creation-Date: 2012-10-08 14:53-0300\n"
+"PO-Revision-Date: 2012-10-08 14:58-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: \n"
 
 #: ../callbacks.c:247
 msgid ""
@@ -62,22 +62,152 @@ msgid "Line's maestro disconnected"
 msgstr "Maestro desconectado"
 
 #: ../data/document-properties.glade.h:1
-msgid "Title"
-msgstr "Título"
+msgid "<b>Author:</b>"
+msgstr "<b>Autor:</b>"
 
 #: ../data/document-properties.glade.h:2
-msgid "Description"
-msgstr "Descrição"
+msgid "<b>BASE:</b>"
+msgstr "<b>BASE:</b>"
 
 #: ../data/document-properties.glade.h:3
+msgid "<b>Description:</b>"
+msgstr "<b>Descrição:</b>"
+
+#: ../data/document-properties.glade.h:4
+msgid "<b>Directories hierarchy</b>"
+msgstr "<b>Hierarquia de Diretórios </b>"
+
+#: ../data/document-properties.glade.h:5
+msgid "<b>E-mail:</b>"
+msgstr "<b>E-mail:</b>"
+
+#: ../data/document-properties.glade.h:6
+msgid "<b>IMPORT:</b>"
+msgstr "<b>IMPORT:</b>"
+
+#: ../data/document-properties.glade.h:7
+msgid "<b>Maestro:</b>"
+msgstr "<b>Maestro:</b>"
+
+#: ../data/document-properties.glade.h:8
+msgid "<b>Title:</b>"
+msgstr "<b>Título:</b>"
+
+#: ../data/document-properties.glade.h:9 ../data/line-properties.glade.h:4
+msgid "<i>&lt;BASE&gt;</i>"
+msgstr "<i>&lt;BASE&gt;</i>"
+
+#: ../data/document-properties.glade.h:10
+msgid "<i>&lt;BASE&gt;</i>/data"
+msgstr "<i>&lt;BASE&gt;</i>/data"
+
+#: ../data/document-properties.glade.h:11
+msgid "<i>&lt;BASE&gt;</i>/export"
+msgstr "<i>&lt;BASE&gt;</i>/export"
+
+#: ../data/document-properties.glade.h:12
+msgid "<i>&lt;BASE&gt;</i>/misc"
+msgstr "<i>&lt;BASE&gt;</i>/misc"
+
+#: ../data/document-properties.glade.h:13
+msgid "<i>&lt;BASE&gt;</i>/table"
+msgstr "<i>&lt;BASE&gt;</i>/table"
+
+#: ../data/document-properties.glade.h:14
+msgid "<i>&lt;BASE&gt;</i>/tmp"
+msgstr "<i>&lt;BASE&gt;</i>/tmp"
+
+#: ../data/document-properties.glade.h:15
+msgid "<i>&lt;DATA&gt;</i>"
+msgstr "<i>&lt;DATA&gt;</i>"
+
+#: ../data/document-properties.glade.h:16
+msgid "<i>&lt;EXPORT&gt;</i>"
+msgstr "<i>&lt;EXPORT&gt;</i>"
+
+#: ../data/document-properties.glade.h:17
+msgid "<i>&lt;MISC&gt;</i>"
+msgstr "<i>&lt;MISC&gt;</i>"
+
+#: ../data/document-properties.glade.h:18
+msgid "<i>&lt;TABLE&gt;</i>"
+msgstr "<i>&lt;TABLE&gt;</i>"
+
+#: ../data/document-properties.glade.h:19
+msgid "<i>&lt;TMP&gt;</i>"
+msgstr "<i>&lt;TMP&gt;</i>"
+
+#: ../data/document-properties.glade.h:20
+msgid ""
+"<i>BASE</i> is the top directory where most files referred in this line "
+"should be."
+msgstr ""
+"<b>BASE</b> é o diretório raiz onde a maioria dos arquivos vinculados a esta "
+"linha devem estar."
+
+#: ../data/document-properties.glade.h:21
+msgid ""
+"<small>Remember that the processing takes place at the working nodes. So, "
+"the structure which is being defined here will be created there.\n"
+"\n"
+"To be able to browse files in these directory, the <i>remote browse</i> "
+"feature must be enable in the Maestro.</small>"
+msgstr ""
+"<small>Lembre-se que o processamento ocorre nos nós de processamento. Então, "
+"a estrutura definida será criada lá.\n"
+"\n"
+"Para poder navegar no arquivos destes diretórios, a funcionalidade de "
+"<i>navegação remota</i> deve estar habilitada no Maestro.</small>"
+
+#: ../data/document-properties.glade.h:24
 msgid "Author"
 msgstr "Autor"
 
-#: ../data/document-properties.glade.h:4
+#: ../data/document-properties.glade.h:25
+msgid "Description"
+msgstr "Descrição"
+
+#: ../data/document-properties.glade.h:26
 msgid "E-mail"
 msgstr "E-mail"
 
-#: ../data/document-properties.glade.h:5
+#: ../data/document-properties.glade.h:27
+msgid "For exporting data (images, etc.)."
+msgstr "Para exportar dados (imagens, etc.)"
+
+#: ../data/document-properties.glade.h:28
+msgid "For miscellaneous data."
+msgstr "Dados diversos."
+
+#: ../data/document-properties.glade.h:29
+msgid "For saving Flow's results."
+msgstr "Resultados."
+
+#: ../data/document-properties.glade.h:30
+msgid "For saving tabular data."
+msgstr "Dados tabulares."
+
+#: ../data/document-properties.glade.h:31
+msgid "For temporary files."
+msgstr "Arquivos temporários"
+
+#: ../data/document-properties.glade.h:32
+msgid "Paths to store:"
+msgstr "Caminhos para armazenar:"
+
+#: ../data/document-properties.glade.h:33
+msgid ""
+"The <b>IMPORT</b> directory is used to find files outside your <b>BASE</b> "
+"directory."
+msgstr ""
+"O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu diretório "
+"<b>BASE</b>."
+
+#: ../data/document-properties.glade.h:34
+msgid "Title"
+msgstr "Título"
+
+#: ../data/document-properties.glade.h:35
 msgid ""
 "To better manage all files read or created during the processing of a data, "
 "GêBR defines a directory structure to store them.\n"
@@ -98,157 +228,117 @@ msgstr ""
 "Embora não seja obrigatório aderir a esta estrutura, é altamente recomendado "
 "fazer isso."
 
-#: ../data/document-properties.glade.h:10
-msgid ""
-"<i>BASE</i> is the top directory where most files referred in this line "
-"should be."
-msgstr ""
-"<b>BASE</b> é o diretório raiz onde a maioria dos arquivos vinculados a esta "
-"linha devem estar."
-
-#: ../data/document-properties.glade.h:11
-msgid ""
-"<small>Remember that the processing takes place at the working nodes. So, "
-"the structure which is being defined here will be created there.\n"
-"\n"
-"To be able to browse files in these directory, the <i>remote browse</i> "
-"feature must be enable in the Maestro.</small>"
-msgstr ""
-"<small>Lembre-se que o processamento ocorre nos nós de processamento. Então, "
-"a estrutura definida será criada lá.\n"
-"\n"
-"Para poder navegar no arquivos destes diretórios, a funcionalidade de "
-"<i>navegação remota</i> deve estar habilitada no Maestro.</small>"
-
-#: ../data/document-properties.glade.h:14
-msgid "<b>Directories hierarchy</b>"
-msgstr "<b>Hierarquia de Diretórios </b>"
-
-#: ../data/document-properties.glade.h:15 ../data/line-properties.glade.h:2
-msgid "<i>&lt;BASE&gt;</i>"
-msgstr "<i>&lt;BASE&gt;</i>"
-
-#: ../data/document-properties.glade.h:16
-msgid "<i>&lt;DATA&gt;</i>"
-msgstr "<i>&lt;DATA&gt;</i>"
-
-#: ../data/document-properties.glade.h:17
-msgid "<i>&lt;TMP&gt;</i>"
-msgstr "<i>&lt;TMP&gt;</i>"
-
-#: ../data/document-properties.glade.h:18
-msgid "<i>&lt;EXPORT&gt;</i>"
-msgstr "<i>&lt;EXPORT&gt;</i>"
-
-#: ../data/document-properties.glade.h:19
-msgid "<i>&lt;TABLE&gt;</i>"
-msgstr "<i>&lt;TABLE&gt;</i>"
-
-#: ../data/document-properties.glade.h:20
-msgid "<i>&lt;MISC&gt;</i>"
-msgstr "<i>&lt;MISC&gt;</i>"
-
-#: ../data/document-properties.glade.h:21
-msgid "<i>&lt;BASE&gt;</i>/data"
-msgstr "<i>&lt;BASE&gt;</i>/data"
-
-#: ../data/document-properties.glade.h:22
-msgid "<i>&lt;BASE&gt;</i>/tmp"
-msgstr "<i>&lt;BASE&gt;</i>/tmp"
-
-#: ../data/document-properties.glade.h:23
-msgid "<i>&lt;BASE&gt;</i>/export"
-msgstr "<i>&lt;BASE&gt;</i>/export"
-
-#: ../data/document-properties.glade.h:24
-msgid "<i>&lt;BASE&gt;</i>/table"
-msgstr "<i>&lt;BASE&gt;</i>/table"
-
-#: ../data/document-properties.glade.h:25
-msgid "<i>&lt;BASE&gt;</i>/misc"
-msgstr "<i>&lt;BASE&gt;</i>/misc"
-
-#: ../data/document-properties.glade.h:26
-msgid "For saving Flow's results."
-msgstr "Resultados."
-
-#: ../data/document-properties.glade.h:27
-msgid "For temporary files."
-msgstr "Arquivos temporários"
-
-#: ../data/document-properties.glade.h:28
-msgid "For exporting data (images, etc.)."
-msgstr "Para exportar dados (imagens, etc.)"
-
-#: ../data/document-properties.glade.h:29
-msgid "For saving tabular data."
-msgstr "Dados tabulares."
-
-#: ../data/document-properties.glade.h:30
-msgid "For miscellaneous data."
-msgstr "Dados diversos."
-
-#: ../data/document-properties.glade.h:31
-msgid ""
-"The <b>IMPORT</b> directory is used to find files outside your <b>BASE</b> "
-"directory."
-msgstr ""
-"O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu diretório "
-"<b>BASE</b>."
-
-#: ../data/document-properties.glade.h:32
-msgid "Paths to store:"
-msgstr "Caminhos para armazenar:"
-
-#: ../data/document-properties.glade.h:33
-msgid "flow's results"
-msgstr "resultados dos fluxos"
-
-#: ../data/document-properties.glade.h:34
-msgid "temporary files"
-msgstr "arquivos temporários"
-
-#: ../data/document-properties.glade.h:35
-msgid "exported data (images, etc.)"
-msgstr "dados exportados (imagens, etc.)"
-
-#: ../data/document-properties.glade.h:36
-msgid "tables"
-msgstr "tabelas"
-
-#: ../data/document-properties.glade.h:37
+#: ../data/document-properties.glade.h:40
 msgid "everything else"
 msgstr "todo o resto"
 
-#: ../data/document-properties.glade.h:38
-msgid "<b>Title:</b>"
-msgstr "<b>Título:</b>"
-
-#: ../data/document-properties.glade.h:39
-msgid "<b>Description:</b>"
-msgstr "<b>Descrição:</b>"
-
-#: ../data/document-properties.glade.h:40
-msgid "<b>Author:</b>"
-msgstr "<b>Autor:</b>"
-
 #: ../data/document-properties.glade.h:41
-msgid "<b>E-mail:</b>"
-msgstr "<b>E-mail:</b>"
+msgid "exported data (images, etc.)"
+msgstr "dados exportados (imagens, etc.)"
 
 #: ../data/document-properties.glade.h:42
-msgid "<b>Maestro:</b>"
-msgstr "<b>Maestro:</b>"
+msgid "flow's results"
+msgstr "resultados dos fluxos"
 
 #: ../data/document-properties.glade.h:43
-msgid "<b>BASE:</b>"
-msgstr "<b>BASE:</b>"
+msgid "tables"
+msgstr "tabelas"
 
 #: ../data/document-properties.glade.h:44
-msgid "<b>IMPORT:</b>"
-msgstr "<b>IMPORT:</b>"
+msgid "temporary files"
+msgstr "arquivos temporários"
 
 #: ../data/gebr-connections-settings.glade.h:1
+#: ../data/gebr-maestro-dialog.glade.h:2
+msgid "<b>Maestro</b>"
+msgstr "<b>Maestro</b>"
+
+#: ../data/gebr-connections-settings.glade.h:2
+msgid ""
+"<b>Maestro</b> is in between the GêBR and the working nodes. It receives all "
+"requests for flow execution and dispatches them to groups of nodes.\n"
+"\n"
+"Without interference, Maestro collects information about the state of each "
+"node and ranks them according to their capabilities and available resources "
+"at time. Therefore, Maestro can take smart decisions about which nodes are "
+"best suited to run a processing flow."
+msgstr ""
+"O <b>Maestro</b> está entre a GêBR e os nós de processamento. Ele recebe as "
+"requisições para execução dos fluxos e envia para um grupo de nós de "
+"processamento.\n"
+"\n"
+"Sem interferência, o Maestro coleta informações sobre o estado de cada "
+"máquina e classifica-a de acordo com suas capacidades e recursos disponíveis "
+"no momento. Portanto, o Maestro pode tomar decisões inteligentes sobre quais "
+"servidores são mais adequados para executar cada fluxo."
+
+#: ../data/gebr-connections-settings.glade.h:5
+msgid "<b>Preferences</b>"
+msgstr "<b>Preferências</b>"
+
+#: ../data/gebr-connections-settings.glade.h:6
+msgid "<b>Remote browsing</b>"
+msgstr "<b>Navegação Remota</b>"
+
+#: ../data/gebr-connections-settings.glade.h:7
+msgid "<b>Working nodes</b>"
+msgstr "<b>Nós de processamento</b>"
+
+#: ../data/gebr-connections-settings.glade.h:8
+msgid ""
+"<i>A Maestro without nodes is like a general without soldiers.</i>\n"
+"\n"
+"The <i>working nodes</i> are the ones who actually execute the processing "
+"flows. They put their computational power at disposal of the Maestro, which "
+"coordinates them to cooperate to conclude processing jobs faster."
+msgstr ""
+"<i>Um maestro sem nós de processamento é como um general sem soldados.</i>\n"
+"\n"
+"<b>Nós de processamento</b> representam onde os fluxos de processamento são "
+"realmente executados. Eles colocam seu poder computacional a disposição do "
+"Maestro, o qual os coordena para cooperar e concluir o execução das tarefas "
+"mais rapidamente."
+
+#: ../data/gebr-connections-settings.glade.h:11
+msgid "<i>here.</i>"
+msgstr "<i>aqui</i>"
+
+#: ../data/gebr-connections-settings.glade.h:12
+msgid "Choose one maestro to proceed"
+msgstr "Escolha um maestro para prosseguir"
+
+#: ../data/gebr-connections-settings.glade.h:13
+msgid "Connect"
+msgstr "Conectar"
+
+#: ../data/gebr-connections-settings.glade.h:14
+msgid "Connect All"
+msgstr "Conectar Todos"
+
+#: ../data/gebr-connections-settings.glade.h:15
+msgid "Email"
+msgstr "Email"
+
+#: ../data/gebr-connections-settings.glade.h:16 ../interface.c:164
+#: ../ui_flow_program.c:171
+msgid "Enable"
+msgstr "Ativar"
+
+#: ../data/gebr-connections-settings.glade.h:17
+msgid ""
+"Every processing flow in GêBR runs on nodes, which may be elsewhere. "
+"<i>Remote browsing</i> is a feature that allows the user to see the files "
+"generated on the nodes.\n"
+"\n"
+"To enable this feature your login password may be asked."
+msgstr ""
+"Cada fluxo de processamento na GêBR é executado pelos nós de processamento. "
+"A <i>navegação remota</i> é uma funcionalidade que permite ao usuário ver os "
+"arquivos gerados nas máquinas de processamento.\n"
+"\n"
+"Para habilitar esta funcionalidade, sua senha de login pode ser requisitada."
+
+#: ../data/gebr-connections-settings.glade.h:20
 msgid ""
 "GêBR needs to establish a connection to a Maestro to send jobs and receive "
 "outputs.\n"
@@ -280,92 +370,7 @@ msgstr ""
 "deste método pode ser feita a qualquer hora, através de uma caixa de "
 "seleção, sempre que sua senha é solicitada.</i></small>"
 
-#: ../data/gebr-connections-settings.glade.h:8
-msgid "Choose one maestro to proceed"
-msgstr "Escolha um maestro para prosseguir"
-
-#: ../data/gebr-connections-settings.glade.h:9
-msgid "User name"
-msgstr "Nome do Usuário"
-
-#: ../data/gebr-connections-settings.glade.h:10
-msgid "Email"
-msgstr "Email"
-
-#: ../data/gebr-connections-settings.glade.h:11
-msgid "User's menus directory"
-msgstr "Diretório de menus do usuário"
-
-#: ../data/gebr-connections-settings.glade.h:12
-msgid ""
-"To establish each connection, your login credentials may be asked.\n"
-"\n"
-"<small><i>This connection process can be extremely simplified  using an "
-"alternative authetication method based on public keys. The adoption of this "
-"method may be done at any time, through a checkbox, whenever your password "
-"is requested.</i></small>"
-msgstr ""
-"Para estabelecer cada conexão, suas informações de login podem ser "
-"solicitadas.\n"
-"\n"
-"<small><i>Este processo de conexão pode ser extremamente simplificado usando "
-"um método alternativo de autenticação baseado em chaves públicas. A adoção "
-"deste método pode ser feita a qualquer hora, através de uma caixa de "
-"seleção, sempre que sua senha é solicitada.</i></small>"
-
-#: ../data/gebr-connections-settings.glade.h:15
-msgid "Connect"
-msgstr "Conectar"
-
-#: ../data/gebr-connections-settings.glade.h:16
-msgid "Connect All"
-msgstr "Conectar Todos"
-
-#: ../data/gebr-connections-settings.glade.h:17
-msgid ""
-"<b>Maestro</b> is in between the GêBR and the working nodes. It receives all "
-"requests for flow execution and dispatches them to groups of nodes.\n"
-"\n"
-"Without interference, Maestro collects information about the state of each "
-"node and ranks them according to their capabilities and available resources "
-"at time. Therefore, Maestro can take smart decisions about which nodes are "
-"best suited to run a processing flow."
-msgstr ""
-"O <b>Maestro</b> está entre a GêBR e os nós de processamento. Ele recebe as "
-"requisições para execução dos fluxos e envia para um grupo de nós de "
-"processamento.\n"
-"\n"
-"Sem interferência, o Maestro coleta informações sobre o estado de cada "
-"máquina e classifica-a de acordo com suas capacidades e recursos disponíveis "
-"no momento. Portanto, o Maestro pode tomar decisões inteligentes sobre quais "
-"servidores são mais adequados para executar cada fluxo."
-
-#: ../data/gebr-connections-settings.glade.h:20
-msgid "More information can be found"
-msgstr "Mais informações podem ser encontradas"
-
-#: ../data/gebr-connections-settings.glade.h:21
-msgid "<i>here.</i>"
-msgstr "<i>aqui.</i>"
-
-#: ../data/gebr-connections-settings.glade.h:22
-msgid "<b>Preferences</b>"
-msgstr "<b>Preferências</b>"
-
-#: ../data/gebr-connections-settings.glade.h:23
-#: ../data/gebr-maestro-dialog.glade.h:2
-msgid "<b>Maestro</b>"
-msgstr "<b>Maestro</b>"
-
-#: ../data/gebr-connections-settings.glade.h:24
-msgid "<b>Working nodes</b>"
-msgstr "<b>Nós de processamento</b>"
-
-#: ../data/gebr-connections-settings.glade.h:25
-msgid "<b>Remote browsing</b>"
-msgstr "<b>Navegação Remota</b>"
-
-#: ../data/gebr-connections-settings.glade.h:26
+#: ../data/gebr-connections-settings.glade.h:27
 msgid ""
 "In this version, GêBR introduces new features that will speed up your "
 "processing flows, like automatic selection of the fastest working node "
@@ -385,141 +390,134 @@ msgstr ""
 "Para aproveitar estes recursos, algumas configurações devem ser feitas. Este "
 "assistente irá guiá-lo através desse processo.\n"
 
-#: ../data/gebr-connections-settings.glade.h:32
-msgid ""
-"Every processing flow in GêBR runs on nodes, which may be elsewhere. "
-"<i>Remote browsing</i> is a feature that allows the user to see the files "
-"generated on the nodes.\n"
-"\n"
-"To enable this feature your login password may be asked."
-msgstr ""
-"Cada fluxo de processamento na GêBR é executado pelos nós de processamento. "
-"A <i>navegação remota</i> é uma funcionalidade que permite ao usuário ver os "
-"arquivos gerados nas máquinas de processamento.\n"
-"\n"
-"Para habilitar esta funcionalidade, sua senha de login pode ser requisitada."
+#: ../data/gebr-connections-settings.glade.h:33
+msgid "More information can be found"
+msgstr "Mais informações podem ser encontradas"
 
-#: ../data/gebr-connections-settings.glade.h:35 ../interface.c:164
-#: ../ui_flow_program.c:171
-msgid "Enable"
-msgstr "Ativar"
-
-#: ../data/gebr-connections-settings.glade.h:36
+#: ../data/gebr-connections-settings.glade.h:34
 msgid ""
-"<i>A Maestro without nodes is like a general without soldiers.</i>\n"
+"To establish each connection, your login credentials may be asked.\n"
 "\n"
-"The <i>working nodes</i> are the ones who actually execute the processing "
-"flows. They put their computational power at disposal of the Maestro, which "
-"coordinates them to cooperate to conclude processing jobs faster."
+"<small><i>This connection process can be extremely simplified  using an "
+"alternative authetication method based on public keys. The adoption of this "
+"method may be done at any time, through a checkbox, whenever your password "
+"is requested.</i></small>"
 msgstr ""
-"<i>Um maestro sem nós de processamento é como um general sem soldados.</i>\n"
+"Para estabelecer cada conexão, suas informações de login podem ser "
+"solicitadas.\n"
 "\n"
-"<b>Nós de processamento</b> representam onde os fluxos de processamento são "
-"realmente executados. Eles colocam seu poder computacional a disposição do "
-"Maestro, o qual os coordena para cooperar e concluir o execução das tarefas "
-"mais rapidamente."
+"<small><i>Este processo de conexão pode ser extremamente simplificado usando "
+"um método alternativo de autenticação baseado em chaves públicas. A adoção "
+"deste método pode ser feita a qualquer hora, através de uma caixa de "
+"seleção, sempre que sua senha é solicitada.</i></small>"
+
+#: ../data/gebr-connections-settings.glade.h:37
+msgid "User name"
+msgstr "Nome do Usuário"
+
+#: ../data/gebr-connections-settings.glade.h:38
+msgid "User's menus directory"
+msgstr "Diretório de menus do usuário"
 
 #: ../data/gebr-execution-details.glade.h:1
-#, fuzzy
-msgid "Execute these flows <i>simultaneously</i> or <i>one after another</i>?"
-msgstr "Executar estes fluxo <i>imediatamente</i> or <i>depois de outra tarefa</i>?"
+msgid "<small>Save preferences</small>"
+msgstr "<small>Salvar preferências</small>"
 
 #: ../data/gebr-execution-details.glade.h:2
-msgid "One after another"
-msgstr "Um após ou outro"
+#, fuzzy
+msgid "Dispute resources"
+msgstr "Esperar por recursos livres."
 
 #: ../data/gebr-execution-details.glade.h:3
+msgid "Execute these flows <i>simultaneously</i> or <i>one after another</i>?"
+msgstr ""
+"Executar estes fluxos <i>simultaneamente</i> ou <i>um após o outro</i>?"
+
+#: ../data/gebr-execution-details.glade.h:4
+msgid ""
+"Execute this batch of flows <i>immediatelly</i> or <i>after the conclusion "
+"of some job</i>?"
+msgstr "Executar este lote de fluxos <i>imediatamente</i> ou <i>após a conclusão de alguma tarefa</i>?"
+
+#: ../data/gebr-execution-details.glade.h:5
+msgid "How should these jobs compete with other processes?"
+msgstr "Como estas tarefas devem competir com outros processos?"
+
+#: ../data/gebr-execution-details.glade.h:6
+msgid "In which group of nodes should this batch be executed?"
+msgstr "Em qual grupos de nós esta tarefa deve ser executada?"
+
+#: ../data/gebr-execution-details.glade.h:7
+msgid "One after another"
+msgstr "Um após o outro"
+
+#: ../data/gebr-execution-details.glade.h:8
 msgid "Simultaneously"
 msgstr "Simultaneamente"
 
-#: ../data/gebr-execution-details.glade.h:4
-#, fuzzy
-msgid "Execute this batch <i>immediatelly</i> or <i>after some job</i>?"
-msgstr "Executar este lote de tarefas <i>imediatamente</i> or <i>depois de alguma tarefa</i>?"
-
-#: ../data/gebr-execution-details.glade.h:5
-#, fuzzy
-msgid "In which set of nodes should this batch be executed?"
-msgstr "Em quais dos grupos de nós esta tarefa deve ser executada?"
-
-#: ../data/gebr-execution-details.glade.h:6
-#, fuzzy
+#: ../data/gebr-execution-details.glade.h:9
 msgid ""
 "The execution of some flows of this batch can be split to speed\n"
 "them up. In how many tasks should they be split?"
 msgstr ""
-"A execução de alguns fluxos deste lote pode ser acelerada dividindo-os.\\n\n"
-"Em quantas partes cada um desses fluxos deve ser dividida?"
-
-#: ../data/gebr-execution-details.glade.h:8
-#, fuzzy
-msgid "How should these jobs compete with other processes?"
-msgstr "Como estas tarefas devem competir com os outros processos?"
-
-#: ../data/gebr-execution-details.glade.h:9
-#, fuzzy
-msgid "Dispute resources"
-msgstr "Esperar por recursos livres"
-
-#: ../data/gebr-execution-details.glade.h:10
-msgid "Wait for free resources"
-msgstr "Esperar por recursos livres."
+"A execução de alguns fluxos pode ser acelerada dividindo-os em partes.\\n\n"
+"Em quantas partes cada um desses fluxos deve ser dividido?"
 
 #: ../data/gebr-execution-details.glade.h:11
-msgid "<small>Save preferences</small>"
-msgstr "<small>Salvar preferências</small>"
+msgid "Wait for free resources"
+msgstr "Esperar por recursos livres"
 
 #: ../data/gebr-job-control.glade.h:1
-msgid "Details"
-msgstr "Detalhes"
-
-#: ../data/gebr-job-control.glade.h:2
 msgid "<b>Executed at:</b>"
 msgstr "<b>Executado em:</b>"
 
-#: ../data/gebr-job-control.glade.h:3 ../flow.c:1754
-msgid "Output"
-msgstr "Saída"
+#: ../data/gebr-job-control.glade.h:2
+msgid "<b>Group/Working Nodes</b>"
+msgstr "<b>Grupo/Nós</b>"
 
-#: ../data/gebr-job-control.glade.h:4
-msgid "Command line"
-msgstr "Linha de comando:"
+#: ../data/gebr-job-control.glade.h:3
+#, fuzzy
+msgid "<b>Job name</b>"
+msgstr "<b>Nome do fluxo</b>"
 
-#: ../data/gebr-job-control.glade.h:5
-msgid "<b>Resources</b>"
-msgstr "<b>Recursos</b>"
-
-#: ../data/gebr-job-control.glade.h:6 ../gebr-job-control.c:1021
+#: ../data/gebr-job-control.glade.h:4 ../gebr-job-control.c:1021
 #, c-format
 msgid "<b>Process distribution among working nodes</b>"
 msgstr ""
 "<b>Distribuição dos processos entre\n"
 "os nós de processamento</b>"
 
-#: ../data/gebr-job-control.glade.h:7
-#, fuzzy
-msgid "<b>Job name</b>"
-msgstr "<b>Nome do Fluxo</b>"
+#: ../data/gebr-job-control.glade.h:5
+msgid "<b>Resources</b>"
+msgstr "<b>Recursos</b>"
 
-#: ../data/gebr-job-control.glade.h:8
-msgid "<b>Group/Working Nodes</b>"
-msgstr "<b>Grupo/Nós</b>"
-
-#: ../data/gebr-job-control.glade.h:9
+#: ../data/gebr-job-control.glade.h:6
 msgid "<b>Status</b>"
 msgstr "<b>Estado</b>"
 
-#: ../data/gebr-maestro-dialog.glade.h:1
-msgid "GêBR - Maestro / Working nodes"
-msgstr "GêBR - Maestro / Nós de processamento"
+#: ../data/gebr-job-control.glade.h:7
+msgid "Command line"
+msgstr "Linha de comando"
 
-#: ../data/gebr-maestro-dialog.glade.h:3
+#: ../data/gebr-job-control.glade.h:8
+msgid "Details"
+msgstr "Detalhes"
+
+#: ../data/gebr-job-control.glade.h:9 ../flow.c:1754
+msgid "Output"
+msgstr "Saída"
+
+#: ../data/gebr-maestro-dialog.glade.h:1
 msgid "<b>Groups</b>"
 msgstr "<b>Grupos</b>"
 
-#: ../data/gebr-maestro-dialog.glade.h:4
+#: ../data/gebr-maestro-dialog.glade.h:3
 msgid "<i>Drop a working node to create a group!</i>"
 msgstr "<i>Arraste um nó para criar um grupo!</i>"
+
+#: ../data/gebr-maestro-dialog.glade.h:4
+msgid "GêBR - Maestro / Working nodes"
+msgstr "GêBR - Maestro / Nós de processamento"
 
 #: ../data/gebr-xdot-graph.py:138
 msgid "Take a Snapshot \tCtrl+S"
@@ -536,7 +534,6 @@ msgstr "Apagar"
 
 #. Sequentially
 #: ../data/gebr-xdot-graph.py:173
-#, fuzzy
 msgid "Run sequentially \t\tCtrl+R"
 msgstr "Executar sequencialmente\t\tCtrl+R"
 
@@ -544,7 +541,7 @@ msgstr "Executar sequencialmente\t\tCtrl+R"
 #: ../data/gebr-xdot-graph.py:178
 #, fuzzy
 msgid "Run simultaneously \t\tCtrl+Shift+R"
-msgstr "Executar paralelamente\t\tCtrl+Shift+R"
+msgstr "Executar simultaneamente\t\tCtrl+Shift+R"
 
 #: ../data/gebr-xdot-graph.py:183
 #, fuzzy
@@ -552,46 +549,58 @@ msgid "Run \t\t\t\tCtrl+R"
 msgstr "Executar\t\t\tCtrl+R"
 
 #: ../data/gebr.desktop.in.in.h:1
-msgid "GêBR"
-msgstr "GêBR"
-
-#: ../data/gebr.desktop.in.in.h:2
-msgid "Seismic processing environment"
-msgstr "Ambiente de processamento sísmico"
-
-#: ../data/gebr.desktop.in.in.h:3
 msgid "Assemble and run flows and manage jobs"
 msgstr "Constrói, executa fluxos e gerencia tarefas"
 
-#: ../data/line-properties.glade.h:1
-msgid "<i>&lt;HOME&gt;</i>"
-msgstr "<i>&lt;HOME&gt;</i>"
+#: ../data/gebr.desktop.in.in.h:2
+msgid "GêBR"
+msgstr "GêBR"
 
-#: ../data/line-properties.glade.h:3
-msgid "<i>&lt;IMPORT&gt;</i>"
-msgstr "<i>&lt;IMPORT&gt;</i>"
+#: ../data/gebr.desktop.in.in.h:3
+msgid "Seismic processing environment"
+msgstr "Ambiente de processamento sísmico"
 
-#: ../data/line-properties.glade.h:4
-msgid "<b>Line Paths:</b>"
-msgstr "<b>Caminhos da linha</b>"
-
-#: ../data/line-properties.glade.h:5 ../data/project-properties.glade.h:1
-msgid "<b>Modified:</b>"
-msgstr "<b>Alterado:</b>"
-
-#: ../data/line-properties.glade.h:6 ../data/project-properties.glade.h:2
+#: ../data/line-properties.glade.h:1 ../data/project-properties.glade.h:1
 msgid "<b>Created:</b>"
 msgstr "<b>Criado:</b>"
 
+#: ../data/line-properties.glade.h:2
+msgid "<b>Line Paths:</b>"
+msgstr "<b>Caminhos da linha</b>"
+
+#: ../data/line-properties.glade.h:3 ../data/project-properties.glade.h:2
+msgid "<b>Modified:</b>"
+msgstr "<b>Alterado:</b>"
+
+#: ../data/line-properties.glade.h:5
+msgid "<i>&lt;HOME&gt;</i>"
+msgstr "<i>&lt;HOME&gt;</i>"
+
+#: ../data/line-properties.glade.h:6
+msgid "<i>&lt;IMPORT&gt;</i>"
+msgstr "<i>&lt;IMPORT&gt;</i>"
+
 #: ../data/mpi-parameters-help.glade.h:1
-msgid "MPI Parameters Help"
-msgstr "Ajuda dos parâmetros MPI"
+msgid "<b>Number of Processes</b>"
+msgstr "<b>Número de Processos</b>"
 
 #: ../data/mpi-parameters-help.glade.h:2
 msgid "<span weight='bold' size='x-large'>MPI Parameters Help</span>"
 msgstr "<span weight='bold' size='x-large'>Ajuda dos parâmetros MPI</span>"
 
 #: ../data/mpi-parameters-help.glade.h:3
+msgid "MPI Parameters Help"
+msgstr "Ajuda dos parâmetros MPI"
+
+#: ../data/mpi-parameters-help.glade.h:4
+msgid ""
+"The number of processes parameter specify how many instances of this MPI "
+"program will be executed. This value comes from the speed slider."
+msgstr ""
+"O número de parâmetros de processo espcifica quantas instâncias deste "
+"programa MPI será executada. Este valor vem da barra de velocidade."
+
+#: ../data/mpi-parameters-help.glade.h:5
 msgid ""
 "These parameters are used to execute MPI programs. Depending on the program, "
 "a different MPI implementation might be used. For now, GêBR supports Open "
@@ -601,29 +610,17 @@ msgstr ""
 "programa, uma implementação de MPI diferente pode ser usada. Atualmente, "
 "GêBR suporta Open MPI e MPICH 2."
 
-#: ../data/mpi-parameters-help.glade.h:4
-msgid "<b>Number of Processes</b>"
-msgstr "<b>Número de Processos</b>"
-
-#: ../data/mpi-parameters-help.glade.h:5
-msgid ""
-"The number of processes parameter specify how many instances of this MPI "
-"program will be executed. This value comes from the speed slider."
-msgstr ""
-"O número de parâmetros de processo espcifica quantas instâncias deste "
-"programa MPI será executada. Este valor vem da barra de velocidade."
-
 #: ../data/snapshot-revert.glade.h:1
-msgid "Reverting modified Flow"
-msgstr "Revertendo a modificação do Fluxo"
-
-#: ../data/snapshot-revert.glade.h:2
 msgid ""
 "<span size=\"large\">This Flow has modifications.\n"
 "</span>"
 msgstr ""
 "<span size=\"large\">Este Fluxo tem modificações.\n"
 "</span>"
+
+#: ../data/snapshot-revert.glade.h:3
+msgid "Reverting modified Flow"
+msgstr "Revertendo a modificação do Fluxo"
 
 #: ../data/snapshot-revert.glade.h:4
 msgid "Take a snapshot and proceed"
