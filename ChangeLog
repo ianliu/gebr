@@ -1,3 +1,335 @@
+2012-10-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change title of RunningParallelization to ParallelizedExecution of
+	English doc
+
+2012-10-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing Working node to Processing node at Help.
+	* Adding tag <example> at examples of Help.
+
+2012-10-05  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixing sentence about programs with errors in case of one program
+	with error
+
+2012-10-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add explanation of IMPORT line path of the English doc
+
+2012-10-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Removing expression not informative from Help.
+
+2012-10-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Replace an image by a list in section 7 of English documentation
+
+2012-10-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some problems in flows section
+
+2012-10-05  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed snapshots in centos 5. (Fixes issue 1318)
+
+2012-10-05  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* docs:Fixing dictionary of variables
+
+2012-10-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve example for groups in menubar section
+
+2012-10-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update images used/unused in English documentation
+
+2012-10-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding an example of tousing groups.
+
+2012-10-05  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Enlightenment on the definition of project, line, flows, etc
+	* Better explanation of the basic purpose of GêBR
+
+2012-10-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve text of groups on menubar section.
+
+2012-10-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding example of dictionary at "Technical aspects" section of Help.
+
+2012-10-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor fixes in images update
+
+2012-10-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Checking examples of snapshot and parallelization at section "The
+	Flows tab" of Help.
+
+2012-10-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validate a flow and their programs after revert to snapshot
+	* Add example for parallel execution on Execution a flow section
+	* Add example to using snapshot on Flow's section
+	* Fix index for Working nodes
+	* Add Snapshot and flow executing on index
+	* Add hard shadow on some images and change their sizes
+	* Add menu-list-icon on makefile
+	* Fix size of maestro_server_overview image on section Menu Bar
+	* Improve glossary of English report
+
+2012-10-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update images sizes in xml
+
+2012-10-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating glossary section of Help.
+	* Reviewing sections "The Flows Tab" of Help.
+
+2012-10-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update last images of English doc
+
+2012-10-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Initial version of glossary in English report
+
+2012-10-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Reviewing section "The Projects and Lines tab" in Help.
+
+2012-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: improve flows_create_flow
+
+2012-10-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed many problems with validation of a flow and their programs,
+	when edit I/O and make changes in variables
+	* Remove unnecessary method to revalidate programs
+
+2012-10-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating section "What's new" of Help.
+
+2012-10-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update images of sections 06-07 of English doc
+
+2012-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: update expanded/collapsed icons
+	* doc: add section to explain the menus list
+	* doc: revised Flows Tab introduction
+	* doc: fix some indentation in flows-tab section
+
+2012-10-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update images of sections 01-05 of English doc
+
+2012-10-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Typo fixed: s/there/were/
+
+2012-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: remove "Index" title in Projects and Lines tab
+
+2012-10-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.5 for changeset 445e107b5c40
+	* Merge 0.19.5 package fixes and user guide review.
+
+2012-10-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add explanation of the Details view of the Flows tab in English doc
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add explain about jobs created through snapshots on Jobs section
+
+2012-10-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add section FollowingTheExecution to the English doc
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvements on section of technical aspects in English report
+
+2012-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: revised projects_lines_view_report_project
+
+2012-10-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving "What's new" section of documentation.
+
+2012-10-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Update link to the latest online user guide.
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Escape special character on comments in GêBR
+
+2012-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: revised projects_lines_edit_comments_project
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Revalidate flows when load flows of a line
+	* Add method to revalidate flows
+
+2012-10-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving chapter of Flow's Tab documentation.
+
+2012-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: invert order of Projects and Lines import/export
+	* doc: revised projects_lines_export
+	* doc: revised projects_lines_import
+	* doc: revised projects_lines_line_paths
+	* doc: revised projects_lines_change_the_maestro_of_a_line
+	* doc: revised projects_lines_edit_properties
+	* doc: revised projects_lines_delete
+	* doc: revised projects_lines_create_lines
+	* doc: revised projects_lines_create_projects section
+	* doc: improve projects and lines tab intro
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve snapshot section of Flows on English report
+
+2012-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: fix spelling of E-mail
+	* doc: indentation fixes
+
+2012-10-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Avoiding execution when no flow is selected.
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change parallely run to simultaneously run on snapshots and context
+	menu of flows
+
+2012-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: fix extra space befor punctuation
+	* doc: standardize capitalization of definition lists
+	* doc: bump version in "Technical Information"
+
+2012-10-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Eliminate occurences of capitalized terms
+	Project/Line/Flow/Program/Maestro/Node
+
+2012-10-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Review sections WhatsNew and Concepts of English doc
+	* Fix broken links of English doc
+
+2012-10-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating the help section about snapshots.
+
+2012-10-02  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Small correction on last commit
+	* Reviewing the doc section about Detailed Execution
+
+2012-10-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: explain the right-hand side of Projects and Lines tab
+	* doc: remove reference to "View Report" and "Edit Comments" buttons
+	* doc: fix indentation
+	* doc: fix capitalization of Maestro and list definitions
+	* doc: indentation fix
+	* doc: improve interaction of maestro and its nodes when executing
+	flows
+	* doc: fix indentation and capitalization of Maestro
+	* doc: shorten the caption of communication_diagram
+	* doc: improve maestro explanation
+
+2012-10-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve subsection Executing a flow on section flows tab of English
+	report
+
+2012-10-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: indent and capitalization of Maestro fix
+
+2012-10-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: fix symbolic link for icons
+
+2012-10-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: fix indentation
+	* doc: shorten list of parameter types
+
+2012-10-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modify section Technical Aspects of En documentation
+
+2012-10-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: improve caption at program_versus_menu
+	* doc: decapitalize "Menus" and correct indentation
+	* doc: remove he/she references
+	* doc: fix capitalization of projects, lines, flows and menus
+	* doc: fix capitalization of projects, lines and flows
+
+2012-10-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing spacing in context menu of snapshot.
+
+2012-10-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* doc: add glossary section in english user-doc
+
+2012-10-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add api documentation of method create_maestro_chooser_model
+
+2012-10-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Mix sections Flows and Flow_Editor of English report
+
+2012-10-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change niceness label of DetailedExecution
+
+2012-10-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add image of group.png in common images
+
+2012-10-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve menubar section of English report
+	* Improve and change section name job_control to jobs
+	* Change link of flows_browse and flows_tab to flows (apply pattern)
+	* Improve and fix some problems on section projects_lines of English
+	report
+
+2012-10-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modify WhatsNew section of documentation
+
+2012-10-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve section concepts on Help in English
+
 2012-10-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Fixed removed and renamed dev documentation references.

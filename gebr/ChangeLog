@@ -1,3 +1,41 @@
+2012-10-05  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed snapshots in centos 5. (Fixes issue 1318)
+
+2012-10-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validate a flow and their programs after revert to snapshot
+	* Fixed many problems with validation of a flow and their programs,
+	when edit I/O and make changes in variables
+	* Remove unnecessary method to revalidate programs
+
+2012-10-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: remove "Index" title in Projects and Lines tab
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Revalidate flows when load flows of a line
+	* Add method to revalidate flows
+
+2012-10-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Avoiding execution when no flow is selected.
+
+2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change parallely run to simultaneously run on snapshots and context
+	menu of flows
+
+2012-10-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing spacing in context menu of snapshot.
+
+2012-10-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add api documentation of method create_maestro_chooser_model
+	* Change niceness label of DetailedExecution
+
 2012-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Revalidate flows when load flows of a line

@@ -1,3 +1,9 @@
+gebrproject (0.19.6) lucid; urgency=low
+
+  * Updated user's guide for the next release. (#1317)
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 08 Oct 2012 11:08:05 -0300
+
 gebrproject (0.19.5) lucid; urgency=low
 
   * Powered Flows Tab with:
