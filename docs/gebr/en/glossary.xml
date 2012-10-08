@@ -6,7 +6,7 @@
 		<glossentry id="Client">
 			<glossterm>Client</glossterm>
 			<glossdef>
-				<para>The machine which is running GêBR.</para>
+				<para>Host machine of GêBR.</para>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -15,7 +15,7 @@
 		<glossentry id="Dictionary">
 			<glossterm>Dictionary of variables</glossterm>
 			<glossdef>
-				<para>Where the variables are defined.</para>
+				<para>Place where the variables are defined.</para>
 				<glossseealso otherterm="Variable">Variable</glossseealso>
 			</glossdef>
 		</glossentry>
@@ -25,7 +25,7 @@
 		<glossentry id="Flow">
 			<glossterm>Flow</glossterm>
 			<glossdef>
-				<para>A sequence of programs that may transform the input data.
+				<para>Sequence of operations over over an input data.
 				</para>
 				<glossseealso otherterm="Program">Program</glossseealso>
 			</glossdef>
@@ -47,7 +47,7 @@
 		<glossentry id="Job">
 			<glossterm>Job</glossterm>
 			<glossdef>
-				<para>A flow submitted to execution, thus, a running flow.</para>
+				<para>Flow submitted to execution.</para>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -56,7 +56,7 @@
 		<glossentry id="Line">
 			<glossterm>Line</glossterm>
 			<glossdef>
-				<para>Set that organizes and clusters seismic flows.</para>
+				<para>Seismic data composed of processing flows.</para>
 				<glossseealso otherterm="Flow">Flow</glossseealso>
 			</glossdef>
 		</glossentry>
@@ -66,8 +66,7 @@
 		<glossentry id="Maestro">
 			<glossterm>Maestro</glossterm>
 			<glossdef>
-				<para>The manager machine of resources of the other machines running
-					GêBR.
+				<para>Resources manager of the pool of processing nodes.
 				</para>
 				<glossseealso otherterm="Client">Client</glossseealso>
 				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
@@ -87,14 +86,14 @@
 		<glossentry id="Parameter">
 			<glossterm>Parameter</glossterm>
 			<glossdef>
-				<para>Values passed to programs to change their behavior.</para>
+				<para>Configuration of a program.</para>
 				<glossseealso otherterm="Program">Program</glossseealso>
 			</glossdef>
 		</glossentry>
 		<glossentry id="ProcessingNodes">
 			<glossterm>Processing nodes</glossterm>
 			<glossdef>
-				<para>Machines used by the maestro to process your tasks.</para>
+				<para>Processing units used coordenated by the maestro.</para>
 				<glossseealso otherterm="Maestro">Maestro</glossseealso>
 				<glossseealso otherterm="Task">Task</glossseealso>
 			</glossdef>
@@ -104,8 +103,7 @@
 		<glossentry id="Program">
 			<glossterm>Program</glossterm>
 			<glossdef>
-				<para>Operation that generates a specific result according to
-					user-defined parameters.
+				<para>Operation ported from a menu.
 				</para>
 				<glossseealso otherterm="Parameter">Parameter</glossseealso>
 			</glossdef>
@@ -123,8 +121,7 @@
 		<glossentry id="Snapshot">
 			<glossterm>Snapshot</glossterm>
 			<glossdef>
-				<para>Stores all the settings of a flow at the exact moment when
-					that is taken.
+				<para>Record of the settings of a flow.
 				</para>
 			</glossdef>
 		</glossentry>
@@ -134,7 +131,7 @@
 		<glossentry id="Task">
 			<glossterm>Task</glossterm>
 			<glossdef>
-				<para>A piece of job to be done</para>
+				<para>Piece of job to be done.</para>
 				<glossseealso otherterm="Job">Job</glossseealso>
 			</glossdef>
 		</glossentry>
@@ -144,8 +141,8 @@
 		<glossentry id="Variable">
 			<glossterm>Variable</glossterm>
 			<glossdef>
-				<para>Storage location associated a name that keeps a value or
-					information.
+				<para>Value or information stored for
+					posterior use.
 				</para>
 				<glossseealso otherterm="Dictionary">Dictionary of variables
 				</glossseealso>
