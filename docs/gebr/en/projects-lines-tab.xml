@@ -373,7 +373,7 @@
 
     <tip>
       <para>
-        GêBR determines the extension automatically, ie
+        GêBR determines the extension automatically, i.e.,
         <filename class="extension">.prjx</filename> for projects and
         <filename class="extension">.lnex</filename> for lines.
       </para>

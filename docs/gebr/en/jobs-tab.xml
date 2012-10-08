@@ -56,13 +56,11 @@
       </listitem>
 
       <listitem>
-        <para>Clear job (<guiicon>
-            <inlinemediaobject>
-              <imageobject>
+				<para>Clear job 
+					(<guiicon><inlinemediaobject><imageobject>
                 <imagedata fileref="../../common-images/trash-empty.png" />
-              </imageobject>
-            </inlinemediaobject>
-          </guiicon>). Eliminate from the Jobs the selected job. Caution is needed because the
+					</imageobject></inlinemediaobject></guiicon>).
+					Eliminate from the Jobs the selected job. Caution is needed because the
           process is irreversible.</para>
         <para>The user can only clear jobs that are not being executed (<guiicon>
             <inlinemediaobject>
@@ -102,13 +100,10 @@
           </guiicon>) job. 
           When a job is terminated in this manner, the job will be marked
           with
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
+          <guiicon><inlinemediaobject><imageobject>
                 <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon>.</para>
+				</imageobject></inlinemediaobject></guiicon>.
+			</para>
       </listitem>
 
       <listitem>
@@ -203,7 +198,7 @@
     <title>Right panel</title>
     <para>In the upper part, information of the selected flow is
       exhibited. More informations are shown clicking
-      over <emphasis>Details</emphasis>. Among the exhibited
+      on <emphasis>Details</emphasis>. Among the exhibited
       information there are:</para>
     <itemizedlist>
       <listitem><para>Description of related flow. If the job is from a snapshot,
@@ -222,7 +217,7 @@
     </itemizedlist>
     <para>Which machines were effectively used in
       the group and how the distribution of the work was done can be
-      consulted by clicking over
+      consulted by clicking on
       <guiicon>
         <inlinemediaobject>
           <imageobject>

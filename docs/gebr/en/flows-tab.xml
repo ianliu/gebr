@@ -307,30 +307,21 @@
 	<section xml:id="flows_change_program_state">
 		<title>Program states</title>
 
-		<para>Programs can be in two states only, <emphasis role="bold">Enabled</emphasis> (
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
+		<para>Programs can be in two states only, <emphasis role="bold">Enabled</emphasis>
+			(<guiicon><inlinemediaobject><imageobject>
 						<imagedata fileref="../../common-images/icone_configurado.png" />
-					</imageobject>
-				</inlinemediaobject>
-			</guiicon>) or <emphasis role="bold">Disabled</emphasis> (
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
+			</imageobject></inlinemediaobject></guiicon>)
+			or <emphasis role="bold">Disabled</emphasis>
+			(<guiicon><inlinemediaobject><imageobject>
 						<imagedata fileref="../../common-images/icone_prog_desabilitado.png" />
-					</imageobject>
-				</inlinemediaobject>
-			</guiicon>
-			).
+					</imageobject></inlinemediaobject></guiicon>).
 			If a program is enabled with an error, the icon changes to 
 			<guiicon>
 				<inlinemediaobject>
 					<imageobject>
 						<imagedata fileref="../../common-images/gtk-dialog-warning.png" />
-					</imageobject>
-				</inlinemediaobject>
-		</guiicon>.</para>
+		</imageobject></inlinemediaobject></guiicon>.
+	</para>
 
 		<para>Alternate between these states by using two
 			methods: <mousebutton>right-clicking</mousebutton>
@@ -358,13 +349,11 @@
 		</tip>
 		<important>
 			<para>
-				<emphasis role="bold">Disabled</emphasis> programs (<guiicon>
-					<inlinemediaobject>
-						<imageobject>
+				<emphasis role="bold">Disabled</emphasis> programs
+				(<guiicon><inlinemediaobject><imageobject>
 							<imagedata fileref="../../common-images/icone_prog_desabilitado.png" />
-						</imageobject>
-					</inlinemediaobject>
-				</guiicon>) will be ignored when the flow runs. This
+				</imageobject></inlinemediaobject></guiicon>)
+				will be ignored when the flow runs. This
 				way, the user can <emphasis role="bold">enable and disable parts of
 					the flow</emphasis>.</para>
 		</important>
@@ -451,9 +440,8 @@
 				<inlinemediaobject>
 					<imageobject>
 						<imagedata fileref="../../common-images/icone_arquivo_saida.png" />
-					</imageobject>
-				</inlinemediaobject>
-			</guiicon>, below and above the flow's programs (if there are
+			</imageobject></inlinemediaobject></guiicon>,
+			below and above the flow's programs (if there are
 			any).</para>
 		<note>
 			<para>If necessary <emphasis role="bold">removing a
@@ -506,9 +494,8 @@
 				<inlinemediaobject>
 					<imageobject>
 						<imagedata fileref="../../common-images/botao_apagar_projeto.png" />
-					</imageobject>
-				</inlinemediaobject>
-		</guiicon>.</para>
+		</imageobject></inlinemediaobject></guiicon>.
+	</para>
 
 		<tip>
 			<para>It's possible handle several flows at once by holding
@@ -870,14 +857,10 @@
 
 			<para>
 				By clicking on 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
+				<guiicon><inlinemediaobject><imageobject>
 							<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-						</imageobject>
-					</inlinemediaobject>
-				</guiicon> 
-				, the job will be triggered with the following settings:
+		</imageobject></inlinemediaobject></guiicon>,
+				the job will be triggered with the following settings:
 
 				<procedure>
 					<step>
@@ -939,13 +922,10 @@
 			</figure>
 			<para>
 				By clicking over 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
+				<guiicon><inlinemediaobject><imageobject>
 							<imagedata fileref="../../common-images/detailed_execution.png" />
-						</imageobject>
-					</inlinemediaobject>
-				</guiicon>, it can be set:
+				</imageobject></inlinemediaobject></guiicon>,
+				it can be set:
 
 				<procedure>
 					<step>
@@ -973,7 +953,8 @@
 					<step>
 						Where jobs must be dispatched. Nodes or set of nodes can be choosen to
 						process the jobs. A special option is the Choose automatically. It
-						allows the maestro to search for the least overloaded nodes or set of nodes. If the use changes this parameter,
+						allows the maestro to search for the least overloaded nodes or set of nodes.
+						If the use changes this parameter,
 						GêBR shows the number of cores of the choosen group.
 					</step>
 					<step>

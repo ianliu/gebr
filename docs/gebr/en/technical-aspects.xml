@@ -298,13 +298,10 @@
             metrics throughout the flows. Creating a variable for each
             metric can help in this task. GêBR shows the computed
             value when the user passes the pointer over the icon
-            <guiicon>
-              <inlinemediaobject>
-                <imageobject>
+            <guiicon><inlinemediaobject><imageobject>
                   <imagedata fileref="../../common-images/integer-icon.png" />
-                </imageobject>
-              </inlinemediaobject>
-            </guiicon>. Note that defining distance_cm depending on
+						</imageobject></inlinemediaobject></guiicon>.
+						Note that defining distance_cm depending on
             distance is valid because distance had been defined
             before.
           </caption>
@@ -398,13 +395,12 @@
     <tip>
       <para>
 	To use the variables in fields like
-	<guimenuitem>Text</guimenuitem>
-	, the variable
+	<guimenuitem>Text</guimenuitem>,
+	the variable
 	name need to be embraced by square brackets
 	<emphasis role="bold">[</emphasis>
 	name-of-the-variable
-	<emphasis role="bold">]</emphasis>
-	.
+	<emphasis role="bold">]</emphasis>.
       </para>
     </tip>
 
@@ -423,10 +419,8 @@
 			<step> Check the line named Shot Gathers.</step>
 			<step>
 				Open the
-				<guilabel>Dictionary of variables</guilabel>
-				, on
-				<guilabel>Flows tab</guilabel>
-				.
+				<guilabel>Dictionary of variables</guilabel>,
+				on <guilabel>Flows tab</guilabel>.
 			</step>
 		</procedure>
 	</para>
@@ -444,8 +438,7 @@
 				Still on Shot Gathers, select the flow Single Shot Sixty
 				Degrees. By
 				checking
-				<guilabel>Dictionary of variables</guilabel>
-				,
+				<guilabel>Dictionary of variables</guilabel>,
 				it's seen that there are some variables related to this flow
 				and these variables are
 				<emphasis>only</emphasis>
