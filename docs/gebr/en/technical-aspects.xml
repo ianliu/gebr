@@ -142,7 +142,7 @@
   </section>
 
   <section xml:id="technical_aspects_multicores">
-    <title>Running parallelization</title>
+    <title>Parallelized processing</title>
 
 		<para>GêBR takes advantage of the <emphasis>multi-core</emphasis> feature
 			of most of
