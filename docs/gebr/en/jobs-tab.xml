@@ -256,7 +256,7 @@
     <mediaobject>
       <imageobject>
 				<imagedata fileref="../images/GeBR_jc_output.png"
-					contentwidth="546px" contentdepth="425px" />
+					contentwidth="560px" contentdepth="459px" />
       </imageobject>
     </mediaobject>
     <caption>Screenshot of the outputs of a job.</caption>
