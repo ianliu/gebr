@@ -1058,16 +1058,29 @@
 		</section>
 		
 	<section xml:id="flows_loop">
-		<title>Executing a flow multiple times</title>
+		<title>Flows with loops</title>
 		
-		  <para>The
-	      program <emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm>
-	      (from the category
-	      <emphasis role="bold">Loops</emphasis>) has a totally different
-	      usage compared to the remaining programs from GêBR. The user is going
-	      to see some of these differences.</para>
+			<para>
+				The notion of a loop refers to a series of
+				commands that continues to repeat over and over again,
+				possibly changing a little, untill a condition is met.
+				For example, suppose the user needs
+				to generate one plot for each of a set of functions.
+				One option is to create many flows,
+				each one based in a function, that generates the plots.
+				Another simpler option would be to create a single flow
+				that, for each function, generates a plot.
+				The loop program allows it in GêBR.
+			</para>
+
+		<para>The 
+			<emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm>
+	      is a program from the category
+				<emphasis role="bold">Loops</emphasis> that has a totally
+				different usage compared to the remaining programs of GêBR.
+				Here these differences are presented.</para>
 	
-	      <para>When the program Loop is added, it always appears
+	      <para>Whenever the program Loop is added, it appears
 	      on the top of the flow. That happens to indicate that the flow
 	      is going to be executed more than once, according to the
 	      parameters set for the program. (see
@@ -1087,10 +1100,10 @@
 	    </figure>
 	
 	    <para>After the <emphasis>Loop</emphasis> is added, 
-	      a new variable is available,
-	      the <emphasis role="bold">iter</emphasis> (see
-				<xref linkend="technical_aspects_dictionary_variables" />). The value of this 
-				special variable is modified
+	      a new variable,
+	      the <emphasis role="bold">iter</emphasis>, is available (see
+				<xref linkend="technical_aspects_dictionary_variables" />).
+				The value of this special variable is modified
 	      on each iteration (increasing or decrementing),
 	      according to the parameters set.</para>
 	
