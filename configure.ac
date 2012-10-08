@@ -44,7 +44,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 dnl ============================================================================
 dnl Check for python stuff
 dnl ============================================================================
-AM_PATH_PYTHON([2.3])
+AM_PATH_PYTHON([2.4])
 GEBR_PYTHON_CHECK([pygtk])
 AC_DEFINE_UNQUOTED(PYTHON, ["$PYTHON"], [Python full path binary])
 
