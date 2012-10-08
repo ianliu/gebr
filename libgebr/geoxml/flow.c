@@ -909,10 +909,15 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	g_free(resolved_input);
 	
 	if (progs_error > 0) {
-		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
-		            GEBR_GEOXML_FLOW_ERROR_PROGRAM,
-		            _("There are %d %s with error"),
-		            progs_error, progs_error == 1? "program" : "programs");
+		if(progs_error == 1)
+			g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+				    GEBR_GEOXML_FLOW_ERROR_PROGRAM,
+				    _("There is one program with error"));
+		else
+			g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+				    GEBR_GEOXML_FLOW_ERROR_PROGRAM,
+				    _("There are %d program with error"), progs_error);
+
 		gebr_geoxml_object_unref(seq);
 		gebr_pairstrfreev(pvector);
 		return FALSE;
