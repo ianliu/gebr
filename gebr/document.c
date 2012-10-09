@@ -646,7 +646,13 @@ gebr_document_report_get_styles(const gchar * report)
 	return list;
 }
 
-gchar * gebr_document_report_get_styles_string(const gchar * report)
+/**
+ * gebr_document_report_get_styles_string:
+ * See gebr_document_report_get_styles().
+ * Returns: a newly allocated string containing the styles concatenated with line breaks.
+ */
+static gchar *
+gebr_document_report_get_styles_string(const gchar * report)
 {
 	GList * list, * i;
 	GString * string;

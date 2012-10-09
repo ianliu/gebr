@@ -152,13 +152,6 @@ GString *document_get_path(const gchar * filename);
 void document_delete(const gchar * filename);
 
 /**
- * gebr_document_report_get_styles_string:
- * See gebr_document_report_get_styles().
- * Returns: a newly allocated string containing the styles concatenated with line breaks.
- */
-gchar * gebr_document_report_get_styles_string(const gchar * report);
-
-/**
  * gebr_document_report_get_inner_body:
  * @report: an html markup
  *
