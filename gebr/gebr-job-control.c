@@ -1025,12 +1025,12 @@ job_control_fill_servers_info(GebrJobControl *jc)
 			if (g_strcmp0(groups, "") == 0)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped(_("Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
-						   "Executed on total <b>%d</b> processes on %s <b>%s</b>,\n"
-						   "%sdistributed on <b>%d</b> node(s).\n"),
+		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to Maestro <i>%s</i>,\n"
+						   "split in %d process(es) %s"
+						   "and distributed in %d node(s).\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
-						  total_procs, type == MAESTRO_SERVER_TYPE_DAEMON? _("node") : _("group"), groups,
-						  g_strcmp0(niceness, "0")? _("using the nodes idle time, ") : "",
+						  total_procs,
+						  g_strcmp0(niceness, "0")? _(", executed using \nthe nodes idle time ") : "",
 						  n_servers);
 		g_string_append(resources, markup);
 
