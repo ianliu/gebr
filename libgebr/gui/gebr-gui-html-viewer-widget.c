@@ -303,9 +303,6 @@ static gboolean on_web_view_search_escape(GtkWidget *widget,
 static void on_web_view_search(GtkWidget *entry,
                                GebrGuiHtmlViewerWidget *self)
 {
-	GebrGuiHtmlViewerWidgetPrivate * priv;
-	priv = GEBR_GUI_HTML_VIEWER_WIDGET_GET_PRIVATE(self);
-
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
 	gebr_gui_html_viewer_widget_search(self, gtk_entry_get_text(GTK_ENTRY(entry)), FALSE);
