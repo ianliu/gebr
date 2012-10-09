@@ -1790,6 +1790,7 @@ gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 
 		if (adm_servers) {
 			load_servers_from_key_file(app, adm_servers);
+			save_servers_keyfile(adm_servers);
 			g_key_file_free (adm_servers);
 		}
 	}
