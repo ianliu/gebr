@@ -1032,7 +1032,7 @@ gebr_document_generate_tables(GebrGeoXmlDocument *document,
 	g_string_free(tables_content, TRUE);
 }
 
-void
+static void
 gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
                                               GString *content,
                                               const gchar *index,
