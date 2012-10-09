@@ -40,16 +40,6 @@
 #include "ui_help.h"
 #include "gebr-report.h"
 
-static void gebr_document_generate_flow_content(GebrGeoXmlDocument *document,
-                                                GString *content,
-                                                const gchar *inner_body,
-                                                gboolean include_table,
-                                                gboolean include_snapshots,
-                                                gboolean include_comments,
-                                                gboolean include_linepaths,
-                                                const gchar *index,
-                                                gboolean is_snapshot);
-
 static GebrGeoXmlDocument *document_cache_check(const gchar *path)
 {
 	return g_hash_table_lookup(gebr.xmls_by_filename, path);
@@ -604,6 +594,32 @@ void document_delete(const gchar * filename)
 gchar *
 gebr_document_generate_report(GebrGeoXmlDocument *document)
 {
+	gboolean is_flow;
+
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
+		is_flow = TRUE;
+	else
+		is_flow = FALSE;
+
 	GebrReport *report = gebr_report_new(document);
+	gebr_report_set_maestro_controller(report, gebr.maestro_controller);
+	gebr_report_set_validator(report, gebr.validator);
+	gebr_report_set_dictionary_documents(report,
+			GEBR_GEOXML_DOCUMENT(gebr.line),
+			GEBR_GEOXML_DOCUMENT(gebr.project));
+
+	if (is_flow) {
+		gebr_report_set_css_url(report, gebr.config.detailed_flow_css->str);
+		gebr_report_set_include_commentary(report, gebr.config.detailed_flow_include_report);
+		gebr_report_set_include_revisions(report, gebr.config.detailed_flow_include_revisions_report);
+		gebr_report_set_detailed_parameter_table(report, gebr.config.detailed_flow_parameter_table);
+	} else {
+		gebr_report_set_css_url(report, gebr.config.detailed_line_css->str);
+		gebr_report_set_include_commentary(report, gebr.config.detailed_line_include_report);
+		gebr_report_set_include_revisions(report, gebr.config.detailed_line_include_revisions_report);
+		gebr_report_set_detailed_parameter_table(report, gebr.config.detailed_line_parameter_table);
+		gebr_report_set_include_flow_report(report, gebr.config.detailed_line_include_flow_report);
+	}
+
 	return gebr_report_generate(report);
 }

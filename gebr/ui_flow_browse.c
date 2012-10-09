@@ -43,6 +43,7 @@
 #include "interface.h"
 #include "gebr-menu-view.h"
 #include "gebr-gui-tool-button.h"
+#include "gebr-report.h"
 
 #define JOB_BUTTON_SIZE 120
 
@@ -734,7 +735,7 @@ flow_browse_revalidate_flows(GebrUiFlowBrowse *fb,
 			goto next;
 
 		GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
 		if (validate_programs) {
 			GebrGeoXmlSequence *prog;
@@ -744,7 +745,7 @@ flow_browse_revalidate_flows(GebrUiFlowBrowse *fb,
 		}
 
 		valid_flow = gebr_geoxml_flow_validate(flow, gebr.validator, &err);
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
 		gebr_ui_flow_set_flow_has_error(ui_flow, !valid_flow);
 		if (err) {
@@ -3397,15 +3398,13 @@ gebr_flow_browse_reset_jobs_from_flow(GebrGeoXmlFlow *flow,
 	on_dismiss_clicked(NULL, fb);
 }
 
-void
-gebr_flow_add_error_line(GebrGeoXmlFlow *flow,
-                         GString *prog_content,
-                         GebrUiFlowBrowse *fb)
+const gchar *
+gebr_flow_add_error_line(GebrGeoXmlFlow *flow, GebrUiFlowBrowse *fb)
 {
 	GtkTreeIter iter;
 
 	if (!flow_browse_get_selected(&iter, FALSE))
-		return;
+		return NULL;
 
 	GebrUiFlowBrowseType type;
 	GebrUiFlow *ui_flow;
@@ -3419,21 +3418,14 @@ gebr_flow_add_error_line(GebrGeoXmlFlow *flow,
 		GtkTreeIter parent;
 
 		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(fb->store), &parent, &iter))
-			return;
+			return NULL;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(fb->store), &parent,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
 	}
 
-	const gchar *tooltip = gebr_ui_flow_get_tooltip_error(ui_flow);
-
-	if (tooltip)
-		g_string_append_printf(prog_content,
-		                       "<div class='flow-error'>\n"
-		                       "  <p>%s</p>\n"
-		                       "</div>\n",
-		                       tooltip);
+	return gebr_ui_flow_get_tooltip_error(ui_flow);
 }
 
 void
@@ -3457,34 +3449,13 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 		gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 	}
 
-	GString *prog_content = g_string_new("");
-	g_string_append_printf(prog_content, "<html>\n"
-					     "  <head>\n"
-					     "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
-	g_string_append_printf(prog_content, "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-report.css\" />"
-					     "    <link rel=\"stylesheet\" type=\"text/css\" href=\"file://%s/gebr-flow-review.css\" />",
-						  LIBGEBR_STYLES_DIR, LIBGEBR_DATA_DIR);
-
-	gboolean debug_is_on = FALSE;
-#ifdef DEBUG
-	debug_is_on = TRUE;
-#endif
-	if (debug_is_on)
-		g_string_append_printf(prog_content, "  </head>\n"
-						     "  <body>\n");
-	else
-		g_string_append_printf(prog_content, "  </head>\n"
-						     "  <body oncontextmenu=\"return false;\"/>\n");
-
-	gebr_flow_add_error_line(flow, prog_content, gebr.ui_flow_browse);
-	gebr_flow_generate_io_table(flow, prog_content);
-	gebr_flow_generate_parameter_value_table(flow, prog_content, NULL, TRUE);
-
-	g_string_append_printf(prog_content, "  </body>\n"
-					     "</html>");
-	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(fb->html_parameters), prog_content->str);
-
-	g_string_free(prog_content, TRUE);
+	const gchar *error_message = gebr_flow_add_error_line(flow, gebr.ui_flow_browse);
+	GebrReport *report = gebr_report_new(GEBR_GEOXML_DOCUMENT(flow));
+	gebr_report_set_error_message(report, error_message);
+	gebr_report_set_detailed_parameter_table(report, GEBR_PARAM_TABLE_ONLY_CHANGED);
+	gchar *review = gebr_report_generate_flow_review(report);
+	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(fb->html_parameters), review);
+	g_boxed_free(GEBR_TYPE_REPORT, report);
 }
 
 void

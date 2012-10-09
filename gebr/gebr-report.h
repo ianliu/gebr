@@ -24,6 +24,9 @@
 #include <glib-object.h>
 #include <libgebr/geoxml/geoxml.h>
 
+#include "ui_help.h" // For GebrHelpParamTable enum. TODO: Move this enum to gebr-report module!
+#include "gebr-maestro-controller.h"
+
 #define GEBR_TYPE_REPORT (gebr_report_get_type())
 
 typedef struct _GebrReport GebrReport;
@@ -37,9 +40,29 @@ GType gebr_report_get_type(void) G_GNUC_CONST;
 
 GebrReport *gebr_report_new(GebrGeoXmlDocument *document);
 
+void gebr_report_set_validator(GebrReport *report, GebrValidator *validator);
+
+void gebr_report_set_maestro_controller(GebrReport *report, GebrMaestroController *maestro_controller);
+
+void gebr_report_set_css_url(GebrReport *report, const gchar *css_url);
+
 void gebr_report_set_include_commentary(GebrReport *report, gboolean setting);
 
+void gebr_report_set_include_revisions(GebrReport *report, gboolean setting);
+
+void gebr_report_set_detailed_parameter_table(GebrReport *report, GebrHelpParamTable detailed_parameter_table);
+
+void gebr_report_set_include_flow_report(GebrReport *report, gboolean setting);
+
+void gebr_report_set_error_message(GebrReport *report, const gchar *error_message);
+
+void gebr_report_set_dictionary_documents(GebrReport *report,
+					  GebrGeoXmlDocument *line,
+					  GebrGeoXmlDocument *project);
+
 gchar *gebr_report_generate(GebrReport *report);
+
+gchar *gebr_report_generate_flow_review(GebrReport *report);
 
 /**
  * gebr_report_get_css_header_field:
@@ -61,58 +84,5 @@ gchar *gebr_report_generate(GebrReport *report);
  * Returns: A newly allocated string containing the field value.
  */
 gchar *gebr_report_get_css_header_field(const gchar *filename, const gchar *field);
-
-/**
- * gebr_flow_generate_variables_value_table:
- * @doc: a #GebrGeoXmlDocument
- * @insert_header: Pass %TRUE for include header, %FALSE otherwise
- * @close: Pass %TRUE for close table of header, %FALSE otherwise
- * @tables_content: a #GString to append content
- * @scope: a string with title of scope to include variables
- *
- * Creates a string containing a HTML table for the variables on dictionary of @doc.
- *
- */
-void gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
-                                         gboolean insert_header,
-                                         gboolean close,
-                                         GString *tables_content,
-                                         const gchar *scope);
-
-/**
- * gebr_flow_generate_io_table:
- * @flow: a #GebrGeoXmlFlow
- * @tables_content: A #GString to append content
- *
- * Creates a string containing a HTML table for I/O of @flow.
- *
- */
-void gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
-                                 GString *tables_content);
-
-/**
- * gebr_flow_generate_parameter_value_table:
- * @flow: a #GebrGeoXmlFlow
- * @tables_content: A #GString to append content
- * @index: A index to link the table
- *
- * Creates a string containing a HTML table for the programs of @flow.
- *
- */
-void gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
-                                              GString *prog_content,
-                                              const gchar *index,
-                                              gboolean flow_review);
-
-/**
- * gebr_flow_generate_flow_revisions_index:
- * @flow:
- * @content:
- *
- * Concatenate on @content a HTML with revisions content
- */
-void gebr_flow_generate_flow_revisions_index(GebrGeoXmlFlow *flow,
-                                             GString *content,
-                                             const gchar *index);
 
 #endif /* end of include guard: __GEBR_REPORT_H__ */
