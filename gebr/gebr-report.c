@@ -55,3 +55,46 @@ gebr_report_new(void)
 {
 	return NULL;
 }
+
+gchar *
+gebr_report_get_css_header_field(const gchar *filename, const gchar *field)
+{
+	GString *search;
+	gchar *contents;
+	gchar *escaped;
+	gchar *word = NULL;
+
+	if (!g_file_get_contents(filename, &contents, NULL, NULL))
+		g_return_val_if_reached(NULL);
+
+	escaped = g_regex_escape_string(field, -1);
+	search = g_string_new("@");
+
+	/* g_regex_escape_string don't escape '-',
+	 * so we need to do it manually. */
+	for (int i = 0; escaped[i]; i++) {
+		if (escaped[i] != '-')
+			g_string_append_c(search, escaped[i]);
+		else
+			g_string_append(search, "\\-");
+	}
+	g_free(escaped);
+	g_string_append(search, ":(.*)");
+
+	GMatchInfo * match_info;
+	GRegex *regex = g_regex_new(search->str, G_REGEX_CASELESS, 0, NULL);
+	g_regex_match(regex, contents, 0, &match_info);
+
+	if (g_match_info_matches(match_info))
+	{
+		word = g_match_info_fetch (match_info, 1);
+		g_strstrip(word);
+	}
+
+	g_string_free(search, TRUE);
+	g_free(contents);
+	g_match_info_free(match_info);
+	g_regex_unref(regex);
+
+	return word;
+}

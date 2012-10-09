@@ -34,4 +34,25 @@ GType gebr_report_get_type(void) G_GNUC_CONST;
 
 GebrReport *gebr_report_new(void);
 
+/**
+ * gebr_report_get_css_header_field:
+ * @filename: Name of the css file. It trusts that the file is ok.
+ * @field: Name of the field to be checked (ex. "title", "e-mail")
+ *
+ * Gets a @field from the CSS comment header. A field is defined as a JavaDoc comment. For instance, the value of the
+ * field "title" in the example below is <emphasis>Foobar</emphasis>:
+ * <programlisting>
+ * /<!-- -->**
+ *  * @title: Foobar
+ *  * @author: John
+ *  *<!-- -->/
+ * body {
+ *   color: blue;
+ * }
+ * </programlisting>
+ *
+ * Returns: A newly allocated string containing the field value.
+ */
+gchar *gebr_report_get_css_header_field(const gchar *filename, const gchar *field);
+
 #endif /* end of include guard: __GEBR_REPORT_H__ */

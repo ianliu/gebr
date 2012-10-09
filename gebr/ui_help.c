@@ -45,7 +45,7 @@
 #include "menu.h"
 #include "flow.h"
 #include "ui_project_line.h"
-
+#include "gebr-report.h"
 
 #define HTML_WINDOW_OBJECT "html-window-object"
 #define CSS_BASENAME "css-basename"
@@ -539,7 +539,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 
 					action_name = g_strdup_printf ("StyleAction%d", i);
 					abs_path = g_strconcat (LIBGEBR_STYLES_DIR, "/", fname, NULL);
-					css_title = gebr_document_get_css_header_field (abs_path, "title");
+					css_title = gebr_report_get_css_header_field(abs_path, "title");
 					radio_action = gtk_radio_action_new (action_name,
 									     css_title,
 									     NULL, NULL, i);
