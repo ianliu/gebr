@@ -64,6 +64,8 @@ libgebr_la_SOURCES =		\
 	gebr-marshal.h		\
 	gebr-menu-view.c	\
 	gebr-menu-view.h	\
+	gebr-report.c		\
+	gebr-report.h		\
 	gebr.c			\
 	gebr.h			\
 	interface.c		\
