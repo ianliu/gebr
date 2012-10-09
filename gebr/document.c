@@ -611,7 +611,15 @@ generate_list_from_match_info(GMatchInfo * match)
 	return g_list_reverse(list);
 }
 
-GList * gebr_document_report_get_styles(const gchar * report)
+/**
+ * gebr_document_report_get_styles:
+ * @report: an html markup
+ *
+ * Returns: a list of strings containing all styles inside @report. It may return complete <style> tags and <link
+ * rel='stylesheet' ... > tags. You must free all strings and the list itself.
+ */
+static GList *
+gebr_document_report_get_styles(const gchar * report)
 {
 	GList * list;
 	GRegex * links;
