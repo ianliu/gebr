@@ -130,58 +130,6 @@ void flow_program_copy(void);
  */
 void flow_program_paste(void);
 
-/**
- * gebr_flow_generate_io_table:
- * @flow: a #GebrGeoXmlFlow
- * @tables_content: A #GString to append content
- *
- * Creates a string containing a HTML table for I/O of @flow.
- *
- */
-void gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
-                                 GString *tables_content);
-/**
- * gebr_flow_generate_parameter_value_table:
- * @flow: a #GebrGeoXmlFlow
- * @tables_content: A #GString to append content
- * @index: A index to link the table
- *
- * Creates a string containing a HTML table for the programs of @flow.
- *
- */
-void gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow,
-                                              GString *prog_content,
-                                              const gchar *index,
-                                              gboolean flow_review);
-
-/**
- * gebr_flow_generate_variables_value_table:
- * @doc: a #GebrGeoXmlDocument
- * @insert_header: Pass %TRUE for include header, %FALSE otherwise
- * @close: Pass %TRUE for close table of header, %FALSE otherwise
- * @tables_content: a #GString to append content
- * @scope: a string with title of scope to include variables
- *
- * Creates a string containing a HTML table for the variables on dictionary of @doc.
- *
- */
-void gebr_generate_variables_value_table(GebrGeoXmlDocument *doc,
-                                         gboolean insert_header,
-                                         gboolean close,
-                                         GString *tables_content,
-                                         const gchar *scope);
-
-/**
- * gebr_flow_generate_flow_revisions_index:
- * @flow:
- * @content:
- *
- * Concatenate on @content a HTML with revisions content
- */
-void gebr_flow_generate_flow_revisions_index(GebrGeoXmlFlow *flow,
-                                             GString *content,
-                                             const gchar *index);
-
 void gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 			    GebrFlowModifyPathsFunc func,
 			    gboolean set_programs_unconfigured,
