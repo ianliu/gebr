@@ -24,7 +24,7 @@
 
 #include "gebr-report.h"
 #include "ui_help.h" // For GebrHelpParamTable enum. TODO: Move this enum to gebr-report module!
-#include "gebr.h"
+//#include "gebr.h"
 #include "document.h" // For document_load
 #include <libgebr/utils.h>
 
