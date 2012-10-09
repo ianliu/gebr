@@ -15,7 +15,7 @@
 struct _GebrValidator
 {
 	GebrArithExpr *arith_expr;
-	GebrGeoXmlDocument **docs[3];
+	GQueue *docs[3];
 	GHashTable *vars;
 	// Scope of the last sync with BC
 	GebrGeoXmlDocumentType cached_scope;
@@ -126,7 +126,8 @@ hash_data_remove(GebrValidator *self,
 static GebrGeoXmlDocument **
 get_document(GebrValidator *validator, GebrGeoXmlDocumentType type)
 {
-	return validator->docs[type];
+	GQueue *q = validator->docs[type];
+	return g_queue_peek_head(q);
 }
 
 static GebrIExpr *
@@ -682,9 +683,13 @@ gebr_validator_new(GebrGeoXmlDocument **flow,
 {
 	GebrValidator *self = g_new(GebrValidator, 1);
 	self->arith_expr = gebr_arith_expr_new();
-	self->docs[0] = flow;
-	self->docs[1] = line;
-	self->docs[2] = proj;
+	self->docs[0] = g_queue_new();
+	self->docs[1] = g_queue_new();
+	self->docs[2] = g_queue_new();
+
+	g_queue_push_head(self->docs[0], flow);
+	g_queue_push_head(self->docs[1], line);
+	g_queue_push_head(self->docs[2], proj);
 
 	self->vars = g_hash_table_new_full(g_str_hash,
 					   g_str_equal,
@@ -1362,8 +1367,27 @@ gebr_validator_set_document(GebrValidator *self,
 			    GebrGeoXmlDocumentType type,
 			    gboolean force)
 {
-	self->docs[type] = doc;
+	gebr_validator_push_document(self, doc, type);
+}
+
+void
+gebr_validator_push_document(GebrValidator *self,
+			     GebrGeoXmlDocument **doc,
+			     GebrGeoXmlDocumentType type)
+{
+	GQueue *q = self->docs[type];
+	g_queue_push_head(q, doc);
 	gebr_validator_update(self);
+}
+
+GebrGeoXmlDocument **
+gebr_validator_pop_document(GebrValidator *self,
+			    GebrGeoXmlDocumentType type)
+{
+	GQueue *q = self->docs[type];
+	GebrGeoXmlDocument **doc = g_queue_pop_head(q);
+	gebr_validator_update(self);
+	return doc;
 }
 
 gboolean

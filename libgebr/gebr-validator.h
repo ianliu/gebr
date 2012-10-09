@@ -274,20 +274,42 @@ gboolean gebr_validator_evaluate_param(GebrValidator *self,
 gboolean gebr_validator_is_var_in_scope(GebrValidator *self,
 					const gchar *name,
 					GebrGeoXmlDocumentType scope);
+
 /**
  * gebr_validator_set_document:
- * @validator:
- * @doc:
- * @type:
- * @force:
  *
- * Set on validator, a new @doc
+ * Set on validator, a new @doc.
  *
+ * Deprecated: Use gebr_validator_push_document() and
+ * gebr_validator_pop_document() instead.
  */
 void gebr_validator_set_document(GebrValidator *self,
 				 GebrGeoXmlDocument **doc,
 				 GebrGeoXmlDocumentType type,
-				 gboolean force);
+				 gboolean force) G_GNUC_DEPRECATED;
+
+/**
+ * gebr_validator_push_document:
+ *
+ * Pushes @doc into this validator, saving a copy of the last document in a
+ * queue. This effectivelly changes the whole validation, using @doc's
+ * variables instead of the original one. To return to the last state, see
+ * gebr_validator_pop_document().
+ *
+ * Notice that there is a queue for each type of document.
+ */
+void gebr_validator_push_document(GebrValidator *self,
+				  GebrGeoXmlDocument **doc,
+				  GebrGeoXmlDocumentType type);
+
+/**
+ * gebr_validator_pop_document:
+ *
+ * Pops the current document and return the validator to the last saved state.
+ * See gebr_validator_push_document().
+ */
+GebrGeoXmlDocument **gebr_validator_pop_document(GebrValidator *self,
+						 GebrGeoXmlDocumentType type);
 
 /**
  * gebr_validator_use_iter:
