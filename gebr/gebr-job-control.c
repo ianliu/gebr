@@ -2374,16 +2374,16 @@ gebr_job_control_new(void)
 	gtk_tree_view_column_pack_start(col, renderer, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, icon_column_data_func, NULL, NULL);
 
+	/* Snapshot icon */
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(col, renderer, FALSE);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, snap_icon_column_data_func, NULL, NULL);
+
 	/* Title Renderer */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
 	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, title_column_data_func, NULL, NULL);
-
-	/* Snapshot icon */
-	renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(col, renderer, FALSE);
-	gtk_tree_view_column_set_cell_data_func(col, renderer, snap_icon_column_data_func, NULL, NULL);
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(jc->priv->view),
 	                                          (GebrGuiGtkPopupCallback) job_control_popup_menu, jc);
