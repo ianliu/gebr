@@ -135,6 +135,9 @@ gebr_ui_flow_program_get_tooltip(GebrUiFlowProgram *program)
 			tooltip = _("An undefined variable is being used");
 			break;
 		case GEBR_IEXPR_ERROR_INVAL_VAR:
+		case GEBR_IEXPR_ERROR_INVAL_PATH:
+			tooltip = _("An invalid path is being used");
+			break;
 		case GEBR_IEXPR_ERROR_BAD_REFERENCE:
 		case GEBR_IEXPR_ERROR_CYCLE:
 			tooltip = _("A badly defined variable is being used");

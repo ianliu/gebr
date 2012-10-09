@@ -284,7 +284,9 @@
 			<step>
 				<para>Edit the program's parameters. Notice that each
 					parameter vary greatly both in size and
-					type.</para>
+					type. In parameters fields that can be filled with numbers/text,
+					variables can be used (<xref linkend="flows_dictionary_variables"/>).
+				</para>
 				<tip>
 					<para>Click on the <guibutton>Help</guibutton> button
 						(bottom right corner of the dialog box) to view
@@ -302,233 +304,6 @@
 					simply change selection on left side.</para>
 			</step>
 		</procedure>
-	</section>
-
-	<section xml:id="flows_change_program_state">
-		<title>Program states</title>
-
-		<para>Programs can be in two states only, <emphasis role="bold">Enabled</emphasis>
-			(<guiicon><inlinemediaobject><imageobject>
-						<imagedata fileref="../../common-images/icone_configurado.png" />
-			</imageobject></inlinemediaobject></guiicon>)
-			or <emphasis role="bold">Disabled</emphasis>
-			(<guiicon><inlinemediaobject><imageobject>
-						<imagedata fileref="../../common-images/icone_prog_desabilitado.png" />
-					</imageobject></inlinemediaobject></guiicon>).
-			If a program is enabled with an error, the icon changes to 
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/gtk-dialog-warning.png" />
-		</imageobject></inlinemediaobject></guiicon>.
-	</para>
-
-		<para>Alternate between these states by using two
-			methods: <mousebutton>right-clicking</mousebutton>
-			on the program and then select the desired state from the context menu 
-			or using the shortcut
-			<keycombo>
-				<keycap>Spacebar</keycap>
-		</keycombo> to change the states of the selected programs.</para>
-
-		<tip>
-			<para>It's possible to select several programs whose state is desired to
-				change by holding
-				<keycombo>
-					<keycap>Ctrl</keycap>
-					<mousebutton>Click</mousebutton>
-				</keycombo> or 
-				<keycombo>
-					<keycap>Shift</keycap>
-					<mousebutton>Click</mousebutton>
-			</keycombo>.</para>
-		</tip>
-		<tip>
-			<para>Changing a program state does not alter its parameter configuration. 
-				This way, alternate between states is an operation completely safe.</para>
-		</tip>
-		<important>
-			<para>
-				<emphasis role="bold">Disabled</emphasis> programs
-				(<guiicon><inlinemediaobject><imageobject>
-							<imagedata fileref="../../common-images/icone_prog_desabilitado.png" />
-				</imageobject></inlinemediaobject></guiicon>)
-				will be ignored when the flow runs. This
-				way, the user can <emphasis role="bold">enable and disable parts of
-					the flow</emphasis>.</para>
-		</important>
-	</section>
-
-	<section xml:id="flows_edit_input_output">
-		<title>Editing the flow's input and output files</title>
-
-		<para>In many occasions, it's necessary to extract data
-			from an input file and/or generate as a result an output file,
-			or even an log file in case an error occurs.</para>
-
-		<para>To associate an input, output and error file to a flow, follow
-			these steps:</para>
-		<figure>
-			<title>Input file setting</title>
-			<mediaobject>
-				<caption>Select the Flow Editor Tab. In the Flow Sequence box
-					it's possible to edit the input, output and log files for this flow
-					sequence.</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_flow_editor_input_file.png"
-						contentwidth="377px" contentdepth="201px" />
-				</imageobject>
-			</mediaobject>
-		</figure>
-		<procedure>
-			<step>
-				<para>Select a flow, in the <guilabel>Flows</guilabel> tab.</para>
-			</step>
-
-			<step>
-				<para>Below the selected flow, the programs and entries with input, output and log files
-					will be shown. To edit files paths, just double clicking on them.
-				</para>
-			</step>
-
-			<step>
-				<para>Type in the path (important folders can be consulted/choosen by
-					typing <keycap>&lt;</keycap>)
-					or click on
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/icone_escolher_arquivo.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon> to browse for the file (see
-					<xref linkend="technical_aspects_remote_browsing"/>).
-				</para>
-			</step>
-		</procedure>
-
-		<para>For using the folders associated to the line, choose them like above or use 
-			the feature of autocomplete of the important folders of this line. 
-			For more information, see <xref linkend="projects_lines_line_paths" />.
-		</para>
-		<figure>
-			<title>Autocomplete of paths</title>
-			<mediaobject>
-				<caption>
-					Autocomplete feature in the Input file of a flow. Analogous to
-					the dictionary variables, to see the available paths it is just 
-					necessary to type a <keycap>&lt;</keycap>.
-				</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"
-						contentwidth="284px" contentdepth="362px" />
-				</imageobject>
-			</mediaobject>
-		</figure>
-
-		<para>When a path is chosen for the 
-			<guilabel>flow's input/output</guilabel>, their file
-			paths will appear in entries, indicated by the icons
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/icone_arquivo_entrada.png" />
-					</imageobject>
-				</inlinemediaobject>
-			</guiicon> and 
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/icone_arquivo_saida.png" />
-			</imageobject></inlinemediaobject></guiicon>,
-			below and above the flow's programs (if there are
-			any).</para>
-		<note>
-			<para>If necessary <emphasis role="bold">removing a
-					set</emphasis> from the list, select them by pressing
-				<emphasis role="bold">right-click</emphasis> and then click on 
-				<guimenuitem>Exclude</guimenuitem>.</para>
-		</note>
-	</section>
-
-	<section xml:id="flows_copy_paste_del_flows">
-
-		<title>Copying, pasting and deleting flows and programs</title>
-
-		<para>The clipboard provides the popular set of tools known as
-			<emphasis>copy and paste</emphasis>. A flow (or set of
-			flows) can be copied to the clipboard and paste back to the same
-			line or to other lines. In the same manner, 
-			a program (or set of programs) can be copied to the clipboard too,
-			and can be paste to the same flow or to other flows.</para>
-
-		<para>To copy flows or programs to the clipboard, first
-			select them with the mouse, and then use the button
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
-					</imageobject>
-				</inlinemediaobject>
-			</guiicon> or press the usual shortcut
-			<keycombo>
-				<keycap>Ctrl</keycap>
-				<keycap>C</keycap>
-			</keycombo>. After copying the user can paste it
-			by clicking on the button
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/botao_colar_fluxo.png" />
-					</imageobject>
-				</inlinemediaobject>
-			</guiicon> or by simply using the shortcut 
-			<keycombo>
-				<keycap>Ctrl</keycap>
-				<keycap>V</keycap>
-		</keycombo>.</para>
-
-		<para>To delete a flow (or set of flows) and a program (or set a programs), 
-			select them then click on 
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/botao_apagar_projeto.png" />
-		</imageobject></inlinemediaobject></guiicon>.
-	</para>
-
-		<tip>
-			<para>It's possible handle several flows at once by holding
-				<keycombo>
-					<keycap>Ctrl</keycap>
-					<mousebutton>Left-click</mousebutton>
-				</keycombo> or 
-				<keycombo>
-					<keycap>Shift</keycap>
-					<mousebutton>Left-click</mousebutton>
-			</keycombo>.</para>
-		</tip>
-
-		<caution>
-			<para>GêBR does <emphasis role="bold">not</emphasis> ask for
-				confirmation before deleting programs from a flow.</para>
-		</caution>
-	</section>
-
-	<section xml:id="flows_edit_properties_flow">
-		<title>Editing flow's properties</title>
-		<para>To edit flow's properties the user must first select the flow,
-			then click on
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
-					</imageobject>
-				</inlinemediaobject>
-		</guiicon>.</para>
-		<para>In the <guilabel>flows properties</guilabel> dialog box the user
-			can edit the fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>,
-			<guilabel>Author</guilabel> and <guilabel>Email</guilabel>.</para>
 	</section>
 
   <section
@@ -781,6 +556,233 @@
 
     </section>
   </section>
+
+	<section xml:id="flows_change_program_state">
+		<title>Program states</title>
+
+		<para>Programs can be in two states only, <emphasis role="bold">Enabled</emphasis>
+			(<guiicon><inlinemediaobject><imageobject>
+						<imagedata fileref="../../common-images/icone_configurado.png" />
+			</imageobject></inlinemediaobject></guiicon>)
+			or <emphasis role="bold">Disabled</emphasis>
+			(<guiicon><inlinemediaobject><imageobject>
+						<imagedata fileref="../../common-images/icone_prog_desabilitado.png" />
+					</imageobject></inlinemediaobject></guiicon>).
+			If a program is enabled with an error, the icon changes to 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/gtk-dialog-warning.png" />
+		</imageobject></inlinemediaobject></guiicon>.
+	</para>
+
+		<para>Alternate between these states by using two
+			methods: <mousebutton>right-clicking</mousebutton>
+			on the program and then select the desired state from the context menu 
+			or using the shortcut
+			<keycombo>
+				<keycap>Spacebar</keycap>
+		</keycombo> to change the states of the selected programs.</para>
+
+		<tip>
+			<para>It's possible to select several programs whose state is desired to
+				change by holding
+				<keycombo>
+					<keycap>Ctrl</keycap>
+					<mousebutton>Click</mousebutton>
+				</keycombo> or 
+				<keycombo>
+					<keycap>Shift</keycap>
+					<mousebutton>Click</mousebutton>
+			</keycombo>.</para>
+		</tip>
+		<tip>
+			<para>Changing a program state does not alter its parameter configuration. 
+				This way, alternate between states is an operation completely safe.</para>
+		</tip>
+		<important>
+			<para>
+				<emphasis role="bold">Disabled</emphasis> programs
+				(<guiicon><inlinemediaobject><imageobject>
+							<imagedata fileref="../../common-images/icone_prog_desabilitado.png" />
+				</imageobject></inlinemediaobject></guiicon>)
+				will be ignored when the flow runs. This
+				way, the user can <emphasis role="bold">enable and disable parts of
+					the flow</emphasis>.</para>
+		</important>
+	</section>
+
+	<section xml:id="flows_edit_input_output">
+		<title>Editing the flow's input and output files</title>
+
+		<para>In many occasions, it's necessary to extract data
+			from an input file and/or generate as a result an output file,
+			or even an log file in case an error occurs.</para>
+
+		<para>To associate an input, output and error file to a flow, follow
+			these steps:</para>
+		<figure>
+			<title>Input file setting</title>
+			<mediaobject>
+				<caption>Select the Flow Editor Tab. In the Flow Sequence box
+					it's possible to edit the input, output and log files for this flow
+					sequence.</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_flow_editor_input_file.png"
+						contentwidth="377px" contentdepth="201px" />
+				</imageobject>
+			</mediaobject>
+		</figure>
+		<procedure>
+			<step>
+				<para>Select a flow, in the <guilabel>Flows</guilabel> tab.</para>
+			</step>
+
+			<step>
+				<para>Below the selected flow, the programs and entries with input, output and log files
+					will be shown. To edit files paths, just double clicking on them.
+				</para>
+			</step>
+
+			<step>
+				<para>Type in the path (important folders can be consulted/choosen by
+					typing <keycap>&lt;</keycap>)
+					or click on
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/icone_escolher_arquivo.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon> to browse for the file (see
+					<xref linkend="technical_aspects_remote_browsing"/>).
+				</para>
+			</step>
+		</procedure>
+
+		<para>For using the folders associated to the line, choose them like above or use 
+			the feature of autocomplete of the important folders of this line. 
+			For more information, see <xref linkend="projects_lines_line_paths" />.
+		</para>
+		<figure>
+			<title>Autocomplete of paths</title>
+			<mediaobject>
+				<caption>
+					Autocomplete feature in the Input file of a flow. Analogous to
+					the dictionary variables, to see the available paths it is just 
+					necessary to type a <keycap>&lt;</keycap>.
+				</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"
+						contentwidth="284px" contentdepth="362px" />
+				</imageobject>
+			</mediaobject>
+		</figure>
+
+		<para>When a path is chosen for the 
+			<guilabel>flow's input/output</guilabel>, their file
+			paths will appear in entries, indicated by the icons
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/icone_arquivo_entrada.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon> and 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/icone_arquivo_saida.png" />
+			</imageobject></inlinemediaobject></guiicon>,
+			below and above the flow's programs (if there are
+			any).</para>
+		<note>
+			<para>If necessary <emphasis role="bold">removing a
+					set</emphasis> from the list, select them by pressing
+				<emphasis role="bold">right-click</emphasis> and then click on 
+				<guimenuitem>Exclude</guimenuitem>.</para>
+		</note>
+	</section>
+
+	<section xml:id="flows_copy_paste_del_flows">
+
+		<title>Copying, pasting and deleting flows and programs</title>
+
+		<para>The clipboard provides the popular set of tools known as
+			<emphasis>copy and paste</emphasis>. A flow (or set of
+			flows) can be copied to the clipboard and paste back to the same
+			line or to other lines. In the same manner, 
+			a program (or set of programs) can be copied to the clipboard too,
+			and can be paste to the same flow or to other flows.</para>
+
+		<para>To copy flows or programs to the clipboard, first
+			select them with the mouse, and then use the button
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon> or press the usual shortcut
+			<keycombo>
+				<keycap>Ctrl</keycap>
+				<keycap>C</keycap>
+			</keycombo>. After copying the user can paste it
+			by clicking on the button
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_colar_fluxo.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon> or by simply using the shortcut 
+			<keycombo>
+				<keycap>Ctrl</keycap>
+				<keycap>V</keycap>
+		</keycombo>.</para>
+
+		<para>To delete a flow (or set of flows) and a program (or set a programs), 
+			select them then click on 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_apagar_projeto.png" />
+		</imageobject></inlinemediaobject></guiicon>.
+	</para>
+
+		<tip>
+			<para>It's possible handle several flows at once by holding
+				<keycombo>
+					<keycap>Ctrl</keycap>
+					<mousebutton>Left-click</mousebutton>
+				</keycombo> or 
+				<keycombo>
+					<keycap>Shift</keycap>
+					<mousebutton>Left-click</mousebutton>
+			</keycombo>.</para>
+		</tip>
+
+		<caution>
+			<para>GêBR does <emphasis role="bold">not</emphasis> ask for
+				confirmation before deleting programs from a flow.</para>
+		</caution>
+	</section>
+
+	<section xml:id="flows_edit_properties_flow">
+		<title>Editing flow's properties</title>
+		<para>To edit flow's properties the user must first select the flow,
+			then click on
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
+					</imageobject>
+				</inlinemediaobject>
+		</guiicon>.</para>
+		<para>In the <guilabel>flows properties</guilabel> dialog box the user
+			can edit the fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>,
+			<guilabel>Author</guilabel> and <guilabel>Email</guilabel>.</para>
+	</section>
 
 
 	<section xml:id="flows_snapshots">

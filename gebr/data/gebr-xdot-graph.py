@@ -175,7 +175,7 @@ class MyDotWidget(xdot.DotWidget):
             execute_single.show()
             self.menu.append(execute_single)
             # Parallel
-            execute_paral = gtk.MenuItem(_("Run simultaneously \t\tCtrl+Shift+R"))
+            execute_paral = gtk.MenuItem(_("Run simultaneously \tCtrl+Shift+R"))
             execute_paral.connect("activate", self.on_execute_parallel, url)
             execute_paral.show()
             self.menu.append(execute_paral)
