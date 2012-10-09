@@ -41,6 +41,8 @@ static GebrGeoXmlDocument *cache_docs[] = { NULL, NULL, NULL};
 #define SET_VAR_NAME(p,n) (gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p), (n)))
 
 /* Prototypes {{{1 */
+static GebrGeoXmlDocument **get_document(GebrValidator *validator, GebrGeoXmlDocumentType type);
+
 static GebrGeoXmlParameter * get_param(GebrValidator         *self,
                                        const gchar           *name,
                                        GebrGeoXmlDocumentType scope);
@@ -121,6 +123,12 @@ hash_data_remove(GebrValidator *self,
 }
 
 /* Private functions {{{1 */
+static GebrGeoXmlDocument **
+get_document(GebrValidator *validator, GebrGeoXmlDocumentType type)
+{
+	return validator->docs[type];
+}
+
 static GebrIExpr *
 get_validator_by_type(GebrValidator *self,
 		      GebrGeoXmlParameterType type)
@@ -580,8 +588,8 @@ gebr_validator_update_vars(GebrValidator *self,
 	gboolean has_iter = FALSE;
 	// Validate iter final value
 	int scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
-	if (param_scope == scope && (self->docs[scope] && *(self->docs[scope]))) {
-		GebrGeoXmlSequence *param = gebr_geoxml_document_get_dict_parameter(*self->docs[scope]);
+	if (param_scope == scope && (get_document(self, scope) && *(get_document(self, scope)))) {
+		GebrGeoXmlSequence *param = gebr_geoxml_document_get_dict_parameter(*get_document(self, scope));
 		g_free(name);
 		name = GET_VAR_NAME(param);
 		if (g_strcmp0(name, "iter") == 0) {
@@ -600,9 +608,9 @@ gebr_validator_update_vars(GebrValidator *self,
 		gebr_geoxml_object_unref(param);
 	}
 	for (int scope = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope >= (int) param_scope; scope--) {
-		if (!self->docs[scope] || !*(self->docs[scope]))
+		if (!get_document(self, scope) || !*(get_document(self, scope)))
 			continue;
-		GebrGeoXmlSequence *param = gebr_geoxml_document_get_dict_parameter(*self->docs[scope]);
+		GebrGeoXmlSequence *param = gebr_geoxml_document_get_dict_parameter(*get_document(self, scope));
 		gchar* value = NULL;
 		for (; param; gebr_geoxml_sequence_next(&param)) {
 			g_free(name);
@@ -909,7 +917,7 @@ gebr_validator_move(GebrValidator         *self,
 	data = g_hash_table_lookup(self->vars, name);
 
 	g_return_val_if_fail(data != NULL, FALSE);
-	g_return_val_if_fail(self->docs[pivot_scope] != NULL, FALSE);
+	g_return_val_if_fail(get_document(self, pivot_scope) != NULL, FALSE);
 
 	comment = gebr_geoxml_parameter_get_label(source);
 	value = GET_VAR_VALUE(source);
@@ -930,7 +938,7 @@ gebr_validator_move(GebrValidator         *self,
 			return FALSE;
 		} else {
 			GebrGeoXmlDocument *doc;
-			doc = *self->docs[pivot_scope];
+			doc = *get_document(self, pivot_scope);
 			new_param = gebr_geoxml_document_set_dict_keyword(doc, type, name, value);
 			gebr_geoxml_parameter_set_label(new_param, comment);
 			gebr_validator_insert(self, new_param, NULL, &err1);
@@ -1063,13 +1071,13 @@ void gebr_validator_get_documents(GebrValidator *self,
 				  GebrGeoXmlDocument **proj)
 {
 	if (flow)
-		*flow = self->docs[0] ? *self->docs[0] : NULL;
+		*flow = get_document(self, 0) ? *get_document(self, 0) : NULL;
 
 	if (line)
-		*line = self->docs[1] ? *self->docs[1] : NULL;
+		*line = get_document(self, 1) ? *get_document(self, 1) : NULL;
 
 	if (proj)
-		*proj = self->docs[2] ? *self->docs[2] : NULL;
+		*proj = get_document(self, 2) ? *get_document(self, 2) : NULL;
 }
 
 static void
@@ -1082,7 +1090,7 @@ gebr_validator_clean_cache(GebrValidator *self)
 			continue;
 
 		// Checks if cache and current doc are equal
-		if (self->docs[i] && (cache_docs[i] == *self->docs[i]))
+		if (get_document(self, i) && (cache_docs[i] == *get_document(self, i)))
 			continue;
 
 		if (i == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
@@ -1116,15 +1124,15 @@ void gebr_validator_update(GebrValidator *self)
 	gebr_validator_clean_cache(self);
 
 	for (int i = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
-		if (!self->docs[i] || !*(self->docs[i]) || *(self->docs[i]) == cache_docs[i])
+		if (!get_document(self, i) || !*(get_document(self, i)) || *(get_document(self, i)) == cache_docs[i])
 			continue;
 
-		seq = gebr_geoxml_document_get_dict_parameter(*(self->docs[i]));
+		seq = gebr_geoxml_document_get_dict_parameter(*(get_document(self, i)));
 		while (seq) {
 			gebr_validator_insert(self, GEBR_GEOXML_PARAMETER(seq), NULL, NULL);
 			gebr_geoxml_sequence_next(&seq);
 		}
-		cache_docs[i] = *(self->docs[i]);
+		cache_docs[i] = *(get_document(self, i));
 		gebr_geoxml_document_ref(cache_docs[i]);
 	}
 }
@@ -1136,15 +1144,15 @@ void gebr_validator_force_update(GebrValidator *self)
 	for (int i = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
 		GebrGeoXmlSequence *seq;
 
-		if (!self->docs[i] || !*(self->docs[i]))
+		if (!get_document(self, i) || !*(get_document(self, i)))
 			continue;
 
-		seq = gebr_geoxml_document_get_dict_parameter(*(self->docs[i]));
+		seq = gebr_geoxml_document_get_dict_parameter(*(get_document(self, i)));
 		while (seq) {
 			gebr_validator_insert(self, GEBR_GEOXML_PARAMETER(seq), NULL, NULL);
 			gebr_geoxml_sequence_next(&seq);
 		}
-		cache_docs[i] = *(self->docs[i]);
+		cache_docs[i] = *(get_document(self, i));
 	}
 }
 
