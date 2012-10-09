@@ -95,10 +95,8 @@ typedef struct {
 	GList *select_flows;
 
 	/* Context Actions */
-	GtkToggleButton *properties_ctx_button;
+	gboolean flow_main_view;
 	GtkWidget *html_parameters;
-
-	GtkToggleButton *snapshots_ctx_button;
 
 	/* Info Bar */
 	GtkWidget *info_jobs;

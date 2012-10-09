@@ -869,9 +869,10 @@ gboolean flow_revision_save(void)
 			flow_browse_reload_selected();
 			ret = TRUE;
 
-			if (!gtk_toggle_button_get_active(gebr.ui_flow_browse->snapshots_ctx_button))
-				gtk_toggle_button_set_active(gebr.ui_flow_browse->snapshots_ctx_button, TRUE);
-			else
+			if (gebr.ui_flow_browse->flow_main_view) {
+				gebr.ui_flow_browse->flow_main_view = FALSE;
+				gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
+			} else
 				gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 		}
 		gchar *last_date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(gebr.flow));

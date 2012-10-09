@@ -9,136 +9,69 @@
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
         <child>
-          <object class="GtkHBox" id="hbox3">
+          <object class="GtkHBox" id="hbox4">
             <property name="visible">True</property>
             <child>
-              <object class="GtkHBox" id="hbox4">
+              <object class="GtkImage" id="flow_status">
                 <property name="visible">True</property>
-                <child>
-                  <object class="GtkImage" id="flow_status">
-                    <property name="visible">True</property>
-                    <property name="yalign">0</property>
-                    <property name="stock">flow-icon</property>
-                    <property name="icon-size">6</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkVBox" id="vbox3">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkLabel" id="flow_description">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="label">&lt;span size='x-large'&gt;#Description of Flow&lt;/span&gt;</property>
-                        <property name="use_markup">True</property>
-                      </object>
-                      <packing>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="flow_modified">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="label">&lt;span size='small'&gt;#Modified in august 6, 2012 at 2:42 PM&lt;/span&gt;
-</property>
-                        <property name="use_markup">True</property>
-                      </object>
-                      <packing>
-                        <property name="padding">3</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="flow_jobs_label">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="label">&lt;span size='small'&gt;#Submitted on date&lt;/span&gt;
-</property>
-                        <property name="use_markup">True</property>
-                      </object>
-                      <packing>
-                        <property name="padding">3</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="padding">7</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkFrame" id="frame2">
-                <property name="visible">True</property>
-                <property name="label_xalign">0</property>
-                <property name="shadow_type">out</property>
-                <child>
-                  <object class="GtkVBox" id="vbox4">
-                    <property name="visible">True</property>
-                    <property name="spacing">5</property>
-                    <child>
-                      <object class="GtkToggleButton" id="context_button_flow">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="relief">none</property>
-                        <child>
-                          <object class="GtkImage" id="image2">
-                            <property name="visible">True</property>
-                            <property name="stock">flow-icon</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkToggleButton" id="context_button_snaps">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="relief">none</property>
-                        <child>
-                          <object class="GtkImage" id="image3">
-                            <property name="visible">True</property>
-                            <property name="stock">photos</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                </child>
+                <property name="yalign">0</property>
+                <property name="stock">flow-icon</property>
+                <property name="icon-size">6</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox3">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkLabel" id="flow_description">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label">&lt;span size='x-large'&gt;#Description of Flow&lt;/span&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="flow_modified">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label">&lt;span size='small'&gt;#Modified in august 6, 2012 at 2:42 PM&lt;/span&gt;
+</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="padding">3</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="flow_jobs_label">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label">&lt;span size='small'&gt;#Submitted on date&lt;/span&gt;
+</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="padding">3</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="padding">7</property>
                 <property name="position">1</property>
               </packing>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="padding">5</property>
             <property name="position">0</property>
           </packing>
         </child>
