@@ -155,16 +155,6 @@ void document_delete(const gchar * filename);
  * gebr_document_generate_report:
  * @document:
  *
- * Returns: a newly allocated string containing the header for document
- */
-gchar * gebr_document_generate_header(GebrGeoXmlDocument * document,
-                                      gboolean is_internal,
-                                      const gchar *index);
-
-/**
- * gebr_document_generate_report:
- * @document:
- *
  * Returns: a newly allocated string containing the detailed report for document based on the GêBR configuration
  * structure #gebr.config.
  */

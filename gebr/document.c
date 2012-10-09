@@ -725,7 +725,14 @@ void gebr_document_create_section(GString *destiny,
 	g_string_append_printf(destiny, "<div class=\"%s\">%s</div>\n ", class_name, source);
 }
 
-gchar * gebr_document_generate_header(GebrGeoXmlDocument * document,
+/**
+ * gebr_document_generate_report:
+ * @document:
+ *
+ * Returns: a newly allocated string containing the header for document
+ */
+static gchar *
+gebr_document_generate_header(GebrGeoXmlDocument * document,
                                       gboolean is_internal,
                                       const gchar *index)
 {
