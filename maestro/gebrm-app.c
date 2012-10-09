@@ -144,6 +144,15 @@ gebrm_app_job_controller_add(GebrmApp *app, GebrmJob *job)
 }
 // }}}
 
+static gchar *
+get_gebrm_dir_name(void)
+{
+	gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", g_get_host_name(), NULL);
+	if (!g_file_test(dirname, G_FILE_TEST_EXISTS))
+		g_mkdir_with_parents(dirname, 0755);
+	return dirname;
+}
+
 static void
 gebrm_app_send_home_dir(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *home)
 {
@@ -1998,15 +2007,6 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	return TRUE;
 }
 
-static gchar *
-get_gebrm_dir_name(void)
-{
-	gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", g_get_host_name(), NULL);
-	if (!g_file_test(dirname, G_FILE_TEST_EXISTS))
-		g_mkdir_with_parents(dirname, 0755);
-	return dirname;
-}
-
 const gchar *
 gebrm_app_get_lock_file(void)
 {
@@ -2055,7 +2055,7 @@ gebrm_app_get_admin_servers_file(void)
 	static gchar *path = NULL;
 
 	if (!path)
-		path = g_build_filename("etc", "gebr", "servers.conf", NULL);
+		path = g_build_filename("/etc", "gebr", "servers.conf", NULL);
 
 	return path;
 }
