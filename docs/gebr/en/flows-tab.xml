@@ -52,17 +52,12 @@
 		The default view of the right panel of the <guilabel>Flows</guilabel> tab
 		contains a summary of the current flow. This view presents the input/output
 		files, the programs and the parameters altered by the user (different from
-		the provided values). Additionally, problems in the flow assembly are
-		warned in this window. To go to the summary view, just select (single
-		click) a flow. 
+		the provided values). Text searches can be done by pressing
+		<keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo>.
+		Additionally, problems in the flow assembly are
+		warned in this window. To go to the summary view, select (single
+		click on) a flow. 
 	</para>
-
-	<tip>
-		<para>
-			You can perform searches on the flow summary by pressing
-			<keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo>.
-		</para>
-	</tip>
 
 	<section xml:id="flows_menus_list">
 		<title>The menus list</title>
@@ -224,14 +219,12 @@
 					<para>To run a flow 
 						<emphasis role="bold">all the programs</emphasis> listed in the 
 						<guilabel>Flow Sequence</guilabel> box must be 
-						<guilabel>enabled</guilabel> (<guiicon>
-							<inlinemediaobject>
-								<imageobject>
+						<guilabel>enabled</guilabel>
+						(<guiicon><inlinemediaobject><imageobject>
 									<imagedata fileref="../../common-images/icone_configurado.png" />
-								</imageobject>
-							</inlinemediaobject>
-						</guiicon>). Otherwise the flow will not be executed as
-						expected.</para>
+						</imageobject></inlinemediaobject></guiicon>).
+						Otherwise the flow will not be executed as expected.
+					</para>
 				</important>
 			</step>
 		</procedure>
@@ -379,24 +372,18 @@
         too (see <xref linkend="flows_change_program_state" />).
       </para>
 
-      <para>Reordering the variables of the dictionary can be done by drag and drop.
-        Since a variable can just use another variable above it,
-        this feature turns the declaration of variables more flexible
-        and dynamic.</para>
-
       <para>Positioning the pointer on the icon of the
         variable type, the user can check the solved
         expression. If the <guilabel>Dictionary of variables</guilabel> finds
         an error among the variables, it is going to exhibit the icon
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/icone_nao_configurado.png" />
-            </imageobject>
-          </inlinemediaobject>
-        </guiicon> and an explanation of the error.
-      </para>
-
+        <guiicon><inlinemediaobject><imageobject>
+							<imagedata fileref="../../common-images/icone_nao_configurado.png" />
+				</imageobject></inlinemediaobject></guiicon>
+				and an explanation of the error.
+				Reordering the variables of the dictionary can be done by drag and drop.
+        Since a variable can just use another variable above it,
+        this feature turns the declaration of variables more flexible
+        and dynamic.</para>
 
 
       <para>Besides variables and expressions, some
@@ -449,13 +436,11 @@
         is used to see all the available variables for auto-completion.
       </para>
 
-    <tip>
       <para>Navigate over the fields can be done by using the keys 
         <keycap>Enter</keycap>, 
         <keycap>Tab</keycap> or with the 
         <mousebutton>Left button of the mouse</mousebutton>.
       </para>
-    </tip>
 
     <tip>
       <para>
@@ -582,10 +567,8 @@
 			or using the shortcut
 			<keycombo>
 				<keycap>Spacebar</keycap>
-		</keycombo> to change the states of the selected programs.</para>
-
-		<tip>
-			<para>It's possible to select several programs whose state is desired to
+		</keycombo> to change the states of the selected programs.
+			It's possible to select several programs whose state is desired to
 				change by holding
 				<keycombo>
 					<keycap>Ctrl</keycap>
@@ -595,7 +578,6 @@
 					<keycap>Shift</keycap>
 					<mousebutton>Click</mousebutton>
 			</keycombo>.</para>
-		</tip>
 		<tip>
 			<para>Changing a program state does not alter its parameter configuration. 
 				This way, alternate between states is an operation completely safe.</para>
@@ -750,8 +732,7 @@
 		</imageobject></inlinemediaobject></guiicon>.
 	</para>
 
-		<tip>
-			<para>It's possible handle several flows at once by holding
+			<para>It's possible to handle several flows at once by pressing
 				<keycombo>
 					<keycap>Ctrl</keycap>
 					<mousebutton>Left-click</mousebutton>
@@ -760,7 +741,6 @@
 					<keycap>Shift</keycap>
 					<mousebutton>Left-click</mousebutton>
 			</keycombo>.</para>
-		</tip>
 
 		<caution>
 			<para>GêBR does <emphasis role="bold">not</emphasis> ask for
@@ -816,7 +796,7 @@
 									<imagedata fileref="../../common-images/botao_salvar_estado.png" />
 								</imageobject>
 							</inlinemediaobject>
-					</guiicon> to take a snapshot.</para>
+					</guiicon> (or press <keycap>Ctrl+S</keycap>) to take a snapshot </para>
 				</step>
 				<step>
 					<para>It's really necessary to write a description of the 
@@ -838,9 +818,6 @@
 				</step>
 			</procedure>
 
-			<tip>
-				<para>Useful keybinds are available here: <keycap>Ctrl+S</keycap> takes a snapshot of the selected flow.</para>
-			</tip>
 
 			<para>To see the saved snapshots, just left-click on 
 				<guiicon>
@@ -962,18 +939,16 @@
 					<para>Running a snapshot is like running a flow (see <xref linkend="flows_execute_flow" />).
 						The advantage of doing this is the possibility of executing
 						a snapshot without having to revert to it. Thus, saved flows can be tested 
-						without changing the current one.</para>
+						without changing the current one. As with flows,
+						<keycap>Ctrl+R</keycap> runs the selected snapshots
+					one after another; <keycap>Ctrl+Shift+R</keycap> runs the
+					selected snapshots parallely (keybind activated just if multiple snapshots are selected);
+					the <keycap>Delete</keycap> key deletes the selected snapshots; 
+				</para>
 
 				</listitem>
 			</itemizedlist>
 
-			<note>
-				<para>Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected snapshots
-					one after another; <keycap>Ctrl+Shift+R</keycap> runs the
-					selected snapshots parallely (keybind activated just if multiple snapshots are selected);
-					<keycap>Delete</keycap> delete the selected snapshots; 
-				</para>
-			</note>
 		</section>
 
 		<example>
@@ -1031,20 +1006,13 @@
 			<step>
 				<para>Select the tab 
 					<guilabel>Flows</guilabel> and left-click on 
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
+					<guiicon><inlinemediaobject><imageobject>
 								<imagedata fileref="../../common-images/botao_importar_projeto.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon> to import or on 
+							</imageobject></inlinemediaobject></guiicon> to import or on 
 					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon> to export.
+						<inlinemediaobject><imageobject>
+							<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
+							</imageobject></inlinemediaobject></guiicon> to export.
 				</para>
 			</step>
 			<step>
@@ -1088,18 +1056,16 @@
 				</listitem>
 			</itemizedlist>
 		</para>
+			<para>More than one flow can be selected together and executed. To make a
+				multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
+				the arrow keys while <keycap>Shift</keycap> is pressed.
+			</para>
 		<para>
 			After being triggered, the execution can be followed in the same
 			window or, for more detailed information, in the <guilabel>Jobs</guilabel>
 			tab (see <xref linkend="flows_execution_infobar"/> and
 			<xref linkend="jobs_tab"/>).
 		</para>
-		<tip>
-			<para>More than one flow can be selected together and executed. To make a
-				multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
-				the arrow keys while <keycap>Shift</keycap> is pressed.
-			</para>
-		</tip>
 		<section xml:id="flows_quick_execution">
 			<title>Run</title>
 
@@ -1133,6 +1099,9 @@
 
 				<para>
 					It is a fast way to execute, skipping the configurations of the Run and Setup.
+					Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected flows
+					one after another; <keycap>Ctrl+Shift+R</keycap> runs the
+					selected flows parallely (keybind activated just if multiple flows are selected).
 				</para>
 			</para>
 
@@ -1143,13 +1112,6 @@
 					(For more information, see <xref linkend="flows_detailed_execution" />)</para>
 			</note>
 
-			<note>
-				<para>
-					Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected flows
-					one after another; <keycap>Ctrl+Shift+R</keycap> runs the
-					selected flows parallely (keybind activated just if multiple flows are selected).
-				</para>
-			</note>
 		</section>
 
 		<section xml:id="flows_detailed_execution">
