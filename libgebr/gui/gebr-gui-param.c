@@ -1178,8 +1178,18 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 		}
 	}
 
-	if (ini <= end)
-		gtk_editable_delete_text(GTK_EDITABLE(entry), ini, end+1);
+	if (ini <= end) {
+		gint special_char = 0, count = ini;
+		while (count >= 0){
+			if (!(g_ascii_isalnum(text[count]) || g_ascii_isspace (text[count]) || g_ascii_ispunct (text[count])))
+				special_char++;
+			count--;
+		}
+		if (special_char > 1)
+			gtk_editable_delete_text(GTK_EDITABLE(entry), (ini-1), end+1);
+		else
+			gtk_editable_delete_text(GTK_EDITABLE(entry), ini, end+1);
+	}
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
 	    type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
