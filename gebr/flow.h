@@ -182,25 +182,6 @@ void gebr_flow_generate_flow_revisions_index(GebrGeoXmlFlow *flow,
                                              GString *content,
                                              const gchar *index);
 
-/**
- * gebr_flow_get_detailed_report:
- * @flow: a #GebrGeoXmlFlow
- * @include_table: whether to include the parameter/value table 
- * @include_table: whether to include the date in the header
- * @rev_comment: Revision comment or NULL if doesn't have revision
- * @rev_date: Revision date or NULL if doesn't have revision
- *
- * Generates the detailed report for @flow and returns it as a string.
- * The detailed report includes a header containing informations such
- * as author, modified date, list of enabled programs, etc.
- * If @include_table is %TRUE, a table containing the parameter label
- * and its value is included.
- *
- * Returns: a newly allocated string, which must be freed with g_free().
- */
-gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table,
-                                       gboolean include_date, gchar *rev_comment, gchar *rev_date);
-
 void gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 			    GebrFlowModifyPathsFunc func,
 			    gboolean set_programs_unconfigured,
