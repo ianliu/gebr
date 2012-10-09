@@ -24,16 +24,25 @@
 
 #include "gebr-report.h"
 
+struct _GebrReportPriv {
+	GebrGeoXmlDocument *document;
+};
+
 gpointer
 gebr_report_copy(gpointer boxed)
 {
-	return NULL;
+	GebrReport *report = boxed;
+	GebrReport *copy = gebr_report_new(report->priv->document);
+	return copy;
 }
 
 void
 gebr_report_free(gpointer boxed)
 {
-	g_free(boxed);
+	GebrReport *report = boxed;
+	gebr_geoxml_document_unref(report->priv->document);
+	g_free(report->priv);
+	g_free(report);
 }
 
 GType
@@ -51,9 +60,12 @@ gebr_report_get_type(void)
 }
 
 GebrReport *
-gebr_report_new(void)
+gebr_report_new(GebrGeoXmlDocument *document)
 {
-	return NULL;
+	GebrReport *report = g_new0(GebrReport, 1);
+	report->priv = g_new0(GebrReportPriv, 1);
+	report->priv->document = gebr_geoxml_document_ref(document);
+	return report;
 }
 
 gchar *

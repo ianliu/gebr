@@ -32,7 +32,7 @@ struct _GebrReport {
 
 GType gebr_report_get_type(void) G_GNUC_CONST;
 
-GebrReport *gebr_report_new(void);
+GebrReport *gebr_report_new(GebrGeoXmlDocument *document);
 
 /**
  * gebr_report_get_css_header_field:
