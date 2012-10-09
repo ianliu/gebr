@@ -33,6 +33,7 @@
 
 struct _GebrReportPriv {
 	GebrGeoXmlDocument *document;
+	gboolean include_commentary : 1;
 };
 
 
@@ -86,6 +87,12 @@ gebr_report_new(GebrGeoXmlDocument *document)
 	return report;
 }
 
+void
+gebr_report_set_include_commentary(GebrReport *report, gboolean setting)
+{
+	report->priv->include_commentary = setting;
+}
+
 /*
  * gebr_document_report_get_inner_body:
  * @report: an html markup
@@ -116,7 +123,8 @@ gebr_document_report_get_inner_body(const gchar * report)
 }
 
 static void
-gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
+gebr_document_generate_flow_revisions_content(GebrReport *report,
+					      GebrGeoXmlDocument *flow,
                                               GString *content,
                                               const gchar *index,
                                               gboolean include_tables,
@@ -162,10 +170,10 @@ gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
 		                       "    </div>\n",
 		                       link, comment, _("Snapshot taken on "), date);
 
-		gchar *report = gebr_geoxml_document_get_help(revdoc);
-		gchar *snap_inner_body = gebr_document_report_get_inner_body(report);
+		gchar *report_str = gebr_geoxml_document_get_help(revdoc);
+		gchar *snap_inner_body = gebr_document_report_get_inner_body(report_str);
 
-		include_comments = gebr.config.detailed_flow_include_report;
+		include_comments = report->priv->include_commentary;
 
 		gebr_document_generate_flow_content(revdoc, snap_content, snap_inner_body,
 		                                    include_tables, include_snapshots,
@@ -180,7 +188,7 @@ gebr_document_generate_flow_revisions_content(GebrGeoXmlDocument *flow,
 		g_free(comment);
 		g_free(link);
 		g_free(date);
-		g_free(report);
+		g_free(report_str);
 		g_free(snap_inner_body);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(revdoc));
 	}

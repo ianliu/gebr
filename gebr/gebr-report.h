@@ -37,6 +37,8 @@ GType gebr_report_get_type(void) G_GNUC_CONST;
 
 GebrReport *gebr_report_new(GebrGeoXmlDocument *document);
 
+void gebr_report_set_include_commentary(GebrReport *report, gboolean setting);
+
 gchar *gebr_report_generate(GebrReport *report);
 
 /**
