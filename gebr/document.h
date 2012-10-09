@@ -152,16 +152,6 @@ GString *document_get_path(const gchar * filename);
 void document_delete(const gchar * filename);
 
 /**
- * gebr_document_report_get_inner_body:
- * @report: an html markup
- *
- * Returns: a newly allocated string containing the inner
- * html of the body tag from @report.
- */
-gchar * gebr_document_report_get_inner_body(const gchar * report);
-
-
-/**
  * gebr_document_generate_report:
  * @document:
  *

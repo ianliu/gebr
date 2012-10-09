@@ -677,7 +677,15 @@ gebr_document_report_get_styles_string(const gchar * report)
 	return g_string_free(string, FALSE);
 }
 
-gchar * gebr_document_report_get_inner_body(const gchar * report)
+/**
+ * gebr_document_report_get_inner_body:
+ * @report: an html markup
+ *
+ * Returns: a newly allocated string containing the inner
+ * html of the body tag from @report.
+ */
+static gchar *
+gebr_document_report_get_inner_body(const gchar * report)
 {
 	GRegex * body;
 	gchar * inner_body;
