@@ -431,6 +431,35 @@ translate_string_expr(GebrValidator *self,
 	return FALSE;
 }
 
+static gboolean
+validate_path_expression(GebrValidator  *validator,
+			 const gchar *expression,
+			 GError **error)
+{
+	gchar *result;
+	GebrGeoXmlDocument *line;
+	gebr_validator_get_documents(validator, NULL, &line, NULL);
+	if (line) {
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
+		gboolean ok;
+		ok = gebr_validator_evaluate_interval(validator,
+						      expression,
+						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+						      FALSE, &result, NULL);
+
+		gchar *err_msg;
+		if (!gebr_validate_path(result, paths, &err_msg)) {
+			g_set_error (error,
+			             GEBR_IEXPR_ERROR,
+				     GEBR_IEXPR_ERROR_INVAL_PATH,
+			             err_msg);
+			return FALSE;
+		}
+
+	}
+	return TRUE;
+}
 /* Validate @expression and extract vars on @deps with @error */
 static gboolean
 define_validate_and_extract_vars(GebrValidator  *self,
@@ -462,8 +491,11 @@ define_validate_and_extract_vars(GebrValidator  *self,
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		if (empty) return TRUE;
 		valid = translate_string_expr(self, expression, NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, NULL, &vars, error);
-		if (valid)
+		if (valid) {
 			valid = get_error_indirect(self, vars, name, type, scope, error);
+			if (type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
+				validate_path_expression(self, expression, error);
+		}
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
