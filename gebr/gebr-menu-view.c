@@ -42,6 +42,8 @@ struct _GebrMenuViewPriv {
 	GtkWidget *entry;
 
 	GtkWidget *vbox;
+
+	GtkWidget *help_viewer;
 };
 
 enum {
@@ -125,30 +127,34 @@ gebr_menu_view_activate_add(GebrMenuView *view)
 	gtk_tree_path_free(path);
 }
 
-//static void
-//gebr_menu_view_show_help(GebrMenuView *view)
-//{
-//	GtkTreeIter iter;
-//	gchar *menu_filename;
-//	GebrGeoXmlFlow *menu;
-//
-//	if (!gebr_menu_view_get_selected_menu(view, &iter))
-//		return;
-//
-//	GtkTreeModel *model;
-//	model = gtk_tree_view_get_model(view->priv->tree_view);
-//
-//	gtk_tree_model_get(model, &iter,
-//			   MENU_FILEPATH_COLUMN, &menu_filename,
-//			   -1);
-//
-//	menu = menu_load_path(menu_filename);
-//	if (menu == NULL)
-//		goto out;
-//	gebr_help_show(GEBR_GEOXML_OBJECT(menu), TRUE);
-//
-//out:	g_free(menu_filename);
-//}
+static void
+gebr_menu_view_show_help(GebrMenuView *view)
+{
+	GtkTreeIter iter;
+	gchar *menu_filename;
+	gchar *html;
+	GebrGeoXmlFlow *menu;
+
+	if (!gebr_menu_view_get_selected_menu(view, &iter))
+		return;
+
+	GtkTreeModel *model;
+	model = gtk_tree_view_get_model(view->priv->tree_view);
+
+	gtk_tree_model_get(model, &iter,
+			   MENU_FILEPATH_COLUMN, &menu_filename,
+			   -1);
+
+	menu = menu_load_path(menu_filename);
+	if (menu == NULL)
+		goto out;
+
+	gebr_gui_html_viewer_widget_generate_links(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), GEBR_GEOXML_OBJECT(menu));
+	html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu));
+	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), html);
+
+out:	g_free(menu_filename);
+}
 
 static GtkMenu *
 gebr_menu_view_popup_menu(GtkWidget * widget,
@@ -183,9 +189,9 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_activate_add), view);
 
 	/* Help */
-//	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
-//	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-//	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_show_help), view);
+	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_show_help), view);
 
 	if (filtered)
 		goto out;
@@ -477,6 +483,11 @@ gebr_menu_view_init(GebrMenuView *view)
 
 	// Add menu list
 	gtk_box_pack_start(GTK_BOX(view->priv->vbox), scrolled_window, TRUE, TRUE, 0);
+
+	// Add help view
+	view->priv->help_viewer = gebr_gui_html_viewer_widget_new();
+	gebr_gui_html_viewer_widget_set_is_menu(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), TRUE);
+	gtk_box_pack_start(GTK_BOX(view->priv->vbox), view->priv->help_viewer, TRUE, TRUE, 0);
 }
 
 static void
