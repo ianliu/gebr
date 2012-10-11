@@ -1393,8 +1393,39 @@ static GtkTreeModel *generate_completion_model(GebrGuiParam *widget)
 	GebrGeoXmlDocument *flow, *line, *proj;
 	gebr_validator_get_documents(widget->validator, &flow, &line, &proj);
 	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(widget->parameter)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
-		return gebr_gui_parameter_get_completion_model(NULL, line, proj, widget->parameter_type);
-	return gebr_gui_parameter_get_completion_model(flow, line, proj, widget->parameter_type);
+		return gebr_gui_complete_variables_get_filter_full(widget->priv->complete_var,
+								   widget->parameter_type,
+								   GEBR_GEOXML_DOCUMENT_TYPE_LINE);
+	return gebr_gui_complete_variables_get_filter(widget->priv->complete_var, widget->parameter_type);
+}
+
+static void
+complete_icon_data_func(GtkCellLayout *cell_layout,
+			GtkCellRenderer *cell,
+			GtkTreeModel *tree_model,
+			GtkTreeIter *iter,
+			gpointer data)
+{
+	GebrGeoXmlParameterType param_type;
+	GebrGuiCompleteVariablesType complete_type;
+	gtk_tree_model_get(tree_model, iter,
+			   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, &param_type,
+			   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, &complete_type,
+			   -1);
+
+	const gchar *stock;
+	if (complete_type == GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH)
+		stock = GTK_STOCK_DIRECTORY;
+	else if (param_type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
+		stock = "string-icon";
+	else if (param_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+		stock = "real-icon";
+	else if (param_type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+		stock = "int-icon";
+	else
+		stock = NULL;
+
+	g_object_set(cell, "stock-id", stock, NULL);
 }
 
 static void
@@ -1414,15 +1445,18 @@ setup_entry_completion(GtkEntry *entry,
 
 	cell = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, FALSE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "stock-id", 1);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(comp), cell,
+					   complete_icon_data_func, NULL, NULL);
 
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, FALSE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text", 0);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text",
+				      GEBR_GUI_COMPLETE_VARIABLES_KEYWORD);
 
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text", 2);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text",
+				      GEBR_GUI_COMPLETE_VARIABLES_RESULT);
 	g_object_set(cell, "ellipsize", PANGO_ELLIPSIZE_START, NULL);
 	gtk_cell_renderer_set_sensitive(cell, FALSE);
 
