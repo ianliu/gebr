@@ -2388,7 +2388,7 @@ update_flow_actions_sensitiveness(GtkTreeSelection *selection,
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), !is_multiple);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), !is_multiple);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), !is_multiple);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), !(is_multiple && is_program));
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), !(is_multiple) && !(is_program));
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), !is_multiple);
 }
 
