@@ -30,34 +30,28 @@
 
 	<para>
 		The left panel contains the list of flows that composes the selected line
-		in the previous tab, while the right panel exhibits information of the
-		currently selected flow, divided in two parts:
+		in the previous tab, presenting the information if the flow has or not snapshots,
+		while the right panel exhibits information of the currently selected flow, divided in two parts:
 		<itemizedlist>
 			<listitem>
 				On the top basic information such as flow title, last modification date
 				and last execution date can be quickly consulted;
 			</listitem>
 			<listitem>
-				On the bottom there is a summary of the flow (see below), but this view
-				can be switched to <guilabel>Snapshots</guilabel> view or
-				<guilabel>Output</guilabel> view, according to the context. Further
-				information is available on
-				<xref linkend="flows_snapshots"/> and
-				<xref linkend="flows_execution_infobar"/>.
-			</listitem>
-		</itemizedlist>
-	</para>
-
-	<para>
-		The default view of the right panel of the <guilabel>Flows</guilabel> tab
-		contains a summary of the current flow. This view presents the input/output
-		files, the programs and the parameters altered by the user (different from
-		the provided values). Text searches can be done by pressing
+				On the bottom there is a summary of the flow, which presents the input/output/error
+		files, the programs that compose the flow and the parameters altered by the user (different 
+		from the provided values). Text searches can be done by pressing
 		<keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo>.
 		Additionally, problems in the flow assembly are
 		warned in this window. To go to the summary view, select (single
-		click on) a flow. 
+		click on) a flow.
+			</listitem>
+		</itemizedlist>
 	</para>
+	
+		<para> The right panel can present the snapshots view, whether the user clicks on the snapshots icon.
+		Thus the summary of the flow will be replaced by the snapshots view (check <xref linkend="flows_snapshots" />) 
+		</para>
 
 	<section xml:id="flows_menus_list">
 		<title>The menus list</title>
@@ -125,7 +119,7 @@
 			</step>
 		</procedure>
 
-		<para>After these steps, the flow will be appear on the left side of the
+		<para>After following these steps, the flow will be appear on the left side of the
 			main window. The right side will show information about this flow, like
 			its title, description and modified date.</para>
 
