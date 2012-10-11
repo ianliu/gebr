@@ -786,9 +786,9 @@ flow_browse_revalidate_programs(GebrUiFlowBrowse *fb)
 			                   -1);
 
 			GebrGeoXmlFlow *flow = gebr_ui_flow_get_flow(ui_flow);
-			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+			gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 			valid_flow = gebr_geoxml_flow_validate(flow, gebr.validator, &err);
-			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+			gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
 			gebr_ui_flow_set_flow_has_error(ui_flow, !valid_flow);
 			if (err)
@@ -2599,9 +2599,9 @@ gebr_ui_flow_browse_update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb)
 
 		flow = gebr_ui_flow_get_flow(ui_flow);
 
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		gboolean parallel = gebr_geoxml_flow_is_parallelizable(flow, gebr.validator);
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_first_mpi_program(flow);
 		gboolean has_mpi = (prog && gebr_geoxml_program_get_status(prog) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 		gebr_geoxml_object_unref(prog);

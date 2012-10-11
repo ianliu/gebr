@@ -296,9 +296,9 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	GebrGeoXmlFlowError error_code;
 	GString *message = g_string_new("");
 
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+	gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 	gebr_geoxml_flow_validate(flow, gebr.validator, &error);
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+	gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
 	if (!error)
 		return TRUE;

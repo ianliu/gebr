@@ -696,7 +696,7 @@ line_import(GtkTreeIter *project_iter, GebrGeoXmlLine ** line, const gchar * lin
 	}
 	gdk_threads_leave();
 
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, FALSE);
+	gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) line, GEBR_GEOXML_DOCUMENT_TYPE_LINE);
 
 	gdk_threads_enter();
 	document_import(GEBR_GEOXML_DOCUMENT(*line), TRUE);
@@ -776,14 +776,14 @@ line_import(GtkTreeIter *project_iter, GebrGeoXmlLine ** line, const gchar * lin
 		gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 						 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 		gdk_threads_enter();
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
+		gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		gebr_geoxml_flow_revalidate(flow, gebr.validator);
 
 		/* Reset last date run */
 		gebr_geoxml_flow_set_date_last_run(flow, "");
 
 		document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
-		gebr_validator_set_document(gebr.validator, NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
+		gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		gdk_threads_leave();
 	}
@@ -794,8 +794,7 @@ line_import(GtkTreeIter *project_iter, GebrGeoXmlLine ** line, const gchar * lin
 	document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE, FALSE);
 	gdk_threads_leave();
 
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, TRUE);
+	gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_LINE);
 
 	return ret;
 }
@@ -829,7 +828,7 @@ document_import_single (const gchar *path,
 		data->iter = project_append_iter(project);
 		gdk_threads_leave();
 
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &project, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, FALSE);
+		gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) &project, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
 
 		gebr_geoxml_project_get_line(project, &project_line, 0);
 		for (; project_line; gebr_geoxml_sequence_next(&project_line)) {
@@ -850,7 +849,7 @@ document_import_single (const gchar *path,
 			document_save(GEBR_GEOXML_DOCUMENT(line), FALSE, FALSE);
 			gdk_threads_leave();
 		}
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.project, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, FALSE);
+		gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
 		document = GEBR_GEOXML_DOCUMENT(project);
 	} else if (!data->is_project && g_str_has_suffix(path, ".lne")) {
 		GebrGeoXmlLine *line;

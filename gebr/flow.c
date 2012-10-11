@@ -265,9 +265,9 @@ static gboolean flow_import_single (const gchar *path)
 
 	document_import (flow, FALSE);
 	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+	gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 	gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), gebr.validator);
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+	gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
 	new_title = g_strdup_printf (_("%s (Imported)"), title);
 
@@ -1185,10 +1185,10 @@ void flow_paste(void)
 		                             GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
 		                                                                                gebr_geoxml_document_get_filename(flow))));
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		gebr_validator_push_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), gebr.validator);
+		gebr_validator_pop_document(gebr.validator, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 	}
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 
 	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 	project_line_info_update();
