@@ -47,6 +47,8 @@ libgebr_la_SOURCES =		\
 	gebr-connectable.h	\
 	gebr-daemon-server.c	\
 	gebr-daemon-server.h	\
+	gebr-dictionary.c	\
+	gebr-dictionary.h	\
 	gebr-flow-edition.c	\
 	gebr-flow-edition.h	\
 	gebr-gettext.h		\
