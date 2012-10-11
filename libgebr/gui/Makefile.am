@@ -31,6 +31,7 @@ libgebr_guiinclude_HEADERS = gui.h
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = 		\
 	gebr-gui-about.c 		\
+	gebr-gui-complete-variables.c	\
 	gebr-gui-enhanced-entry.c	\
 	gebr-gui-file-entry.c		\
 	gebr-gui-help-edit-widget.c	\
@@ -54,6 +55,7 @@ libgebr_gui_la_SOURCES = 		\
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-about.h		\
+	gebr-gui-complete-variables.h	\
 	gebr-gui-enhanced-entry.h	\
 	gebr-gui-file-entry.h		\
 	gebr-gui-help-edit-widget.h	\
