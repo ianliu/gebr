@@ -21,7 +21,22 @@
 #ifndef __GEBR_DICTIONARY_H__
 #define __GEBR_DICTIONARY_H__
 
+#include <glib-object.h>
+#include <libgebr/geoxml/geoxml.h>
+
 G_BEGIN_DECLS
+
+enum {
+	GEBR_DICT_COMPLETE_KEYWORD = 0,
+	GEBR_DICT_COMPLETE_COMPLETE_TYPE,
+	GEBR_DICT_COMPLETE_VARIABLE_TYPE,
+	GEBR_DICT_COMPLETE_RESULT,
+};
+
+typedef enum {
+	GEBR_DICT_COMPLETE_TYPE_VARIABLE,
+	GEBR_DICT_COMPLETE_TYPE_PATH,
+} GebrDictCompleteType;
 
 typedef struct _GebrDictComplete GebrDictComplete;
 typedef struct _GebrDictCompletePriv GebrDictCompletePriv;
@@ -33,7 +48,14 @@ struct _GebrDictComplete
 
 GType gebr_dict_complete_get_type(void);
 
-GebrDictComplete *gebr_dict_complete_new(void);
+GebrDictComplete *gebr_dict_complete_new(GebrGeoXmlDocument *proj,
+					 GebrGeoXmlDocument *line,
+					 GebrGeoXmlDocument *flow);
+
+void gebr_dict_complete_set_documents(GebrDictComplete *self,
+				      GebrGeoXmlDocument *proj,
+				      GebrGeoXmlDocument *line,
+				      GebrGeoXmlDocument *flow);
 
 G_END_DECLS
 

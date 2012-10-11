@@ -20,11 +20,14 @@
 
 #include "gebr-dictionary.h"
 
+#include <gtk/gtk.h>
+#include <libgebr/utils.h>
+
 struct _GebrDictCompletePriv
 {
-	GebrGeoXmlProject *proj;
-	GebrGeoXmlLine *line;
-	GebrGeoXmlFlow *flow;
+	GebrGeoXmlDocument *proj;
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *flow;
 	GtkListStore *store;
 };
 
@@ -53,13 +56,81 @@ gebr_dict_complete_get_type(void)
 }
 
 static void
+insert_dict_variable(GebrDictComplete *self, GebrGeoXmlProgramParameter *param)
+{
+	const gchar *keyword;
+	GebrGeoXmlParameterType type;
+	GebrDictCompleteType complete_type;
+	const gchar *value;
+	gchar *result;
+
+	keyword = gebr_geoxml_program_parameter_get_keyword(param);
+	type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
+	complete_type = GEBR_DICT_COMPLETE_TYPE_VARIABLE;
+	value = gebr_geoxml_program_parameter_get_first_value(param, FALSE);
+	result = g_strdup_printf("= %s", value);
+
+	GtkTreeIter iter;
+	gtk_list_store_append(self->priv->store, &iter);
+	gtk_list_store_set(self->priv->store, &iter,
+			   GEBR_DICT_COMPLETE_KEYWORD, keyword,
+			   GEBR_DICT_COMPLETE_COMPLETE_TYPE, complete_type,
+			   GEBR_DICT_COMPLETE_VARIABLE_TYPE, type,
+			   GEBR_DICT_COMPLETE_RESULT, result);
+
+	g_free(result);
+}
+
+static void
+insert_path_variable(GebrDictComplete *self, gchar **path)
+{
+	const gchar *result;
+	const gchar *keyword;
+	GebrGeoXmlParameterType type;
+	GebrDictCompleteType complete_type;
+
+	result = path[0];
+	keyword = path[1];
+	type = GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
+	complete_type = GEBR_DICT_COMPLETE_TYPE_PATH;
+
+	GtkTreeIter iter;
+	gtk_list_store_append(self->priv->store, &iter);
+	gtk_list_store_set(self->priv->store, &iter,
+			   GEBR_DICT_COMPLETE_KEYWORD, keyword,
+			   GEBR_DICT_COMPLETE_COMPLETE_TYPE, complete_type,
+			   GEBR_DICT_COMPLETE_VARIABLE_TYPE, type,
+			   GEBR_DICT_COMPLETE_RESULT, result);
+}
+
+static void
 gebr_dict_complete_update_model(GebrDictComplete *self)
 {
 	gtk_list_store_clear(self->priv->store);
+
+	GebrGeoXmlDocument *docs[] = {
+		self->priv->proj,
+		self->priv->line,
+		self->priv->flow,
+		NULL
+	};
+
+	for (int i = 0; docs[i]; i++) {
+		GebrGeoXmlSequence *seq;
+		seq = gebr_geoxml_document_get_dict_parameter(docs[i]);
+
+		for (; seq; gebr_geoxml_sequence_next(&seq))
+			insert_dict_variable(self, GEBR_GEOXML_PROGRAM_PARAMETER(seq));
+	}
+
+	gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(self->priv->line));
+	for (int i = 0; paths[i]; i++)
+		insert_path_variable(self, paths[i]);
+	gebr_pairstrfreev(paths);
 }
 
 GebrDictComplete *
-gebr_dict_complete_new(GebrGeoXmlProject *proj, GebrGeoXmlLine *line, GebrGeoXmlFlow *flow)
+gebr_dict_complete_new(GebrGeoXmlDocument *proj, GebrGeoXmlDocument *line, GebrGeoXmlDocument *flow)
 {
 	GebrDictComplete *dict = g_new0(GebrDictComplete, 1);
 	dict->priv = g_new0(GebrDictCompletePriv, 1);
@@ -73,11 +144,11 @@ gebr_dict_complete_new(GebrGeoXmlProject *proj, GebrGeoXmlLine *line, GebrGeoXml
 	return dict;
 }
 
-GebrDictComplete *
+void
 gebr_dict_complete_set_documents(GebrDictComplete *self,
-				 GebrGeoXmlProject *proj,
-				 GebrGeoXmlLine *line,
-				 GebrGeoXmlFlow *flow)
+				 GebrGeoXmlDocument *proj,
+				 GebrGeoXmlDocument *line,
+				 GebrGeoXmlDocument *flow)
 {
 	if (self->priv->proj)
 		gebr_geoxml_document_unref(self->priv->proj);
