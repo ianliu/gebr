@@ -62,6 +62,13 @@ gebr_dict_complete_init(GebrDictComplete *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
 						 GEBR_TYPE_DICT_COMPLETE,
 						 GebrDictCompletePriv);
+
+	self->priv->store = gtk_list_store_new(GEBR_GUI_COMPLETE_VARIABLES_NCOLS,
+					       G_TYPE_STRING,  /* Keyword */
+					       G_TYPE_INT,     /* Completion type */
+					       G_TYPE_INT,     /* Variable type */
+					       G_TYPE_INT,     /* Document type */
+					       G_TYPE_STRING); /* Result */
 }
 
 static void
@@ -161,15 +168,7 @@ gebr_dict_complete_update_model(GebrDictComplete *self)
 GebrDictComplete *
 gebr_dict_complete_new(void)
 {
-	GebrDictComplete *dict = g_new0(GebrDictComplete, 1);
-	dict->priv = g_new0(GebrDictCompletePriv, 1);
-	dict->priv->store = gtk_list_store_new(GEBR_GUI_COMPLETE_VARIABLES_NCOLS,
-					       G_TYPE_STRING,  /* Keyword */
-					       G_TYPE_INT,     /* Completion type */
-					       G_TYPE_INT,     /* Variable type */
-					       G_TYPE_INT,     /* Document type */
-					       G_TYPE_STRING); /* Result */
-	return dict;
+	return g_object_new(GEBR_TYPE_DICT_COMPLETE, NULL);
 }
 
 void
