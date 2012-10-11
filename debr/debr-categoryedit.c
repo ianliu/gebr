@@ -233,7 +233,7 @@ static gboolean __category_edit_check_text(const gchar *text)
 	}
 
 	if (empty)
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 					_("Empty category"),
 					_("You can't add an empty category name (remember to take care with the '|' hierarchy separator)."));
 
@@ -595,7 +595,7 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 	if (retval) {
 		gchar *str_mrk;
 		str_mrk = g_strdup_printf("The category <i>%s</i> already exists in the list, the operation will be cancelled.", i_categ);
-		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 					 _("Category already exists"),
 					 str_mrk);
 		g_free(i_categ);

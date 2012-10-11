@@ -452,7 +452,8 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
  * \return TRUE if response was GTK_RESPONSE_YES or GTK_RESPONSE_OK.
  */
 gboolean gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
-				 const gchar * title, const gchar * message, ...);
+				 const gchar *stock_id, const gchar * title,
+				 const gchar * message, ...);
 
 /**
  * Show an action confirmation dialog with printf-like formated \p message.

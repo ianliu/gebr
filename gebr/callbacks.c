@@ -303,7 +303,7 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	if (!error)
 		return TRUE;
 
-	g_string_append_printf(message, "%s in Flow %s.", error->message, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
+	g_string_append_printf(message, "%s\nin flow %s.", error->message, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
 
 	error_code = error->code;
 	switch (error_code)
@@ -313,10 +313,14 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	case GEBR_GEOXML_FLOW_ERROR_PROGRAM:
 		if (is_snapshot) {
 			gdk_threads_enter();
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), message->str);
+			gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
+						"broken-flow-icon", _("Broken Flow"),
+						message->str);
 			gdk_threads_leave();
 		} else {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), message->str);
+			gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
+						"broken-flow-icon", _("Broken Flow"),
+						message->str);
 		}
 		break;
 	case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
@@ -327,10 +331,10 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
 		if (is_snapshot) {
 			gdk_threads_enter();
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), message->str);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, _("Warning"), message->str);
 			gdk_threads_leave();
 		} else {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), message->str);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, _("Warning"), message->str);
 		}
 
 		break;

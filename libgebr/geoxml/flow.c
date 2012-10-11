@@ -884,7 +884,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			case 1:	/* Previous does not write to stdin but current expect something */
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_INPUT,
-					    _("An input file is expected"));
+					    _("An input of %s is expected"),
+					    program_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
@@ -893,7 +894,9 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			case 2:	/* Previous does write to stdin but current does not care about */
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
-					    _("Unexpected output file"));
+					    _("Output of %s ignored as it"
+					      "should not be"),
+					    program_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
