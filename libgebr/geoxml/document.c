@@ -2084,3 +2084,21 @@ gebr_geoxml_create_catalog(const gchar *directory)
 	}
 	return FALSE;
 }
+
+gboolean
+gebr_geoxml_document_type_contains(GebrGeoXmlDocumentType base,
+				   GebrGeoXmlDocumentType type)
+{
+	switch (base) {
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
+		return TRUE;
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+		return type != GEBR_GEOXML_DOCUMENT_TYPE_PROJECT;
+	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+		return type == GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
+	case GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN:
+		return FALSE;
+	}
+
+	return FALSE;
+}

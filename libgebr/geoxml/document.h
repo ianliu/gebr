@@ -449,6 +449,16 @@ void gebr_geoxml_initialize_catalog(void);
 
 gboolean gebr_geoxml_create_catalog(const gchar *directory);
 
+/**
+ * gebr_geoxml_document_type_contains:
+ *
+ * This method simply returns if the @base type of document contains the @type type of document.
+ * For instance, projects contain projects, lines and flows; lines contains
+ * lines and flows; flows contains only flows.
+ */
+gboolean gebr_geoxml_document_type_contains(GebrGeoXmlDocumentType base,
+					    GebrGeoXmlDocumentType type);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_DOCUMENT_H
