@@ -441,19 +441,18 @@ validate_path_expression(GebrValidator  *validator,
 	gebr_validator_get_documents(validator, NULL, &line, NULL);
 	if (line) {
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
-		gboolean ok;
-		ok = gebr_validator_evaluate_interval(validator,
-						      expression,
-						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
-						      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-						      FALSE, &result, NULL);
+		gebr_validator_evaluate_interval(validator,
+						 expression,
+						 GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						 GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+						 FALSE, &result, NULL);
 
 		gchar *err_msg;
 		if (!gebr_validate_path(result, paths, &err_msg)) {
 			g_set_error (error,
 			             GEBR_IEXPR_ERROR,
 				     GEBR_IEXPR_ERROR_INVAL_PATH,
-			             err_msg);
+			             "%s", err_msg);
 			return FALSE;
 		}
 
