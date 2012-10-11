@@ -199,5 +199,8 @@ gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter);
  */
 GebrGeoXmlDocumentType gebr_geoxml_parameter_get_scope(GebrGeoXmlParameter *parameter);
 
+gboolean gebr_geoxml_parameter_type_is_compatible(GebrGeoXmlParameterType base,
+						  GebrGeoXmlParameterType type);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETER_H

@@ -507,3 +507,46 @@ GebrGeoXmlDocumentType gebr_geoxml_parameter_get_scope(GebrGeoXmlParameter *para
 	return scope;
 }
 
+gboolean
+gebr_geoxml_parameter_type_is_compatible(GebrGeoXmlParameterType base,
+					 GebrGeoXmlParameterType type)
+{
+	switch (base) {
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING
+		    || type == GEBR_GEOXML_PARAMETER_TYPE_INT
+		    || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
+		    || type == GEBR_GEOXML_PARAMETER_TYPE_RANGE)
+			return TRUE;
+		else
+			return FALSE;
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
+		    || type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+			return TRUE;
+		else
+			return FALSE;
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_INT
+		    || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+			return TRUE;
+		else
+			return FALSE;
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_RANGE
+		    || type == GEBR_GEOXML_PARAMETER_TYPE_INT
+		    || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+			return TRUE;
+		else
+			return FALSE;
+	case GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
+	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:
+	case GEBR_GEOXML_PARAMETER_TYPE_GROUP:
+	case GEBR_GEOXML_PARAMETER_TYPE_REFERENCE:
+		return FALSE;
+	}
+
+	return FALSE;
+}
