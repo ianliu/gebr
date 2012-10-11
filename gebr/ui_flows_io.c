@@ -483,17 +483,13 @@ static void populate_io_popup(GtkEntry *entry, GtkMenu *menu)
 
 void
 gebr_ui_flows_io_start_editing(GebrUiFlowsIo *io,
-                               GtkEntry *entry)
+                               GtkEntry *entry,
+			       GtkTreeModel *completion_model)
 {
-	GtkTreeModel *completion_model;
 	const gchar *input;
 	const gchar *output;
 	const gchar *error;
 
-	completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (gebr.flow),
-								   GEBR_GEOXML_DOCUMENT (gebr.line),
-								   GEBR_GEOXML_DOCUMENT (gebr.project),
-								   GEBR_GEOXML_PARAMETER_TYPE_FILE);
 	gebr_gui_parameter_set_entry_completion(entry, completion_model, GEBR_GEOXML_PARAMETER_TYPE_FILE);
 
 	input = gebr_geoxml_flow_io_get_input(gebr.flow);

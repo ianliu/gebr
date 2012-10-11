@@ -154,7 +154,8 @@ GtkMenu *gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 				     GtkTreeIter *iter);
 
 void gebr_ui_flows_io_start_editing(GebrUiFlowsIo *io,
-                                    GtkEntry *entry);
+                                    GtkEntry *entry,
+				    GtkTreeModel *completion_model);
 
 void gebr_ui_flows_io_edited(GebrUiFlowsIo *io,
                              const gchar *new_text);
