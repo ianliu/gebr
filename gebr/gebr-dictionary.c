@@ -20,8 +20,8 @@
 
 #include "gebr-dictionary.h"
 
-#include <gtk/gtk.h>
 #include <libgebr/utils.h>
+#include <libgebr/geoxml/geoxml.h>
 
 struct _GebrDictCompletePriv
 {
@@ -56,7 +56,9 @@ gebr_dict_complete_get_type(void)
 }
 
 static void
-insert_dict_variable(GebrDictComplete *self, GebrGeoXmlProgramParameter *param)
+insert_dict_variable(GebrDictComplete *self,
+		     GebrGeoXmlProgramParameter *param,
+		     GebrGeoXmlDocumentType doc_type)
 {
 	const gchar *keyword;
 	GebrGeoXmlParameterType type;
@@ -76,7 +78,9 @@ insert_dict_variable(GebrDictComplete *self, GebrGeoXmlProgramParameter *param)
 			   GEBR_DICT_COMPLETE_KEYWORD, keyword,
 			   GEBR_DICT_COMPLETE_COMPLETE_TYPE, complete_type,
 			   GEBR_DICT_COMPLETE_VARIABLE_TYPE, type,
-			   GEBR_DICT_COMPLETE_RESULT, result);
+			   GEBR_DICT_COMPLETE_DOCUMENT_TYPE, doc_type,
+			   GEBR_DICT_COMPLETE_RESULT, result,
+			   -1);
 
 	g_free(result);
 }
@@ -88,11 +92,13 @@ insert_path_variable(GebrDictComplete *self, gchar **path)
 	const gchar *keyword;
 	GebrGeoXmlParameterType type;
 	GebrDictCompleteType complete_type;
+	GebrGeoXmlDocumentType doc_type;
 
 	result = path[0];
 	keyword = path[1];
 	type = GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
 	complete_type = GEBR_DICT_COMPLETE_TYPE_PATH;
+	doc_type = GEBR_GEOXML_DOCUMENT_TYPE_LINE;
 
 	GtkTreeIter iter;
 	gtk_list_store_append(self->priv->store, &iter);
@@ -100,7 +106,9 @@ insert_path_variable(GebrDictComplete *self, gchar **path)
 			   GEBR_DICT_COMPLETE_KEYWORD, keyword,
 			   GEBR_DICT_COMPLETE_COMPLETE_TYPE, complete_type,
 			   GEBR_DICT_COMPLETE_VARIABLE_TYPE, type,
-			   GEBR_DICT_COMPLETE_RESULT, result);
+			   GEBR_DICT_COMPLETE_DOCUMENT_TYPE, doc_type,
+			   GEBR_DICT_COMPLETE_RESULT, result,
+			   -1);
 }
 
 static void
@@ -119,8 +127,11 @@ gebr_dict_complete_update_model(GebrDictComplete *self)
 		GebrGeoXmlSequence *seq;
 		seq = gebr_geoxml_document_get_dict_parameter(docs[i]);
 
+		GebrGeoXmlDocumentType doc_type;
+		doc_type = gebr_geoxml_document_get_type(docs[i]);
+
 		for (; seq; gebr_geoxml_sequence_next(&seq))
-			insert_dict_variable(self, GEBR_GEOXML_PROGRAM_PARAMETER(seq));
+			insert_dict_variable(self, GEBR_GEOXML_PROGRAM_PARAMETER(seq), doc_type);
 	}
 
 	gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(self->priv->line));
@@ -138,6 +149,7 @@ gebr_dict_complete_new(GebrGeoXmlDocument *proj, GebrGeoXmlDocument *line, GebrG
 					       G_TYPE_STRING,  /* Keyword */
 					       G_TYPE_INT,     /* Completion type */
 					       G_TYPE_INT,     /* Variable type */
+					       G_TYPE_INT,     /* Document type */
 					       G_TYPE_STRING); /* Result */
 
 	gebr_dict_complete_set_documents(dict, proj, line, flow);
@@ -165,3 +177,55 @@ gebr_dict_complete_set_documents(GebrDictComplete *self,
 	gebr_dict_complete_update_model(self);
 }
 
+GtkTreeModel *
+gebr_dict_complete_get_filter(GebrDictComplete *self,
+			      GebrGeoXmlParameterType type)
+{
+	return gebr_dict_complete_get_filter_full(self, type, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+}
+
+struct FilterData {
+	GebrGeoXmlParameterType type;
+	GebrGeoXmlDocumentType doc_type;
+};
+
+static gboolean visible_func(GtkTreeModel *model,
+			     GtkTreeIter  *iter,
+			     gpointer      user_data)
+{
+	struct FilterData *data = user_data;
+
+	GebrDictCompleteType complete_type;
+	GebrGeoXmlParameterType param_type;
+	GebrGeoXmlDocumentType doc_type;
+
+	gtk_tree_model_get(model, iter,
+			   GEBR_DICT_COMPLETE_COMPLETE_TYPE, &complete_type,
+			   GEBR_DICT_COMPLETE_VARIABLE_TYPE, &param_type,
+			   GEBR_DICT_COMPLETE_DOCUMENT_TYPE, &doc_type,
+			   -1);
+
+	if (complete_type == GEBR_DICT_COMPLETE_TYPE_PATH)
+		return data->type == GEBR_GEOXML_PARAMETER_TYPE_FILE;
+
+	if (!gebr_geoxml_document_type_contains(doc_type, data->doc_type))
+		return FALSE;
+
+	return gebr_geoxml_parameter_type_is_compatible(data->type, param_type);
+}
+
+GtkTreeModel *
+gebr_dict_complete_get_filter_full(GebrDictComplete *self,
+				   GebrGeoXmlParameterType type,
+				   GebrGeoXmlDocumentType doc_type)
+{
+	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(self->priv->store), NULL);
+
+	struct FilterData *data = g_new(struct FilterData, 1);
+	data->type = type;
+	data->doc_type = doc_type;
+
+	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter),
+					       visible_func, data, g_free);
+	return filter;
+}
