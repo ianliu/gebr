@@ -719,37 +719,43 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 	gboolean error_reading = !g_file_get_contents(log_file, &log_contents, NULL, NULL);
 	g_free(log_file);
 
+	gchar **log_lines;
 	gboolean command_not_found = FALSE;
-
-	gchar **log_lines = g_strsplit(log_contents, "\n", -1);
-	g_free(log_contents);
-
 	gint last_line = 0;
-	for (last_line = 0; log_lines[last_line]; last_line++);
-	last_line = last_line - 1;
-	for (; !*log_lines[last_line]; last_line--); //Rollback empty lines
 
+	if (!error_reading && log_contents) {
+		log_lines = g_strsplit(log_contents, "\n", -1);
+		g_free(log_contents);
 
-	if (!error_reading && g_strrstr(log_lines[last_line], "Exit status 127")) //SSH error code of command not found
+		for (last_line = 0; log_lines[last_line]; last_line++);
+		last_line = last_line - 1;
+		for (; !*log_lines[last_line]; last_line--); //Rollback empty lines
+
+		if (g_strrstr(log_lines[last_line], "Exit status 127")) //SSH error code of command not found
+			command_not_found = TRUE;
+	} else
 		command_not_found = TRUE;
 
 	if (!server->port) {
 		gchar *error = NULL;
 
-		if (command_not_found)
+		if (command_not_found) {
 			error = g_strdup_printf(_("%s not found in %s"), gebr_comm_server_is_maestro(server) ? "Maestro" : _("Server"), server->address->str);
-		else
+		} else {
 			error = g_strdup(log_lines[last_line]);
+			g_strfreev(log_lines);
+		}
 
 		gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "%s: Missing port number!", __func__);
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, error);
 		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run machine '%s'."), server->address->str);
 
 		g_free(error);
-		g_strfreev(log_lines);
 		return;
 	}
-	g_strfreev(log_lines);
+
+	if (!error_reading && log_contents)
+		g_strfreev(log_lines);
 
 	server->tried_existant_pass = FALSE;
 	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
