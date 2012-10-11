@@ -276,7 +276,17 @@ static gboolean flow_import_single (const gchar *path)
 	/* Reset last date run */
 	gebr_geoxml_flow_set_date_last_run(GEBR_GEOXML_FLOW(flow), "");
 
-	document_save(flow, FALSE, FALSE);
+	GtkTreeIter iter;
+	GebrGeoXmlLineFlow *line_flow;
+	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
+
+	iter = line_append_flow_iter(GEBR_GEOXML_FLOW(flow), line_flow);
+
+	document_save (GEBR_GEOXML_DOC (gebr.line), TRUE, FALSE);
+	document_save (flow, TRUE, TRUE);
+
+	flow_browse_select_iter(&iter);
+
 	g_free(new_title);
 
 	gebr_flow_set_toolbar_sensitive();
