@@ -76,6 +76,12 @@ void gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_ed
 		GebrGuiParameterValidatedFunc callback, gpointer user_data);
 
 /**
+ * gebr_gui_program_edit_set_complete_variables:
+ */
+void gebr_gui_program_edit_set_complete_variables(GebrGuiProgramEdit *program_edit,
+						  GebrGuiCompleteVariables *complete_var);
+
+/**
  * \internal
  * Just free.
  */

@@ -41,6 +41,8 @@ struct _GebrGuiParamPriv
 		GebrGuiParameterValidatedFunc callback;
 		gpointer user_data;
 	} signal_validated;
+
+	GebrGuiCompleteVariables *complete_var;
 };
 
 /* Prototypes {{{1 */
@@ -1600,6 +1602,7 @@ static void
 parameter_widget_free(GebrGuiParam *self)
 {
 	gebr_geoxml_object_unref(self->parameter);
+	g_object_unref(self->priv->complete_var);
 	g_free(self->priv);
 	g_free(self);
 }
@@ -1848,4 +1851,14 @@ gebr_gui_param_set_validated_callback(GebrGuiParam *widget,
 {
 	widget->priv->signal_validated.callback = callback;
 	widget->priv->signal_validated.user_data = user_data;
+}
+
+void
+gebr_gui_param_set_complete_variables(GebrGuiParam *param,
+				      GebrGuiCompleteVariables *complete_var)
+{
+	if (param->priv->complete_var)
+		g_object_unref(param->priv->complete_var);
+
+	param->priv->complete_var = g_object_ref(complete_var);
 }

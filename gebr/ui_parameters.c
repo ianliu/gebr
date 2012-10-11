@@ -117,6 +117,7 @@ parameters_configure_setup_ui(void)
 	program_edit = gebr_gui_program_edit_setup_ui(gebr.program, NULL,
 						      FALSE, gebr.validator, info, FALSE);
 	gebr_gui_program_edit_set_validated_callback(program_edit, on_validated, NULL);
+	gebr_gui_program_edit_set_complete_variables(program_edit, GEBR_GUI_COMPLETE_VARIABLES(gebr.ui_flow_browse->dict_complete));
 
 	GtkWidget *hbox_buttons = gtk_hbox_new(FALSE, 0);
 	GtkWidget *button_default = gtk_button_new_with_mnemonic(_("Reset"));

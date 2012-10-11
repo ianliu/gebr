@@ -154,10 +154,19 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 
 void
 gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_edit,
-		GebrGuiParameterValidatedFunc callback, gpointer user_data)
+					     GebrGuiParameterValidatedFunc callback,
+					     gpointer user_data)
 {
 	for (GList *i = program_edit->priv->widgets; i; i = i->next)
 		gebr_gui_param_set_validated_callback(i->data, callback, user_data);
+}
+
+void
+gebr_gui_program_edit_set_complete_variables(GebrGuiProgramEdit *program_edit,
+					     GebrGuiCompleteVariables *complete_var)
+{
+	for (GList *i = program_edit->priv->widgets; i; i = i->next)
+		gebr_gui_param_set_complete_variables(i->data, complete_var);
 }
 
 void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)

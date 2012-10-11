@@ -26,6 +26,7 @@
 #include "gebr-gui-file-entry.h"
 #include "gebr-gui-value-sequence-edit.h"
 #include <libgebr/gebr-maestro-info.h>
+#include "gebr-gui-complete-variables.h"
 
 G_BEGIN_DECLS
 
@@ -164,6 +165,12 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
  */
 void gebr_gui_param_set_validated_callback(GebrGuiParam *widget,
 		GebrGuiParameterValidatedFunc callback, gpointer user_data);
+
+/**
+ * gebr_gui_param_set_complete_variables:
+ */
+void gebr_gui_param_set_complete_variables(GebrGuiParam *param,
+					   GebrGuiCompleteVariables *complete_var);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H
