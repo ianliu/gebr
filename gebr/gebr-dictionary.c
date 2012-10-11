@@ -22,6 +22,7 @@
 
 #include <libgebr/utils.h>
 #include <libgebr/geoxml/geoxml.h>
+#include <libgebr/gui/gui.h>
 
 struct _GebrDictCompletePriv
 {
@@ -62,24 +63,24 @@ insert_dict_variable(GebrDictComplete *self,
 {
 	const gchar *keyword;
 	GebrGeoXmlParameterType type;
-	GebrDictCompleteType complete_type;
+	GebrGuiCompleteVariablesType complete_type;
 	const gchar *value;
 	gchar *result;
 
 	keyword = gebr_geoxml_program_parameter_get_keyword(param);
 	type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
-	complete_type = GEBR_DICT_COMPLETE_TYPE_VARIABLE;
+	complete_type = GEBR_GUI_COMPLETE_VARIABLES_TYPE_VARIABLE;
 	value = gebr_geoxml_program_parameter_get_first_value(param, FALSE);
 	result = g_strdup_printf("= %s", value);
 
 	GtkTreeIter iter;
 	gtk_list_store_append(self->priv->store, &iter);
 	gtk_list_store_set(self->priv->store, &iter,
-			   GEBR_DICT_COMPLETE_KEYWORD, keyword,
-			   GEBR_DICT_COMPLETE_COMPLETE_TYPE, complete_type,
-			   GEBR_DICT_COMPLETE_VARIABLE_TYPE, type,
-			   GEBR_DICT_COMPLETE_DOCUMENT_TYPE, doc_type,
-			   GEBR_DICT_COMPLETE_RESULT, result,
+			   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, keyword,
+			   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, complete_type,
+			   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, type,
+			   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, doc_type,
+			   GEBR_GUI_COMPLETE_VARIABLES_RESULT, result,
 			   -1);
 
 	g_free(result);
