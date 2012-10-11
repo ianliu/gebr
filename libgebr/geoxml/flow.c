@@ -772,6 +772,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	gchar ***pvector = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
 
 	const gchar *program_title;
+	gchar *prev_program_title = NULL;
 
 	/* Checking if flow has only the for loop */
 	if (gebr_geoxml_flow_get_programs_number(flow) == 1
@@ -894,8 +895,9 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			case 2:	/* Previous does write to stdin but current does not care about */
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
-					    _("Output of %s ignored as it"
-					      "should not be"),
+					    _("%s's output is being ignored by "
+					      "%s"),
+					    prev_program_title,
 					    program_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
@@ -907,9 +909,12 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			}
 		}
 		previous_stdout = gebr_geoxml_program_get_stdout(prog);
+		g_free(prev_program_title);
+		prev_program_title = g_strdup(program_title);
 		first = FALSE;
 	}
 	g_free(resolved_input);
+	g_free(prev_program_title);
 	
 	if (progs_error > 0) {
 		if(progs_error == 1)

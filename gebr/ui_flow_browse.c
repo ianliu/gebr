@@ -496,7 +496,11 @@ flow_browse_component_editing_started(GtkCellRenderer *renderer,
 
 	g_object_set_data(G_OBJECT(editable), "path", g_strdup(path));
 
-	gebr_ui_flows_io_start_editing(io, GTK_ENTRY(editable));
+	GtkTreeModel *completion_model =
+		gebr_gui_complete_variables_get_filter(GEBR_GUI_COMPLETE_VARIABLES(fb->dict_complete),
+						       GEBR_GEOXML_PARAMETER_TYPE_FILE);
+
+	gebr_ui_flows_io_start_editing(io, GTK_ENTRY(editable), completion_model);
 }
 
 static void

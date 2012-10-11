@@ -303,8 +303,10 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	if (!error)
 		return TRUE;
 
-	g_string_append_printf(message, "%s\nin flow %s.", error->message, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
+	const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
+	g_string_append_printf(message, "%s.", error->message);
 
+	const gchar *broken_flow_msg = g_strdup_printf(_("Assembly error"));
 	error_code = error->code;
 	switch (error_code)
 	{
@@ -314,12 +316,12 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 		if (is_snapshot) {
 			gdk_threads_enter();
 			gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
-						"broken-flow-icon", _("Broken Flow"),
+						"broken-flow-icon", broken_flow_msg,
 						message->str);
 			gdk_threads_leave();
 		} else {
 			gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
-						"broken-flow-icon", _("Broken Flow"),
+						"broken-flow-icon", broken_flow_msg,
 						message->str);
 		}
 		break;
