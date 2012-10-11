@@ -457,7 +457,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 		GebrGeoXmlObject *object;
 		if (!strcmp(uri, "gebr://menu")) {
 			if (gebr_geoxml_object_get_type(priv->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
-				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 							_("Invalid link"), _("Sorry, couldn't reach link."));
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
@@ -465,7 +465,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 			object = GEBR_GEOXML_OBJECT(menu);
 		} else if (!g_strcmp0(uri, "gebr://link")) {
 			if (gebr_geoxml_object_get_type(priv->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
-				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 				                        _("Invalid link"), _("Sorry, couldn't reach link."));
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
@@ -483,7 +483,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 			return  WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 		} else {
 			if (gebr_geoxml_object_get_type(priv->object) != GEBR_GEOXML_OBJECT_TYPE_FLOW) {
-				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 							_("Invalid link"), _("Sorry, couldn't reach link."));
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
@@ -492,7 +492,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 			GebrGeoXmlSequence *program;
 			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(priv->object), &program, program_index);
 			if (program == NULL) {
-				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 							_("Invalid link"), _("Sorry, couldn't find program."));
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
@@ -510,7 +510,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 			help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
 
 		if(strlen(help) == 0) {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 						_("Invalid link"), _("Sorry, couldn't reach link."));
 			g_free (help);
 			return WEBKIT_NAVIGATION_RESPONSE_IGNORE;

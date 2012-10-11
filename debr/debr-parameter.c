@@ -1186,7 +1186,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 			if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG
 			    && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button))
 			    && !strlen(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)))) {
-				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Separator"),
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, _("Separator"),
 							_("You've marked this parameter as a list but no separator was selected.\n"
 							  "Please select the list separator."));
 				gtk_widget_grab_focus(separator_entry);

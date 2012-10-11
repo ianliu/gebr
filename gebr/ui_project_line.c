@@ -340,6 +340,7 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
 	const gchar *addr = maestro ? gebr_maestro_server_get_address(maestro) : "";
 
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+						   NULL,
 						   _("Moving this line to current Maestro."),
 						   _("Are you sure you want to move this Line to Maestro %s?"
 						     "\n\nIf you choose to move this Line to current Maestro,"

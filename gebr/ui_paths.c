@@ -131,7 +131,7 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 
 	if (!ok)
 	{
-		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 					 _("Invalid path"),
 					 _("The path <i>%s</i> is invalid, the operation will be cancelled."),
 					 path);
@@ -165,12 +165,12 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 
 	if (retval) {
 		if (g_strcmp0(path,buf) == 0)
-			gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+			gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 						 _("Path already exists"),
 						 _("The path <i>%s</i> already exists in the list, the operation will be cancelled."),
 						 path);
 		else
-			gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+			gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 						 _("Path already exists"),
 						 _("The path <i>%s</i> already exists in the list as %s, the operation will be cancelled."),
 						 path, buf);

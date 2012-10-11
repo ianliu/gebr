@@ -72,7 +72,7 @@ gboolean project_delete(GtkTreeIter * iter, gboolean warn_user)
 	gint nlines = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), iter);
 	if (nlines > 0) {
 		if (warn_user)
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Selection error:"),
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, _("Selection error:"),
 						_("The Project has Lines.\nThese Lines should also be selected so as to be deleted along with the Project."));
 		return FALSE;
 	}

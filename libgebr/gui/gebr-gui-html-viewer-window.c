@@ -169,7 +169,7 @@ static void on_save_activate (GtkAction *action, GebrGuiHtmlViewerWindow * self)
 
 	file = fopen (path, "w");
 	if (!file) {
-		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
 					 _("Could not save file"),
 					 _("You do not have the permissions necessary to save the file %s."
 					   "Check that you choose the location correctly."),
