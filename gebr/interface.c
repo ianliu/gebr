@@ -218,7 +218,6 @@ insert_popup_menulist (GtkToolbar *toolbar)
 
 	GtkWidget *menu_view = gebr_menu_view_get_widget(gebr.menu_view);
 	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(menu_button), menu_view);
-	gtk_widget_show_all(menu_view);
 
 	gtk_widget_show_all(menu_button);
 	gtk_container_add(GTK_CONTAINER(menu_item), menu_button);

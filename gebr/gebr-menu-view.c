@@ -40,10 +40,14 @@ struct _GebrMenuViewPriv {
 	GHashTable *menus_added;
 
 	GtkWidget *entry;
+	GtkWidget *help;
+	GtkWidget *add;
 
 	GtkWidget *vbox;
+	GtkWidget *hbox;
 
 	GtkWidget *help_viewer;
+	GtkWidget *menu_view;
 };
 
 enum {
@@ -117,6 +121,9 @@ gebr_menu_view_activate_add(GebrMenuView *view)
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 
+	if (!gebr_menu_view_get_selected_menu(view, &iter))
+		return;
+
 	model = gtk_tree_view_get_model(view->priv->tree_view);
 
 	if (gebr_menu_view_get_selected_menu(view, &iter))
@@ -135,8 +142,24 @@ gebr_menu_view_show_help(GebrMenuView *view)
 	gchar *html;
 	GebrGeoXmlFlow *menu;
 
-	if (!gebr_menu_view_get_selected_menu(view, &iter))
+	if (!gebr_menu_view_get_selected_menu(view, &iter)) {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(view->priv->help), FALSE);
 		return;
+	}
+
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(view->priv->help))){
+		gtk_widget_show_all(view->priv->help_viewer);
+		gtk_widget_hide_all(view->priv->menu_view);
+		gtk_widget_hide(view->priv->entry);
+		gtk_widget_set_tooltip_text(view->priv->help, _("Close this help and back to menus list"));
+		gtk_widget_set_tooltip_text(view->priv->add, _("Add this menu to flow"));
+	} else {
+		gtk_widget_show_all(view->priv->menu_view);
+		gtk_widget_show(view->priv->entry);
+		gtk_widget_hide_all(view->priv->help_viewer);
+		gtk_widget_set_tooltip_text(view->priv->help, _("See the selected menu's help"));
+		gtk_widget_set_tooltip_text(view->priv->add, _("Add the selected menu to flow"));
+	}
 
 	GtkTreeModel *model;
 	model = gtk_tree_view_get_model(view->priv->tree_view);
@@ -154,6 +177,13 @@ gebr_menu_view_show_help(GebrMenuView *view)
 	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), html);
 
 out:	g_free(menu_filename);
+}
+
+static void
+gebr_menu_popup_show_help(GebrMenuView *view)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(view->priv->help), TRUE);
+	gebr_menu_view_show_help(view);
 }
 
 static GtkMenu *
@@ -191,7 +221,7 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 	/* Help */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_show_help), view);
+	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_popup_show_help), view);
 
 	if (filtered)
 		goto out;
@@ -431,7 +461,7 @@ gebr_menu_view_init(GebrMenuView *view)
 	gtk_tree_view_set_headers_visible(view->priv->tree_view, FALSE);
 	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(view->priv->tree_view), FALSE);
 
-	GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	GtkWidget *scrolled_window = view->priv->menu_view = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
 	                               GTK_POLICY_AUTOMATIC);
 
@@ -458,6 +488,32 @@ gebr_menu_view_init(GebrMenuView *view)
 	g_object_set(renderer, "ypad", 2, NULL);
 	g_object_set(renderer, "wrap-mode", PANGO_WRAP_WORD_CHAR, "wrap-width", 490, NULL);
 
+	view->priv->hbox = gtk_hbox_new(FALSE, 0);
+
+	/*
+	 * Create Add button
+	 */
+	view->priv->help = gtk_toggle_button_new();
+	gtk_button_set_relief(GTK_BUTTON(view->priv->help), GTK_RELIEF_NONE);
+	gtk_button_set_focus_on_click(GTK_BUTTON(view->priv->help), FALSE);
+	gtk_button_set_image(GTK_BUTTON(view->priv->help), gtk_image_new_from_stock(GTK_STOCK_HELP, GTK_ICON_SIZE_SMALL_TOOLBAR));
+	gtk_widget_set_tooltip_text(view->priv->help, _("See the selected menu's help"));
+	gtk_button_set_alignment(GTK_BUTTON(view->priv->help), 1.0, 1.0);
+	gtk_box_pack_end(GTK_BOX(view->priv->hbox), view->priv->help, FALSE, FALSE, 5);
+
+	g_signal_connect_swapped(view->priv->help, "toggled", G_CALLBACK(gebr_menu_view_show_help), view);
+
+	/*
+	 * Create Menu button
+	 */
+	view->priv->add = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(view->priv->add), GTK_RELIEF_NONE);
+	gtk_button_set_focus_on_click(GTK_BUTTON(view->priv->add), FALSE);
+	gtk_container_add(GTK_CONTAINER(view->priv->add), gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_SMALL_TOOLBAR));
+	gtk_widget_set_tooltip_text(view->priv->add, _("Add the selected menu to flow"));
+	gtk_box_pack_end(GTK_BOX(view->priv->hbox), view->priv->add, FALSE, FALSE, 5);
+
+	g_signal_connect_swapped(view->priv->add, "clicked", G_CALLBACK(gebr_menu_view_activate_add), view);
 
 	/*
 	 * Create search entry
@@ -478,8 +534,10 @@ gebr_menu_view_init(GebrMenuView *view)
 	g_signal_connect(view->priv->entry, "changed", G_CALLBACK(on_search_entry), view);
 	g_signal_connect(view->priv->entry, "key-press-event", G_CALLBACK(on_search_entry_key_press), view);
 
+	gtk_box_pack_end(GTK_BOX(view->priv->hbox), view->priv->entry, TRUE, TRUE, 5);
+
 	// Add Search entry
-	gtk_box_pack_start(GTK_BOX(view->priv->vbox), view->priv->entry, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(view->priv->vbox), view->priv->hbox, FALSE, FALSE, 5);
 
 	// Add menu list
 	gtk_box_pack_start(GTK_BOX(view->priv->vbox), scrolled_window, TRUE, TRUE, 0);
@@ -488,6 +546,9 @@ gebr_menu_view_init(GebrMenuView *view)
 	view->priv->help_viewer = gebr_gui_html_viewer_widget_new();
 	gebr_gui_html_viewer_widget_set_is_menu(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), TRUE);
 	gtk_box_pack_start(GTK_BOX(view->priv->vbox), view->priv->help_viewer, TRUE, TRUE, 0);
+
+	gtk_widget_show_all(view->priv->vbox);
+	gtk_widget_hide_all(view->priv->help_viewer);
 }
 
 static void
