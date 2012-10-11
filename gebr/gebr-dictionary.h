@@ -26,12 +26,25 @@
 
 G_BEGIN_DECLS
 
+#define GEBR_TYPE_DICT_COMPLETE            (gebr_dict_complete_get_type ())
+#define GEBR_DICT_COMPLETE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TYPE_DICT_COMPLETE, GebrDictComplete))
+#define GEBR_DICT_COMPLETE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEBR_TYPE_DICT_COMPLETE, GebrDictCompleteClass))
+#define GEBR_IS_DICT_COMPLETE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_TYPE_DICT_COMPLETE))
+#define GEBR_IS_DICT_COMPLETE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEBR_TYPE_DICT_COMPLETE))
+#define GEBR_DICT_COMPLETE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEBR_TYPE_DICT_COMPLETE, GebrDictCompleteClass))
+
 typedef struct _GebrDictComplete GebrDictComplete;
+typedef struct _GebrDictCompleteClass GebrDictCompleteClass;
 typedef struct _GebrDictCompletePriv GebrDictCompletePriv;
 
 struct _GebrDictComplete
 {
+	GObject parent;
 	GebrDictCompletePriv *priv;
+};
+
+struct _GebrDictCompleteClass {
+	GObjectClass parent_class;
 };
 
 GType gebr_dict_complete_get_type(void);
@@ -42,13 +55,6 @@ void gebr_dict_complete_set_documents(GebrDictComplete *self,
 				      GebrGeoXmlDocument *proj,
 				      GebrGeoXmlDocument *line,
 				      GebrGeoXmlDocument *flow);
-
-GtkTreeModel *gebr_dict_complete_get_filter(GebrDictComplete *self,
-					    GebrGeoXmlParameterType type);
-
-GtkTreeModel *gebr_dict_complete_get_filter_full(GebrDictComplete *self,
-						 GebrGeoXmlParameterType type,
-						 GebrGeoXmlDocumentType doc_type);
 
 G_END_DECLS
 

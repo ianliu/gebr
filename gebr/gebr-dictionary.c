@@ -32,28 +32,45 @@ struct _GebrDictCompletePriv
 	GtkListStore *store;
 };
 
-static gpointer
-_gebr_dict_complete_copy(gpointer boxed)
-{
-	return NULL;
-}
+static GtkTreeModel *gebr_dict_complete_get_filter(GebrGuiCompleteVariables *complete,
+						   GebrGeoXmlParameterType type);
+
+static GtkTreeModel *gebr_dict_complete_get_filter_full(GebrGuiCompleteVariables *self,
+							GebrGeoXmlParameterType type,
+							GebrGeoXmlDocumentType doc_type);
 
 static void
-_gebr_dict_complete_free(gpointer boxed)
+gebr_dict_complete_variables_init(GebrGuiCompleteVariablesInterface *iface)
+{
+	iface->get_filter = gebr_dict_complete_get_filter;
+	iface->get_filter_full = gebr_dict_complete_get_filter_full;
+}
+
+G_DEFINE_TYPE_WITH_CODE(GebrDictComplete, gebr_dict_complete, G_TYPE_OBJECT,
+			G_IMPLEMENT_INTERFACE(GEBR_GUI_TYPE_COMPLETE_VARIABLES,
+					      gebr_dict_complete_variables_init));
+
+static void
+gebr_dict_complete_finalize(GObject *object)
 {
 	return;
 }
 
-GType
-gebr_dict_complete_get_type(void)
+static void
+gebr_dict_complete_init(GebrDictComplete *self)
 {
-	static GType type_id = 0;
+	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
+						 GEBR_TYPE_DICT_COMPLETE,
+						 GebrDictCompletePriv);
+}
 
-	if (type_id == 0)
-		type_id = g_boxed_type_register_static("GebrDictComplete",
-				_gebr_dict_complete_copy,
-				_gebr_dict_complete_free);
-	return type_id;
+static void
+gebr_dict_complete_class_init(GebrDictCompleteClass *klass)
+{
+	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+	gobject_class->finalize = gebr_dict_complete_finalize;
+
+	g_type_class_add_private(klass, sizeof(GebrDictCompletePriv));
 }
 
 static void
@@ -92,23 +109,23 @@ insert_path_variable(GebrDictComplete *self, gchar **path)
 	const gchar *result;
 	const gchar *keyword;
 	GebrGeoXmlParameterType type;
-	GebrDictCompleteType complete_type;
+	GebrGuiCompleteVariablesType complete_type;
 	GebrGeoXmlDocumentType doc_type;
 
 	result = path[0];
 	keyword = path[1];
 	type = GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
-	complete_type = GEBR_DICT_COMPLETE_TYPE_PATH;
+	complete_type = GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH;
 	doc_type = GEBR_GEOXML_DOCUMENT_TYPE_LINE;
 
 	GtkTreeIter iter;
 	gtk_list_store_append(self->priv->store, &iter);
 	gtk_list_store_set(self->priv->store, &iter,
-			   GEBR_DICT_COMPLETE_KEYWORD, keyword,
-			   GEBR_DICT_COMPLETE_COMPLETE_TYPE, complete_type,
-			   GEBR_DICT_COMPLETE_VARIABLE_TYPE, type,
-			   GEBR_DICT_COMPLETE_DOCUMENT_TYPE, doc_type,
-			   GEBR_DICT_COMPLETE_RESULT, result,
+			   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, keyword,
+			   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, complete_type,
+			   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, type,
+			   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, doc_type,
+			   GEBR_GUI_COMPLETE_VARIABLES_RESULT, result,
 			   -1);
 }
 
@@ -146,7 +163,7 @@ gebr_dict_complete_new(void)
 {
 	GebrDictComplete *dict = g_new0(GebrDictComplete, 1);
 	dict->priv = g_new0(GebrDictCompletePriv, 1);
-	dict->priv->store = gtk_list_store_new(GEBR_DICT_COMPLETE_NCOLS,
+	dict->priv->store = gtk_list_store_new(GEBR_GUI_COMPLETE_VARIABLES_NCOLS,
 					       G_TYPE_STRING,  /* Keyword */
 					       G_TYPE_INT,     /* Completion type */
 					       G_TYPE_INT,     /* Variable type */
@@ -176,11 +193,11 @@ gebr_dict_complete_set_documents(GebrDictComplete *self,
 	gebr_dict_complete_update_model(self);
 }
 
-GtkTreeModel *
-gebr_dict_complete_get_filter(GebrDictComplete *self,
+static GtkTreeModel *
+gebr_dict_complete_get_filter(GebrGuiCompleteVariables *complete,
 			      GebrGeoXmlParameterType type)
 {
-	return gebr_dict_complete_get_filter_full(self, type, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+	return gebr_dict_complete_get_filter_full(complete, type, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 }
 
 struct FilterData {
@@ -194,17 +211,17 @@ static gboolean visible_func(GtkTreeModel *model,
 {
 	struct FilterData *data = user_data;
 
-	GebrDictCompleteType complete_type;
+	GebrGuiCompleteVariablesType complete_type;
 	GebrGeoXmlParameterType param_type;
 	GebrGeoXmlDocumentType doc_type;
 
 	gtk_tree_model_get(model, iter,
-			   GEBR_DICT_COMPLETE_COMPLETE_TYPE, &complete_type,
-			   GEBR_DICT_COMPLETE_VARIABLE_TYPE, &param_type,
-			   GEBR_DICT_COMPLETE_DOCUMENT_TYPE, &doc_type,
+			   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, &complete_type,
+			   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, &param_type,
+			   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, &doc_type,
 			   -1);
 
-	if (complete_type == GEBR_DICT_COMPLETE_TYPE_PATH)
+	if (complete_type == GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH)
 		return data->type == GEBR_GEOXML_PARAMETER_TYPE_FILE;
 
 	if (!gebr_geoxml_document_type_contains(doc_type, data->doc_type))
@@ -213,11 +230,12 @@ static gboolean visible_func(GtkTreeModel *model,
 	return gebr_geoxml_parameter_type_is_compatible(data->type, param_type);
 }
 
-GtkTreeModel *
-gebr_dict_complete_get_filter_full(GebrDictComplete *self,
+static GtkTreeModel *
+gebr_dict_complete_get_filter_full(GebrGuiCompleteVariables *complete,
 				   GebrGeoXmlParameterType type,
 				   GebrGeoXmlDocumentType doc_type)
 {
+	GebrDictComplete *self = GEBR_DICT_COMPLETE(complete);
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(self->priv->store), NULL);
 
 	struct FilterData *data = g_new(struct FilterData, 1);
