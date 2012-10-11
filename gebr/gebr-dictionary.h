@@ -32,6 +32,7 @@ enum {
 	GEBR_DICT_COMPLETE_VARIABLE_TYPE,
 	GEBR_DICT_COMPLETE_DOCUMENT_TYPE,
 	GEBR_DICT_COMPLETE_RESULT,
+	GEBR_DICT_COMPLETE_NCOLS,
 };
 
 typedef enum {
@@ -49,9 +50,7 @@ struct _GebrDictComplete
 
 GType gebr_dict_complete_get_type(void);
 
-GebrDictComplete *gebr_dict_complete_new(GebrGeoXmlDocument *proj,
-					 GebrGeoXmlDocument *line,
-					 GebrGeoXmlDocument *flow);
+GebrDictComplete *gebr_dict_complete_new(void);
 
 void gebr_dict_complete_set_documents(GebrDictComplete *self,
 				      GebrGeoXmlDocument *proj,

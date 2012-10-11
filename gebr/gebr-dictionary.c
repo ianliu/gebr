@@ -141,18 +141,16 @@ gebr_dict_complete_update_model(GebrDictComplete *self)
 }
 
 GebrDictComplete *
-gebr_dict_complete_new(GebrGeoXmlDocument *proj, GebrGeoXmlDocument *line, GebrGeoXmlDocument *flow)
+gebr_dict_complete_new(void)
 {
 	GebrDictComplete *dict = g_new0(GebrDictComplete, 1);
 	dict->priv = g_new0(GebrDictCompletePriv, 1);
-	dict->priv->store = gtk_list_store_new(4,
+	dict->priv->store = gtk_list_store_new(GEBR_DICT_COMPLETE_NCOLS,
 					       G_TYPE_STRING,  /* Keyword */
 					       G_TYPE_INT,     /* Completion type */
 					       G_TYPE_INT,     /* Variable type */
 					       G_TYPE_INT,     /* Document type */
 					       G_TYPE_STRING); /* Result */
-
-	gebr_dict_complete_set_documents(dict, proj, line, flow);
 	return dict;
 }
 

@@ -31,6 +31,7 @@
 #include "gebr-maestro-server.h"
 #include "ui_flows_io.h"
 #include "ui_flow_program.h"
+#include "gebr-dictionary.h"
 
 G_BEGIN_DECLS
 
@@ -93,6 +94,7 @@ typedef struct {
 	GtkWidget *socket;
 
 	GList *select_flows;
+	GebrDictComplete *dict_complete;
 
 	/* Context Actions */
 	gboolean flow_main_view;

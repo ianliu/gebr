@@ -1289,6 +1289,7 @@ flow_browse_setup_ui()
 	ui_flow_browse->select_flows = NULL;
 	ui_flow_browse->last_info_width = 0;
 	ui_flow_browse->program_edit = NULL;
+	ui_flow_browse->dict_complete = gebr_dict_complete_new();
 
 	g_signal_connect_after(gebr.maestro_controller, "maestro-state-changed",
 	                       G_CALLBACK(on_controller_maestro_state_changed), ui_flow_browse);
@@ -2387,6 +2388,17 @@ update_flow_actions_sensitiveness(GtkTreeSelection *selection,
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), !is_multiple);
 }
 
+static void
+gebr_ui_flow_browse_flow_changed(GebrUiFlowBrowse *fb,
+				 GebrGeoXmlFlow *old_flow,
+				 GebrGeoXmlFlow *new_flow)
+{
+	gebr_dict_complete_set_documents(fb->dict_complete,
+					 GEBR_GEOXML_DOCUMENT(gebr.project),
+					 GEBR_GEOXML_DOCUMENT(gebr.line),
+					 GEBR_GEOXML_DOCUMENT(gebr.flow));
+}
+
 /**
  * Load a selected flow from file when selected in "Flow Browser".
  */
@@ -2448,6 +2460,9 @@ static void flow_browse_load(void)
 		                   -1);
 
 		gebr.flow = gebr_ui_flow_get_flow(ui_flow);
+
+		if (gebr.flow != old_flow)
+			gebr_ui_flow_browse_flow_changed(gebr.ui_flow_browse, old_flow, gebr.flow);
 
 		if (gebr.validator)
 			gebr_validator_update(gebr.validator);
