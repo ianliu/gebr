@@ -268,9 +268,9 @@ Although it is not mandatory to adhere to this structure, it is highly recommend
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;small&gt;Remember that the processing takes place at the working nodes. So, the structure which is being defined here will be created there.
+            <property name="label" translatable="yes">&lt;small&gt;Remember that the processing takes place at the processing nodes. So, the structure which is being defined here will be created there.
 
-To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&gt; feature must be enable in the Maestro.&lt;/small&gt;</property>
+To be able to browse files in these directory, the &lt;i&gt;remote browsing&lt;/i&gt; feature must be enable in the maestro.&lt;/small&gt;</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -651,7 +651,7 @@ To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&
                       <object class="GtkLabel" id="label20">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">For saving Flow's results.</property>
+                        <property name="label" translatable="yes">For saving flow's results.</property>
                         <property name="use_markup">True</property>
                         <property name="selectable">True</property>
                       </object>
@@ -793,7 +793,7 @@ To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&
     <child>
       <object class="GtkLabel" id="label_hierarchy_1">
         <property name="visible">True</property>
-        <property name="label">#GêBR will create some directories to organize the files 
+        <property name="label">#GêBR will create some directories to organize the files
 created during the data processing.
 These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</property>
         <property name="use_markup">True</property>
@@ -1272,7 +1272,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
         <property name="visible">True</property>
         <property name="xalign">0</property>
         <property name="xpad">15</property>
-        <property name="label" translatable="yes">&lt;b&gt;Maestro:&lt;/b&gt;</property>
+        <property name="label" translatable="yes">&lt;b&gt;maestro:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
       <packing>

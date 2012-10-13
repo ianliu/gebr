@@ -380,12 +380,12 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 	if (page == 1) {
 		GObject *info_label= gtk_builder_get_object(data->builder, "info_label");
-		gchar *info_label_text= g_markup_printf_escaped(_("The <i>Line</i> structure in GêBR gathers many "
+		gchar *info_label_text= g_markup_printf_escaped(_("The <i>line</i> structure in GêBR gathers many "
                                                                   "processing flows.\n\nThe term <i>line</i> comes from "
                                                                   "the notion that the processing of a data "
                                                                   "set, acquired over a seismic line, is performed "
                                                                   "in several steps by the processing flows.\n\n"
-                                                                  "This Line will be attached to the current Maestro "
+                                                                  "This line will be attached to the current maestro "
                                                                   "(%s), which will be in charge of running its "
                                                                   "processing flows."), maestro_addr);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
@@ -411,7 +411,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		GObject *label;
 		gchar *text_maestro = g_markup_printf_escaped(_("Below is the hierarchy of directories GêBR is about to create.\n\n"
-								"These directories will be created on the nodes of Maestro <b>%s</b>."), maestro_addr);
+								"These directories will be created on the nodes of maestro <b>%s</b>."), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
@@ -521,7 +521,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_window_set_modal(GTK_WINDOW(assistant), TRUE);
 	gtk_window_set_transient_for(GTK_WINDOW(assistant), GTK_WINDOW(gebr.window));
 	gtk_window_set_position(GTK_WINDOW(assistant), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
+	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new line"));
 
 	WizardData *data = g_new(WizardData, 1);
 	data->assistant = assistant;
@@ -700,7 +700,7 @@ void line_new(void)
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 	line = GEBR_GEOXML_LINE(document_new(GEBR_GEOXML_DOCUMENT_TYPE_LINE));
-	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(line), _("New Line"));
+	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(line), _("New line"));
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(line), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(line), gebr.config.email->str);
 
@@ -761,9 +761,9 @@ gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
 
 	/* inform the user */
 	if (warn_user) {
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting Line '%s'."),
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting line '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)));
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting Line '%s' from project '%s'."),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting line '%s' from project '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(project)));
 	}

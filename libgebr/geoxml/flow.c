@@ -780,7 +780,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	{
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			    GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
-			    _("No configured or enabled Programs found"));
+			    _("No configured or enabled programs found"));
 		return FALSE;
 	}
 
@@ -934,7 +934,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 	if (first) {
 		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 			    GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
-			    _("No enabled Programs found"));
+			    _("No enabled programs found"));
 		gebr_geoxml_object_unref(last_configured);
 		gebr_pairstrfreev(pvector);
 		return FALSE;

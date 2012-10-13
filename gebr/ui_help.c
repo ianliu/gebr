@@ -101,10 +101,10 @@ static const GtkToggleActionEntry html_viewer_toggle_entries[] = {
 	{"IncludeCommentAction", NULL, N_("_Include user's commentary"), NULL,
 		NULL, G_CALLBACK (on_include_comment_activate), TRUE},
 
-	{"IncludeFlowsReportAction", NULL, N_("Include the _Flow's report"), NULL,
+	{"IncludeFlowsReportAction", NULL, N_("Include the _flow's report"), NULL,
 		NULL, G_CALLBACK (on_include_flows_report_activate), TRUE},
 
-	{"IncludeRevisionsReportAction", NULL, N_("Include the report of the snapshots of _Flows"), NULL,
+	{"IncludeRevisionsReportAction", NULL, N_("Include the report of the snapshots of _flows"), NULL,
 		NULL, G_CALLBACK (on_include_revisions_report_activate), TRUE},
 };
 static guint n_html_viewer_toggle_entries = G_N_ELEMENTS (html_viewer_toggle_entries);

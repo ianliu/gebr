@@ -77,7 +77,7 @@ void flow_new (void)
 
 	/* Create a new flow */
 	flow = GEBR_GEOXML_FLOW(document_new(GEBR_GEOXML_DOCUMENT_TYPE_FLOW));
-	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(flow), _("New Flow"));
+	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(flow), _("New flow"));
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.line)));
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line)));
 
@@ -95,7 +95,7 @@ void flow_new (void)
 
 	flow_browse_set_run_widgets_sensitiveness(gebr.ui_flow_browse, TRUE, FALSE);
 
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New Flow added to Line '%s'."), line_title);
+	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'."), line_title);
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.flow), on_properties_response, TRUE);
 	project_line_info_update();
 
@@ -184,12 +184,12 @@ void flow_delete(gboolean confirm)
 	
 	gchar *deletion_msg;
 	if (there_is_snapshot)
-		deletion_msg = g_strdup(_("Are you sure you want to delete the selected Flow(s) and\n"
+		deletion_msg = g_strdup(_("Are you sure you want to delete the selected flow(s) and\n"
 				 "the associated snapshots?"));
 	else
-		deletion_msg = g_strdup(_("Are you sure you want to delete the selected Flow(s)?"));
+		deletion_msg = g_strdup(_("Are you sure you want to delete the selected flow(s)?"));
 
-	if (confirm && gebr_gui_confirm_action_dialog(_("Delete Flow(s)?"),
+	if (confirm && gebr_gui_confirm_action_dialog(_("Delete flow(s)?"),
 						      deletion_msg) == FALSE) {
 		g_free(deletion_msg);
 		return;
@@ -208,8 +208,8 @@ void flow_delete(gboolean confirm)
 
 		/* Some feedback */
 		if (confirm) {
-			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting Flow '%s'."), title);
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting  Flow '%s' from Line '%s'."),
+			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting flow '%s'."), title);
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting  flow '%s' from line '%s'."),
 				     title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
 		}
 
@@ -260,7 +260,7 @@ static gboolean flow_import_single (const gchar *path)
 
 	title = gebr_geoxml_document_get_title (flow);
 
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported into Line '%s' from the file '%s'."),
+	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported into line '%s' from the file '%s'."),
 		     title, gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (gebr.line)), path);
 
 	document_import (flow, FALSE);
@@ -304,7 +304,7 @@ void flow_import(void)
 	if (!project_line_get_selected(NULL, LineSelection))
 		return;
 
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose a Flow to import"),
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose a flow to import"),
 						     GTK_WINDOW(gebr.window),
 						     GTK_FILE_CHOOSER_ACTION_OPEN,
 						     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
@@ -329,13 +329,13 @@ void flow_import(void)
 		tar = gebr_tar_new_from_file (path);
 		if (!gebr_tar_extract (tar))
 			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
-				      _("Could not import Flow from the file %s"), path);
+				      _("Could not import flow from the file %s"), path);
 		else
 			gebr_tar_foreach (tar, (GebrTarFunc) flow_import_single, NULL);
 		gebr_tar_free (tar);
 	} else if (!flow_import_single (path))
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
-			      _("Could not import Flow from the file %s"), path);
+			      _("Could not import flow from the file %s"), path);
 
 	g_free(path);
 out:
@@ -364,14 +364,14 @@ void flow_export(void)
 	len = g_list_length (rows);
 
 	if (!rows) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected"));
 		return;
 	}
 
 	title = g_string_new(NULL);
 
 	if (len > 1)
-		g_string_printf (title, "Save selected Flows as...");
+		g_string_printf (title, "Save selected flows as...");
 	else {
 		GtkTreeIter iter;
 		GtkTreePath *path = rows->data;
@@ -445,7 +445,7 @@ void flow_export(void)
 
 		flow = gebr_geoxml_document_clone (doc);
 		if (!flow) {
-			gebr_message (GEBR_LOG_ERROR, FALSE, TRUE, _("Could not clone Flow %s"), flow_filename);
+			gebr_message (GEBR_LOG_ERROR, FALSE, TRUE, _("Could not clone flow %s"), flow_filename);
 			error = TRUE;
 			continue;
 		}
@@ -471,13 +471,13 @@ void flow_export(void)
 	if (have_flow && gebr_tar_compact (tar, tempdir->str)) {
 		gchar *msg;
 		if (error)
-			msg = _("Exported selected Flow(s) into %s with error. See log file for more information.");
+			msg = _("Exported selected flow(s) into %s with error. See log file for more information.");
 		else
-			msg = _("Exported selected Flow(s) into %s.");
+			msg = _("Exported selected flow(s) into %s.");
 		gebr_message (GEBR_LOG_INFO, TRUE, TRUE, msg, tmp);
 	} else {
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
-			      _("Could not export Flow(s). See log file for more information."));
+			      _("Could not export flow(s). See log file for more information."));
 	}
 
 	gebr_temp_directory_destroy (tempdir);
@@ -787,11 +787,11 @@ gboolean flow_revision_save(void)
 	const gchar *dialog_msg;
 
 	if (num_flows == 1) {
-		dialog_title = _("Take a snapshot of the current Flow?");
-		dialog_msg = _("Enter a description for the snapshot of the current Flow:");
+		dialog_title = _("Take a snapshot of the current flow?");
+		dialog_msg = _("Enter a description for the snapshot of the current flow:");
 	} else {
-		dialog_title = _("Take a snapshot of the selected Flows?");
-		dialog_msg = _("Enter a description for the snapshots of the selected Flows:");
+		dialog_title = _("Take a snapshot of the selected flows?");
+		dialog_msg = _("Enter a description for the snapshots of the selected flows:");
 	}
 
 	dialog = gtk_dialog_new_with_buttons(dialog_title,
@@ -1186,7 +1186,7 @@ void flow_paste(void)
 		GebrGeoXmlDocument *flow;
 
 		if (document_load(&flow, (gchar *)i->data, FALSE)) {
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste Flow. It was probably deleted."));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste flow. It was probably deleted."));
 			continue;
 		}
 
@@ -1334,29 +1334,29 @@ gebr_flow_set_toolbar_sensitive(void)
 		gtk_widget_show(gebr.ui_flow_browse->left_panel);
 	} else {
 		if (!line_selected) {
-			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No Line is selected\n"));
+			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No line is selected\n"));
 			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (maestro_disconnected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
-					   _("The Maestro of this Line is disconnected,\nthen you cannot edit flows.\n"
+					   _("The maestro of this line is disconnected,\nthen you cannot edit flows.\n"
 					     "Try changing its maestro or connecting it."));
 			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (flows_nrows  !=  1) {
 			gchar *label_msg;
 			if (flows_nrows >1 )
-				label_msg = g_markup_printf_escaped(_("%d Flows selected.\n\n"
+				label_msg = g_markup_printf_escaped(_("%d flows selected.\n\n"
 						"GêBR can execute them\n"
 						"- <i>sequentially</i> (Ctrl+R) or\n"
 						"- <i>simultaneously</i> (Ctrl+Shift+R)"),
 									flows_nrows);
 			else if (flows_nrows == 0 && total_rows > 0)
-				label_msg = g_markup_printf_escaped(_("No Flow is selected\n"));
+				label_msg = g_markup_printf_escaped(_("No flow is selected\n"));
 
 			else{
-				label_msg = g_markup_printf_escaped(_("This Line has no Flows.\n\n"
+				label_msg = g_markup_printf_escaped(_("This line has no flows.\n\n"
 						"Two options are avaiable:\n"
-						"- Click on <i>New Fow</i> to create a Flow or\n"
-						"- Import a Flow through the <i>Import</i> on More options."));
+						"- Click on <i>New Fow</i> to create a flow or\n"
+						"- Import a flow through the <i>Import</i> on More options."));
 				gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 			}
 			gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->warn_window), label_msg);

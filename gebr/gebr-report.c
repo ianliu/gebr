@@ -351,7 +351,7 @@ gebr_document_generate_header(GebrGeoXmlDocument * document,
 	                       _("Report generated at "),
 	                       date);
 
-	/* If Document is Line, include Maestro on header */
+	/* If Document is line, include Maestro on header */
 	if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		gchar *maestro = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 		g_string_append_printf(dump,
@@ -840,7 +840,7 @@ gebr_document_generate_line_content(GebrReport *report,
 
 	gebr_document_generate_index(document, content,
 	                             GEBR_GEOXML_DOCUMENT_TYPE_LINE, NULL,
-	                             _("Line composed by the Flow(s):"));
+	                             _("Line composed by the flow(s):"));
 
 	if (include_table) {
 		gebr_document_generate_line_paths(document, content);

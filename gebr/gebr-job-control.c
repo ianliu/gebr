@@ -1018,14 +1018,14 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		GebrMaestroServerGroupType type = gebr_maestro_server_group_str_to_enum(type_str);
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
-		g_string_printf(bold_resources, _("<b>Process distribution among working nodes</b>"));
+		g_string_printf(bold_resources, _("<b>Process distribution among processing nodes</b>"));
 		gchar *markup;
 
 		if (type == MAESTRO_SERVER_TYPE_GROUP)
 			if (g_strcmp0(groups, "") == 0)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to Maestro <i>%s</i>,\n"
+		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to maestro <i>%s</i>,\n"
 						   "split in %d process(es) %s"
 						   "and distributed in %d node(s).\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),

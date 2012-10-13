@@ -427,8 +427,8 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		GObject *label;
 
 		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
-		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of nodes of Maestro <b>%s</b>.\n"
-				"This directories structure can not be the same on your local machine.</i>"), maestro_addr);
+		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of nodes of maestro <b>%s</b>.\n"
+				"This directories structure may not be the same on your local machine.</i>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 		g_free(text_maestro);

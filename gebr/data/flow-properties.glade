@@ -255,7 +255,7 @@
             <property name="sensitive">False</property>
             <property name="label">#There are no snapshots.
 
-A snapshot stores the settings of your flow so you can restore it at any moment. To take a snapshot, just click on the camera icon and give a non-empty description.</property>
+A snapshot stores the settings of your flow so you can restore it at any moment. To take a snapshot, just click on the camera icon and give a description.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>

@@ -965,7 +965,7 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 	                   -1);
 
 	if (!daemon && !insert_new) {
-		gchar *text = g_strdup_printf(_("nodes of Maestro %s"), gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
+		gchar *text = g_strdup_printf(_("nodes of maestro %s"), gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
 		g_object_set(cell, "text", text, NULL);
 		g_object_set(cell, "sensitive", FALSE, NULL);
 		g_free(text);

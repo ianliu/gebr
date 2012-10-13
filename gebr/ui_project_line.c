@@ -341,11 +341,11 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
 
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 						   NULL,
-						   _("Moving this line to current Maestro."),
-						   _("Are you sure you want to move this Line to Maestro %s?"
-						     "\n\nIf you choose to move this Line to current Maestro,"
-						     " be sure to correct the paths of this Line "
-						     "and its respective Flows that can be broken."), addr);
+						   _("Moving this line to current maestro."),
+						   _("Are you sure you want to move this line to maestro %s?"
+						     "\n\nIf you choose to move this line to current maestro,"
+						     " be sure to correct the paths of this line "
+						     "and its respective flows that can be broken."), addr);
 	if (confirm) {
 		gebr_geoxml_line_set_maestro(gebr.line, change_addr);
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, change_addr);
@@ -444,11 +444,11 @@ line_info_update(void)
 	/* Set number of flows */
 	gint nflows = gebr_geoxml_line_get_flows_number(gebr.line);
 	if (nflows == 0)
-		tmp = g_markup_escape_text(_("This Line has no Flows."), -1);
+		tmp = g_markup_escape_text(_("This line has no flows."), -1);
 	else if (nflows == 1)
-		tmp = g_markup_escape_text(_("This Line has one Flow."), -1);
+		tmp = g_markup_escape_text(_("This line has one flow."), -1);
 	else
-		tmp = g_markup_printf_escaped(_("This Line has %d Flows."), nflows);
+		tmp = g_markup_printf_escaped(_("This line has %d flows."), nflows);
 	gtk_label_set_markup(GTK_LABEL(label_nflows), tmp);
 	g_free(tmp);
 
@@ -595,11 +595,11 @@ project_info_update(void)
 	/* Set number of lines */
 	gint nlines = gebr_geoxml_project_get_lines_number(gebr.project);
 	if (nlines == 0)
-		tmp = g_markup_escape_text(_("This Project has no Line."), -1);
+		tmp = g_markup_escape_text(_("This project has no line."), -1);
 	else if (nlines == 1)
-		tmp = g_markup_escape_text(_("This Project has one Line."), -1);
+		tmp = g_markup_escape_text(_("This project has one line."), -1);
 	else
-		tmp = g_markup_printf_escaped(_("This Project has %d Lines."), nlines);
+		tmp = g_markup_printf_escaped(_("This project has %d Lines."), nlines);
 	gtk_label_set_markup(GTK_LABEL(label_nlines), tmp);
 	g_free(tmp);
 }
@@ -634,8 +634,8 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 	GtkTreePath *path;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
-	static const gchar *no_line_selected = N_("Please select a Line.");
-	static const gchar *no_project_selected = N_("Please select a Project.");
+	static const gchar *no_line_selected = N_("Please select a line.");
+	static const gchar *no_project_selected = N_("Please select a project.");
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_project_line->view));
 	rows = gtk_tree_selection_get_selected_rows (selection, &model);
@@ -651,7 +651,7 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _(no_line_selected));
 			break;
 		case ProjectLineSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a Project or a Line."));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a project or a line."));
 			break;
 		}
 		return FALSE;
@@ -994,7 +994,7 @@ static gboolean update_progress(gpointer user_data)
 
 			gchar *text = g_strdup_printf("%s\n\n%s",
 			                              _("<span size='large' weight='bold'>Create directories?</span>"),
-			                              _("There are some Line's paths located on your home directory that\n"
+			                              _("There are some line's paths located on your home directory that\n"
 			                        	" do not exist. Do you want to create the following folders?"));
 
 
@@ -1145,7 +1145,7 @@ void project_line_import(void)
 	GtkFileFilter *file_filter;
 	gchar *filename;
 
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose a Project or Line to open"),
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose a project or line to open"),
 						     GTK_WINDOW(gebr.window),
 						     GTK_FILE_CHOOSER_ACTION_OPEN,
 						     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
@@ -1157,7 +1157,7 @@ void project_line_import(void)
 	// FIXME: Use the global variable for adding shortcuts
 	gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), "/usr/share/gebr/demos/", NULL);
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Project (prjz, prjx) or Line (lnez, lnex)"));
+	gtk_file_filter_set_name(file_filter, _("Project (prjz, prjx) or line (lnez, lnex)"));
 	gtk_file_filter_add_pattern(file_filter, "*.prjz");
 	gtk_file_filter_add_pattern(file_filter, "*.lnez");
 	gtk_file_filter_add_pattern(file_filter, "*.prjx");
@@ -1234,7 +1234,7 @@ void project_line_export(void)
 
 	if (!rows) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, FALSE,
-			      _("Please select a Project or a Line."));
+			      _("Please select a project or a line."));
 		return;
 	}
 
@@ -1443,7 +1443,7 @@ void project_line_delete(void)
 			quantity_selected++;
 
 			if (n > 0){
-				g_string_printf(tmp, _("including %ld Flow(s)"), n);
+				g_string_printf(tmp, _("including %ld flow(s)"), n);
 				quantity_selected++;
 			}
 

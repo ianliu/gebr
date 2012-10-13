@@ -198,7 +198,7 @@ set_status_for_maestro(GebrMaestroController *self,
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, TRUE);
 
-		summary_txt = g_markup_printf_escaped(_("<span size='large'>Successfully connected to Maestro <b>%s</b>!</span>"),
+		summary_txt = g_markup_printf_escaped(_("<span size='large'>Successfully connected to maestro <b>%s</b>!</span>"),
 		                                      address);
 
 		gtk_label_set_markup(GTK_LABEL(status_title), summary_txt);
@@ -217,7 +217,7 @@ set_status_for_maestro(GebrMaestroController *self,
 
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
 
-			summary_txt = g_markup_printf_escaped(_("<span size='large'>Connecting to Maestro <b>%s</b>!</span>"),
+			summary_txt = g_markup_printf_escaped(_("<span size='large'>Connecting to maestro <b>%s</b>!</span>"),
 			                                      address);
 
 			gtk_label_set_markup(GTK_LABEL(status_title), summary_txt);
@@ -235,7 +235,7 @@ set_status_for_maestro(GebrMaestroController *self,
 			gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
 		} else {
-			gchar *title = g_markup_printf_escaped(_("<span size='large'>Could not connect to Maestro <b>%s</b></span>!"), address);
+			gchar *title = g_markup_printf_escaped(_("<span size='large'>Could not connect to maestro <b>%s</b></span>!"), address);
 			gtk_label_set_markup(GTK_LABEL(status_title), title);
 			g_free(title);
 
@@ -988,7 +988,7 @@ create_maestro_chooser_model (GtkListStore *model, GebrMaestroServer *maestro)
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter,
 		                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-		                   MAESTRO__DEFAULT_DESCRIPTION, _("Default Maestro from File"),
+		                   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from File"),
 		                   -1);
 	}
 }

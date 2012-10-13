@@ -392,7 +392,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			GebrGeoXmlDocument *orphans_project;
 
 			orphans_project = document_new(GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
-			gebr_geoxml_document_set_title(orphans_project, _("Orphan Lines"));
+			gebr_geoxml_document_set_title(orphans_project, _("Orphan lines"));
 
 			gebr_geoxml_project_get_line(GEBR_GEOXML_PROJECT(*document), &project_line, 0);
 			for (; project_line != NULL; gebr_geoxml_sequence_next(&project_line)) {

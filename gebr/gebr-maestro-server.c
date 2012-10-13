@@ -1438,7 +1438,7 @@ gebr_maestro_server_get_display_address(GebrMaestroServer *maestro)
 	const gchar *addr = maestro->priv->address;
 
 	if (g_strcmp0(addr, "127.0.0.1") == 0)
-		return g_strdup(_("Local Maestro"));
+		return g_strdup(_("Local maestro"));
 
 	return g_strdup_printf(_("Maestro %s"), addr);
 }

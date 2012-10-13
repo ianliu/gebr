@@ -38,7 +38,7 @@
 static void on_properties_response(gboolean accept)
 {
 	if (accept)
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New Project created."));
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created."));
 	else {
 		GtkTreeIter iter;
 		if (project_line_get_selected(&iter, DontWarnUnselection))
@@ -53,7 +53,7 @@ void project_new(void)
 	GebrGeoXmlDocument *project;
 
 	project = document_new(GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
-	gebr_geoxml_document_set_title(project, _("New Project"));
+	gebr_geoxml_document_set_title(project, _("New project"));
 	gebr_geoxml_document_set_author(project, gebr.config.username->str);
 	gebr_geoxml_document_set_email(project, gebr.config.email->str);
 	iter = project_append_iter(GEBR_GEOXML_PROJECT(project));
@@ -73,7 +73,7 @@ gboolean project_delete(GtkTreeIter * iter, gboolean warn_user)
 	if (nlines > 0) {
 		if (warn_user)
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, _("Selection error:"),
-						_("The Project has Lines.\nThese Lines should also be selected so as to be deleted along with the Project."));
+						_("The project has lines.\nThese Lines should also be selected so as to be deleted along with the project."));
 		return FALSE;
 	}
 
@@ -89,7 +89,7 @@ gboolean project_delete(GtkTreeIter * iter, gboolean warn_user)
 
 	/* message user */
 	if (warn_user)
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Deleting Project '%s'."),
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Deleting project '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)));
 
 	return TRUE;
