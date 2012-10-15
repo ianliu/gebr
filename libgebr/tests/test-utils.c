@@ -279,6 +279,14 @@ test_gebr_double_list_to_list(void)
 				==, text[n-i-1]);
 	}
 }
+void
+test_gebr_g_string_remove_accents(void){
+	gchar *title1 = "eh sem acento";
+	gchar *title2 = "Várias açõe’s² ñÑ";
+	g_assert_cmpstr(gebr_g_string_remove_accents(title1), == , "eh sem acento");
+	g_assert_cmpstr(gebr_g_string_remove_accents(title2), == , "Varias acoes nN");
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -294,7 +302,8 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/gebr_utf8_strstr", test_gebr_utf8_strstr);
 	g_test_add_func("/libgebr/utils/test_gebr_calculate_number_of_processors", test_gebr_calculate_number_of_processors);
 	g_test_add_func("/libgebr/utils/gebr_double_list_to_list", test_gebr_double_list_to_list);
-
+	g_test_add_func("/libgebr/utils/gebr_g_string_remove_accents", test_gebr_g_string_remove_accents);
+	
 	gint ret = g_test_run();
 	return ret;
 }

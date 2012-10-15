@@ -45,6 +45,9 @@ typedef enum {
  * Replace each reference of oldtext in string
  * with newtext. If newtext if NULL, then each reference of oldtext found is removed.
  */
+
+gchar*
+gebr_g_string_remove_accents(gchar *title);
 void
 gebr_g_string_replace(GString * string,
 		      const gchar * oldtext,
