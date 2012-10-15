@@ -595,7 +595,7 @@ void gebr_gui_html_viewer_show_search_bar(GebrGuiHtmlViewerWidget *self)
 	g_return_if_fail(GEBR_GUI_IS_HTML_VIEWER_WIDGET(self));
 
 	if (gtk_widget_get_visible(priv->find)) {
-		gtk_widget_hide(priv->find);
+		on_web_view_search_foward(NULL, self);
 	} else {
 		gtk_widget_grab_focus(priv->find_entry);
 		gtk_widget_show(priv->find);
