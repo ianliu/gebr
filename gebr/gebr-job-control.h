@@ -178,6 +178,10 @@ void gebr_job_control_set_automatic_filter(GebrJobControl *jc, gboolean value);
  */
 GebrJob *gebr_job_control_get_selected_job(GebrJobControl *jc);
 
+void gebr_job_control_block_cursor_changed(GebrJobControl *jc);
+
+void gebr_job_control_unblock_cursor_changed(GebrJobControl *jc);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_CONTROL_H__ */

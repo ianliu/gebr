@@ -273,10 +273,13 @@ on_job_button_clicked(GtkButton *button,
 	if (!job)
 		job = gebr_job_control_get_recent_job_from_flow(GEBR_GEOXML_DOCUMENT(gebr.flow), gebr.job_control);
 
+	gebr_job_control_block_cursor_changed(gebr.job_control);
 	gebr_job_control_set_automatic_filter(gebr.job_control, TRUE);
 	gebr_job_control_reset_filters(gebr.job_control);
 	gebr_job_control_apply_flow_filter(gebr.flow, gebr.job_control);
 	gebr_job_control_select_job(gebr.job_control, job);
+	gebr_job_control_unblock_cursor_changed(gebr.job_control);
+
 	gebr.last_notebook = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook));
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), NOTEBOOK_PAGE_JOB_CONTROL);
 }
