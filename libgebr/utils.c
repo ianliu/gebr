@@ -777,6 +777,12 @@ gebr_get_lower_bound_for_type(TimesType type)
 	return 0;
 }
 
+gint
+gebr_get_number_of_time_controls()
+{
+	return TIME_N_TYPES;
+}
+
 gchar *
 gebr_get_control_text_for_type(TimesType type)
 {

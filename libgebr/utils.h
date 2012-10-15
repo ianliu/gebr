@@ -223,6 +223,9 @@ gchar *gebr_calculate_relative_time (GTimeVal *time1,
  */
 gdouble gebr_get_lower_bound_for_type(TimesType type);
 
+
+gint gebr_get_number_of_time_controls();
+
 /**
  * gebr_get_control_text_for_type:
  * @type:
