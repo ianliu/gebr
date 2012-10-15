@@ -1140,46 +1140,49 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	gtk_tree_model_get(model, iter, 0, &var, 3, &comp_type, -1);
 	word = gebr_str_word_before_pos(text, &ini);
 
+	gunichar c_prev = g_utf8_get_char(g_utf8_offset_to_pointer(text, ini - 1));
+	gunichar c_curr = g_utf8_get_char(g_utf8_offset_to_pointer(text, ini));
+	gunichar c_next = g_utf8_get_char(g_utf8_offset_to_pointer(text, ini + 1));
+
 	if (!word) {
 		ini = pos;
-		if (text[ini] == '[' && text[ini+1] == ']')
+		if (c_curr == '[' && c_next == ']')
 			end = pos + 1;
-		else if (text[ini] == '<' && text[ini+1] == '>')
+		else if (c_curr == '<' && c_next == '>')
 			end = pos + 2;
 		else
 			end = pos;
 	} else {
-		if (ini - 1 >= 0 && (text[ini-1] == '[' || text[ini-1] == '<')) {
+		if (ini - 1 >= 0 && (c_prev == '[' || c_prev == '<')) {
 			ini--;
 		} else {
-			for (gint i = pos; text[i]; i--) {
-				if (text[i] == '[' ||
-				    text[i] == '<' ) {
+			for (gint i = pos; g_utf8_get_char(g_utf8_offset_to_pointer(text, i)); i--) {
+				gunichar c_curr = g_utf8_get_char(g_utf8_offset_to_pointer(text, i));
+				if (c_curr == '[' || c_curr == '<' ) {
 					ini = i;
 					break;
 				}
-				if (text[i] == ']' ||
-				    text[i] == '>' ) {
+				if (c_curr == ']' || c_curr == '>' ) {
 					ini = i + 1;
 					break;
 				}
 			}
 		}
-		for (gint i = ini+1; text[i]; i++) {
-			if (text[i] == ' ') {
+		for (gint i = ini+1; g_utf8_get_char(g_utf8_offset_to_pointer(text, i)); i++) {
+			gunichar c_curr = g_utf8_get_char(g_utf8_offset_to_pointer(text, i));
+			if (c_curr == ' ') {
 				end = i - 1;
 				break;
 			}
-			if (text[i] == '[' ||
-			    text[i] == '<' ) {
+			if (c_curr == '[' || c_curr == '<' ) {
 				end = i - 1;
 				break;
 			}
-			if (text[i] == ']') {
+			if (c_curr == ']') {
 				end = i;
 				break;
 			}
-			if (text[i] == '>') {
+			if (c_curr == '>') {
 				end = i + 1;
 				break;
 			}
@@ -1189,7 +1192,8 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	if (ini <= end) {
 		gint special_char = 0, count = ini;
 		while (count >= 0){
-			if (!(g_ascii_isalnum(text[count]) || g_ascii_isspace (text[count]) || g_ascii_ispunct (text[count])))
+			gunichar c_curr = g_utf8_get_char(g_utf8_offset_to_pointer(text, count));
+			if (!(g_unichar_isalnum(c_curr) || g_unichar_isspace(c_curr) || g_unichar_ispunct(c_curr)))
 				special_char++;
 			count--;
 		}
@@ -1291,8 +1295,9 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 		return FALSE;
 
 	gboolean is_lower = TRUE;
-	for (gint i = 0; i < strlen(word); i++) {
-		if (!g_ascii_islower(word[i])) {
+	for (gint i = 0; i < g_utf8_strlen(word, -1); i++) {
+		gunichar c_curr = g_utf8_get_char(g_utf8_offset_to_pointer(text, i));
+		if (!g_unichar_islower(c_curr)) {
 			is_lower = FALSE;
 			break;
 		}

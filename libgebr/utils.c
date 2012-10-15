@@ -695,21 +695,27 @@ gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gbo
 
 gchar *gebr_str_word_before_pos(const gchar *str, gint *pos)
 {
-	gchar *word;
+	gchar *word = g_new0(gchar, *pos);
 	gint ini = *pos;
 	gint end = *pos;
+	gunichar c_curr = '\0';
 
-	while (ini >= 0 && (g_ascii_isalnum(str[ini]) || str[ini] == '_'))
-		ini--;
+	gchar *tmp = g_utf8_offset_to_pointer(str, *pos);
+	for (; ini >= 0; ini--) {
+		c_curr = g_utf8_get_char(tmp);
+		if (!(g_unichar_isalnum(c_curr) || c_curr == '_'))
+			break;
+		tmp = g_utf8_prev_char(tmp);
+	}
 
 	if (ini == end)
 		return NULL;
 
 	// Advance one so ini points to the first valid char
 	ini++;
+	tmp = g_utf8_next_char(tmp);
 	*pos = ini;
-	word = g_strdup(str+ini);
-	word[end-ini+1] = '\0';
+	g_utf8_strncpy(word, tmp, end-ini+1);
 
 	return word;
 }

@@ -58,5 +58,7 @@ gebr_gui_complete_variables_get_filter_full(GebrGuiCompleteVariables *self,
 					    GebrGeoXmlParameterType type,
 					    GebrGeoXmlDocumentType doc_type)
 {
+	if (!self)
+		return NULL;
 	return GEBR_GUI_COMPLETE_VARIABLES_GET_INTERFACE(self)->get_filter_full(self, type, doc_type);
 }
