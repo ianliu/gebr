@@ -692,7 +692,8 @@ static void gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 					       completion_match_func,
 					       G_CALLBACK(on_entry_completion_matched),
 					       GINT_TO_POINTER(parameter_widget->parameter_type));
-			g_object_unref (completion_model);
+			if (completion_model)
+				g_object_unref (completion_model);
 		}
 
 		g_signal_connect (spin, "activate",
@@ -724,7 +725,8 @@ static void gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 					       completion_match_func,
 					       G_CALLBACK(on_entry_completion_matched),
 					       GINT_TO_POINTER(parameter_widget->parameter_type));
-			g_object_unref (completion_model);
+			if (completion_model)
+				g_object_unref (completion_model);
 		}
 
 		gtk_widget_set_size_request(entry, 220, -1);
@@ -754,7 +756,8 @@ static void gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 					       completion_match_func,
 					       G_CALLBACK(on_entry_completion_matched),
 					       GINT_TO_POINTER(parameter_widget->parameter_type));
-			g_object_unref (completion_model);
+			if (completion_model)
+				g_object_unref (completion_model);
 		}
 
 		gtk_widget_set_size_request(entry, 220, -1);
@@ -784,7 +787,8 @@ static void gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 					       completion_match_func,
 					       G_CALLBACK(on_entry_completion_matched),
 					       GINT_TO_POINTER(parameter_widget->parameter_type));
-			g_object_unref (completion_model);
+			if (completion_model)
+				g_object_unref (completion_model);
 		}
 
 		activatable_entry = GTK_ENTRY (entry);
@@ -824,7 +828,8 @@ static void gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 					       completion_match_func,
 					       G_CALLBACK(on_entry_completion_matched),
 					       GINT_TO_POINTER(parameter_widget->parameter_type));
-			g_object_unref (completion_model);
+			if (completion_model)
+				g_object_unref (completion_model);
 		}
 		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 				  G_CALLBACK (on_entry_activate_add), parameter_widget);
@@ -929,7 +934,8 @@ static void gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 					       completion_match_func,
 					       G_CALLBACK(on_entry_completion_matched),
 					       GINT_TO_POINTER(parameter_widget->parameter_type));
-			g_object_unref (completion_model);
+			if (completion_model)
+				g_object_unref (completion_model);
 
 			GebrGeoXmlDocument *flow, *line, *proj;
 			gebr_validator_get_documents(parameter_widget->validator, &flow, &line, &proj);

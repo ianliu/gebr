@@ -48,6 +48,8 @@ GtkTreeModel *
 gebr_gui_complete_variables_get_filter(GebrGuiCompleteVariables *self,
 				       GebrGeoXmlParameterType type)
 {
+	if (!self)
+		return NULL;
 	return GEBR_GUI_COMPLETE_VARIABLES_GET_INTERFACE(self)->get_filter(self, type);
 }
 
