@@ -303,7 +303,6 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	if (!error)
 		return TRUE;
 
-	const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 	g_string_append_printf(message, "%s.", error->message);
 
 	const gchar *broken_flow_msg = g_strdup_printf(_("Assembly error"));
