@@ -1795,67 +1795,6 @@ void gebr_gui_param_reconfigure(GebrGuiParam *parameter_widget)
 	gebr_gui_param_configure(parameter_widget);
 }
 
-
-GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
-						      GebrGeoXmlDocument *line,
-						      GebrGeoXmlDocument *proj,
-						      GebrGeoXmlParameterType type)
-{
-	const gchar *keyword;
-	const gchar *result, *value;
-	GList *compatible;
-	GtkTreeIter iter;
-	GtkListStore *store;
-	GebrGeoXmlProgramParameter *ppar;
-	GebrGeoXmlParameterType param_type;
-
-	store = gtk_list_store_new(GEBR_GUI_COMPLETE_VARIABLES_NCOLS,
-				   G_TYPE_STRING,
-				   G_TYPE_INT,
-				   G_TYPE_INT,
-				   G_TYPE_INT,
-				   G_TYPE_STRING);
-	compatible = get_compatible_variables(type, flow, line, proj);
-
-	for (GList *i = compatible; i; i = i->next) {
-		ppar = i->data;
-		keyword = gebr_geoxml_program_parameter_get_keyword(ppar);
-		value = gebr_geoxml_program_parameter_get_first_value(ppar, FALSE);
-		result = g_strdup_printf("= %s", value);
-		param_type = gebr_geoxml_parameter_get_type(i->data);
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter,
-				   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, keyword,
-				   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, GEBR_GUI_COMPLETE_VARIABLES_TYPE_VARIABLE,
-				   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, param_type,
-				   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-				   GEBR_GUI_COMPLETE_VARIABLES_RESULT, result,
-				   -1);
-	}
-
-	if (type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
-		for (gint i = 0; paths[i]; i++) {
-			keyword = paths[i][1];
-			result = paths[i][0];
-			gtk_list_store_append(store, &iter);
-			gtk_list_store_set(store, &iter,
-					   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, keyword,
-					   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH,
-					   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN,
-					   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-					   GEBR_GUI_COMPLETE_VARIABLES_RESULT, result,
-					   -1);
-		}
-		gebr_pairstrfreev(paths);
-	}
-
-	g_list_foreach(compatible, (GFunc)gebr_geoxml_object_unref, NULL);
-	g_list_free(compatible);
-
-	return GTK_TREE_MODEL(store);
-}
-
 void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
 					     GtkTreeModel *model,
 					     GebrGeoXmlParameterType type)

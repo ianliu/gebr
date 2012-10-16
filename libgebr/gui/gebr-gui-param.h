@@ -140,14 +140,6 @@ GtkWidget *gebr_gui_parameter_add_variables_popup(GtkEntry *entry,
 						  GebrGeoXmlParameterType type);
 
 /**
- * gebr_gui_parameter_get_completion_model:
- */
-GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
-						      GebrGeoXmlDocument *line,
-						      GebrGeoXmlDocument *proj,
-						      GebrGeoXmlParameterType type) G_GNUC_DEPRECATED;
-
-/**
  * gebr_gui_parameter_set_entry_completion:
  */
 void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
