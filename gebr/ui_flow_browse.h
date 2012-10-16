@@ -288,5 +288,7 @@ gboolean gebr_flow_browse_selection_has_disabled_program(GebrUiFlowBrowse *fb);
 
 void flow_browse_show_search_bar(GebrUiFlowBrowse *fb);
 
+void gebr_ui_flow_browse_update_dict_complete(GebrUiFlowBrowse *fb);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H
