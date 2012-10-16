@@ -1643,7 +1643,9 @@ update_control_sensitive(GebrUiProjectLine *upl)
 	GtkTreeModel *model;
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(upl->view));
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
-	gboolean is_multiple;
+	gboolean is_multiple, multiple_projs;
+	guint n_projs = 0;
+
 	guint len = g_list_length(rows);
 
 	is_multiple = len > 1;
@@ -1662,14 +1664,22 @@ update_control_sensitive(GebrUiProjectLine *upl)
 				has_maestro = FALSE;
 				break;
 			}
+		} else {
+			n_projs++;
 		}
 	}
 
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
 	g_list_free(rows);
 
+	if (n_projs > 1)
+		multiple_projs = TRUE;
+	else
+		multiple_projs = FALSE;
+
 	// Set sensitive for tab Projects and Lines
 	if (has_maestro) {
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_new_line"), !multiple_projs);
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"), has_maestro);
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"), !is_multiple);
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"), !is_multiple);
