@@ -76,6 +76,7 @@ GebrGuiParam *gebr_gui_param_new(GebrGeoXmlParameter *parameter,
 						      GebrValidator       *validator,
 						      GebrMaestroInfo	  *info,
 						      gboolean             use_default_value,
+						      GebrGuiCompleteVariables *complete_var,
 						      gpointer             data);
 
 /**
@@ -165,12 +166,6 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
  */
 void gebr_gui_param_set_validated_callback(GebrGuiParam *widget,
 		GebrGuiParameterValidatedFunc callback, gpointer user_data);
-
-/**
- * gebr_gui_param_set_complete_variables:
- */
-void gebr_gui_param_set_complete_variables(GebrGuiParam *param,
-					   GebrGuiCompleteVariables *complete_var);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H

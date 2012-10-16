@@ -34,6 +34,7 @@
 struct _GebrGuiProgramEditPriv
 {
 	GList *widgets;
+	GebrGuiCompleteVariables *complete_var;
 };
 
 typedef struct {
@@ -41,6 +42,8 @@ typedef struct {
 	GList * instances_list;
 } GebrGroupReorderData;
 
+static void gebr_gui_program_edit_set_complete_variables(GebrGuiProgramEdit *program_edit,
+							 GebrGuiCompleteVariables *complete_var);
 static GtkWidget *
 gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameters * parameters);
 
@@ -78,6 +81,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gboolean use_default,
 			       GebrValidator *validator,
 			       GebrMaestroInfo *info,
+			       GebrGuiCompleteVariables *complete_var,
 			       gboolean add_title)
 {
 	GebrGuiProgramEdit *program_edit;
@@ -95,6 +99,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
 	program_edit->validator = validator;
+	gebr_gui_program_edit_set_complete_variables(program_edit, complete_var);
 
 	//MPI Program
 	const gchar *mpi = gebr_geoxml_program_get_mpi(program);
@@ -161,12 +166,13 @@ gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_edit,
 		gebr_gui_param_set_validated_callback(i->data, callback, user_data);
 }
 
-void
+static void
 gebr_gui_program_edit_set_complete_variables(GebrGuiProgramEdit *program_edit,
 					     GebrGuiCompleteVariables *complete_var)
 {
-	for (GList *i = program_edit->priv->widgets; i; i = i->next)
-		gebr_gui_param_set_complete_variables(i->data, complete_var);
+	if (program_edit->priv->complete_var)
+		g_object_unref(program_edit->priv->complete_var);
+	program_edit->priv->complete_var = g_object_ref(complete_var);
 }
 
 void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)
@@ -326,23 +332,25 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 
 static GebrGuiParam *
 create_parameter_widget(GebrGuiProgramEdit *program_edit,
-		GebrGeoXmlParameter *parameter,
-		GebrGeoXmlParameterType type)
+			GebrGeoXmlParameter *parameter,
+			GebrGeoXmlParameterType type)
 {
 	GebrGuiParam *widget;
 
 	if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 		widget = gebr_gui_param_new(parameter,
-					program_edit->validator,
-					program_edit->info,
-					program_edit->use_default,
-					NULL);
+					    program_edit->validator,
+					    program_edit->info,
+					    program_edit->use_default,
+					    program_edit->priv->complete_var,
+					    NULL);
 	} else {
 		widget = gebr_gui_param_new(parameter,
-				program_edit->validator,
-				program_edit->info,
-				program_edit->use_default,
-				program_edit->parameter_widget_data);
+					    program_edit->validator,
+					    program_edit->info,
+					    program_edit->use_default,
+					    program_edit->priv->complete_var,
+					    program_edit->parameter_widget_data);
 
 		GebrGeoXmlDocument *line;
 		gebr_validator_get_documents(widget->validator, NULL, &line, NULL);

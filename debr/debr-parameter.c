@@ -920,7 +920,7 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 
 	}
 
-	gebr_gui_param = gebr_gui_param_new(ui->parameter, debr.validator, NULL, TRUE, NULL);
+	gebr_gui_param = gebr_gui_param_new(ui->parameter, debr.validator, NULL, TRUE, NULL, NULL);
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE: {
 		GtkWidget *type_label;

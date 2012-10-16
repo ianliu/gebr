@@ -646,12 +646,14 @@ static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 	return FALSE;
 }
 
+/* Widget construction function {{{ */
+
 /*
  * gebr_gui_param_configure:
  * Create UI.
  */
-/* Widget construction function {{{ */
-static void gebr_gui_param_configure(GebrGuiParam *parameter_widget)
+static void
+gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 {
 	gboolean may_complete;
 	GtkEntry *activatable_entry = NULL;
@@ -1653,10 +1655,11 @@ parameter_widget_free(GebrGuiParam *self)
 }
 
 GebrGuiParam *gebr_gui_param_new(GebrGeoXmlParameter *parameter,
-						      GebrValidator       *validator,
-						      GebrMaestroInfo	  *info,
-						      gboolean             use_default_value,
-						      gpointer             data)
+				 GebrValidator       *validator,
+				 GebrMaestroInfo     *info,
+				 gboolean             use_default_value,
+				 GebrGuiCompleteVariables *complete_var,
+				 gpointer             data)
 {
 	GebrGuiParam *self;
 	GebrGuiParamPriv *priv;
@@ -1665,6 +1668,7 @@ GebrGuiParam *gebr_gui_param_new(GebrGeoXmlParameter *parameter,
 	self = g_new(GebrGuiParam, 1);
 	self->priv = priv;
 	self->priv->last_status = TRUE;
+	self->priv->complete_var = complete_var;
 
 	gebr_geoxml_object_ref(parameter);
 	self->parameter = parameter;
@@ -1896,14 +1900,4 @@ gebr_gui_param_set_validated_callback(GebrGuiParam *widget,
 {
 	widget->priv->signal_validated.callback = callback;
 	widget->priv->signal_validated.user_data = user_data;
-}
-
-void
-gebr_gui_param_set_complete_variables(GebrGuiParam *param,
-				      GebrGuiCompleteVariables *complete_var)
-{
-	if (param->priv->complete_var)
-		g_object_unref(param->priv->complete_var);
-
-	param->priv->complete_var = g_object_ref(complete_var);
 }

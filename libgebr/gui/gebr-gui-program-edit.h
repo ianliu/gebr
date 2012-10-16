@@ -64,6 +64,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gboolean use_default,
 			       GebrValidator *validator,
 			       GebrMaestroInfo *info,
+			       GebrGuiCompleteVariables *complete_var,
 			       gboolean add_title);
 
 /**
@@ -74,12 +75,6 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
  */
 void gebr_gui_program_edit_set_validated_callback(GebrGuiProgramEdit *program_edit,
 		GebrGuiParameterValidatedFunc callback, gpointer user_data);
-
-/**
- * gebr_gui_program_edit_set_complete_variables:
- */
-void gebr_gui_program_edit_set_complete_variables(GebrGuiProgramEdit *program_edit,
-						  GebrGuiCompleteVariables *complete_var);
 
 /**
  * \internal
