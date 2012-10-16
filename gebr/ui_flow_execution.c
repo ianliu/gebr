@@ -908,7 +908,7 @@ restore_execution_servers(GebrUiFlowExecution *ui_flow_execution, GebrMaestroSer
 	if (valid)
 		gtk_combo_box_set_active_iter(combo, &iter);
 	else if (gtk_tree_model_get_iter_first(model, &iter))
-		gtk_tree_model_get_iter_first(model, &iter);
+		gtk_combo_box_set_active_iter(combo, &iter);
 }
 
 
