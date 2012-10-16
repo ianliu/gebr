@@ -303,7 +303,7 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	if (!error)
 		return TRUE;
 
-	g_string_append_printf(message, "%s.", error->message);
+	g_string_append_printf(message, "%s", error->message);
 
 	const gchar *broken_flow_msg = g_strdup_printf(_("Assembly error"));
 	error_code = error->code;
