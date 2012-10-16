@@ -312,9 +312,7 @@ void gebr_gui_value_sequence_edit_clear(GebrGuiValueSequenceEdit *self)
 }
 
 typedef struct {
-	GebrGeoXmlDocument *flow;
-	GebrGeoXmlDocument *line;
-	GebrGeoXmlDocument *proj;
+	GebrGuiCompleteVariables *complete_var;
 	GebrGeoXmlParameterType type;
 } AutoCompletionData;
 
@@ -322,18 +320,12 @@ static void on_renderer_editing_started(GtkCellRenderer *renderer, GtkCellEditab
 {
 	GtkTreeModel *model;
 
-	model = gebr_gui_parameter_get_completion_model(data->flow,
-							data->line,
-							data->proj,
-							data->type);
-	gebr_gui_parameter_set_entry_completion(GTK_ENTRY(editable), model,
-						data->type);
+	model = gebr_gui_complete_variables_get_filter(data->complete_var, data->type);
+	gebr_gui_parameter_set_entry_completion(GTK_ENTRY(editable), model, data->type);
 }
 
 void gebr_gui_value_sequence_edit_set_autocomplete(GebrGuiValueSequenceEdit *self,
-						   GebrGeoXmlDocument *flow,
-						   GebrGeoXmlDocument *line,
-						   GebrGeoXmlDocument *proj,
+						   GebrGuiCompleteVariables *complete_var,
 						   GebrGeoXmlParameterType type)
 {
 	AutoCompletionData *data;
@@ -345,9 +337,7 @@ void gebr_gui_value_sequence_edit_set_autocomplete(GebrGuiValueSequenceEdit *sel
 	self->has_autocomplete = TRUE;
 
 	data = g_new(AutoCompletionData, 1);
-	data->flow = flow;
-	data->line = line;
-	data->proj = proj;
+	data->complete_var = complete_var;
 	data->type = type;
 
 	renderer = GEBR_GUI_SEQUENCE_EDIT(self)->renderer;

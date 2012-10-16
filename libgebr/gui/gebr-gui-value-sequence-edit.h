@@ -23,6 +23,7 @@
 #include <geoxml.h>
 
 #include "gebr-gui-sequence-edit.h"
+#include <gui/gebr-gui-complete-variables.h>
 
 G_BEGIN_DECLS
 
@@ -74,9 +75,7 @@ gboolean gebr_gui_value_sequence_edit_rename(GebrGuiValueSequenceEdit *self,
 void gebr_gui_value_sequence_edit_clear (GebrGuiValueSequenceEdit *self);
 
 void gebr_gui_value_sequence_edit_set_autocomplete(GebrGuiValueSequenceEdit *self,
-						   GebrGeoXmlDocument *flow,
-						   GebrGeoXmlDocument *line,
-						   GebrGeoXmlDocument *proj,
+						   GebrGuiCompleteVariables *complete_var,
 						   GebrGeoXmlParameterType type);
 
 G_END_DECLS

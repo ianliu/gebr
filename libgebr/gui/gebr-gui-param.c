@@ -937,7 +937,8 @@ gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 			GebrGeoXmlDocument *flow, *line, *proj;
 			gebr_validator_get_documents(parameter_widget->validator, &flow, &line, &proj);
 			gebr_gui_value_sequence_edit_set_autocomplete(GEBR_GUI_VALUE_SEQUENCE_EDIT(sequence_edit),
-								      flow, line, proj, parameter_widget->parameter_type);
+								      parameter_widget->priv->complete_var,
+								      parameter_widget->parameter_type);
 		}
 
 		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), sequence_edit, TRUE, TRUE, 0);
