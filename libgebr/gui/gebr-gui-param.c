@@ -112,11 +112,6 @@ static void __set_type_icon(GebrGuiParam *parameter_widget);
 
 static void validate_list_value_widget(GebrGuiParam *self);
 
-typedef enum {
-	COMPLETION_TYPE_VARIABLE,
-	COMPLETION_TYPE_PATH,
-} CompletionType;
-
 static void parameter_widget_set_icon(GebrGuiParam *widget,
 				      GebrGeoXmlParameter *param,
 				      GError *error)
@@ -1131,7 +1126,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	gchar * var;
 	gchar * word;
 	gint ini, end;
-	CompletionType comp_type;
+	GebrGuiCompleteVariablesType comp_type;
 	GebrGeoXmlParameterType type = GPOINTER_TO_INT(data);
 
 	entry = gtk_entry_completion_get_entry(completion);
@@ -1218,7 +1213,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 		const gchar *bar;
 		const gchar *tmp1;
 		const gchar *tmp2;
-		if (comp_type == COMPLETION_TYPE_VARIABLE) {
+		if (comp_type == GEBR_GUI_COMPLETE_VARIABLES_TYPE_VARIABLE) {
 			tmp1 = "[";
 			tmp2 = "]";
 			bar = "";
@@ -1243,11 +1238,11 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 				      GtkTreeIter *iter,
 				      gpointer user_data)
 {
-	CompletionType type;
+	GebrGuiCompleteVariablesType type;
 	GtkTreeModel *model;
 	GtkWidget *entry;
 	const gchar *text;
-	gchar *compl;
+	gchar *keyword;
 	gchar *word;
 	gint pos;
 	gboolean retval;
@@ -1274,7 +1269,10 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 	}
 
 	model = gtk_entry_completion_get_model(completion);
-	gtk_tree_model_get(model, iter, 0, &compl, 3, &type, -1);
+	gtk_tree_model_get(model, iter,
+			   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, &keyword,
+			   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, &type,
+			   -1);
 
 	// Start of variable name
 	if (c_curr == '[') {
@@ -1282,10 +1280,10 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 		if (c_prev == '[')
 			return FALSE;
 		else
-			return type == COMPLETION_TYPE_VARIABLE;
+			return type == GEBR_GUI_COMPLETE_VARIABLES_TYPE_VARIABLE;
 	} else if (c_curr == '<') {
 		if (pos == 0)
-			return type == COMPLETION_TYPE_PATH;
+			return type == GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH;
 		else
 			return FALSE;
 	}
@@ -1312,10 +1310,10 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 			return FALSE;
 	}
 
-	retval = g_str_has_prefix(compl, word);
+	retval = g_str_has_prefix(keyword, word);
 
 	g_free(word);
-	g_free(compl);
+	g_free(keyword);
 
 	return retval;
 }
@@ -1800,12 +1798,12 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 						      GebrGeoXmlParameterType type)
 {
 	const gchar *keyword;
-	const gchar *icon;
 	const gchar *result, *value;
 	GList *compatible;
 	GtkTreeIter iter;
 	GtkListStore *store;
 	GebrGeoXmlProgramParameter *ppar;
+	GebrGeoXmlParameterType param_type;
 
 	store = gtk_list_store_new(4,
 				   G_TYPE_STRING,
@@ -1819,29 +1817,29 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 		keyword = gebr_geoxml_program_parameter_get_keyword(ppar);
 		value = gebr_geoxml_program_parameter_get_first_value(ppar, FALSE);
 		result = g_strdup_printf("= %s", value);
-		switch(gebr_geoxml_parameter_get_type(i->data)) {
-		case GEBR_GEOXML_PARAMETER_TYPE_STRING: icon = "string-icon"; break;
-		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: icon = "real-icon"; break;
-		case GEBR_GEOXML_PARAMETER_TYPE_INT: icon = "int-icon"; break;
-		default: icon = NULL; break;
-		}
+		param_type = gebr_geoxml_parameter_get_type(i->data);
 		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 0, keyword, 1, icon, 2, result,
-				   3, COMPLETION_TYPE_VARIABLE, -1);
+		gtk_list_store_set(store, &iter,
+				   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, keyword,
+				   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, GEBR_GUI_COMPLETE_VARIABLES_TYPE_VARIABLE,
+				   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, param_type,
+				   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+				   GEBR_GUI_COMPLETE_VARIABLES_RESULT, result,
+				   -1);
 	}
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
-		icon = GTK_STOCK_DIRECTORY;
 		for (gint i = 0; paths[i]; i++) {
 			keyword = paths[i][1];
 			result = paths[i][0];
 			gtk_list_store_append(store, &iter);
 			gtk_list_store_set(store, &iter,
-					   0, keyword,
-					   1, icon,
-					   2, result,
-					   3, COMPLETION_TYPE_PATH,
+					   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, keyword,
+					   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH,
+					   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN,
+					   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+					   GEBR_GUI_COMPLETE_VARIABLES_RESULT, result,
 					   -1);
 		}
 		gebr_pairstrfreev(paths);
