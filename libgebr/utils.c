@@ -716,10 +716,9 @@ gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gbo
 
 gchar *gebr_str_word_before_pos(const gchar *str, gint *pos)
 {
-	gchar *word = g_new0(gchar, *pos);
 	gint ini = *pos;
 	gint end = *pos;
-	gunichar c_curr = '\0';
+	gunichar c_curr;
 
 	gchar *tmp = g_utf8_offset_to_pointer(str, *pos);
 	for (; ini >= 0; ini--) {
@@ -736,6 +735,8 @@ gchar *gebr_str_word_before_pos(const gchar *str, gint *pos)
 	ini++;
 	tmp = g_utf8_next_char(tmp);
 	*pos = ini;
+	gint len = g_utf8_offset_to_pointer(tmp, end) - g_utf8_offset_to_pointer(tmp, ini - 1);
+	gchar *word = g_new0(gchar, len + 1);
 	g_utf8_strncpy(word, tmp, end-ini+1);
 
 	return word;
