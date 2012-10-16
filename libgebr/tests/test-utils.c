@@ -52,8 +52,18 @@ void test_gebr_str_word_before_pos(void)
 	text = "olá, tudo bem?";
 	pos = 2;
 	word = gebr_str_word_before_pos(text, &pos);
+	g_assert_cmpstr(word, ==, "olá");
+	g_assert_cmpint(pos, ==, 0);
+
+	pos = 8;
+	word = gebr_str_word_before_pos(text, &pos);
+	g_assert_cmpstr(word, ==, "tudo");
+	g_assert_cmpint(pos, ==, 5);
+
+	pos = 3;
+	word = gebr_str_word_before_pos(text, &pos);
 	g_assert(word == NULL);
-	g_assert_cmpint(pos, ==, 2);
+	g_assert_cmpint(pos, ==, 3);
 }
 
 void test_gebr_str_remove_trailing_zeros(void)
