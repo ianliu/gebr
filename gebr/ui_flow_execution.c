@@ -46,10 +46,6 @@ struct _GebrUiFlowExecutionPriv {
 
 G_DEFINE_TYPE(GebrUiFlowExecution, gebr_ui_flow_execution, G_TYPE_OBJECT);
 
-GtkWidget *
-create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_execution,
-                                        GebrMaestroServer *maestro);
-
 static void
 gebr_ui_flow_execution_finalize(GObject *object)
 {
@@ -909,11 +905,10 @@ restore_execution_servers(GebrUiFlowExecution *ui_flow_execution, GebrMaestroSer
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
 
-	if (valid) {
+	if (valid)
 		gtk_combo_box_set_active_iter(combo, &iter);
-	} else if (gtk_tree_model_get_iter_first(model, &iter)) {
-		gtk_combo_box_set_active_iter(combo, &iter);
-	}
+	else if (gtk_tree_model_get_iter_first(model, &iter))
+		gtk_tree_model_get_iter_first(model, &iter);
 }
 
 
@@ -1042,11 +1037,10 @@ on_servers_combo_changed(GtkComboBox *widget,
 	update_speed_slider(GTK_SCALE(ui_flow_execution->priv->speed_slider), ncores);
 }
 
-GtkWidget *
+static GtkWidget *
 create_detailed_execution_servers_combo(GebrUiFlowExecution *ui_flow_execution,
                                         GebrMaestroServer *maestro)
 {
-	g_debug("create_detailed_execution_servers_combo");
 	/*Server combo*/
 	GtkTreeModel *servers_model = gebr_maestro_server_get_groups_model(maestro);
 	GtkWidget *servers_combo = gtk_combo_box_new_with_model(servers_model);
