@@ -2363,13 +2363,10 @@ update_flow_actions_sensitiveness(GtkTreeSelection *selection,
 {
 	guint len;
 	GList *rows;
-	gboolean is_multiple, is_program = FALSE;
+	gboolean is_multiple;
 	GtkTreeModel *model;
 
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
-
-	GebrUiFlowBrowseType type;
-	GtkTreeIter iter;
 
 	len = g_list_length(rows);
 	is_multiple = len > 1;
@@ -2377,21 +2374,10 @@ update_flow_actions_sensitiveness(GtkTreeSelection *selection,
 	if (len == 0)
 		return;
 
-	gtk_tree_model_get_iter(model, &iter, rows->data);
-	gtk_tree_model_get(model, &iter,
-	                   FB_STRUCT_TYPE, &type,
-	                   -1);
-
-	if (type == STRUCT_TYPE_PROGRAM)
-		is_program = TRUE;
-
-	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
-	g_list_free(rows);
-
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"), !is_multiple);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"), !is_multiple);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), !is_multiple);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), !(is_multiple) && !(is_program));
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), !is_multiple);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"), !is_multiple);
 }
 
