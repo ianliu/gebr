@@ -492,8 +492,8 @@ define_validate_and_extract_vars(GebrValidator  *self,
 		valid = translate_string_expr(self, expression, NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, NULL, &vars, error);
 		if (valid) {
 			valid = get_error_indirect(self, vars, name, type, scope, error);
-			if (type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
-				validate_path_expression(self, expression, error);
+			if (valid && type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
+				valid = validate_path_expression(self, expression, error);
 		}
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
