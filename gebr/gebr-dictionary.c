@@ -245,3 +245,9 @@ gebr_dict_complete_get_filter_full(GebrGuiCompleteVariables *complete,
 					       visible_func, data, g_free);
 	return filter;
 }
+
+void
+gebr_dict_complete_update(GebrDictComplete *self)
+{
+	gebr_dict_complete_update_model(self);
+}

@@ -56,6 +56,8 @@ void gebr_dict_complete_set_documents(GebrDictComplete *self,
 				      GebrGeoXmlDocument *line,
 				      GebrGeoXmlDocument *flow);
 
+void gebr_dict_complete_update(GebrDictComplete *self);
+
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_DICTIONARY_H__ */
