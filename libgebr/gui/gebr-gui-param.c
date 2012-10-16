@@ -1134,7 +1134,10 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	pos = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
 	ini = pos;
 	end = pos;
-	gtk_tree_model_get(model, iter, 0, &var, 3, &comp_type, -1);
+	gtk_tree_model_get(model, iter,
+			   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, &var,
+			   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, &comp_type,
+			   -1);
 	word = gebr_str_word_before_pos(text, &ini);
 
 	gunichar c_prev = g_utf8_get_char(g_utf8_offset_to_pointer(text, ini - 1));
