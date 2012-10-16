@@ -1,5 +1,4 @@
 usr/bin/gebr
 usr/share/applications/gebr.desktop
-usr/share/gebr/glade
-usr/share/gebr/menus/*
+usr/share/gebr
 usr/share/locale/*/*/gebr.mo
