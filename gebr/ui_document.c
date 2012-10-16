@@ -71,6 +71,7 @@ enum {
 struct dict_edit_data {
 	GtkWidget *widget;
 
+	GebrDictComplete *dict_complete;
 	GebrGeoXmlDocument *current_document;
 	GtkTreeIter current_document_iter;
 	GebrGeoXmlDocument *documents[4];
@@ -558,6 +559,8 @@ close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *da
 {
 	flow_browse_revalidate_flows(gebr.ui_flow_browse, TRUE);
 
+	g_object_unref(data->dict_complete);
+
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GebrGeoXmlSequence *i_parameter;
 
@@ -612,6 +615,19 @@ parameters_actions(GtkDialog *dialog, gint response, gpointer pointer)
 	}
 }
 
+static void
+setup_dict_complete(struct dict_edit_data *data)
+{
+	data->dict_complete = gebr_dict_complete_new();
+	GebrGeoXmlFlow *flow;
+	flow = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE ? gebr.flow : NULL;
+	gebr_dict_complete_set_documents(data->dict_complete,
+					 GEBR_GEOXML_DOCUMENT(gebr.project),
+					 GEBR_GEOXML_DOCUMENT(gebr.line),
+					 GEBR_GEOXML_DOCUMENT(flow));
+
+}
+
 void document_dict_edit_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -648,6 +664,8 @@ void document_dict_edit_setup_ui(void)
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
 	data->is_inserting_new = FALSE;
+
+	setup_dict_complete(data);
 	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN,
 					G_TYPE_STRING,	/* keyword stock */
 					G_TYPE_STRING,	/* keyword */
@@ -1059,27 +1077,15 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 	} else if (renderer == data->cell_renderer_array[DICT_EDIT_VALUE]) {
 		GebrGeoXmlProgramParameter *parameter;
 		GtkTreeModel *completion_model;
-		gchar *var;
 		const gchar *keyword;
-		GtkTreeIter it;
 		GtkEntry *entry = GTK_ENTRY(editable);
 
 		gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
 		keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
 
-		GebrGeoXmlFlow *flow;
-		flow = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_BROWSE ? gebr.flow : NULL;
-		completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (flow),
-									   GEBR_GEOXML_DOCUMENT (gebr.line),
-									   GEBR_GEOXML_DOCUMENT (gebr.project),
-									   type);
-		gebr_gui_gtk_tree_model_foreach(it, completion_model) {
-			gtk_tree_model_get(completion_model, &it, 0, &var, -1);
-			if(!g_strcmp0(keyword, var))
-				gtk_list_store_remove(GTK_LIST_STORE(completion_model), &it);
-			g_free(var);
-		}
+		gebr_dict_complete_update(data->dict_complete);
+		completion_model = gebr_gui_complete_variables_get_filter(GEBR_GUI_COMPLETE_VARIABLES(data->dict_complete), type);
 		gebr_gui_parameter_set_entry_completion(entry, completion_model, type);
 	}
 
