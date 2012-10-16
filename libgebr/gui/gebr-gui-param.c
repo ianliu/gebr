@@ -1808,11 +1808,12 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 	GebrGeoXmlProgramParameter *ppar;
 	GebrGeoXmlParameterType param_type;
 
-	store = gtk_list_store_new(4,
+	store = gtk_list_store_new(GEBR_GUI_COMPLETE_VARIABLES_NCOLS,
 				   G_TYPE_STRING,
-				   G_TYPE_STRING,
-				   G_TYPE_STRING,
-				   G_TYPE_INT);
+				   G_TYPE_INT,
+				   G_TYPE_INT,
+				   G_TYPE_INT,
+				   G_TYPE_STRING);
 	compatible = get_compatible_variables(type, flow, line, proj);
 
 	for (GList *i = compatible; i; i = i->next) {
