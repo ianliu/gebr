@@ -847,6 +847,7 @@ void document_dict_edit_setup_ui(void)
 	gtk_widget_show_all(dialog);
 	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), data);
 	gtk_dialog_run(GTK_DIALOG(dialog));
+	gebr_ui_flow_browse_update_dict_complete(gebr.ui_flow_browse);
 	g_string_free(dialog_title, TRUE);
 }
 
