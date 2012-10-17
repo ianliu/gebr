@@ -1651,7 +1651,6 @@ static void
 parameter_widget_free(GebrGuiParam *self)
 {
 	gebr_geoxml_object_unref(self->parameter);
-	g_object_unref(self->priv->complete_var);
 	g_free(self->priv);
 	g_free(self);
 }
