@@ -1077,12 +1077,10 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
 	} else if (renderer == data->cell_renderer_array[DICT_EDIT_VALUE]) {
 		GebrGeoXmlProgramParameter *parameter;
 		GtkTreeModel *completion_model;
-		const gchar *keyword;
 		GtkEntry *entry = GTK_ENTRY(editable);
 
 		gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
-		keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
 
 		gebr_dict_complete_update(data->dict_complete);
 		completion_model = gebr_gui_complete_variables_get_filter(GEBR_GUI_COMPLETE_VARIABLES(data->dict_complete), type);
