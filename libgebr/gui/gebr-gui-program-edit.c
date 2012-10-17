@@ -324,6 +324,12 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 			g_object_set_data(G_OBJECT(frame), "first-parameter-widget", widget);
 			first_parameter = FALSE;
 		}
+
+		if (gebr_geoxml_parameter_get_group(GEBR_GEOXML_PARAMETER(parameter)))
+			gebr_gui_group_validate(program_edit->validator,
+			                        GEBR_GEOXML_PARAMETER(parameter),
+			                        program_edit->group_warning_widget);
+
 		gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	}
 
@@ -479,9 +485,6 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 
 		gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 		for (gboolean first_instance = TRUE, i = 0; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
-
-			gebr_gui_group_instance_validate(program_edit->validator, instance, program_edit->group_warning_widget);
-
 			GtkWidget *widget;
 			widget = gebr_gui_program_edit_load(program_edit, GEBR_GEOXML_PARAMETERS(instance));
 			data->instances_list = g_list_prepend(data->instances_list, widget);
@@ -497,7 +500,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 			gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(instance), widget);
 			gtk_box_pack_start(GTK_BOX(group_vbox), widget, FALSE, TRUE, 0);
 		}
-		program_edit->group_warning_widget = NULL;
+
 		data->instances_list = g_list_reverse(data->instances_list);
 
 		/* Updates the arrow and delete buttons */

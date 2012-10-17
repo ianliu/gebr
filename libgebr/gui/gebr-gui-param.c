@@ -1566,14 +1566,8 @@ validate_list_value_widget(GebrGuiParam *self)
 	} else
 		exprs = g_strsplit(text, separator, -1);
 
-	if (self->group_warning_widget) {
-		GebrGeoXmlParameterGroup *group;
-		GebrGeoXmlSequence *instance;
-		group = gebr_geoxml_parameter_get_group(self->parameter);
-		gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
-		for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
-			gebr_gui_group_instance_validate(self->validator, instance, self->group_warning_widget);
-	}
+	if (self->group_warning_widget)
+		gebr_gui_group_validate(self->validator, self->parameter, self->group_warning_widget);
 
 	for (int i = 0; exprs[i]; i++) {
 		gebr_validator_validate_expr(self->validator, exprs[i], type, &error);
@@ -1757,14 +1751,8 @@ gboolean gebr_gui_param_validate(GebrGuiParam *self)
 {
 	gboolean validate;
 
-	if (self->group_warning_widget) {
-		GebrGeoXmlParameterGroup *group;
-		GebrGeoXmlSequence *instance;
-		group = gebr_geoxml_parameter_get_group(self->parameter);
-		gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
-		for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
-			gebr_gui_group_instance_validate(self->validator, instance, self->group_warning_widget);
-	}
+	if (self->group_warning_widget)
+		gebr_gui_group_validate(self->validator, self->parameter, self->group_warning_widget);
 
 	if (!__parameter_accepts_expression(self))
 		return TRUE;
@@ -1803,12 +1791,31 @@ void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
 			       GINT_TO_POINTER(type));
 }
 
-gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSequence *instance, GtkWidget *icon)
+static void
+gebr_gui_group_set_warning(gint nerrors,
+                           GtkWidget *icon)
 {
-	gboolean invalid = FALSE;
+	if (nerrors) {
+		gtk_image_set_from_stock(GTK_IMAGE(icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
+		gchar *message;
+		if (nerrors == 1)
+			message = g_strdup_printf(_("This group has %d error"), nerrors);
+		else
+			message = g_strdup_printf(_("This group has %d errors"), nerrors);
+		gtk_widget_set_tooltip_text (icon, message);
+	} else
+		gtk_image_clear(GTK_IMAGE(icon));
+}
+
+static gint
+gebr_gui_group_instance_validate(GebrValidator *validator,
+                                 GebrGeoXmlSequence *instance,
+                                 GtkWidget *icon)
+{
 	GebrGeoXmlSequence *parameter;
 	GebrGeoXmlParameter *selected;
 	int i = 0;
+
 	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
 	selected = gebr_geoxml_parameters_get_selection(GEBR_GEOXML_PARAMETERS(instance));
 	if (selected) {
@@ -1821,18 +1828,28 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
 			gebr_geoxml_sequence_next(&parameter);
 		}
 	}
-	if (i) {
-		gtk_image_set_from_stock(GTK_IMAGE(icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
-		gchar *message;
-		if (i == 1)
-			message = g_strdup_printf(_("This group has %d error"), i);
-		else
-			message = g_strdup_printf(_("This group has %d errors"), i);
-		gtk_widget_set_tooltip_text (icon, message);
-	} else
-		gtk_image_clear(GTK_IMAGE(icon));
 
-	return invalid;
+	return i;
+}
+
+void
+gebr_gui_group_validate(GebrValidator *validator,
+                        GebrGeoXmlParameter *parameter,
+                        GtkWidget *icon)
+{
+	gint nerrors = 0;
+	gint i;
+	GebrGeoXmlParameterGroup *group;
+	GebrGeoXmlSequence *instance;
+
+	group = gebr_geoxml_parameter_get_group(parameter);
+	gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
+	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
+		i = gebr_gui_group_instance_validate(validator, instance, icon);
+		nerrors += i;
+	}
+
+	gebr_gui_group_set_warning(nerrors, icon);
 }
 
 void

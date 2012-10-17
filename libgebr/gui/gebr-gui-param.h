@@ -146,10 +146,12 @@ void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
 					     GtkTreeModel *model,
 					     GebrGeoXmlParameterType type);
 
-/**
- * gebr_gui_group_instance_validate:
+/*
+ * gebr_gui_group_validate:
  */
-gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSequence *instance, GtkWidget *icon);
+void gebr_gui_group_validate(GebrValidator *validator,
+                                 GebrGeoXmlParameter *parameter,
+                                 GtkWidget *icon);
 
 /**
  * gebr_gui_param_set_validated_callback:
