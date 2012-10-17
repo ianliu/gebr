@@ -101,42 +101,26 @@
 	<section xml:id="flows_create_flow">
 		<title>Creating flows</title>
 
-		<para>To create a flow, follow the steps:</para>
+		<para>In the <guilabel>Flows</guilabel> tab, the button
+					<guiicon><inlinemediaobject><imageobject>
+								<imagedata fileref="../../common-images/botao_criar_fluxo.png" />
+				</imageobject></inlinemediaobject></guiicon> creates a flow.
+				Title, description and flow's author can be provided in the
+				creation.
+			</para>
 
-		<procedure>
-			<step>
-				<para>In the <guilabel>Projects and Lines</guilabel> tab, check that
-					some line is selected;</para>
-			</step>
-			<step>
-				<para>Go to the <guilabel>Flows</guilabel> tab, then left-click on
-					<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png" /></imageobject></inlinemediaobject></guiicon>.</para>
-			</step>
-			<step>
-				<para>The <guilabel>Flow Properties</guilabel> dialog will appear. Fill
-					in the basic information of the flow and then click
-					<guibutton>OK</guibutton>.</para>
-			</step>
-		</procedure>
 
 		<para>After following these steps, the flow will be appear on the left side of the
 			main window. The right side will show information about this flow, like
-			its title, description and modified date.</para>
-
-		<para>The menus list will automatically appear in a pop-up and the user
-			will be able to assemble the flow (see<xref
-				linkend="flows_assembling_flow" />).
+			its title, description and modified date.
 		</para>
 
 		<tip>
 			<para>It's possible to alter the position of the flow in the list by
 				dragging the flow with the mouse to the desired position.</para>
 		</tip>
-	</section>
 
-	<section xml:id="flows_assembling_flow">
-		<title>Assembling the flow</title>
-		<para>In GêBR, a <emphasis>flow</emphasis> is a sequence
+		<para>A processing <emphasis>flow</emphasis> is a sequence
 			of operations defined by the user. These operations, also
 			called
 			<emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
@@ -181,7 +165,7 @@
 			</listitem>
 		</itemizedlist>
 
-		<para>After the flow has been created, a pop-up appears with several menus and
+		<para>After the flow is created, a pop-up appears with the available menus and
 			is possible assemble the flow:</para>
 
 		<procedure>

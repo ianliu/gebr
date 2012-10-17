@@ -308,15 +308,14 @@
   <section xml:id="technical_aspects_administrative_features">
     <title>Administrative features</title>
 		<para>
-			The administrator can configure global options appliable 
+			The system administrator can configure global options appliable 
 			to everyone that starts GêBR for the first time.
 		</para>
 
-  <section xml:id="technical_aspects_maestro_configuration_file">
-  <title> Administrative maestro suggestion </title>
 		<para>
 			GêBR verifies the existence of an environment variable
-			(GEBR_DEFAULT_MAESTRO) to suggest a maestro. The syntax of
+			(GEBR_DEFAULT_MAESTRO) to <emphasis>suggest a maestro</emphasis>.
+			The syntax of
 			this variable is <code>maestro_A, description_A; maestro_B,
 				description_B</code>.
 		</para>
@@ -326,7 +325,7 @@
 			<code>127.0.0.1, My first maestro; 100.00.00.0, My second maestro;</code>
 			then, on the first time or through <guilabel>Connection Assistant</guilabel>
 			(see <xref linkend="additional_features_connection_assistant" />),
-			GêBR offer the following options:
+			GêBR will offer the following options:
 		</para>
 
 		<itemizedlist>
@@ -338,11 +337,9 @@
 		</listitem>
 	</itemizedlist>
 
-</section>
-  <section xml:id="technical_aspects_nodes_environment_variable">
-  <title> Administrative nodes suggestion </title>
 		<para>
-			Additionally, GêBR can also automatically add processing nodes. This
+			Additionally, GêBR can also automatically
+			<emphasis>add processing nodes</emphasis>. This
 			configuration can be done through a file in the path
 			<code>/etc/gebr/servers.conf</code>.
 		</para>
@@ -365,103 +362,6 @@
 			will be available.
 		</para>
 		</para>
-</section>
   </section>
 
-  <section xml:id="technical_aspects_import_samples">
-    <title>Sample projects</title>
-    <para>In <menuchoice>
-        <guimenu>Help</guimenu>
-        <guimenuitem>Samples</guimenuitem>
-		</menuchoice> menu, there are samples to be imported.</para>
-		<para>
-			GêBR offers bundled samples for download in its hostpage,
-			<link xlink:show="new" xlink:href="https://www.gebrproject.com">hostpage</link>
-		like gebr-menus-su package. Here are some samples this package provides:
-			<itemizedlist>
-				<listitem>
-					Dip Moveout : 
-					<emphasis> Ilustrates different types of DMO processing </emphasis>
-				</listitem>
-				<listitem>
-					Velocity Analysis : 
-					<emphasis> Illustrate some velocity analysis processes </emphasis>
-				</listitem>
-				<listitem>
-					NMO : 
-					<emphasis> Illustrate normal moveout corrections and stacking </emphasis>
-				</listitem>
-				<listitem>
-					Ray Tracing : 
-					<emphasis> Illustrates different ray tracing programs </emphasis>
-				</listitem>
-				<listitem>
-					Migration Inversion : 
-					<emphasis> Illustrates different processes of migration inversion </emphasis>
-				</listitem>
-				<listitem>
-					Time Frequency Analysis : 
-					<emphasis> Illustrates chirpy data in the time-frequency domain </emphasis>
-				</listitem>
-				<listitem>
-					Deconvolution : 
-					<emphasis> Illustrate a random noise attenuation via F-X deconvolution </emphasis>
-				</listitem>
-				<listitem>
-					Filtering : 
-					<emphasis> Ilustrates different filtering processes </emphasis>
-				</listitem>
-				<listitem>
-					Trace Headers and Values : 
-					<emphasis> Illustrates several applications to the trace headers and values of keywords </emphasis>
-				</listitem>
-				<listitem>
-					Plotting : 
-					<emphasis> Illustrates different plotting programs </emphasis>
-				</listitem>
-				<listitem>
-					Velocity Profiles : 
-					<emphasis> Illustrate several types of velocity profiles </emphasis>
-				</listitem>
-				<listitem>
-					Muting : 
-					<emphasis> Illustrating a picking in a data, and your result after applied mute </emphasis>
-				</listitem>
-				<listitem>
-					Synthetic : 
-					<emphasis> Show several demonstrations about synthetic data creation </emphasis>
-				</listitem>
-				<listitem>
-					Amplitude Correction : 
-					<emphasis> Illustrates the amplitude correction on synthetic seismic data </emphasis>
-				</listitem>
-				<listitem>
-					Offset Continuation : 
-					<emphasis> Ilustrates the use of Offset Continuation method </emphasis>
-				</listitem>
-				<listitem>
-					Block : 
-					<emphasis> Creates a data set of the form required by the "block" program.	</emphasis>
-				</listitem>
-				<listitem>
-					Stacking Traces : 
-					<emphasis> Illustrating the usage phase weighted and diversity stacking </emphasis>
-				</listitem>
-				<listitem>
-					Vibroseis Sweeps : 
-					<emphasis> Illustrates using SUVIBRO </emphasis>
-				</listitem>
-				<listitem>
-					Making Data : 
-					<emphasis> Illustrating the construction of common offsets and shot gathers </emphasis>
-				</listitem>
-			</itemizedlist>
-
-		</para>
-		Once imported, the associated flows can be readily consulted or executed (consult 
-		<xref linkend="flows_execute_flow"/>).
-		<para>
-
-		</para>
-	</section>
 </chapter>

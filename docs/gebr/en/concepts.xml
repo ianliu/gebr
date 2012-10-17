@@ -68,8 +68,7 @@
     <para>
       Thus, before creating and executing flows, it's necessary to create
       at least one project owning one
-      line. <xref linkend="projects_lines_create_projects"/>,
-      <xref linkend="projects_lines_create_lines"/> and
+      line. <xref linkend="projects_lines_create_projects"/>, and
       <xref linkend="flows_create_flow"/> explain how this is
       accomplished.
     </para>
