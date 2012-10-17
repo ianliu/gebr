@@ -191,7 +191,7 @@ on_menu_button_clicked(GtkWidget   *widget,
 {
        menu_list_populate();
        gebr_menu_view_set_focus_on_entry(gebr.menu_view);
-       gebr_menu_view_set_sensitive_add(gebr.menu_view, !gebr_menu_view_multiple_flow_selected());
+       gebr_menu_view_set_sensitive_add(gebr.menu_view, !(gebr_menu_view_multiple_flow_selected() || !flow_browse_get_selected(NULL, TRUE)));
        return FALSE;
 }
 

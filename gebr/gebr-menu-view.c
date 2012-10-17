@@ -48,6 +48,8 @@ struct _GebrMenuViewPriv {
 
 	GtkWidget *help_viewer;
 	GtkWidget *menu_view;
+	GtkWidget *info_bar;
+	GtkWidget *label_info;
 };
 
 enum {
@@ -114,18 +116,19 @@ gebr_menu_view_add(GtkTreeView *tree_view,
 	GtkTreeIter iter;
 	gchar *filename;
 
-	if(gebr_menu_view_multiple_flow_selected())
-		return;
-
-	if (!flow_browse_get_selected(NULL, TRUE))
-		return;
-
 	if (!gebr_menu_view_get_selected_menu(view, &iter)) {
 		if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(tree_view), path))
 			gtk_tree_view_collapse_row(GTK_TREE_VIEW(tree_view), path);
 		else
 			gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_view), path, FALSE);
 		return;
+	}
+
+	if(gebr_menu_view_multiple_flow_selected() || !flow_browse_get_selected(NULL, TRUE)) {
+		gtk_widget_show_all(view->priv->info_bar);
+		return;
+	} else {
+		gtk_widget_hide_all(view->priv->info_bar);
 	}
 
 	GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
@@ -146,9 +149,6 @@ gebr_menu_view_activate_add(GebrMenuView *view)
 	GtkTreeModel *model;
 	GtkTreePath *path = NULL;
 	GtkTreeIter iter;
-
-	if(gebr_menu_view_multiple_flow_selected())
-		return;
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
@@ -455,6 +455,14 @@ on_menu_view_data_func(GtkTreeViewColumn *tree_column,
 }
 
 static void
+on_close_infobar(GtkButton  *button,
+                gpointer    user_data)
+{
+	GebrMenuView *view = user_data;
+	gtk_widget_hide_all(view->priv->info_bar);
+}
+
+static void
 gebr_menu_view_init(GebrMenuView *view)
 {
 	view->priv = G_TYPE_INSTANCE_GET_PRIVATE(view,
@@ -572,6 +580,25 @@ gebr_menu_view_init(GebrMenuView *view)
 	// Add Search entry
 	gtk_box_pack_start(GTK_BOX(view->priv->vbox), view->priv->hbox, FALSE, FALSE, 5);
 
+	// Add info bar
+	view->priv->info_bar = gtk_info_bar_new();
+	view->priv->label_info = gtk_label_new( "To Add a menu, select only one flow.");
+
+	gtk_info_bar_set_message_type(GTK_INFO_BAR(view->priv->info_bar), GTK_MESSAGE_INFO);
+	GtkWidget *content_area = gtk_info_bar_get_content_area (GTK_INFO_BAR (view->priv->info_bar));
+	GtkWidget *close_button = gtk_button_new();
+	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	GtkWidget *button_box = gtk_vbox_new(FALSE, 0);
+
+	gtk_container_add(GTK_CONTAINER(close_button), image);
+	gtk_button_set_relief(GTK_BUTTON(close_button), GTK_RELIEF_NONE);
+	gtk_box_pack_end(GTK_BOX(button_box), close_button, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(content_area), button_box, FALSE, FALSE, 0);
+	g_signal_connect(close_button, "clicked", G_CALLBACK(on_close_infobar), view);
+
+	gtk_container_add (GTK_CONTAINER (content_area), view->priv->label_info);
+	gtk_box_pack_start(GTK_BOX(view->priv->vbox), view->priv->info_bar, FALSE, FALSE, 0);
+
 	// Add menu list
 	gtk_box_pack_start(GTK_BOX(view->priv->vbox), scrolled_window, TRUE, TRUE, 0);
 
@@ -582,6 +609,7 @@ gebr_menu_view_init(GebrMenuView *view)
 
 	gtk_widget_show_all(view->priv->vbox);
 	gtk_widget_hide_all(view->priv->help_viewer);
+	gtk_widget_hide_all(view->priv->info_bar);
 }
 
 static void
@@ -714,4 +742,10 @@ void
 gebr_menu_view_set_sensitive_add(GebrMenuView *view,  gboolean sensitive)
 {
 	gtk_widget_set_sensitive(view->priv->add, sensitive);
+	if (sensitive)
+		gtk_widget_hide_all(view->priv->info_bar);
+	if (gebr_menu_view_multiple_flow_selected())
+		gtk_label_set_text(GTK_LABEL(view->priv->label_info), "To Add a menu, select only one flow.");
+	if (!flow_browse_get_selected(NULL, TRUE))
+		gtk_label_set_text(GTK_LABEL(view->priv->label_info), "To Add a menu, select one flow.");
 }
