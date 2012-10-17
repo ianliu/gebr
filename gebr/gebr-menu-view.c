@@ -79,6 +79,32 @@ gebr_menu_view_get_selected_menu(GebrMenuView *view, GtkTreeIter *iter)
 	return TRUE;
 }
 
+gboolean
+gebr_menu_view_multiple_flow_selected() {
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	guint len;
+	GList *rows;
+	GtkTreeModel *model;
+	GebrUiFlowBrowseType type;
+	GtkTreeIter iter;
+
+	rows = gtk_tree_selection_get_selected_rows(selection, &model);
+	len = g_list_length(rows);
+	if (len < 2)
+		return FALSE;
+
+	gtk_tree_model_get_iter(model, &iter, rows->data);
+
+	gtk_tree_model_get(model, &iter,
+	                   FB_STRUCT_TYPE, &type,
+	                   -1);
+
+	if (type != STRUCT_TYPE_FLOW)
+		return FALSE;
+
+	return TRUE;
+}
+
 static void
 gebr_menu_view_add(GtkTreeView *tree_view,
                    GtkTreePath *path,
@@ -87,6 +113,9 @@ gebr_menu_view_add(GtkTreeView *tree_view,
 {
 	GtkTreeIter iter;
 	gchar *filename;
+
+	if(gebr_menu_view_multiple_flow_selected())
+		return;
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
@@ -117,6 +146,9 @@ gebr_menu_view_activate_add(GebrMenuView *view)
 	GtkTreeModel *model;
 	GtkTreePath *path = NULL;
 	GtkTreeIter iter;
+
+	if(gebr_menu_view_multiple_flow_selected())
+		return;
 
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
@@ -213,11 +245,12 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 		goto out;
 	}
 
-	/* add */
-	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_activate_add), view);
-
+	if (!gebr_menu_view_multiple_flow_selected()) {
+		/* add */
+		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_ADD, NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_view_activate_add), view);
+	}
 	/* Help */
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
@@ -491,7 +524,7 @@ gebr_menu_view_init(GebrMenuView *view)
 	view->priv->hbox = gtk_hbox_new(FALSE, 0);
 
 	/*
-	 * Create Add button
+	 * Create Help button
 	 */
 	view->priv->help = gtk_toggle_button_new();
 	gtk_button_set_relief(GTK_BUTTON(view->priv->help), GTK_RELIEF_NONE);
@@ -504,7 +537,7 @@ gebr_menu_view_init(GebrMenuView *view)
 	g_signal_connect_swapped(view->priv->help, "toggled", G_CALLBACK(gebr_menu_view_show_help), view);
 
 	/*
-	 * Create Menu button
+	 * Create Add button
 	 */
 	view->priv->add = gtk_button_new();
 	gtk_button_set_relief(GTK_BUTTON(view->priv->add), GTK_RELIEF_NONE);
@@ -675,4 +708,10 @@ void
 gebr_menu_view_set_focus_on_entry(GebrMenuView *view)
 {
 	gtk_widget_grab_focus(view->priv->entry);
+}
+
+void
+gebr_menu_view_set_sensitive_add(GebrMenuView *view,  gboolean sensitive)
+{
+	gtk_widget_set_sensitive(view->priv->add, sensitive);
 }
