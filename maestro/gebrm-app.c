@@ -597,8 +597,11 @@ has_duplicated_daemons(GebrmApp *app, const gchar *id)
 	gboolean added_daemon = FALSE;
 	for (GList *i = app->priv->daemons; i; i = i->next) {
 		const gchar *tmp = gebrm_daemon_get_id(i->data);
-		if (!tmp)
-			added_daemon = TRUE;
+		if (!tmp) {
+			const gchar *err_type = gebrm_daemon_get_error_type(i->data);
+			if (!err_type || g_strcmp0(err_type, "connection-refused") == 0)
+				added_daemon = TRUE;
+		}
 		if (g_strcmp0(tmp, id) == 0)
 			has_duplicated = TRUE;;
 	}

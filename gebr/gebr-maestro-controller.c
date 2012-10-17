@@ -1003,7 +1003,9 @@ update_spinner(gpointer user_data)
 	GtkTreePath *path;
 
 	gboolean valid = gtk_tree_model_get_iter_first(data->model, &iter);
-	valid = gtk_tree_model_iter_next(data->model, &iter);
+	if (valid)
+		valid = gtk_tree_model_iter_next(data->model, &iter);
+
 	while (valid) {
 		path = gtk_tree_model_get_path(data->model, &iter);
 		if (path) {
