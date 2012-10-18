@@ -519,6 +519,7 @@
             <property name="visible">True</property>
             <property name="xalign">0</property>
             <property name="label">#label</property>
+            <property name="wrap">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -549,29 +550,43 @@
         <child>
           <object class="GtkHBox" id="box1">
             <property name="visible">True</property>
+            <property name="border_width">6</property>
             <child>
-              <object class="GtkVBox" id="servers_box">
+              <object class="GtkAlignment" id="alignment2">
                 <property name="visible">True</property>
+                <property name="xalign">0.75</property>
+                <property name="xscale">0</property>
                 <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
+                  <object class="GtkHBox" id="pie_box">
+                    <property name="visible">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="pie_box">
+              <object class="GtkAlignment" id="alignment1">
                 <property name="visible">True</property>
+                <property name="xalign">0.25</property>
+                <property name="xscale">0</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkVBox" id="servers_box">
+                    <property name="visible">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>

@@ -1012,20 +1012,19 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		GebrMaestroServerGroupType type = gebr_maestro_server_group_str_to_enum(type_str);
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
-		g_string_printf(bold_resources, _("<b>Process distribution among processing nodes</b>"));
+		g_string_printf(bold_resources, _("<b>Process distribution among %d processing nodes</b>"), n_servers);
 		gchar *markup;
 
 		if (type == MAESTRO_SERVER_TYPE_GROUP)
 			if (g_strcmp0(groups, "") == 0)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to maestro <i>%s</i>,\n"
-						   "split in %d process(es) %s"
-						   "and distributed in %d node(s).\n"),
+		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to maestro <i>%s</i>, "
+						   "split in %d %s%s\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
 						  total_procs,
-						  g_strcmp0(niceness, "0")? _(", executed using \nthe nodes idle time ") : "",
-						  n_servers);
+						  total_procs > 1 ? _("processes") :_("process"),
+						  g_strcmp0(niceness, "0")? _(", using processing nodes idle time.\n") : ".");
 		g_string_append(resources, markup);
 
 		const gchar *mpi_owner_tst = gebr_job_get_mpi_owner(job);
