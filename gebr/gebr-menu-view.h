@@ -120,7 +120,9 @@ void gebr_menu_view_set_open_infobar(GebrMenuView *view,  gboolean open);
  *
  * Verify if there is a wrong selection to add menu and set the text of infobar
  */
-gboolean gebr_menu_view_choose_infobar_text(GebrMenuView *view, gboolean multiple_loop);
+gboolean gebr_menu_view_choose_infobar_text(GebrMenuView *view,
+                                            gboolean multiple_loop,
+                                            gboolean help);
 
 G_END_DECLS
 
