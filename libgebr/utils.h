@@ -37,6 +37,17 @@ typedef enum {
 } TimesType;
 
 /**
+ * gebr_g_string_remove_accents:
+ * @title:the text with accents to be removed
+ *
+ * Replace accented characters on a string to non accented characters.
+ * If character is higher than 255, it is replaced to ""
+ */
+gchar *
+gebr_g_string_remove_accents(gchar *title);
+
+void
+/**
  * gebr_g_string_replace:
  * @string: The string to with the text.
  * @oldtext: The text to be replaced.
@@ -45,10 +56,6 @@ typedef enum {
  * Replace each reference of oldtext in string
  * with newtext. If newtext if NULL, then each reference of oldtext found is removed.
  */
-
-gchar*
-gebr_g_string_remove_accents(gchar *title);
-void
 gebr_g_string_replace(GString * string,
 		      const gchar * oldtext,
 		      const gchar * newtext);

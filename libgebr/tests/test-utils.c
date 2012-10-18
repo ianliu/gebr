@@ -292,9 +292,11 @@ test_gebr_double_list_to_list(void)
 void
 test_gebr_g_string_remove_accents(void){
 	gchar *title1 = "eh sem acento";
-	gchar *title2 = "Várias açõe’s² ñÑ";
+	gchar *title2 = "Várias açõe’s² ñ'Ñ";
+	gchar *title3 = "благодарю";
 	g_assert_cmpstr(gebr_g_string_remove_accents(title1), == , "eh sem acento");
-	g_assert_cmpstr(gebr_g_string_remove_accents(title2), == , "Varias acoes nN");
+	g_assert_cmpstr(gebr_g_string_remove_accents(title2), == , "Varias acoes n'N");
+	g_assert_cmpstr(gebr_g_string_remove_accents(title3), == , "");
 }
 
 

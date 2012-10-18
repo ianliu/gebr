@@ -42,24 +42,18 @@
 #define DEFAULT_NPROCS 1
 
 
-gchar*
-gebr_g_string_remove_accents(gchar *title){
-
+gchar *
+gebr_g_string_remove_accents(gchar *title)
+{
 	GString *buffer = g_string_new(NULL);
-	gchar *result;
 	gsize len;
 	for (gchar *i = title; i[0] != '\0' ; i = g_utf8_next_char(i)) {
 		gunichar *decomp = g_unicode_canonical_decomposition(g_utf8_get_char(i) , &len);
-		gchar c = decomp[0];
-		if (g_ascii_isprint(c)) {
-			g_string_append_c(buffer, c);
-		}
+		if (decomp[0] <= 255 && g_ascii_isprint(decomp[0]))
+			g_string_append_c(buffer, decomp[0]);
 		g_free(decomp);
 	}
-	g_string_append_c(buffer, '\0');
-	result = buffer->str;
-	g_string_free(buffer, FALSE);
-	return result;
+	return g_string_free(buffer, FALSE);
 }
 
 void
