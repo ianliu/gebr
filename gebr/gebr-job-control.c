@@ -1012,7 +1012,8 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		GebrMaestroServerGroupType type = gebr_maestro_server_group_str_to_enum(type_str);
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
-		g_string_printf(bold_resources, _("<b>Process distribution among %d processing nodes</b>"), n_servers);
+		g_string_printf(bold_resources, _("<b>Process distribution among %d processing %s</b>"), n_servers,
+				n_servers > 1 ? _("nodes") : _("node"));
 		gchar *markup;
 
 		if (type == MAESTRO_SERVER_TYPE_GROUP)

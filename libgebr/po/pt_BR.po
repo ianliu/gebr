@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 13:27-0300\n"
+"POT-Creation-Date: 2012-10-18 15:54-0300\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -82,7 +82,7 @@ msgstr "Chave do servidor:"
 
 #: ../comm/gebr-comm-server.c:608
 msgid "SSH host key rejected."
-msgstr "A chave SSH do servidor foi rejeitada."
+msgstr "A chave SSH foi rejeitada."
 
 #. last \n
 #: ../comm/gebr-comm-server.c:618
@@ -130,8 +130,8 @@ msgid "%s not found in %s"
 msgstr "%s não encontrado em %s"
 
 #: ../comm/gebr-comm-server.c:743
-msgid "Server"
-msgstr "Servidor"
+msgid "Node"
+msgstr "Nó"
 
 #: ../comm/gebr-comm-server.c:935
 #, c-format
@@ -1330,3 +1330,6 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
+
+#~ msgid "Server"
+#~ msgstr "Servidor"

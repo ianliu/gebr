@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 14:11-0300\n"
+"POT-Creation-Date: 2012-10-18 16:09-0300\n"
 "PO-Revision-Date: 2012-10-08 14:58-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -946,145 +946,152 @@ msgstr ""
 "não foi executado."
 
 #: ../gebr-job-control.c:1015
-#, c-format
-msgid "<b>Process distribution among %d processing nodes</b>"
-msgstr "<b>Distribuição dos processos entre %d nós de processamento</b>"
+msgid "<b>Process distribution among %d processing %s</b>"
+msgstr "<b>Distribuição dos processos entre %d </b>"
 
-#: ../gebr-job-control.c:1020
+#: ../gebr-job-control.c:1016
+msgid "nodes"
+msgstr "nós"
+
+#: ../gebr-job-control.c:1016
+msgid "node"
+msgstr "nó"
+
+#: ../gebr-job-control.c:1021
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: ../gebr-job-control.c:1022
+#: ../gebr-job-control.c:1023
 #, c-format
 msgid "Job submitted by <i>%s</i> to maestro <i>%s</i>, split in %d %s%s\n"
 msgstr ""
-"Tarefa submetida por <i>%s</i> ao maestro <i>%s</i>, dividida em %d %s %s\n"
+"Tarefa submetida por <i>%s</i> ao maestro <i>%s</i>, dividida em %d %s%s\n"
 
-#: ../gebr-job-control.c:1026
+#: ../gebr-job-control.c:1027
 msgid "processes"
 msgstr "processos"
 
-#: ../gebr-job-control.c:1026
+#: ../gebr-job-control.c:1027
 msgid "process"
 msgstr "processo"
 
-#: ../gebr-job-control.c:1027
+#: ../gebr-job-control.c:1028
 msgid ", using processing nodes idle time.\n"
 msgstr ", utilizando o tempo ocioso dos nós.\n"
 
-#: ../gebr-job-control.c:1033
+#: ../gebr-job-control.c:1034
 #, c-format
 msgid "This MPI job (<b>%s</b>) was dispatched by <b>%s</b>.\n"
 msgstr "Esta tarefa MPI (<b>%s</b>) foi submetida por <b>%s</b>.\n"
 
-#: ../gebr-job-control.c:1372
+#: ../gebr-job-control.c:1373
 #, c-format
 msgid "Started on %s"
 msgstr "Iniciado em %s"
 
-#: ../gebr-job-control.c:1379
+#: ../gebr-job-control.c:1380
 #, c-format
 msgid "Finished on %s"
 msgstr "finalizado em %s"
 
-#: ../gebr-job-control.c:1381
+#: ../gebr-job-control.c:1382
 #, c-format
 msgid "Canceled on %s"
 msgstr "Cancelado em %s"
 
-#: ../gebr-job-control.c:1383
+#: ../gebr-job-control.c:1384
 #, c-format
 msgid "Failed on %s"
 msgstr "Falhou em %s"
 
-#: ../gebr-job-control.c:1388 ../gebr-job-control.c:1397
-#: ../gebr-job-control.c:1407 ../gebr-job-control.c:1416
+#: ../gebr-job-control.c:1389 ../gebr-job-control.c:1398
+#: ../gebr-job-control.c:1408 ../gebr-job-control.c:1417
 #, c-format
 msgid "Elapsed time: %s"
 msgstr "Tempo decorrido: %s"
 
-#: ../gebr-job-control.c:1424
+#: ../gebr-job-control.c:1425
 msgid "Waiting for job"
 msgstr "Esperando pela tarefa"
 
-#: ../gebr-job-control.c:1432
+#: ../gebr-job-control.c:1433
 msgid "Waiting for nodes"
 msgstr "Esperando pelos nós de processamento"
 
-#: ../gebr-job-control.c:1534
+#: ../gebr-job-control.c:1535
 #, c-format
 msgid "Command line for task %d of %d (node: %s)"
 msgstr "Linha de comando para tarefa %d de %d (nó: %s)"
 
-#: ../gebr-job-control.c:1600
+#: ../gebr-job-control.c:1601
 #, c-format
 msgid "<b>Input file</b>: %s"
 msgstr "<b>Arquivo de entrada</b>: %s"
 
-#: ../gebr-job-control.c:1600 ../gebr-job-control.c:1611
-#: ../gebr-job-control.c:1622 ../ui_flow_browse.c:1322
+#: ../gebr-job-control.c:1601 ../gebr-job-control.c:1612
+#: ../gebr-job-control.c:1623 ../ui_flow_browse.c:1322
 #: ../ui_project_line.c:522 ../ui_project_line.c:524 ../ui_project_line.c:526
 msgid "None"
 msgstr "Nenhum"
 
-#: ../gebr-job-control.c:1611
+#: ../gebr-job-control.c:1612
 #, c-format
 msgid "<b>Output file</b>: %s"
 msgstr "<b>Arquivo de saída</b>: %s"
 
-#: ../gebr-job-control.c:1622
+#: ../gebr-job-control.c:1623
 #, c-format
 msgid "<b>Log File</b>: %s"
 msgstr "<b>Arquivo de log</b>: %s"
 
-#: ../gebr-job-control.c:1778 ../gebr-job-control.c:2006
-#: ../gebr-job-control.c:2094
+#: ../gebr-job-control.c:1779 ../gebr-job-control.c:2007
+#: ../gebr-job-control.c:2095
 msgid "Any"
 msgstr "Qualquer"
 
-#: ../gebr-job-control.c:1785
+#: ../gebr-job-control.c:1786
 msgid "Finished"
 msgstr "Finalizado"
 
-#: ../gebr-job-control.c:1792
+#: ../gebr-job-control.c:1793
 msgid "Canceled/Failed"
 msgstr "Cancelado/Falhado"
 
-#: ../gebr-job-control.c:1799
+#: ../gebr-job-control.c:1800
 msgid "Running"
 msgstr "Executando"
 
-#: ../gebr-job-control.c:1806
+#: ../gebr-job-control.c:1807
 msgid "Queued"
 msgstr "Em fila"
 
-#: ../gebr-job-control.c:1855
+#: ../gebr-job-control.c:1856
 msgid "Word-wrap"
 msgstr "Quebra de linha automática"
 
-#: ../gebr-job-control.c:1861
+#: ../gebr-job-control.c:1862
 msgid "Auto-scroll"
 msgstr "Auto-rolagem"
 
-#: ../gebr-job-control.c:2291
+#: ../gebr-job-control.c:2292
 msgid "Jobs filtered by:"
 msgstr "Tarefas filtradas por:"
 
 #. run file chooser
-#: ../gebr-job-control.c:2615 ../ui_project_line.c:1299
+#: ../gebr-job-control.c:2616 ../ui_project_line.c:1299
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
-#: ../gebr-job-control.c:2619
+#: ../gebr-job-control.c:2620
 msgid "Text (*.txt)"
 msgstr "Texto (*.txt)"
 
-#: ../gebr-job-control.c:2631
+#: ../gebr-job-control.c:2632
 msgid "Could not write file."
 msgstr "Não foi possível escrever o arquivo."
 
-#: ../gebr-job-control.c:2661
+#: ../gebr-job-control.c:2662
 #, c-format
 msgid ""
 "\n"
@@ -1095,11 +1102,11 @@ msgstr ""
 "Data de início: %s\n"
 "Data de término: %s\n"
 
-#: ../gebr-job-control.c:2661 ../gebr-job-control.c:2662
+#: ../gebr-job-control.c:2662 ../gebr-job-control.c:2663
 msgid "(None)"
 msgstr "(Nenhum)"
 
-#: ../gebr-job-control.c:2669
+#: ../gebr-job-control.c:2670
 #, c-format
 msgid ""
 "\n"
@@ -1110,11 +1117,11 @@ msgstr ""
 "Questões:\n"
 "%s"
 
-#: ../gebr-job-control.c:2669
+#: ../gebr-job-control.c:2670
 msgid "(None)\n"
 msgstr "(Nenhum)\n"
 
-#: ../gebr-job-control.c:2677
+#: ../gebr-job-control.c:2678
 #, c-format
 msgid ""
 "\n"
@@ -1127,7 +1134,7 @@ msgstr ""
 "Arquivo de saída: %s\n"
 "Arquivo de log: %s\n"
 
-#: ../gebr-job-control.c:2696
+#: ../gebr-job-control.c:2697
 #, c-format
 msgid ""
 "Output:\n"
@@ -1138,48 +1145,48 @@ msgstr ""
 "%s\n"
 "\n"
 
-#: ../gebr-job-control.c:2701
+#: ../gebr-job-control.c:2702
 #, c-format
 msgid "Saved job information at \"%s\"."
 msgstr "Informação da tarefa salvada em \"%s\"."
 
-#: ../gebr-job-control.c:2740
+#: ../gebr-job-control.c:2741
 msgid "Cancel job"
 msgstr "Cancelar tarefa"
 
-#: ../gebr-job-control.c:2741
+#: ../gebr-job-control.c:2742
 #, c-format
 msgid "Are you sure you want to cancel the job \"%s\"?"
 msgstr "Tem certeza que deseja cancelar a tarefa \"%s\"?"
 
-#: ../gebr-job-control.c:2745
+#: ../gebr-job-control.c:2746
 msgid "Cancel Job"
 msgstr "Cancelar tarefa"
 
-#: ../gebr-job-control.c:2746
+#: ../gebr-job-control.c:2747
 msgid "Are you sure you want to cancel the selected jobs?"
 msgstr "Tem certeza que quer cancelar as tarefas selecionadas?"
 
-#: ../gebr-job-control.c:2754
+#: ../gebr-job-control.c:2755
 msgid "Asking node to cancel job."
 msgstr "Requisitando cancelamento da tarefa ao nó de processamento."
 
-#: ../gebr-job-control.c:2755
+#: ../gebr-job-control.c:2756
 #, c-format
 msgid "Asking node \"%s\" to cancel job \"%s\"."
 msgstr ""
 "Requisitando ao nó de processamento \"%s\" o cancelamento da tarefa \"%s\"."
 
-#: ../gebr-job-control.c:2789 ../gebr-job-control.c:2793
+#: ../gebr-job-control.c:2790 ../gebr-job-control.c:2794
 msgid "Clear job"
 msgstr "Limpar tarefa"
 
-#: ../gebr-job-control.c:2790
+#: ../gebr-job-control.c:2791
 #, c-format
 msgid "Are you sure you want to clear job \"%s\"?"
 msgstr "Tem certeza que deseja limpar a tarefa \"%s\"?"
 
-#: ../gebr-job-control.c:2794
+#: ../gebr-job-control.c:2795
 msgid "Are you sure you want to clear the selected jobs?"
 msgstr "Tem certeza que quer limpar as tarefas selecionadas?"
 
@@ -1748,6 +1755,10 @@ msgstr "Filtro"
 #: ../interface.c:179
 msgid "Filter jobs by group, node and status"
 msgstr "Filtrar fluxos por grupos, nós de processamento e estado"
+
+#: ../interface.c:213
+msgid "Menus list"
+msgstr "Lista de menus"
 
 #: ../interface.c:317
 msgid "More"
