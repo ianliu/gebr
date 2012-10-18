@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-26 11:14-0300\n"
+"POT-Creation-Date: 2012-10-18 12:54-0300\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -119,21 +119,21 @@ msgstr "SSH reportou o seguinte erro da máquina '%s': %s"
 msgid "Could not run machine."
 msgstr "Não foi possível executar a máquina."
 
-#: ../comm/gebr-comm-server.c:694 ../comm/gebr-comm-server.c:746
+#: ../comm/gebr-comm-server.c:694 ../comm/gebr-comm-server.c:751
 #, c-format
 msgid "Could not run machine '%s'."
 msgstr "Não foi possível executar a máquina '%s'."
 
-#: ../comm/gebr-comm-server.c:740
+#: ../comm/gebr-comm-server.c:743
 #, c-format
 msgid "%s not found in %s"
 msgstr "%s não encontrado em %s"
 
-#: ../comm/gebr-comm-server.c:740
+#: ../comm/gebr-comm-server.c:743
 msgid "Server"
 msgstr "Servidor"
 
-#: ../comm/gebr-comm-server.c:929
+#: ../comm/gebr-comm-server.c:935
 #, c-format
 msgid "Machine '%s' disconnected"
 msgstr "Máquina '%s' desconectada"
@@ -197,7 +197,7 @@ msgstr "Variável com tipo inválido"
 msgid "Invalid name for variable %s"
 msgstr "Nome inválido para variável %s"
 
-#: ../gebr-arith-expr.c:209 ../gebr-arith-expr.c:298 ../gebr-validator.c:192
+#: ../gebr-arith-expr.c:209 ../gebr-arith-expr.c:298 ../gebr-validator.c:201
 #, c-format
 msgid "Variable %s is not yet defined"
 msgstr "Variável %s ainda não foi definida"
@@ -222,7 +222,7 @@ msgstr "Expressão vazia"
 msgid "Invalid expression%s"
 msgstr "Expressão inválida%s"
 
-#: ../gebr-arith-expr.c:536 ../gebr-validator.c:466
+#: ../gebr-arith-expr.c:536 ../gebr-validator.c:506
 #, c-format
 msgid "Expression does not evaluate to a value"
 msgstr "Expressão não resulta em um valor"
@@ -232,90 +232,90 @@ msgstr "Expressão não resulta em um valor"
 msgid "Expression returned multiple results"
 msgstr "Expressão resulta em múltiplos valores"
 
-#: ../gebr-arith-expr.c:610 ../gebr-validator.c:477
+#: ../gebr-arith-expr.c:610 ../gebr-validator.c:517
 #, c-format
 msgid "Invalid syntax: ';'"
 msgstr "Sintaxe inválida: ';'"
 
-#: ../gebr-arith-expr.c:617 ../gebr-validator.c:484
+#: ../gebr-arith-expr.c:617 ../gebr-validator.c:524
 #, c-format
 msgid "Invalid syntax: '\"'"
 msgstr "Sintaxe inválida: '\"'"
 
-#: ../gebr-validator.c:162
+#: ../gebr-validator.c:171
 #, c-format
 msgid "Variable %s can not reference itself"
 msgstr "Variável %s não pode depender de si mesma"
 
-#: ../gebr-validator.c:173
+#: ../gebr-validator.c:182
 #, c-format
 msgid "Insert program Loop to use variable iter"
 msgstr "Insira o programa Loop para usar a variável iter"
 
-#: ../gebr-validator.c:174 ../gebr-validator.c:188
+#: ../gebr-validator.c:183 ../gebr-validator.c:197
 #, c-format
 msgid "Iter can be used only in Flow variables"
 msgstr "Iter pode ser usada apenas em variáveis de Fluxo"
 
-#: ../gebr-validator.c:178
+#: ../gebr-validator.c:187
 #, c-format
 msgid "Variable %s is not defined"
 msgstr "Variável %s não foi definida"
 
-#: ../gebr-validator.c:205
+#: ../gebr-validator.c:214
 #, c-format
 msgid "The variable %s is a String"
 msgstr "A variável %s é Textual"
 
-#: ../gebr-validator.c:219
+#: ../gebr-validator.c:228
 #, c-format
 msgid "Variable %s is not well defined"
 msgstr "Variável %s não está bem definida"
 
-#: ../gebr-validator.c:406
+#: ../gebr-validator.c:415
 #, c-format
 msgid "Syntax error: unmatched right bracket"
 msgstr "Erro de sintaxe: fecha colchete sem par"
 
-#: ../gebr-validator.c:411
+#: ../gebr-validator.c:420
 #, c-format
 msgid "Syntax error: unmatched left bracket"
 msgstr "Erro de sintaxe: abre colchete sem par"
 
-#: ../gebr-validator.c:500
+#: ../gebr-validator.c:540
 #, c-format
 msgid "Expression result is too big"
 msgstr "Resultado da expressão é muito grande"
 
-#: ../gebr-validator.c:534 ../gebr-validator.c:865 ../gebr-validator.c:998
-#: ../gui/gebr-gui-validatable-widget.c:65
+#: ../gebr-validator.c:574 ../gebr-validator.c:909 ../gebr-validator.c:1042
+#: ../gui/gebr-gui-param.c:1738
 #, c-format
 msgid "This parameter is required"
 msgstr "Parâmetro obrigatório"
 
-#: ../gebr-validator.c:928
+#: ../gebr-validator.c:972
 #, c-format
 msgid "The variable %s already exists in that scope"
 msgstr "A variável %s já existe neste escopo"
 
-#: ../gebr-validator.c:1382
+#: ../gebr-validator.c:1445
 #, c-format
 msgid "Required parameter"
 msgstr "Parâmetro obrigatório"
 
-#: ../gebr-validator.c:1393
+#: ../gebr-validator.c:1456
 #, c-format
 msgid "Accepts only integer values from 0 to 2147483647"
 msgstr "Aceita apenas valores inteiros entre 1 e 2147483647"
 
-#: ../gebr-validator.c:1401
+#: ../gebr-validator.c:1464
 #, c-format
 msgid "Accepts only positive values"
 msgstr "Aceita apenas valores positivos"
 
 #. FIXME: The message below is untranslatable!
 #. Comment for translators: 1st %s is expression error; 2nd is variable label
-#: ../gebr-validator.c:1447
+#: ../gebr-validator.c:1510
 #, c-format
 msgid "%s on \"%s\""
 msgstr "%s on \"%s\""
@@ -514,62 +514,74 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../geoxml/flow.c:783 ../geoxml/flow.c:919
-#, c-format
-msgid "No configured or enabled Programs found in Flow \"%s\"."
+#: ../geoxml/flow.c:783
+#, fuzzy, c-format
+msgid "No configured or enabled programs found."
 msgstr "Nenhum Programa habilitado ou configurado encontrado no Fluxo \"%s\"."
 
 #: ../geoxml/flow.c:814
-#, c-format
-msgid "There are unconfigured program(s) in Flow \"%s\"."
+#, fuzzy, c-format
+msgid "There are unconfigured program(s)."
 msgstr "Existe(m) programa(s) não configurado(s) no Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:828
-#, c-format
-msgid "There are erroneous program(s) in Flow \"%s\"."
-msgstr "Existe(m) programa(s) errôneo(s) no Fluxo \"%s\"."
-
-#: ../geoxml/flow.c:846
-#, c-format
-msgid "No input file was specified for the Program \"%s\" in Flow \"%s\"."
+#: ../geoxml/flow.c:844
+#, fuzzy, c-format
+msgid "No input file was specified for the Program \"%s\"."
 msgstr ""
 "Nenhum arquivo de entrada foi especificado para o Programa \"%s\" no Fluxo "
 "\"%s\"."
 
-#: ../geoxml/flow.c:859 ../geoxml/flow.c:871
-#, c-format
-msgid "Invalid input file specified for the Program \"%s\" in Flow \"%s\"."
+#: ../geoxml/flow.c:857 ../geoxml/flow.c:869
+#, fuzzy, c-format
+msgid "Invalid input file specified for the Program \"%s\"."
 msgstr ""
 "Arquivo de entrada especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:890
+#: ../geoxml/flow.c:888
 #, c-format
-msgid "The Flow \"%s\" expects an input file."
-msgstr "O Fluxo \"%s\" espera um arquivo de entrada."
+msgid "An input of %s is expected."
+msgstr ""
 
-#: ../geoxml/flow.c:900
+#: ../geoxml/flow.c:898
 #, c-format
-msgid "Unexpected output file for the Flow \"%s\"."
-msgstr "Arquivo de saída inexperado para o Fluxo \"%s\"."
+msgid ""
+"This flow is broken. The %s's output is unexpected and it's being ignored by "
+"%s."
+msgstr ""
 
-#: ../geoxml/flow.c:947 ../geoxml/flow.c:961
-#, c-format
-msgid "Invalid output file specified for the Program \"%s\" in Flow \"%s\"."
+#: ../geoxml/flow.c:923
+#, fuzzy, c-format
+msgid "There is one program with error."
+msgstr "Existe(m) programa(s) errôneo(s) no Fluxo \"%s\"."
+
+#: ../geoxml/flow.c:927
+#, fuzzy, c-format
+msgid "There are %d programs with error."
+msgstr "Existe(m) programa(s) não configurado(s) no Fluxo \"%s\"."
+
+#: ../geoxml/flow.c:937
+#, fuzzy, c-format
+msgid "No enabled programs found."
+msgstr "Nenhum Programa habilitado ou configurado encontrado no Fluxo \"%s\"."
+
+#: ../geoxml/flow.c:964 ../geoxml/flow.c:978
+#, fuzzy, c-format
+msgid "Invalid output file specified for the Program \"%s\"."
 msgstr "Arquivo de saída inválido para o Programa \"%s\" no Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:990 ../geoxml/flow.c:1002
-#, c-format
-msgid "Invalid error file specified for the Program \"%s\" in Flow \"%s\"."
+#: ../geoxml/flow.c:1007 ../geoxml/flow.c:1019
+#, fuzzy, c-format
+msgid "Invalid error file specified for the Program \"%s\"."
 msgstr ""
 "Arquivo de log especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:1076
+#: ../geoxml/flow.c:1093
 msgid "Loop iteration counter"
 msgstr "Contador de iterações do Loop"
 
-#: ../geoxml/flow.c:1519
+#: ../geoxml/flow.c:1536
 msgid "Now"
 msgstr "Atual"
 
@@ -837,7 +849,7 @@ msgid "Choose directory"
 msgstr "Escolha um diretório"
 
 #: ../gui/gebr-gui-help-edit-window.c:78
-#: ../gui/gebr-gui-html-viewer-window.c:57
+#: ../gui/gebr-gui-html-viewer-window.c:60
 msgid "_File"
 msgstr "_Arquivo"
 
@@ -846,7 +858,7 @@ msgid "Print the content of this window"
 msgstr "Imprime o conteúdo dessa janela"
 
 #: ../gui/gebr-gui-help-edit-window.c:82
-#: ../gui/gebr-gui-html-viewer-window.c:64
+#: ../gui/gebr-gui-html-viewer-window.c:67
 msgid "Close this window"
 msgstr "Sai desta janela"
 
@@ -862,42 +874,50 @@ msgstr ""
 msgid "If you do not save the changes, they will be permanently lost."
 msgstr "Se você não salvar as mudanças, elas serão perdidas permanentemente."
 
-#: ../gui/gebr-gui-html-viewer-widget.c:313
-#: ../gui/gebr-gui-html-viewer-widget.c:321
-#: ../gui/gebr-gui-html-viewer-widget.c:339
-#: ../gui/gebr-gui-html-viewer-widget.c:348
-#: ../gui/gebr-gui-html-viewer-widget.c:366
+#: ../gui/gebr-gui-html-viewer-widget.c:167
+msgid "Search:"
+msgstr ""
+
+#: ../gui/gebr-gui-html-viewer-widget.c:461
+#: ../gui/gebr-gui-html-viewer-widget.c:469
+#: ../gui/gebr-gui-html-viewer-widget.c:487
+#: ../gui/gebr-gui-html-viewer-widget.c:496
+#: ../gui/gebr-gui-html-viewer-widget.c:514
 msgid "Invalid link"
 msgstr "Link inválido"
 
-#: ../gui/gebr-gui-html-viewer-widget.c:313
-#: ../gui/gebr-gui-html-viewer-widget.c:321
-#: ../gui/gebr-gui-html-viewer-widget.c:339
-#: ../gui/gebr-gui-html-viewer-widget.c:366
+#: ../gui/gebr-gui-html-viewer-widget.c:461
+#: ../gui/gebr-gui-html-viewer-widget.c:469
+#: ../gui/gebr-gui-html-viewer-widget.c:487
+#: ../gui/gebr-gui-html-viewer-widget.c:514
 msgid "Sorry, couldn't reach link."
 msgstr "Sinto muito, não consegui atingir o link."
 
-#: ../gui/gebr-gui-html-viewer-widget.c:348
+#: ../gui/gebr-gui-html-viewer-widget.c:496
 msgid "Sorry, couldn't find program."
 msgstr "Sinto muito, não consegui encontrar o programa."
 
-#: ../gui/gebr-gui-html-viewer-window.c:60
+#: ../gui/gebr-gui-html-viewer-window.c:63
 msgid "Save content into file"
 msgstr "Salva o conteúdo em um arquivo"
 
-#: ../gui/gebr-gui-html-viewer-window.c:62
+#: ../gui/gebr-gui-html-viewer-window.c:65
 msgid "Print content"
 msgstr "Imprimir conteúdo"
 
-#: ../gui/gebr-gui-html-viewer-window.c:158
+#: ../gui/gebr-gui-html-viewer-window.c:69
+msgid "Find on file"
+msgstr ""
+
+#: ../gui/gebr-gui-html-viewer-window.c:164
 msgid "Choose file to save content"
 msgstr "Escolha um arquivo para salvar o conteúdo"
 
-#: ../gui/gebr-gui-html-viewer-window.c:167
+#: ../gui/gebr-gui-html-viewer-window.c:173
 msgid "Could not save file"
 msgstr "Não foi possível salvar o arquivo"
 
-#: ../gui/gebr-gui-html-viewer-window.c:168
+#: ../gui/gebr-gui-html-viewer-window.c:174
 #, c-format
 msgid ""
 "You do not have the permissions necessary to save the file %s.Check that you "
@@ -906,24 +926,24 @@ msgstr ""
 "Você não tem a permissão necessária para salvar o arquivo %s. Verifique se "
 "você escolheu a localização corretamente."
 
-#: ../gui/gebr-gui-parameter.c:264
+#: ../gui/gebr-gui-param.c:216
 msgid "All"
 msgstr "Todos"
 
-#: ../gui/gebr-gui-parameter.c:955
+#: ../gui/gebr-gui-param.c:914
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../gui/gebr-gui-parameter.c:1100
+#: ../gui/gebr-gui-param.c:1061
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-parameter.c:1841
+#: ../gui/gebr-gui-param.c:1802
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-parameter.c:1843
+#: ../gui/gebr-gui-param.c:1804
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
@@ -950,11 +970,11 @@ msgstr ""
 msgid "\\u2205"
 msgstr "\\u2205"
 
-#: ../gui/gebr-gui-utils.c:1227
+#: ../gui/gebr-gui-utils.c:1235
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
 
-#: ../gui/gebr-gui-utils.c:1262
+#: ../gui/gebr-gui-utils.c:1270
 #, c-format
 msgid ""
 "The presented files are from your <b>local machine</b> and may not represent "
@@ -963,130 +983,130 @@ msgstr ""
 "Os arquivos apresentados são de sua <b>máquina local</b> e podem não "
 "representar os arquivos nas <b>máquinas de processamento</b>."
 
-#: ../gui/gebr-gui-utils.c:1440
+#: ../gui/gebr-gui-utils.c:1448
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se de que ele está instalado."
 
-#: ../utils.c:784
+#: ../utils.c:818
 msgid "Moments ago"
 msgstr "Momentos atrás"
 
-#: ../utils.c:786
+#: ../utils.c:820
 msgid "Hours ago"
 msgstr "Horas atrás"
 
-#: ../utils.c:788
+#: ../utils.c:822
 msgid "Days ago"
 msgstr "Dias atrás"
 
-#: ../utils.c:790
+#: ../utils.c:824
 msgid "Weeks ago"
 msgstr "Semanas atrás"
 
-#: ../utils.c:792
+#: ../utils.c:826
 msgid "Months ago"
 msgstr "Meses atrás"
 
-#: ../utils.c:794
+#: ../utils.c:828
 msgid "Years ago"
 msgstr "Anos atrás"
 
-#: ../utils.c:844
+#: ../utils.c:878
 msgid "1 hour, 1 minute and 1 second"
 msgstr "1 hora, 1 minuto e 1 segundo"
 
-#: ../utils.c:846
+#: ../utils.c:880
 #, c-format
 msgid "1 hour, 1 minute and %ld seconds"
 msgstr "1 hora, 1 minuto e %ld segundos"
 
-#: ../utils.c:848
+#: ../utils.c:882
 #, c-format
 msgid "1 hour, %ld minute and 1 second"
 msgstr "1 hora, %ld minutos e 1 segundo"
 
-#: ../utils.c:850
+#: ../utils.c:884
 #, c-format
 msgid "1 hour, %ld minutes and %ld seconds"
 msgstr "1 hora, %ld minutos e %ld segundos"
 
-#: ../utils.c:852
+#: ../utils.c:886
 #, c-format
 msgid "%ld hours, %ld minutes and %ld seconds"
 msgstr "%ld horas, %ld minutos e %ld segundos"
 
-#: ../utils.c:854
+#: ../utils.c:888
 #, c-format
 msgid "%ld hours and %ld minutes"
 msgstr "%ld horas e %ld minutos"
 
-#: ../utils.c:856
+#: ../utils.c:890
 msgid "1 minute and 1 second"
 msgstr "1 minuto e 1 segundo"
 
-#: ../utils.c:858
+#: ../utils.c:892
 #, c-format
 msgid "1 minute and %ld seconds"
 msgstr "1 minuto e %ld segundos"
 
-#: ../utils.c:860
+#: ../utils.c:894
 #, c-format
 msgid "%ld minutes and 1 second"
 msgstr "%ld minutos e 1 segundo"
 
-#: ../utils.c:862
+#: ../utils.c:896
 #, c-format
 msgid "%ld minutes and %ld seconds"
 msgstr "%ld minutos e %ld segundos"
 
-#: ../utils.c:864
+#: ../utils.c:898
 #, c-format
 msgid "1 hour and %ld seconds"
 msgstr "1 hora e %ld segundos"
 
-#: ../utils.c:866
+#: ../utils.c:900
 #, c-format
 msgid "%ld hours and %ld seconds"
 msgstr "%ld horas e %ld segundos"
 
-#: ../utils.c:868
+#: ../utils.c:902
 #, c-format
 msgid "%ld hours"
 msgstr "%ld horas"
 
-#: ../utils.c:870
+#: ../utils.c:904
 msgid "1 minute"
 msgstr "1 minuto"
 
-#: ../utils.c:872
+#: ../utils.c:906
 #, c-format
 msgid "%ld minutes"
 msgstr "%ld minutos"
 
-#: ../utils.c:874
+#: ../utils.c:908
 #, c-format
 msgid "%ld seconds"
 msgstr "%ld segundos"
 
-#: ../utils.c:876
+#: ../utils.c:910
 msgid "1 second"
 msgstr "1 segundo"
 
-#: ../utils.c:878
+#: ../utils.c:912
 msgid "1 milisecond"
 msgstr "1 milissegundo"
 
-#: ../utils.c:880
+#: ../utils.c:914
 #, c-format
 msgid "%ld miliseconds"
 msgstr "%ld milessegundos"
 
-#: ../utils.c:1259
+#: ../utils.c:1293
 msgid "The specified line path does not exist"
 msgstr "O caminho de linha específico não existe"
 
-#: ../utils.c:1261
+#: ../utils.c:1295
 msgid "The path must either start with < or /"
 msgstr "O caminho deve começar com < ou /"
 
@@ -1314,3 +1334,9 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
+
+#~ msgid "The Flow \"%s\" expects an input file."
+#~ msgstr "O Fluxo \"%s\" espera um arquivo de entrada."
+
+#~ msgid "Unexpected output file for the Flow \"%s\"."
+#~ msgstr "Arquivo de saída inexperado para o Fluxo \"%s\"."
