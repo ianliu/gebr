@@ -271,7 +271,7 @@ on_document_help_button_clicked (GtkButton *button,
 
 	switch (doc_type) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
-		section = g_strdup("projects_lines_create_lines");
+		section = g_strdup("projects_lines_edit_properties");
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		section = g_strdup("flows_create_flow");
