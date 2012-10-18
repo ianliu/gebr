@@ -41,7 +41,7 @@ typedef enum {
  * @title:the text with accents to be removed
  *
  * Replace accented characters on a string to non accented characters.
- * If character is higher than 255, it is replaced to ""
+ * If character is non ASCII, it is replaced to ""
  */
 gchar *
 gebr_g_string_remove_accents(gchar *title);
