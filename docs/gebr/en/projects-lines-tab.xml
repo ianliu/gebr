@@ -71,9 +71,8 @@
             </imageobject>
           </inlinemediaobject>
         </guiicon>
-				creates a line. Additionally to the same information provided in
-				the project's creation, information about the paths and the maestro
-				are requested:
+        creates a line. These information will be requested to complete the
+        operation:
 			</para>
 
     <itemizedlist>
@@ -86,13 +85,13 @@
 
       <listitem>
         <para>The <emphasis>BASE</emphasis><indexterm><primary>BASE</primary></indexterm>
-          path: a directory where most files referred in the line should be
+          path is a directory where most files referred in the line should be
           placed (see <xref linkend="projects_lines_line_paths" />);</para>
       </listitem>
 
       <listitem>
         <para>The <emphasis>IMPORT</emphasis><indexterm><primary>IMPORT</primary></indexterm>
-          path: a directory used to easily find files outside the BASE
+          path is a directory used to easily find files outside the BASE
           directory.</para>
       </listitem>
     </itemizedlist>
