@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 12:54-0300\n"
+"POT-Creation-Date: 2012-10-18 14:11-0300\n"
 "PO-Revision-Date: 2012-10-08 14:58-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -40,7 +40,7 @@ msgid ""
 msgstr ""
 "<span size='large'><b>O maestro desta linha está desconectado.</b></span>\n"
 "\n"
-"Conecte-se ao maestro <b>%s</b> para executar esta linha"
+"Conecte-se ao maestro <b>%s</b> para executar esta linha."
 
 #: ../callbacks.c:308
 #, c-format
@@ -218,7 +218,7 @@ msgid ""
 "Although it is not mandatory to adhere to this structure, it is highly "
 "recommended to do so."
 msgstr ""
-"Para gerenciar melhor todos os arquivos lidos ou criados durante o "
+"Para gerenciar melhor os arquivos lidos ou criados durante o "
 "processamentodos dados, a GêBR define uma estrutura de diretórios para "
 "armazená-los.\n"
 "\n"
@@ -280,7 +280,6 @@ msgid "<b>Remote browsing</b>"
 msgstr "<b>Navegação Remota</b>"
 
 #: ../data/gebr-connections-settings.glade.h:7
-#: ../data/gebr-maestro-dialog.glade.h:2
 msgid "<b>maestro</b>"
 msgstr "<b>maestro</b>"
 
@@ -301,7 +300,7 @@ msgstr ""
 
 #: ../data/gebr-connections-settings.glade.h:11
 msgid "<i>here.</i>"
-msgstr "<i>aqui</i>"
+msgstr "<i>aqui.</i>"
 
 #: ../data/gebr-connections-settings.glade.h:12
 msgid "Choose one maestro to proceed"
@@ -382,8 +381,8 @@ msgid ""
 "assistant will guide you through this process.\n"
 msgstr ""
 "Nesta versão, GêBR introduz novas funcionalidades que vão acelerar os seus "
-"fluxos de processamento, como seleção automática dos nós de processamento "
-"mais rápidoque estejam disponíveis e divisão do processamento entre os nós.\n"
+"fluxos de processamento, como seleção automática dos nós disponíveismais "
+"rápidos e divisão do processamento entre os nós.\n"
 "\n"
 "Isto é possível graças a uma nova entidade, chamada de maestro.\n"
 "\n"
@@ -508,6 +507,10 @@ msgstr "Saída"
 msgid "<b>Groups</b>"
 msgstr "<b>Grupos</b>"
 
+#: ../data/gebr-maestro-dialog.glade.h:2
+msgid "<b>Maestro</b>"
+msgstr "<b>Maestro</b>"
+
 #: ../data/gebr-maestro-dialog.glade.h:3
 msgid "<i>Drop a processing node to create a group!</i>"
 msgstr "<i>Arraste um nó de processamento para criar um grupo!</i>"
@@ -545,7 +548,7 @@ msgstr "Executar \t\t\t\tCtrl+R"
 
 #: ../data/gebr.desktop.in.in.h:1
 msgid "Assemble and run flows and manage jobs"
-msgstr "Constrói, executa fluxos e gerencia tarefas"
+msgstr "Construir, executar fluxos e gerencia tarefas"
 
 #: ../data/gebr.desktop.in.in.h:2
 msgid "GêBR"
@@ -788,7 +791,7 @@ msgstr "Salvar '%s' como..."
 
 #: ../flow.c:408
 msgid "Flow file types (*.flwz, *.flwx)"
-msgstr "Tipos de Arquivos de Fluxo (*.flw, *flwz)"
+msgstr "Tipos de arquivos de Fluxo (*.flw, *flwz)"
 
 #: ../flow.c:448
 #, c-format
@@ -913,11 +916,11 @@ msgstr "Há tarefas filtradas. %d de %d não aparecerão na lista."
 
 #: ../gebr-job-control.c:283
 msgid "Select a job in the list."
-msgstr "Selecione um fluxo da lista."
+msgstr "Selecione uma tarefa da lista."
 
 #: ../gebr-job-control.c:285
 msgid "Multiple jobs selected."
-msgstr "Múltiplos fluxos selecionados."
+msgstr "Múltiplos tarefas selecionados."
 
 #: ../gebr-job-control.c:944
 #, c-format
@@ -960,22 +963,20 @@ msgstr ""
 
 #: ../gebr-job-control.c:1026
 msgid "processes"
-msgstr ""
+msgstr "processos"
 
 #: ../gebr-job-control.c:1026
 msgid "process"
-msgstr ""
+msgstr "processo"
 
 #: ../gebr-job-control.c:1027
 msgid ", using processing nodes idle time.\n"
-msgstr ""
-", utilizando o tempo ocioso dos nós.\n"
-" "
+msgstr ", utilizando o tempo ocioso dos nós.\n"
 
 #: ../gebr-job-control.c:1033
 #, c-format
 msgid "This MPI job (<b>%s</b>) was dispatched by <b>%s</b>.\n"
-msgstr "Esta tarefa MPI (<b>%s</b>) foi despachada por <b>%s</b>.\n"
+msgstr "Esta tarefa MPI (<b>%s</b>) foi submetida por <b>%s</b>.\n"
 
 #: ../gebr-job-control.c:1372
 #, c-format
@@ -1139,44 +1140,48 @@ msgstr ""
 
 #: ../gebr-job-control.c:2701
 #, c-format
-msgid "Saved Job information at \"%s\"."
-msgstr "Informação da Tarefa salvada em \"%s\"."
+msgid "Saved job information at \"%s\"."
+msgstr "Informação da tarefa salvada em \"%s\"."
 
-#: ../gebr-job-control.c:2740 ../gebr-job-control.c:2745
-msgid "Cancel Job"
-msgstr "Cancelar Tarefa"
+#: ../gebr-job-control.c:2740
+msgid "Cancel job"
+msgstr "Cancelar tarefa"
 
 #: ../gebr-job-control.c:2741
 #, c-format
-msgid "Are you sure you want to cancel Job \"%s\"?"
-msgstr "Tem certeza que deseja cancelar a Tarefa \"%s\"?"
+msgid "Are you sure you want to cancel the job \"%s\"?"
+msgstr "Tem certeza que deseja cancelar a tarefa \"%s\"?"
+
+#: ../gebr-job-control.c:2745
+msgid "Cancel Job"
+msgstr "Cancelar tarefa"
 
 #: ../gebr-job-control.c:2746
-msgid "Are you sure you want to cancel the selected Jobs?"
-msgstr "Tem certeza que quer cancelar as Tarefas selecionadas?"
+msgid "Are you sure you want to cancel the selected jobs?"
+msgstr "Tem certeza que quer cancelar as tarefas selecionadas?"
 
 #: ../gebr-job-control.c:2754
-msgid "Asking node to cancel Job."
-msgstr "Requisitando cancelamento da tarefa aos nós de processamento."
+msgid "Asking node to cancel job."
+msgstr "Requisitando cancelamento da tarefa ao nó de processamento."
 
 #: ../gebr-job-control.c:2755
 #, c-format
-msgid "Asking node \"%s\" to cancel Job \"%s\"."
+msgid "Asking node \"%s\" to cancel job \"%s\"."
 msgstr ""
-"Requisitando ao nó de processamento \"%s\" o cancelamento da Tarefa \"%s\"."
+"Requisitando ao nó de processamento \"%s\" o cancelamento da tarefa \"%s\"."
 
 #: ../gebr-job-control.c:2789 ../gebr-job-control.c:2793
-msgid "Clear Job"
-msgstr "Limpar Tarefa"
+msgid "Clear job"
+msgstr "Limpar tarefa"
 
 #: ../gebr-job-control.c:2790
 #, c-format
-msgid "Are you sure you want to clear Job \"%s\"?"
-msgstr "Tem certeza que deseja limpar a Tarefa \"%s\"?"
+msgid "Are you sure you want to clear job \"%s\"?"
+msgstr "Tem certeza que deseja limpar a tarefa \"%s\"?"
 
 #: ../gebr-job-control.c:2794
-msgid "Are you sure you want to clear the selected Jobs?"
-msgstr "Tem certeza que quer limpar as Tarefas selecionadas?"
+msgid "Are you sure you want to clear the selected jobs?"
+msgstr "Tem certeza que quer limpar as tarefas selecionadas?"
 
 #: ../gebr-job.c:451
 #, c-format
@@ -2577,7 +2582,7 @@ msgstr "Mensagem"
 
 #: ../ui_log.c:155 ../ui_log.c:256 ../ui_log.c:272
 msgid "Remote browsing disabled"
-msgstr "A navegação remota está desabilitada!"
+msgstr "A navegação remota está desabilitada"
 
 #: ../ui_log.c:251
 #, c-format
@@ -2893,7 +2898,7 @@ msgstr "Este projeto tem uma linha."
 #: ../ui_project_line.c:602
 #, c-format
 msgid "This project has %d Lines."
-msgstr "Este projeto tem %d linhas"
+msgstr "Este projeto tem %d linhas."
 
 #: ../ui_project_line.c:637
 msgid "Please select a line."
@@ -3010,20 +3015,20 @@ msgid ""
 "This operation can't be undone! Are you sure?\n"
 msgstr ""
 "Os seguintes documentos serão apagados.\n"
-"Essa operação não pode ser desfeita! Confirma mesmo assim?\n"
+"Essa operação não pode ser desfeita! Confirmar mesmo assim?\n"
 
 #: ../ui_project_line.c:1471 ../ui_project_line.c:1478
 msgid "Confirm multiple deletion"
-msgstr "Confirme remoção multipla"
+msgstr "Confirmar remoção multipla"
 
 #: ../ui_project_line.c:1511
 msgid ""
 "The following document is about to be deleted.\n"
 "This operation can't be undone! Are you sure?\n"
 msgstr ""
-"O segunte documento será apagado.\n"
-"Essa operação não pode ser desfeita! Confirma mesmo assim?\n"
+"O seguinte documento será apagado.\n"
+"Essa operação não poderá ser desfeita! Confirmar mesmo assim?\n"
 
 #: ../ui_project_line.c:1513 ../ui_project_line.c:1515
 msgid "Confirm deletion"
-msgstr "Confirme remoção"
+msgstr "Confirme a remoção"

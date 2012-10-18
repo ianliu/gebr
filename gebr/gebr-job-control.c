@@ -2698,7 +2698,7 @@ gebr_job_control_save_selected(GebrJobControl *jc)
 		g_free(text);
 		g_free(output_text);
 
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved Job information at \"%s\"."), fname);
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved job information at \"%s\"."), fname);
 	}
 	
 	fclose(fp);
@@ -2737,13 +2737,13 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 			continue;
 
 		if (selected_rows == 1) {
-			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
-							   _("Are you sure you want to cancel Job \"%s\"?"),
+			if (gebr_gui_confirm_action_dialog(_("Cancel job"),
+							   _("Are you sure you want to cancel the job \"%s\"?"),
 							   gebr_job_get_title(job)) == FALSE)
 				return;
 		} else if (!asked) {
 			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
-							   _("Are you sure you want to cancel the selected Jobs?")) == FALSE)
+							   _("Are you sure you want to cancel the selected jobs?")) == FALSE)
 				return;
 			asked = TRUE;
 		}
@@ -2751,8 +2751,8 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 		gint n;
 		gchar *servers = g_strjoinv(", ", gebr_job_get_servers(job, &n));
 
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking node to cancel Job."));
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking node \"%s\" to cancel Job \"%s\"."),
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking node to cancel job."));
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking node \"%s\" to cancel job \"%s\"."),
 			     servers, gebr_job_get_title(job));
 		g_free(servers);
 
@@ -2786,12 +2786,12 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 		if (control)
 			goto free_rows;
 
-		if (!gebr_gui_confirm_action_dialog(_("Clear Job"),
-		                                    _("Are you sure you want to clear Job \"%s\"?"), gebr_job_get_title(job)))
+		if (!gebr_gui_confirm_action_dialog(_("Clear job"),
+		                                    _("Are you sure you want to clear job \"%s\"?"), gebr_job_get_title(job)))
 			goto free_rows;
 	} else {
-		if (!gebr_gui_confirm_action_dialog(_("Clear Job"),
-		                                    _("Are you sure you want to clear the selected Jobs?")))
+		if (!gebr_gui_confirm_action_dialog(_("Clear job"),
+		                                    _("Are you sure you want to clear the selected jobs?")))
 			goto free_rows;
 	}
 
