@@ -99,6 +99,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
 	program_edit->validator = validator;
+	program_edit->group_warning_widget = NULL;
 	gebr_gui_program_edit_set_complete_variables(program_edit, complete_var);
 
 	//MPI Program
