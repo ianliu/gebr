@@ -852,7 +852,7 @@ static void
 on_help_button_clicked(GtkButton *button,
                        gpointer pointer)
 {
-	gebr_gui_help_button_clicked("flows_browser_detailed_execution", NULL);
+	gebr_gui_help_button_clicked("flows_detailed_execution", NULL);
 }
 
 static void
