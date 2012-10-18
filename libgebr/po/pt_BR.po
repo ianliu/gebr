@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 12:54-0300\n"
+"POT-Creation-Date: 2012-10-18 13:21-0300\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -515,67 +515,63 @@ msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
 #: ../geoxml/flow.c:783
-#, fuzzy, c-format
+#, c-format
 msgid "No configured or enabled programs found."
-msgstr "Nenhum Programa habilitado ou configurado encontrado no Fluxo \"%s\"."
+msgstr "Nenhum programa habilitado ou configurado."
 
 #: ../geoxml/flow.c:814
-#, fuzzy, c-format
+#, c-format
 msgid "There are unconfigured program(s)."
-msgstr "Existe(m) programa(s) não configurado(s) no Fluxo \"%s\"."
+msgstr "Existe(m) programa(s) não configurado(s)."
 
 #: ../geoxml/flow.c:844
-#, fuzzy, c-format
+#, c-format
 msgid "No input file was specified for the Program \"%s\"."
-msgstr ""
-"Nenhum arquivo de entrada foi especificado para o Programa \"%s\" no Fluxo "
-"\"%s\"."
+msgstr "Nenhum arquivo de entrada foi especificado para o programa \"%s\"."
 
 #: ../geoxml/flow.c:857 ../geoxml/flow.c:869
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid input file specified for the Program \"%s\"."
-msgstr ""
-"Arquivo de entrada especificado para o Programa \"%s\" no Fluxo \"%s\" é "
-"inválido."
+msgstr "Arquivo de entrada especificado para o Programa \"%s\"  é inválido."
 
 #: ../geoxml/flow.c:888
 #, c-format
 msgid "An input of %s is expected."
-msgstr ""
+msgstr "É esperado um arquivo de entrada para o programa %s"
 
 #: ../geoxml/flow.c:898
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "This flow is broken. The %s's output is unexpected and it's being ignored by "
 "%s."
 msgstr ""
+"Este fluxo está quebrado. A saída do programa %s é inesperada e está sendo "
+"ignoradapelo programa %s"
 
 #: ../geoxml/flow.c:923
-#, fuzzy, c-format
+#, c-format
 msgid "There is one program with error."
-msgstr "Existe(m) programa(s) errôneo(s) no Fluxo \"%s\"."
+msgstr "Existe um programa com erro."
 
 #: ../geoxml/flow.c:927
-#, fuzzy, c-format
+#, c-format
 msgid "There are %d programs with error."
-msgstr "Existe(m) programa(s) não configurado(s) no Fluxo \"%s\"."
+msgstr "Existem %d programas com erro."
 
 #: ../geoxml/flow.c:937
-#, fuzzy, c-format
+#, c-format
 msgid "No enabled programs found."
-msgstr "Nenhum Programa habilitado ou configurado encontrado no Fluxo \"%s\"."
+msgstr "Nenhum programa habilitado foi encontrado."
 
 #: ../geoxml/flow.c:964 ../geoxml/flow.c:978
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid output file specified for the Program \"%s\"."
-msgstr "Arquivo de saída inválido para o Programa \"%s\" no Fluxo \"%s\"."
+msgstr "Arquivo de saída especificado para o programa \"%s\" é inválido."
 
 #: ../geoxml/flow.c:1007 ../geoxml/flow.c:1019
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid error file specified for the Program \"%s\"."
-msgstr ""
-"Arquivo de log especificado para o Programa \"%s\" no Fluxo \"%s\" é "
-"inválido."
+msgstr "Arquivo de log especificado para o Programa \"%s\" é inválido."
 
 #: ../geoxml/flow.c:1093
 msgid "Loop iteration counter"
@@ -876,7 +872,7 @@ msgstr "Se você não salvar as mudanças, elas serão perdidas permanentemente.
 
 #: ../gui/gebr-gui-html-viewer-widget.c:167
 msgid "Search:"
-msgstr ""
+msgstr "Busca:"
 
 #: ../gui/gebr-gui-html-viewer-widget.c:461
 #: ../gui/gebr-gui-html-viewer-widget.c:469
@@ -906,8 +902,9 @@ msgid "Print content"
 msgstr "Imprimir conteúdo"
 
 #: ../gui/gebr-gui-html-viewer-window.c:69
+#, fuzzy
 msgid "Find on file"
-msgstr ""
+msgstr "Encontrado no arquivo"
 
 #: ../gui/gebr-gui-html-viewer-window.c:164
 msgid "Choose file to save content"
@@ -1334,9 +1331,3 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
-
-#~ msgid "The Flow \"%s\" expects an input file."
-#~ msgstr "O Fluxo \"%s\" espera um arquivo de entrada."
-
-#~ msgid "Unexpected output file for the Flow \"%s\"."
-#~ msgstr "Arquivo de saída inexperado para o Fluxo \"%s\"."
