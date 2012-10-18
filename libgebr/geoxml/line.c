@@ -385,15 +385,16 @@ gebr_geoxml_line_get_path_by_name(GebrGeoXmlLine *line,
 gchar *
 gebr_geoxml_line_create_key(const gchar *title)
 {
-	gchar *lower = g_utf8_strdown(title, -1);
+	gchar *lower_no_accents = g_utf8_strdown(title, -1);
+	lower_no_accents = gebr_g_string_remove_accents(lower_no_accents);
 	GString *buffer = g_string_new(NULL);
-	gchar *tmp = lower;
+	gchar *tmp = lower_no_accents;
 	gunichar c;
 
 	for (; tmp && *tmp; tmp = g_utf8_next_char(tmp)) {
 		c = g_utf8_get_char(tmp);
 
-		if (c == ' ' || c >= 256 || !g_ascii_isalnum((char)c)) {
+		if (c == ' ' || !g_ascii_isalnum((char)c)) {
 			g_string_append_c(buffer, '_');
 		} else {
 			gchar str[7];
@@ -403,6 +404,6 @@ gebr_geoxml_line_create_key(const gchar *title)
 	}
 	g_string_append_c(buffer, '\0');
 
-	g_free(lower);
+	g_free(lower_no_accents);
 	return g_string_free(buffer, FALSE);
 }
