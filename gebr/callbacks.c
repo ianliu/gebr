@@ -305,39 +305,26 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 
 	g_string_append_printf(message, "%s", error->message);
 
-	const gchar *broken_flow_msg = g_strdup_printf(_("Assembly error"));
+	const gchar *broken_flow_msg = _("Assembly error");
 	error_code = error->code;
 	switch (error_code)
 	{
+	case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
 	case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
 	case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
 	case GEBR_GEOXML_FLOW_ERROR_PROGRAM:
-		if (is_snapshot) {
-			gdk_threads_enter();
-			gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
-						"broken-flow-icon", broken_flow_msg,
-						message->str);
-			gdk_threads_leave();
-		} else {
-			gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
-						"broken-flow-icon", broken_flow_msg,
-						message->str);
-		}
-		break;
-	case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE:
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
 	case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
 	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
-		if (is_snapshot) {
+		if (is_snapshot)
 			gdk_threads_enter();
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, _("Warning"), message->str);
+		gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
+					"broken-flow-icon", broken_flow_msg,
+					message->str);
+		if (is_snapshot)
 			gdk_threads_leave();
-		} else {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, _("Warning"), message->str);
-		}
-
 		break;
 	}
 
