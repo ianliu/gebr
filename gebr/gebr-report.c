@@ -1150,7 +1150,7 @@ gebr_flow_generate_io_table(GebrGeoXmlFlow *flow,
 	                       _("I/O table"),
 	                       _("Input"), strlen (input) > 0? input : _("(none)"),
 	                       _("Output"), strlen (output) > 0? output : _("(none)"),
-	                       _("Error"), strlen (error) > 0? error : _("(none)"));
+	                       _("Log"), strlen (error) > 0? error : _("(none)"));
 
 	g_free(input);
 	g_free(output);
