@@ -10,13 +10,22 @@
 
   <title>The <guilabel>Jobs</guilabel> tab</title>
 
-  <para>GêBR presents an interface to the organization and
-  visualization of the results.</para>
+	<para>The jobs submitted for execution in the <guilabel>Flows</guilabel>
+		tab can be followed in <guilabel>Job Control</guilabel> tab.
+		As anywhere else in GêBR,
+		the information presented here is preserved even when GêBR is closed.
+		It is possible to consult the flow's state (if it has
+		ended, has failed or is queued), the results and the submission
+		details.
+	</para>
 
     <figure>
       <title><guilabel>Jobs</guilabel> tab</title>
       <mediaobject>
-        <caption><guilabel>Jobs</guilabel> tab interface.</caption>
+				<caption><guilabel>Jobs</guilabel> tab interface.
+					Interface to the organization and visualization of the
+					results.
+				</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_jobs_tab.png"  contentwidth="716px" contentdepth="536px" />
         </imageobject>

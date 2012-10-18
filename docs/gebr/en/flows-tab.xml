@@ -11,6 +11,15 @@
 	<title>The <guilabel>Flows</guilabel> tab</title>
 
 	<para>
+		In the <guilabel>Flows</guilabel> tab, processing flows
+		can be created, edited and submitted for execution. After
+		creating a flow, the desired programs can be added to it and
+		the I/O files and parameters can be configured. Once
+		properly configured (GêBR warns if not ), the flow can be
+		submitted for execution. Prior to the submission, execution
+		details can be set,
+	</para>
+	<para>
 		The <guilabel>Flows</guilabel> tab is used to manage the flows of a
 		particular line. Notice the similarity of this tab with the
 		<guilabel>Projects and Lines</guilabel> tab.

@@ -10,16 +10,22 @@
 
   <title>The <guilabel>Projects and Lines</guilabel> tab</title>
 
-  <para>Projects and lines are created and managed in the <guilabel>Projects
-      and Lines</guilabel> tab. The right-hand side of the screen shows the
-    details of the selected item, like its name, description and creation
-    date.</para>
+	<para>
+		Projects and lines are the organizer entities and are managed in
+		the <guilabel>Projects and Lines</guilabel> tab. Seismic processing
+		lines can be created and manipulated here. Lines can be grouped in
+		projects, for sake of organization. The information presented in the 
+		<guilabel>Flows</guilabel> tab depends on the line selected here.
+	</para>
 
   <figure id="sample_project_line_tab">
     <title>Projects and Lines tab</title>
     <mediaobject>
       <caption>Screenshot of the <guilabel>Projects and
-          Lines</guilabel> tab.</caption>
+          Lines</guilabel> tab.
+				The right-hand side of the screen shows the
+				details of the selected item, like its name, description and creation
+				date.</caption>
       <imageobject>
         <imagedata fileref="../images/janela_principal_1.png"  contentwidth="729px" contentdepth="472px" />
       </imageobject>
@@ -125,7 +131,9 @@
     <title>Deleting projects and lines</title>
 
     <para>To delete a line, select it and then left-click on
-      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+			<guiicon><inlinemediaobject><imageobject>
+						<imagedata fileref="../../common-images/botao_apagar_projeto.png" />
+		</imageobject></inlinemediaobject></guiicon>.</para>
 
     <warning>
       <para>When a line is deleted all its flows are also deleted. This
@@ -145,7 +153,9 @@
 
     <para>To edit a project's or line's properties, first select the item and
       then click on the button
-      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+			<guiicon><inlinemediaobject><imageobject>
+						<imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
+		</imageobject></inlinemediaobject></guiicon>.</para>
   </section>
 
   <section xml:id="projects_lines_line_paths">
