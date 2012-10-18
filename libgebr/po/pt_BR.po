@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 13:21-0300\n"
+"POT-Creation-Date: 2012-10-18 13:27-0300\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -540,13 +540,13 @@ msgid "An input of %s is expected."
 msgstr "É esperado um arquivo de entrada para o programa %s"
 
 #: ../geoxml/flow.c:898
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This flow is broken. The %s's output is unexpected and it's being ignored by "
 "%s."
 msgstr ""
 "Este fluxo está quebrado. A saída do programa %s é inesperada e está sendo "
-"ignoradapelo programa %s"
+"ignorada pelo programa %s"
 
 #: ../geoxml/flow.c:923
 #, c-format
@@ -902,7 +902,6 @@ msgid "Print content"
 msgstr "Imprimir conteúdo"
 
 #: ../gui/gebr-gui-html-viewer-window.c:69
-#, fuzzy
 msgid "Find on file"
 msgstr "Encontrado no arquivo"
 
