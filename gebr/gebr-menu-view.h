@@ -109,18 +109,18 @@ GtkWidget *gebr_menu_view_get_widget(GebrMenuView *view);
 void gebr_menu_view_set_focus_on_entry(GebrMenuView *view);
 
 /**
- * gebr_menu_view_multiple_flow_selected:
+ * gebr_menu_view_set_open_infobar:
  *
- * Verify if there are multiple flows selected
+ * Verify and open the infobar when it's necessary
  */
-gboolean gebr_menu_view_multiple_flow_selected();
+void gebr_menu_view_set_open_infobar(GebrMenuView *view,  gboolean open);
 
 /**
- * gebr_menu_view_set_sensitive_add:
+ * gebr_menu_view_choose_infobar_text:
  *
- * Set sensitivity of add button
+ * Verify if there is a wrong selection to add menu and set the text of infobar
  */
-void gebr_menu_view_set_sensitive_add(GebrMenuView *view,  gboolean sensitive);
+gboolean gebr_menu_view_choose_infobar_text(GebrMenuView *view, gboolean multiple_loop);
 
 G_END_DECLS
 
