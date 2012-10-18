@@ -601,7 +601,7 @@ parameters_actions(GtkDialog *dialog, gint response, gpointer pointer)
 	gchar *error;
 	switch (response) {
 	case GTK_RESPONSE_HELP:
-		gebr_gui_help_button_clicked("dictionary_variables", &error);
+		gebr_gui_help_button_clicked("flows_dictionary_variables", &error);
 
 		if (error) {
 			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
