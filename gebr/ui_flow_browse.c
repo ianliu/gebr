@@ -205,6 +205,7 @@ gebr_flow_browse_on_add_menu(GebrMenuView *view,
 	gebr_flow_browse_load_parameters_review(gebr.flow, fb, TRUE);
 
 	document_free(GEBR_GEOXML_DOC(menu));
+	gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 }
 
 /* End of Menu's methods */
