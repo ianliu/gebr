@@ -1031,7 +1031,7 @@ on_servers_combo_changed(GtkComboBox *widget,
                          GebrUiFlowExecution *ui_flow_execution)
 {
 	gint ncores = get_number_of_cores(GTK_WIDGET(ui_flow_execution->priv->server_combo));
-	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>The nominal capacity of this group of nodes is %d cores.</small>"),
+	gchar *number_cores_markup = g_markup_printf_escaped(_("<small>The nominal capacity of this set of nodes is %d cores.</small>"),
 	                                                     ncores);
 	gtk_label_set_markup(ui_flow_execution->priv->number_cores_label, number_cores_markup);
 	update_speed_slider(GTK_SCALE(ui_flow_execution->priv->speed_slider), ncores);
@@ -1087,7 +1087,7 @@ set_single_execution_labels(GtkBuilder *builder){
 			_("In which set of nodes should this flow be executed?"));
 	gchar *dispersion_text = g_markup_printf_escaped(
 			_("The execution of this flow can be split to speed it up.\n"
-					"Up to how many tasks should it be split?"));
+					"Up to how many processes should it be split?"));
 	gchar *priority_text = g_markup_printf_escaped(
 			_("How should the execution of this flow compete with\n"
 			  "other processes?"));

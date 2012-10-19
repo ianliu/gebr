@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-19 10:57-0300\n"
+"POT-Creation-Date: 2012-10-19 11:20-0300\n"
 "PO-Revision-Date: 2012-10-08 14:58-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -2426,7 +2426,7 @@ msgstr "A execução deste fluxo não pode ser dividida"
 
 #: ../ui_flow_execution.c:1034
 #, c-format
-msgid "<small>The nominal capacity of this group of nodes is %d cores.</small>"
+msgid "<small>The nominal capacity of this set of nodes is %d cores.</small>"
 msgstr "<small>A capacidade nominal deste grupo de nós é %d cores.</small>"
 
 #: ../ui_flow_execution.c:1085
@@ -2444,7 +2444,7 @@ msgstr "Em qual conjunto de nós este fluxo deve ser executado?"
 #, c-format
 msgid ""
 "The execution of this flow can be split to speed it up.\n"
-"Up to how many tasks should it be split?"
+"Up to how many processes should it be split?"
 msgstr ""
 "Esta tarefa pode ser dividida para acelerar sua execução\n"
 "Em quantas partes ela deve ser dividida?"
