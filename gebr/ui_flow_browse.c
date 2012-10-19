@@ -2488,6 +2488,9 @@ static void flow_browse_load(void)
 		gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
 		g_free(tmp_help_p);
 
+		if (!gebr.ui_flow_browse->flow_main_view)
+			gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
+
 		if (gebr_geoxml_program_get_status(gebr.program) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 			gint anchor = 0;
 			gint index = 1;
@@ -3478,6 +3481,8 @@ gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,
                                         GebrUiFlowBrowse *fb)
 {
 	gtk_widget_show(fb->context[current_context]);
+
+	fb->flow_main_view = current_context == CONTEXT_FLOW ? TRUE : FALSE;
 
 	for (gint i = CONTEXT_FLOW; i < CONTEXT_N_TYPES; i++) {
 		if (i == current_context)
