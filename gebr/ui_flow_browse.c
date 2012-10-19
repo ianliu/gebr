@@ -3430,7 +3430,9 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	}
 
 	const gchar *error_message = gebr_flow_add_error_line(flow, gebr.ui_flow_browse);
-	gchar *err_msg = g_strdup_printf(_("Broken flow: %s"), error_message);
+	gchar *err_msg = NULL;
+	if (error_message)
+		err_msg = g_strdup_printf(_("Broken flow: %s"), error_message);
 	GebrReport *report = gebr_report_new(GEBR_GEOXML_DOCUMENT(flow));
 	gebr_report_set_error_message(report, err_msg);
 	gebr_report_set_detailed_parameter_table(report, GEBR_PARAM_TABLE_ONLY_CHANGED);
