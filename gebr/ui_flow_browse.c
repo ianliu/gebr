@@ -95,6 +95,10 @@ static void create_programs_view(GtkTreeIter *parent,
 void flow_add_program_to_flow(GebrGeoXmlSequence *program,
                               GtkTreeIter *flow_iter);
 
+static void flow_browse_add_parameters_view(GtkTreeModel *model,
+                                            GtkTreeIter *iter,
+                                            GebrUiFlowBrowse *fb);
+
 void
 gebr_flow_browse_update_server(GebrUiFlowBrowse *fb,
                                GebrMaestroServer *maestro)
@@ -203,10 +207,9 @@ gebr_flow_browse_on_add_menu(GebrMenuView *view,
 	flow_add_program_sequence_to_view(menu_programs, TRUE);
 
 	flow_browse_revalidate_programs(fb);
-	gebr_flow_browse_load_parameters_review(gebr.flow, fb, TRUE);
+	flow_browse_add_parameters_view(model, &parent, fb);
 
 	document_free(GEBR_GEOXML_DOC(menu));
-	gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, gebr.ui_flow_browse);
 }
 
 /* End of Menu's methods */
@@ -2660,6 +2663,34 @@ void flow_browse_edit_help(void)
  * Go to flow components tab
  */
 static void
+flow_browse_add_parameters_view(GtkTreeModel *model,
+                                GtkTreeIter *iter,
+                                GebrUiFlowBrowse *fb)
+{
+	GebrGuiProgramEdit *program_edit = parameters_configure_setup_ui();
+
+	if (program_edit) {
+		GebrUiFlowProgram *ui_program;
+
+		gtk_tree_model_get(model, iter,
+		                   FB_STRUCT, &ui_program,
+		                   -1);
+
+		if (fb->program_edit)
+			gebr_gui_program_edit_destroy(fb->program_edit);
+
+		fb->program_edit = program_edit;
+
+		GList *children = gtk_container_get_children(GTK_CONTAINER(fb->context[CONTEXT_PARAMETERS]));
+		if (children)
+			gtk_widget_destroy(children->data);
+
+		gtk_container_add(GTK_CONTAINER(fb->context[CONTEXT_PARAMETERS]), program_edit->widget);
+		gebr_flow_browse_define_context_to_show(CONTEXT_PARAMETERS, fb);
+	}
+}
+
+static void
 flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 			     GtkTreeViewColumn * column, GebrUiFlowBrowse *fb)
 {
@@ -2673,29 +2704,8 @@ flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-	if (type == STRUCT_TYPE_PROGRAM) {
-		GebrGuiProgramEdit *program_edit = parameters_configure_setup_ui();
-
-		if (program_edit) {
-			GebrUiFlowProgram *ui_program;
-
-			gtk_tree_model_get(model, &iter,
-			                   FB_STRUCT, &ui_program,
-			                   -1);
-
-			if (fb->program_edit)
-				gebr_gui_program_edit_destroy(fb->program_edit);
-
-			fb->program_edit = program_edit;
-
-			GList *children = gtk_container_get_children(GTK_CONTAINER(fb->context[CONTEXT_PARAMETERS]));
-			if (children)
-				gtk_widget_destroy(children->data);
-
-			gtk_container_add(GTK_CONTAINER(fb->context[CONTEXT_PARAMETERS]), program_edit->widget);
-			gebr_flow_browse_define_context_to_show(CONTEXT_PARAMETERS, fb);
-		}
-	}
+	if (type == STRUCT_TYPE_PROGRAM)
+		flow_browse_add_parameters_view(model, &iter, fb);
 }
 
 void
