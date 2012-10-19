@@ -108,15 +108,17 @@
 	</section>
 
 	<section xml:id="flows_create_flow">
-		<title>Creating flows</title>
-
-		<para>In the <guilabel>Flows</guilabel> tab, the button
-					<guiicon><inlinemediaobject><imageobject>
-								<imagedata fileref="../../common-images/botao_criar_fluxo.png" />
-				</imageobject></inlinemediaobject></guiicon> creates a flow.
-				Title, description and flow's author can be provided in the
-				creation.
-			</para>
+	  <title>Creating flows</title>
+	  
+	  <para>In the <guilabel>Flows</guilabel> tab, the button
+	    <guiicon><inlinemediaobject><imageobject>
+		  <imagedata fileref="../../common-images/botao_criar_fluxo.png" />
+	    </imageobject></inlinemediaobject></guiicon> creates a
+	    flow.  Title, description and flow's author should be
+	    provided in the creation, and can be further edited
+	    through the
+	    button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
+	    /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
 		<para>After following these steps, the flow will be appear on the left side of the
@@ -735,23 +737,6 @@
 		</caution>
 	</section>
 
-	<section xml:id="flows_edit_properties_flow">
-		<title>Editing flow's properties</title>
-		<para>To edit flow's properties the user must first select the flow,
-			then click on
-			<guiicon>
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
-					</imageobject>
-				</inlinemediaobject>
-		</guiicon>.</para>
-		<para>In the <guilabel>flows properties</guilabel> dialog box the user
-			can edit the fields <guilabel>Title</guilabel>, <guilabel>Description</guilabel>,
-			<guilabel>Author</guilabel> and <guilabel>Email</guilabel>.</para>
-	</section>
-
-
 	<section xml:id="flows_snapshots">
 		<title>Snapshot of a flow</title>
 		<indexterm><primary>Snapshot</primary><secondary>of a flow</secondary></indexterm>
@@ -976,7 +961,7 @@
 	</section>
 
 	<section xml:id="flows_import_flow">
-		<title>Importing/Exporting a flow</title>
+		<title>Importing and exporting flows</title>
 		<para>Although GêBR maintains all the data, sometimes it's necessary to copy 
 			the flow to files for sharing.</para>
 
@@ -1016,10 +1001,10 @@
 	</section>
 
 	<section xml:id="flows_execute_flow">
-		<title>Executing a flow</title>
+		<title>Executing flows</title>
 		<indexterm><primary>Flow</primary></indexterm>
 
-		<para>Once assembled a flow, it can be executed in two ways:
+		<para>Once assembled, a flow can be executed in two ways:
 			<itemizedlist>
 				<listitem>
 					Run - Basic execution (
@@ -1300,14 +1285,16 @@
 	</section>
 
 	<section xml:id="flows_execution_infobar">
-		<title>Following the execution </title>
-		<para>
-			After a flow has been sent to execution, the status and
-			output of the job can be followed in the same window, still in the
-			<guilabel>Flows</guilabel> tab. A bar in the botton of the window
-			will appear to keep a history of the last jobs dispatched for
-			execution and to switch among the results of the different jobs.
-		</para>
+	  <title>Following the execution of a flow</title>
+	  <para>After a flow has been sent to execution, the
+	    status and output of the yielded job can be
+	    followed in the same window, still in the
+	    <guilabel>Flows</guilabel> tab. A bar in the botton of the
+	    window will appear to keep the history of the last jobs
+	    dispatched for execution. Through buttons in that bar it
+	    is possible to switch among the results of the many jobs.</para>
+
+
 		<para>
 			Each job execution is represented in the bar as a button,
 			composed by:

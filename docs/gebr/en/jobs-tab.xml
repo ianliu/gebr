@@ -274,6 +274,6 @@
     <para>The user can also consult the command lines executed by GêBR. He
       just needs to visit the <guilabel>Command Line</guilabel>
       tab. The command lines are portable and can be copy-pasted
-      to a execution terminal.</para>
+      to execution on a terminal.</para>
   </section>
 </chapter>
