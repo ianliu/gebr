@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-19 11:17-0300\n"
+"POT-Creation-Date: 2012-10-19 10:57-0300\n"
 "PO-Revision-Date: 2012-10-08 14:58-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -1432,6 +1432,38 @@ msgstr "Contrair todos"
 msgid "Expand all"
 msgstr "Expandir todos"
 
+#: ../gebr-menu-view.c:768
+msgid "Select a menu to view help."
+msgstr "Selecione um menu para ver a ajuda."
+
+#: ../gebr-menu-view.c:772
+msgid "This item does not have help."
+msgstr "Este item não tem ajuda."
+
+#: ../gebr-menu-view.c:778
+msgid "Select a menu to add into a flow."
+msgstr "Selecione um menu para adicionar em um fluxo."
+
+#: ../gebr-menu-view.c:782
+msgid "This item cannot be added into a flow."
+msgstr "Este item não pode ser adicionado em um fluxo."
+
+#: ../gebr-menu-view.c:786
+msgid "Select only one flow to add a menu."
+msgstr "Selecione apenas um fluxo para adicionar um menu."
+
+#: ../gebr-menu-view.c:790
+msgid "Select a flow to add a menu."
+msgstr "Selecione um fluxo para adicionar um menu."
+
+#: ../gebr-menu-view.c:794
+msgid ""
+"Only one program loop can be inserted into \n"
+"a flow and this flow already contains a loop."
+msgstr ""
+"Apenas um programa loop pode ser inserido \n"
+"em um fluxo e este fluxo já tem um loop."
+
 #: ../gebr-report.c:259
 msgid "Snapshot taken on "
 msgstr "Foto tirada em "
@@ -2174,9 +2206,8 @@ msgstr ""
 "Tente reconectar seu maestro."
 
 #: ../ui_flow_browse.c:180
-#, fuzzy
 msgid "This flow already contains a loop"
-msgstr "Fluxo já contém um Loop"
+msgstr "Este fluxo já tem um loop."
 
 #: ../ui_flow_browse.c:1549
 msgid "Remove this snapshot permanently?"

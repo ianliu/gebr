@@ -765,34 +765,34 @@ gebr_menu_view_choose_infobar_text(GebrMenuView *view,
 
 	if (help) {
 		if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-			gtk_label_set_text(GTK_LABEL(view->priv->label_info), "Select a menu to view help.");
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info), _("Select a menu to view help."));
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else if (!gebr_menu_view_get_selected_menu(view, &iter)) {
-			gtk_label_set_text(GTK_LABEL(view->priv->label_info), "This item does not have help.");
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info), _("This item does not have help."));
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		}
 	} else {
 		if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
-			gtk_label_set_text(GTK_LABEL(view->priv->label_info), "Select a menu to add into a flow.");
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info), _("Select a menu to add into a flow."));
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else if (!gebr_menu_view_get_selected_menu(view, &iter)) {
-			gtk_label_set_text(GTK_LABEL(view->priv->label_info), "This item cannot be added into a flow.");
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info), _("This item cannot be added into a flow."));
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else if (gebr_menu_view_multiple_flow_selected()) {
-			gtk_label_set_text(GTK_LABEL(view->priv->label_info), "Select only one flow to add a menu.");
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info), _("Select only one flow to add a menu."));
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else if (!flow_browse_get_selected(NULL, TRUE)) {
-			gtk_label_set_text(GTK_LABEL(view->priv->label_info), "Select a flow to add a menu.");
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info), _("Select a flow to add a menu."));
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else if (multiple_loop) {
-			gtk_label_set_text(GTK_LABEL(view->priv->label_info),   "Only one program loop can be inserted into \n"
-										"a flow and this flow already contains a loop.");
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info),   _("Only one program loop can be inserted into \n"
+										"a flow and this flow already contains a loop."));
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else {
