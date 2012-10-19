@@ -791,7 +791,8 @@ gebr_menu_view_choose_infobar_text(GebrMenuView *view,
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else if (multiple_loop) {
-			gtk_label_set_text(GTK_LABEL(view->priv->label_info), "This flow already contains a loop.");
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info),   "Only one program loop can be inserted into \n"
+										"a flow and this flow already contains a loop.");
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else {
