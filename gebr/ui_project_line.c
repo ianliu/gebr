@@ -342,10 +342,12 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 						   NULL,
 						   _("Moving this line to current maestro."),
+						   _("Moving this line to current maestro."),
 						   _("Are you sure you want to move this line to maestro %s?"
 						     "\n\nIf you choose to move this line to current maestro,"
 						     " be sure to correct the paths of this line "
-						     "and its respective flows that can be broken."), addr);
+						     "and its respective flows that can be broken."),
+						   addr);
 	if (confirm) {
 		gebr_geoxml_line_set_maestro(gebr.line, change_addr);
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, change_addr);

@@ -455,10 +455,11 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 
 	if (priv->object && g_str_has_prefix(uri, "gebr://")) {
 		GebrGeoXmlObject *object;
+		const gchar *title = _("Invalid link");
 		if (!strcmp(uri, "gebr://menu")) {
 			if (gebr_geoxml_object_get_type(priv->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-							_("Invalid link"), _("Sorry, couldn't reach link."));
+							title, title, _("Sorry, couldn't reach link."));
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
 			GebrGeoXmlDocument *menu = gebr_geoxml_object_get_owner_document(priv->object);
@@ -466,7 +467,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 		} else if (!g_strcmp0(uri, "gebr://link")) {
 			if (gebr_geoxml_object_get_type(priv->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-				                        _("Invalid link"), _("Sorry, couldn't reach link."));
+				                        title, title, _("Sorry, couldn't reach link."));
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
 			GString *full_uri = g_string_new(NULL);
@@ -484,7 +485,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 		} else {
 			if (gebr_geoxml_object_get_type(priv->object) != GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-							_("Invalid link"), _("Sorry, couldn't reach link."));
+							title, title, _("Sorry, couldn't reach link."));
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
 			int program_index = -1;
@@ -493,7 +494,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(priv->object), &program, program_index);
 			if (program == NULL) {
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-							_("Invalid link"), _("Sorry, couldn't find program."));
+							title, title, _("Sorry, couldn't find program."));
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
 
@@ -511,7 +512,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 
 		if(strlen(help) == 0) {
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-						_("Invalid link"), _("Sorry, couldn't reach link."));
+						title, title, _("Sorry, couldn't reach link."));
 			g_free (help);
 			return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 		}

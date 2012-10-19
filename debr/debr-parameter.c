@@ -356,8 +356,10 @@ void parameter_remove(gboolean confirm)
 
 	if (parameter_get_selected(&iter, TRUE) == FALSE)
 		return;
+
+	const gchar *title = _("Delete parameter");
 	if (confirm
-	    && gebr_gui_confirm_action_dialog(_("Delete parameter"), _("Are you sure you want to delete the selected" \
+	    && gebr_gui_confirm_action_dialog(title, title, _("Are you sure you want to delete the selected" \
 								       " parameter(s)?")) == FALSE)
 		return;
 	
@@ -1183,10 +1185,11 @@ static gboolean parameter_dialog_setup_ui(gboolean new_parameter)
 	/* dialog actions loop and checks */
 	do {
 		if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+			const gchar *title = _("Separator");
 			if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG
 			    && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(is_list_check_button))
 			    && !strlen(gebr_geoxml_program_parameter_get_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER(ui->parameter)))) {
-				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, _("Separator"),
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, title, title,
 							_("You've marked this parameter as a list but no separator was selected.\n"
 							  "Please select the list separator."));
 				gtk_widget_grab_focus(separator_entry);

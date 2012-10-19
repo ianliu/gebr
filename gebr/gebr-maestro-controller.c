@@ -1296,8 +1296,9 @@ on_servers_edited(GtkCellRendererText *cell,
 		//FIXME: Do we need to use threads_enter here???
 
 		//I don t know why markup does not work here
+		const gchar *title = _("Invalid input");
 		gebr_gui_message_dialog(GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, NULL,
-					_("Invalid input"),
+					title, title,
 					_("GêBR supports the formats hostname or ip address.\n\n"
 					  "The entry %s will be automatically removed"), new_text);
 
@@ -1916,7 +1917,7 @@ on_daemon_error(GebrMaestroServer *maestro,
 		}
 
 		gebr_gui_message_dialog(GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, NULL,
-					message, second);
+					NULL, message, second);
 		gdk_threads_leave();
 	} else {
 		GebrDaemonServer *daemon;

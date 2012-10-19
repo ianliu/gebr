@@ -327,8 +327,10 @@ void program_remove(gboolean confirm)
 
 	if (!program_get_selected(NULL, TRUE))
 		return;
+
+	const gchar *title = _("Delete program");
 	if (confirm && 
-	    gebr_gui_confirm_action_dialog(_("Delete program"),
+	    gebr_gui_confirm_action_dialog(title, title,
 					   _("Are you sure you want to delete selected(s) program(s)?")) == FALSE)
 		return;
 

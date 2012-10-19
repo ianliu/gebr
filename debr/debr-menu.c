@@ -508,8 +508,9 @@ MenuMessage menu_save(GtkTreeIter * iter)
 
 	filename = g_path_get_basename(path);
 	if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path, FALSE) != GEBR_GEOXML_RETV_SUCCESS) {
+		const gchar *title = _("Could not save the menu");
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-					_("Could not save the menu"),
+					title, title,
 					_("You do not have necessary permissions to save "
 					  "the menu. Please check the provided location is "
 					  "correct and try again."));
@@ -802,7 +803,7 @@ void menu_install(void)
 		if (do_save && gebr_system("cp %s %s", quote1, quote2) != 0) {
 			gchar *title = g_strdup_printf(_("Failed to install menu '%s'"), menu_filename);
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL, title,
-						_("A problem occurred when copying the menu into GêBR's folder."));
+						title, _("A problem occurred when copying the menu into GêBR's folder."));
 			g_free(title);
 		}
 		g_free(quote1);

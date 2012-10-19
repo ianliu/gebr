@@ -189,7 +189,9 @@ void flow_delete(gboolean confirm)
 	else
 		deletion_msg = g_strdup(_("Are you sure you want to delete the selected flow(s)?"));
 
-	if (confirm && gebr_gui_confirm_action_dialog(_("Delete flow(s)?"),
+	const gchar *header = _("Delete flow(s)?");
+	if (confirm && gebr_gui_confirm_action_dialog(header,
+						      header,
 						      deletion_msg) == FALSE) {
 		g_free(deletion_msg);
 		return;

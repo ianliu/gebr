@@ -453,13 +453,14 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
  */
 gboolean gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
 				 const gchar *stock_id, const gchar * title,
+				 const gchar *header,
 				 const gchar * message, ...);
 
 /**
  * Show an action confirmation dialog with printf-like formated \p message.
  * \return TRUE if user pressed YES; FALSE otherwise.
  */
-gboolean gebr_gui_confirm_action_dialog(const gchar * title, const gchar * message, ...);
+gboolean gebr_gui_confirm_action_dialog(const gchar * title, const gchar *header, const gchar * message, ...);
 
 /**
  * Sets \p accel_group to all actions in \p action_group.

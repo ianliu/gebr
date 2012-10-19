@@ -260,7 +260,8 @@ on_gtk_tree_view_drag_motion(GtkTreeView * tree_view, GdkDragContext * drag_cont
  * \internal
  */
 static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsType buttons,
-					       const gchar *stock_id, const gchar * title, const gchar * message, va_list args)
+					       const gchar *stock_id, const gchar * title,
+					       const gchar *header, const gchar * message, va_list args)
 {
 	GtkWidget *dialog;
 
@@ -272,7 +273,7 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 	dialog = gtk_message_dialog_new_with_markup(NULL,
 						    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 						    type, buttons, "<span font_weight='bold' size='large'>%s</span>",
-						    title ? title : "");
+						    header ? header : "");
 	if (title)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
 
@@ -1133,25 +1134,26 @@ gebr_gui_gtk_tree_view_set_reorder_callback(GtkTreeView * tree_view, GebrGuiGtkT
 
 gboolean gebr_gui_message_dialog(GtkMessageType type, GtkButtonsType buttons,
 				 const gchar *stock_id, const gchar * title,
+				 const gchar *header,
 				 const gchar * message, ...)
 {
 	va_list argp;
 	gboolean ret;
 
 	va_start(argp, message);
-	ret = gebr_gui_message_dialog_vararg(type, buttons, stock_id, title, message, argp);
+	ret = gebr_gui_message_dialog_vararg(type, buttons, stock_id, title, header, message, argp);
 	va_end(argp);
 
 	return ret;
 }
 
-gboolean gebr_gui_confirm_action_dialog(const gchar * title, const gchar * message, ...)
+gboolean gebr_gui_confirm_action_dialog(const gchar * title, const gchar *header, const gchar * message, ...)
 {
 	va_list argp;
 	gboolean ret;
 
 	va_start(argp, message);
-	ret = gebr_gui_message_dialog_vararg(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, NULL, title, message, argp);
+	ret = gebr_gui_message_dialog_vararg(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, NULL, title, header, message, argp);
 	va_end(argp);
 
 	return ret;
@@ -1231,8 +1233,9 @@ gboolean gebr_gui_show_uri(const gchar * uri)
 	gboolean ret;
 	ret = gtk_show_uri(NULL, uri, GDK_CURRENT_TIME, &error);
 	if (error) {
+		const gchar *title = _("No such file or directory:");
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-					_("No such file or directory:"), uri);
+					title, title, uri);
 		g_error_free(error);
 	}
 	return ret;

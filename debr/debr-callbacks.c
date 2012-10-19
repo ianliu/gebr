@@ -223,8 +223,10 @@ void on_menu_revert_activate(void)
 {
 	GtkTreeIter iter;
 
+	const gchar *title = _("Revert changes");
+
 	if (gebr_gui_confirm_action_dialog
-		(_("Revert changes"),
+		(title, title,
 		 _("All unsaved changes will be lost. Are you sure you want to revert selected menu(s)?")) == FALSE)
 		return;
 
@@ -266,8 +268,9 @@ void on_menu_revert_activate(void)
 void on_menu_delete_activate(void)
 {
 	GtkTreeIter iter;
+	const gchar *title = _("Delete menu");
 
-	if (gebr_gui_confirm_action_dialog(_("Delete menu"), _("Are you sure you want to delete selected menu(s)?")) ==
+	if (gebr_gui_confirm_action_dialog(title, title, _("Are you sure you want to delete selected menu(s)?")) ==
 		FALSE)
 		return;
 
@@ -322,7 +325,8 @@ void on_menu_create_from_flow_activate(void)
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_YES)
 		goto out;
 
-	use_value = gebr_gui_confirm_action_dialog(_("Default values"),
+	const gchar *title = _("Default values");
+	use_value = gebr_gui_confirm_action_dialog(title, title,
 						   _("Do you want to use your parameter's values as default values?"));
 
 	gchar *path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));

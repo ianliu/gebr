@@ -2737,13 +2737,16 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 		if (!job)
 			continue;
 
+		const gchar *header = _("Cancel job");
 		if (selected_rows == 1) {
-			if (gebr_gui_confirm_action_dialog(_("Cancel job"),
+			if (gebr_gui_confirm_action_dialog(header,
+							   header,
 							   _("Are you sure you want to cancel the job \"%s\"?"),
 							   gebr_job_get_title(job)) == FALSE)
 				return;
 		} else if (!asked) {
-			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
+			if (gebr_gui_confirm_action_dialog(header,
+							   header,
 							   _("Are you sure you want to cancel the selected jobs?")) == FALSE)
 				return;
 			asked = TRUE;
@@ -2776,6 +2779,7 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
+	const gchar *header = _("Clear job");
 	if (!rows->next) {
 		gboolean control;
 		gtk_tree_model_get_iter(model, &iter, rows->data);
@@ -2787,11 +2791,13 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 		if (control)
 			goto free_rows;
 
-		if (!gebr_gui_confirm_action_dialog(_("Clear job"),
+		if (!gebr_gui_confirm_action_dialog(header,
+						    header,
 		                                    _("Are you sure you want to clear job \"%s\"?"), gebr_job_get_title(job)))
 			goto free_rows;
 	} else {
-		if (!gebr_gui_confirm_action_dialog(_("Clear job"),
+		if (!gebr_gui_confirm_action_dialog(header,
+						    header,
 		                                    _("Are you sure you want to clear the selected jobs?")))
 			goto free_rows;
 	}

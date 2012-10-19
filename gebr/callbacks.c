@@ -305,11 +305,14 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 
 	g_string_append_printf(message, "%s", error->message);
 
-	const gchar *broken_flow_msg = _("Assembly error");
+	const gchar *header;
 	error_code = error->code;
+
 	switch (error_code)
 	{
 	case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
+		header	= _("Missing input file");
+		break;
 	case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
 	case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
 	case GEBR_GEOXML_FLOW_ERROR_PROGRAM:
@@ -318,15 +321,19 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
 	case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
 	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
-		if (is_snapshot)
-			gdk_threads_enter();
-		gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
-					"broken-flow-icon", broken_flow_msg,
-					message->str);
-		if (is_snapshot)
-			gdk_threads_leave();
-		break;
+		header	= _("Broken flow");
 	}
+
+	if (is_snapshot)
+		gdk_threads_enter();
+
+	gebr_gui_message_dialog(GTK_MESSAGE_OTHER, GTK_BUTTONS_OK,
+				"broken-flow-icon", _("Assembly error"),
+				header,
+				message->str);
+
+	if (is_snapshot)
+		gdk_threads_leave();
 
 	g_string_free(message, TRUE);
 	g_clear_error(&error);

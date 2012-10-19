@@ -1545,12 +1545,14 @@ gebr_flow_browse_snapshot_delete(const gchar *rev_id)
 	gchar **snaps = g_strsplit(rev_id, ",", -1);
 
 	gdk_threads_enter();
+
+	const gchar *title = _("Remove this snapshot permanently?");
 	if (!snaps[1])
-		response = gebr_gui_confirm_action_dialog(_("Remove this snapshot permanently?"),
+		response = gebr_gui_confirm_action_dialog(title, title,
 		                                          _("If you choose to remove this snapshot "
 							    "you will not be able to recover it later."));
 	else
-		response = gebr_gui_confirm_action_dialog(_("Remove snapshots permanently?"),
+		response = gebr_gui_confirm_action_dialog(title, title,
 		                                          _("If you choose to remove these snapshots "
 							    "you will not be able to recover them later."));
 	gdk_threads_leave();
@@ -3415,8 +3417,9 @@ gebr_flow_browse_load_parameters_review(GebrGeoXmlFlow *flow,
 	}
 
 	const gchar *error_message = gebr_flow_add_error_line(flow, gebr.ui_flow_browse);
+	gchar *err_msg = g_strdup_printf(_("Broken flow: %s"), error_message);
 	GebrReport *report = gebr_report_new(GEBR_GEOXML_DOCUMENT(flow));
-	gebr_report_set_error_message(report, error_message);
+	gebr_report_set_error_message(report, err_msg);
 	gebr_report_set_detailed_parameter_table(report, GEBR_PARAM_TABLE_ONLY_CHANGED);
 	gchar *review = gebr_report_generate_flow_review(report);
 	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(fb->html_parameters), review);
