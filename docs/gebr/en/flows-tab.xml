@@ -8,7 +8,7 @@
 	version="5.0"
 	xml:id="flows_tab">
 
-	<title>The <guilabel>Flows</guilabel> tab</title>
+	<title>The <guilabel>Flows</guilabel> tab: basic aspects</title>
 
 	<para>
 		In the <guilabel>Flows</guilabel> tab, processing flows
@@ -244,293 +244,6 @@
 			and some of its parameters. </para>
 	</section>
 
-	<section xml:id="flows_editing_parameters">
-		<title>Editing program's parameters</title>
-
-		<para>Program's parameters compose a set of initial configurations
-			defined by the user.</para>
-		<para>To edit program's parameters follow the steps below:</para>
-		<procedure>
-			<step>
-				<para>Select the program from the list and click on
-					<guiicon>
-						<inlinemediaobject>
-							<imageobject>
-								<imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
-							</imageobject>
-						</inlinemediaobject>
-					</guiicon> on the toolbar, or just double-click on the
-					program. The <guilabel>Parameter</guilabel> box will
-					appear on right side of window over the <guilabel>Flow Review</guilabel> box.</para>
-			</step>
-			<step>
-				<para>Edit the program's parameters. Notice that each
-					parameter vary greatly both in size and
-					type. In parameters fields that can be filled with numbers/text,
-					variables can be used (<xref linkend="flows_dictionary_variables"/>).
-				</para>
-				<tip>
-					<para>Click on the <guibutton>Help</guibutton> button
-						(bottom right corner of the dialog box) to view
-						the <emphasis role="bold">program's
-							documentation</emphasis>. This will be certainly useful
-						when the user is editing the programs parameters.</para>
-				</tip>
-				<tip>
-					<para>Click on the <guibutton>Reset</guibutton> button 
-						to return to default configurations.</para>
-				</tip>
-			</step>
-			<step>
-				<para>All changes are saved automatically, and to close the <guilabel>Parameter</guilabel> box,
-					simply change selection on left side.</para>
-			</step>
-		</procedure>
-	</section>
-
-  <section
-    xml:id="flows_dictionary_variables">
-    <title>Using variables</title>
-    
-    <para>It is usual in the course of processing a data that many
-      flows depend on some fundamental quantities, like acquisition
-      parameters, for example. Those quantities may be provided
-      explicitly to each flow. Consider however a scenario where one
-      or some of those quantities have to be redefined. The user would
-      have to go through all flows which depend on them making the
-			necessary updates. Despite possible, this procedure is error-prone
-			and time consuming. A better approach would be centralize
-      the definition of those common quantities, in such a way that a
-      change on them would be automatically propagated to all flows
-      where they are employed. This central place for definition of
-      these "quantities" is the <emphasis role="bold">Dictionary of
-      variables</emphasis><indexterm><primary>Dictionary of
-      variables</primary></indexterm>.</para>
-
-    <section xml:id="technical_aspects_variables">
-      <title>Variables</title>
-
-      <para>The <guilabel>Dictionary of variables</guilabel> is an
-      interface to handle all the variables. It is accessed through
-      the icon
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_dicionario_projeto.png"
-            /></imageobject></inlinemediaobject></guiicon>, in the
-            <guilabel>More</guilabel> menu of toolbars of the
-      <guilabel>Projects and Lines</guilabel> and <guilabel>Flows
-      </guilabel> tabs.</para>
-
-      <para>GêBR has three levels of organization (see
-        <xref linkend="concepts_elements"/>).  The variables, thus,
-        have three levels of visibility:</para>
-      <itemizedlist>
-        <listitem>Project's variables are visible to all flows
-          associated to lines of the project;</listitem>
-        <listitem>Line's variables are visible to all its flows;</listitem>
-        <listitem>Flow's variables are just visible to itself.</listitem>
-      </itemizedlist>
-      
-      <para>
-        <figure>
-          <title>Dictionary of variables</title>
-          <mediaobject>
-            <imageobject>
-							<imagedata fileref="../images/GeBR_dictionary_variables_example.png"
-								contentwidth="571px" contentdepth="435px" />
-            </imageobject>
-          </mediaobject>
-          <caption>A variable with a value may be used with different
-            metrics throughout the flows. Creating a variable for each
-            metric can help in this task. GêBR shows the computed
-            value when the user passes the pointer over the icon
-            <guiicon><inlinemediaobject><imageobject>
-                  <imagedata fileref="../../common-images/integer-icon.png" />
-						</imageobject></inlinemediaobject></guiicon>.
-						Note that defining distance_cm depending on
-            distance is valid because distance had been defined
-            before.
-          </caption>
-        </figure>
-      </para>
-
-      <para>The dictionary validates the variables dynamically,
-        revalidating them as soon as anything is changed in
-        dictionary. Programs with errors are automatically revalidated
-        too (see <xref linkend="flows_change_program_state" />).
-      </para>
-
-      <para>Positioning the pointer on the icon of the
-        variable type, the user can check the solved
-        expression. If the <guilabel>Dictionary of variables</guilabel> finds
-        an error among the variables, it is going to exhibit the icon
-        <guiicon><inlinemediaobject><imageobject>
-							<imagedata fileref="../../common-images/icone_nao_configurado.png" />
-				</imageobject></inlinemediaobject></guiicon>
-				and an explanation of the error.
-				Reordering the variables of the dictionary can be done by drag and drop.
-        Since a variable can just use another variable above it,
-        this feature turns the declaration of variables more flexible
-        and dynamic.</para>
-
-
-      <para>Besides variables and expressions, some
-        predefined functions can be used:
-      </para>
-
-      <table>
-        <title>Available functions</title>
-        <tgroup cols='2'>
-          <thead>
-            <row>
-              <entry>Function</entry>
-              <entry>Sintax</entry>
-            </row>
-          </thead>
-          <tbody>
-            <row>
-              <entry>Square root</entry>
-              <entry>sqrt (<emphasis>value</emphasis>)</entry>
-            </row>
-            <row>
-              <entry>Sine</entry>
-              <entry>s (<emphasis>value</emphasis>)</entry>
-            </row>
-            <row>
-              <entry>Cosine</entry>
-              <entry>c (<emphasis>value</emphasis>)</entry>
-            </row>
-            <row>
-              <entry>Arctangent</entry>
-              <entry>a (<emphasis>value</emphasis>)</entry>
-            </row>
-            <row>
-              <entry>Natural logarithm</entry>
-              <entry>l (<emphasis>value</emphasis>)</entry>
-            </row>
-            <row>
-              <entry>Exponential</entry>
-              <entry>e (<emphasis>value</emphasis>)</entry>
-            </row>
-            <row>
-              <entry>Bessel</entry>
-              <entry>j (<emphasis>order, value)</emphasis></entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </table>
-      <para>
-        The character <emphasis role="bold">[</emphasis>' (open brackets) 
-        is used to see all the available variables for auto-completion.
-      </para>
-
-      <para>Navigate over the fields can be done by using the keys 
-        <keycap>Enter</keycap>, 
-        <keycap>Tab</keycap> or with the 
-        <mousebutton>Left button of the mouse</mousebutton>.
-      </para>
-
-    <tip>
-      <para>
-	To use the variables in fields like
-	<guimenuitem>Text</guimenuitem>,
-	the variable
-	name need to be embraced by square brackets
-	<emphasis role="bold">[</emphasis>
-	name-of-the-variable
-	<emphasis role="bold">]</emphasis>.
-      </para>
-    </tip>
-
-	<example>
-	<title>
-		<emphasis role="bold">Using the dictionary</emphasis>
-	</title>
-	<para>
-		Dictionary is a very useful feature for using a same value
-		multiple
-		times.
-		It is also useful for naming variables, making a flow's
-		parameters more	intuitive. For example:
-		<procedure>
-			<step> Import a demo named Making Data.</step>
-			<step> Check the line named Shot Gathers.</step>
-			<step>
-				Open the
-				<guilabel>Dictionary of variables</guilabel>,
-				on <guilabel>Flows tab</guilabel>.
-			</step>
-		</procedure>
-	</para>
-	<para>
-		It can be seen that:
-		<itemizedlist>
-			<listitem>Some of the variables are line's variables (width,
-				height...). Changing width and weight, all images generated by X
-				Image
-				(on this line) will be changed according to the new value set.
-				Instead of setting each new value, all values can be changed at
-				once.
-			</listitem>
-			<listitem>
-				Still on Shot Gathers, select the flow Single Shot Sixty
-				Degrees. By
-				checking
-				<guilabel>Dictionary of variables</guilabel>,
-				it's seen that there are some variables related to this flow
-				and these variables are
-				<emphasis>only</emphasis>
-				used on this flow.
-				Also, there are some variables used twice (like dz). It's important to
-				check
-				that the names of each variable represent a meaning on its context : d
-				(z or x)
-				are related to sampling interval; f (z or x) are related to first
-				sample.
-			</listitem>
-		</itemizedlist>
-	</para>
-</example>
-    </section>
-
-    <section xml:id="technical_aspects_iter">
-      <title>The variable iter</title>
-      <para> GêBR allows the execution of repetitive procedures by 
-        creating flows with <guilabel>Loops</guilabel> (see 
-        <xref linkend="flows_loop" />). With <guilabel>Loops</guilabel>,
-        the user has access to a special variable
-        called <emphasis role="bold">iter</emphasis>.
-      </para>
-
-      <para>Upon execution, the user might want to identify what is the current
-        step of the Loop. The iter variable is devised with this aim.
-      </para>
-
-      <para>
-        For instance, the output of each step of the Loop can be defined 
-        to a file with a name identified by the step, 
-        output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see 
-        <xref linkend="fig_flow_editor_loop_output"/>).</para>
-
-      <figure xml:id="fig_flow_editor_loop_output">
-        <title>Usage of iter variable</title>
-        <mediaobject>
-          <imageobject>
-			<imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
-				contentwidth="281px" contentdepth="150px" />
-          </imageobject>
-        </mediaobject>
-        <caption>This flow with a Loop program and number of loops
-          equal to 3, is going to throw the results to three
-          different files, identified by the step of the loop
-          (output-1, output-2 and output-3).
-        </caption>
-      </figure>
-
-    </section>
-  </section>
-
 	<section xml:id="flows_change_program_state">
 		<title>Program states</title>
 
@@ -581,6 +294,50 @@
 				way, the user can <emphasis role="bold">enable and disable parts of
 					the flow</emphasis>.</para>
 		</important>
+	</section>
+
+	<section xml:id="flows_editing_parameters">
+		<title>Editing program's parameters</title>
+
+		<para>Program's parameters compose a set of initial configurations
+			defined by the user.</para>
+		<para>To edit program's parameters follow the steps below:</para>
+		<procedure>
+			<step>
+				<para>Select the program from the list and click on
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon> on the toolbar, or just double-click on the
+					program. The <guilabel>Parameter</guilabel> box will
+					appear on right side of window over the <guilabel>Flow Review</guilabel> box.</para>
+			</step>
+			<step>
+				<para>Edit the program's parameters. Notice that each
+					parameter vary greatly both in size and
+					type. In parameters fields that can be filled with numbers/text,
+					variables can be used (<xref linkend="flows_dictionary_variables"/>).
+				</para>
+				<tip>
+					<para>Click on the <guibutton>Help</guibutton> button
+						(bottom right corner of the dialog box) to view
+						the <emphasis role="bold">program's
+							documentation</emphasis>. This will be certainly useful
+						when the user is editing the programs parameters.</para>
+				</tip>
+				<tip>
+					<para>Click on the <guibutton>Reset</guibutton> button 
+						to return to default configurations.</para>
+				</tip>
+			</step>
+			<step>
+				<para>All changes are saved automatically, and to close the <guilabel>Parameter</guilabel> box,
+					simply change selection on left side.</para>
+			</step>
+		</procedure>
 	</section>
 
 	<section xml:id="flows_edit_input_output">
@@ -735,269 +492,6 @@
 			<para>GêBR does <emphasis role="bold">not</emphasis> ask for
 				confirmation before deleting programs from a flow.</para>
 		</caution>
-	</section>
-
-	<section xml:id="flows_snapshots">
-		<title>Snapshot of a flow</title>
-		<indexterm><primary>Snapshot</primary><secondary>of a flow</secondary></indexterm>
-		<para>There are situations when working with GêBR it will be
-			useful to use an existing flow as a basis to create new
-			flows. For example, to experiment with flows that
-			are only slightly different from one another, however without
-			having to discard or modify the original flow.
-		</para>
-		<para>A way to do this is to copy and paste the flow (see the
-			section <xref linkend="flows_copy_paste_del_flows" />.
-			Another way is to take a snapshot of the original flow, through a snapshot, 
-			GêBR stores the settings of a flow so it's easy come back to it later.</para>
-
-		<section xml:id="flows_taking_snapshots">
-			<title>Taking a snapshot</title>
-			<indexterm><primary>Snapshot</primary><secondary>taking snapshot</secondary></indexterm>
-			<para>All snapshots of the flow are presented in the flows tab. 
-				To <emphasis role="bold">take a snapshot</emphasis> of a flow:</para>
-			<procedure>
-				<step>
-					<para>Select the flow and left-click on <guilabel>More</guilabel> button on Toolbar.</para>
-				</step>
-				<step>
-					<para>Then click on 
-						<guiicon>
-							<inlinemediaobject>
-								<imageobject>
-									<imagedata fileref="../../common-images/botao_salvar_estado.png" />
-								</imageobject>
-							</inlinemediaobject>
-					</guiicon> (or press <keycap>Ctrl+S</keycap>) to take a snapshot </para>
-				</step>
-				<step>
-					<para>It's really necessary to write a description of the 
-						snapshot in the dialog box to
-						identify this saved state later on.</para>
-					<figure>
-						<title>Save the snapshot description</title>
-						<mediaobject>
-							<caption>Save the snapshot description</caption>
-							<imageobject>
-								<imagedata fileref="../images/GeBR_snapshot_description_dialog.png"  contentwidth="419px" contentdepth="167px"/>
-							</imageobject>
-						</mediaobject>
-					</figure>
-				</step>
-				<step>
-					<para>Left-click on 
-						<guibutton>OK</guibutton> to save your snapshot</para>
-				</step>
-			</procedure>
-
-
-			<para>To see the saved snapshots, just left-click on 
-				<guiicon>
-					<inlinemediaobject>
-						<imageobject>
-							<imagedata fileref="../../common-images/photos.png" />
-						</imageobject>
-					</inlinemediaobject>
-				</guiicon> in the details of a flow.
-			</para>
-		</section>
-
-		<section xml:id="flows_snapshots_actions">
-			<title>Snapshot actions</title>
-			<indexterm><primary>Snapshot</primary><secondary>actions</secondary></indexterm>
-
-			<para>A user that uses different versions of the same flow may also be benefited 
-				by the use of snapshots. An option would be to save many different flows, one for 
-				each version, which drawback is the pollution of the flows tab.
-				Another option, using the feature above, is taking
-				a snapshot of each version of the flow.</para>
-
-			<figure>
-				<title>Snapshots on GêBR</title>
-				<mediaobject>
-					<caption>In this view, the user can perform various actions in the snapshots,
-						like revert, delete and run</caption>
-					<imageobject>
-						<imagedata fileref="../images/GeBR_snapshot_example.png"
-							contentwidth="566px" contentdepth="527px" />
-					</imageobject>
-				</mediaobject>
-			</figure>
-
-			<para>The graph indicates from which version each snapshot was derived from. 
-				The start of arrow indicates the origin and the end indicates the modified
-				version.
-			</para>
-
-			<caution>
-				<para>GêBR always preserves the setup of the flow. Even if
-					the computer was turned off, this list will be recovered when GêBR 
-					is opened again. However, if the <emphasis role="bold">flow was 
-						deleted</emphasis> all the saved states
-					will <emphasis role="bold">immediately disappear
-						forever</emphasis>.</para>
-			</caution>
-
-			<para>Through a right-click over the target snapshot, the user has the option to 
-				<emphasis role="bold">Revert</emphasis>, <emphasis role="bold">Delete</emphasis> 
-				or <emphasis role="bold">Run</emphasis> it. The right-click over the current 
-				stage (Now) allows the user to <emphasis role="bold">Run</emphasis> the current
-				flow or to take a snapshot thereof.
-			</para>
-
-			<para>In this view, also is possible use multiple selection just click over several snapshots 
-				and the actions are disposable through the right-click over a snapshot. After to choose 
-				several snapshots and the action, this action will be applied in all selected snapshots. 
-			</para>
-			<para>To deselect a snapshot is as easy as select one, the user just need to click over the 
-				undesired snapshot. Also is possible deselect all the selected snapshots by clicking 
-				on the white area in this view. 
-			</para>
-
-			<itemizedlist>
-				<listitem>
-					<emphasis role="bold">Revert</emphasis>
-
-					<para>If a snapshot of a flow was taken and for some reason undesired modifications 
-						were made to it, is possible to revert to another one through 
-						double-click on that. Whenever a snapshot is
-						reverted, the dialog <emphasis>Reverting modified flow</emphasis> will appear.</para>
-
-					<figure>
-						<title>Dialog of Reverting modified flow</title>
-						<mediaobject>
-							<caption>Two option are avaliable to proceed.</caption>
-							<imageobject>
-								<imagedata fileref="../images/GeBR_reverting_modified.png"
-									contentwidth="319px" contentdepth="293px" />
-							</imageobject>
-						</mediaobject>
-					</figure>
-
-					<itemizedlist>
-						<listitem>
-							<guibutton>Take a snapshot</guibutton>: a dialog to input a description
-							will appear, where is possible save this new snapshot.
-						</listitem>
-						<listitem>
-							<guibutton>Proceed discarding changes</guibutton>: GêBR will
-							simply revert to the chosen snapshot without saving the current
-							state. 
-						</listitem>
-					</itemizedlist>
-
-					<tip>
-						<para>If the current state was previously saved, GêBR
-							recommends that the user click on <guibutton>Proceed discarding changes</guibutton>, in the
-							dialog box <emphasis>Backup Current State</emphasis>, as to avoid a bloated snapshot view.</para>
-					</tip>
-				</listitem>
-
-				<listitem>
-					<emphasis role="bold">Delete</emphasis>
-
-					<para>The delete of a snapshot is a permanently action. After do that, 
-						this snapshot will disappear and cannot be recovered.</para>
-
-					<para>GêBR deals with the idea of origin of the snapshot. In the graph of the figure, 
-						'B1' and 'B2' come from 'B' which, by its turn, comes from 'A'. If the user deletes 'B', 
-						GêBR will consider 'B1'and 'B2' as originated from 'A'. 
-					</para>
-				</listitem>
-
-				<listitem>
-					<emphasis role="bold">Run</emphasis>
-
-					<para>Running a snapshot is like running a flow (see <xref linkend="flows_execute_flow" />).
-						The advantage of doing this is the possibility of executing
-						a snapshot without having to revert to it. Thus, saved flows can be tested 
-						without changing the current one. As with flows,
-						<keycap>Ctrl+R</keycap> runs the selected snapshots
-					one after another; <keycap>Ctrl+Shift+R</keycap> runs the
-					selected snapshots parallely (keybind activated just if multiple snapshots are selected);
-					the <keycap>Delete</keycap> key deletes the selected snapshots; 
-				</para>
-
-				</listitem>
-			</itemizedlist>
-
-		</section>
-
-		<example>
-			<title>
-				<emphasis role="bold">Using snapshots</emphasis>
-			</title>
-			<para>Take the program SU Plane for that example. That program
-				create common offset with up to 3 planes, and there are two possible
-				output options for that flow: image plot, using program X Image
-				or postscript image, using PS Image.
-			</para>
-			<para>To solve this issue (two possible outputs for a flow)
-				without the need to create two separate flows with small differences,
-				it is possible to take two snapshots: one for image
-				plot, and the other for postscript.
-			</para>
-
-			<para>
-				To do that, following the steps below:
-				<procedure>
-					<step>Assemble the flow with two programs,
-						SU Plane and X Image.
-					</step>
-					<step>Takes a snapshot of this flow, with some description
-						like "Common offset with image plot".
-					</step>
-					<step>Remove the program X Image of the original flow,
-						and add a program PS Image, with some output file like "plot.ps".
-					</step>
-					<step>Takes a snapshot of this new flow, with description
-						like "Common offset with postscript image".
-					</step>
-				</procedure>
-				Now, with only one flow can run two different plots
-				for the data generated from SU Plane.
-			</para>
-		</example>
-	</section>
-
-	<section xml:id="flows_import_flow">
-		<title>Importing and exporting flows</title>
-		<para>Although GêBR maintains all the data, sometimes it's necessary to copy 
-			the flow to files for sharing.</para>
-
-		<para>In the window <guilabel>Save flow</guilabel>, navigate
-			to a desired directory and type a name for the file
-			(GêBR will automatically determine the extension
-			<filename class="exension">flw</filename>). To do so:</para>
-		<procedure>
-			<step>
-				<para> In case of Import, the user must first 
-					<emphasis role="bold">select a flow</emphasis> (or see
-					<xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
-			</step>
-			<step>
-				<para>Select the tab 
-					<guilabel>Flows</guilabel> and left-click on 
-					<guiicon><inlinemediaobject><imageobject>
-								<imagedata fileref="../../common-images/botao_importar_projeto.png" />
-							</imageobject></inlinemediaobject></guiicon> to import or on 
-					<guiicon>
-						<inlinemediaobject><imageobject>
-							<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
-							</imageobject></inlinemediaobject></guiicon> to export.
-				</para>
-			</step>
-			<step>
-				<para>Navigate through the files and
-					select the flow that is desired to be
-					imported/export.</para>
-			</step>
-		</procedure>
-		<para>In case of Import, the imported flow will be
-			listed along with any other flows of the
-			selected line. Otherwise, in case of Export,
-			the file containing the exported flow will be
-			created.</para>
 	</section>
 
 	<section xml:id="flows_execute_flow">
@@ -1220,70 +714,6 @@
 
 	</section>
 
-	<section xml:id="flows_loop">
-		<title>Flows with loops</title>
-
-		<para>
-			The notion of a loop refers to a series of
-			commands that continues to repeat over and over again,
-			possibly changing a little, untill a condition is met.
-			For example, suppose the user needs
-			to generate one plot for each of a set of functions.
-			One option is to create many flows,
-			each one based in a function, that generates the plots.
-			Another simpler option would be to create a single flow
-			that, for each function, generates a plot.
-			The loop program allows it in GêBR.
-		</para>
-
-		<para>The 
-			<emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm>
-			is a program from the category
-			<emphasis role="bold">Loops</emphasis> that has a totally
-			different usage compared to the remaining programs of GêBR.
-			Here these differences are presented.</para>
-
-		<para>Whenever the program Loop is added, it appears
-			on the top of the flow. That happens to indicate that the flow
-			is going to be executed more than once, according to the
-			parameters set for the program. (see
-			<xref linkend="flows_editing_parameters" /> for
-			further details).</para>
-
-		<figure>
-			<title>Loop program</title>
-			<mediaobject>
-				<caption>Screenshot of program <emphasis>Loop</emphasis>, added
-					to a flow and properly configured.</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_flow_editor_loop.png" 
-						contentwidth="284px" contentdepth="147px" />
-				</imageobject>
-			</mediaobject>
-		</figure>
-
-		<para>After the <emphasis>Loop</emphasis> is added, 
-			a new variable,
-			the <emphasis role="bold">iter</emphasis>, is available (see
-			<xref linkend="flows_dictionary_variables" />).
-			The value of this special variable is modified
-			on each iteration (increasing or decrementing),
-			according to the parameters set.</para>
-
-		<figure>
-			<title>Loop parameters</title>
-			<mediaobject>
-				<caption>Screenshot of the edition from parameters
-					of <emphasis>Loop</emphasis> program, with a simple example of
-					parameters setting.</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png" 
-						contentwidth="460px" contentdepth="280px" />
-				</imageobject>
-			</mediaobject>
-		</figure>
-	</section>
-
 	<section xml:id="flows_execution_infobar">
 	  <title>Following the execution of a flow</title>
 	  <para>After a flow has been sent to execution, the
@@ -1327,25 +757,5 @@
 		</para>
 	</section>
 
-	<section xml:id="flows_edit_comments_flow">
-		<title>Report</title>
-		<para> The option
-			<menuchoice>
-				<guimenu>More</guimenu>
-				<guisubmenu>Include user's commentary</guisubmenu>
-			</menuchoice>
-			allows the user to add comments
-			<indexterm><primary>Report</primary><secondary>of a flow</secondary></indexterm>
-			about the selected flow, just like the option presented
-			in the <guilabel>Projects and Lines</guilabel> tab.
-			Analogously, the option
-			<menuchoice>
-				<guimenu>More</guimenu>
-				<guisubmenu>View Report</guisubmenu>
-			</menuchoice> allows the user to
-			visualize the report of the current flow
-			The difference is that the line's report can include the
-			flow's report.  Consult 
-			<xref linkend="projects_lines_report" />.</para>
-	</section>
+
 </chapter>

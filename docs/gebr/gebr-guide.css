@@ -2,7 +2,8 @@
 
 .book {
 	margin: 0 auto;
-	width: 950px;
+	margin-left: 60px;
+	margin-right: 60px;
 	text-align: left;
 }
 
