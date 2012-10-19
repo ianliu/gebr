@@ -3059,7 +3059,7 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 		if (gebr_ui_flows_io_get_active(io))
 			g_object_set(cell, "foreground-gdk", &style->black, NULL);
 		else
-			g_object_set(cell, "foreground-gdk", &style->base[GTK_STATE_INSENSITIVE], NULL);
+			g_object_set(cell, "foreground-gdk", &style->text[GTK_STATE_INSENSITIVE], NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *program;
