@@ -114,7 +114,6 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/group.png		\
 	16x16/stock/photos.png	\
     	16x16/stock/utilities-terminal.png \
-	16x16/stock/kontact_todo.png	\
 	16x16/stock/detailed_execution.png	\
 	16x16/stock/document_comment.png \
 	16x16/stock/menu-list-icon.png \
@@ -217,7 +216,6 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/view-sort-descending.png	\
 	22x22/stock/window-close.png	\
 	22x22/stock/utilities-terminal.png	\
-	22x22/stock/kontact_todo.png	\
 	22x22/stock/detailed_execution.png	\
 	22x22/stock/document_comment.png \
 	22x22/stock/menu-list-icon.png \
@@ -320,7 +318,6 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/window-close.png	\
     48x48/stock/group.png	\
     48x48/stock/utilities-terminal.png \
-	48x48/stock/kontact_todo.png	\
     48x48/stock/detailed_execution.png	\
     48x48/stock/document_comment.png \
     48x48/stock/menu-list-icon.png \
@@ -341,7 +338,6 @@ libgebr_gui_iconsscalablestock_DATA = \
 	scalable/stock/object-unlocked.svgz   \
 	scalable/stock/group.svgz 	\
 	scalable/stock/document_comment.svg	\
-	scalable/stock/kontact_todo.svg \
 	scalable/stock/detailed_execution.svg	\
 	scalable/stock/flow-icon.svg \
 	scalable/stock/document_review.svg \
