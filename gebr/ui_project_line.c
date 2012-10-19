@@ -279,13 +279,12 @@ on_maestro_button_clicked(GtkButton *button,
 	gchar *connect_text;
 	if (g_strcmp0(connect_addr, "") != 0) {
 		connect_text = g_markup_printf_escaped(_("Connect to maestro <b>%s</b>"), connect_addr);
-		gtk_label_set_markup(GTK_LABEL(connect_label), connect_text);
 	} else {
+		connect_text = g_strdup(_("This Line does not have maestro"));
 		gtk_widget_set_sensitive(GTK_WIDGET(connect_button), FALSE);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connect_button), FALSE);
-		connect_text = g_strdup("");
 	}
 
+	gtk_label_set_markup(GTK_LABEL(connect_label), connect_text);
 	gtk_widget_show(GTK_WIDGET(dialog));
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
