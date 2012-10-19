@@ -1025,7 +1025,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
 						  total_procs,
 						  total_procs > 1 ? _("processes") :_("process"),
-						  g_strcmp0(niceness, "0")? _(", using only free resources of processing nodes.\n") : ".");
+						  g_strcmp0(niceness, "0")? _(", using only free resources of processing nodes.") : _(", disputing for resources of the processing nodes."));
 		g_string_append(resources, markup);
 
 		const gchar *mpi_owner_tst = gebr_job_get_mpi_owner(job);

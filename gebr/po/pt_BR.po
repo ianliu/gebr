@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-19 11:20-0300\n"
+"POT-Creation-Date: 2012-10-19 12:54-0300\n"
 "PO-Revision-Date: 2012-10-08 14:58-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -973,9 +973,12 @@ msgid "process"
 msgstr "processo"
 
 #: ../gebr-job-control.c:1028
-msgid ", using only free resources of processing nodes.\n"
-msgstr ""
-", utilizando apenas os recursos disponíveis dos nós de processamento.\n"
+msgid ", using only free resources of processing nodes."
+msgstr ", utilizando apenas os recursos disponíveis dos nós de processamento."
+
+#: ../gebr-job-control.c:1028
+msgid ", disputing for resources of the processing nodes."
+msgstr ", disputando pelos recursos dos nós de processamento."
 
 #: ../gebr-job-control.c:1034
 #, c-format
