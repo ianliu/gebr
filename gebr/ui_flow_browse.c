@@ -3266,11 +3266,10 @@ gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
 
 	gtk_tree_view_unset_rows_drag_source(tree_view);
 
-	if (fb->flow_main_view) {
+	if (fb->flow_main_view)
 		fb->flow_main_view = FALSE;
-		gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, fb);
-	} else
-		gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, fb);
+
+	gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, fb);
 
 	g_free(path_str);
 	gtk_tree_path_free(path);
