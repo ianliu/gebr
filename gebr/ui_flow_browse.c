@@ -3480,7 +3480,6 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
 	const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
 	const gchar *tooltip_detail = sensitive ? tooltip_execute_detail : tooltip_disconn;
 
-	gtk_action_set_stock_id(action, "gtk-execute");
 	gtk_action_set_sensitive(action, sensitive);
 	gtk_action_set_tooltip(action, tooltip);
 	gtk_action_set_sensitive(detailed_execution, sensitive);
