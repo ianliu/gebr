@@ -337,12 +337,12 @@ run_flow(GebrUiFlowExecution *ui_flow_execution,
 			else
 				new_name = g_strdup(name);
 
-			msg = g_markup_printf_escaped(_("<span size='large' weight='bold'>Execution error</span>\n\n"
+			msg = g_markup_printf_escaped(_("<span size='large'><b>Execution error</b></span>\n\n"
 					"There are no connected nodes on group <b>%s</b>."), new_name);
 			g_free(new_name);
 			break;
 		case MAESTRO_SERVER_TYPE_DAEMON:
-			msg = g_markup_printf_escaped(_("<span size='large' weight='bold'>Execution error</span>\n\n"
+			msg = g_markup_printf_escaped(_("<span size='large'><b>Execution error</b></span>\n\n"
 					"The selected node (<b>%s</b>) is not connected."), name);
 			break;
 		default:
@@ -984,7 +984,7 @@ update_speed_slider(GtkScale *scale, gint ncores)
 	gtk_scale_clear_marks(scale);
 
 	gchar *half_cores = g_markup_printf_escaped("<span size='x-small'>%d</span>", ncores/2);
-	gchar *total_cores = g_markup_printf_escaped("<span size='x-small' font_weight='bold'>%d</span>", ncores);
+	gchar *total_cores = g_markup_printf_escaped("<span size='x-small'><b>%d</b></span>", ncores);
 	gchar *over_cores = g_markup_printf_escaped("<span size='x-small'>%d</span>", 4*ncores);
 
 	gdouble med = SLIDER_100 / 2.0;
