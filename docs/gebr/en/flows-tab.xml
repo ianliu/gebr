@@ -537,7 +537,7 @@
 			<title>Run</title>
 
 			<para>
-				By clicking on 
+				By clicking on
 				<guiicon><inlinemediaobject><imageobject>
 							<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
 		</imageobject></inlinemediaobject></guiicon>,
@@ -598,11 +598,11 @@
 				</mediaobject>
 			</figure>
 			<para>
-				By clicking over 
+				By clicking the button 
 				<guiicon><inlinemediaobject><imageobject>
 							<imagedata fileref="../../common-images/detailed_execution.png" />
 				</imageobject></inlinemediaobject></guiicon>,
-				it can be set:
+				the following options can be set:
 
 				<procedure>
 					<step>
@@ -717,7 +717,8 @@
 
 	<section xml:id="flows_execution_infobar">
 	  <title>Following the execution of a flow</title>
-	  <para>After a flow has been sent to execution, the
+		<para>Flows submitted for execution generate jobs
+			(see <xref linkend="concepts_connections"/>). The
 	    status and output of the yielded job can be
 	    followed in the same window, still in the
 	    <guilabel>Flows</guilabel> tab. A bar in the botton of the
