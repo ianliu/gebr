@@ -549,9 +549,15 @@ void on_configure_servers_activate(void)
 void on_help_contents_activate(void)
 {
 	gchar *loc;
-	const gchar *path;
+	const gchar *path, *language;
 
-	loc = setlocale(LC_MESSAGES, NULL);
+	// Get environment variable LANGUAGE
+	language = g_getenv("LANGUAGE");
+	if (!language || !*language)
+		loc = setlocale(LC_MESSAGES, NULL);
+	else
+		loc = g_strdup(language);
+
 	if (g_str_has_prefix (loc, "pt"))
 		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html";
 	else
