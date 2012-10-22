@@ -1,3 +1,23 @@
+2012-10-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Alter message of BrokenFlow dialog
+
+2012-10-18  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* Translation of fuzzy translations to Portuguese
+
+2012-10-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: fix completion in program parameters
+
+2012-10-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change layout of BrokenFlow dialog (Fixes issue 1320)
+
+2012-10-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.6: User guide update [Sprint 66]
+
 
 2012-10-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 

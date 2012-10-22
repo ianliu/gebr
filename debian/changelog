@@ -1,11 +1,13 @@
-gebrproject (0.19.6+85~a62a94d4de27) lucid; urgency=low
+gebrproject (0.19.7) lucid; urgency=low
 
+  * Fix loss of navigation bar on Fedora 17. (#1212)
+  * Insert a program opens the parameters edition. (#1350)
   * Better Menu list with help and add button. (#1327) (#1328)
   * Removed snapshot mode. (#1329)
   * Variable creation and completion fixes.  (#1205,1324)
-  * Many bug fixes (#1295,1296,1319,1320,1321,1323,1325,1331,1338,1339,1343,1340,1349,1354)
+  * Many bug fixes (#1293,1295,1296,1319,1320,1321,1323,1325,1331,1333,1335,1338,1339,1340,1342,1343,1349,1352,1354,1355)
 
- -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Tue, 16 Oct 2012 17:16:48 -0300
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 22 Oct 2012 15:12:08 -0200
 
 gebrproject (0.19.6) lucid; urgency=low
 

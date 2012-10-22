@@ -1,3 +1,278 @@
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move definition of tree view before creation of popup menu (to fix
+	last commit)
+	* Show correct options on popup to connect/disconnect servers
+	* Fix loss of navigation bar on Fedora 17 (Fixes issue 1212)
+	* Connect signal on GêBR top window to repass events to internal
+	widgets
+
+2012-10-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Increase GêBR size to avoid accomodate the Details popup in the
+	Jobs tab.
+	* Fix wrong label of change of line's maestro
+
+2012-10-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix foreground color of insensitive I/O to get correct style (Fixes
+	issue 1335)
+
+2012-10-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving internationalization of Setup and Run dialog.
+
+2012-10-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove unnecessary lines of code
+
+2012-10-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using GTk_STOCK_EDIT instead of kontac_todo in Edit icon.
+
+2012-10-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* flows: Fix wrong error exhibition in the flows tab
+
+2012-10-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Open parameters view when adding a new program on flow (Fixes issue
+	1350)
+
+2012-10-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* flows: Switch main view to parameters view when a program is clicked
+	* Alter message of BrokenFlow dialog
+
+2012-10-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show text for "dispute for nodes resources" on details of execution.
+
+2012-10-19  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Several micro improvements
+
+2012-10-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Standardizing words as set and processes on 'Setup and Run' dialog.
+
+2012-10-19  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Translating commit 7964
+
+2012-10-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* internationalization of menus list's infobar.
+
+2012-10-19  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Changing sentence on job details
+
+2012-10-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving message of menus list infobar when a flow already contains
+	a loop.
+
+2012-10-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert treatment when try to view help line add menu on Menu View
+
+2012-10-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixed link to create line (help)
+	* Fixed link to create flow (help)
+
+2012-10-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving behaviour of infobar on menus list. (Fixes issue 1327)
+
+2012-10-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Switch to Flow revision tab when a menu is added
+
+2012-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: improve error messages for flow validation
+
+2012-10-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixed link to setup & run (help)
+	* Fixed link to dictionary variables (help)
+
+2012-10-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Review update of libgebr translation
+	* i18n: Review po update of gebr
+	* minor: Uncapitalize Maestro label of Maestro/Nodes configuration
+
+2012-10-18  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* Translation of fuzzy translations of gebr and libgebr
+	* Translation of fuzzy translations to Portuguese
+	* Translation of fuzzy translations to Portuguese
+
+2012-10-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using word log instead of error in i/o's table of flow report.
+
+2012-10-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix detection if maestro has duplicated daemons (Fixes issue 1342)
+
+2012-10-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove unused variable keyword to avoid warnings on compilation
+
+2012-10-17  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* Translation of fuzzy translations to Portuguese
+
+2012-10-17  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show infobar when no/multiple flow is selected. (Fixes issue 1293)
+	* Making Add button insensitive when multiple flows are selected.
+	(Fixes issue 1293)
+
+2012-10-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Restore "Choose automatically" when preferred server group is
+	deleted. (Fixes issue 1333)
+
+2012-10-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Backed out changeset b1b03d237072
+
+2012-10-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Restore "Choose automatically" when preferred server group is
+	deleted.
+
+2012-10-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: use new variable completion scheme in dictionary window
+	* gebr: update dict complete when closing dctionary dialog
+	* gebr: add method gebr_ui_flow_browse_update_dict_complete
+	* gebr: add method gebr_dict_complete_update
+	* gebr: fix completion in program parameters
+
+2012-10-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving message of error at broken flow. (Fixes issue 1320)
+
+2012-10-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set sensitive of 'New line' to false if has multiple projects
+	selected
+	* Fix sensitive of Flow's edit comment when select a program
+
+2012-10-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve methods to reset and apply filter, and
+	non_select_single_job, and add methods to block and unblock changed
+	signal
+	* Remove unused variable from method to check before execution
+
+2012-10-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update interface according to the terms used in the English doc
+	(Fixes issue 1354)
+
+2012-10-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add imported flow into the line (Fixes issue 1339)
+
+2012-10-11  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix: set edit comments sensitive on multiple selection
+
+2012-10-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: add API to pass GebrGuiCompleteVariables into GebrGuiParam
+	* gebr: fix gebr_dict_complete_new constructor
+	* gebr: merge refactoring of GebrDictComplete
+	* gebr: implement GebrGuiCompleteVariables in GebrDictComplete
+
+2012-10-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply gebr-dictionary paradigm in IO completion
+	* Improve messages of the BrokenFlow dialog
+
+2012-10-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: move DictComplete to GebrGuiCompleteVariables
+	* gebr: add instance of GebrDictComplete into FlowBrowse
+
+2012-10-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Simplify access to the help of menu. (Fixes issue 1328)
+
+2012-10-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* merge: dictionary complete module
+	* gebr: implement update method in GebrDictComplete
+	* gebr: add gebr_dict_complete_get_filter into GebrDictComplete
+	* gebr: add gebr-dictionary module
+	* gebr: remove all calls to gebr_validator_set_document
+
+2012-10-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change layout of BrokenFlow dialog (Fixes issue 1320)
+
+2012-10-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding program's help in menu popup.
+
+2012-10-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Jobs: Change text from the label of the Jobs details (fixes issue
+	1319)
+
+2012-10-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing order of the snapshot icon and title at jobs tab.
+	* Removing context toggle buttons from Flows Tab.
+
+2012-10-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* merge: gebr report generation refactoring
+	* gebr: report: refactor all report methods into GebrReport
+	* gebr: add gebr_report_set_include_commentary
+	* gebr: report: remove gebr.h dependency in gebr-report
+	* gebr: report: move methods from flow and document to gebr-report
+	* gebr: report: add GBoxed structure to GebrReport
+	* gebr: make gebr_document_report_get_inner_body a private method
+	* gebr: make gebr_document_generate_header a private method
+	* gebr: move method gebr_document_get_css_header_field to gebr-report
+	* gebr: remove undefined method gebr_flow_get_detailed_report
+	* gebr: add module gebr-report for report generation
+	* gebr: put "static" in private method
+	gebr_document_generate_flow_revisions_content
+	* gebr: make gebr_document_report_get_styles a private method
+	* gebr: make gebr_document_report_get_styles_string a private method
+
+2012-10-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Joining snapshots and title columns from the Jobs tab.
+	* Prevent showing snapshot at undesired moments.
+
+2012-10-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add path validation to gebr-validator (Fixes issue 1325)
+
+2012-10-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* flowsUI: Change button in the top of the flows/programs list
+
+2012-10-08  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fix some translations mainly from detailed run dialog again
+	* Fix some translations mainly from detailed run dialog
+	* Clearer question
+
+2012-10-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.6: User guide update [Sprint 66]
+
 2012-10-05  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Fixed snapshots in centos 5. (Fixes issue 1318)

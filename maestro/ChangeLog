@@ -1,3 +1,27 @@
+2012-10-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix detection if maestro has duplicated daemons (Fixes issue 1342)
+
+2012-10-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update interface according to the terms used in the English doc
+	(Fixes issue 1354)
+
+2012-10-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Use servers administrative file in interactive mode (Fixes issue
+	1343)
+	* Save servers keyfile when loading from the system default (Fixes
+	issue 1323)
+
+2012-10-08  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fix some translations mainly from detailed run dialog again
+
+2012-10-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.6: User guide update [Sprint 66]
+
 2012-09-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Fixed sequentially run on maestro when sent from detailed execution

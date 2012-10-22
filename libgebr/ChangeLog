@@ -1,3 +1,163 @@
+2012-10-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed unit tests for gebr_geoxml_line_create_key with accent mark
+	strip.
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add method to repass event from toplevel window to internal widgets
+
+2012-10-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using GTk_STOCK_EDIT instead of kontac_todo in Edit icon.
+
+2012-10-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Alter message of BrokenFlow dialog
+
+2012-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: improve error messages for flow validation
+
+2012-10-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Review update of libgebr translation
+
+2012-10-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Correcting commentary on gebr_g_string_remove_accents
+	* Added new feature: removing accents, replacing to a no accented
+	character, when creating a directory
+	* Fixing gebr_g_string_remove_accents and adding comments on utils.h
+
+2012-10-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Initialization of group_warning_widget in
+	gebr_gui_program_edit_setup_ui. (Fixes issue 1355)
+
+2012-10-18  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* Translation of gebr and libgebr fuzzy translations
+	* Translation of fuzzy translations of gebr and libgebr
+	* Translation of fuzzy translations to Portuguese
+
+2012-10-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new method to improve validation of instantiable parameters
+	group
+	* Fix segfault when open and close program with more than one
+	parameter
+
+2012-10-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix tooltip when parameters file has path error (Fixes issue 1352)
+
+2012-10-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: remove deprecated variable completion method
+	* libgebr: remove old variable completion from
+	GebrGuiValueSequenceEdit
+	* libgebr: temporarily fix old completion scheme
+	* libgebr: fix insertion of variable completion
+	* libgebr: remove old enum CompletionType
+
+2012-10-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix unitary test on gebr_str_word_before_pos.
+
+2012-10-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: fix completion in program parameters
+
+2012-10-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix validating on completion of file parameters. (Fixes issue 1325)
+	* Improving message of error at broken flow. (Fixes issue 1320)
+
+2012-10-16  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* Fixed the size of the 'word' to make it NULL terminated
+
+2012-10-15  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* New function added on utils to remove accents
+
+2012-10-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Treat wrong offset of utf8 characters prior to auto completion
+	(Fixes issue 1205)
+
+2012-10-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add method to get number of time control to Jobs
+	* Search foward when press CTRL+F on report or flow revision and the
+	search bar already visible
+
+2012-10-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add sentinels to temporarily fix the segFault on ui_param
+
+2012-10-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update interface according to the terms used in the English doc
+	(Fixes issue 1354)
+
+2012-10-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix visualization of completion entries
+	* libgebr: deprecate old method for completion variables
+	* libgebr: add API to pass GebrGuiCompleteVariables into GebrGuiParam
+
+2012-10-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Improve messages of the BrokenFlow dialog
+	* Add sentinels to eventual segmentationFaults on
+	gebr_comm_ssh_run_server_finished
+
+2012-10-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: move DictComplete to GebrGuiCompleteVariables
+	* libgebr: add GebrGuiCompleteVariables interface
+	* libgebr: add method gebr_geoxml_document_type_contains
+	* libgebr: add gebr_geoxml_parameter_type_is_compatible method
+	* libgebr: remove warnings in gebr-validator
+
+2012-10-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add broken-flow-icon images
+	* Change layout of BrokenFlow dialog (Fixes issue 1320)
+
+2012-10-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Deleting extra open bracket when a accented word is inserted. (Fixes
+	issue 1205)
+
+2012-10-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gui: remove unused variable
+
+2012-10-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add path validation to gebr-validator (Fixes issue 1325)
+
+2012-10-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: validator: add gebr_validator_push/pop_document
+	* libgebr: validator: add internal getter method for documents
+
+2012-10-08  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixing last commit, changing program to programs
+	* Fixing commit-7827 for internationalization
+
+2012-10-08  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fix some translations mainly from detailed run dialog again
+
+2012-10-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.6: User guide update [Sprint 66]
+
 2012-10-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Removed Styles Combo class since its not being used
