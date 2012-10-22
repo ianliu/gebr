@@ -165,11 +165,11 @@ void test_gebr_geoxml_line_create_key(void)
 	g_free(key);
 
 	key = gebr_geoxml_line_create_key("Linhánha");
-	g_assert_cmpstr(key, ==, "linh_nha");
+	g_assert_cmpstr(key, ==, "linhanha");
 	g_free(key);
 
 	key = gebr_geoxml_line_create_key("Linha boçal");
-	g_assert_cmpstr(key, ==, "linha_bo_al");
+	g_assert_cmpstr(key, ==, "linha_bocal");
 	g_free(key);
 }
 
