@@ -48,6 +48,8 @@ p { text-align: justify; }
 .caption {font-style: italic;
 	  font-size: small; }
 
+.guimenu, .guisubmenu {font-family: courier; font-size: small;}
+
 a:active,
 a:link,
 a:visited { color: #0000AA; 
