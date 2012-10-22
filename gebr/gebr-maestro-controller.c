@@ -978,7 +978,7 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 		g_object_set(cell, "sensitive", TRUE, NULL);
 
 		if (!daemon){
-			gchar *markup_addr = g_strdup_printf("<span font_style='italic' font_weight='light'>%s</span>", addr);
+			gchar *markup_addr = g_strdup_printf("<span font_style='italic' weight='light'>%s</span>", addr);
 			g_object_set(cell, "markup", markup_addr, NULL);
 		} else {
 			g_object_set(cell, "text", addr, NULL);

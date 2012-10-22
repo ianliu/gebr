@@ -1472,7 +1472,7 @@ void project_line_delete(void)
 		GtkWidget * title = gtk_label_new("");
 		GtkWidget * message = gtk_label_new(_("The following documents are about to be deleted.\nThis operation can't be undone! Are you sure?\n"));
 		guint row = 0;
-		char *markup = g_markup_printf_escaped("<span font_weight='bold' size='large'>%s</span>", _("Confirm multiple deletion"));
+		char *markup = g_markup_printf_escaped("<span size='large'><b>%s</b></span>", _("Confirm multiple deletion"));
 		GtkWidget *scrolled_window;
 		scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
@@ -1514,7 +1514,7 @@ void project_line_delete(void)
 		GtkWidget * title = gtk_label_new("");
 		GtkWidget * message = gtk_label_new(_("The following document is about to be deleted.\nThis operation can't be undone! Are you sure?\n"));
 		guint row = 0;
-		char *markup = g_markup_printf_escaped("<span font_weight='bold' size='large'>%s</span>", _("Confirm deletion"));
+		char *markup = g_markup_printf_escaped("<span size='large'><b>%s</b></span>", _("Confirm deletion"));
 
 		dialog = gtk_dialog_new_with_buttons(_("Confirm deletion"), NULL,
 						     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
