@@ -346,6 +346,7 @@ void gebr_setup_ui(void)
 	/* Create the main window */
 	gtk_window_set_default_icon(gebr_gui_pixmaps_gebr_icon_16x16());
 	gebr.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	g_signal_connect(gebr.window, "key-press-event", G_CALLBACK(gebr_utils_hijack_key_press), NULL);
 	gtk_window_set_title(GTK_WINDOW(gebr.window), "GêBR");
 	gtk_widget_set_size_request(gebr.window, 700, 450);
 	gtk_widget_show(gebr.window);
