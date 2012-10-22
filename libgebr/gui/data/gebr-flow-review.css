@@ -34,6 +34,10 @@
 	font-weight: bold;
 }
 
+.param-group .label {
+	padding-left: 30px;
+}
+
 .io:before {
 	font-size: 12px;
 	font-weight: bold;

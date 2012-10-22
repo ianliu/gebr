@@ -262,6 +262,9 @@ body {
 .parameters tbody .param {
 	color: #333333;
 }
+.parameters tbody .param-group .label {
+	padding-left: 30px;
+}
 .snapshot {
 	border: 1px solid #aaaaaa;
 	margin-top: 20px;
