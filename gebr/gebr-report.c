@@ -1320,6 +1320,7 @@ static void append_parameter_row(GebrReport *report,
 				}
 				g_free(enum_value);
 			}
+			gboolean in_group = gebr_geoxml_parameter_get_is_in_group(parameter);
 			gchar *label = gebr_geoxml_parameter_get_label(parameter);
 			str_value->str = g_markup_printf_escaped("%s",str_value->str);
 			g_string_append_printf(dump,
@@ -1327,7 +1328,8 @@ static void append_parameter_row(GebrReport *report,
 			                       "        <td class=\"label\">%s</td>\n"
 			                       "        <td class=\"value\">%s</td>\n"
 			                       "      </tr>\n",
-					       is_required? "param-required" : "param", label, str_value->str);
+					       is_required? "param param-required" : in_group? "param param-group" : "param",
+					       label, str_value->str);
 			g_free(label);
 		}
 		g_string_free(str_value, TRUE);
