@@ -879,6 +879,8 @@ gebr_maestro_controller_server_popup_menu(GtkWidget * widget,
 	if(!daemon)
 		return NULL;
 
+	mc->priv->servers_view = widget;
+
 	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
 
 	menu = gtk_menu_new ();
@@ -886,7 +888,6 @@ gebr_maestro_controller_server_popup_menu(GtkWidget * widget,
 	GtkWidget *item;
 
 	if (state == SERVER_STATE_DISCONNECTED) {
-		mc->priv->servers_view = widget;
 		item = gtk_menu_item_new_with_mnemonic(_("_Connect"));
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 		g_signal_connect(item, "activate", G_CALLBACK(on_server_connect), mc);
