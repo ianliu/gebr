@@ -533,5 +533,9 @@ gint gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 
 void gebr_gui_help_button_clicked(const gchar *section, gchar **error);
 
+gint gebr_utils_hijack_key_press(GtkWindow *win,
+                                 GdkEventKey *event,
+                                 gpointer user_data);
+
 G_END_DECLS
 #endif				//__GEBR_GUI_UTILS_H

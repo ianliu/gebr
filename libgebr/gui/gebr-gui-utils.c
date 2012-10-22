@@ -1460,3 +1460,26 @@ gebr_gui_help_button_clicked(const gchar *section, gchar **error)
 
 	g_free(path);
 }
+
+gint
+gebr_utils_hijack_key_press(GtkWindow *win,
+                            GdkEventKey *event,
+                            gpointer user_data)
+{
+	GtkWidget *focus_widget;
+
+	focus_widget = gtk_window_get_focus (win);
+
+	if (GTK_IS_TREE_VIEW(focus_widget))
+		return FALSE;
+
+	if (focus_widget && (event->keyval == GDK_Delete ||           /* Filter Delete from accelerator keys */
+	    ((event->state & GDK_CONTROL_MASK) &&    		      /* CNTL keys... */
+	     ((event->keyval == GDK_c || event->keyval == GDK_C) ||   /* CNTL-C (copy)  */
+	      (event->keyval == GDK_x || event->keyval == GDK_X) ||   /* CNTL-X (cut)   */
+	      (event->keyval == GDK_v || event->keyval == GDK_V)))))  /* CNTL-V (paste) */
+	{
+		return gtk_widget_event (focus_widget, (GdkEvent *) event);
+	}
+	return FALSE;
+}
