@@ -362,6 +362,9 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
 		GList *paths = gtk_tree_selection_get_selected_rows(selection, &model);
 		gtk_tree_model_get_iter(model, &iter, paths->data);
 		gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, TRUE, -1);
+
+		project_line_load();
+		update_control_sensitive(upl);
 	}
 	line_info_update();
 }
