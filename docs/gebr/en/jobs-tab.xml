@@ -239,8 +239,8 @@
       <title>Jobs tab Right Panel</title>
       <mediaobject>
         <imageobject>
-					<imagedata fileref="../images/GeBR_jc_more_details.png"
-						contentwidth="404px" contentdepth="297px" />
+					<imagedata fileref="../images/GeBR_jobs_details.png"
+						contentwidth="416px" contentdepth="298px" />
         </imageobject>
       </mediaobject>
       <caption> Job information. The user can consult detailed information
@@ -259,8 +259,8 @@
     <title>Jobs outputs</title>
     <mediaobject>
       <imageobject>
-				<imagedata fileref="../images/GeBR_jc_output.png"
-					contentwidth="560px" contentdepth="459px" />
+				<imagedata fileref="../images/GeBR_jobs_output.png"
+					contentwidth="666px" contentdepth="473px" />
       </imageobject>
     </mediaobject>
     <caption>Screenshot of the outputs of a job.</caption>

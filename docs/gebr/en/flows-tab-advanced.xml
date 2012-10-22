@@ -98,8 +98,8 @@
           <title>Dictionary of variables</title>
           <mediaobject>
             <imageobject>
-	      <imagedata fileref="../images/GeBR_dictionary_variables_example.png"
-			 contentwidth="571px" contentdepth="435px" />
+	      <imagedata fileref="../images/GeBR_dictionary_variables.png"
+			 contentwidth="559px" contentdepth="386px" />
             </imageobject>
           </mediaobject>
           <caption>A variable with a value may be used with different

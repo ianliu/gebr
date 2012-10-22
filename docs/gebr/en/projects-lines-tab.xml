@@ -27,7 +27,7 @@
 				details of the selected item, like its name, description and creation
 				date.</caption>
       <imageobject>
-        <imagedata fileref="../images/janela_principal_1.png"  contentwidth="729px" contentdepth="472px" />
+				<imagedata fileref="../images/GeBR_projects_lines_tab.png"  contentwidth="729px" contentdepth="509px" />
       </imageobject>
     </mediaobject>
   </figure>
@@ -407,8 +407,8 @@
       <mediaobject>
         <caption>The comment editor window.</caption>
         <imageobject>
-					<imagedata fileref="../images/janela_comentarios_de_linha.png"
-						contentwidth="555px" contentdepth="385px" />
+					<imagedata fileref="../images/GeBR_line_comments.png"
+						contentwidth="556px" contentdepth="336px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -427,8 +427,8 @@
 					concerning the associated flows and their programs, 
 					important folders and variables.</caption>
         <imageobject>
-					<imagedata fileref="../images/janela_visualizar_relatorio.png"
-						contentwidth="669px" contentdepth="462px" />
+					<imagedata fileref="../images/GeBR_line_report.png"
+						contentwidth="779px" contentdepth="591px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -504,8 +504,8 @@
       <mediaobject>
         <caption>GêBR enables the report customization.</caption>
         <imageobject>
-					<imagedata fileref="../images/janela_visualizar_relatorio_menu.png"
-						contentwidth="437px" contentdepth="248px" />
+					<imagedata fileref="../images/GeBR_line_report_options.png"
+						contentwidth="418px" contentdepth="236px" />
         </imageobject>
       </mediaobject>
     </figure>

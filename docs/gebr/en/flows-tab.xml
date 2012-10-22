@@ -100,7 +100,8 @@
 					<emphasis>migration</emphasis>. All menus that have the word
 					migration in its title or description are shown.</caption>
 				<imageobject>
-					<imagedata fileref="../images/flows_menus_list_filter.png" contentwidth="531px" contentdepth="257px"/>
+					<imagedata fileref="../images/flows_menus_list_filter.png"
+						contentwidth="531px" contentdepth="257px"/>
 				</imageobject>
 			</mediaobject>
 		</figure>
@@ -356,8 +357,8 @@
 					it's possible to edit the input, output and log files for this flow
 					sequence.</caption>
 				<imageobject>
-					<imagedata fileref="../images/GeBR_flow_editor_input_file.png"
-						contentwidth="377px" contentdepth="201px" />
+					<imagedata fileref="../images/GeBR_flows_input_file.png"
+						contentwidth="286px" contentdepth="201px" />
 				</imageobject>
 			</mediaobject>
 		</figure>
@@ -401,8 +402,8 @@
 					necessary to type a <keycap>&lt;</keycap>.
 				</caption>
 				<imageobject>
-					<imagedata fileref="../images/GeBR_flow_editor_autocomplete.png"
-						contentwidth="284px" contentdepth="362px" />
+					<imagedata fileref="../images/GeBR_flows_autocomplete.png"
+						contentwidth="287px" contentdepth="389px" />
 				</imageobject>
 			</mediaobject>
 		</figure>
