@@ -1475,7 +1475,8 @@ gebr_utils_hijack_key_press(GtkWindow *win,
 
 	if (focus_widget && (event->keyval == GDK_Delete ||           /* Filter Delete from accelerator keys */
 	    ((event->state & GDK_CONTROL_MASK) &&    		      /* CNTL keys... */
-	     ((event->keyval == GDK_c || event->keyval == GDK_C) ||   /* CNTL-C (copy)  */
+	     ((event->keyval == GDK_a || event->keyval == GDK_A) ||   /* CNTL-A (select all) */
+	      (event->keyval == GDK_c || event->keyval == GDK_C) ||   /* CNTL-C (copy)  */
 	      (event->keyval == GDK_x || event->keyval == GDK_X) ||   /* CNTL-X (cut)   */
 	      (event->keyval == GDK_v || event->keyval == GDK_V)))))  /* CNTL-V (paste) */
 	{
