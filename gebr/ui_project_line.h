@@ -64,6 +64,8 @@ struct ui_project_line {
 	struct ui_project_line_info {
 		GtkBuilder *builder_proj;
 		GtkBuilder *builder_line;
+
+		GtkWidget *warn_label;
 	} info;
 };
 

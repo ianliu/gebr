@@ -183,11 +183,16 @@ struct ui_project_line *project_line_setup_ui(void)
 	GObject *infopage_proj = gtk_builder_get_object(ui_project_line->info.builder_proj, "main");
 	GObject *infopage_line = gtk_builder_get_object(ui_project_line->info.builder_line, "main");
 
+	GtkWidget *warn_label = gtk_label_new(NULL);
+	gtk_widget_set_sensitive(warn_label, FALSE);
+	ui_project_line->info.warn_label = warn_label;
+
 	GtkButton *maestro_button = GTK_BUTTON(gtk_builder_get_object(ui_project_line->info.builder_line, "maestro_button"));
 	g_signal_connect(maestro_button, "clicked", G_CALLBACK(on_maestro_button_clicked), ui_project_line);
 
 	gtk_box_pack_start(GTK_BOX(infopage), GTK_WIDGET(infopage_proj), FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(infopage), GTK_WIDGET(infopage_line), FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(infopage), warn_label, TRUE, TRUE, 0);
 
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), infopage);
 	return ui_project_line;
@@ -608,16 +613,58 @@ project_info_update(void)
 	g_free(tmp);
 }
 
+static void
+project_line_update_warn_message(struct ui_project_line *upl)
+{
+	GtkTreeModel *model;
+
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(upl->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	gint n_lines = 0;
+	gint n_projs = 0;
+	for(GList *i = rows; i; i = i->next) {
+		if (gtk_tree_path_get_depth(i->data) == 2)
+			n_lines++;
+		else
+			n_projs++;
+	}
+
+	gchar *message;
+	if (!n_lines && !n_projs)
+		message = g_strdup_printf(_("No project or line selected."));
+	else if (!n_lines)
+		message = g_strdup_printf(_("%d projects selected."), n_projs);
+	else if (!n_projs)
+		message = g_strdup_printf(_("%d lines selected."), n_lines);
+	else
+		message = g_strdup_printf(_("%d %s and %d %s selected."),
+		                          n_projs, n_projs > 1? "projects" : "project",
+		                          n_lines, n_lines > 1? "lines" : "line");
+
+	gtk_label_set_text(GTK_LABEL(upl->info.warn_label), message);
+	g_free(message);
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+}
+
 void project_line_info_update(void)
 {
 	GObject *infopage_proj = gtk_builder_get_object(gebr.ui_project_line->info.builder_proj, "main");
 	GObject *infopage_line = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "main");
 
 	if (!gebr.project_line) {
+		project_line_update_warn_message(gebr.ui_project_line);
+
 		gtk_widget_hide(GTK_WIDGET(infopage_proj));
 		gtk_widget_hide(GTK_WIDGET(infopage_line));
+		gtk_widget_show(GTK_WIDGET(gebr.ui_project_line->info.warn_label));
+
 		return;
 	}
+
+	gtk_widget_hide(GTK_WIDGET(gebr.ui_project_line->info.warn_label));
 
 	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
 		project_info_update();
@@ -1698,8 +1745,6 @@ update_control_sensitive(GebrUiProjectLine *upl)
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), FALSE);
 		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"), FALSE);
 	}
-
-	project_line_load();
 }
 
 /*
@@ -1711,8 +1756,7 @@ static void project_line_load(void)
 	GtkTreeIter child;
 
 	gboolean is_line;
-	gchar *project_filename;
-	gchar *line_filename;
+	gboolean multiple_selection = FALSE;
 
 	project_line_free();
 	if (!project_line_get_selected(&iter, DontWarnUnselection)) {
@@ -1720,45 +1764,46 @@ static void project_line_load(void)
 		return;
 	}
 
-	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
-	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
-	gtk_tree_path_free(path);
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
 
-	if (is_line) {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-				   PL_FILENAME, &line_filename, -1);
+	if (g_list_length(rows) >= 2)
+		multiple_selection = TRUE;
 
-		child = iter;
-		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, &child);
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-				   PL_FILENAME, &project_filename, -1);
-	} else {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-				   PL_FILENAME, &project_filename, -1);
-	}
+	if (!multiple_selection) {
+		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
+		is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
+		gtk_tree_path_free(path);
 
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-			   PL_XMLPOINTER, &gebr.project, -1);
-	if (is_line) {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &child,
-				   PL_XMLPOINTER, &gebr.line, -1);
-		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
-
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-		if (maestro) {
-			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-				gtk_widget_show(gebr.ui_flow_browse->view);
-				line_load_flows();
-				if (gebr_geoxml_line_get_flows_number(gebr.line) < 1)
-					flow_browse_reload_selected();
-			}
-			else {
-				gtk_widget_hide(gebr.ui_flow_browse->view);
-			}
+		if (is_line) {
+			child = iter;
+			gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, &child);
 		}
-	} else {
-		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
-		gebr.line = NULL;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+		                   PL_XMLPOINTER, &gebr.project, -1);
+
+		if (is_line) {
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &child,
+			                   PL_XMLPOINTER, &gebr.line, -1);
+			gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
+
+			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+			if (maestro) {
+				if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+					gtk_widget_show(gebr.ui_flow_browse->view);
+					line_load_flows();
+					if (gebr_geoxml_line_get_flows_number(gebr.line) < 1)
+						flow_browse_reload_selected();
+				}
+				else {
+					gtk_widget_hide(gebr.ui_flow_browse->view);
+				}
+			}
+		} else {
+			gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
+			gebr.line = NULL;
+		}
 	}
 
 	GebrMaestroServer *maestro =
@@ -1768,9 +1813,8 @@ static void project_line_load(void)
 
 	project_line_info_update();
 
-	g_free(project_filename);
-	if (is_line)
-		g_free(line_filename);
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
 }
 
 static void pl_change_selection_update_validator(GtkTreeSelection *selection)
