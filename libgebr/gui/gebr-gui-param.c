@@ -365,7 +365,7 @@ static void gebr_gui_param_sync_non_list(GebrGuiParam *parameter_widget)
 }
 
 static void gebr_gui_param_on_value_widget_changed(GtkWidget * widget,
-							      GebrGuiParam *parameter_widget)
+                                                   GebrGuiParam *parameter_widget)
 {
 	gebr_gui_param_sync_non_list(parameter_widget);
 	gebr_gui_param_report_change(parameter_widget);
@@ -1751,7 +1751,7 @@ gboolean gebr_gui_param_validate(GebrGuiParam *self)
 {
 	gboolean validate;
 
-	if (self->group_warning_widget)
+	if (GTK_IS_IMAGE(self->group_warning_widget))
 		gebr_gui_group_validate(self->validator, self->parameter, self->group_warning_widget);
 
 	if (!__parameter_accepts_expression(self))

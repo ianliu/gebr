@@ -312,6 +312,7 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 	gtk_widget_show_all(vbox);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
+	GList *groups = NULL;
 	radio_group = NULL;
 	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
 	for (gboolean first_parameter = TRUE; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
@@ -326,13 +327,21 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 			first_parameter = FALSE;
 		}
 
-		if (gebr_geoxml_parameter_get_group(GEBR_GEOXML_PARAMETER(parameter)))
-			gebr_gui_group_validate(program_edit->validator,
-			                        GEBR_GEOXML_PARAMETER(parameter),
-			                        program_edit->group_warning_widget);
+		if (gebr_geoxml_parameter_get_group(GEBR_GEOXML_PARAMETER(parameter))) {
+			gebr_geoxml_object_ref(parameter);
+			groups = g_list_prepend(groups, GEBR_GEOXML_PARAMETER(parameter));
+		}
 
 		gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
 	}
+
+	for (GList *i = groups; i; i = i->next)
+		gebr_gui_group_validate(program_edit->validator,
+		                        i->data,
+		                        program_edit->group_warning_widget);
+
+	g_list_foreach(groups, (GFunc)gebr_geoxml_object_unref, NULL);
+	g_list_free(groups);
 
 	return frame;
 }
