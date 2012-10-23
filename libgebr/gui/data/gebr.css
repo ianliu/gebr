@@ -179,6 +179,25 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px; }
 }
 
 /* main & content */
+@media screen and (max-width: 600px) {
+	body {
+		padding-top: 5px;
+	}
+	.inner-container {
+    	width : 90%
+  	}
+  	.outer-container { 
+  		padding-bottom : 24px; 
+  	}
+	.content {
+		width: 96%;
+	}
+}
+@media screen and (min-width: 601px) {
+	.content {
+		width: 76%;
+	}
+}
 @media screen {
   .main {
     border-top : 4px solid #FFF;
@@ -186,8 +205,7 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px; }
   }
   .content {
     float : right;
-    width : 76%;
-    margin-left : 2%
+    margin-left : 2%;
   }
 }
 
@@ -197,7 +215,6 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px; }
   }
   .content {
     float : left;
-    width : 96%;
     margin-left : 10px
   }
 }
@@ -232,11 +249,34 @@ h1,h2,h3 {padding-top: 6px; color: #553; margin-bottom: 4px; }
 .parameters .grouplabel:before { content : "[ "; }
 
 /* navigation */
+@media screen and (max-width: 600px) {
+	.navigation {
+		width: 80%;
+		margin-top: 10px;
+	}
+	.list-programs {
+		display: block;
+		float: left;
+	}
+	.list-links {
+		display: none;
+	}
+}
+@media screen and (min-width: 601px) {
+	.navigation {
+		width: 20%;
+	}
+	.list-programs {
+		display: block;
+	}
+	.list-links {
+		display: block;
+	}
+}
 @media screen {
   .links, .navigation {
     float : left;
-    width : 18%;
-    margin-left : 2%
+    margin-left : 2%;
   }
   .links h2, .navigation h2 {
     color : #5A5A43;
