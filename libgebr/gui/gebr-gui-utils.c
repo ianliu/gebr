@@ -272,7 +272,7 @@ static gboolean gebr_gui_message_dialog_vararg(GtkMessageType type, GtkButtonsTy
 	 * large messages. */
 	dialog = gtk_message_dialog_new_with_markup(NULL,
 						    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-						    type, buttons, "<span size='large'<b>>%s</b></span>",
+						    type, buttons, "<span size='large'><b>%s</b></span>",
 						    header ? header : "");
 	if (title)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);

@@ -322,6 +322,7 @@ flow_check_before_execution(GebrGeoXmlFlow *flow,
 	case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
 	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
 		header	= _("Broken flow");
+		break;
 	}
 
 	if (is_snapshot)
