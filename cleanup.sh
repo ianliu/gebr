@@ -39,6 +39,7 @@ case x$1 in
     xall | x)
       killg gebrd
       killg gebrm
+      killg gebr-comm-socketchannel
       ;;
     xALL)
       killg gebrd
