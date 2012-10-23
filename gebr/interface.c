@@ -162,7 +162,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	{"escape", "escape", NULL, "Escape",
 		NULL, G_CALLBACK(on_flows_escape_context)},
 	{"flow_edition_change_status", NULL, N_("Enable"),
-		NULL, N_("Toggle the status of the selected programs"), G_CALLBACK(on_flow_component_status_activate)},
+		"space", N_("Toggle the status of the selected programs"), G_CALLBACK(on_flow_component_status_activate)},
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {
