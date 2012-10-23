@@ -417,6 +417,13 @@ on_ui_flows_io_overwrite_toggled(GtkCheckMenuItem *item,
 	gtk_tree_path_free(path);
 }
 
+static void
+free_dai(GebrUiFlowsDai *dai)
+{
+	gtk_tree_iter_free(dai->iter);
+	g_free(dai);
+}
+
 GtkMenu *
 gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 			    GebrGeoXmlFlow *flow,
@@ -450,11 +457,13 @@ gebr_ui_flows_io_popup_menu(GebrUiFlowsIo *io,
 	GebrUiFlowsDai *dai = g_new0(GebrUiFlowsDai, 1);
 	dai->doc = GEBR_GEOXML_DOCUMENT(flow);
 	dai->io  = io;
-	dai->iter = iter;
+	dai->iter = gtk_tree_iter_copy(iter);
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), overwrite);
 	g_signal_connect(menu_item, "toggled", overwrite_callback, dai);
 	gtk_menu_shell_append(GTK_MENU_SHELL (menu), menu_item);
+
+	g_object_weak_ref(G_OBJECT(menu), (GWeakNotify)free_dai, dai);
 
 	gtk_widget_show_all(menu);
 
