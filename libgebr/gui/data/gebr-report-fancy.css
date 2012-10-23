@@ -307,6 +307,11 @@ body {
 .parameters tbody .param {
 	color: #333333;
 }
+
+.parameters tbody .param-group {
+	background: #f8f8f8;
+}
+
 .parameters tbody .param-group .label {
 	padding-left: 30px;
 }

@@ -34,6 +34,9 @@
 	font-weight: bold;
 }
 
+.param-group {
+	background: #f8f8f8;
+}
 .param-group .label {
 	padding-left: 30px;
 }
