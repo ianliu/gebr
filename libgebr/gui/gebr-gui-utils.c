@@ -1436,8 +1436,15 @@ gebr_gui_help_button_clicked(const gchar *section, gchar **error)
 	gchar *loc;
 	gchar *path;
 	gchar *local_error;
+	const gchar *language;
 
-	loc = setlocale(LC_MESSAGES, NULL);
+	// Get environment variable LANGUAGE
+	language = g_getenv("LANGUAGE");
+	if (!language || !*language)
+		loc = setlocale(LC_MESSAGES, NULL);
+	else
+		loc = g_strdup(language);
+	g_debug("LANGUAGE: %s", loc);
 	if (g_str_has_prefix (loc, "pt"))
 		path = g_strconcat ("file://", GEBR_USERDOC_DIR,
 				    "/pt_BR/html/index.html#", section, NULL);

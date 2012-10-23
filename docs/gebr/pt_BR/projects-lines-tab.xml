@@ -156,7 +156,7 @@
         <step>
           <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha,
             o <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato. Você também pode adicionar caminhos
-            personalizados de linha, assunto melhor abordado na <xref linkend="projects_lines_edit_paths"/>.</para>
+            personalizados de linha, assunto melhor abordado na <xref linkend="projects_lines_line_paths"/>.</para>
         </step>
       </procedure>
       <figure>
@@ -234,10 +234,10 @@
       (dependendo do caso) você pode editar os
       campos <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>, <guilabel>Autor</guilabel> e
       <guilabel>Email</guilabel>. Para o caso de edição de propriedades de linha, pode-se editar o <guilabel>Maestro</guilabel> e adicionar caminhos
-      personalizados, cujo detalhamento será abordado na <xref linkend="projects_lines_edit_paths"/>.</para>
+      personalizados, cujo detalhamento será abordado na <xref linkend="projects_lines_line_paths"/>.</para>
   </section>
   
-  <section xml:id="projects_lines_edit_paths">
+  <section xml:id="projects_lines_line_paths">
     <title>Editar caminhos preferenciais da linha</title>
     <para>Na <xref linkend="flow_editor_edit_input_output"/> veremos que um Fluxo pode
       estar associado a alguns arquivos de dados. Veremos também que essa associação pode ser feita mais facilmente
@@ -319,7 +319,7 @@
   </section>
   <section xml:id="projects_lines_dictionary">
     <title>Editar o dicionário de variáveis do projeto ou linha</title>
-    <para>Este recurso está documentado na <xref linkend="dictionary_variables"/>.</para>
+    <para>Este recurso está documentado na <xref linkend="flows_dictionary_variables"/>.</para>
   </section>
   <section xml:id="projects_lines_import_project">
     <title>Importar um projeto ou linha</title>

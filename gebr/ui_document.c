@@ -275,7 +275,7 @@ on_document_help_button_clicked (GtkButton *button,
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
-		section = g_strdup("projects_lines_create_projects");
+		section = g_strdup("projects_lines_create_projects_and_lines");
 		break;
 	default:
 		section = NULL;

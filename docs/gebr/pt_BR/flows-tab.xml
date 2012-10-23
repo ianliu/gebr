@@ -14,7 +14,7 @@
   <itemizedlist>
     <listitem>
       <para>
-        <link linkend="flows_browser_create_flow">Criar um novo Fluxo</link>
+        <link linkend="flows_create_flow">Criar um novo Fluxo</link>
       </para>
     </listitem>
     <listitem>
@@ -79,7 +79,7 @@
       notar que diversos comandos podem ser acionados por este método. Em determinados casos, isso é
       mais <emphasis role="bold">fácil e rápido</emphasis> do que usar os botões.</para>
     </tip>
-    <section xml:id="flows_browser_create_flow">
+    <section xml:id="flows_create_flow">
       <title>Criando Fluxos</title>
       <para>Na GêBR, um <emphasis>Fluxo</emphasis> é uma <emphasis role="bold">sequência de
           operações</emphasis> selecionadas pelo usuário. Estas operações, também chamadas
@@ -314,7 +314,7 @@
   </section>
   <section xml:id="flows_browser_edit_dictionary">
     <title>Editar o dicionário de variáveis de um Fluxo</title>
-    <para>Este recurso está documentado na <xref linkend="dictionary_variables"/>.</para>
+    <para>Este recurso está documentado na <xref linkend="flows_dictionary_variables"/>.</para>
   </section>
   <section xml:id="flows_browser_save_state_flow">
     <title>Salvar o estado de um Fluxo</title>

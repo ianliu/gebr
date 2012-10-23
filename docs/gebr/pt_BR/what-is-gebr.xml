@@ -61,7 +61,7 @@
     </para>
         <itemizedlist>
           <listitem>
-            O dicionário de variáveis e os parâmetros dos programas aceitam expressões aritméticas (veja seção <xref linkend="dictionary_variables"/>).
+            O dicionário de variáveis e os parâmetros dos programas aceitam expressões aritméticas (veja seção <xref linkend="flows_dictionary_variables"/>).
           </listitem>
           <listitem>
             A GêBR automatiza fluxos repetitivos através de loops (veja seção <xref linkend="flow_editor_loop"/>).

@@ -22,7 +22,7 @@
       <step>
 	<para> In case of Import, the user must first 
 	  <emphasis role="bold">select a flow</emphasis> (or see
-	  <xref linkend="projects_lines_create_projects" />, if one does not exist).</para>
+	  <xref linkend="projects_lines_create_projects_and_lines" />, if one does not exist).</para>
       </step>
       <step>
 	<para>Select the tab 

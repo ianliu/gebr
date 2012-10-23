@@ -1682,7 +1682,7 @@ on_password_dialog_response(GtkDialog *dialog, gint response, gpointer pointer)
 	gchar *error;
 
 	if (response == GTK_RESPONSE_HELP) {
-		gebr_gui_help_button_clicked("intercommunication_between_players", &error);
+		gebr_gui_help_button_clicked("technical_aspects_intercommunication_between_players", &error);
 		if (error) {
 			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, error);
 			g_free(error);

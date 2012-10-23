@@ -166,7 +166,7 @@
         não são aceitos.</para>
     </section>
   </section>
-  <section xml:id="ssh_authentication">
+  <section xml:id="technical_aspects_intercommunication_between_players">
     <title>Autenticação por SSH</title>
 
 		<para>
@@ -206,7 +206,7 @@
 		</para>
 
 	</section>
-  <section xml:id="dictionary_variables">
+  <section xml:id="flows_dictionary_variables">
     <title>Dicionário de Variáveis</title>
     <para>
       A GêBR estende o conceito de variavéis da programação computacional à manipulação de projetos, linhas e fluxos. A utilização de variáveis pode auxiliar na legibilidade do código, portabilidade e na edição dinâmica de propriedades dentro de seu processamento.
