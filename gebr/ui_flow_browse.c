@@ -180,7 +180,7 @@ gebr_flow_browse_on_add_menu(GebrMenuView *view,
 
 	if (c1 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY && c2 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
 		document_free(GEBR_GEOXML_DOC(menu));
-		gebr_menu_view_choose_infobar_text(view, TRUE, FALSE);
+		gebr_menu_view_choose_infobar_text(view, TRUE, FALSE, FALSE);
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, _("This flow already contains a loop"));
 		return;
 	}

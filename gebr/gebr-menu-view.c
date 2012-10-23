@@ -132,7 +132,7 @@ gebr_menu_view_add(GtkTreeView *tree_view,
 		return;
 	}
 
-	if (gebr_menu_view_choose_infobar_text(view, FALSE, FALSE))
+	if (gebr_menu_view_choose_infobar_text(view, FALSE, FALSE, FALSE))
 		return;
 
 	GtkTreeModel *model = gtk_tree_view_get_model(tree_view);
@@ -154,7 +154,7 @@ gebr_menu_view_activate_add(GebrMenuView *view)
 	GtkTreePath *path = NULL;
 	GtkTreeIter iter;
 
-	if (gebr_menu_view_choose_infobar_text(view, FALSE, FALSE))
+	if (gebr_menu_view_choose_infobar_text(view, FALSE, FALSE, FALSE))
 		return;
 
 	model = gtk_tree_view_get_model(view->priv->tree_view);
@@ -175,7 +175,7 @@ gebr_menu_view_show_help(GebrMenuView *view)
 	gchar *html;
 	GebrGeoXmlFlow *menu;
 
-	gebr_menu_view_choose_infobar_text(view, FALSE, TRUE);
+	gebr_menu_view_choose_infobar_text(view, FALSE, TRUE, FALSE);
 
 	if (!gebr_menu_view_get_selected_menu(view, &iter)) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(view->priv->help), FALSE);
@@ -205,14 +205,18 @@ gebr_menu_view_show_help(GebrMenuView *view)
 			   -1);
 
 	menu = menu_load_path(menu_filename);
-	if (menu == NULL)
-		goto out;
+	if (menu) {
+		gebr_gui_html_viewer_widget_generate_links(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), GEBR_GEOXML_OBJECT(menu));
+		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu));
+		if (g_strcmp0(html,"") == 0) {
+			gebr_menu_view_choose_infobar_text(view, FALSE, TRUE, TRUE);
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(view->priv->help), FALSE);
+		} else {
+			gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), html);
+		}
 
-	gebr_gui_html_viewer_widget_generate_links(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), GEBR_GEOXML_OBJECT(menu));
-	html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu));
-	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), html);
-
-out:	g_free(menu_filename);
+	}
+	g_free(menu_filename);
 }
 
 static void
@@ -756,7 +760,8 @@ gebr_menu_view_set_open_infobar(GebrMenuView *view,  gboolean open)
 gboolean
 gebr_menu_view_choose_infobar_text(GebrMenuView *view,
                                    gboolean multiple_loop,
-                                   gboolean help)
+                                   gboolean help,
+                                   gboolean no_html)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -769,6 +774,10 @@ gebr_menu_view_choose_infobar_text(GebrMenuView *view,
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
 		} else if (!gebr_menu_view_get_selected_menu(view, &iter)) {
+			gtk_label_set_text(GTK_LABEL(view->priv->label_info), _("This item does not have help."));
+			gebr_menu_view_set_open_infobar(view,  TRUE);
+			return TRUE;
+		} else if (no_html) {
 			gtk_label_set_text(GTK_LABEL(view->priv->label_info), _("This item does not have help."));
 			gebr_menu_view_set_open_infobar(view,  TRUE);
 			return TRUE;
