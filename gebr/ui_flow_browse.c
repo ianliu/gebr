@@ -2016,7 +2016,7 @@ flow_browse_static_info_update(void)
 	gchar *last_run_date = gebr_geoxml_flow_get_date_last_run(gebr.flow);
 
 	if (!last_run_date || !*last_run_date) {
-		last_text = g_strdup(_("This flow was never executed"));
+		last_text = g_strdup(_("This flow has never been executed"));
 	} else {
 		const gchar *last_run = gebr_localized_date(last_run_date);
 		last_text = g_markup_printf_escaped(_("Submitted on %s"), last_run);

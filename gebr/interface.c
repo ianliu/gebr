@@ -174,7 +174,7 @@ static const GtkActionEntry actions_entries_job_control[] = {
 	{"job_control_close", "trash-empty", N_("Close"),
 		"Delete", N_("Clear selected jobs"), G_CALLBACK(on_job_control_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
-		NULL, N_("Ask node to cancel the selected job"), G_CALLBACK(on_job_control_stop)},
+		NULL, N_("Cancel the selected job"), G_CALLBACK(on_job_control_stop)},
 	{"job_control_filter", "filter", N_("Filter"),
 		NULL, N_("Filter jobs by group, node and status"), NULL},
 };
