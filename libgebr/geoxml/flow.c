@@ -891,8 +891,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 					    GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
 					    _("The program '%s' is sending output"
 					      " which is being ignored by the next program '%s'."),
-					    program_title,
-					    prev_program_title);
+					      prev_program_title,
+					      program_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				gebr_pairstrfreev(pvector);
