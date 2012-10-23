@@ -58,6 +58,13 @@ on_parameters_key_press(GtkWidget *widget,
 }
 
 static void
+on_validated(GebrGuiParam *widget,
+	     gpointer user_data)
+{
+	validate_and_save_flow();
+}
+
+static void
 on_parameters_default_button_clicked(GtkButton *button,
 				     GebrGuiProgramEdit *program_edit)
 {
@@ -65,6 +72,7 @@ on_parameters_default_button_clicked(GtkButton *button,
 	params = gebr_geoxml_program_get_parameters(program_edit->program);
 	gebr_geoxml_parameters_reset_to_default(params);
 	gebr_gui_program_edit_reload(program_edit, NULL);
+	gebr_gui_program_edit_set_validated_callback(program_edit, on_validated, NULL);
 	validate_and_save_flow();
 	gebr_geoxml_object_unref(params);
 	return;
@@ -75,13 +83,6 @@ on_parameters_help_button_clicked(GtkButton *button,
 				  GebrGuiProgramEdit *program_edit)
 {
 	gebr_help_show(GEBR_GEOXML_OBJECT(program_edit->program), FALSE);
-}
-
-static void
-on_validated(GebrGuiParam *widget,
-	     gpointer user_data)
-{
-	validate_and_save_flow();
 }
 
 /* Public functions {{{1*/

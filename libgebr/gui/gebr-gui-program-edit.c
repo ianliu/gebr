@@ -191,6 +191,9 @@ void gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlPr
 	if (program != NULL)
 		program_edit->program = program;
 
+	g_list_free(program_edit->priv->widgets);
+	program_edit->priv->widgets = NULL;
+
 	gtk_container_foreach(GTK_CONTAINER(program_edit->hbox), (GtkCallback) gtk_widget_destroy, NULL);
 
 	gtk_container_foreach(GTK_CONTAINER(program_edit->scrolled_window), (GtkCallback) gtk_widget_destroy, NULL);
