@@ -3483,7 +3483,14 @@ gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,
 {
 	gtk_widget_show(fb->context[current_context]);
 
-	fb->flow_main_view = current_context == CONTEXT_FLOW ? TRUE : FALSE;
+	if (current_context == CONTEXT_FLOW) {
+		fb->flow_main_view = TRUE;
+	} else {
+		if (gebr_geoxml_flow_get_revisions_number(gebr.flow) >= 1)
+			fb->flow_main_view = FALSE;
+		else
+			fb->flow_main_view = TRUE;
+	}
 
 	for (gint i = CONTEXT_FLOW; i < CONTEXT_N_TYPES; i++) {
 		if (i == current_context)
