@@ -1086,8 +1086,7 @@ void flow_program_remove(void)
 				GebrGeoXmlSequence *param;
 				GError *err = NULL;
 				GList *affected;
-				param = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-				gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(param), &affected, &err);
+				gebr_ui_document_remove_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
 			}
 			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
 		}
@@ -1238,12 +1237,7 @@ void flow_program_paste(void)
 	}
 
 	if (gebr_geoxml_clipboard_has_forloop() && !flow_has_loop)
-	{
-		GebrGeoXmlParameter *parameter;
-		gebr_geoxml_flow_insert_iter_dict(gebr.flow);
-		parameter = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
-		gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
-	}
+		gebr_ui_document_add_iter_and_update_complete(gebr.flow);
 
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE);
 	flow_browse_program_check_sensitiveness();

@@ -849,14 +849,10 @@ flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
 	else if (is_control) {
 		GebrGeoXmlSequence *parameter;
 
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
-			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-			gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
-		} else {
-			gebr_geoxml_flow_insert_iter_dict(gebr.flow);
-			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
-		}
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+			gebr_ui_document_remove_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
+		else
+			gebr_ui_document_add_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
 	}
 
 	/* Update interface */
@@ -2263,14 +2259,14 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 
 	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 		if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
-			gebr_geoxml_flow_insert_iter_dict(gebr.flow);
-			GebrGeoXmlSequence *parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
+			gebr_ui_document_add_iter_and_update_complete(gebr.flow);
 		} else {
 			gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
 			GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
 			const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
 			gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
+
+			gebr_ui_flow_browse_update_dict_complete(gebr.ui_flow_browse);
 		}
 	}
 
@@ -2787,6 +2783,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
                        continue;
 
                if (!has_control && control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
+        	       gebr_ui_flow_browse_update_dict_complete(gebr.ui_flow_browse);
                        gtk_tree_store_prepend(gebr.ui_flow_browse->store, &iter, &parent);
                        has_control = TRUE;
                } else
