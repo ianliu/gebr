@@ -995,6 +995,7 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("HOME: %s", home->str);
 
 			gebr_maestro_server_set_home_dir(maestro, home->str);
+			flow_browse_validate_io(gebr.ui_flow_browse);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
