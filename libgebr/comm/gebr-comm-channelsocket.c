@@ -32,6 +32,8 @@
 
 static void __g_channel_socket_new_connection(GebrCommChannelSocket * channel_socket);
 
+static int x11_open_helper(Buffer *b);
+
 /*
  * gobject stuff
  */
@@ -192,4 +194,71 @@ GebrCommSocketAddress gebr_comm_channel_socket_get_forward_address(GebrCommChann
 	g_return_val_if_fail(GEBR_COMM_IS_CHANNEL_SOCKET(channel_socket), _gebr_comm_socket_address_unknown());
 
 	return channel_socket->forward_address;
+}
+
+/*
+ * This is a special state for X11 authentication spoofing.  An opened X11
+ * connection (when authentication spoofing is being done) remains in this
+ * state until the first packet has been completely read.  The authentication
+ * data in that packet is then substituted by the real data if it matches the
+ * fake data, and the channel is put into normal mode.
+ * XXX All this happens at the client side.
+ * Returns: 0 = need more data, -1 = wrong cookie, 1 = ok
+ */
+static int
+x11_open_helper(Buffer *b)
+{
+	u_char *ucp;
+	u_int proto_len, data_len;
+
+	/* Check if the fixed size part of the packet is in buffer. */
+	if (buffer_len(b) < 12)
+		return 0;
+
+	/* Parse the lengths of variable-length fields. */
+	ucp = buffer_ptr(b);
+	if (ucp[0] == 0x42) {	/* Byte order MSB first. */
+		proto_len = 256 * ucp[6] + ucp[7];
+		data_len = 256 * ucp[8] + ucp[9];
+	} else if (ucp[0] == 0x6c) {	/* Byte order LSB first. */
+		proto_len = ucp[6] + 256 * ucp[7];
+		data_len = ucp[8] + 256 * ucp[9];
+	} else {
+		debug2("Initial X11 packet contains bad byte order byte: 0x%x",
+		    ucp[0]);
+		return -1;
+	}
+
+	/* Check if the whole packet is in buffer. */
+	if (buffer_len(b) <
+	    12 + ((proto_len + 3) & ~3) + ((data_len + 3) & ~3))
+		return 0;
+
+	/* Check if authentication protocol matches. */
+	if (proto_len != strlen(x11_saved_proto) ||
+	    memcmp(ucp + 12, x11_saved_proto, proto_len) != 0) {
+		debug2("X11 connection uses different authentication protocol.");
+		return -1;
+	}
+	/* Check if authentication data matches our fake data. */
+	if (data_len != x11_fake_data_len ||
+	    memcmp(ucp + 12 + ((proto_len + 3) & ~3),
+		x11_fake_data, x11_fake_data_len) != 0) {
+		debug2("X11 auth data does not match fake data.");
+		return -1;
+	}
+	/* Check fake data length */
+	if (x11_fake_data_len != x11_saved_data_len) {
+		error("X11 fake_data_len %d != saved_data_len %d",
+		    x11_fake_data_len, x11_saved_data_len);
+		return -1;
+	}
+	/*
+	 * Received authentication protocol and data match
+	 * our fake data. Substitute the fake data with real
+	 * data.
+	 */
+	memcpy(ucp + 12 + ((proto_len + 3) & ~3),
+	    x11_saved_data, x11_saved_data_len);
+	return 1;
 }
