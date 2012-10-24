@@ -57,6 +57,8 @@ struct _GebrCommServerPriv {
 	InteractiveState istate;
 	gchar *title;
 	gchar *description;
+
+	GHashTable *qa_cache;
 };
 
 G_DEFINE_TYPE(GebrCommServer, gebr_comm_server, G_TYPE_OBJECT);
@@ -254,6 +256,9 @@ gebr_comm_server_new(const gchar * _address,
 	server->last_error = g_string_new(NULL);
 	server->state = SERVER_STATE_UNKNOWN;
 	server->error = SERVER_ERROR_UNKNOWN;
+
+	server->priv->qa_cache = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
 	gebr_comm_server_free_for_reuse(server);
 	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
 
@@ -602,12 +607,22 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 				      server->priv->description);
 		} else {
 			GString *answer = g_string_new(NULL);
-			if (server->ops->ssh_question(server, _("SSH host key question:"),
-						      output->str, server->user_data) == FALSE) {
-				g_string_assign(answer, "no\n");
-				gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH host key rejected."));
+			gchar *cached_answer = g_hash_table_lookup(server->priv->qa_cache, output->str);
+
+			if (!cached_answer) {
+				if (server->ops->ssh_question(server, _("SSH host key question:"),
+				                              output->str, server->user_data) == FALSE) {
+					g_string_assign(answer, "no\n");
+					gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH host key rejected."));
+				} else
+					g_string_assign(answer, "yes\n");
+
+				g_hash_table_insert(server->priv->qa_cache,
+				                    g_strdup(output->str),
+				                    g_strdup(answer->str));
 			} else
-				g_string_assign(answer, "yes\n");
+				g_string_assign(answer, cached_answer);
+
 			gebr_comm_terminal_process_write_string(process, answer);
 			g_string_free(answer, TRUE);
 		}
@@ -987,6 +1002,9 @@ static void gebr_comm_server_free_x11_forward(GebrCommServer *server)
  */
 static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 {
+	if (server->priv->qa_cache)
+		g_hash_table_remove_all(server->priv->qa_cache);
+
 	gebr_comm_protocol_reset(server->socket->protocol);
 	gebr_comm_server_free_x11_forward(server);
 	switch (server->process.use) {
