@@ -239,10 +239,19 @@ set_status_for_maestro(GebrMaestroController *self,
 			gtk_label_set_markup(GTK_LABEL(status_title), title);
 			g_free(title);
 
+			gchar *message;
+			if (g_strrstr(msg, "Host key"))
+				message = g_strdup_printf("%sThis machine appears to be untrusted, contact the system administrator"
+							  "to resolve that problem, or connect to another machine.",
+						          msg);
+			else
+				message = g_strdup(msg);
+
 			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-			gchar *txt = g_markup_printf_escaped(_("The connection reported the following error:\n<i>%s</i>"), msg);
+			gchar *txt = g_markup_printf_escaped(_("The connection reported the following error:\n<i>%s</i>"), message);
 			gtk_label_set_markup(GTK_LABEL(status_label), txt);
 			g_free(txt);
+			g_free(message);
 
 			gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
