@@ -2233,3 +2233,28 @@ validate_entry(GtkEntry *entry,
 		gtk_widget_set_tooltip_text(GTK_WIDGET(entry), err_text);
 	}
 }
+
+void
+gebr_ui_document_remove_iter_and_update_complete(GebrGeoXmlDocument *flow)
+{
+	GebrGeoXmlSequence *parameter;
+	GError *err = NULL;
+	GList *affected;
+
+	parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(flow));
+	gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
+
+	gebr_ui_flow_browse_update_dict_complete(gebr.ui_flow_browse);
+}
+
+void
+gebr_ui_document_add_iter_and_update_complete(GebrGeoXmlDocument *flow)
+{
+	GebrGeoXmlSequence *parameter;
+
+	gebr_geoxml_flow_insert_iter_dict(flow);
+	parameter = gebr_geoxml_document_get_dict_parameter(flow);
+	gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
+
+	gebr_ui_flow_browse_update_dict_complete(gebr.ui_flow_browse);
+}

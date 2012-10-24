@@ -76,6 +76,11 @@ void gebr_ui_document_send_paths_to_maestro(GebrMaestroServer *maestro,
 
 void validate_entry(GtkEntry *entry, gboolean error, const gchar *err_text, const gchar *clean_text);
 
+void gebr_ui_document_remove_iter_and_update_complete(GebrGeoXmlDocument *flow);
+
+void gebr_ui_document_add_iter_and_update_complete(GebrGeoXmlDocument *flow);
+
+
 G_END_DECLS
 
 #endif				//__UI_DOCUMENT_H
