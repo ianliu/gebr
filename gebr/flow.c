@@ -689,7 +689,7 @@ on_response_event(GtkDialog *dialog,
                   gpointer   user_data)
 {
 	if (response_id == GTK_RESPONSE_HELP) {
-		const gchar *section = "flows_browser_save_state_flow";
+		const gchar *section = "flows_snapshots";
 		gchar *error;
 
 		gebr_gui_help_button_clicked(section, &error);

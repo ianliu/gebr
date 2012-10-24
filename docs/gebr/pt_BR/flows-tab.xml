@@ -39,7 +39,7 @@
     </listitem>
     <listitem>
       <para>
-        <link linkend="flows_browser_save_state_flow">Salvar o estado de um Fluxo</link>
+        <link linkend="flows_snapshots">Salvar o estado de um Fluxo</link>
       </para>
     </listitem>
     <listitem>
@@ -316,7 +316,7 @@
     <title>Editar o dicionário de variáveis de um Fluxo</title>
     <para>Este recurso está documentado na <xref linkend="flows_dictionary_variables"/>.</para>
   </section>
-  <section xml:id="flows_browser_save_state_flow">
+  <section xml:id="flows_snapshots">
     <title>Salvar o estado de um Fluxo</title>
     <para>Ao trabalhar com Fluxos na GêBR, você encontrará diversas situações em que é interessante usar um Fluxo
       existente como base para a criação de novos Fluxos. Por exemplo, você pode querer fazer experiências com um

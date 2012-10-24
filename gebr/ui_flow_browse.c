@@ -1633,7 +1633,7 @@ void
 on_snapshot_help_button_clicked(GtkWidget *widget,
 		   GtkWidget *dialog)
 {
-	const gchar *section = "flows_browser_save_state_flow";
+	const gchar *section = "flows_snapshots";
 	gchar *error;
 
 	gebr_gui_help_button_clicked(section, &error);
