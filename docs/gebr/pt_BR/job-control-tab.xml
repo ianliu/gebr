@@ -18,7 +18,7 @@
     </imageobject>
   </mediaobject> 
   <para>Como visto na  
-    <xref linkend="flow_editor_execute_flow" />, a GêBR troca para a aba 
+    <xref linkend="flows_detailed_execution" />, a GêBR troca para a aba 
     <guilabel>Tarefas</guilabel> sempre que um Fluxo é executado.</para>
   <para>Esta aba contém três seções:</para>
   <itemizedlist>

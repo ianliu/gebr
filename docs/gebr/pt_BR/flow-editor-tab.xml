@@ -47,7 +47,7 @@
     </listitem>
     <listitem>
       <para>
-        <link linkend="flow_editor_execute_flow">Executar um Fluxo</link>
+        <link linkend="flows_detailed_execution">Executar um Fluxo</link>
       </para>
     </listitem>
     <listitem>
@@ -187,7 +187,7 @@
         <guimenuitem>Excluir</guimenuitem>.</para>
     </note>
   </section>
-  <section xml:id="flow_editor_execute_flow">
+  <section xml:id="flows_detailed_execution">
     <title>Executar um Fluxo</title>
     <para>Para executar o Fluxo atual, clique no botão 
       <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. A execução de um fluxo também pode ser executada através da aba <guilabel>Fluxos</guilabel> (veja <xref linkend="flows_browser_execute_flow"/>).</para>
