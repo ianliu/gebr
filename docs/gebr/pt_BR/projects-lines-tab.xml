@@ -59,7 +59,7 @@
     </listitem>
     <listitem>
       <para>
-        <link linkend="projects_lines_view_report_project">Visualização de relatórios</link>
+        <link linkend="projects_lines_report">Visualização de relatórios</link>
       </para>
     </listitem>
   </itemizedlist>
@@ -414,7 +414,7 @@
   Ao lado direito da aba de <guilabel>Projetos e Linhas</guilabel> você pode ver os detalhes do 
   projeto ou linha selecionado. Na parte inferior desta janela, você tem acesso a dois botões: <guilabel>Visualizar Relatório</guilabel> e <guilabel>Editar Comentários</guilabel>.
 
-  <section xml:id="projects_lines_view_report_project">
+  <section xml:id="projects_lines_report">
     <title>Visualizar relatório</title>
     <para>Como explorado na seção anterior, pode-se criar e editar informações adicionais sobre
       projetos e linhas. Para visualizar o relatório que você criou, clique no botão Visualizar relatório, na parte

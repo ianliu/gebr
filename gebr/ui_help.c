@@ -151,7 +151,7 @@ static void on_help_clicked(GtkAction *action, GebrGuiHtmlViewerWindow * self)
 	if (g_strcmp0(gtk_action_get_name(action), "EditorHelpAction") == 0)
 		gebr_gui_help_button_clicked("projects_lines_edit_comments_project", NULL);
 	else
-		gebr_gui_help_button_clicked("projects_lines_view_report_project", NULL);
+		gebr_gui_help_button_clicked("projects_lines_report", NULL);
 }
 
 static void 

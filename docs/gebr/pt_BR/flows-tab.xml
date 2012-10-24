@@ -477,6 +477,6 @@
     <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
       <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
       Fluxo em questão, com a pequena diferença de que é possível englobar o relatório do Fluxo no relatório da
-      linha. As demais funcionalidades são descritas na <xref linkend="projects_lines_view_report_project"/>.</para>
+      linha. As demais funcionalidades são descritas na <xref linkend="projects_lines_report"/>.</para>
   </section>
 </section>
