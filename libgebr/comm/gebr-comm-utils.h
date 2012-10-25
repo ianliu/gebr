@@ -30,5 +30,12 @@
  */
 gchar *gebr_get_xauth_cookie(const gchar *display_number);
 
-#endif /* end of include guard: __GEBR_COMM_UTILS_H__ */
+/**
+ * gebr_convert_xauth_cookie_to_binary:
+ *
+ * Converts the xauth cookie from a string representing hexdecimal digits to
+ * binary data.
+ */
+GByteArray *gebr_convert_xauth_cookie_to_binary(const gchar *xauth_str);
 
+#endif /* end of include guard: __GEBR_COMM_UTILS_H__ */

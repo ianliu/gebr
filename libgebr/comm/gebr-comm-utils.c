@@ -21,6 +21,7 @@
 #include "gebr-comm-utils.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
@@ -63,3 +64,19 @@ gebr_get_xauth_cookie(const gchar *display_number)
 	return mcookie_str;
 }
 
+GByteArray *
+gebr_convert_xauth_cookie_to_binary(const gchar *xauth_str)
+{
+	gint i;
+	guint value;
+	guint data_len = (guint) strlen(xauth_str) / 2;
+	GByteArray *ba = g_byte_array_new();
+	for (i = 0; i < data_len; i++) {
+		if (sscanf(xauth_str + 2 * i, "%2x", &value) != 1) {
+			perror("sscanf");
+			exit(-1);
+		}
+		g_byte_array_append(ba, (guint8*)&value, 1);
+	}
+	return NULL;
+}
