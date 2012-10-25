@@ -144,20 +144,8 @@ on_assistant_title_changed(GtkEntry *entry,
 		data->title_ready = TRUE;
 	else
 		data->title_ready = FALSE;
-	validate_entry(GTK_ENTRY(entry), !data->title_ready, _("Title cannot be empty"), _(""));
+	validate_entry(GTK_ENTRY(entry), !data->title_ready, _("Title cannot be empty"), NULL);
 	on_assistant_entry_changed(data);
-}
-
-static void
-on_assistant_description_changed(GtkEntry *entry,
-                           WizardData *data)
-{
-	const gchar *text = gtk_entry_get_text(entry);
-
-	if (text && *text )
-		data->description_ready = TRUE;
-	else
-		data->description_ready = FALSE;
 }
 
 static void
@@ -527,7 +515,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	data->assistant = assistant;
 	data->builder = builder;
 	data->title_ready = TRUE;
-	data->description_ready = TRUE;
 	data->email_ready = TRUE;
 	g_signal_connect(assistant, "destroy", G_CALLBACK(on_assistant_destroy), data);
 	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
@@ -588,10 +575,8 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	on_assistant_entry_changed(data);
 	on_assistant_title_changed(GTK_ENTRY(entry_title), data);
-	on_assistant_description_changed(GTK_ENTRY(entry_description), data);
 	on_assistant_email_changed(GTK_ENTRY(entry_email), data);
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_title_changed), data);
-	g_signal_connect(entry_description, "changed", G_CALLBACK(on_assistant_description_changed), data);
 	g_signal_connect(entry_email, "changed", G_CALLBACK(on_assistant_email_changed), data);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
 	g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
