@@ -441,6 +441,14 @@ gboolean gebr_callback_true(void);
  */
 void gebr_string_freeall(GString *string);
 
+/*
+ * gebr_add_pattern_on_address:
+ *
+ * Apply pattern on @addr, converting localhost or
+ * IP 127.0.0.1 to hostname
+ */
+const gchar *gebr_apply_pattern_on_address(const gchar *addr);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

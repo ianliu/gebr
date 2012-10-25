@@ -1594,3 +1594,16 @@ gebr_string_freeall(GString *string)
 {
 	g_string_free(string, TRUE);
 }
+
+const gchar *
+gebr_apply_pattern_on_address(const gchar *addr)
+{
+	const gchar *address;
+	if (g_strcmp0(addr, "127.0.0.1") == 0 ||
+			g_strcmp0(addr, "localhost") == 0)
+		address = g_get_host_name();
+	else
+		address = addr;
+
+	return address;
+}
