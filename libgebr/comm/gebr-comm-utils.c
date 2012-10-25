@@ -80,3 +80,14 @@ gebr_convert_xauth_cookie_to_binary(const gchar *xauth_str)
 	}
 	return NULL;
 }
+
+gchar *
+gebr_get_display(void)
+{
+	const gchar *display = getenv("DISPLAY");
+
+	if (!display)
+		return g_strdup("");
+	else
+		return g_strdup(strchr(display, ':'));
+}

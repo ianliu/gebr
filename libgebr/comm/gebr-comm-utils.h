@@ -38,4 +38,11 @@ gchar *gebr_get_xauth_cookie(const gchar *display_number);
  */
 GByteArray *gebr_convert_xauth_cookie_to_binary(const gchar *xauth_str);
 
+/**
+ * gebr_get_display:
+ *
+ * Returns: the display number from $DISPLAY environment variable.
+ */
+gchar *gebr_get_display(void);
+
 #endif /* end of include guard: __GEBR_COMM_UTILS_H__ */

@@ -866,16 +866,8 @@ static void
 gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 				  GebrCommServer *server)
 {
-	const gchar *display;
-	gchar *display_number = NULL;
+	gchar *display_number = gebr_get_display();
 	const gchar *hostname = g_get_host_name();
-
-
-	display = getenv("DISPLAY");
-	if (!display)
-		display = "";
-	else
-		display_number = strchr(display, ':');
 
 	gebr_comm_server_change_state(server, SERVER_STATE_CONNECT);
 
@@ -898,7 +890,7 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 						      gebr_comm_protocol_get_version(),
 						      hostname);
 	}
-
+	g_free(display_number);
 }
 
 static void
