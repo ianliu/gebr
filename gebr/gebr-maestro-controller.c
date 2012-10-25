@@ -139,7 +139,7 @@ insert_new_entry(GebrMaestroController *mc)
 	gtk_list_store_prepend(mc->priv->model, &iter);
 	gtk_list_store_set(mc->priv->model, &iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
-	                   MAESTRO_CONTROLLER_ADDR, _("Add a node"),
+	                   MAESTRO_CONTROLLER_ADDR, _("Click here to add a node"),
 	                   MAESTRO_CONTROLLER_EDITABLE, TRUE,
 	                   -1);
 }
