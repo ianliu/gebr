@@ -36,6 +36,7 @@
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-protocol.h"
 #include "gebr-comm-uri.h"
+#include "gebr-comm-utils.h"
 
 /*
  * Declarations
@@ -861,48 +862,6 @@ static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServer
 		server->state = state;
 }
 
-/*
- * get this X session magic cookie
- */
-gchar *
-get_xauth_cookie(const gchar *display_number)
-{
-	if (!display_number)
-		return g_strdup("");
-
-	gchar *mcookie_str = g_new(gchar, 33);
-	GString *cmd_line = g_string_new(NULL);
-
-	g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display_number);
-
-	g_debug("GET XATUH COOKIE WITH COMMAND: %s", cmd_line->str);
-
-	/* WORKAROUND: if xauth is already executing it will lock
-	 * the auth file and it will fail to retrieve the m-cookie.
-	 * So, as a workaround, we try to get the m-cookie many times.
-	 */
-	gint i;
-	for (i = 0; i < 5; i++) {
-		FILE *output_fp = popen(cmd_line->str, "r");
-		if (fscanf(output_fp, "%32s", mcookie_str) != 1)
-			usleep(100*1000);
-		else {
-			pclose(output_fp);
-			break;
-		}
-		pclose(output_fp);
-	}
-
-	if (i == 5)
-		strcpy(mcookie_str, "");
-
-	g_debug("===== COOKIE ARE %s", mcookie_str);
-
-	g_string_free(cmd_line, TRUE);
-
-	return mcookie_str;
-}
-
 static void
 gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 				  GebrCommServer *server)
@@ -921,7 +880,7 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 	gebr_comm_server_change_state(server, SERVER_STATE_CONNECT);
 
 	if (server->priv->is_maestro) {
-		gchar *mcookie_str = get_xauth_cookie(display_number);
+		gchar *mcookie_str = gebr_get_xauth_cookie(display_number);
 		GTimeVal gebr_time;
 		g_get_current_time(&gebr_time);
 		gchar *gebr_time_iso = g_time_val_to_iso8601(&gebr_time);

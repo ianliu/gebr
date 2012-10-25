@@ -9,6 +9,7 @@ comm/gebr-comm-socket.c
 comm/gebr-comm-socketaddress.c
 comm/gebr-comm-streamsocket.c
 comm/gebr-comm-terminalprocess.c
+comm/gebr-comm-utils.c
 comm/socketchannel/socketchannel.c
 date.c
 gebr-arith-expr.c

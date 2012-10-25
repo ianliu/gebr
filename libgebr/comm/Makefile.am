@@ -55,6 +55,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-streamsocket.c	\
 	gebr-comm-terminalprocess.c	\
 	gebr-comm-uri.c			\
+	gebr-comm-utils.c		\
 	$(NULL)
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
@@ -82,7 +83,9 @@ noinst_HEADERS = \
 	gebr-comm-protocol_p.h			\
 	gebr-comm-socketaddressprivate.h	\
 	gebr-comm-socketprivate.h		\
-	gebr-comm-streamsocketprivate.h
+	gebr-comm-streamsocketprivate.h		\
+	gebr-comm-utils.h			\
+	$(NULL)
 
 AM_CPPFLAGS =			\
 	$(GLIB_CFLAGS)		\
