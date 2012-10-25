@@ -44,6 +44,7 @@
 #include "gebr-menu-view.h"
 #include "gebr-gui-tool-button.h"
 #include "gebr-report.h"
+#include "ui_document.h"
 
 #define JOB_BUTTON_SIZE 120
 
@@ -847,8 +848,6 @@ flow_browse_change_iter_status(GebrGeoXmlProgramStatus status,
 	if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED && !is_control)
 		validate_program_iter(iter, NULL);
 	else if (is_control) {
-		GebrGeoXmlSequence *parameter;
-
 		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 			gebr_ui_document_remove_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
 		else
@@ -1739,6 +1738,8 @@ gebr_flow_browse_snapshot_revert(const gchar *rev_id)
 	gebr_validator_force_update(gebr.validator);
 	flow_browse_revalidate_programs(gebr.ui_flow_browse);
 	flow_browse_load();
+
+	gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, gebr.ui_flow_browse);
 
 	gebr_ui_flow_browse_update_speed_slider_sensitiveness(gebr.ui_flow_browse);
 	gchar *last_date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(gebr.flow));
