@@ -163,8 +163,6 @@ void gebr_geoxml_program_set_status(GebrGeoXmlProgram * program, GebrGeoXmlProgr
 
 	switch(status) {
 	case GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED:
-		status_str = "unconfigured";
-		break;
 	case GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED:
 		status_str = "configured";
 		break;
@@ -266,9 +264,7 @@ GebrGeoXmlProgramStatus gebr_geoxml_program_get_status(GebrGeoXmlProgram * progr
 
 	status = __gebr_geoxml_get_attr_value((GdomeElement *) program, "status");
 
-	if (!strcmp(status, "unconfigured"))
-		ret = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
-	else if (!strcmp(status, "configured"))
+	if (!strcmp(status, "unconfigured") || !strcmp(status, "configured"))
 		ret = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
 	else if (!strcmp(status, "disabled"))
 		ret = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
