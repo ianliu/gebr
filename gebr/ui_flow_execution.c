@@ -537,6 +537,8 @@ gebr_ui_flow_run_snapshots(GebrUiFlowExecution *ui_flow_execution,
 	gchar **snaps = g_strsplit(snapshots, ",", -1);
 	const gchar *id = NULL;
 
+	const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
+
 	for (gint i = 0; snaps[i]; i++) {
 		GebrGeoXmlDocument *snap_flow;
 		gchar *xml;
@@ -553,8 +555,6 @@ gebr_ui_flow_run_snapshots(GebrUiFlowExecution *ui_flow_execution,
 				g_warn_if_reached();
 				return;
 			}
-
-			const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(snap_flow));
 
 			gebr_geoxml_document_set_title(GEBR_GEOXML_DOCUMENT(snap_flow), flow_title);
 			gebr_geoxml_document_set_description(GEBR_GEOXML_DOCUMENT(snap_flow), comment);
