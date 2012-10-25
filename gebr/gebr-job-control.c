@@ -175,7 +175,7 @@ static void gebr_job_control_include_cmd_line(GebrJobControl *jc,
 
 gboolean static update_user_defined_filters(GebrJobControl *jc);
 
-void gebr_job_control_free_user_defined_filter(GebrJobControl *jc);
+
 /* Private methods {{{1 */
 static void
 gebr_jc_get_jobs_state(GebrJobControl *jc,

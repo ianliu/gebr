@@ -171,6 +171,13 @@ detail_button_query_tooltip(GtkWidget  *widget,
  */
 void gebr_job_control_set_automatic_filter(GebrJobControl *jc, gboolean value);
 
+/*
+ * gebr_job_control_free_user_defined_filter:
+ *
+ * Free user defined filter
+ */
+void gebr_job_control_free_user_defined_filter(GebrJobControl *jc);
+
 /**
  * gebr_job_control_get_selected_job:
  *
