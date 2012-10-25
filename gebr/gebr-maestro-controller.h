@@ -133,6 +133,27 @@ GtkMenu *gebr_maestro_controller_server_popup_menu(GtkWidget * widget,
 void gebr_maestro_controller_update_daemon_model(GebrMaestroServer *maestro,
                                                  GebrMaestroController *mc);
 
+/*
+ * create_maestro_chooser_model
+ *
+ * Read the environment variable GEBR_DEFAULT_MAESTRO
+ * and read its content, according to the following syntax:
+ * maestro1, description1; maestro2, description2
+ *
+ * */
+void gebr_maestro_controller_create_chooser_model (GtkListStore *model,
+                                                   GebrMaestroServer *maestro);
+
+/*
+ * gebr_maestro_controller_update_chooser_model:
+ *
+ * Update maestro chooser model using default model for @combo, or
+ * if pass %NULL in @combo, update use the combo on @mc to update
+ */
+void gebr_maestro_controller_update_chooser_model(GebrMaestroServer *maestro,
+                                                  GebrMaestroController *mc,
+                                                  GtkComboBox *combo);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_CONTROLLER_H__ */

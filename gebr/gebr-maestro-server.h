@@ -105,6 +105,12 @@ struct _GebrMaestroServer {
 	GebrMaestroServerPriv *priv;
 };
 
+enum {
+	MAESTRO_DEFAULT_ADDR,
+	MAESTRO__DEFAULT_DESCRIPTION,
+	MAESTRO_DEFAULT_N_COLUMN
+};
+
 typedef enum {
 	MAESTRO_SERVER_TYPE,
 	MAESTRO_SERVER_NAME,

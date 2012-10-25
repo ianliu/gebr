@@ -1471,6 +1471,27 @@ on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 	gebr_maestro_server_set_autoconnect(mc->priv->maestro, daemon, !ac);
 }
 
+static void
+on_combo_set_text(GtkCellLayout   *cell_layout,
+                  GtkCellRenderer *cell,
+                  GtkTreeModel    *tree_model,
+                  GtkTreeIter     *iter,
+                  gpointer 	   data)
+{
+	gchar *description;
+
+	gtk_tree_model_get(tree_model, iter,
+	                   MAESTRO__DEFAULT_DESCRIPTION, &description,
+	                   -1);
+
+	gchar *text = g_markup_printf_escaped("<i>%s</i>", description);
+
+	g_object_set(cell, "markup", text, NULL);
+
+	g_free(text);
+	g_free(description);
+}
+
 void
 gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 {
@@ -1505,6 +1526,18 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_entry_set_text(entry, gebr_maestro_server_get_address(maestro));
 	g_signal_connect(entry, "activate", G_CALLBACK(connect_to_maestro), self);
 
+	// Create maestro combo options
+	GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, TRUE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(combo), renderer, on_combo_set_text, NULL, NULL);
+
+	GtkListStore *maestro_model = gtk_list_store_new(MAESTRO_DEFAULT_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING);
+
+	gebr_maestro_controller_create_chooser_model(maestro_model, maestro);
+
+	gtk_combo_box_set_model(GTK_COMBO_BOX(combo), GTK_TREE_MODEL(maestro_model));
+	gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(combo), MAESTRO_DEFAULT_ADDR);
+
 	const gchar *error_type, *error_msg;
 	gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
 	on_maestro_error(maestro, gebr_maestro_server_get_address(maestro),
@@ -1519,7 +1552,6 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	 */
 	GtkTreeModel *model = GTK_TREE_MODEL(self->priv->model);
 	gtk_tree_view_set_model(view, model);
-	GtkCellRenderer *renderer ;
 
         gtk_drag_source_set(GTK_WIDGET(view), GDK_BUTTON1_MASK, entries, n_entries, GDK_ACTION_COPY);
         g_signal_connect(view, "drag-data-get", G_CALLBACK(drag_data_get_handl), NULL);
@@ -1635,11 +1667,7 @@ connect_to_maestro(GtkEntry *entry,
 		   GebrMaestroController *self)
 {
 	const gchar *entry_text = gtk_entry_get_text(entry);
-	const gchar *address;
-	if (g_strcmp0(entry_text, "127.0.0.1")==0 || g_strcmp0(entry_text, "localhost")==0)
-		address = g_get_host_name();
-	else
-		address = entry_text;
+	const gchar *address = gebr_apply_pattern_on_address(entry_text);
 	gebr_maestro_controller_connect(self, address);
 }
 
@@ -2058,6 +2086,8 @@ update_maestro_view(GebrMaestroController *mc,
 			gebr_maestro_controller_update_daemon_model(maestro, mc);
 	}
 
+	gebr_maestro_controller_update_chooser_model(maestro, mc, NULL);
+
 	gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(view);
 	gtk_tree_selection_set_select_function(selection, (GtkTreeSelectionFunc)nodes_selection_func,
@@ -2195,4 +2225,85 @@ GtkTreeModel *
 gebr_maestro_controller_get_servers_model(GebrMaestroController *mc)
 {
 	return GTK_TREE_MODEL(mc->priv->model);
+}
+
+void
+gebr_maestro_controller_update_chooser_model(GebrMaestroServer *maestro,
+                                             GebrMaestroController *mc,
+                                             GtkComboBox *combobox)
+{
+	GtkTreeModel *model;
+
+	if (!combobox) {
+		GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(mc->priv->builder, "combo_maestro"));
+		 model = gtk_combo_box_get_model(GTK_COMBO_BOX(combo));
+	} else
+		 model = gtk_combo_box_get_model(GTK_COMBO_BOX(combobox));
+
+	gtk_list_store_clear(GTK_LIST_STORE(model));
+	gebr_maestro_controller_create_chooser_model(GTK_LIST_STORE(model), maestro);
+}
+
+void
+gebr_maestro_controller_create_chooser_model (GtkListStore *model,
+                                              GebrMaestroServer *maestro)
+{
+	GtkTreeIter iter;
+	const gchar *maestros_default = g_getenv("GEBR_DEFAULT_MAESTRO");
+	gboolean has_config_maestro = FALSE;
+
+	if (maestros_default) {
+		gchar **options = g_strsplit(maestros_default, ";", -1);
+		for (gint i = 0; options[i] && *options[i]; i++) {
+			gchar **m = g_strsplit(options[i], ",", -1);
+
+			if (g_strcmp0(gebr.config.maestro_address->str, m[0]) == 0)
+				has_config_maestro = TRUE;
+
+			gtk_list_store_append(model, &iter);
+			gtk_list_store_set(model, &iter,
+			                   MAESTRO_DEFAULT_ADDR, m[0],
+			                   MAESTRO__DEFAULT_DESCRIPTION, m[1],
+			                   -1);
+
+			g_strfreev(m);
+		}
+		g_strfreev(options);
+
+		if (!maestro && g_strcmp0(gebr.config.maestro_address->str, "") && !has_config_maestro) {
+			gtk_list_store_append(model, &iter);
+			gtk_list_store_set(model, &iter,
+			                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
+			                   MAESTRO__DEFAULT_DESCRIPTION, _("Suggested maestro"),
+			                   -1);
+		}
+	} else {
+		const gchar *local_maestro = g_get_host_name();
+		const gchar *current_maestro = gebr_maestro_server_get_address(maestro);
+
+		if (g_strcmp0(current_maestro, gebr.config.maestro_address->str) != 0) {
+			gtk_list_store_append(model, &iter);
+			gtk_list_store_set(model, &iter,
+			                   MAESTRO_DEFAULT_ADDR, current_maestro,
+			                   MAESTRO__DEFAULT_DESCRIPTION, _("Current maestro"),
+			                   -1);
+		}
+
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter,
+		                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
+		                   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from File"),
+		                   -1);
+
+		if (g_strcmp0(local_maestro, current_maestro) != 0 &&
+		    g_strcmp0(local_maestro, gebr.config.maestro_address->str) != 0 &&
+		    g_strcmp0(current_maestro, "localhost") != 0 &&
+		    g_strcmp0(gebr.config.maestro_address->str, "localhost") != 0) {
+			gtk_list_store_append(model, &iter);
+			gtk_list_store_set(model, &iter,
+			                   MAESTRO_DEFAULT_ADDR, "localhost",
+			                   MAESTRO__DEFAULT_DESCRIPTION, _("Maestro for local machine"),
+			                   -1);
+		}
+	}
 }

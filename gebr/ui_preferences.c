@@ -34,12 +34,6 @@
 #include "gebr.h"
 #include "gebr-version.h"
 
-enum {
-	MAESTRO_DEFAULT_ADDR,
-	MAESTRO__DEFAULT_DESCRIPTION,
-	MAESTRO_DEFAULT_N_COLUMN
-};
-
 typedef enum {
 	WIZARD_STATUS_WITHOUT_PREFERENCES,
 	WIZARD_STATUS_WITHOUT_MAESTRO,
@@ -70,8 +64,6 @@ static void on_assistant_destroy(GtkWidget *window,
 static void on_assistant_prepare(GtkAssistant *assistant,
 				 GtkWidget *current_page,
 				 struct ui_preferences *up);
-static void create_maestro_chooser_model(GtkListStore *model,
-					 GebrMaestroServer *maestro);
 
 static void validate_entry(GtkEntry *entry,
                            gboolean error,
@@ -178,6 +170,7 @@ set_status_for_maestro(GebrMaestroController *self,
                        struct ui_preferences *up,
                        GebrCommServerState state)
 {
+	GtkComboBox *combo = GTK_COMBO_BOX(gtk_builder_get_object(up->builder, "maestro_combo"));
 	GtkWidget *main_maestro = GTK_WIDGET(gtk_builder_get_object(up->builder, "maestro_chooser"));
 	GtkWidget *main_status = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_status"));
 	GObject *status_img = gtk_builder_get_object(up->builder, "status_img");
@@ -257,6 +250,8 @@ set_status_for_maestro(GebrMaestroController *self,
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
 		}
 	}
+
+	gebr_maestro_controller_update_chooser_model(maestro, NULL, combo);
 }
 
 static void
@@ -468,7 +463,10 @@ on_connect_maestro_clicked(GtkButton *button,
 
 	if (up->maestro_addr)
 		g_free(up->maestro_addr);
-	up->maestro_addr = g_strdup(gtk_entry_get_text(up->maestro_entry));
+
+	const gchar *entry_text = gtk_entry_get_text(up->maestro_entry);
+	const gchar *address = gebr_apply_pattern_on_address(entry_text);
+	up->maestro_addr = g_strdup(address);
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, up->maestro_addr);
 
@@ -696,9 +694,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_maestro_clicked), up);
 		g_signal_connect(up->maestro_entry, "activate", G_CALLBACK(on_connect_maestro_activate), up);
-
-		//GtkWidget *stop_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "stop_button"));
-		//g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_maestro_clicked), up);
 
 		gtk_widget_show(connections_info);
 
@@ -953,55 +948,6 @@ set_servers_page(GtkBuilder *builder,
 	g_signal_connect(GTK_ENTRY(server_entry), "changed", G_CALLBACK(on_server_entry_changed), up);
 }
 
-/*
- * create_maestro_chooser_model
- *
- * Read the environment variable GEBR_DEFAULT_MAESTRO
- * and read its content, according to the following syntax:
- * maestro1, description1; maestro2, description2
- *
- * */
-static void
-create_maestro_chooser_model (GtkListStore *model, GebrMaestroServer *maestro)
-{
-	GtkTreeIter iter;
-	const gchar *maestros_default = g_getenv("GEBR_DEFAULT_MAESTRO");
-	gboolean has_config_maestro = FALSE;
-
-	if (maestros_default) {
-		gchar **options = g_strsplit(maestros_default, ";", -1);
-		for (gint i = 0; options[i] && *options[i]; i++) {
-			gchar **m = g_strsplit(options[i], ",", -1);
-
-			if (g_strcmp0(gebr.config.maestro_address->str, m[0]) == 0)
-				has_config_maestro = TRUE;
-
-			gtk_list_store_append(model, &iter);
-			gtk_list_store_set(model, &iter,
-			                   MAESTRO_DEFAULT_ADDR, m[0],
-			                   MAESTRO__DEFAULT_DESCRIPTION, m[1],
-			                   -1);
-
-			g_strfreev(m);
-		}
-		g_strfreev(options);
-
-		if (!maestro && g_strcmp0(gebr.config.maestro_address->str, "") && !has_config_maestro) {
-			gtk_list_store_append(model, &iter);
-			gtk_list_store_set(model, &iter,
-			                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-			                   MAESTRO__DEFAULT_DESCRIPTION, _("Suggested maestro"),
-			                   -1);
-		}
-	} else {
-		gtk_list_store_append(model, &iter);
-		gtk_list_store_set(model, &iter,
-		                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-		                   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from File"),
-		                   -1);
-	}
-}
-
 static void
 set_maestro_chooser_page(GtkBuilder *builder,
                          struct ui_preferences *up)
@@ -1018,7 +964,7 @@ set_maestro_chooser_page(GtkBuilder *builder,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-	create_maestro_chooser_model(model, maestro);
+	gebr_maestro_controller_create_chooser_model(model, maestro);
 
 	gtk_combo_box_set_model(combo, GTK_TREE_MODEL(model));
 	gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(combo), MAESTRO_DEFAULT_ADDR);
