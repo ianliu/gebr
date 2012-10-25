@@ -2252,7 +2252,7 @@ gebr_ui_document_add_iter_and_update_complete(GebrGeoXmlDocument *flow)
 {
 	GebrGeoXmlSequence *parameter;
 
-	gebr_geoxml_flow_insert_iter_dict(flow);
+	gebr_geoxml_flow_insert_iter_dict(GEBR_GEOXML_FLOW(flow));
 	parameter = gebr_geoxml_document_get_dict_parameter(flow);
 	gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 
