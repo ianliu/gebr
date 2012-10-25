@@ -470,6 +470,12 @@ on_close_infobar(GtkButton  *button,
 }
 
 static void
+on_more_info_press (GebrMenuView *view)
+{
+	gebr_gui_tool_button_toggled_active(gebr.menu_button, TRUE);
+}
+
+static void
 gebr_menu_view_init(GebrMenuView *view)
 {
 	view->priv = G_TYPE_INSTANCE_GET_PRIVATE(view,
@@ -616,6 +622,8 @@ gebr_menu_view_init(GebrMenuView *view)
 	view->priv->help_viewer = gebr_gui_html_viewer_widget_new();
 	gebr_gui_html_viewer_widget_set_is_menu(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), TRUE);
 	gtk_box_pack_start(GTK_BOX(view->priv->vbox), view->priv->help_viewer, TRUE, TRUE, 0);
+
+	g_signal_connect(GEBR_GUI_HTML_VIEWER_WIDGET(view->priv->help_viewer), "navigation-requested", G_CALLBACK(on_more_info_press), view);
 
 	gtk_widget_show_all(view->priv->vbox);
 	gtk_widget_hide_all(view->priv->help_viewer);
