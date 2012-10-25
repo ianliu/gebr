@@ -26,6 +26,11 @@
 #include "gebr-comm-streamsocketprivate.h"
 #include "gebr-comm-socketaddressprivate.h"
 
+struct _GebrCommChannelSocketPriv
+{
+	int slot;
+};
+
 /*
  * prototypes
  */
@@ -45,14 +50,20 @@ enum {
 };
 // static guint object_signals[LAST_SIGNAL];
 
-static void gebr_comm_channel_socket_class_init(GebrCommChannelSocketClass * class)
+static void gebr_comm_channel_socket_class_init(GebrCommChannelSocketClass * klass)
 {
 	/* virtual */
-	class->parent.new_connection = (typeof(class->parent.new_connection)) __g_channel_socket_new_connection;
+	klass->parent.new_connection = (typeof(klass->parent.new_connection)) __g_channel_socket_new_connection;
+
+	g_type_class_add_private(klass, sizeof(GebrCommChannelSocketPriv));
 }
 
 static void gebr_comm_channel_socket_init(GebrCommChannelSocket * channel_socket)
 {
+	channel_socket->priv = G_TYPE_INSTANCE_GET_PRIVATE(channel_socket,
+							   GEBR_COMM_CHANNEL_SOCKET_TYPE,
+							   GebrCommChannelSocketPriv);
+
 	channel_socket->parent.state = GEBR_COMM_SOCKET_STATE_NOTLISTENING;
 }
 

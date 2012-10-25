@@ -50,6 +50,7 @@ GType gebr_comm_channel_socket_get_type(void);
  * \see channelsocket.h
  */ 
 typedef struct _GebrCommChannelSocket GebrCommChannelSocket;
+typedef struct _GebrCommChannelSocketPriv GebrCommChannelSocketPriv;
 typedef struct _GebrCommChannelSocketClass GebrCommChannelSocketClass;
 
 /**
@@ -57,9 +58,10 @@ typedef struct _GebrCommChannelSocketClass GebrCommChannelSocketClass;
  */
 struct _GebrCommChannelSocket {
 	GebrCommSocket parent;
-
+	GebrCommChannelSocketPriv *priv;
 	GebrCommSocketAddress forward_address;
 };
+
 struct _GebrCommChannelSocketClass {
 	GebrCommSocketClass parent;
 };
