@@ -1085,7 +1085,6 @@ void flow_program_remove(void)
 			    && gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
 				GebrGeoXmlSequence *param;
 				GError *err = NULL;
-				GList *affected;
 				gebr_ui_document_remove_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
 			}
 			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
