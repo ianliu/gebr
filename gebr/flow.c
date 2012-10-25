@@ -1082,11 +1082,9 @@ void flow_program_remove(void)
 
 			// Remove `iter' variable from dictionary if the Loop is configured
 			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
-			    && gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
-				GebrGeoXmlSequence *param;
-				GError *err = NULL;
+			    && gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 				gebr_ui_document_remove_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
-			}
+
 			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
 		}
 	}
@@ -1236,7 +1234,7 @@ void flow_program_paste(void)
 	}
 
 	if (gebr_geoxml_clipboard_has_forloop() && !flow_has_loop)
-		gebr_ui_document_add_iter_and_update_complete(gebr.flow);
+		gebr_ui_document_add_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE);
 	flow_browse_program_check_sensitiveness();
