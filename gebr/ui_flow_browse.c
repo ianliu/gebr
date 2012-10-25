@@ -2260,7 +2260,7 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 
 	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 		if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
-			gebr_ui_document_add_iter_and_update_complete(gebr.flow);
+			gebr_ui_document_add_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
 		} else {
 			gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
 			GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
