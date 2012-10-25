@@ -512,10 +512,13 @@ gebr_ui_flow_run(GebrUiFlowExecution *ui_flow_execution,
 		gebr_flow_browse_update_jobs_info(flow, gebr.ui_flow_browse, gebr_flow_browse_calculate_n_max(gebr.ui_flow_browse));
 	}
 
-	if (n > 1 || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE)
+	if (n > 1 || gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) != NOTEBOOK_PAGE_FLOW_BROWSE) {
+		gebr_job_control_free_user_defined_filter(gebr.job_control);
+		gebr_job_control_reset_filters(gebr.job_control);
 		gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	else
+	} else {
 		gebr_flow_browse_select_job_output(id, gebr.ui_flow_browse);
+	}
 
 	/* Close dialog of Detailed execution */
 	if (is_detailed && gtk_widget_get_visible(ui_flow_execution->priv->window))
