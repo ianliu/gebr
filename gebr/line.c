@@ -557,7 +557,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page7, _("Creating directories..."));
 
 	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
-	GObject *entry_description = gtk_builder_get_object(builder, "entry_description");
 	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
 	GObject *entry_import = gtk_builder_get_object(builder, "entry_import");
 	GObject *entry_author = gtk_builder_get_object(builder, "entry_author");
