@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 15:54-0300\n"
+"POT-Creation-Date: 2012-10-26 11:39-0200\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -22,23 +22,23 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. initiate the marathon to communicate to server
-#: ../comm/gebr-comm-server.c:305
+#: ../comm/gebr-comm-server.c:310
 #, c-format
 msgid "%p: Launching machine at '%s'."
 msgstr "%p: Iniciando máquina em '%s'."
 
-#: ../comm/gebr-comm-server.c:367
+#: ../comm/gebr-comm-server.c:372
 #, c-format
 msgid "Stopping machine at '%s'."
 msgstr "Parando máquina '%s'."
 
 #. log
-#: ../comm/gebr-comm-server.c:455
+#: ../comm/gebr-comm-server.c:460
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../comm/gebr-comm-server.c:549
+#: ../comm/gebr-comm-server.c:554
 #, c-format
 msgid ""
 "Machine '%s' needs SSH login.\n"
@@ -49,7 +49,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:552
+#: ../comm/gebr-comm-server.c:557
 #, c-format
 msgid ""
 "Wrong password for machine '%s', please try again.\n"
@@ -60,48 +60,48 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:564
+#: ../comm/gebr-comm-server.c:569
 msgid "Please, enter password"
 msgstr "Por favor, digite sua senha"
 
-#: ../comm/gebr-comm-server.c:571
+#: ../comm/gebr-comm-server.c:576
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../comm/gebr-comm-server.c:577
+#: ../comm/gebr-comm-server.c:582
 msgid "No password provided."
 msgstr "Nenhuma senha informada."
 
-#: ../comm/gebr-comm-server.c:596
+#: ../comm/gebr-comm-server.c:601
 msgid "Please, answer the question"
 msgstr "Por favor, responda a pergunta"
 
-#: ../comm/gebr-comm-server.c:605
+#: ../comm/gebr-comm-server.c:613
 msgid "SSH host key question:"
 msgstr "Chave do servidor:"
 
-#: ../comm/gebr-comm-server.c:608
+#: ../comm/gebr-comm-server.c:616
 msgid "SSH host key rejected."
 msgstr "A chave SSH foi rejeitada."
 
 #. last \n
-#: ../comm/gebr-comm-server.c:618
+#: ../comm/gebr-comm-server.c:633
 #, c-format
 msgid "SSH error: %s"
 msgstr "Erro SSH: %s"
 
-#: ../comm/gebr-comm-server.c:619
+#: ../comm/gebr-comm-server.c:634
 #, c-format
 msgid "Received SSH error for machine '%s': %s"
 msgstr "O máquina '%s' reportou o seguinte erro de SSH: %s"
 
 #. last \n
-#: ../comm/gebr-comm-server.c:625
+#: ../comm/gebr-comm-server.c:640
 #, c-format
 msgid "Received SSH message of machine '%s': %s"
 msgstr "Mensagem de SSH recebida da máquina '%s': %s"
 
-#: ../comm/gebr-comm-server.c:636
+#: ../comm/gebr-comm-server.c:651
 #, c-format
 msgid ""
 "SSH reported the following error: \n"
@@ -110,30 +110,30 @@ msgstr ""
 "SSH reportou o seguinte erro:\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:637
+#: ../comm/gebr-comm-server.c:652
 #, c-format
 msgid "SSH reported the following error for machine '%s': %s"
 msgstr "SSH reportou o seguinte erro da máquina '%s': %s"
 
-#: ../comm/gebr-comm-server.c:693
+#: ../comm/gebr-comm-server.c:708
 msgid "Could not run machine."
 msgstr "Não foi possível executar a máquina."
 
-#: ../comm/gebr-comm-server.c:694 ../comm/gebr-comm-server.c:751
+#: ../comm/gebr-comm-server.c:709 ../comm/gebr-comm-server.c:766
 #, c-format
 msgid "Could not run machine '%s'."
 msgstr "Não foi possível executar a máquina '%s'."
 
-#: ../comm/gebr-comm-server.c:743
+#: ../comm/gebr-comm-server.c:758
 #, c-format
 msgid "%s not found in %s"
 msgstr "%s não encontrado em %s"
 
-#: ../comm/gebr-comm-server.c:743
+#: ../comm/gebr-comm-server.c:758
 msgid "Node"
 msgstr "Nó"
 
-#: ../comm/gebr-comm-server.c:935
+#: ../comm/gebr-comm-server.c:950
 #, c-format
 msgid "Machine '%s' disconnected"
 msgstr "Máquina '%s' desconectada"
@@ -363,11 +363,11 @@ msgstr "%s INVÁLIDO: %s"
 msgid "%s valid!\n"
 msgstr "%s válido!\n"
 
-#: ../geoxml/document.c:948 ../geoxml/program.c:636
+#: ../geoxml/document.c:948 ../geoxml/program.c:632
 msgid "MPI Parameters"
 msgstr "Parâmetros do MPI"
 
-#: ../geoxml/document.c:954 ../geoxml/program.c:642
+#: ../geoxml/document.c:954 ../geoxml/program.c:638
 msgid "Number of process to start"
 msgstr "Número de processos a começar"
 
@@ -514,70 +514,74 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../geoxml/flow.c:783
+#: ../geoxml/flow.c:767
 #, c-format
 msgid "No configured or enabled programs found."
 msgstr "Nenhum programa habilitado ou configurado."
 
-#: ../geoxml/flow.c:814
+#: ../geoxml/flow.c:821
 #, c-format
-msgid "There are unconfigured program(s)."
+msgid "There are unconfigured programs."
 msgstr "Existe(m) programa(s) não configurado(s)."
 
-#: ../geoxml/flow.c:844
+#: ../geoxml/flow.c:851
 #, c-format
-msgid "No input file was specified for the Program \"%s\"."
-msgstr "Nenhum arquivo de entrada foi especificado para o programa \"%s\"."
+msgid "The first program '%s' expects an input file."
+msgstr "O primeiro programa '%s' espera um arquivo de entrada."
 
-#: ../geoxml/flow.c:857 ../geoxml/flow.c:869
+#: ../geoxml/flow.c:863
 #, c-format
-msgid "Invalid input file specified for the Program \"%s\"."
-msgstr "Arquivo de entrada especificado para o Programa \"%s\"  é inválido."
+msgid "Invalid input file specified for the program '%s'."
+msgstr "Arquivo de entrada especificado para o programa \"%s\"  é inválido."
 
-#: ../geoxml/flow.c:888
-#, c-format
-msgid "An input of %s is expected."
-msgstr "É esperado um arquivo de entrada para o programa %s"
-
-#: ../geoxml/flow.c:898
+#: ../geoxml/flow.c:880
 #, c-format
 msgid ""
-"This flow is broken. The %s's output is unexpected and it's being ignored by "
-"%s."
+"The program '%s' expects an input which is not being generated by the "
+"previous program '%s'."
 msgstr ""
-"Este fluxo está quebrado. A saída do programa %s é inesperada e está sendo "
-"ignorada pelo programa %s"
+"O programa '%s' espera um arquivo de entrada, o qual não está sendo gerado "
+"pelo programa precedente '%s'."
 
-#: ../geoxml/flow.c:923
+#: ../geoxml/flow.c:892
+#, c-format
+msgid ""
+"The program '%s' is sending output which is being ignored by the next "
+"program '%s'."
+msgstr ""
+"O programa '%s' está enviando um arquivo de saída, o qual está sendo "
+"ignorado pelo próximo programa '%s'."
+
+#: ../geoxml/flow.c:917
 #, c-format
 msgid "There is one program with error."
 msgstr "Existe um programa com erro."
 
-#: ../geoxml/flow.c:927
+#: ../geoxml/flow.c:921
 #, c-format
-msgid "There are %d programs with error."
-msgstr "Existem %d programas com erro."
+msgid "This flow is broken because there are %d programs with error."
+msgstr "Este fluxo está quebrado pois existem %d programas com erro."
 
-#: ../geoxml/flow.c:937
+#: ../geoxml/flow.c:931
 #, c-format
 msgid "No enabled programs found."
 msgstr "Nenhum programa habilitado foi encontrado."
 
-#: ../geoxml/flow.c:964 ../geoxml/flow.c:978
+#: ../geoxml/flow.c:958 ../geoxml/flow.c:971
 #, c-format
-msgid "Invalid output file specified for the Program \"%s\"."
-msgstr "Arquivo de saída especificado para o programa \"%s\" é inválido."
+msgid "Invalid output file specified for the program '%s'."
+msgstr "Arquivo de saída especificado para o programa '%s' é inválido."
 
-#: ../geoxml/flow.c:1007 ../geoxml/flow.c:1019
+#: ../geoxml/flow.c:999 ../geoxml/flow.c:1011
 #, c-format
-msgid "Invalid error file specified for the Program \"%s\"."
-msgstr "Arquivo de log especificado para o Programa \"%s\" é inválido."
+msgid "Invalid error file specified for the Program '%s'."
+msgstr "Arquivo de log especificado para o Programa '%s' é inválido."
 
-#: ../geoxml/flow.c:1093
+#: ../geoxml/flow.c:1085
 msgid "Loop iteration counter"
 msgstr "Contador de iterações do Loop"
 
-#: ../geoxml/flow.c:1536
+#: ../geoxml/flow.c:1528
 msgid "Now"
 msgstr "Atual"
 
@@ -813,7 +817,7 @@ msgid ""
 "#9610, Feb 19, 1998, and is registered in Instituto Nacional da Propriedade "
 "Industrial (INPI) under number 70156."
 msgstr ""
-"Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
+"Copyright (C) 2007-2012 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
 "Este programa é um software livre: você pode distribuí-lo e/ou modifica-lo "
 "de acordo com os termos da GNU General Public Licence como publicado pela "
@@ -870,26 +874,22 @@ msgstr ""
 msgid "If you do not save the changes, they will be permanently lost."
 msgstr "Se você não salvar as mudanças, elas serão perdidas permanentemente."
 
-#: ../gui/gebr-gui-html-viewer-widget.c:167
+#: ../gui/gebr-gui-html-viewer-widget.c:181
 msgid "Search:"
 msgstr "Busca:"
 
-#: ../gui/gebr-gui-html-viewer-widget.c:461
-#: ../gui/gebr-gui-html-viewer-widget.c:469
-#: ../gui/gebr-gui-html-viewer-widget.c:487
-#: ../gui/gebr-gui-html-viewer-widget.c:496
-#: ../gui/gebr-gui-html-viewer-widget.c:514
+#: ../gui/gebr-gui-html-viewer-widget.c:474
 msgid "Invalid link"
 msgstr "Link inválido"
 
-#: ../gui/gebr-gui-html-viewer-widget.c:461
-#: ../gui/gebr-gui-html-viewer-widget.c:469
-#: ../gui/gebr-gui-html-viewer-widget.c:487
-#: ../gui/gebr-gui-html-viewer-widget.c:514
+#: ../gui/gebr-gui-html-viewer-widget.c:478
+#: ../gui/gebr-gui-html-viewer-widget.c:486
+#: ../gui/gebr-gui-html-viewer-widget.c:505
+#: ../gui/gebr-gui-html-viewer-widget.c:532
 msgid "Sorry, couldn't reach link."
 msgstr "Sinto muito, não consegui atingir o link."
 
-#: ../gui/gebr-gui-html-viewer-widget.c:496
+#: ../gui/gebr-gui-html-viewer-widget.c:514
 msgid "Sorry, couldn't find program."
 msgstr "Sinto muito, não consegui encontrar o programa."
 
@@ -909,11 +909,11 @@ msgstr "Encontrado no arquivo"
 msgid "Choose file to save content"
 msgstr "Escolha um arquivo para salvar o conteúdo"
 
-#: ../gui/gebr-gui-html-viewer-window.c:173
+#: ../gui/gebr-gui-html-viewer-window.c:172
 msgid "Could not save file"
 msgstr "Não foi possível salvar o arquivo"
 
-#: ../gui/gebr-gui-html-viewer-window.c:174
+#: ../gui/gebr-gui-html-viewer-window.c:175
 #, c-format
 msgid ""
 "You do not have the permissions necessary to save the file %s.Check that you "
@@ -966,11 +966,11 @@ msgstr ""
 msgid "\\u2205"
 msgstr "\\u2205"
 
-#: ../gui/gebr-gui-utils.c:1235
+#: ../gui/gebr-gui-utils.c:1236
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
 
-#: ../gui/gebr-gui-utils.c:1270
+#: ../gui/gebr-gui-utils.c:1273
 #, c-format
 msgid ""
 "The presented files are from your <b>local machine</b> and may not represent "
@@ -979,130 +979,130 @@ msgstr ""
 "Os arquivos apresentados são de sua <b>máquina local</b> e podem não "
 "representar os arquivos nas <b>máquinas de processamento</b>."
 
-#: ../gui/gebr-gui-utils.c:1448
+#: ../gui/gebr-gui-utils.c:1458
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se de que ele está instalado."
 
-#: ../utils.c:818
+#: ../utils.c:812
 msgid "Moments ago"
 msgstr "Momentos atrás"
 
-#: ../utils.c:820
+#: ../utils.c:814
 msgid "Hours ago"
 msgstr "Horas atrás"
 
-#: ../utils.c:822
+#: ../utils.c:816
 msgid "Days ago"
 msgstr "Dias atrás"
 
-#: ../utils.c:824
+#: ../utils.c:818
 msgid "Weeks ago"
 msgstr "Semanas atrás"
 
-#: ../utils.c:826
+#: ../utils.c:820
 msgid "Months ago"
 msgstr "Meses atrás"
 
-#: ../utils.c:828
+#: ../utils.c:822
 msgid "Years ago"
 msgstr "Anos atrás"
 
-#: ../utils.c:878
+#: ../utils.c:872
 msgid "1 hour, 1 minute and 1 second"
 msgstr "1 hora, 1 minuto e 1 segundo"
 
-#: ../utils.c:880
+#: ../utils.c:874
 #, c-format
 msgid "1 hour, 1 minute and %ld seconds"
 msgstr "1 hora, 1 minuto e %ld segundos"
 
-#: ../utils.c:882
+#: ../utils.c:876
 #, c-format
 msgid "1 hour, %ld minute and 1 second"
 msgstr "1 hora, %ld minutos e 1 segundo"
 
-#: ../utils.c:884
+#: ../utils.c:878
 #, c-format
 msgid "1 hour, %ld minutes and %ld seconds"
 msgstr "1 hora, %ld minutos e %ld segundos"
 
-#: ../utils.c:886
+#: ../utils.c:880
 #, c-format
 msgid "%ld hours, %ld minutes and %ld seconds"
 msgstr "%ld horas, %ld minutos e %ld segundos"
 
-#: ../utils.c:888
+#: ../utils.c:882
 #, c-format
 msgid "%ld hours and %ld minutes"
 msgstr "%ld horas e %ld minutos"
 
-#: ../utils.c:890
+#: ../utils.c:884
 msgid "1 minute and 1 second"
 msgstr "1 minuto e 1 segundo"
 
-#: ../utils.c:892
+#: ../utils.c:886
 #, c-format
 msgid "1 minute and %ld seconds"
 msgstr "1 minuto e %ld segundos"
 
-#: ../utils.c:894
+#: ../utils.c:888
 #, c-format
 msgid "%ld minutes and 1 second"
 msgstr "%ld minutos e 1 segundo"
 
-#: ../utils.c:896
+#: ../utils.c:890
 #, c-format
 msgid "%ld minutes and %ld seconds"
 msgstr "%ld minutos e %ld segundos"
 
-#: ../utils.c:898
+#: ../utils.c:892
 #, c-format
 msgid "1 hour and %ld seconds"
 msgstr "1 hora e %ld segundos"
 
-#: ../utils.c:900
+#: ../utils.c:894
 #, c-format
 msgid "%ld hours and %ld seconds"
 msgstr "%ld horas e %ld segundos"
 
-#: ../utils.c:902
+#: ../utils.c:896
 #, c-format
 msgid "%ld hours"
 msgstr "%ld horas"
 
-#: ../utils.c:904
+#: ../utils.c:898
 msgid "1 minute"
 msgstr "1 minuto"
 
-#: ../utils.c:906
+#: ../utils.c:900
 #, c-format
 msgid "%ld minutes"
 msgstr "%ld minutos"
 
-#: ../utils.c:908
+#: ../utils.c:902
 #, c-format
 msgid "%ld seconds"
 msgstr "%ld segundos"
 
-#: ../utils.c:910
+#: ../utils.c:904
 msgid "1 second"
 msgstr "1 segundo"
 
-#: ../utils.c:912
+#: ../utils.c:906
 msgid "1 milisecond"
 msgstr "1 milissegundo"
 
-#: ../utils.c:914
+#: ../utils.c:908
 #, c-format
 msgid "%ld miliseconds"
 msgstr "%ld milessegundos"
 
-#: ../utils.c:1293
+#: ../utils.c:1287
 msgid "The specified line path does not exist"
 msgstr "O caminho de linha específico não existe"
 
-#: ../utils.c:1295
+#: ../utils.c:1289
 msgid "The path must either start with < or /"
 msgstr "O caminho deve começar com < ou /"
 
@@ -1330,6 +1330,3 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
-
-#~ msgid "Server"
-#~ msgstr "Servidor"
