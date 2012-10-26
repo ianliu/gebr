@@ -2032,21 +2032,42 @@ void flow_browse_info_update(void)
 	if (!flow_browse_static_info_update())
 		return;
 
+	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_flow_browse->store);
         /* Update flow list */
         GtkTreeIter iter;
         if (flow_browse_get_selected(&iter, FALSE)) {
-        	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter);
-        	gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_flow_browse->store), path, &iter);
+        	GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+        	gtk_tree_model_row_changed(model, path, &iter);
         }
 
         /* Clean job list view */
         on_dismiss_clicked(NULL, gebr.ui_flow_browse);
 
-        gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view)));
+        gboolean multiple_flows = FALSE;
+        GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+        GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+        if (g_list_length(rows) > 1) {
+        	GtkTreeIter iter;
+        	GebrUiFlowBrowseType type;
+
+        	if (!gtk_tree_model_get_iter(model, &iter, rows->data))
+        		return;
+
+        	gtk_tree_model_get(model, &iter,
+        	                   FB_STRUCT_TYPE, &type,
+        	                   -1);
+
+        	if (type != STRUCT_TYPE_PROGRAM)
+        		multiple_flows = TRUE;
+        }
+
+        g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (rows);
+
         /* Get the list and rebuild Info Bar */
         GList *jobs = gebr_flow_browse_get_jobs_from_flow(gebr.flow, gebr.ui_flow_browse);
         if (jobs) {
-        	if (nrows == 1)
+        	if (!multiple_flows)
         		gebr_flow_browse_update_jobs_info(gebr.flow, gebr.ui_flow_browse,
         		                                  gebr_flow_browse_calculate_n_max(gebr.ui_flow_browse));
         }
