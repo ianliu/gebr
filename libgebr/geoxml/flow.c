@@ -1433,10 +1433,18 @@ gebr_geoxml_flow_io_get_input_real(GebrGeoXmlFlow *flow)
 	gebr_geoxml_flow_get_program(flow, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+
+		if (gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+			continue;
+
 		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(prog);
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED && gebr_geoxml_program_get_stdin(prog)) {
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+			continue;
+
+		if (gebr_geoxml_program_get_stdin(prog))
 			return gebr_geoxml_flow_io_get_input(flow);
-		}
+
+		break;
 	}
 	return g_strdup("");
 }
@@ -1450,10 +1458,18 @@ gebr_geoxml_flow_io_get_output_real(GebrGeoXmlFlow *flow)
 	gebr_geoxml_flow_get_program(flow, &seq, num_progs-1);
 	for (; seq; gebr_geoxml_sequence_previous(&seq)) {
 		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+
+		if (gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+			continue;
+
 		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(prog);
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED && gebr_geoxml_program_get_stdout(prog)) {
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+			continue;
+
+		if (gebr_geoxml_program_get_stdout(prog))
 			return gebr_geoxml_flow_io_get_output(flow);
-		}
+
+		break;
 	}
 	return g_strdup("");
 }
