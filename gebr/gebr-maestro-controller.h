@@ -96,6 +96,9 @@ void gebr_maestro_controller_stop(GebrMaestroController *self,
 GebrMaestroServer *gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
 								   const gchar *address);
 
+GebrMaestroServer *gebr_maestro_controller_get_maestro_for_nfsid(GebrMaestroController *mc,
+                                                                 const gchar *nfsid);
+
 GebrMaestroServer *gebr_maestro_controller_get_maestro_for_line(GebrMaestroController *mc,
 								GebrGeoXmlLine *line);
 

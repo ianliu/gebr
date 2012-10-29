@@ -154,8 +154,8 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 		if (g_strcmp0(proj_maestro, "") == 0) {
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 			if (maestro) {
-				const gchar *actual_maestro_addr = gebr_maestro_server_get_address(maestro);
-				gebr_geoxml_line_set_maestro(line, actual_maestro_addr);
+				const gchar *actual_maestro_nfsid = gebr_maestro_server_get_nfsid(maestro);
+				gebr_geoxml_line_set_maestro(line, actual_maestro_nfsid);
 
 				const gchar *maestro_home = gebr_maestro_server_get_home_dir(maestro);
 				gebr_geoxml_line_append_path(line, "HOME", maestro_home);

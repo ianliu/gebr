@@ -2196,16 +2196,32 @@ gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
 }
 
 GebrMaestroServer *
+gebr_maestro_controller_get_maestro_for_nfsid(GebrMaestroController *mc,
+                                              const gchar *nfsid)
+{
+	if (!mc->priv->maestro)
+		return NULL;
+
+	const gchar *curr_nfsid = gebr_maestro_server_get_nfsid(mc->priv->maestro);
+
+	if (g_strcmp0(curr_nfsid, nfsid) == 0)
+		return mc->priv->maestro;
+
+	return NULL;
+}
+
+GebrMaestroServer *
 gebr_maestro_controller_get_maestro_for_line(GebrMaestroController *mc,
 					     GebrGeoXmlLine *line)
 {
 	if (!line)
 		return NULL;
 
-	gchar *address = gebr_geoxml_line_get_maestro(line);
+	gchar *nfsid = gebr_geoxml_line_get_maestro(line);
 	GebrMaestroServer *maestro =
-		gebr_maestro_controller_get_maestro_for_address(mc, address);
-	g_free(address);
+		gebr_maestro_controller_get_maestro_for_nfsid(mc, nfsid);
+	g_free(nfsid);
+
 	return maestro;
 }
 

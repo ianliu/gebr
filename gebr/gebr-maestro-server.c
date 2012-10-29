@@ -1012,6 +1012,8 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("NFSID = %s", nfsid->str);
 
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
+			gebr_project_line_show(gebr.ui_project_line);
+			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -1650,7 +1652,10 @@ gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
 const gchar *
 gebr_maestro_server_get_nfsid(GebrMaestroServer *maestro)
 {
-	return maestro->priv->nfsid;
+	if (maestro->priv->nfsid && strlen(maestro->priv->nfsid))
+		return maestro->priv->nfsid;
+
+	return NULL;
 }
 
 void

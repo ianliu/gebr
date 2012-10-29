@@ -91,7 +91,7 @@ static void update_control_sensitive(GebrUiProjectLine *upl);
 static void on_maestro_button_clicked(GtkButton *button,
                                       GebrUiProjectLine *upl);
 
-void save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr);
+void save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid);
 
 void
 gebr_project_line_hide(GebrUiProjectLine *self)
@@ -221,10 +221,10 @@ static void
 on_change_line_maestro(GtkWidget *widget,
 		       GtkWidget *dialog)
 {
-	const gchar *change_addr;
+	const gchar *change_nfsid;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	change_addr = gebr_maestro_server_get_address(maestro);
-	save_maestro_changed(gebr.ui_project_line, change_addr);
+	change_nfsid = gebr_maestro_server_get_nfsid(maestro);
+	save_maestro_changed(gebr.ui_project_line, change_nfsid);
 	gtk_dialog_response(GTK_DIALOG(dialog), 0);
 }
 
@@ -339,7 +339,7 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 }
 
 void
-save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
+save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	const gchar *addr = maestro ? gebr_maestro_server_get_address(maestro) : "";
@@ -354,8 +354,8 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
 						     "and its respective flows that can be broken."),
 						   addr);
 	if (confirm) {
-		gebr_geoxml_line_set_maestro(gebr.line, change_addr);
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, change_addr);
+		gebr_geoxml_line_set_maestro(gebr.line, change_nfsid);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_nfsid(gebr.maestro_controller, change_nfsid);
 		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", home);
 		gebr_document_send_path_message(gebr.line, GEBR_COMM_PROTOCOL_PATH_CREATE, NULL);
@@ -758,8 +758,8 @@ line_import(GtkTreeIter *project_iter, GebrGeoXmlLine ** line, const gchar * lin
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 	if (maestro) {
-		const gchar *addr = gebr_maestro_server_get_address(maestro);
-		gebr_geoxml_line_set_maestro(*line, addr);
+		const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
+		gebr_geoxml_line_set_maestro(*line, nfsid);
 
 		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gchar *mount_point = gebr_maestro_server_get_sftp_root(maestro);
