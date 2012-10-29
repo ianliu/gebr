@@ -226,6 +226,37 @@ gebr_menu_popup_show_help(GebrMenuView *view)
 	gebr_menu_view_show_help(view);
 }
 
+/*
+ * Check if the selected item have Help
+ * */
+static gboolean
+gebr_menu_check_help_exists(GebrMenuView *view)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_tree_view_get_model(view->priv->tree_view);
+	gchar *menu_filename;
+	gboolean exists = TRUE;
+
+	if (!gebr_menu_view_get_selected_menu(view, &iter))
+		return FALSE;
+
+	gtk_tree_model_get(model, &iter,
+			   MENU_FILEPATH_COLUMN, &menu_filename,
+			   -1);
+
+	GebrGeoXmlFlow *menu_doc = menu_load_path(menu_filename);
+
+	gchar *html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu_doc));
+
+	if (!gebr_menu_view_get_selected_menu(view, &iter) ||
+	    g_strcmp0(html, "") == 0 )
+		exists = FALSE;
+
+	g_free(menu_filename);
+
+	return exists;
+}
+
 static GtkMenu *
 gebr_menu_view_popup_menu(GtkWidget * widget,
                           GebrMenuView *view)
@@ -262,6 +293,9 @@ gebr_menu_view_popup_menu(GtkWidget * widget,
 	menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 	g_signal_connect_swapped(GTK_OBJECT(menu_item), "activate", G_CALLBACK(gebr_menu_popup_show_help), view);
+
+	if (!gebr_menu_check_help_exists(view))
+		gtk_widget_set_sensitive(menu_item, FALSE);
 
 	if (filtered)
 		goto out;
@@ -426,6 +460,7 @@ on_search_entry_key_press(GtkWidget *widget,
 	    || event->keyval == GDK_Down)
 	{
 		gebr_menu_view_select_near(view, event->keyval == GDK_Down);
+
 		return TRUE;
 	}
 
