@@ -46,6 +46,7 @@ struct _GebrMaestroServerPriv {
 	gchar *error_msg;
 	GtkWindow *window;
 	gchar *home;
+	gchar *nfsid;
 	gint clocks_diff;
 	gboolean wizard_setup;
 
@@ -1000,6 +1001,20 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.nfsid_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *nfsid = g_list_nth_data(arguments, 0);
+
+			g_debug("NFSID = %s", nfsid->str);
+
+			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
@@ -1062,6 +1077,8 @@ gebr_maestro_server_finalize(GObject *object)
 	g_object_unref(maestro->priv->store);
 	g_hash_table_unref(maestro->priv->jobs);
 	g_hash_table_unref(maestro->priv->temp_jobs);
+	g_free(maestro->priv->nfsid);
+	g_free(maestro->priv->home);
 	unmount_gvfs(maestro, FALSE);
 
 	G_OBJECT_CLASS(gebr_maestro_server_parent_class)->finalize(object);
@@ -1619,6 +1636,21 @@ gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro)
 		return NULL;
 
 	return g_file_get_uri(maestro->priv->mount_location);
+}
+
+void
+gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
+                              const gchar *nfsid)
+{
+	if (maestro->priv->nfsid)
+		g_free(maestro->priv->nfsid);
+	maestro->priv->nfsid = g_strdup(nfsid);
+}
+
+const gchar *
+gebr_maestro_server_get_nfsid(GebrMaestroServer *maestro)
+{
+	return maestro->priv->nfsid;
 }
 
 void

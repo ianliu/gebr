@@ -162,6 +162,13 @@ gebrm_app_send_home_dir(GebrmApp *app, GebrCommProtocolSocket *socket, const gch
 					      home);
 }
 
+static void
+gebrm_app_send_nfsid(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *nfsid)
+{
+	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+					      gebr_comm_protocol_defs.nfsid_def, 1,
+					      nfsid);
+}
 
 static gboolean
 gebrm_app_send_mpi_flavors(GebrCommProtocolSocket *socket, GebrmDaemon *daemon)
@@ -620,6 +627,7 @@ on_daemon_init(GebrmDaemon *daemon,
 	const gchar *home = gebrm_daemon_get_home_dir(daemon);
 	gboolean remove = FALSE;
 	gboolean home_defined = FALSE;
+	gboolean nfsid_defined = FALSE;
 
 	if (g_strcmp0(error_type, "connection-refused") == 0) {
 		if (has_duplicated_daemons(app, error_msg)) {
@@ -657,6 +665,7 @@ on_daemon_init(GebrmDaemon *daemon,
 	}
 
 	if (!app->priv->nfsid) {
+		nfsid_defined = TRUE;
 		app->priv->nfsid = g_strdup(nfsid);
 	} else if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
 		error = "error:nfs";
@@ -685,7 +694,12 @@ err:
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			if (!home_defined)
 				gebrm_app_send_home_dir(app, socket, home);
+
+			if (nfsid_defined)
+				gebrm_app_send_nfsid(app, socket, nfsid);
+
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon), state);
+
 
 			queue_client_info(app, daemon, i->data);
 			gebrm_app_send_mpi_flavors(socket, daemon);

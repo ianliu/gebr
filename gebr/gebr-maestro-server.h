@@ -190,6 +190,11 @@ void gebr_maestro_server_get_error(GebrMaestroServer *maestro,
 
 gchar *gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro);
 
+void gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
+                                   const gchar *nfsid);
+
+const gchar *gebr_maestro_server_get_nfsid(GebrMaestroServer *maestro);
+
 const gchar *gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro);
 
 gboolean gebr_maestro_server_has_home_dir(GebrMaestroServer *maestro);
