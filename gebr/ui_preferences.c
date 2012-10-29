@@ -234,7 +234,7 @@ set_status_for_maestro(GebrMaestroController *self,
 
 			gchar *message;
 			if (g_strrstr(msg, "Host key"))
-				message = g_strdup_printf("%sThis machine appears to be untrusted, contact the system administrator"
+				message = g_strdup_printf("%sThis machine appears to be untrusted, contact the system administrator "
 							  "to resolve that problem, or connect to another machine.",
 						          msg);
 			else
