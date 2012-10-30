@@ -2,6 +2,7 @@
 comm/gebr-comm-channelsocket.c
 comm/gebr-comm-hostinfo.c
 comm/gebr-comm-listensocket.c
+comm/gebr-comm-port-provider.c
 comm/gebr-comm-process.c
 comm/gebr-comm-protocol.c
 comm/gebr-comm-server.c
