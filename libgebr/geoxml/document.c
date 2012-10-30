@@ -914,6 +914,22 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			gdome_el_unref(io, &exception);
 			gdome_el_unref(server, &exception);
 			gdome_el_unref(servers, &exception);
+		} 
+		else if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.7");
+
+			GdomeElement *first_el = __gebr_geoxml_get_first_element(root_element, "server-maestro");
+			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*)first_el, &exception), &exception);
+
+			GdomeElement *path_el = __gebr_geoxml_get_first_element(root_element, "path");
+			GdomeElement *new_el = __gebr_geoxml_insert_new_element(root_element, "nfs", path_el);
+
+			__gebr_geoxml_set_attr_value(new_el, "id", "");
+			__gebr_geoxml_set_attr_value(new_el, "label", "");
+
+			gdome_el_unref(first_el, &exception);
+			gdome_el_unref(new_el, &exception);
+			gdome_el_unref(path_el, &exception);
 		}
 	}
 
