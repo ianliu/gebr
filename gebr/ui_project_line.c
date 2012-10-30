@@ -1494,10 +1494,8 @@ void project_line_delete(void)
 			glong n = gebr_geoxml_line_get_flows_number(GEBR_GEOXML_LINE(document));
 			quantity_selected++;
 
-			if (n > 0){
+			if (n > 0)
 				g_string_printf(tmp, _("including %ld flow(s)"), n);
-				quantity_selected++;
-			}
 
 			GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 			
