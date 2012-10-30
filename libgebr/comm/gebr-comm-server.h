@@ -78,7 +78,7 @@ typedef struct _GebrCommServerPriv GebrCommServerPriv;
 typedef struct _GebrCommServerClass GebrCommServerClass;
 
 struct _GebrCommServer {
-	GObject *parent;
+	GObject parent;
 	GebrCommProtocolSocket *socket;
 
 	GebrCommServerPriv *priv;
