@@ -157,8 +157,53 @@ gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
 	self->priv->display = display;
 }
 
+static gboolean
+is_local_address(const gchar *addr)
+{
+	if (g_strcmp0(addr, "localhost") == 0
+	    || g_strcmp0(addr, "127.0.0.1") == 0)
+		return TRUE;
+	return FALSE;
+}
+
+static void
+start_local(GebrCommPortProvider *self)
+{
+	switch(self->priv->type)
+	{
+	case GEBR_COMM_PORT_TYPE_MAESTRO:
+		break;
+	case GEBR_COMM_PORT_TYPE_DAEMON:
+		break;
+	case GEBR_COMM_PORT_TYPE_X11:
+		g_signal_emit(self, PORT_DEFINE, 0, self->priv->display);
+		break;
+	case GEBR_COMM_PORT_TYPE_SFTP:
+		break;
+	}
+}
+
+static void
+start_remote(GebrCommPortProvider *self)
+{
+	switch(self->priv->type)
+	{
+	case GEBR_COMM_PORT_TYPE_MAESTRO:
+		break;
+	case GEBR_COMM_PORT_TYPE_DAEMON:
+		break;
+	case GEBR_COMM_PORT_TYPE_X11:
+		break;
+	case GEBR_COMM_PORT_TYPE_SFTP:
+		break;
+	}
+}
+
 void
 gebr_comm_port_provider_start(GebrCommPortProvider *self)
 {
-
+	if (is_local_address(self->priv->address))
+		start_local(self);
+	else
+		start_remote(self);
 }
