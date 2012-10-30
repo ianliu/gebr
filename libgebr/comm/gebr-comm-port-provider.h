@@ -65,15 +65,14 @@ struct _GebrCommPortProviderClass {
 
 GType gebr_comm_port_provider_get_type(void) G_GNUC_CONST;
 
-GebrCommPortProvider *gebr_comm_port_provider_new(GebrCommPortType type);
-
 /**
- * gebr_comm_port_provider_set_address:
+ * gebr_comm_port_provider_new:
  *
- * Sets the address to communicate by the ports.
+ * Creates a GebrCommPortProvider of @type and @address to communicate through
+ * the ports.
  */
-void gebr_comm_port_provider_set_address(GebrCommPortProvider *self,
-					 const gchar *address);
+GebrCommPortProvider *gebr_comm_port_provider_new(GebrCommPortType type,
+						  const gchar *address);
 
 /**
  * gebr_comm_port_provider_set_display:

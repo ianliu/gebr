@@ -25,6 +25,7 @@ G_DEFINE_TYPE(GebrCommPortProvider, gebr_comm_port_provider, G_TYPE_OBJECT);
 enum {
 	PROP_0,
 	PROP_TYPE,
+	PROP_ADDRESS,
 };
 
 enum {
@@ -53,6 +54,9 @@ gebr_comm_port_provider_get(GObject    *object,
 	case PROP_TYPE:
 		g_value_set_int(value, self->priv->type);
 		break;
+	case PROP_ADDRESS:
+		g_value_set_string(value, self->priv->address);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -71,6 +75,11 @@ gebr_comm_port_provider_set(GObject      *object,
 	{
 	case PROP_TYPE:
 		self->priv->type = g_value_get_int(value);
+		break;
+	case PROP_ADDRESS:
+		if (self->priv->address)
+			g_free(self->priv->address);
+		self->priv->address = g_value_dup_string(value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -112,6 +121,14 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 							 0, 100, 0,
 							 G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY));
 
+	g_object_class_install_property(object_class,
+					PROP_ADDRESS,
+					g_param_spec_string("address",
+							    "Address",
+							    "Address",
+							    NULL,
+							    G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY));
+
 	g_type_class_add_private(klass, sizeof(GebrCommPortProviderPriv));
 }
 
@@ -124,20 +141,13 @@ gebr_comm_port_provider_init(GebrCommPortProvider *self)
 }
 
 GebrCommPortProvider *
-gebr_comm_port_provider_new(GebrCommPortType type)
+gebr_comm_port_provider_new(GebrCommPortType type,
+			    const gchar *address)
 {
 	return g_object_new(GEBR_COMM_TYPE_PORT_PROVIDER,
 			    "type", type,
+			    "address", address,
 			    NULL);
-}
-
-void
-gebr_comm_port_provider_set_address(GebrCommPortProvider *self,
-				    const gchar *address)
-{
-	if (self->priv->address)
-		g_free(self->priv->address);
-	self->priv->address = g_strdup(address);
 }
 
 void
@@ -150,4 +160,5 @@ gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
 void
 gebr_comm_port_provider_start(GebrCommPortProvider *self)
 {
+
 }
