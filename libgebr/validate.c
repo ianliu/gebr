@@ -126,7 +126,7 @@ const gchar * gebr_validate_case_get_message (GebrValidateCase *validate_case)
 }
 
 static gint
-gebr_validate_case_check_value_aux(gint flags, const gchar *value, gint failed) 
+gebr_validate_case_check_value_aux(gint flags, const gchar *value, gint failed)
 {
 	if (flags & GEBR_VALIDATE_CHECK_EMPTY && !gebr_validate_check_is_not_empty(value))
 		failed |= GEBR_VALIDATE_CHECK_EMPTY;
@@ -148,7 +148,6 @@ gebr_validate_case_check_value_aux(gint flags, const gchar *value, gint failed)
 		failed |= GEBR_VALIDATE_CHECK_TABS;
 	return failed;
 }
-
 gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value, gboolean * can_fix)
 {
 	gint flags = self->flags;
@@ -162,10 +161,10 @@ gint gebr_validate_case_check_value(GebrValidateCase * self, const gchar * value
 	if (self->name == GEBR_VALIDATE_CASE_CATEGORY) {
 		gchar **cats = g_strsplit(value, "|", 0);
 		for (int i = 0; cats[i] != NULL; ++i)
-			gebr_validate_case_check_value_aux(flags, cats[i], failed);
+			failed = gebr_validate_case_check_value_aux(flags, cats[i], failed);
 		g_strfreev(cats);
 	} else
-		gebr_validate_case_check_value_aux(flags, value, failed);
+		failed = gebr_validate_case_check_value_aux(flags, value, failed);
 
 	return failed;
 }
