@@ -276,6 +276,8 @@ gebr_load_maestro_config(void)
 
 	gebr.maestro_controller = gebr_maestro_controller_new();
 	gebr.config.maestro_address  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "maestro", "address", g_get_host_name());
+	gebr.config.nfs_id  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "nfsid", "id", NULL);
+	gebr.config.nfs_label  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "nfsid", "label", gebr_generate_nfs_label());
 
 	return TRUE;
 }
@@ -461,6 +463,8 @@ gebr_config_maestro_save(void)
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
 		g_key_file_set_string(gebr.config.key_file_maestro, "maestro", "address", maestro_addr);
+		g_key_file_set_string(gebr.config.key_file_maestro, "nfsid", "id", gebr_maestro_server_get_nfsid(maestro));
+		g_key_file_set_string(gebr.config.key_file_maestro, "nfsid", "label", gebr_generate_nfs_label());
 	} else
 		return;
 

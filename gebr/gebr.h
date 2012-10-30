@@ -118,6 +118,9 @@ struct gebr {
 		GString *version;
 
 		GString *maestro_address;
+		GString *nfs_id;
+		GString *nfs_label;
+
 		GString *username;
 		GString *email;
 		GString *usermenus;
