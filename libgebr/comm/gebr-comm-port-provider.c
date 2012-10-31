@@ -318,6 +318,7 @@ local_get_port(GebrCommPortProvider *self, const gchar *binary)
 	emit_signals(self, port ? atoi(port) : 0, error);
 
 	g_free(tmp);
+	g_free(output);
 	g_free(filename);
 	g_string_free(cmd_line, TRUE);
 }
