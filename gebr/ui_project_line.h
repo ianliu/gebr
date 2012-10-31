@@ -132,6 +132,13 @@ void project_line_delete(void);
 void project_line_free(void);
 
 /**
+ * project_line_update_nfs_label_for_lines:
+ *
+ * Update NFS label for all lines with connected maestro
+ */
+void project_line_update_nfs_label_for_lines(GebrUiProjectLine *upl);
+
+/**
  */
 void project_line_show_help(void);
 

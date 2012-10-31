@@ -1642,6 +1642,38 @@ void project_line_free(void)
 	project_line_info_update();
 }
 
+void
+project_line_update_nfs_label_for_lines(GebrUiProjectLine *upl)
+{
+	gboolean valid;
+	GtkTreeIter iter, parent;
+	GebrGeoXmlLine *line;
+	GebrMaestroServer *maestro;
+	GtkTreeModel *model = GTK_TREE_MODEL(upl->store);
+
+	gebr_gui_gtk_tree_model_foreach(parent, model) {
+		valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		while (valid) {
+			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
+
+			maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+			if (maestro) {
+				const gchar *nfs_label = gebr_maestro_server_get_nfs_label(maestro);
+				const gchar *line_nfslabel = gebr_geoxml_line_get_maestro_label(line);
+
+				const gchar *line_nfsid = gebr_geoxml_line_get_maestro(line);
+
+				if (g_strcmp0(line_nfslabel, nfs_label) != 0) {
+					gebr_geoxml_line_set_maestro(line, line_nfsid, nfs_label);
+					document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, FALSE);
+				}
+			}
+
+			valid = gtk_tree_model_iter_next(model, &iter);
+		}
+	}
+}
+
 static void
 on_maestro_state_change(GebrMaestroController *mc,
                         GebrMaestroServer *maestro,
