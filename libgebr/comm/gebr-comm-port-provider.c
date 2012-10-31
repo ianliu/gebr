@@ -283,6 +283,7 @@ local_get_daemon_port(GebrCommPortProvider *self)
 void
 local_get_x11_port(GebrCommPortProvider *self)
 {
+	emit_signals(self, self->priv->display, NULL);
 }
 
 void
