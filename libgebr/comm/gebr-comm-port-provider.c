@@ -240,13 +240,16 @@ start(GebrCommPortProvider *self, struct PortProviderVirtualMethods *vmethods)
 	switch (self->priv->type)
 	{
 	case GEBR_COMM_PORT_TYPE_MAESTRO:
+		vmethods->get_maestro_port(self, &port, &error);
 		break;
 	case GEBR_COMM_PORT_TYPE_DAEMON:
+		vmethods->get_daemon_port(self, &port, &error);
 		break;
 	case GEBR_COMM_PORT_TYPE_X11:
-		port = self->priv->display;
+		vmethods->get_x11_port(self, &port, &error);
 		break;
 	case GEBR_COMM_PORT_TYPE_SFTP:
+		vmethods->get_sftp_port(self, &port, &error);
 		break;
 	default:
 		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
