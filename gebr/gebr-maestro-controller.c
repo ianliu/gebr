@@ -1345,7 +1345,29 @@ on_stop_to_maestro_clicked(GtkButton *button,
 }
 #endif
 
-static void 
+static void
+on_get_alias_maestro_clicked(GebrMaestroController *self)
+{
+	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+	const gchar *text_entry  = gebr_maestro_server_get_nfs_label(maestro);
+	if (text_entry && *text_entry)
+		gtk_entry_set_text(entry, text_entry);
+	else
+		gtk_entry_set_text(entry, "");
+}
+
+static void
+on_save_alias_maestro_clicked(GebrMaestroController *self)
+{
+	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
+	const gchar *text_entry = gtk_entry_get_text(entry);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+	gebr_maestro_server_set_nfs_label(maestro, text_entry);
+	project_line_info_update();
+}
+
+static void
 on_connect_to_maestro_clicked(GtkButton *button,
 			      GebrMaestroController *self)
 {
@@ -1548,6 +1570,19 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_to_maestro_clicked), self);
 
 	/*
+	 * Maestro alias
+	 */
+	GtkButton *alias_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_save"));
+	GtkEntry *alias_entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
+
+	gtk_widget_set_tooltip_text(GTK_WIDGET(alias_entry), _("Set an alias for this maestro."));
+	const gchar *text_entry  = gebr_maestro_server_get_nfs_label(maestro);
+	gtk_entry_set_text(alias_entry, text_entry);
+
+	g_signal_connect_swapped(alias_button, "clicked", G_CALLBACK(on_save_alias_maestro_clicked), self);
+	g_signal_connect_swapped(alias_entry, "activate", G_CALLBACK(on_save_alias_maestro_clicked), self);
+
+	/*
 	 * Servers treeview
 	 */
 	GtkTreeModel *model = GTK_TREE_MODEL(self->priv->model);
@@ -1669,6 +1704,7 @@ connect_to_maestro(GtkEntry *entry,
 	const gchar *entry_text = gtk_entry_get_text(entry);
 	const gchar *address = gebr_apply_pattern_on_address(entry_text);
 	gebr_maestro_controller_connect(self, address);
+	on_get_alias_maestro_clicked(self);
 }
 
 static void
