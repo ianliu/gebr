@@ -47,6 +47,7 @@ struct _GebrMaestroServerPriv {
 	GtkWindow *window;
 	gchar *home;
 	gchar *nfsid;
+	gchar *nfs_label;
 	gint clocks_diff;
 	gboolean wizard_setup;
 
@@ -115,6 +116,9 @@ void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *windo
 
 void gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 				      const gchar *home);
+
+static void gebr_maestro_server_set_config_nfs_label(GebrMaestroServer *maestro,
+                                                     const gchar *nfsid);
 
 static gchar *gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface);
 
@@ -1011,6 +1015,7 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("NFSID = %s", nfsid->str);
 
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
+			gebr_maestro_server_set_config_nfs_label(maestro, nfsid->str);
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 
@@ -1642,6 +1647,16 @@ gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro)
 	return g_file_get_uri(maestro->priv->mount_location);
 }
 
+static void
+gebr_maestro_server_set_config_nfs_label(GebrMaestroServer *maestro,
+                                          const gchar *nfsid)
+{
+	if (g_strcmp0(gebr.config.nfs_id->str, nfsid) == 0)
+		gebr_maestro_server_set_nfs_label(maestro, gebr.config.nfs_label->str);
+	else
+		gebr_maestro_server_set_nfs_label(maestro, "");
+}
+
 void
 gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
                               const gchar *nfsid)
@@ -1658,6 +1673,21 @@ gebr_maestro_server_get_nfsid(GebrMaestroServer *maestro)
 		return maestro->priv->nfsid;
 
 	return NULL;
+}
+
+void
+gebr_maestro_server_set_nfs_label(GebrMaestroServer *maestro,
+                                  const gchar *nfs_label)
+{
+	if (maestro->priv->nfs_label)
+		g_free(maestro->priv->nfs_label);
+	maestro->priv->nfs_label = g_strdup(nfs_label);
+}
+
+const gchar *
+gebr_maestro_server_get_nfs_label(GebrMaestroServer *maestro)
+{
+	return maestro->priv->nfs_label;
 }
 
 void
