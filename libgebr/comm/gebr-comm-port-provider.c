@@ -312,13 +312,16 @@ local_get_port(GebrCommPortProvider *self, const gchar *binary)
 
 	if (error || (WIFEXITED(status) && WEXITSTATUS(status) != 0))
 		local_set_error(error, &local_error);
-	else
+	else if (output)
 		port = output + strlen(GEBR_PORT_PREFIX);
+	else
+		g_warn_if_reached();
 
 	emit_signals(self, port ? atoi(port) : 0, error);
 
 	g_free(tmp);
 	g_free(output);
+	g_free(status);
 	g_free(filename);
 	g_string_free(cmd_line, TRUE);
 }
