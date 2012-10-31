@@ -472,7 +472,12 @@ line_info_update(void)
 	else
 		nfs_label = gebr_geoxml_line_get_maestro_label(gebr.line);
 
-	gchar *text = g_markup_printf_escaped(_("On <b>%s</b>"), nfs_label);
+	gchar *text;
+	if (nfs_label && *nfs_label)
+		text = g_markup_printf_escaped(_("On <b>%s</b>"), nfs_label);
+	else
+		text = g_strdup("");
+
 	gtk_label_set_markup(GTK_LABEL(maestro_label), text);
 	g_free(text);
 
