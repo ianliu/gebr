@@ -354,7 +354,7 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid)
 						     "and its respective flows that can be broken."),
 						   addr);
 	if (confirm) {
-		gebr_geoxml_line_set_maestro(gebr.line, change_nfsid, NULL);
+		gebr_geoxml_line_set_maestro(gebr.line, change_nfsid, gebr_maestro_server_get_nfs_label(maestro));
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_nfsid(gebr.maestro_controller, change_nfsid);
 		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", home);
@@ -465,14 +465,14 @@ line_info_update(void)
 
 	/* Line's Maestro information */
 
-	const gchar *addr;
+	const gchar *nfs_label;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(gebr.line));
 	if (maestro)
-		addr = gebr_maestro_server_get_address(maestro);
+		nfs_label = gebr_maestro_server_get_nfs_label(maestro);
 	else
-		addr = gebr_geoxml_line_get_maestro(gebr.line);
+		nfs_label = gebr_geoxml_line_get_maestro_label(gebr.line);
 
-	gchar *text = g_markup_printf_escaped(_("On maestro <b>%s</b>"), addr);
+	gchar *text = g_markup_printf_escaped(_("On <b>%s</b>"), nfs_label);
 	gtk_label_set_markup(GTK_LABEL(maestro_label), text);
 	g_free(text);
 
@@ -759,7 +759,8 @@ line_import(GtkTreeIter *project_iter, GebrGeoXmlLine ** line, const gchar * lin
 
 	if (maestro) {
 		const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
-		gebr_geoxml_line_set_maestro(*line, nfsid, NULL);
+		const gchar *nfs_label = gebr_maestro_server_get_nfs_label(maestro);
+		gebr_geoxml_line_set_maestro(*line, nfsid, nfs_label);
 
 		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gchar *mount_point = gebr_maestro_server_get_sftp_root(maestro);
@@ -1658,7 +1659,8 @@ on_maestro_state_change(GebrMaestroController *mc,
 				if (gebr_maestro_server_get_state(mg) == SERVER_STATE_LOGGED) {
 					const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
 					if (nfsid) {
-						gebr_geoxml_line_set_maestro(line, nfsid, NULL);
+						const gchar *nfs_label = gebr_maestro_server_get_nfs_label(maestro);
+						gebr_geoxml_line_set_maestro(line, nfsid, nfs_label);
 						document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, FALSE);
 					}
 				}

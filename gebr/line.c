@@ -690,7 +690,7 @@ void line_new(void)
 
 	if (maestro)
 		gebr_geoxml_line_set_maestro(line, gebr_maestro_server_get_nfsid(maestro),
-		                             NULL);
+		                             gebr_maestro_server_get_nfs_label(maestro));
 
 	iter = project_append_line_iter(&parent, line);
 	gebr_geoxml_project_append_line(gebr.project, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)));
