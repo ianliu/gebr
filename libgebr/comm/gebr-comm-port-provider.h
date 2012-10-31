@@ -43,10 +43,11 @@ typedef enum {
 
 /**
  * GebrCommPortProviderError:
- * @GEBR_COMM_PORT_PROVIDER_ERROR_NOT_SET: The port could not be set.
+ * @GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE: The type set in constructor is unknown, see #GebrCommPortType.
  */
 typedef enum {
-	GEBR_COMM_PORT_PROVIDER_ERROR_NOT_SET,
+	GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE,
+	GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED,
 } GebrCommPortProviderError;
 
 /**

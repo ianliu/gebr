@@ -262,8 +262,8 @@ start(GebrCommPortProvider *self, struct PortProviderVirtualMethods *vmethods)
 		break;
 	default:
 		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
-			    GEBR_COMM_PORT_PROVIDER_ERROR_NOT_SET,
-			    "Port was not set");
+			    GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE,
+			    "Unknown port type");
 		emit_signals(self, 0, error);
 		break;
 	}
@@ -289,6 +289,11 @@ local_get_x11_port(GebrCommPortProvider *self)
 void
 local_get_sftp_port(GebrCommPortProvider *self)
 {
+	GError *error = NULL;
+	g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
+		    GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED,
+		    "SFTP not required in local configuration");
+	emit_signals(self, 0, error);
 }
 /* }}} */
 
