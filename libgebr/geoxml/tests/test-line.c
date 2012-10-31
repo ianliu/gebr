@@ -144,7 +144,7 @@ void test_gebr_geoxml_line_get_group(void)
 	gchar *addr;
 
 	line = gebr_geoxml_line_new();
-	gebr_geoxml_line_set_maestro(line, "foo");
+	gebr_geoxml_line_set_maestro(line, "foo", NULL);
 	addr = gebr_geoxml_line_get_maestro(line);
 
 	g_assert_cmpstr(addr, ==, "foo");

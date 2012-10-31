@@ -150,12 +150,12 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 
 		line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
 		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&line), line_source, &project_iter, FALSE);
-		gchar *proj_maestro = gebr_geoxml_line_get_maestro(line);
-		if (g_strcmp0(proj_maestro, "") == 0) {
+		gchar *line_maestro = gebr_geoxml_line_get_maestro(line);
+		if (g_strcmp0(line_maestro, "") == 0) {
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 			if (maestro) {
 				const gchar *actual_maestro_nfsid = gebr_maestro_server_get_nfsid(maestro);
-				gebr_geoxml_line_set_maestro(line, actual_maestro_nfsid);
+				gebr_geoxml_line_set_maestro(line, actual_maestro_nfsid, NULL);
 
 				const gchar *maestro_home = gebr_maestro_server_get_home_dir(maestro);
 				gebr_geoxml_line_append_path(line, "HOME", maestro_home);
@@ -165,7 +165,7 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 			gchar *line_home = gebr_geoxml_line_get_path_by_name(line, "HOME");
 			if (!line_home) {
 				GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller,
-				                                                                             proj_maestro);
+				                                                                             line_maestro);
 				if (maestro) {
 					const gchar *maestro_home = gebr_maestro_server_get_home_dir(maestro);
 					gebr_geoxml_line_append_path(line, "HOME", maestro_home);

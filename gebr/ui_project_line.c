@@ -354,7 +354,7 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid)
 						     "and its respective flows that can be broken."),
 						   addr);
 	if (confirm) {
-		gebr_geoxml_line_set_maestro(gebr.line, change_nfsid);
+		gebr_geoxml_line_set_maestro(gebr.line, change_nfsid, NULL);
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_nfsid(gebr.maestro_controller, change_nfsid);
 		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", home);
@@ -759,7 +759,7 @@ line_import(GtkTreeIter *project_iter, GebrGeoXmlLine ** line, const gchar * lin
 
 	if (maestro) {
 		const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
-		gebr_geoxml_line_set_maestro(*line, nfsid);
+		gebr_geoxml_line_set_maestro(*line, nfsid, NULL);
 
 		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gchar *mount_point = gebr_maestro_server_get_sftp_root(maestro);
@@ -1651,7 +1651,21 @@ on_maestro_state_change(GebrMaestroController *mc,
 			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
 
 			gboolean sensitive;
+			GebrMaestroServer *mg = gebr_maestro_controller_get_maestro(mc);
+
+			const gchar *line_nfsid = gebr_geoxml_line_get_maestro(line);
+			if (!line_nfsid || !*line_nfsid) {
+				if (gebr_maestro_server_get_state(mg) == SERVER_STATE_LOGGED) {
+					const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
+					if (nfsid) {
+						gebr_geoxml_line_set_maestro(line, nfsid, NULL);
+						document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, FALSE);
+					}
+				}
+			}
+
 			GebrMaestroServer *m = gebr_maestro_controller_get_maestro_for_line(mc, line);
+
 			if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED)
 				sensitive = TRUE;
 			else
@@ -1673,7 +1687,6 @@ on_maestro_state_change(GebrMaestroController *mc,
 			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
 			valid = gtk_tree_model_iter_next(model, &iter);
 
-			GebrMaestroServer *mg = gebr_maestro_controller_get_maestro(mc);
 			if(mg && gebr_maestro_server_get_state(mg) == SERVER_STATE_LOGGED)
 				sensitive = TRUE;
 			else
