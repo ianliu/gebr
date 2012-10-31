@@ -25,6 +25,8 @@
 
 G_BEGIN_DECLS
 
+#define GEBR_PORT_PREFIX "gebr-port="
+
 /**
  * GebrCommPortType:
  *
@@ -48,6 +50,7 @@ typedef enum {
 typedef enum {
 	GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE,
 	GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED,
+	GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
 } GebrCommPortProviderError;
 
 /**

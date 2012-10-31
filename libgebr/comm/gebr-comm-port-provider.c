@@ -19,6 +19,9 @@
  */
 
 #include "gebr-comm-port-provider.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
 
 GQuark
 gebr_comm_port_provider_error_quark(void)
@@ -269,15 +272,66 @@ start(GebrCommPortProvider *self, struct PortProviderVirtualMethods *vmethods)
 	}
 }
 
+/* Set our own error*/
+static void
+local_set_error(GError *error, GError **local_error)
+{
+	if (!error)
+		return;
+
+	GebrCommPortProviderError error_type;
+	const gchar *error_msg = NULL;
+
+	error_type = GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN;
+	error_msg = "Error in the process execution";
+
+	g_set_error(local_error,
+		    GEBR_COMM_PORT_PROVIDER_ERROR,
+		    error_type,
+		    "%s",
+		    error_msg);
+}
+
 /* Local port provider implementation {{{ */
+static void
+local_get_port(GebrCommPortProvider *self, const gchar *binary)
+{
+	gchar *tmp = g_strdup_printf("%s-%s.tmp", self->priv->address, "maestro");
+	gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", tmp, NULL);
+	GString *cmd_line = g_string_new(NULL);
+	GError *error = NULL;
+	GError *local_error = NULL;
+	gchar *err = NULL;
+	gint status;
+	gchar *output = NULL;
+	gchar *port = NULL;
+
+	g_string_printf(cmd_line, "bash -l -c %s 2> %s", binary, filename);
+
+	g_spawn_command_line_sync(cmd_line->str, &output, &err, &status, &error);
+
+	if (error || (WIFEXITED(status) && WEXITSTATUS(status) != 0))
+		local_set_error(error, &local_error);
+	else
+		port = output + strlen(GEBR_PORT_PREFIX);
+
+	emit_signals(self, port ? atoi(port) : 0, error);
+
+	g_free(tmp);
+	g_free(filename);
+	g_string_free(cmd_line, TRUE);
+}
+
 void
 local_get_maestro_port(GebrCommPortProvider *self)
 {
+	local_get_port(self, "gebrm");
 }
 
 void
 local_get_daemon_port(GebrCommPortProvider *self)
 {
+	local_get_port(self, "gebrd");
 }
 
 void
