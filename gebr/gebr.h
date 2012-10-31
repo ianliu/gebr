@@ -185,6 +185,8 @@ gboolean gebr_quit(gboolean save_config);
 
 gboolean gebr_config_load(void);
 
+gboolean gebr_update_maestro_nfs_info(const gchar *nfsid);
+
 /**
  * Populates the various data models, such as menus index and projects & lines.
  */

@@ -259,8 +259,8 @@ gboolean gebr_quit(gboolean save_config)
 	return FALSE;
 }
 
-gboolean
-gebr_load_maestro_config(void)
+static gboolean
+gebr_init_maestro_config(void)
 {
 	gboolean has_config;
 
@@ -274,8 +274,33 @@ gebr_load_maestro_config(void)
 		if (!g_key_file_load_from_file(gebr.config.key_file_maestro, gebr.config.path_maestro->str, G_KEY_FILE_NONE, NULL))
 			return FALSE;
 
+	return TRUE;
+}
+
+static gboolean
+gebr_load_maestro_config(void)
+{
+	gboolean has_config = gebr_init_maestro_config();
+
+	if (!has_config)
+		return FALSE;
+
 	gebr.maestro_controller = gebr_maestro_controller_new();
 	gebr.config.maestro_address  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "maestro", "address", g_get_host_name());
+	gebr.config.nfs_id  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "nfsid", "id", NULL);
+	gebr.config.nfs_label  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "nfsid", "label", gebr_generate_nfs_label());
+
+	return TRUE;
+}
+
+gboolean
+gebr_update_maestro_nfs_info(void)
+{
+	gboolean has_config = gebr_init_maestro_config();
+
+	if (!has_config)
+		return FALSE;
+
 	gebr.config.nfs_id  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "nfsid", "id", NULL);
 	gebr.config.nfs_label  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "nfsid", "label", gebr_generate_nfs_label());
 

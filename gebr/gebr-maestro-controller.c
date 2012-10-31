@@ -1362,8 +1362,16 @@ on_save_alias_maestro_clicked(GebrMaestroController *self)
 {
 	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
 	const gchar *text_entry = gtk_entry_get_text(entry);
+
+	if (!*text_entry) {
+		text_entry = gebr_generate_nfs_label();
+		gtk_entry_set_text(entry, text_entry);
+	}
+
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
 	gebr_maestro_server_set_nfs_label(maestro, text_entry);
+
+	project_line_update_nfs_label_for_lines(gebr.ui_project_line);
 	project_line_info_update();
 }
 
@@ -1704,7 +1712,6 @@ connect_to_maestro(GtkEntry *entry,
 	const gchar *entry_text = gtk_entry_get_text(entry);
 	const gchar *address = gebr_apply_pattern_on_address(entry_text);
 	gebr_maestro_controller_connect(self, address);
-	on_get_alias_maestro_clicked(self);
 }
 
 static void
@@ -2113,13 +2120,16 @@ update_maestro_view(GebrMaestroController *mc,
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 
-	if (state == SERVER_STATE_DISCONNECTED)
+	if (state == SERVER_STATE_DISCONNECTED) {
+		on_get_alias_maestro_clicked(mc);
 		gtk_list_store_clear(mc->priv->model);
-	else if (state == SERVER_STATE_LOGGED) {
+	} else if (state == SERVER_STATE_LOGGED) {
 		if (emit_daemon_changed)
 			on_daemons_changed(maestro, mc);
 		else
 			gebr_maestro_controller_update_daemon_model(maestro, mc);
+
+		on_get_alias_maestro_clicked(mc);
 	}
 
 	gebr_maestro_controller_update_chooser_model(maestro, mc, NULL);
@@ -2174,6 +2184,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 		    (state == SERVER_STATE_CONNECT || state == SERVER_STATE_LOGGED))
 			return;
 
+		gebr_config_maestro_save();
 		gebr_maestro_server_disconnect(self->priv->maestro, FALSE);
 		g_object_unref(self->priv->maestro);
 	}

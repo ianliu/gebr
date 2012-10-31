@@ -1651,6 +1651,8 @@ static void
 gebr_maestro_server_set_config_nfs_label(GebrMaestroServer *maestro,
                                           const gchar *nfsid)
 {
+	gebr_update_maestro_nfs_info(nfsid);
+
 	if (g_strcmp0(gebr.config.nfs_id->str, nfsid) == 0)
 		gebr_maestro_server_set_nfs_label(maestro, gebr.config.nfs_label->str);
 	else
