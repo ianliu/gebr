@@ -916,6 +916,17 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			gdome_el_unref(servers, &exception);
 		} 
 		else if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+
+			GdomeDocument *aux = *document;
+			gdome_doc_ref(aux, &exception);
+			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "line", GEBR_GEOXML_LINE_VERSION);
+			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
+
+			gdome_doc_unref(aux, &exception);
+
+			gdome_el_unref(root_element, &exception);
+			root_element = gebr_geoxml_document_root_element(*document);
+
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.7");
 
 			GdomeElement *first_el = __gebr_geoxml_get_first_element(root_element, "server-maestro");
