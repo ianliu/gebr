@@ -338,7 +338,6 @@ state_changed(GebrCommServer *comm_server,
 	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
-		gebr_config_maestro_save();
 
 		gebr_project_line_show(gebr.ui_project_line);
 
@@ -1096,6 +1095,9 @@ static void
 gebr_maestro_server_state_change_real(GebrMaestroServer *maestro)
 {
 	update_groups_store(maestro);
+
+	if (maestro->priv->nfsid)
+		gebr_config_maestro_save();
 }
 
 static void
