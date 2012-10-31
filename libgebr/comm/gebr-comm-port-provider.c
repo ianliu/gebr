@@ -26,6 +26,7 @@ gebr_comm_port_provider_error_quark(void)
 	return g_quark_from_static_string("gebr-comm-port-provider-error-quark");
 }
 
+/* GObject stuff {{{ */
 G_DEFINE_TYPE(GebrCommPortProvider, gebr_comm_port_provider, G_TYPE_OBJECT);
 
 enum {
@@ -171,23 +172,7 @@ gebr_comm_port_provider_init(GebrCommPortProvider *self)
 						 GEBR_COMM_TYPE_PORT_PROVIDER,
 						 GebrCommPortProviderPriv);
 }
-
-GebrCommPortProvider *
-gebr_comm_port_provider_new(GebrCommPortType type,
-			    const gchar *address)
-{
-	return g_object_new(GEBR_COMM_TYPE_PORT_PROVIDER,
-			    "type", type,
-			    "address", address,
-			    NULL);
-}
-
-void
-gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
-				    guint display)
-{
-	self->priv->display = display;
-}
+/* }}} */
 
 static gboolean
 is_local_address(const gchar *addr)
@@ -207,8 +192,47 @@ emit_signals(GebrCommPortProvider *self, guint port, GError *error)
 		g_signal_emit(self, ERROR, 0, error);
 }
 
+/*
+ * This structure provides some virtual methods that must be implemented by
+ * both local and remote logics. Each method must return a boolean value
+ * indicating the success or failure of the method. In case of failure, `error`
+ * must be set from GEBR_COMM_PORT_PROVIDER_ERROR domain.
+ *
+ * See: GebrCommPortProviderError enumeration.
+ */
+struct PortProviderVirtualMethods {
+	gboolean (*get_maestro_port) (GebrCommPortProvider *self, guint *port, GError **error);
+	gboolean (*get_daemon_port)  (GebrCommPortProvider *self, guint *port, GError **error);
+	gboolean (*get_x11_port)     (GebrCommPortProvider *self, guint *port, GError **error);
+	gboolean (*get_sftp_port)    (GebrCommPortProvider *self, guint *port, GError **error);
+};
+
+gboolean local_get_maestro_port (GebrCommPortProvider *self, guint *port, GError **error);
+gboolean local_get_daemon_port  (GebrCommPortProvider *self, guint *port, GError **error);
+gboolean local_get_x11_port     (GebrCommPortProvider *self, guint *port, GError **error);
+gboolean local_get_sftp_port    (GebrCommPortProvider *self, guint *port, GError **error);
+
+gboolean remote_get_maestro_port (GebrCommPortProvider *self, guint *port, GError **error);
+gboolean remote_get_daemon_port  (GebrCommPortProvider *self, guint *port, GError **error);
+gboolean remote_get_x11_port     (GebrCommPortProvider *self, guint *port, GError **error);
+gboolean remote_get_sftp_port    (GebrCommPortProvider *self, guint *port, GError **error);
+
+struct PortProviderVirtualMethods local_methods = {
+	.get_maestro_port = local_get_maestro_port,
+	.get_daemon_port  = local_get_daemon_port,
+	.get_x11_port     = local_get_x11_port,
+	.get_sftp_port    = local_get_sftp_port,
+};
+
+struct PortProviderVirtualMethods remote_methods = {
+	.get_maestro_port = remote_get_maestro_port,
+	.get_daemon_port  = remote_get_daemon_port,
+	.get_x11_port     = remote_get_x11_port,
+	.get_sftp_port    = remote_get_sftp_port,
+};
+
 static void
-start_local(GebrCommPortProvider *self)
+start(GebrCommPortProvider *self, struct PortProviderVirtualMethods *vmethods)
 {
 	guint port = 0;
 	GError *error = NULL;
@@ -234,37 +258,86 @@ start_local(GebrCommPortProvider *self)
 	emit_signals(self, port, error);
 }
 
-static void
-start_remote(GebrCommPortProvider *self)
+/* Local port provider implementation {{{ */
+gboolean
+local_get_maestro_port(GebrCommPortProvider *self, guint *port, GError **error)
 {
-	guint port = 0;
-	GError *error = NULL;
+	return FALSE;
+}
 
-	switch (self->priv->type)
-	{
-	case GEBR_COMM_PORT_TYPE_MAESTRO:
-		break;
-	case GEBR_COMM_PORT_TYPE_DAEMON:
-		break;
-	case GEBR_COMM_PORT_TYPE_X11:
-		break;
-	case GEBR_COMM_PORT_TYPE_SFTP:
-		break;
-	default:
-		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
-			    GEBR_COMM_PORT_PROVIDER_ERROR_NOT_SET,
-			    "Port was not set");
-		break;
-	}
+gboolean
+local_get_daemon_port(GebrCommPortProvider *self, guint *port, GError **error)
+{
+	return FALSE;
+}
 
-	emit_signals(self, port, error);
+gboolean
+local_get_x11_port(GebrCommPortProvider *self, guint *port, GError **error)
+{
+	return FALSE;
+}
+
+gboolean
+local_get_sftp_port(GebrCommPortProvider *self, guint *port, GError **error)
+{
+	return FALSE;
+}
+/* }}} */
+
+/* Remote port provider implementation {{{ */
+gboolean
+remote_get_maestro_port(GebrCommPortProvider *self, guint *port, GError **error)
+{
+	return FALSE;
+}
+
+gboolean
+remote_get_daemon_port(GebrCommPortProvider *self, guint *port, GError **error)
+{
+	return FALSE;
+}
+
+gboolean
+remote_get_x11_port(GebrCommPortProvider *self, guint *port, GError **error)
+{
+	return FALSE;
+}
+
+gboolean
+remote_get_sftp_port(GebrCommPortProvider *self, guint *port, GError **error)
+{
+	return FALSE;
+}
+/* }}} */
+
+/* Public API {{{ */
+GebrCommPortProvider *
+gebr_comm_port_provider_new(GebrCommPortType type,
+			    const gchar *address)
+{
+	return g_object_new(GEBR_COMM_TYPE_PORT_PROVIDER,
+			    "type", type,
+			    "address", address,
+			    NULL);
+}
+
+void
+gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
+				    guint display)
+{
+	self->priv->display = display;
 }
 
 void
 gebr_comm_port_provider_start(GebrCommPortProvider *self)
 {
+	struct PortProviderVirtualMethods *vmethods;
+
 	if (is_local_address(self->priv->address))
-		start_local(self);
+		vmethods = &local_methods;
 	else
-		start_remote(self);
+		vmethods = &remote_methods;
+
+	start(self, vmethods);
 }
+/* }}} */
