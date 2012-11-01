@@ -44,12 +44,42 @@ struct _GebrCommSsh {
 struct _GebrCommSshClass {
 	GObjectClass parent;
 
+	/**
+	 * GebrCommSsh::ssh-password:
+	 *
+	 * This signal is emitted when a password is needed for this ssh
+	 * connection to continue. The password must be provided by means of
+	 * gebr_comm_ssh_set_password() method.
+	 *
+	 * If @retry is %TRUE, then a password was already requested but it was
+	 * not accepted.
+	 */
 	void (*ssh_password) (GebrCommSsh *self, gboolean retry);
 
+	/**
+	 * GebrCommSsh::ssh-question:
+	 *
+	 * This signal is emitted when a yes/no question is asked by this ssh
+	 * connection. It must be answered by means of
+	 * gebr_comm_ssh_answer_question() method.
+	 */
 	void (*ssh_question) (GebrCommSsh *self, const gchar *question);
 
+	/**
+	 * GebrCommSsh::ssh-error:
+	 *
+	 * This signal is emitted when there was an error in this ssh
+	 * connection and it cannot be continued. The error message is provided
+	 * by @msg parameter and is an exact copy of the ssh error.
+	 */
 	void (*ssh_error) (GebrCommSsh *self, const gchar *msg);
 
+	/**
+	 * GebrCommSsh::ssh-stdout:
+	 *
+	 * This signal is emitted when the command executed by ssh generates
+	 * output.
+	 */
 	void (*ssh_stdout) (GebrCommSsh *self, const GString *buffer);
 };
 
