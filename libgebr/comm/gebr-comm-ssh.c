@@ -227,10 +227,8 @@ gebr_comm_ssh_parse_output(GebrCommSsh *self,
 		return TRUE;
 
 	gchar *start = g_strrstr(output->str, GEBR_PORT_PREFIX);
-	if (start) {
-		g_string_erase(output, 0, start - output->str + strlen(GEBR_PORT_PREFIX));
+	if (start)
 		return FALSE;
-	}
 
 	for (gint i = 0; output->str[i]; i++) {
 		if (!g_ascii_isdigit(output->str[i]))

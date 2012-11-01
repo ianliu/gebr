@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
+#include "gebr-comm-ssh.h"
+#include <libgebr/utils.h>
 
 GQuark
 gebr_comm_port_provider_error_quark(void)
@@ -41,6 +43,8 @@ enum {
 enum {
 	PORT_DEFINE,
 	ERROR,
+	PASSWORD,
+	QUESTION,
 	LAST_SIGNAL
 };
 
@@ -148,6 +152,32 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 			     g_cclosure_marshal_VOID__POINTER,
 			     G_TYPE_NONE, 1,
 			     G_TYPE_POINTER);
+
+	/**
+	 * GebrCommPortProvider::password:
+	 */
+	signals[PASSWORD] =
+		g_signal_new("password",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommPortProviderClass, password),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__BOOLEAN,
+			     G_TYPE_NONE, 1,
+			     G_TYPE_BOOLEAN);
+
+	/**
+	 * GebrCommPortProvider::question:
+	 */
+	signals[QUESTION] =
+		g_signal_new("question",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommPortProviderClass, question),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__STRING,
+			     G_TYPE_NONE, 1,
+			     G_TYPE_STRING);
 
 	g_object_class_install_property(object_class,
 					PROP_TYPE,
@@ -355,9 +385,117 @@ local_get_sftp_port(GebrCommPortProvider *self)
 /* }}} */
 
 /* Remote port provider implementation {{{ */
+static void
+on_ssh_password(GebrCommSsh *ssh, gboolean retry, GebrCommPortProvider *self)
+{
+	g_signal_emit(self, PASSWORD, 0, retry);
+}
+
+static void
+on_ssh_question(GebrCommSsh *ssh, const gchar *question, GebrCommPortProvider *self)
+{
+	g_signal_emit(self, QUESTION, 0, question);
+}
+
+static void
+on_ssh_error(GebrCommSsh *ssh, const gchar *msg, GebrCommPortProvider *self)
+{
+	GError *error = NULL;
+	g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
+		    GEBR_COMM_PORT_PROVIDER_ERROR_SSH,
+		    "%s", msg);
+	emit_signals(self, 0, error);
+}
+
+static void
+on_ssh_stdout(GebrCommSsh *ssh, const GString *buffer, GebrCommPortProvider *self)
+{
+	guint port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
+	emit_signals(self, port, NULL);
+}
+
+static gchar *
+gebr_get_dafault_keys(void)
+{
+	const gchar *default_keys[] = {"id_rsa", "id_dsa", "identity", NULL};
+	GString *keys = g_string_new(NULL);
+
+	for (gint i = 0; default_keys[i]; i++) {
+		gchar *default_key = g_build_filename(g_get_home_dir(), ".ssh", default_keys[i], NULL);
+
+		if (g_file_test(default_key, G_FILE_TEST_EXISTS)) {
+			gchar *cmd = g_strdup_printf(" -i %s", default_key);
+			keys = g_string_append(keys, cmd);
+			g_free(cmd);
+		}
+
+		g_free(default_key);
+	}
+
+	return g_string_free(keys, FALSE);
+}
+
+static gchar *
+get_ssh_command_with_key(void)
+{
+	const gchar *default_keys = gebr_get_dafault_keys();
+	gchar *basic_cmd;
+	if (default_keys)
+		basic_cmd = g_strdup_printf("ssh -o NoHostAuthenticationForLocalhost=yes %s", default_keys);
+	else
+		basic_cmd = g_strdup("ssh -o NoHostAuthenticationForLocalhost=yes");
+
+	gchar *path = gebr_key_filename(FALSE);
+	gchar *ssh_cmd;
+
+	if (g_file_test(path, G_FILE_TEST_EXISTS))
+		ssh_cmd = g_strconcat(basic_cmd, " -i ", path, NULL);
+	else
+		ssh_cmd = g_strdup(basic_cmd);
+
+	g_free(path);
+	g_free(basic_cmd);
+
+	return ssh_cmd;
+}
+
+static gchar *
+get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
+{
+	const gchar *binary = is_maestro ? "gebrm" : "gebrd";
+	gchar *tmp = g_strdup_printf("%s-%s.tmp", self->priv->address,
+				     is_maestro? "maestro" : "server");
+	gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", tmp, NULL);
+
+	gchar *ssh_cmd = get_ssh_command_with_key();
+
+	GString *cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\" 2> %s",
+	                ssh_cmd, self->priv->address, binary, filename);
+	gchar *cmd = g_shell_quote(cmd_line->str);
+
+	g_string_printf(cmd_line, "bash -c %s", cmd);
+
+	g_free(filename);
+	g_free(tmp);
+	g_free(cmd);
+	g_free(ssh_cmd);
+
+	return g_string_free(cmd_line, FALSE);
+}
+
 void
 remote_get_maestro_port(GebrCommPortProvider *self)
 {
+	GebrCommSsh *ssh = gebr_comm_ssh_new();
+	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
+	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
+	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
+	g_signal_connect(ssh, "ssh-stdout", G_CALLBACK(on_ssh_stdout), self);
+	gchar *command = get_launch_command(self, TRUE);
+	gebr_comm_ssh_set_command(ssh, command);
+	gebr_comm_ssh_run(ssh);
+	g_free(command);
 }
 
 void

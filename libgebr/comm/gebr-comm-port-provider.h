@@ -51,6 +51,7 @@ typedef enum {
 	GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE,
 	GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED,
 	GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
+	GEBR_COMM_PORT_PROVIDER_ERROR_SSH,
 } GebrCommPortProviderError;
 
 /**
@@ -82,6 +83,8 @@ struct _GebrCommPortProviderClass {
 
 	void (*port_defined) (GebrCommPortProvider *self, guint port);
 	void (*error) (GebrCommPortProvider *self, GError *error);
+	void (*password) (GebrCommPortProvider *self, gboolean retry);
+	void (*question) (GebrCommPortProvider *self, const gchar *question);
 };
 
 GType gebr_comm_port_provider_get_type(void) G_GNUC_CONST;
