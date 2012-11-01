@@ -51,8 +51,8 @@ typedef enum {
 	GEBR_COMM_SSH_STATE_INIT,
 	GEBR_COMM_SSH_STATE_PASSWORD,
 	GEBR_COMM_SSH_STATE_QUESTION,
-	GEBR_COMM_SSH_STATE_STABLISHED,
 	GEBR_COMM_SSH_STATE_ERROR,
+	GEBR_COMM_SSH_STATE_FINISHED,
 } GebrCommSshState;
 
 struct _GebrCommSshPriv {
@@ -176,14 +176,17 @@ write_pass_in_process(GebrCommTerminalProcess *process,
 void
 gebr_comm_ssh_set_password(GebrCommSsh *self, const gchar *password)
 {
-	write_pass_in_process(self->priv->process, password);
+	if (self->priv->state == GEBR_COMM_SSH_STATE_PASSWORD)
+		write_pass_in_process(self->priv->process, password);
 }
 
 void
 gebr_comm_ssh_answer_question(GebrCommSsh *self, gboolean response)
 {
-	GString *answer = g_string_new(response ? "yes\n" : "no\n");
-	gebr_comm_terminal_process_write_string(self->priv->process, answer);
+	if (self->priv->state == GEBR_COMM_SSH_STATE_QUESTION) {
+		GString *answer = g_string_new(response ? "yes\n" : "no\n");
+		gebr_comm_terminal_process_write_string(self->priv->process, answer);
+	}
 }
 
 void
@@ -198,14 +201,17 @@ ssh_process_read(GebrCommTerminalProcess *process,
 {
 	GString *output;
 	output = gebr_comm_terminal_process_read_string_all(process);
-	g_debug("On '%s', line '%d', function: '%s', output:%s", __FILE__, __LINE__, __func__, output->str);
+
+	if (!gebr_comm_ssh_parse_output(self, process, output))
+		g_signal_emit(self, SSH_STDOUT, 0, output);
 }
 
 static void
 ssh_process_finished(GebrCommTerminalProcess *process,
 		     GebrCommSsh *self)
 {
-
+	self->priv->state = GEBR_COMM_SSH_STATE_FINISHED;
+	gebr_comm_terminal_process_free(process);
 }
 
 /*
@@ -246,8 +252,8 @@ gebr_comm_ssh_parse_output(GebrCommSsh *self,
 	} else if (!strcmp(output->str, "yes\r\n")) { 		/*User's positive feedback*/
 		g_debug("On '%s', function: '%s', USER ANSWERED YES, output:'%s'", __FILE__, __func__, output->str);
 	} else if (g_str_has_prefix(output->str, "ssh:") || g_str_has_prefix(output->str, "channel ")) { 	/*Known errors*/
-			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
-			g_signal_emit(self, signals[SSH_ERROR], 0, output->str);
+		self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
+		g_signal_emit(self, signals[SSH_ERROR], 0, output->str);
 	} else
 		g_debug("On '%s', function: '%s', IT DIDNT FALL IN ANY OF THE CATEGORIES, output: %s", __FILE__, __func__, output->str);
 
