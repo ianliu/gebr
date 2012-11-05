@@ -30,6 +30,11 @@
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-process.h"
 
+static gchar *get_local_forward_command(GebrCommPortProvider *self,
+					guint *port,
+					const gchar *addr,
+					guint remote_port);
+
 GQuark
 gebr_comm_port_provider_error_quark(void)
 {
@@ -415,11 +420,43 @@ on_ssh_error(GebrCommSsh *ssh, const gchar *msg, GebrCommPortProvider *self)
 	emit_signals(self, 0, error);
 }
 
-static void
-on_ssh_stdout(GebrCommSsh *ssh, const GString *buffer, GebrCommPortProvider *self)
+struct TunnelPollData {
+	GebrCommPortProvider *self;
+	guint port;
+};
+
+static gboolean
+tunnel_poll_port(gpointer user_data)
 {
-	guint port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
-	emit_signals(self, port, NULL);
+	struct TunnelPollData *data = user_data;
+
+	if (gebr_comm_listen_socket_is_local_port_available(data->port))
+		return TRUE;
+
+	emit_signals(data->self, data->port, NULL);
+	g_free(data);
+	return FALSE;
+}
+
+static void
+on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
+{
+	guint port = 2125;
+	guint remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
+	gchar *command = get_local_forward_command(self, &port, self->priv->sftp_address, remote_port);
+
+	GebrCommSsh *ssh = gebr_comm_ssh_new();
+	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
+	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
+	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
+	gebr_comm_ssh_set_command(ssh, command);
+	gebr_comm_ssh_run(ssh);
+	g_free(command);
+
+	struct TunnelPollData *data = g_new(struct TunnelPollData, 1);
+	data->self = self;
+	data->port = port;
+	g_timeout_add(200, tunnel_poll_port, data);
 }
 
 static gchar *
@@ -558,24 +595,29 @@ void
 remote_get_x11_port(GebrCommPortProvider *self)
 {
 	GebrCommSsh *ssh = gebr_comm_ssh_new();
+	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
+	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
+	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
 	gchar *command = get_x11_command(self);
 	gebr_comm_ssh_set_command(ssh, command);
 	gebr_comm_ssh_run(ssh);
 	g_free(command);
 }
 
-static gchar*
-remote_get_sftp_command(GebrCommPortProvider *self)
+static gchar *
+get_local_forward_command(GebrCommPortProvider *self,
+			  guint *port,
+			  const gchar *addr,
+			  guint remote_port)
 {
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *string = g_string_new(NULL);
-	guint16 port = 2000;
 
-	while (!gebr_comm_listen_socket_is_local_port_available(port))
-		port++;
+	while (!gebr_comm_listen_socket_is_local_port_available(*port))
+		(*port)++;
 
-	g_string_printf(string, "%s -x -L %d:%s:%d %s -N", ssh_cmd, port,
-			self->priv->sftp_address, 22, self->priv->address);
+	g_string_printf(string, "%s -x -L %d:%s:%d %s -N", ssh_cmd, *port,
+			addr, remote_port, self->priv->address);
 
 	g_free(ssh_cmd);
 
@@ -585,11 +627,20 @@ remote_get_sftp_command(GebrCommPortProvider *self)
 void
 remote_get_sftp_port(GebrCommPortProvider *self)
 {
+	guint port = 2000;
 	GebrCommSsh *ssh = gebr_comm_ssh_new();
-	gchar *command = remote_get_sftp_command(self);
+	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
+	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
+	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
+	gchar *command = get_local_forward_command(self, &port, self->priv->sftp_address, 22);
 	gebr_comm_ssh_set_command(ssh, command);
 	gebr_comm_ssh_run(ssh);
 	g_free(command);
+
+	struct TunnelPollData *data = g_new(struct TunnelPollData, 1);
+	data->self = self;
+	data->port = port;
+	g_timeout_add(200, tunnel_poll_port, data);
 }
 /* }}} */
 
