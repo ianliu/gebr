@@ -1008,21 +1008,21 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.nfsid_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
 			GString *nfsid = g_list_nth_data(arguments, 0);
+			GString *hosts = g_list_nth_data(arguments, 1);
+			GString *label = g_list_nth_data(arguments, 2);
 
-			g_debug("NFSID = %s", nfsid->str);
+			g_debug("NFSID = %s / LABEL = %s", nfsid->str, label->str);
+
+			gebr_config_set_current_nfs_info(nfsid->str,
+			                                 hosts->str,
+			                                 label->str);
 
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
-			gebr_config_set_current_nfsid(nfsid->str);
-			gebr_maestro_server_set_config_nfs_label(maestro, nfsid->str);
-
-			const gchar *addr = gebr_maestro_server_get_address(maestro);
-			gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid->str,
-			                                 gebr_maestro_server_get_nfs_label(maestro),
-			                                 addr);
+			gebr_maestro_server_set_nfs_label(maestro, label->str);
 
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
@@ -1950,4 +1950,19 @@ gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model)
 		 valid = gtk_tree_model_iter_next(orig_model, &iter);
 	 }
 	 return GTK_TREE_MODEL(new_model);
+}
+
+void
+gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro)
+{
+	const gchar *nfsid = maestro->priv->nfsid;
+	const gchar *label = maestro->priv->nfs_label;
+
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
+	                                      gebr_comm_protocol_defs.nfsid_def, 3,
+	                                      nfsid,
+	                                      "",
+	                                      label);
 }

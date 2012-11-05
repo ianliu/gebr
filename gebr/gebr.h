@@ -222,7 +222,9 @@ const gchar *gebr_get_session_id(void);
 
 gboolean gebr_has_maestro_config(void);
 
-void gebr_config_set_current_nfsid(const gchar *nfsid);
+void gebr_config_set_current_nfs_info(const gchar *nfsid,
+                                      const gchar *hosts,
+                                      const gchar *label);
 
 void restore_project_line_flow_selection(void);
 

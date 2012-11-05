@@ -1374,6 +1374,9 @@ on_save_alias_maestro_clicked(GebrMaestroController *self)
 	const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
 	gebr_maestro_settings_change_label(gebr.config.maestro_set, nfsid, text_entry);
 
+	// Send Label for Maestro
+	gebr_maestro_server_send_nfs_label(maestro);
+
 	project_line_update_nfs_label_for_lines(gebr.ui_project_line);
 	project_line_info_update();
 }

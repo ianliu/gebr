@@ -779,10 +779,15 @@ gebr_has_maestro_config(void)
 }
 
 void
-gebr_config_set_current_nfsid(const gchar *nfsid)
+gebr_config_set_current_nfs_info(const gchar *nfsid,
+                                 const gchar *hosts,
+                                 const gchar *label)
 {
 	if (!nfsid)
 		return;
 
 	g_string_assign(gebr.config.nfsid, nfsid);
+
+	gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid, label, "");
+	gebr_maestro_settings_add_addresses_on_domain(gebr.config.maestro_set, nfsid, hosts);
 }
