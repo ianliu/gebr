@@ -39,6 +39,7 @@
 #include "ui_project_line.h"
 #include "ui_flow_execution.h"
 #include "gebr-menu-view.h"
+#include "libgebr/gebr-maestro-settings.h"
 
 #include "gebr-maestro-controller.h"
 
@@ -112,13 +113,12 @@ struct gebr {
 		GKeyFile *key_file;
 		GString *path;
 
-		GKeyFile *key_file_maestro;
-		GString *path_maestro;
+		GebrMaestroSettings *maestro_set;
 
 		GString *version;
 
 		GString *maestro_address;
-		GString *nfs_id;
+		GString *nfsid;
 		GString *nfs_label;
 
 		GString *username;
@@ -185,8 +185,6 @@ gboolean gebr_quit(gboolean save_config);
 
 gboolean gebr_config_load(void);
 
-gboolean gebr_update_maestro_nfs_info();
-
 /**
  * Populates the various data models, such as menus index and projects & lines.
  */
@@ -223,6 +221,8 @@ void gebr_remove_help_edit_window(GebrGeoXmlDocument * document);
 const gchar *gebr_get_session_id(void);
 
 gboolean gebr_has_maestro_config(void);
+
+void gebr_config_set_current_nfsid(const gchar *nfsid);
 
 void restore_project_line_flow_selection(void);
 

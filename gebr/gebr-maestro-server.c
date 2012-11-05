@@ -25,6 +25,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
 #include <libgebr/gebr-maestro-info.h>
+#include <libgebr/gebr-maestro-settings.h>
 #include <stdlib.h>
 
 #include "gebr.h" // for gebr_get_session_id()
@@ -1015,7 +1016,14 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("NFSID = %s", nfsid->str);
 
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
+			gebr_config_set_current_nfsid(nfsid->str);
 			gebr_maestro_server_set_config_nfs_label(maestro, nfsid->str);
+
+			const gchar *addr = gebr_maestro_server_get_address(maestro);
+			gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid->str,
+			                                 gebr_maestro_server_get_nfs_label(maestro),
+			                                 addr);
+
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 
@@ -1651,12 +1659,11 @@ static void
 gebr_maestro_server_set_config_nfs_label(GebrMaestroServer *maestro,
                                           const gchar *nfsid)
 {
-	gebr_update_maestro_nfs_info(nfsid);
+	if (!nfsid)
+		return;
 
-	if (g_strcmp0(gebr.config.nfs_id->str, nfsid) == 0)
-		gebr_maestro_server_set_nfs_label(maestro, gebr.config.nfs_label->str);
-	else
-		gebr_maestro_server_set_nfs_label(maestro, "");
+	const gchar *label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, nfsid);
+	gebr_maestro_server_set_nfs_label(maestro, label);
 }
 
 void
