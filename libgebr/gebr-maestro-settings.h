@@ -26,10 +26,10 @@
 G_BEGIN_DECLS
 
 typedef struct _GebrMaestroSettings GebrMaestroSettings;
-typedef struct _GebrMaestroServerSettings GebrMaestroServerSettings;
+typedef struct _GebrMaestroSettingsPriv GebrMaestroSettingsPriv;
 
 struct _GebrMaestroSettings {
-	GebrMaestroServerSettings *priv;
+	GebrMaestroSettingsPriv *priv;
 };
 
 /**
@@ -75,12 +75,22 @@ void gebr_maestro_settings_add_address_on_domain(GebrMaestroSettings *ms,
                                                  const gchar *addr);
 
 /**
+ * gebr_maestro_settings_change_label:
+ *
+ * Change label of @domain to @label
+ */
+void gebr_maestro_settings_change_label(GebrMaestroSettings *ms,
+                                        const gchar *domain,
+                                        const gchar *label);
+
+/**
  * gebr_maestro_settings_get_addr_for_domain:
  *
- * Get address of the first maestro on @domain
+ * Get address of the maestro on @domain in @index position
  */
 const gchar * gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
-                                                        const gchar *domain);
+                                                        const gchar *domain,
+                                                        gint index);
 
 /**
  * gebr_maestro_settings_get_label_for_domain:
