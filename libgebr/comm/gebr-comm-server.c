@@ -450,6 +450,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
 	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 void gebr_comm_server_disconnect(GebrCommServer *server)
