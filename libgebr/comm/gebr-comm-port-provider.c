@@ -29,6 +29,7 @@
 
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-process.h"
+#include "../marshalers.h"
 
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
 					guint *port,
@@ -175,7 +176,7 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrCommPortProviderClass, password),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__BOOLEAN,
+			     _gebr_gui_marshal_VOID__OBJECT_BOOLEAN,
 			     G_TYPE_NONE, 1,
 			     G_TYPE_BOOLEAN);
 
@@ -188,7 +189,7 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrCommPortProviderClass, question),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__STRING,
+			     _gebr_gui_marshal_VOID__OBJECT_STRING,
 			     G_TYPE_NONE, 1,
 			     G_TYPE_STRING);
 

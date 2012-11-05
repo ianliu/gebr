@@ -22,6 +22,7 @@
 #define __GEBR_COMM_PORT_PROVIDER_H__
 
 #include <glib-object.h>
+#include <libgebr/comm/gebr-comm-ssh.h>
 
 G_BEGIN_DECLS
 
@@ -83,8 +84,8 @@ struct _GebrCommPortProviderClass {
 
 	void (*port_defined) (GebrCommPortProvider *self, guint port);
 	void (*error) (GebrCommPortProvider *self, GError *error);
-	void (*password) (GebrCommPortProvider *self, gboolean retry);
-	void (*question) (GebrCommPortProvider *self, const gchar *question);
+	void (*password) (GebrCommPortProvider *self, GebrCommSsh *ssh, gboolean retry);
+	void (*question) (GebrCommPortProvider *self, GebrCommSsh *ssh, const gchar *question);
 };
 
 GType gebr_comm_port_provider_get_type(void) G_GNUC_CONST;
