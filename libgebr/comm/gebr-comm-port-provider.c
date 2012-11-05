@@ -52,7 +52,7 @@ enum {
 };
 
 enum {
-	PORT_DEFINE,
+	PORT_DEFINED,
 	ERROR,
 	PASSWORD,
 	QUESTION,
@@ -140,8 +140,8 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 	 * port that can be used to communicate with the specified type in the
 	 * constructor gebr_comm_port_provider_new().
 	 */
-	signals[PORT_DEFINE] =
-		g_signal_new("port-define",
+	signals[PORT_DEFINED] =
+		g_signal_new("port-defined",
 			     G_OBJECT_CLASS_TYPE(object_class),
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrCommPortProviderClass, port_defined),
@@ -199,7 +199,7 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 							 "Type",
 							 "Type",
 							 0, 100, 0,
-							 G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY));
+							 G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
@@ -207,7 +207,7 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 							    "Address",
 							    "Address",
 							    NULL,
-							    G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY));
+							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_type_class_add_private(klass, sizeof(GebrCommPortProviderPriv));
 }
@@ -244,7 +244,7 @@ static void
 emit_signals(GebrCommPortProvider *self, guint port, GError *error)
 {
 	if (!error)
-		g_signal_emit(self, PORT_DEFINE, 0, port);
+		g_signal_emit(self, PORT_DEFINED, 0, port);
 	else
 		g_signal_emit(self, ERROR, 0, error);
 }
