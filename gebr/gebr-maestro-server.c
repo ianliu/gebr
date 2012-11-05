@@ -118,9 +118,6 @@ void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *windo
 void gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 				      const gchar *home);
 
-static void gebr_maestro_server_set_config_nfs_label(GebrMaestroServer *maestro,
-                                                     const gchar *nfsid);
-
 static gchar *gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface);
 
 static gchar *gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface);
@@ -1653,17 +1650,6 @@ gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro)
 		return NULL;
 
 	return g_file_get_uri(maestro->priv->mount_location);
-}
-
-static void
-gebr_maestro_server_set_config_nfs_label(GebrMaestroServer *maestro,
-                                          const gchar *nfsid)
-{
-	if (!nfsid)
-		return;
-
-	const gchar *label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, nfsid);
-	gebr_maestro_server_set_nfs_label(maestro, label);
 }
 
 void
