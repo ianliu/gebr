@@ -184,3 +184,9 @@ gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
 
 	return g_string_free(label, FALSE);
 }
+
+GKeyFile *
+gebr_maestro_settings_get_key_file(GebrMaestroSettings *ms)
+{
+	return ms->priv->maestro_key;
+}

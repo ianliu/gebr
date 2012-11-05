@@ -116,6 +116,13 @@ const gchar * gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
 const gchar *gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
                                                         const gchar *domain);
 
+/**
+ * gebr_maestro_settings_get_key_file:
+ *
+ * Get keyfile for the object @ms
+ */
+GKeyFile *gebr_maestro_settings_get_key_file(GebrMaestroSettings *ms);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_SETTINGS_H__ */
