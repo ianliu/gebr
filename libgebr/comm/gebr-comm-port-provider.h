@@ -110,6 +110,13 @@ void gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
 					 guint display);
 
 /**
+ * gebr_comm_port_provider_set_sftp_address:
+ * Sets the address to be used in a remote nfs case.
+ */
+void
+gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
+					 const gchar *address);
+/**
  * gebr_comm_port_provider_start:
  *
  * After calling this method, the signal GebrCommPortProvider::port_defined may
