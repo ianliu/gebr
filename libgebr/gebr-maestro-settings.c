@@ -94,6 +94,15 @@ gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
 }
 
 void
+gebr_maestro_settings_add_addresses_on_domain(GebrMaestroSettings *ms,
+                                              const gchar *domain,
+                                              const gchar *addrs)
+{
+	if (g_key_file_has_group(ms->priv->maestro_key, domain))
+		g_key_file_set_string(ms->priv->maestro_key, domain, "maestro", addrs);
+}
+
+void
 gebr_maestro_settings_add_address_on_domain(GebrMaestroSettings *ms,
                                             const gchar *domain,
                                             const gchar *addr)
@@ -108,7 +117,7 @@ gebr_maestro_settings_add_address_on_domain(GebrMaestroSettings *ms,
 
 	gchar **list = g_strsplit(maestro->str, ",", -1);
 	if (list) {
-		for (gint i = 0; list[i]; i++)
+		for (gint i = 0; list[i] && !has_addr; i++)
 			has_addr = g_strcmp0(list[i], addr) == 0;
 	}
 
@@ -130,6 +139,17 @@ gebr_maestro_settings_change_label(GebrMaestroSettings *ms,
 {
 	if (g_key_file_has_group(ms->priv->maestro_key, domain))
 		g_key_file_set_string(ms->priv->maestro_key, domain, "label", label);
+}
+
+const gchar *
+gebr_maestro_settings_get_addrs(GebrMaestroSettings *ms,
+                                const gchar *domain)
+{
+	GString *maestros;
+
+	maestros = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "maestro", "");
+
+	return g_string_free(maestros, FALSE);
 }
 
 const gchar *
