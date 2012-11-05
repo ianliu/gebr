@@ -252,7 +252,6 @@ gebr_comm_server_new(const gchar * _address,
 	server->ops = ops;
 	server->user_data = NULL;
 	server->tunnel_pooling_source = 0;
-	server->process.use = COMM_SERVER_PROCESS_NONE;
 	server->last_error = g_string_new(NULL);
 	server->state = SERVER_STATE_UNKNOWN;
 	server->error = SERVER_ERROR_UNKNOWN;
@@ -311,8 +310,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 				     server->socket, server->address->str);
 
 	GebrCommTerminalProcess *process;
-	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
-	server->process.data.terminal = process = gebr_comm_terminal_process_new();
+	server->process = process = gebr_comm_terminal_process_new();
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_run_server_read), server);
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_run_server_finished), server);
 
@@ -682,7 +680,6 @@ out:	g_string_free(output, TRUE);
 static void gebr_comm_ssh_finished(GebrCommTerminalProcess * process, GebrCommServer *server)
 {
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_finished");
-	server->process.use = COMM_SERVER_PROCESS_NONE;
 	gebr_comm_terminal_process_free(process);
 }
 
@@ -720,7 +717,6 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 {
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_run_server_finished");
 
-	server->process.use = COMM_SERVER_PROCESS_NONE;
 	gebr_comm_terminal_process_free(process);
 
 	if (server->error != SERVER_ERROR_NONE)
@@ -773,8 +769,7 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 		g_strfreev(log_lines);
 
 	server->tried_existant_pass = FALSE;
-	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
-	server->process.data.terminal = process = gebr_comm_terminal_process_new();
+	server->process = process = gebr_comm_terminal_process_new();
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
 
@@ -1007,19 +1002,11 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 
 	gebr_comm_protocol_reset(server->socket->protocol);
 	gebr_comm_server_free_x11_forward(server);
-	switch (server->process.use) {
-	case COMM_SERVER_PROCESS_NONE:
-		break;
-	case COMM_SERVER_PROCESS_TERMINAL:
-		gebr_comm_terminal_process_free(server->process.data.terminal);
-		server->process.data.terminal = NULL;
-		break;
-	case COMM_SERVER_PROCESS_REGULAR:
-		gebr_comm_process_free(server->process.data.regular);
-		server->process.data.regular = NULL;
-		break;
+
+	if (server->process) {
+		gebr_comm_terminal_process_free(server->process);
+		server->process = NULL;
 	}
-	server->process.use = COMM_SERVER_PROCESS_NONE;
 }
 
 static const gchar *state_hash[] = {
@@ -1061,7 +1048,7 @@ gebr_comm_server_set_password(GebrCommServer *server, const gchar *pass)
 
 	if (server->priv->is_interactive
 	    && server->priv->istate == ISTATE_PASS)
-		write_pass_in_process(server->process.data.terminal, pass);
+		write_pass_in_process(server->process, pass);
 }
 
 void
@@ -1072,7 +1059,7 @@ gebr_comm_server_answer_question(GebrCommServer *server,
 
 	if (server->priv->is_interactive
 	    && server->priv->istate == ISTATE_QUESTION)
-		gebr_comm_terminal_process_write_string(server->process.data.terminal, answer);
+		gebr_comm_terminal_process_write_string(server->process, answer);
 }
 
 void
@@ -1174,8 +1161,7 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
 
 	GebrCommTerminalProcess *process;
-	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
-	server->process.data.terminal = process = gebr_comm_terminal_process_new();
+	server->process = process = gebr_comm_terminal_process_new();
 
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 	if (finished_callback)

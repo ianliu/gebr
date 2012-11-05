@@ -147,18 +147,7 @@ struct _GebrCommServer {
 	} *ops;
 	gpointer user_data;
 
-	/* temporary process */
-	struct gebr_comm_server_process {
-		enum gebr_comm_server_process_use {
-			COMM_SERVER_PROCESS_NONE,
-			COMM_SERVER_PROCESS_TERMINAL,
-			COMM_SERVER_PROCESS_REGULAR,
-		} use;
-		union gebr_comm_server_process_data {
-			GebrCommTerminalProcess *terminal;
-			GebrCommProcess *regular;
-		} data;
-	} process;
+	GebrCommTerminalProcess *process;
 	guint tunnel_pooling_source;
 };
 
