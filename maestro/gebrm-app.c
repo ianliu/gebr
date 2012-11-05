@@ -39,7 +39,6 @@
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 #include <libgebr/gebr-version.h>
-#include <libgebr/gebr-maestro-settings.h>
 
 struct _GebrmAppPriv {
 	GMainLoop *main_loop;
@@ -148,7 +147,7 @@ gebrm_app_job_controller_add(GebrmApp *app, GebrmJob *job)
 
 // Configuration Methods {{{
 
-static GebrMaestroSettings *
+GebrMaestroSettings *
 gebrm_app_create_configuration()
 {
 	GebrMaestroSettings *ms;
@@ -161,6 +160,17 @@ gebrm_app_create_configuration()
 	g_string_free(path, TRUE);
 
 	return ms;
+}
+
+gchar *
+gebrm_app_get_nfsid(GebrMaestroSettings *ms)
+{
+	GKeyFile *key;
+
+	key = gebr_maestro_settings_get_key_file(ms);
+	gchar *nfsid = g_key_file_get_start_group(key);
+
+	return nfsid;
 }
 
 // }}}
@@ -2095,15 +2105,43 @@ gebrm_app_get_lock_file(void)
 const gchar *
 gebrm_app_get_version_file(void)
 {
+	static gchar *version = NULL;
+
+	if (!version) {
+		gchar *dirname = get_gebrm_dir_name();
+		version = g_build_filename(dirname, "version", NULL);
+		g_free(dirname);
+	}
+
+	return version;
+}
+
+const gchar *
+gebrm_app_get_lock_file_for_addr(const gchar *addr)
+{
 	static gchar *lock = NULL;
 
 	if (!lock) {
-		gchar *dirname = get_gebrm_dir_name();
-		lock = g_build_filename(dirname, "version", NULL);
+		gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", addr, NULL);
+		lock = g_build_filename(dirname, "lock", NULL);
 		g_free(dirname);
 	}
 
 	return lock;
+}
+
+const gchar *
+gebrm_app_get_version_file_for_addr(const gchar *addr)
+{
+	static gchar *version = NULL;
+
+	if (!version) {
+		gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", addr, NULL);
+		version = g_build_filename(dirname, "version", NULL);
+		g_free(dirname);
+	}
+
+	return version;
 }
 
 const gchar *

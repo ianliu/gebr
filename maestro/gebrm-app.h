@@ -22,6 +22,7 @@
 #define __GEBRM_APP_H__
 
 #include <glib-object.h>
+#include <libgebr/gebr-maestro-settings.h>
 
 #define GEBRM_TYPE_APP            (gebrm_app_get_type())
 #define GEBRM_APP(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GEBRM_TYPE_APP, GebrmApp))
@@ -119,9 +120,21 @@ const gchar *gebrm_app_get_lock_file(void);
 
 const gchar * gebrm_app_get_version_file(void);
 
+const gchar *gebrm_app_get_lock_file_for_addr(const gchar *addr);
+
+const gchar *gebrm_app_get_version_file_for_addr(const gchar *addr);
+
 const gchar *gebrm_app_get_servers_file(void);
 
 const gchar *gebrm_app_get_admin_servers_file(void);
+
+/*
+ * Configuration Methods
+ */
+GebrMaestroSettings *gebrm_app_create_configuration(void);
+
+gchar *gebrm_app_get_nfsid(GebrMaestroSettings *ms);
+
 
 /* }}} GebrmApp methods */
 
