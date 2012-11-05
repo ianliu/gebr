@@ -177,8 +177,8 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 			     G_STRUCT_OFFSET(GebrCommPortProviderClass, password),
 			     NULL, NULL,
 			     _gebr_gui_marshal_VOID__OBJECT_BOOLEAN,
-			     G_TYPE_NONE, 1,
-			     G_TYPE_BOOLEAN);
+			     G_TYPE_NONE, 2,
+			     G_TYPE_OBJECT, G_TYPE_BOOLEAN);
 
 	/**
 	 * GebrCommPortProvider::question:
@@ -190,8 +190,8 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 			     G_STRUCT_OFFSET(GebrCommPortProviderClass, question),
 			     NULL, NULL,
 			     _gebr_gui_marshal_VOID__OBJECT_STRING,
-			     G_TYPE_NONE, 1,
-			     G_TYPE_STRING);
+			     G_TYPE_NONE, 2,
+			     G_TYPE_OBJECT, G_TYPE_STRING);
 
 	g_object_class_install_property(object_class,
 					PROP_TYPE,
@@ -244,9 +244,9 @@ static void
 emit_signals(GebrCommPortProvider *self, guint port, GError *error)
 {
 	if (!error)
-		g_signal_emit(self, PORT_DEFINED, 0, port);
+		g_signal_emit(self, signals[PORT_DEFINED], 0, port);
 	else
-		g_signal_emit(self, ERROR, 0, error);
+		g_signal_emit(self, signals[ERROR], 0, error);
 }
 
 /*
@@ -402,13 +402,13 @@ local_get_sftp_port(GebrCommPortProvider *self)
 static void
 on_ssh_password(GebrCommSsh *ssh, gboolean retry, GebrCommPortProvider *self)
 {
-	g_signal_emit(self, PASSWORD, 0, retry);
+	g_signal_emit(self, signals[PASSWORD], 0, ssh, retry);
 }
 
 static void
 on_ssh_question(GebrCommSsh *ssh, const gchar *question, GebrCommPortProvider *self)
 {
-	g_signal_emit(self, QUESTION, 0, question);
+	g_signal_emit(self, signals[QUESTION], 0, ssh, question);
 }
 
 static void
@@ -444,7 +444,7 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 {
 	guint port = 2125;
 	guint remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
-	gchar *command = get_local_forward_command(self, &port, self->priv->sftp_address, remote_port);
+	gchar *command = get_local_forward_command(self, &port, "127.0.0.1", remote_port);
 
 	GebrCommSsh *ssh = gebr_comm_ssh_new();
 	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);

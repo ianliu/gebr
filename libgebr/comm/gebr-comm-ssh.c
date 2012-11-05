@@ -203,7 +203,7 @@ ssh_process_read(GebrCommTerminalProcess *process,
 	output = gebr_comm_terminal_process_read_string_all(process);
 
 	if (!gebr_comm_ssh_parse_output(self, process, output))
-		g_signal_emit(self, SSH_STDOUT, 0, output);
+		g_signal_emit(self, signals[SSH_STDOUT], 0, output);
 }
 
 static void
