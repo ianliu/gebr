@@ -1099,15 +1099,6 @@ gebr_comm_server_forward_remote_port(GebrCommServer *server,
 	return gebr_comm_server_forward_port(server, remote_port, local_port, "127.0.0.1", FALSE);
 }
 
-GebrCommTerminalProcess *
-gebr_comm_server_forward_local_port(GebrCommServer *server,
-				    guint16 remote_port,
-				    guint16 local_port,
-				    const gchar *addr)
-{
-	return gebr_comm_server_forward_port(server, local_port, remote_port, addr, TRUE);
-}
-
 gboolean
 gebr_comm_server_append_key(GebrCommServer *server,
                             void * finished_callback,

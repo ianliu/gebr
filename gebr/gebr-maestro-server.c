@@ -53,7 +53,7 @@ struct _GebrMaestroServerPriv {
 	/* GVFS */
 	gboolean has_connected_daemon;
 	GFile *mount_location;
-	GebrCommTerminalProcess *proc;
+	GebrCommPortForward *forward;
 
 	GtkListStore *groups_store;
 	GtkListStore *queues_model;
@@ -134,17 +134,24 @@ G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_CONNECTABLE,
 					      gebr_maestro_server_connectable_init));
 
-typedef struct {
-	GebrMaestroServer *maestro;
-	guint16 port;
-} TunnelPool;
-
-static gboolean
-mount_operation_pool(gpointer user_data)
+static void
+on_sftp_port_defined(GebrCommPortProvider *self,
+		     guint port,
+		     GebrMaestroServer *maestro)
 {
-	TunnelPool *data = user_data;
-	if (gebr_comm_listen_socket_is_local_port_available(data->port))
-		return TRUE;
+	maestro->priv->forward = gebr_comm_port_provider_get_forward(self);
+
+	gchar *uri;
+	gchar *user = gebr_maestro_server_get_user(maestro);
+	if (!*user)
+		uri = g_strdup_printf("sftp://localhost:%d", port);
+	else
+		uri = g_strdup_printf("sftp://%s@localhost:%d", user, port);
+
+	maestro->priv->mount_location = g_file_new_for_commandline_arg(uri);
+
+	g_free(uri);
+	g_free(user);
 
 	gebr_add_remove_ssh_key(FALSE);
 
@@ -163,16 +170,40 @@ mount_operation_pool(gpointer user_data)
 		window = GTK_WINDOW(gebr.window);
 
 	GMountOperation *op = gtk_mount_operation_new(window);
-	g_file_mount_enclosing_volume(data->maestro->priv->mount_location, 0, op, NULL,
+	g_file_mount_enclosing_volume(maestro->priv->mount_location, 0, op, NULL,
 				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
-				      data->maestro);
+				      maestro);
 
-	g_signal_emit(data->maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_PROGRESS);
+	g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_PROGRESS);
 
 	g_object_unref(window);
 	g_list_free(windows);
+}
 
-	return FALSE;
+static void
+on_sftp_port_error(GebrCommPortProvider *self,
+		   GError *error,
+		   GebrMaestroServer *maestro)
+{
+	g_debug("%s", error->message);
+}
+
+static void
+on_sftp_port_password(GebrCommPortProvider *self,
+		      GebrCommSsh *ssh,
+		      gboolean retry,
+		      GebrMaestroServer *maestro)
+{
+	g_debug("Password requested!");
+}
+
+static void
+on_sftp_port_question(GebrCommPortProvider *self,
+		      GebrCommSsh *ssh,
+		      const gchar *question,
+		      GebrMaestroServer *maestro)
+{
+	g_debug("Question requested!");
 }
 
 void
@@ -181,31 +212,16 @@ gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 	if (maestro->priv->has_connected_daemon)
 		return;
 
-	guint16 port = 2000;
-	while (!gebr_comm_listen_socket_is_local_port_available(port))
-		port++;
-
-	GebrCommTerminalProcess *proc;
-	proc = gebr_comm_server_forward_local_port(maestro->priv->server,
-						   22, port, addr);
-	maestro->priv->proc = proc;
 	maestro->priv->has_connected_daemon = TRUE;
-	gchar *uri;
-	gchar *user = gebr_maestro_server_get_user(maestro);
-	if (!*user)
-		uri = g_strdup_printf("sftp://localhost:%d", port);
-	else
-		uri = g_strdup_printf("sftp://%s@localhost:%d", user, port);
-	g_free(user);
 
-	GFile *location = g_file_new_for_commandline_arg(uri);
-
-	TunnelPool *data = g_new0(TunnelPool, 1);
-	data->maestro = maestro;
-	data->port = port;
-	g_timeout_add(200, mount_operation_pool, data);
-	maestro->priv->mount_location = location;
-	g_free(uri);
+	GebrCommPortProvider *port_provider =
+		gebr_comm_port_provider_new(GEBR_COMM_PORT_TYPE_SFTP, maestro->priv->server->address->str);
+	gebr_comm_port_provider_set_sftp_address(port_provider, addr);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
+	g_signal_connect(port_provider, "password", G_CALLBACK(on_sftp_port_password), maestro);
+	g_signal_connect(port_provider, "question", G_CALLBACK(on_sftp_port_question), maestro);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 static void
@@ -219,8 +235,7 @@ unmount_gvfs(GebrMaestroServer *maestro,
 			return;
 	}
 
-	gebr_comm_terminal_process_kill(maestro->priv->proc);
-	gebr_comm_terminal_process_free(maestro->priv->proc);
+	gebr_comm_port_forward_close(maestro->priv->forward);
 
 	maestro->priv->has_connected_daemon = FALSE;
 

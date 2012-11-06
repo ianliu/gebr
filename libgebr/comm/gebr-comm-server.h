@@ -272,20 +272,6 @@ GebrCommTerminalProcess *gebr_comm_server_forward_remote_port(GebrCommServer *se
 							      guint16 local_port);
 
 /**
- * gebr_comm_forward_local_port:
- * @server: A #GebrCommServer.
- * @remote_port: The remote port in which connections will be listened.
- * @local_port: The local port to be connected.
- *
- * Returns: The #GebrCommTerminalProcess of the ssh tunnel. You can call
- * gebr_comm_terminal_process_kill() to close the tunnel.
- */
-GebrCommTerminalProcess *gebr_comm_server_forward_local_port(GebrCommServer *server,
-							     guint16 remote_port,
-							     guint16 local_port,
-							     const gchar *addr);
-
-/**
  * gebr_comm_server_append_key:
  */
 gboolean gebr_comm_server_append_key(GebrCommServer *server,
