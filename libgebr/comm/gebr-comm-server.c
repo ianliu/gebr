@@ -287,7 +287,10 @@ gebr_comm_server_free(GebrCommServer *server)
 }
 
 static void
-on_comm_port_defined(GebrCommPortProvider *self, guint port, GebrCommServer *server)
+on_comm_port_defined(GebrCommPortProvider *self,
+		     GebrCommPortForward *forward,
+		     guint port,
+		     GebrCommServer *server)
 {
 	GebrCommSocketAddress socket_address;
 	socket_address = gebr_comm_socket_address_ipv4_local(port);

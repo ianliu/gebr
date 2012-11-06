@@ -71,6 +71,7 @@ struct _GebrCommPortProviderPriv {
 	gchar *sftp_address;
 	guint display;
 	GebrCommSsh *ssh_forward;
+	GebrCommPortForward *forward;
 };
 
 static void
@@ -150,8 +151,9 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrCommPortProviderClass, port_defined),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__INT,
-			     G_TYPE_NONE, 1,
+			     _gebr_gui_marshal_VOID__POINTER_INT,
+			     G_TYPE_NONE, 2,
+			     G_TYPE_POINTER,
 			     G_TYPE_INT);
 
 	/**

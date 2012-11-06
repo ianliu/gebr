@@ -63,6 +63,13 @@ typedef enum {
 #define GEBR_COMM_PORT_PROVIDER_ERROR (gebr_comm_port_provider_error_quark())
 GQuark gebr_comm_port_provider_error_quark(void);
 
+/**
+ * GebrCommPortForward:
+ *
+ * Survivor structure after death of GebrCommPortProvider.
+ */
+typedef struct _GebrCommPortForward GebrCommPortForward;
+
 #define GEBR_COMM_TYPE_PORT_PROVIDER            (gebr_comm_port_provider_get_type ())
 #define GEBR_COMM_PORT_PROVIDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_TYPE_PORT_PROVIDER, GebrCommPortProvider))
 #define GEBR_COMM_PORT_PROVIDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEBR_COMM_TYPE_PORT_PROVIDER, GebrCommPortProviderClass))
@@ -82,20 +89,13 @@ struct _GebrCommPortProvider {
 struct _GebrCommPortProviderClass {
 	GObjectClass parent;
 
-	void (*port_defined) (GebrCommPortProvider *self, guint port);
+	void (*port_defined) (GebrCommPortProvider *self, GebrCommPortForward *forward, guint port);
 	void (*error) (GebrCommPortProvider *self, GError *error);
 	void (*password) (GebrCommPortProvider *self, GebrCommSsh *ssh, gboolean retry);
 	void (*question) (GebrCommPortProvider *self, GebrCommSsh *ssh, const gchar *question);
 };
 
 GType gebr_comm_port_provider_get_type(void) G_GNUC_CONST;
-
-/**
- * GebrCommPortForward:
- *
- * Survivor structure after death of GebrCommPortProvider
- */
-typedef struct _GebrCommPortForward GebrCommPortForward;
 
 /**
  * gebr_comm_port_provider_new:
