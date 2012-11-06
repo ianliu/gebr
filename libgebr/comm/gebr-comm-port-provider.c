@@ -447,7 +447,20 @@ static void
 on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
 {
 	guint port = 2125;
-	guint remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
+	guint remote_port;
+
+	gchar *redirect_addr = g_strrstr(buffer->str, GEBR_ADDR_PREFIX);
+	if (!redirect_addr) {
+		remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
+	} else {
+		GError *err = NULL;
+		gchar *addr = g_strstrip(g_strdup(redirect_addr + strlen(GEBR_ADDR_PREFIX)));
+		g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR, GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT, "%s", addr);
+		g_free(addr);
+		emit_signals(self, 0, err);
+		return;
+	}
+
 	gchar *command = get_local_forward_command(self, &port, "127.0.0.1", remote_port);
 
 	GebrCommSsh *ssh = gebr_comm_ssh_new();
