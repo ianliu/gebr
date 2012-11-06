@@ -32,7 +32,7 @@
 #include "../marshalers.h"
 
 struct _GebrCommPortForward {
-	GebrCommTerminalProcess *tprocess;
+	GebrCommSsh *ssh;
 };
 
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
@@ -341,6 +341,14 @@ local_set_error(GError *error, GError **local_error)
 		    error_msg);
 }
 
+static void
+set_forward(GebrCommPortProvider *self, GebrCommSsh *ssh)
+{
+	g_return_if_fail(self->priv->forward == NULL);
+	self->priv->forward = g_new0(GebrCommPortForward, 1);
+	self->priv->forward->ssh = ssh;
+}
+
 /* Local port provider implementation {{{ */
 static void
 local_get_port(GebrCommPortProvider *self, const gchar *binary)
@@ -456,6 +464,7 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
 	gebr_comm_ssh_set_command(ssh, command);
+	set_forward(self, ssh);
 	gebr_comm_ssh_run(ssh);
 	g_free(command);
 
@@ -463,6 +472,9 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	data->self = self;
 	data->port = port;
 	g_timeout_add(200, tunnel_poll_port, data);
+
+	// the ssh command for getting the maestro/daemon port isn't needed anymore.
+	g_object_unref(_ssh);
 }
 
 static gchar *
@@ -606,6 +618,7 @@ remote_get_x11_port(GebrCommPortProvider *self)
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
 	gchar *command = get_x11_command(self);
 	gebr_comm_ssh_set_command(ssh, command);
+	set_forward(self, ssh);
 	gebr_comm_ssh_run(ssh);
 	g_free(command);
 }
@@ -640,6 +653,7 @@ remote_get_sftp_port(GebrCommPortProvider *self)
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
 	gchar *command = get_local_forward_command(self, &port, self->priv->sftp_address, 22);
 	gebr_comm_ssh_set_command(ssh, command);
+	set_forward(self, ssh);
 	gebr_comm_ssh_run(ssh);
 	g_free(command);
 
@@ -699,7 +713,7 @@ gebr_comm_port_provider_get_forward(GebrCommPortProvider *self)
 void
 gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
 {
-	gebr_comm_terminal_process_kill(port_forward->tprocess);
-	gebr_comm_terminal_process_free(port_forward->tprocess);
+	gebr_comm_ssh_kill(port_forward->ssh);
+	g_object_unref(port_forward->ssh);
 }
 /* }}} */
