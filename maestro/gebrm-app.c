@@ -2033,7 +2033,7 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	GError *error_lock = NULL;
 	GError *error_version = NULL;
 
-	GebrCommSocketAddress address = gebr_comm_socket_address_ipv4_local(0);
+	GebrCommSocketAddress address = gebr_comm_socket_address_ipv4("0.0.0.0", 0);
 	app->priv->listener = gebr_comm_listen_socket_new();
 
 	g_signal_connect(app->priv->listener, "new-connection",
