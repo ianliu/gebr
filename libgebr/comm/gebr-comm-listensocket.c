@@ -22,6 +22,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <arpa/inet.h>
+#include <gio/gio.h>
 
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-socketprivate.h"
@@ -155,21 +157,37 @@ gboolean gebr_comm_listen_socket_is_local_port_available(guint16 port)
 	return available;
 }
 
-gboolean gebr_comm_listen_socket_listen_on_port(guint16 port)
+gboolean gebr_comm_listen_socket_listen_on_port(guint16 port,
+                                                const gchar *host)
 {
-	int sockfd;
-	struct sockaddr_in sockaddr_in;
-	gboolean listen;
+	gboolean valid = FALSE;
+	GSocketConnectable *addr;
+	GSocketAddressEnumerator *enumerator;
+	GSocketAddress *sockaddr;
 
-	sockfd = socket(PF_INET, SOCK_STREAM, 0);
-	sockaddr_in.sin_family = AF_INET;
-	sockaddr_in.sin_port = htons(port);
-	sockaddr_in.sin_addr.s_addr = INADDR_ANY;
+	GSocket *socket = g_socket_new(G_SOCKET_FAMILY_IPV4,
+	                               G_SOCKET_TYPE_STREAM,
+	                               G_SOCKET_PROTOCOL_TCP,
+	                               NULL);
 
-	listen = connect(sockfd, (struct sockaddr *)&sockaddr_in, sizeof(sockaddr_in)) == 0 ? TRUE : FALSE;
+	if (!socket)
+		return FALSE;
 
-	close(sockfd);
-	return listen;
+	addr = g_network_address_new (host, port);
+	enumerator = g_socket_connectable_enumerate (addr);
+	g_object_unref (addr);
+
+	while (!valid && (sockaddr = g_socket_address_enumerator_next (enumerator, NULL, NULL)))
+	{
+		valid = g_socket_connect(socket, sockaddr, NULL, NULL);
+		g_object_unref (sockaddr);
+	}
+
+	g_socket_close(socket, NULL);
+	g_object_unref(socket);
+	g_object_unref (enumerator);
+
+	return valid;
 }
 
 GebrCommListenSocket *gebr_comm_listen_socket_new(void)
