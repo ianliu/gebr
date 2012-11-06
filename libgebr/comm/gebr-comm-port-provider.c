@@ -151,9 +151,8 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrCommPortProviderClass, port_defined),
 			     NULL, NULL,
-			     _gebr_gui_marshal_VOID__POINTER_INT,
-			     G_TYPE_NONE, 2,
-			     G_TYPE_POINTER,
+			     g_cclosure_marshal_VOID__INT,
+			     G_TYPE_NONE, 1,
 			     G_TYPE_INT);
 
 	/**
@@ -687,6 +686,12 @@ gebr_comm_port_provider_start(GebrCommPortProvider *self)
 		vmethods = &remote_methods;
 
 	start(self, vmethods);
+}
+
+GebrCommPortForward *
+gebr_comm_port_provider_get_forward(GebrCommPortProvider *self)
+{
+	return self->priv->forward;
 }
 
 /* GebrCommPortForward methods */

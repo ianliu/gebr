@@ -288,7 +288,6 @@ gebr_comm_server_free(GebrCommServer *server)
 
 static void
 on_comm_port_defined(GebrCommPortProvider *self,
-		     GebrCommPortForward *forward,
 		     guint port,
 		     GebrCommServer *server)
 {
