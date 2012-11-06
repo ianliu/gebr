@@ -45,6 +45,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-job.c			\
 	gebr-comm-json-content.c	\
 	gebr-comm-listensocket.c	\
+	gebr-comm-port-provider.c	\
 	gebr-comm-process.c		\
 	gebr-comm-protocol-socket.c	\
 	gebr-comm-protocol.c		\
@@ -52,6 +53,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-server.c		\
 	gebr-comm-socket.c		\
 	gebr-comm-socketaddress.c	\
+	gebr-comm-ssh.c			\
 	gebr-comm-streamsocket.c	\
 	gebr-comm-terminalprocess.c	\
 	gebr-comm-uri.c			\
@@ -79,10 +81,13 @@ libgebr_commsubinclude_HEADERS = \
 	$(NULL)
 
 noinst_HEADERS = \
+	gebr-comm-port-provider.h		\
 	gebr-comm-protocol_p.h			\
 	gebr-comm-socketaddressprivate.h	\
 	gebr-comm-socketprivate.h		\
-	gebr-comm-streamsocketprivate.h
+	gebr-comm-ssh.h				\
+	gebr-comm-streamsocketprivate.h		\
+	$(NULL)
 
 AM_CPPFLAGS =			\
 	$(GLIB_CFLAGS)		\

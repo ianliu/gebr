@@ -36,6 +36,7 @@
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-protocol.h"
 #include "gebr-comm-uri.h"
+#include "gebr-comm-port-provider.h"
 
 /*
  * Declarations
@@ -84,14 +85,6 @@ static void	gebr_comm_ssh_read		(GebrCommTerminalProcess *process,
 
 static void	gebr_comm_ssh_finished		(GebrCommTerminalProcess *process,
 						 GebrCommServer *server);
-
-static void	gebr_comm_ssh_run_server_read	(GebrCommTerminalProcess *process,
-						 GebrCommServer *server);
-
-static void	gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess *process,
-						  GebrCommServer *server);
-
-static gboolean	gebr_comm_ssh_open_tunnel_pool	(GebrCommServer *server);
 
 static void	gebr_comm_server_disconnected_state(GebrCommServer *server,
 						    enum gebr_comm_server_error error,
@@ -241,9 +234,14 @@ gebr_comm_server_new(const gchar * _address,
 	GebrCommServer *server;
 	server = g_object_new(GEBR_COMM_TYPE_SERVER, NULL);
 
+	if (g_strcmp0(_address, "127.0.0.1") == 0
+	    || g_strcmp0(_address, "localhost") == 0)
+		server->address = g_string_new(g_get_host_name());
+	else
+		server->address = g_string_new(_address);
+
 	server->priv->gebr_id = g_strdup(gebr_id);
 	server->socket = gebr_comm_protocol_socket_new();
-	server->address = g_string_new(_address);
 	server->port = 0;
 	server->use_public_key = FALSE;
 	server->password = NULL;
@@ -252,7 +250,6 @@ gebr_comm_server_new(const gchar * _address,
 	server->ops = ops;
 	server->user_data = NULL;
 	server->tunnel_pooling_source = 0;
-	server->process.use = COMM_SERVER_PROCESS_NONE;
 	server->last_error = g_string_new(NULL);
 	server->state = SERVER_STATE_UNKNOWN;
 	server->error = SERVER_ERROR_UNKNOWN;
@@ -289,55 +286,171 @@ gebr_comm_server_free(GebrCommServer *server)
 	g_object_unref(server);
 }
 
+static void
+on_comm_port_defined(GebrCommPortProvider *self, guint port, GebrCommServer *server)
+{
+	GebrCommSocketAddress socket_address;
+	socket_address = gebr_comm_socket_address_ipv4_local(port);
+	gebr_comm_protocol_socket_connect(server->socket, &socket_address, FALSE);
+}
+
+static void
+on_comm_port_error(GebrCommPortProvider *self, GError *error)
+{
+	g_critical("Error when launching gebrm/gebrd: %s", error->message);
+}
+
+static void
+on_comm_port_password(GebrCommPortProvider *self,
+		      GebrCommSsh *ssh,
+		      gboolean retry,
+		      GebrCommServer *server)
+{
+	GString *string;
+	GString *password;
+
+	// FIXME: This is a workaround to a problem faced when using this
+	// method for other SSH connections other than the server connection
+	// itself. See gebr_comm_server_forward_remote_port() for an example.
+	//
+	// If the server is already connected, the cached password is correct
+	// so we can just write it into the process.
+	gboolean is_connected = (server->state == SERVER_STATE_CONNECT
+				 || server->state == SERVER_STATE_LOGGED);
+
+	gboolean has_password = server->password && *server->password;
+
+	if (is_connected || (has_password && !server->tried_existant_pass)) {
+		gebr_comm_ssh_set_password(ssh, server->password);
+		server->tried_existant_pass = TRUE;
+		return;
+	}
+
+	string = g_string_new(NULL);
+	if (!retry)
+		g_string_printf(string, _("Machine '%s' needs SSH login."),
+				server->address->str);
+	else
+		g_string_printf(string, _("Wrong password for machine '%s', please try again."),
+				server->address->str);
+
+	if (server->priv->is_interactive) {
+		server->priv->istate = ISTATE_PASS;
+
+		if (server->priv->title)
+			g_free(server->priv->title);
+
+		if (server->priv->description)
+			g_free(server->priv->description);
+
+		server->priv->title = g_strdup(_("Please, enter password"));
+		server->priv->description = g_strdup(string->str);
+
+		g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
+			      server->priv->title,
+			      server->priv->description);
+	} else {
+		password = server->ops->ssh_login(server, _("SSH login:"), string->str,
+						  server->user_data);
+		if (password == NULL) {
+			g_free(server->password);
+			server->password = NULL;
+
+			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("No password provided."));
+			gebr_comm_ssh_kill(ssh);
+		} else {
+			gebr_comm_server_set_password(server, password->str);
+			gebr_comm_ssh_set_password(ssh, password->str);
+			g_string_free(password, TRUE);
+		}
+		server->tried_existant_pass = FALSE;
+	}
+
+	g_string_free(string, TRUE);
+}
+
+static void
+on_comm_port_question(GebrCommPortProvider *self,
+		      GebrCommSsh *ssh,
+		      const gchar *question,
+		      GebrCommServer *server)
+{
+	if (server->priv->is_interactive) {
+		if (server->priv->title)
+			g_free(server->priv->title);
+
+		if (server->priv->description)
+			g_free(server->priv->description);
+
+		server->priv->title = g_strdup(_("Please, answer the question"));
+		server->priv->description = g_strdup(question);
+
+		server->priv->istate = ISTATE_QUESTION;
+		g_signal_emit(server, signals[QUESTION_REQUEST], 0,
+			      server->priv->title,
+			      server->priv->description);
+	} else {
+		gchar *cached_answer = g_hash_table_lookup(server->priv->qa_cache, question);
+		gboolean answer;
+
+		if (!cached_answer) {
+			answer = server->ops->ssh_question(server,
+							   _("SSH host key question:"),
+							   question, server->user_data);
+
+			g_hash_table_insert(server->priv->qa_cache,
+					    g_strdup(question),
+					    g_strdup(answer?"yes":"no"));
+		} else {
+			answer = g_strcmp0(cached_answer, "yes") == 0;
+		}
+
+		gebr_comm_ssh_answer_question(ssh, answer);
+
+		if (!answer)
+			gebr_comm_server_disconnected_state(server,
+							    SERVER_ERROR_SSH,
+							    _("SSH host key rejected."));
+	}
+}
+
+const gchar *
+get_real_addr(const gchar *addr)
+{
+	if (g_strcmp0(g_get_host_name(), addr) == 0)
+		return "127.0.0.1";
+	else
+		return addr;
+}
+
 void gebr_comm_server_connect(GebrCommServer *server,
 			      gboolean maestro)
 {
-	gebr_comm_server_free_for_reuse(server);
-	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
-	gebr_comm_server_change_state(server, SERVER_STATE_RUN);
-	server->tried_existant_pass = FALSE;
+	GebrCommPortType port_type;
 
-	const gchar *binary;
-
-	server->priv->is_maestro = maestro;
-
-	if (maestro)
-		binary = "gebrm";
-	else
-		binary = "gebrd";
-
-	/* initiate the marathon to communicate to server */
 	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("%p: Launching machine at '%s'."),
 				     server->socket, server->address->str);
 
-	GebrCommTerminalProcess *process;
-	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
-	server->process.data.terminal = process = gebr_comm_terminal_process_new();
-	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_run_server_read), server);
-	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_run_server_finished), server);
+	gebr_comm_server_free_for_reuse(server);
+	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
+	gebr_comm_server_change_state(server, SERVER_STATE_RUN);
 
-	gchar *tmp = g_strdup_printf("%s-%s.tmp", server->address->str, maestro? "maestro" : "server");
-	gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", tmp, NULL);
+	server->tried_existant_pass = FALSE;
+	server->priv->is_maestro = maestro;
 
-	gchar *ssh_cmd = get_ssh_command_with_key();
+	if (maestro)
+		port_type = GEBR_COMM_PORT_TYPE_MAESTRO;
+	else
+		port_type = GEBR_COMM_PORT_TYPE_DAEMON;
 
-	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\" 2> %s",
-	                ssh_cmd, server->address->str, binary, filename);
-	gchar *cmd = g_shell_quote(cmd_line->str);
-
-	g_string_set_size(cmd_line, 0);
-	g_string_printf(cmd_line, "bash -c %s", cmd);
-
-	g_debug("<>------- EXECUTE COMMAND LINE == %s", cmd_line->str);
-
-	gebr_comm_terminal_process_start(process, cmd_line);
-
-	g_free(tmp);
-	g_free(filename);
-	g_free(cmd);
-	g_free(ssh_cmd);
-	g_string_free(cmd_line, TRUE);
+	const gchar *addr = get_real_addr(server->address->str);
+	GebrCommPortProvider *port_provider =
+		gebr_comm_port_provider_new(port_type, addr);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
+	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
+	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 void gebr_comm_server_disconnect(GebrCommServer *server)
@@ -682,143 +795,7 @@ out:	g_string_free(output, TRUE);
 static void gebr_comm_ssh_finished(GebrCommTerminalProcess * process, GebrCommServer *server)
 {
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_finished");
-	server->process.use = COMM_SERVER_PROCESS_NONE;
 	gebr_comm_terminal_process_free(process);
-}
-
-/**
- * \internal
- */
-static void gebr_comm_ssh_run_server_read(GebrCommTerminalProcess * process, GebrCommServer *server)
-{
-	gchar *strtol_endptr;
-	guint16 port;
-	GString *output;
-
-	output = gebr_comm_terminal_process_read_string_all(process);
-	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_run_server_read: %s",
-				     output->str);
-	if (gebr_comm_ssh_parse_output(process, server, output) == TRUE)
-		goto out;
-
-	port = strtol(output->str, &strtol_endptr, 10);
-	if (port) {
-		server->port = port;
-	} else {
-		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, _("Could not run machine."));
-		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run machine '%s'."), server->address->str);
-	}
-
-out:	g_string_free(output, TRUE);
-}
-
-/**
- * \internal
- */
-static void
-gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommServer *server)
-{
-	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_run_server_finished");
-
-	server->process.use = COMM_SERVER_PROCESS_NONE;
-	gebr_comm_terminal_process_free(process);
-
-	if (server->error != SERVER_ERROR_NONE)
-		return;
-
-	gchar *filename = g_strdup_printf("%s-%s.tmp", server->address->str, gebr_comm_server_is_maestro(server) ? "maestro" : "server");
-	gchar *log_file = g_build_filename(g_get_home_dir(),".gebr", filename, NULL);
-	g_free(filename);
-
-	gchar *log_contents;
-	gboolean error_reading = !g_file_get_contents(log_file, &log_contents, NULL, NULL);
-	g_free(log_file);
-
-	gchar **log_lines;
-	gboolean command_not_found = FALSE;
-	gint last_line = 0;
-
-	if (!error_reading && log_contents) {
-		log_lines = g_strsplit(log_contents, "\n", -1);
-		g_free(log_contents);
-
-		for (last_line = 0; log_lines[last_line]; last_line++);
-		last_line = last_line - 1;
-		for (; !*log_lines[last_line]; last_line--); //Rollback empty lines
-
-		if (g_strrstr(log_lines[last_line], "Exit status 127")) //SSH error code of command not found
-			command_not_found = TRUE;
-	} else
-		command_not_found = TRUE;
-
-	if (!server->port) {
-		gchar *error = NULL;
-
-		if (command_not_found) {
-			error = g_strdup_printf(_("%s not found in %s"), gebr_comm_server_is_maestro(server) ? "Maestro" : _("Node"), server->address->str);
-		} else {
-			error = g_strdup(log_lines[last_line]);
-			g_strfreev(log_lines);
-		}
-
-		gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "%s: Missing port number!", __func__);
-		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, error);
-		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run machine '%s'."), server->address->str);
-
-		g_free(error);
-		return;
-	}
-
-	if (!error_reading && log_contents)
-		g_strfreev(log_lines);
-
-	server->tried_existant_pass = FALSE;
-	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
-	server->process.data.terminal = process = gebr_comm_terminal_process_new();
-	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
-	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
-
-	gebr_comm_server_change_state(server, SERVER_STATE_OPEN_TUNNEL);
-	static gint tunnel_port = 2125;
-	while (!gebr_comm_listen_socket_is_local_port_available(tunnel_port))
-		++tunnel_port;
-	server->tunnel_port = tunnel_port;
-	++tunnel_port;
-
-	gchar *ssh_cmd = get_ssh_command_with_key();
-	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -x -L %d:127.0.0.1:%d %s 'sleep 300'",
-			ssh_cmd, server->tunnel_port, server->port, server->address->str);
-
-	gebr_comm_terminal_process_start(process, cmd_line);
-	g_string_free(cmd_line, TRUE);
-	g_free(ssh_cmd);
-	
-	server->tunnel_pooling_source = g_timeout_add(200, (GSourceFunc)gebr_comm_ssh_open_tunnel_pool, server);
-}
-
-/**
- * \internal
- */
-static gboolean
-gebr_comm_ssh_open_tunnel_pool(GebrCommServer *server)
-{
-	GebrCommSocketAddress socket_address;
-
-	/* wait for ssh listen tunnel port */
-	if (gebr_comm_listen_socket_is_local_port_available(server->tunnel_port))
-		return TRUE;
-
-	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_open_tunnel_pool");
-
-	if (server->error != SERVER_ERROR_NONE)
-		goto out;
-
-	socket_address = gebr_comm_socket_address_ipv4_local(server->tunnel_port);
-	gebr_comm_protocol_socket_connect(server->socket, &socket_address, FALSE);
-
-out:	server->tunnel_pooling_source = 0;
-	return FALSE;
 }
 
 /**
@@ -1007,19 +984,11 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 
 	gebr_comm_protocol_reset(server->socket->protocol);
 	gebr_comm_server_free_x11_forward(server);
-	switch (server->process.use) {
-	case COMM_SERVER_PROCESS_NONE:
-		break;
-	case COMM_SERVER_PROCESS_TERMINAL:
-		gebr_comm_terminal_process_free(server->process.data.terminal);
-		server->process.data.terminal = NULL;
-		break;
-	case COMM_SERVER_PROCESS_REGULAR:
-		gebr_comm_process_free(server->process.data.regular);
-		server->process.data.regular = NULL;
-		break;
+
+	if (server->process) {
+		gebr_comm_terminal_process_free(server->process);
+		server->process = NULL;
 	}
-	server->process.use = COMM_SERVER_PROCESS_NONE;
 }
 
 static const gchar *state_hash[] = {
@@ -1061,7 +1030,7 @@ gebr_comm_server_set_password(GebrCommServer *server, const gchar *pass)
 
 	if (server->priv->is_interactive
 	    && server->priv->istate == ISTATE_PASS)
-		write_pass_in_process(server->process.data.terminal, pass);
+		write_pass_in_process(server->process, pass);
 }
 
 void
@@ -1072,7 +1041,7 @@ gebr_comm_server_answer_question(GebrCommServer *server,
 
 	if (server->priv->is_interactive
 	    && server->priv->istate == ISTATE_QUESTION)
-		gebr_comm_terminal_process_write_string(server->process.data.terminal, answer);
+		gebr_comm_terminal_process_write_string(server->process, answer);
 }
 
 void
@@ -1174,8 +1143,7 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
 
 	GebrCommTerminalProcess *process;
-	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
-	server->process.data.terminal = process = gebr_comm_terminal_process_new();
+	server->process = process = gebr_comm_terminal_process_new();
 
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 	if (finished_callback)
