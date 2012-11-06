@@ -937,7 +937,6 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			GdomeElement *new_el = __gebr_geoxml_insert_new_element(root_element, "nfs", path_el);
 
 			__gebr_geoxml_set_attr_value(new_el, "id", "");
-			__gebr_geoxml_set_attr_value(new_el, "label", "");
 
 			gdome_el_unref(first_el, &exception);
 			gdome_el_unref(new_el, &exception);

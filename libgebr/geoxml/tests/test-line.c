@@ -144,15 +144,11 @@ void test_gebr_geoxml_line_get_group(void)
 	gchar *nfsid, *nfs_label;
 
 	line = gebr_geoxml_line_new();
-	gebr_geoxml_line_set_maestro(line, "foo", "label");
+	gebr_geoxml_line_set_maestro(line, "foo");
 
 	nfsid = gebr_geoxml_line_get_maestro(line);
 	g_assert_cmpstr(nfsid, ==, "foo");
 	g_free(nfsid);
-
-	nfs_label = gebr_geoxml_line_get_maestro_label(line);
-	g_assert_cmpstr(nfs_label, ==, "label");
-	g_free(nfs_label);
 }
 
 void test_gebr_geoxml_line_create_key(void)

@@ -278,8 +278,7 @@ gebr_geoxml_line_get_maestro_label(GebrGeoXmlLine *line)
 
 void
 gebr_geoxml_line_set_maestro(GebrGeoXmlLine *line,
-			     const gchar *nfsid,
-			     const gchar *label)
+			     const gchar *nfsid)
 {
 	GdomeElement *root;
 	GdomeElement *group_el;
@@ -291,7 +290,6 @@ gebr_geoxml_line_set_maestro(GebrGeoXmlLine *line,
 	group_el = __gebr_geoxml_get_first_element(root, "nfs");
 
 	__gebr_geoxml_set_attr_value(group_el, "id", nfsid);
-	__gebr_geoxml_set_attr_value(group_el, "label", label? label : "");
 
 	gdome_el_unref(root, &exception);
 	gdome_el_unref(group_el, &exception);

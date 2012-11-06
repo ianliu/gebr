@@ -173,11 +173,9 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line);
  *
  * @line:
  * @nfsid: the NFSid where are the nodes of maestro
- * @label: the label to represent NFSid
  */
 void gebr_geoxml_line_set_maestro(GebrGeoXmlLine *line,
-                                  const gchar *nfsid,
-                                  const gchar *label);
+                                  const gchar *nfsid);
 
 /**
  * gebr_geoxml_line_get_maestro:

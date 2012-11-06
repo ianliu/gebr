@@ -6,8 +6,7 @@
 
 <!ELEMENT nfs (#PCDATA)>
 <!ATTLIST nfs
-	id 	CDATA #IMPLIED
-	label 	CDATA #IMPLIED>
+	id 	CDATA #IMPLIED>
 
 <!-- Path for input/output/error of flows -->
 <!ELEMENT path             (#PCDATA)>
