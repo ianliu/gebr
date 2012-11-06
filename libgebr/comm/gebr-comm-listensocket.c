@@ -155,6 +155,23 @@ gboolean gebr_comm_listen_socket_is_local_port_available(guint16 port)
 	return available;
 }
 
+gboolean gebr_comm_listen_socket_listen_on_port(guint16 port)
+{
+	int sockfd;
+	struct sockaddr_in sockaddr_in;
+	gboolean listen;
+
+	sockfd = socket(PF_INET, SOCK_STREAM, 0);
+	sockaddr_in.sin_family = AF_INET;
+	sockaddr_in.sin_port = htons(port);
+	sockaddr_in.sin_addr.s_addr = INADDR_ANY;
+
+	listen = connect(sockfd, (struct sockaddr *)&sockaddr_in, sizeof(sockaddr_in)) == 0 ? TRUE : FALSE;
+
+	close(sockfd);
+	return listen;
+}
+
 GebrCommListenSocket *gebr_comm_listen_socket_new(void)
 {
 	return (GebrCommListenSocket *) g_object_new(GEBR_COMM_LISTEN_SOCKET_TYPE, NULL);
