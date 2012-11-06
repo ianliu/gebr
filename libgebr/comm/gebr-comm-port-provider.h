@@ -91,6 +91,13 @@ struct _GebrCommPortProviderClass {
 GType gebr_comm_port_provider_get_type(void) G_GNUC_CONST;
 
 /**
+ * GebrCommPortForward:
+ *
+ * Survivor structure after death of GebrCommPortProvider
+ */
+typedef struct _GebrCommPortForward GebrCommPortForward;
+
+/**
  * gebr_comm_port_provider_new:
  *
  * Creates a GebrCommPortProvider of @type and @address to communicate through
@@ -124,6 +131,13 @@ gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
  * be emitted, where the port can be fetched.
  */
 void gebr_comm_port_provider_start(GebrCommPortProvider *self);
+
+/**
+ * gebr_comm_port_forward_close:
+ *
+ * Finalize the structure GebrCommPortForward
+ */
+void gebr_comm_port_forward_close(GebrCommPortForward *port_forward);
 
 G_END_DECLS
 

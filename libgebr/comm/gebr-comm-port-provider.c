@@ -31,6 +31,10 @@
 #include "gebr-comm-process.h"
 #include "../marshalers.h"
 
+struct _GebrCommPortForward {
+	GebrCommTerminalProcess *tprocess;
+};
+
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
 					guint *port,
 					const gchar *addr,
@@ -681,5 +685,14 @@ gebr_comm_port_provider_start(GebrCommPortProvider *self)
 		vmethods = &remote_methods;
 
 	start(self, vmethods);
+}
+
+/* GebrCommPortForward methods */
+
+void
+gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
+{
+	gebr_comm_terminal_process_kill(port_forward->tprocess);
+	gebr_comm_terminal_process_free(port_forward->tprocess);
 }
 /* }}} */
