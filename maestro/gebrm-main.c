@@ -194,7 +194,7 @@ main(int argc, char *argv[])
 				}
 				g_free(version_error);
 
-				if (gebr_comm_listen_socket_listen_on_port(port) || !gebr_comm_listen_socket_is_local_port_available(port)) {
+				if (gebr_comm_listen_socket_listen_on_port(port, addr) || !gebr_comm_listen_socket_is_local_port_available(port)) {
 					if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
 						g_print("%s%s\n%s%s\n",
 						        GEBR_PORT_PREFIX, lock_contents,
