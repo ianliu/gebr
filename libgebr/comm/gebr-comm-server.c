@@ -515,70 +515,53 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	g_free(kill);
 }
 
-gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
+static gchar *
+get_x11_unix_file(void)
 {
-	gchar *display;
+	const gchar *display = g_getenv("DISPLAY");
+
+	if (!display)
+		return NULL;
+
 	guint16 display_number;
-	guint16 redirect_display_port;
+	if (sscanf(strchr(display, ':'), ":%hu.", &display_number) != 1)
+		return NULL;
 
-	gboolean ret = TRUE;
-	GString *string;
+	return g_strdup_printf("/tmp/.X11-unix/X%hu", display_number);
+}
 
-	/* initialization */
-	string = g_string_new(NULL);
+static void
+on_x11_port_defined(GebrCommPortProvider *self,
+		    guint port,
+		    GebrCommServer *server)
+{
+	gchar *x11_file = get_x11_unix_file();
+	server->x11_forward_unix = gebr_comm_process_new();
+	GString *cmdline = g_string_new(NULL);
+	g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", port, x11_file);
+	gebr_comm_process_start(server->x11_forward_unix, cmdline);
+	g_string_free(cmdline, TRUE);
+}
 
-	/* does we have a display? */
-	display = getenv("DISPLAY");
-	if (!(ret = !(display == NULL || !strlen(display))))
-		goto out;
-	GString *display_host = g_string_new_len(display, (strchr(display, ':')-display)/sizeof(gchar));
-	if (!display_host->len)
-		g_string_assign(display_host, "127.0.0.1");
-	GString *tmp = g_string_new(strchr(display, ':'));
-	if (sscanf(tmp->str, ":%hu.", &display_number) != 1)
-		display_number = 0;
-	g_string_free(tmp, TRUE);
+static void
+on_x11_port_error(GebrCommPortProvider *self,
+		  GError *error,
+		  GebrCommServer *server)
+{
+	g_critical("Error when forwarding x11: %s", error->message);
+}
 
-	/* free previous forward */
-	gebr_comm_server_free_x11_forward(server);
-
-	g_string_printf(string, "/tmp/.X11-unix/X%hu", display_number);
-	if (g_file_test(string->str, G_FILE_TEST_EXISTS)) {
-		/* set redirection port */
-		static gint start_port = 6010;
-		while (!gebr_comm_listen_socket_is_local_port_available(start_port))
-			++start_port;
-		redirect_display_port = start_port;
-		++start_port;
-
-		server->x11_forward_unix = gebr_comm_process_new();
-		GString *cmdline = g_string_new(NULL);
-		g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", redirect_display_port, string->str);
-		gebr_comm_process_start(server->x11_forward_unix, cmdline);
-		g_string_free(cmdline, TRUE);
-	} else
-		redirect_display_port = display_number+6000;
-
-	/* now ssh from server to redirect_display_port */
-	server->tried_existant_pass = FALSE;
-	server->x11_forward_process = gebr_comm_terminal_process_new();
-	g_signal_connect(server->x11_forward_process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
-
-	gchar *ssh_cmd = get_ssh_command_with_key();
-	g_string_printf(string, "%s -x -R %d:%s:%d %s -N", ssh_cmd, port, display_host->str, redirect_display_port, server->address->str);
-	g_free(ssh_cmd);
-
-	g_debug("X11 Forwarding %s", string->str);
-	gebr_comm_terminal_process_start(server->x11_forward_process, string);
-
-	/* log */
-	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Redirecting '%s' graphical output."),
-				     server->address->str);
-
-	/* frees */
- out:	g_string_free(string, TRUE);
-
-	return ret;
+void
+gebr_comm_server_forward_x11(GebrCommServer *server, guint16 remote_display)
+{
+	GebrCommPortProvider *port_provider =
+		gebr_comm_port_provider_new(GEBR_COMM_PORT_TYPE_X11, server->address->str);
+	gebr_comm_port_provider_set_display(port_provider, remote_display);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), server);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_port_error), server);
+	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
+	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 void

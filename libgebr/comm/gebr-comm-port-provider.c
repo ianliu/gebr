@@ -35,6 +35,15 @@ struct _GebrCommPortForward {
 	GebrCommSsh *ssh;
 };
 
+struct _GebrCommPortProviderPriv {
+	GebrCommPortType type;
+	gchar *address;
+	gchar *sftp_address;
+	guint display;
+	GebrCommSsh *ssh_forward;
+	GebrCommPortForward *forward;
+};
+
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
 					guint *port,
 					const gchar *addr,
@@ -64,15 +73,6 @@ enum {
 };
 
 guint signals[LAST_SIGNAL] = { 0, };
-
-struct _GebrCommPortProviderPriv {
-	GebrCommPortType type;
-	gchar *address;
-	gchar *sftp_address;
-	guint display;
-	GebrCommSsh *ssh_forward;
-	GebrCommPortForward *forward;
-};
 
 static void
 gebr_comm_port_provider_get(GObject    *object,
@@ -574,11 +574,10 @@ remote_get_daemon_port(GebrCommPortProvider *self)
 }
 
 static gchar *
-get_x11_command(GebrCommPortProvider *self)
+get_x11_command(GebrCommPortProvider *self, guint *x11_port)
 {
 	gchar *ssh_cmd;
 	guint16 display_number;
-	static guint x11_port = 6010;
 	GString *cmd_line, *display_host;
 
 	gchar *display = getenv("DISPLAY");
@@ -595,13 +594,13 @@ get_x11_command(GebrCommPortProvider *self)
 	if (sscanf(tmp->str, ":%hu.", &display_number) != 1)
 		display_number = 0;
 
-	while (!gebr_comm_listen_socket_is_local_port_available(x11_port))
-		++x11_port;
+	while (!gebr_comm_listen_socket_is_local_port_available(*x11_port))
+		(*x11_port)++;
 
 	ssh_cmd = get_ssh_command_with_key();
 	cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s -x -R %d:%s:%d %s -N", ssh_cmd, self->priv->display,
-			display_host->str, x11_port, self->priv->address);
+			display_host->str, *x11_port, self->priv->address);
 
 	g_string_free(tmp, TRUE);
 	g_free(ssh_cmd);
@@ -612,15 +611,21 @@ get_x11_command(GebrCommPortProvider *self)
 void
 remote_get_x11_port(GebrCommPortProvider *self)
 {
+	static guint x11_port = 6010;
 	GebrCommSsh *ssh = gebr_comm_ssh_new();
 	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
 	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
-	gchar *command = get_x11_command(self);
+	gchar *command = get_x11_command(self, &x11_port);
 	gebr_comm_ssh_set_command(ssh, command);
 	set_forward(self, ssh);
 	gebr_comm_ssh_run(ssh);
 	g_free(command);
+
+	struct TunnelPollData *data = g_new(struct TunnelPollData, 1);
+	data->self = self;
+	data->port = x11_port;
+	g_timeout_add(200, tunnel_poll_port, data);
 }
 
 static gchar *
