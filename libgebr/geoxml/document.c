@@ -1812,7 +1812,7 @@ gebr_geoxml_document_update_header(GdomeDOMImplementation *dom_implementation,
 {
 	GdomeDocument *aux = *document;
 	gdome_doc_ref(aux, &exception);
-	GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "line", GEBR_GEOXML_LINE_VERSION);
+	GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, name, version);
 	*document = __gebr_geoxml_document_clone_doc(*document, doctype);
 	gdome_doc_unref(aux, &exception);
 }
