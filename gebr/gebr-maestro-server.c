@@ -552,16 +552,14 @@ parse_messages(GebrCommServer *comm_server,
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 					goto err;
 
-				GString *port = g_list_nth_data(arguments, 0);
 				GString *clocks_diff = g_list_nth_data(arguments, 1);
 
 				gebr_maestro_server_set_clocks_diff(maestro, atoi(clocks_diff->str));
 
 				gebr_comm_server_set_logged(comm_server);
-				gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
 
 				gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
 				if (use_key) {
@@ -1040,6 +1038,18 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.prt_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *port = g_list_nth_data(arguments, 0);
+
+			gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
