@@ -43,6 +43,7 @@ typedef enum {
 	GEBR_COMM_PORT_TYPE_DAEMON,
 	GEBR_COMM_PORT_TYPE_X11,
 	GEBR_COMM_PORT_TYPE_SFTP,
+	GEBR_COMM_PORT_TYPE_KEY,
 } GebrCommPortType;
 
 /**
@@ -128,6 +129,15 @@ void gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
 void
 gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
 					 const gchar *address);
+
+/**
+ * gebr_comm_port_provider_append_key:
+ * Launch the command to append key.
+ */
+void gebr_comm_port_provider_append_key(GebrCommPortProvider *self,
+					void *finished_callback,
+					gpointer user_data);
+
 /**
  * gebr_comm_port_provider_start:
  *

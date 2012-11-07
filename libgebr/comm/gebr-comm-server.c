@@ -1095,40 +1095,9 @@ gebr_comm_server_append_key(GebrCommServer *server,
                             void * finished_callback,
                             gpointer user_data)
 {
-	gchar *path = gebr_key_filename(TRUE);
-	gchar *public_key;
+	GebrCommPortProvider *port_provider = gebr_comm_server_create_port_provider(server, GEBR_COMM_PORT_TYPE_KEY);
 
-	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-		g_free(path);
-		return FALSE;
-	}
-
-	g_debug("Append gebr.key on PATH %s", path);
-
-	// FIXME: please handle GError of the g_file_get_contents
-	g_file_get_contents(path, &public_key, NULL, NULL);
-	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
-
-	GebrCommTerminalProcess *process;
-	server->process = process = gebr_comm_terminal_process_new();
-
-	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
-	if (finished_callback)
-		g_signal_connect(process, "finished", G_CALLBACK(finished_callback), user_data);
-	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
-
-	gchar *ssh_cmd = get_ssh_command_with_key();
-	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
-	                "'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s (%s)\" >> $HOME/.ssh/authorized_keys'",
-	                ssh_cmd, server->address->str, public_key, gebr_comm_server_is_maestro(server) ? "gebr" : "gebrm");
-
-	gebr_comm_terminal_process_start(process, cmd_line);
-
-	g_string_free(cmd_line, TRUE);
-	g_free(path);
-	g_free(ssh_cmd);
-	g_free(public_key);
+	gebr_comm_port_provider_append_key(port_provider, finished_callback, user_data);
 
 	return TRUE;
 }

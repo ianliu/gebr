@@ -192,6 +192,16 @@ gebr_comm_ssh_set_password(GebrCommSsh *self, const gchar *password)
 }
 
 void
+gebr_comm_ssh_connect_finished_callback(GebrCommSsh *self,
+					void *finished_callback,
+					gpointer user_data)
+{
+	g_signal_connect(self->priv->process, "finished",
+			 G_CALLBACK(finished_callback), user_data);
+
+}
+
+void
 gebr_comm_ssh_answer_question(GebrCommSsh *self, gboolean response)
 {
 	if (self->priv->state == GEBR_COMM_SSH_STATE_QUESTION) {

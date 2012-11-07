@@ -100,6 +100,10 @@ void gebr_comm_ssh_run(GebrCommSsh *self);
 
 void gebr_comm_ssh_set_password(GebrCommSsh *self, const gchar *password);
 
+void gebr_comm_ssh_connect_finished_callback(GebrCommSsh *self,
+					     void *finished_callback,
+					     gpointer user_data);
+
 void gebr_comm_ssh_answer_question(GebrCommSsh *self, gboolean response);
 
 void gebr_comm_ssh_kill(GebrCommSsh *self);

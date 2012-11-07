@@ -696,6 +696,50 @@ remote_get_sftp_port(GebrCommPortProvider *self)
 	data->port = port;
 	g_timeout_add(200, tunnel_poll_port, data);
 }
+
+/* Authentication keys methods*/
+static gchar *
+get_append_key_command(GebrCommPortProvider *self)
+{
+	gchar *path = gebr_key_filename(TRUE);
+	gchar *public_key;
+	const gchar *type_txt;
+
+	g_debug("++++++++++++++++++Path:%s", path);
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(path);
+		return FALSE;
+	}
+
+	g_debug("Append gebr.key on PATH %s", path);
+
+	// FIXME: please handle GError of the g_file_get_contents
+	g_file_get_contents(path, &public_key, NULL, NULL);
+	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
+
+	if (self->priv->type == GEBR_COMM_PORT_TYPE_MAESTRO)
+		type_txt = "(maestro)";
+	else if (GEBR_COMM_PORT_TYPE_DAEMON)
+		type_txt = "(daemon)";
+	else
+		type_txt = "";
+
+	gchar *ssh_cmd = get_ssh_command_with_key();
+	GString *cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
+	                "'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s %s\" >> $HOME/.ssh/authorized_keys'",
+	                ssh_cmd, self->priv->address, public_key, type_txt);
+
+	g_debug("cmd_line:'%s'", cmd_line->str);
+
+	g_free(path);
+	g_free(ssh_cmd);
+	g_free(public_key);
+
+	return g_string_free(cmd_line, FALSE);
+}
+
 /* }}} */
 
 /* Public API {{{ */
@@ -721,6 +765,25 @@ gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
 					 const gchar *address)
 {
 	self->priv->sftp_address = g_strdup(address);
+}
+
+void
+gebr_comm_port_provider_append_key(GebrCommPortProvider *self,
+				   void *finished_callback,
+				   gpointer user_data)
+{
+	GebrCommSsh *ssh = gebr_comm_ssh_new();
+	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
+	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
+	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
+	g_signal_connect(ssh, "ssh-stdout", G_CALLBACK(on_ssh_stdout), self);
+
+	gebr_comm_ssh_connect_finished_callback(ssh, finished_callback, user_data);
+	gchar *command = get_append_key_command(self);
+	gebr_comm_ssh_set_command(ssh, command);
+	set_forward(self, ssh);
+	gebr_comm_ssh_run(ssh);
+	g_free(command);
 }
 
 void
