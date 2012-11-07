@@ -429,15 +429,6 @@ on_comm_port_question(GebrCommPortProvider *self,
 	}
 }
 
-const gchar *
-get_real_addr(const gchar *addr)
-{
-	if (g_strcmp0(g_get_host_name(), addr) == 0)
-		return "127.0.0.1";
-	else
-		return addr;
-}
-
 void gebr_comm_server_connect(GebrCommServer *server,
 			      gboolean maestro)
 {
@@ -458,9 +449,8 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	else
 		port_type = GEBR_COMM_PORT_TYPE_DAEMON;
 
-	const gchar *addr = get_real_addr(server->address->str);
 	GebrCommPortProvider *port_provider =
-		gebr_comm_port_provider_new(port_type, addr);
+		gebr_comm_port_provider_new(port_type, server->address->str);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
 	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
