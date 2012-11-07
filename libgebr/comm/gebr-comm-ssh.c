@@ -43,6 +43,7 @@ enum {
 	SSH_QUESTION,
 	SSH_ERROR,
 	SSH_STDOUT,
+	SSH_KEY,
 	LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -116,6 +117,16 @@ gebr_comm_ssh_class_init(GebrCommSshClass *klass)
 			     g_cclosure_marshal_VOID__POINTER,
 			     G_TYPE_NONE, 1,
 			     G_TYPE_GSTRING);
+
+	signals[SSH_KEY] =
+		g_signal_new("ssh-key",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommSshClass, ssh_key),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__BOOLEAN,
+			     G_TYPE_NONE, 1,
+			     G_TYPE_BOOLEAN);
 
 	g_type_class_add_private(klass, sizeof(GebrCommSshPriv));
 }
@@ -236,24 +247,39 @@ gebr_comm_ssh_parse_output(GebrCommSsh *self,
 		return FALSE;
 	}
 
+	gchar *point;
+
 	if (output->str[output->len - 2] == ':') { 		/*Password*/
 		self->priv->state = GEBR_COMM_SSH_STATE_PASSWORD;
 		g_signal_emit(self, signals[SSH_PASSWORD], 0, self->priv->missed_password);
-	} else if (output->str[output->len - 2] == '?') { 	/*Question*/
+	}
+	else if (output->str[output->len - 2] == '?') { 	/*Question*/
 		self->priv->state = GEBR_COMM_SSH_STATE_QUESTION;
 		g_signal_emit(self, signals[SSH_QUESTION], 0, output->str);
-	} else if (g_str_has_prefix(output->str, "@@@")) { 	/*Error*/
+	}
+	else if (g_str_has_prefix(output->str, "@@@")) { 	/*Error*/
 		self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
 		g_signal_emit(self, signals[SSH_ERROR], 0, output->str);
-	} else if (output->str[output->len - 4] == '.') { 	/*SSH log message*/
-		g_debug("On '%s', function: '%s', log_msg:'%s'", __FILE__, __func__, output->str);
-	} else if (!strcmp(output->str, "yes\r\n")) { 		/*User's positive feedback*/
+	}
+	else if (!strcmp(output->str, "yes\r\n")) { 		/*User's positive feedback*/
 		g_debug("On '%s', function: '%s', USER ANSWERED YES, output:'%s'", __FILE__, __func__, output->str);
-	} else if (g_str_has_prefix(output->str, "ssh:") || g_str_has_prefix(output->str, "channel ")) { 	/*Known errors*/
+	}
+	else if (g_str_has_prefix(output->str, "ssh:") || g_str_has_prefix(output->str, "channel ")) { 	/*Known errors*/
 		self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
 		g_signal_emit(self, signals[SSH_ERROR], 0, output->str);
-	} else
-		g_debug("On '%s', function: '%s', IT DIDNT FALL IN ANY OF THE CATEGORIES, output: %s", __FILE__, __func__, output->str);
+	}
+	else if ((point = g_strrstr(output->str, "Authentications that can continue:")) != NULL) { /* SSH Public Key */
+		if (point) {
+			gboolean accepts_key = FALSE;
+			gchar *last_point = g_strstr_len(point, strlen(point), "\n");
+			if (last_point) {
+				gchar *key_point = g_strstr_len(point, (last_point - point), "publickey");
+				if (key_point)
+					accepts_key = TRUE;
+			}
+			g_signal_emit(self, signals[SSH_KEY], 0, accepts_key);
+		}
+	}
 
 	return TRUE;
 }

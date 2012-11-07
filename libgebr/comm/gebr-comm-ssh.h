@@ -81,6 +81,13 @@ struct _GebrCommSshClass {
 	 * output.
 	 */
 	void (*ssh_stdout) (GebrCommSsh *self, const GString *buffer);
+
+	/**
+	 * GebrCommSsh::ssh_key:
+	 *
+	 * This signal is emitted when ssh check accepts or no publickey.
+	 */
+	void (*ssh_key) (GebrCommSsh *self, gboolean accepts_key);
 };
 
 GType gebr_comm_ssh_get_type(void) G_GNUC_CONST;
