@@ -23,7 +23,6 @@
 G_DEFINE_TYPE(GebrmClient, gebrm_client, G_TYPE_OBJECT);
 
 struct _GebrmClientPriv {
-	guint16 display_port;
 	GebrCommProtocolSocket *socket;
 	gchar *id;
 	gchar *cookie;
@@ -76,14 +75,6 @@ gebrm_client_class_init(GebrmClientClass *klass)
 							    "A protocol socket to communicate with this client",
 							    GEBR_COMM_PROTOCOL_SOCKET_TYPE,
 							    G_PARAM_READABLE));
-
-	g_object_class_install_property(gobject_class,
-					PROP_DISPLAY_PORT,
-					g_param_spec_int("display-port",
-							 "Display port",
-							 "Port that will be used to forward X11 display",
-							 0, G_MAXUINT16, 0,
-							 G_PARAM_READABLE));
 
 	g_type_class_add_private(klass, sizeof(GebrmClientPriv));
 }
@@ -142,9 +133,6 @@ gebrm_client_get_property(GObject    *object,
 
 	switch (prop_id)
 	{
-	case PROP_DISPLAY_PORT:
-		g_value_set_int(value, gebrm_client_get_display_port(client));
-		break;
 	case PROP_PROTOCOL_SOCKET:
 		g_value_set_object(value, gebrm_client_get_protocol_socket(client));
 		break;
@@ -175,19 +163,6 @@ gebrm_client_get_protocol_socket(GebrmClient *client)
 	return client->priv->socket;
 }
 
-guint16
-gebrm_client_get_display_port(GebrmClient *client)
-{
-	if (client->priv->display_port == 0) {
-		static guint16 p = 3000;
-		while (!gebr_comm_listen_socket_is_local_port_available(p))
-			p++;
-		client->priv->display_port = p;
-	}
-
-	return client->priv->display_port;
-}
-
 void
 gebrm_client_set_id(GebrmClient *client,
 		    const gchar *id)
@@ -216,19 +191,40 @@ gebrm_client_get_magic_cookie(GebrmClient *client)
 	return client->priv->cookie;
 }
 
+static void
+on_x11_port_defined(GebrCommPortProvider *self,
+		    guint port,
+		    GebrmClient *client)
+{
+	gchar *str = g_strdup_printf("%d", port);
+	gebr_comm_protocol_socket_oldmsg_send(client->priv->socket, FALSE,
+					      gebr_comm_protocol_defs.prt_def, 1,
+					      str);
+	g_free(str);
+
+	client->priv->forwards = g_list_prepend(client->priv->forwards,
+						gebr_comm_port_provider_get_forward(self));
+}
+
+static void
+on_x11_error(GebrCommPortProvider *self,
+	     GError *error,
+	     GebrmClient *client)
+{
+	g_debug("%s", error->message);
+}
+
 void
 gebrm_client_add_forward(GebrmClient *client,
 			 GebrCommServer *server,
 			 guint16 remote_port)
 {
-	GebrCommTerminalProcess *proc;
-	guint16 cp = gebrm_client_get_display_port(client);
-	proc = gebr_comm_server_forward_remote_port(server, remote_port, cp);
-	client->priv->forwards = g_list_prepend(client->priv->forwards, proc);
-
-	gchar *address = g_strdup(server->address->str);
-	g_object_weak_ref(G_OBJECT(proc), (GWeakNotify)g_free, address);
-	g_object_set_data(G_OBJECT(proc), "address", address);
+	GebrCommPortProvider *port_provider =
+		gebr_comm_server_create_port_provider(server, GEBR_COMM_PORT_TYPE_X11);
+	gebr_comm_port_provider_set_display(port_provider, remote_port);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), client);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_error), client);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 void
@@ -239,7 +235,7 @@ gebrm_client_kill_forward_by_address(GebrmClient *client,
 		GebrCommTerminalProcess *proc = GEBR_COMM_TERMINAL_PROCESS(i->data);
 		const gchar *address = g_object_get_data(G_OBJECT(proc), "address");
 		if (g_strcmp0(address, addr) == 0) {
-			gebr_comm_terminal_process_free(i->data);
+			gebr_comm_port_forward_close(i->data);
 			client->priv->forwards = g_list_delete_link(client->priv->forwards, i);
 		}
 	}
@@ -251,7 +247,7 @@ gebrm_client_remove_forwards(GebrmClient *client)
 	g_debug("Removing client %s forwards...", client->priv->id);
 
 	g_list_foreach(client->priv->forwards,
-		       (GFunc)gebr_comm_terminal_process_free, NULL);
+		       (GFunc)gebr_comm_port_forward_close, NULL);
 	g_list_free(client->priv->forwards);
 	client->priv->forwards = NULL;
 }
