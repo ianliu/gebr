@@ -238,7 +238,8 @@ unmount_gvfs(GebrMaestroServer *maestro,
 			return;
 	}
 
-	gebr_comm_port_forward_close(maestro->priv->forward);
+	if (maestro->priv->forward)
+		gebr_comm_port_forward_close(maestro->priv->forward);
 
 	maestro->priv->has_connected_daemon = FALSE;
 

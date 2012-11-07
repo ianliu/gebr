@@ -738,6 +738,8 @@ gebr_comm_port_provider_get_forward(GebrCommPortProvider *self)
 void
 gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
 {
+	g_return_if_fail(port_forward != NULL);
+
 	gebr_comm_ssh_kill(port_forward->ssh);
 	g_object_unref(port_forward->ssh);
 }
