@@ -36,7 +36,6 @@
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-protocol.h"
 #include "gebr-comm-uri.h"
-#include "gebr-comm-port-provider.h"
 
 /*
  * Declarations
@@ -1162,4 +1161,15 @@ gboolean
 gebr_comm_server_is_maestro(GebrCommServer *server)
 {
 	return server->priv->is_maestro;
+}
+
+GebrCommPortProvider *
+gebr_comm_server_create_port_provider(GebrCommServer *server,
+				      GebrCommPortType type)
+{
+	GebrCommPortProvider *port_provider =
+		gebr_comm_port_provider_new(type, server->address->str);
+	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
+	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
+	return port_provider;
 }

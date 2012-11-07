@@ -27,6 +27,7 @@
 #include <libgebr/log.h>
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/utils.h>
+#include <libgebr/comm/gebr-comm-port-provider.h>
 
 #include "gebr-comm-protocol-socket.h"
 #include "gebr-comm-terminalprocess.h"
@@ -297,6 +298,9 @@ gboolean gebr_comm_server_is_maestro(GebrCommServer *server);
 void gebr_comm_server_close_x11_forward(GebrCommServer *server);
 
 void gebr_comm_server_maestro_connect_on_daemons(GebrCommServer *server);
+
+GebrCommPortProvider *gebr_comm_server_create_port_provider(GebrCommServer *server,
+							    GebrCommPortType type);
 
 G_END_DECLS
 
