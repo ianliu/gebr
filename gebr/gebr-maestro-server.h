@@ -188,7 +188,7 @@ void gebr_maestro_server_get_error(GebrMaestroServer *maestro,
 				   const gchar **error_type,
 				   const gchar **error_msg);
 
-gchar *gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro);
+gchar *gebr_maestro_server_get_browse_prefix(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
                                    const gchar *nfsid);

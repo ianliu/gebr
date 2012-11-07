@@ -70,7 +70,7 @@ on_remote_browse_press_event(GtkWidget      *widget,
 	if (on_maestro_press_event(widget, event))
 		return TRUE;
 
-	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
  	if (!prefix) {
 		preferences_setup_ui(FALSE, TRUE, FALSE, GVFS_PAGE);
 		g_free(prefix);

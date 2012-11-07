@@ -618,7 +618,7 @@ create_base_import_file_chooser(gchar *title,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 
-	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
 	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 	gchar ***paths = gebr_generate_paths_with_home(home);
 

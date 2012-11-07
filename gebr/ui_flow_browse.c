@@ -3192,7 +3192,7 @@ flow_browse_open_activated(GebrUiFlowBrowse *fb,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
-	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
 
 	gchar *new_text;
 	gint response = gebr_file_chooser_set_remote_navigation(dialog, entry_text,

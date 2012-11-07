@@ -1686,7 +1686,7 @@ gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 }
 
 gchar *
-gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro)
+gebr_maestro_server_get_browse_prefix(GebrMaestroServer *maestro)
 {
 	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
 
@@ -1814,7 +1814,7 @@ static gchar *
 gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface)
 {
 	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
-	return gebr_maestro_server_get_sftp_prefix(self->maestro);
+	return gebr_maestro_server_get_browse_prefix(self->maestro);
 }
 
 GebrMaestroInfo *
