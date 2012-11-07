@@ -187,7 +187,8 @@ on_sftp_port_error(GebrCommPortProvider *self,
 		   GError *error,
 		   GebrMaestroServer *maestro)
 {
-	g_debug("%s", error->message);
+	if (error->code == GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED)
+		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 }
 
 static void
