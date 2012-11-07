@@ -643,11 +643,7 @@ remote_get_x11_port(GebrCommPortProvider *self)
 	set_forward(self, ssh);
 	gebr_comm_ssh_run(ssh);
 	g_free(command);
-
-	struct TunnelPollData *data = g_new(struct TunnelPollData, 1);
-	data->self = self;
-	data->port = x11_port;
-	g_timeout_add(200, tunnel_poll_port, data);
+	emit_signals(self, x11_port, NULL);
 }
 
 static gchar *
