@@ -375,18 +375,6 @@ gboolean gebr_generate_key();
 gboolean gebr_add_remove_ssh_key(gboolean remove);
 
 /**
- * gebr_check_if_server_accepts_key:
- */
-gboolean gebr_check_if_server_accepts_key(const gchar *hostname,
-                                          gboolean is_maestro);
-
-/**
- * gebr_remove_temporary_file:
- */
-void gebr_remove_temporary_file(const gchar *hostname,
-                                gboolean is_maestro);
-
-/**
  * gebr_get_address_without_user:
  *
  * Get substring after the first @ and before the first space

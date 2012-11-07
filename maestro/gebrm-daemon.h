@@ -166,8 +166,6 @@ void gebrm_daeamon_answer_question(GebrmDaemon *daemon,
  * @SERVER_STATE_RUN state. All these requirements are achieved by calling
  * gebrm_daemon_connect() with the parameter client equal to %NULL.
  */
-void gebrm_daemon_continue_stuck_connection(GebrmDaemon *daemon,
-					    GebrCommProtocolSocket *socket);
 
 void gebrm_daemon_set_id(GebrmDaemon *daemon,
 			 const gchar *id);

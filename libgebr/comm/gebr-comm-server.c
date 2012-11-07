@@ -58,6 +58,8 @@ struct _GebrCommServerPriv {
 	gchar *title;
 	gchar *description;
 
+	gboolean accepts_key;
+
 	GHashTable *qa_cache;
 };
 
@@ -373,9 +375,8 @@ on_comm_port_password(GebrCommPortProvider *self,
 			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("No password provided."));
 			gebr_comm_ssh_kill(ssh);
 		} else {
-			gebr_comm_server_set_password(server, password->str);
 			gebr_comm_ssh_set_password(ssh, password->str);
-			g_string_free(password, TRUE);
+			server->password = g_string_free(password, FALSE);
 		}
 		server->tried_existant_pass = FALSE;
 	}
@@ -428,6 +429,14 @@ on_comm_port_question(GebrCommPortProvider *self,
 	}
 }
 
+static void
+on_comm_port_accepts_key(GebrCommPortProvider *self,
+                         gboolean accepts_key,
+                         GebrCommServer *server)
+{
+	server->priv->accepts_key = accepts_key;
+}
+
 void gebr_comm_server_connect(GebrCommServer *server,
 			      gboolean maestro)
 {
@@ -454,6 +463,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
 	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
+	g_signal_connect(port_provider, "accepts-key", G_CALLBACK(on_comm_port_accepts_key), server);
 	gebr_comm_port_provider_start(port_provider);
 }
 
@@ -806,6 +816,7 @@ static void gebr_comm_server_disconnected_state(GebrCommServer *server,
 	 * maybe be used by Process's read callback */
 	server->port = 0;
 	server->socket->protocol->logged = FALSE;
+	g_free(server->password);
 	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 }
 
@@ -1037,28 +1048,6 @@ gebr_comm_server_set_interactive(GebrCommServer *server, gboolean setting)
 	server->priv->is_interactive = setting;
 }
 
-void
-gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server)
-{
-	g_return_if_fail(server->priv->is_interactive);
-
-	switch (server->priv->istate)
-	{
-	case ISTATE_NONE:
-		break;
-	case ISTATE_PASS:
-		g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
-			      server->priv->title,
-			      server->priv->description);
-		break;
-	case ISTATE_QUESTION:
-		g_signal_emit(server, signals[QUESTION_REQUEST], 0,
-			      server->priv->title,
-			      server->priv->description);
-		break;
-	}
-}
-
 static GebrCommTerminalProcess *
 gebr_comm_server_forward_port(GebrCommServer *server,
 			      guint16 port1,
@@ -1142,6 +1131,12 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	g_free(public_key);
 
 	return TRUE;
+}
+
+gboolean
+gebr_comm_server_get_accepts_key(GebrCommServer *server)
+{
+	return server->priv->accepts_key;
 }
 
 void

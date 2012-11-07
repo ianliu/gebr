@@ -333,7 +333,6 @@ state_changed(GebrCommServer *comm_server,
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
 		if (err && *err)
 			gebr_maestro_server_set_error(maestro, "error:ssh", err);
-		gebr_remove_temporary_file(comm_server->address->str, TRUE);
 	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
@@ -374,8 +373,7 @@ ssh_login(GebrCommServer *server,
 
 	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
 		      gebr_maestro_server_get_display_address(maestro),
-		      gebr_check_if_server_accepts_key(server->address->str,
-		                                       gebr_comm_server_is_maestro(server)), &pk);
+		      gebr_comm_server_get_accepts_key(server), &pk);
 
 	if (!pk || !pk->password)
 		return NULL;
@@ -547,8 +545,6 @@ parse_messages(GebrCommServer *comm_server,
 				} else if (!maestro->priv->wizard_setup) {
 					gebr_maestro_server_connect_on_daemons(maestro);
 				}
-
-				gebr_remove_temporary_file(comm_server->address->str, TRUE);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {

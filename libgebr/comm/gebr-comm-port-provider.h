@@ -96,6 +96,7 @@ struct _GebrCommPortProviderClass {
 	void (*error) (GebrCommPortProvider *self, GError *error);
 	void (*password) (GebrCommPortProvider *self, GebrCommSsh *ssh, gboolean retry);
 	void (*question) (GebrCommPortProvider *self, GebrCommSsh *ssh, const gchar *question);
+	void (*accepts_key) (GebrCommPortProvider *self, gboolean accepts_key);
 };
 
 GType gebr_comm_port_provider_get_type(void) G_GNUC_CONST;

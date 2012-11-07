@@ -247,20 +247,6 @@ void gebr_comm_server_set_interactive(GebrCommServer *server,
 				      gboolean setting);
 
 /**
- * gebr_comm_server_emit_interactive_state_signals:
- *
- * If this @server is in interactive mode and it is requesting for user
- * interaction, this method will reemit the user interaction signals, mainly
- * #GebrCommServer::password-request or #GebrCommServer::question-request.
- *
- * Note that it is an error to call this method if @server is not in
- * interactive state.
- *
- * See gebrm_comm_server_set_interactive().
- */
-void gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server);
-
-/**
  * gebr_comm_forward_remote_port:
  * @server: A #GebrCommServer.
  * @remote_port: The remote port in which connections will be made.
@@ -280,6 +266,12 @@ gboolean gebr_comm_server_append_key(GebrCommServer *server,
                                      void * finished_callback,
                                      gpointer user_data);
 
+/**
+ * gebr_comm_server_get_accepts_key:
+ *
+ * Return if the server accepts public key
+ */
+gboolean gebr_comm_server_get_accepts_key(GebrCommServer *server);
 /**
  * gebr_comm_server_set_use_public_key:
  */

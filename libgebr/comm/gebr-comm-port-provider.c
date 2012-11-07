@@ -69,10 +69,11 @@ enum {
 	ERROR,
 	PASSWORD,
 	QUESTION,
+	ACCEPTS_KEY,
 	LAST_SIGNAL
 };
 
-guint signals[LAST_SIGNAL] = { 0, };
+static guint signals[LAST_SIGNAL] = { 0, };
 
 static void
 gebr_comm_port_provider_get(GObject    *object,
@@ -197,6 +198,19 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 			     _gebr_gui_marshal_VOID__OBJECT_STRING,
 			     G_TYPE_NONE, 2,
 			     G_TYPE_OBJECT, G_TYPE_STRING);
+
+	/**
+	 * GebrCommPortProvider::accepts-key
+	 */
+	signals[ACCEPTS_KEY] =
+		g_signal_new("accepts-key",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommPortProviderClass, accepts_key),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__BOOLEAN,
+			     G_TYPE_NONE, 1,
+			     G_TYPE_BOOLEAN);
 
 	g_object_class_install_property(object_class,
 					PROP_TYPE,
@@ -362,14 +376,7 @@ local_get_port(GebrCommPortProvider *self, gboolean maestro)
 
 	g_spawn_command_line_sync(binary, &output, &err, &status, &error);
 
-	gchar *tmp = g_strdup_printf("%s-%s.tmp", self->priv->address, maestro? "maestro":"daemon");
-	gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", tmp, NULL);
 	GError *local_error = NULL;
-
-	if (err) {
-		g_file_set_contents(filename, err, -1, NULL);
-		g_free(err);
-	}
 
 	guint port;
 
@@ -384,9 +391,7 @@ local_get_port(GebrCommPortProvider *self, gboolean maestro)
 
 	emit_signals(self, port, error);
 
-	g_free(tmp);
 	g_free(output);
-	g_free(filename);
 }
 
 void
@@ -441,6 +446,12 @@ on_ssh_error(GebrCommSsh *ssh, const gchar *msg, GebrCommPortProvider *self)
 	emit_signals(self, 0, error);
 }
 
+static void
+on_ssh_key(GebrCommSsh *ssh, gboolean accepts_key, GebrCommPortProvider *self)
+{
+	g_signal_emit(self, signals[ACCEPTS_KEY], 0, accepts_key);
+}
+
 struct TunnelPollData {
 	GebrCommPortProvider *self;
 	guint port;
@@ -466,18 +477,22 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	guint remote_port;
 
 	gchar *redirect_addr = g_strrstr(buffer->str, GEBR_ADDR_PREFIX);
-	gchar *addr = g_strstrip(g_strdup(redirect_addr + strlen(GEBR_ADDR_PREFIX)));
 
-	if (g_strcmp0(self->priv->address, addr) == 0) {
+	if (redirect_addr) {
+		gchar *addr = g_strstrip(g_strdup(redirect_addr + strlen(GEBR_ADDR_PREFIX)));
+
+		if (g_strcmp0(self->priv->address, addr) == 0) {
+			remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
+			g_free(addr);
+		} else {
+			GError *err = NULL;
+			g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR, GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT, "%s", addr);
+			emit_signals(self, 0, err);
+			g_free(addr);
+			return;
+		}
+	} else
 		remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
-		g_free(addr);
-	} else {
-		GError *err = NULL;
-		g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR, GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT, "%s", addr);
-		emit_signals(self, 0, err);
-		g_free(addr);
-		return;
-	}
 
 	gchar *command = get_local_forward_command(self, &port, "127.0.0.1", remote_port);
 
@@ -548,21 +563,16 @@ static gchar *
 get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 {
 	const gchar *binary = is_maestro ? "gebrm" : "gebrd";
-	gchar *tmp = g_strdup_printf("%s-%s.tmp", self->priv->address,
-				     is_maestro? "maestro" : "server");
-	gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", tmp, NULL);
 
 	gchar *ssh_cmd = get_ssh_command_with_key();
 
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\" 2> %s",
-	                ssh_cmd, self->priv->address, binary, filename);
+	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
+	                ssh_cmd, self->priv->address, binary);
 	gchar *cmd = g_shell_quote(cmd_line->str);
 
 	g_string_printf(cmd_line, "bash -c %s", cmd);
 
-	g_free(filename);
-	g_free(tmp);
 	g_free(cmd);
 	g_free(ssh_cmd);
 
@@ -577,6 +587,7 @@ remote_get_port(GebrCommPortProvider *self, gboolean is_maestro)
 	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
 	g_signal_connect(ssh, "ssh-stdout", G_CALLBACK(on_ssh_stdout), self);
+	g_signal_connect(ssh, "ssh-key", G_CALLBACK(on_ssh_key), self);
 	gchar *command = get_launch_command(self, is_maestro);
 	gebr_comm_ssh_set_command(ssh, command);
 	gebr_comm_ssh_run(ssh);
