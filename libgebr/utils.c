@@ -1607,3 +1607,39 @@ gebr_apply_pattern_on_address(const gchar *addr)
 
 	return address;
 }
+
+const gchar *
+gebr_generate_nfs_label(void)
+{
+	GError *err = NULL;
+	gchar *output;
+	gint exit;
+
+	if (!g_spawn_command_line_sync("df /home", &output, NULL, &exit, &err))
+		return NULL;
+
+	if (exit) {
+		if (err) {
+			g_warning("Error: %s", err->message);
+			g_error_free(err);
+		}
+		return NULL;
+	}
+
+	gchar *label;
+	gchar *initaddr, *endaddr;
+	initaddr = strstr(output, "\n");
+
+	if (initaddr) {
+		initaddr = initaddr + 1;
+		endaddr = strstr(initaddr, " ");
+		if (endaddr)
+			*endaddr = '\0';
+	}
+
+	label = g_strdup(initaddr);
+
+	g_free(output);
+
+	return label;
+}

@@ -1,3 +1,78 @@
+2012-10-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* libgebr: Fix methods to get input/output real for flow
+
+2012-10-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Little translation improvements.
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add method to apply pattern on address, change localhost to hostname
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding menu's popup when More Info is clicked.
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Treats unconfigured state like configured state because first are
+	deprecated
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Backout commit 8030 to fix compile
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve CSS to print report with Gebr-fancy-style
+
+2012-10-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: comm: add X11 method for authenticating connections
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add cache Host key questions to avoid questions to tunnels and
+	forwards
+
+2012-10-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: comm: remove duplicate include.
+
+2012-10-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Order correctly the programs's name which were shown in warning of
+	broken flow.
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Reset validated callback to program edit after reset parameters
+
+2012-10-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making parameter's group more visible. (Fixes issue 1270)
+	* Updating links on interface to specific sessions of Help. (Fixes
+	issue 1183)
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve validation of parameters group and fix segfault when change
+	parameter after reset parameters to default (Fixes issue 1362)
+	* Improve method hijack_key_press to treat Control+a
+	* Adapt CSS and javascript for help in Menu View (Fixes issue 1357)
+	* Fix markup used in header of gui_message_dialog and add break on
+	switch to avoid warning compilation
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bold markup of some labels to avoid warnings on CentOS
+	* Improve CSS to modify parameters in group on view
+
+2012-10-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.7: Feature Freeze [Sprint 67]
+
 2012-10-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Fixed unit tests for gebr_geoxml_line_create_key with accent mark

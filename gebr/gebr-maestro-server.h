@@ -195,6 +195,11 @@ void gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
 
 const gchar *gebr_maestro_server_get_nfsid(GebrMaestroServer *maestro);
 
+void gebr_maestro_server_set_nfs_label(GebrMaestroServer *maestro,
+                                       const gchar *nfs_label);
+
+const gchar *gebr_maestro_server_get_nfs_label(GebrMaestroServer *maestro);
+
 const gchar *gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro);
 
 gboolean gebr_maestro_server_has_home_dir(GebrMaestroServer *maestro);
@@ -232,6 +237,8 @@ void gebr_maestro_server_reset_daemons_timeout(GebrMaestroServer *maestro);
 gchar *gebr_maestro_server_translate_error(const gchar *error_type, const gchar *error_msg);
 
 GtkTreeModel *gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model);
+
+void gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro);
 
 G_END_DECLS
 

@@ -141,15 +141,14 @@ void test_gebr_geoxml_line_get_path(void)
 void test_gebr_geoxml_line_get_group(void)
 {
 	GebrGeoXmlLine *line = NULL;
-	gchar *addr;
+	gchar *nfsid, *nfs_label;
 
 	line = gebr_geoxml_line_new();
 	gebr_geoxml_line_set_maestro(line, "foo");
-	addr = gebr_geoxml_line_get_maestro(line);
 
-	g_assert_cmpstr(addr, ==, "foo");
-
-	g_free(addr);
+	nfsid = gebr_geoxml_line_get_maestro(line);
+	g_assert_cmpstr(nfsid, ==, "foo");
+	g_free(nfsid);
 }
 
 void test_gebr_geoxml_line_create_key(void)

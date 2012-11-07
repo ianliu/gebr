@@ -57,6 +57,9 @@ struct _GebrCommListenSocketClass {
 
 gboolean gebr_comm_listen_socket_is_local_port_available(guint16 port);
 
+gboolean gebr_comm_listen_socket_listen_on_port(guint16 port,
+                                                const gchar *host);
+
 GebrCommListenSocket *gebr_comm_listen_socket_new(void);
 
 void gebr_comm_listen_socket_free(GebrCommListenSocket *);

@@ -39,6 +39,7 @@
 #include "ui_project_line.h"
 #include "ui_flow_execution.h"
 #include "gebr-menu-view.h"
+#include "libgebr/gebr-maestro-settings.h"
 
 #include "gebr-maestro-controller.h"
 
@@ -112,12 +113,14 @@ struct gebr {
 		GKeyFile *key_file;
 		GString *path;
 
-		GKeyFile *key_file_maestro;
-		GString *path_maestro;
+		GebrMaestroSettings *maestro_set;
 
 		GString *version;
 
 		GString *maestro_address;
+		GString *nfsid;
+		GString *nfs_label;
+
 		GString *username;
 		GString *email;
 		GString *usermenus;
@@ -218,6 +221,10 @@ void gebr_remove_help_edit_window(GebrGeoXmlDocument * document);
 const gchar *gebr_get_session_id(void);
 
 gboolean gebr_has_maestro_config(void);
+
+void gebr_config_set_current_nfs_info(const gchar *nfsid,
+                                      const gchar *hosts,
+                                      const gchar *label);
 
 void restore_project_line_flow_selection(void);
 

@@ -1,3 +1,218 @@
+2012-10-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* ui: Show the hotkeys of every iten of context menu
+	* ui: Minor fix on the StartingWizard label
+	* menu: Set Help option of context menu insensitive when appropriate
+
+2012-10-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* libgebr: Fix methods to get input/output real for flow
+
+2012-10-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Little translation improvements.
+
+2012-10-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix lost of info bar with jobs when select multiple programs
+
+2012-10-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Little translation improvements.
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve and enable drop down of suggested maestro to connect on
+	maestro controller dialog
+	* Add cast to avoid warning compilation
+	* Remove unused variable to fix warning compilation
+	* Add method to apply pattern on address, change localhost to hostname
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix little mistake on translation.
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use flow name to set on snapshots on job control (Fixes issue 1371)
+	* Fix some warning compilations
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Removing lost tooltip on line's wizzard and removing unused
+	function. (Fixes issue 1365)
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix warn compilation and stay in snapshot context after revert
+	snapshots (Fixes issue 1373)
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding menu's popup when More Info is clicked.
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Reset user defined filters when execute multiple flows (Fixes issue
+	1374)
+	* Add cast in variable to avoid warning compilation
+	* gebr: Move public method to header file of Job Control
+
+2012-10-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove unused variable in gebr/flow.c
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving indication about how to add a node at Maestro/Servers
+	dialog.
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Treats unconfigured state like configured state because first are
+	deprecated
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Backout commit 8030 to fix compile
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve CSS to print report with Gebr-fancy-style
+
+2012-10-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix broken link to help of Reports.
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validate I/O after define variable HOME
+
+2012-10-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: comm: add X11 method for authenticating connections
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIx update of flow list after change state of maestro
+	* Improve message of Host key error in connections dialog (Fixes issue
+	1298)
+	* Use new methods do add and remove iter to fix completion model on
+	flow (Fixes issue 1366)
+	* Add methods to add/remove iter and update completion model (Fixes
+	issue 1366)
+	* Add cache Host key questions to avoid questions to tunnels and
+	forwards
+
+2012-10-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix broken link to help of Setup and Run dialog.
+	* Fix broken link to help of snapshots.
+
+2012-10-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: comm: remove duplicate include.
+
+2012-10-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Order correctly the programs's name which were shown in warning of
+	broken flow.
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Reset validated callback to program edit after reset parameters
+
+2012-10-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making parameter's group more visible. (Fixes issue 1270)
+	* Updating links on interface to specific sessions of Help. (Fixes
+	issue 1183)
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve validation of parameters group and fix segfault when change
+	parameter after reset parameters to default (Fixes issue 1362)
+
+2012-10-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Update pt_BR translation
+
+2012-10-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Handling menus without help at infobar of menus list.
+
+2012-10-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Improves phrases from interface
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Correct update of variable flow_main_view when set context
+	considering if flow has snapshots
+	* Add warn_label on project and line tab to multiple selection (Fixes
+	issue 1361)
+	* Improve method hijack_key_press to treat Control+a
+	* Remove unused code on Flow Browse
+
+2012-10-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* doc: Solve minor issues of the images of the English doc (Fixes
+	issue 1186)
+	* Minor fix of label of Maestro/Nodes interface
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix memory leaks and critical when change mode of I/O to overwrite
+	or append
+	* Add shortcut "space" on change_status action of programs (Fixes
+	issue 1288)
+	* Adapt CSS and javascript for help in Menu View (Fixes issue 1357)
+	* Fix markup used in header of gui_message_dialog and add break on
+	switch to avoid warning compilation
+
+2012-10-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* utils: kill gebr-comm-socketchannel in cleanup script
+	* Replace project.vimrc by .vimprj
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bold markup of some labels to avoid warnings on CentOS
+	* Improve CSS to modify parameters in group on view
+	* Add new class for parameter in group on parameters table of report
+	* Fix markup on some messages in Flow Execution
+
+2012-10-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* doc: Add different emphasis to the 'menu' tags
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix launcher of GêBR on Portuguese to eclipse
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Check environment variable LANGUAGE to open correct version of help
+	(Fixes issue 1143)
+
+2012-10-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Italicize AddNode label of maestro/nodes interface
+	* doc: Add an introdution of the 'job' concept in the flows tab.
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Load flows when change maestro of a line
+
+2012-10-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* docs: Update 'images' folder of English documentation
+
+2012-10-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.7 for changeset ec9c2321a26f
+	* Release 0.19.7: Feature Freeze [Sprint 67]
+
 2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Move definition of tree view before creation of popup menu (to fix

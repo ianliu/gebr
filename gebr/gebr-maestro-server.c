@@ -25,6 +25,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
 #include <libgebr/gebr-maestro-info.h>
+#include <libgebr/gebr-maestro-settings.h>
 #include <stdlib.h>
 
 #include "gebr.h" // for gebr_get_session_id()
@@ -47,6 +48,7 @@ struct _GebrMaestroServerPriv {
 	GtkWindow *window;
 	gchar *home;
 	gchar *nfsid;
+	gchar *nfs_label;
 	gint clocks_diff;
 	gboolean wizard_setup;
 
@@ -353,7 +355,6 @@ state_changed(GebrCommServer *comm_server,
 	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
-		gebr_config_maestro_save();
 
 		gebr_project_line_show(gebr.ui_project_line);
 
@@ -1019,14 +1020,22 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.nfsid_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
 			GString *nfsid = g_list_nth_data(arguments, 0);
+			GString *hosts = g_list_nth_data(arguments, 1);
+			GString *label = g_list_nth_data(arguments, 2);
 
-			g_debug("NFSID = %s", nfsid->str);
+			g_debug("NFSID = %s / LABEL = %s", nfsid->str, label->str);
+
+			gebr_config_set_current_nfs_info(nfsid->str,
+			                                 hosts->str,
+			                                 label->str);
 
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
+			gebr_maestro_server_set_nfs_label(maestro, label->str);
+
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 
@@ -1111,6 +1120,9 @@ static void
 gebr_maestro_server_state_change_real(GebrMaestroServer *maestro)
 {
 	update_groups_store(maestro);
+
+	if (maestro->priv->nfsid)
+		gebr_config_maestro_save();
 }
 
 static void
@@ -1390,6 +1402,9 @@ void
 gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 			       GebrDaemonServer *daemon)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	GtkTreeIter iter;
 	gtk_list_store_prepend(maestro->priv->store, &iter);
 	gtk_list_store_set(maestro->priv->store, &iter, 0, daemon, -1);
@@ -1398,12 +1413,16 @@ gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 GebrCommServerState
 gebr_maestro_server_get_state(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), SERVER_STATE_UNKNOWN);
+
 	return maestro->priv->server->state;
 }
 
 GebrCommServer *
 gebr_maestro_server_get_server(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	return maestro->priv->server;
 }
 
@@ -1444,6 +1463,8 @@ gebr_maestro_server_get_model(GebrMaestroServer *maestro,
 			      gboolean include_autochoose,
 			      const gchar *group)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
 
 	if (include_autochoose && (!group || !*group))
@@ -1464,12 +1485,16 @@ gebr_maestro_server_get_model(GebrMaestroServer *maestro,
 const gchar *
 gebr_maestro_server_get_address(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	return maestro->priv->address;
 }
 
 gchar *
 gebr_maestro_server_get_display_address(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	const gchar *addr = maestro->priv->address;
 
 	if (g_strcmp0(addr, "127.0.0.1") == 0)
@@ -1489,6 +1514,8 @@ foreach_maestro_server_func(gpointer key, gpointer value, gpointer data)
 GList *
 gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	GtkTreeIter iter;
 	GtkTreeModel *daemons = gebr_maestro_server_get_model(maestro, FALSE, NULL);
 	GTree *tree = g_tree_new((GCompareFunc)g_strcmp0);
@@ -1512,6 +1539,8 @@ gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 GtkTreeModel *
 gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	return GTK_TREE_MODEL(maestro->priv->queues_model);
 }
 
@@ -1519,6 +1548,8 @@ void
 gebr_maestro_server_disconnect(GebrMaestroServer *maestro,
                                gboolean quit)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	gebr_comm_server_disconnect(maestro->priv->server);
 	unmount_gvfs(maestro, quit);
 
@@ -1532,6 +1563,8 @@ gebr_maestro_server_disconnect(GebrMaestroServer *maestro,
 void
 gebr_maestro_server_connect(GebrMaestroServer *maestro)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	maestro->priv->server = gebr_comm_server_new(maestro->priv->address,
 						     gebr_get_session_id(),
 						     &maestro_ops);
@@ -1543,6 +1576,8 @@ void
 gebr_maestro_server_add_temporary_job(GebrMaestroServer *maestro, 
 				      GebrJob *job)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	g_hash_table_insert(maestro->priv->temp_jobs,
 			    g_strdup(gebr_job_get_id(job)), job);
 }
@@ -1552,6 +1587,8 @@ gebr_maestro_server_add_tag_to(GebrMaestroServer *maestro,
 			       GebrDaemonServer *daemon,
 			       const gchar *tag)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/tag-insert");
 	gebr_comm_uri_add_param(uri, "server", gebr_daemon_server_get_address(daemon));
@@ -1569,12 +1606,8 @@ gebr_maestro_server_remove_tag_from(GebrMaestroServer *maestro,
                                     GebrDaemonServer *daemon,
                                     const gchar *tag)
 {
-	/*
-	gchar *url_aux = g_strdup_printf("/tag-remove?server=%s;tag=%s",
-				     gebr_daemon_server_get_address(daemon), tag);
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
 
-	gchar *url = g_uri_escape_string(url_aux, NULL, FALSE);
-	*/
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/tag-remove");
 	gebr_comm_uri_add_param(uri, "server", gebr_daemon_server_get_address(daemon));
@@ -1591,6 +1624,8 @@ gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
                                     GebrDaemonServer *daemon,
                                     gboolean ac)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/autoconnect");
 	gebr_comm_uri_add_param(uri, "server", gebr_daemon_server_get_address(daemon));
@@ -1605,12 +1640,16 @@ gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
 void 
 gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *window)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	maestro->priv->window = window;
 }
 
 GtkTreeModel *
 gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	return GTK_TREE_MODEL(maestro->priv->groups_store);
 }
 
@@ -1649,6 +1688,8 @@ gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 gchar *
 gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	if (!maestro->priv->mount_location)
 		return NULL;
 
@@ -1659,6 +1700,8 @@ void
 gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
                               const gchar *nfsid)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	if (maestro->priv->nfsid)
 		g_free(maestro->priv->nfsid);
 	maestro->priv->nfsid = g_strdup(nfsid);
@@ -1667,6 +1710,8 @@ gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
 const gchar *
 gebr_maestro_server_get_nfsid(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	if (maestro->priv->nfsid && strlen(maestro->priv->nfsid))
 		return maestro->priv->nfsid;
 
@@ -1674,9 +1719,30 @@ gebr_maestro_server_get_nfsid(GebrMaestroServer *maestro)
 }
 
 void
+gebr_maestro_server_set_nfs_label(GebrMaestroServer *maestro,
+                                  const gchar *nfs_label)
+{
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
+	if (maestro->priv->nfs_label)
+		g_free(maestro->priv->nfs_label);
+	maestro->priv->nfs_label = g_strdup(nfs_label);
+}
+
+const gchar *
+gebr_maestro_server_get_nfs_label(GebrMaestroServer *maestro)
+{
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
+	return maestro->priv->nfs_label;
+}
+
+void
 gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 				 const gchar *home)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	if (maestro->priv->home)
 		g_free(maestro->priv->home);
 	maestro->priv->home = g_strdup(home);
@@ -1685,6 +1751,8 @@ gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 const gchar *
 gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	if (maestro->priv->home && strlen(maestro->priv->home))
 		return maestro->priv->home;
 
@@ -1694,6 +1762,8 @@ gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro)
 gboolean
 gebr_maestro_server_has_home_dir(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), FALSE);
+
 	if (maestro->priv->home && strlen(maestro->priv->home))
 		return TRUE;
 
@@ -1703,6 +1773,8 @@ gebr_maestro_server_has_home_dir(GebrMaestroServer *maestro)
 gchar *
 gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	GMount *mount = NULL;
 	if (maestro->priv->mount_location)
 		mount = g_file_find_enclosing_mount(maestro->priv->mount_location, NULL, NULL);
@@ -1725,12 +1797,16 @@ gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface)
 void 
 gebr_maestro_server_set_clocks_diff(GebrMaestroServer *maestro, gint secs)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	maestro->priv->clocks_diff = secs;
 }
 
 gint
 gebr_maestro_server_get_clocks_diff(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), 0);
+
 	return maestro->priv->clocks_diff;
 }
 
@@ -1744,6 +1820,8 @@ gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface)
 GebrMaestroInfo *
 gebr_maestro_server_get_info(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	return (GebrMaestroInfo *) &maestro->priv->maestro_info_iface;
 }
 
@@ -1753,6 +1831,8 @@ gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
 					 const gchar *group,
 					 GebrMaestroServerGroupType type)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), 0);
+
 	GebrDaemonServer *daemon;
 
 	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
@@ -1780,6 +1860,8 @@ gboolean
 gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
                                 gboolean connected_servers)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), FALSE);
+
 	gboolean valid;
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
@@ -1806,12 +1888,16 @@ gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
 gboolean
 gebr_maestro_server_has_connected_daemon(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), FALSE);
+
 	return maestro->priv->has_connected_daemon;
 }
 
 static gchar *
 gebr_maestro_server_get_user(GebrMaestroServer *maestro)
 {
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
+
 	const gchar *addr = gebr_maestro_server_get_address(maestro);
 
 	gchar *find_str = g_strrstr(addr, "@");
@@ -1827,12 +1913,16 @@ void
 gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
                                      gboolean is_wizard_setup)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	maestro->priv->wizard_setup = is_wizard_setup;
 }
 
 void
 gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	if (g_strcmp0(maestro->priv->error_type, "error:none") != 0)
 		return;
 
@@ -1866,6 +1956,8 @@ gebr_maestro_server_append_key_finished()
 void
 gebr_maestro_server_reset_daemons_timeout(GebrMaestroServer *maestro)
 {
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
 	gboolean valid;
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
@@ -1924,4 +2016,21 @@ gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model)
 		 valid = gtk_tree_model_iter_next(orig_model, &iter);
 	 }
 	 return GTK_TREE_MODEL(new_model);
+}
+
+void
+gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro)
+{
+	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
+
+	const gchar *nfsid = maestro->priv->nfsid;
+	const gchar *label = maestro->priv->nfs_label;
+
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
+	                                      gebr_comm_protocol_defs.nfsid_def, 3,
+	                                      nfsid,
+	                                      "",
+	                                      label);
 }

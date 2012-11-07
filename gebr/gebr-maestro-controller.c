@@ -1345,7 +1345,42 @@ on_stop_to_maestro_clicked(GtkButton *button,
 }
 #endif
 
-static void 
+static void
+on_get_alias_maestro_clicked(GebrMaestroController *self)
+{
+	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+	const gchar *text_entry  = gebr_maestro_server_get_nfs_label(maestro);
+	if (text_entry && *text_entry)
+		gtk_entry_set_text(entry, text_entry);
+	else
+		gtk_entry_set_text(entry, "");
+}
+
+static void
+on_save_alias_maestro_clicked(GebrMaestroController *self)
+{
+	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
+	const gchar *text_entry = gtk_entry_get_text(entry);
+
+	if (!*text_entry) {
+		text_entry = gebr_generate_nfs_label();
+		gtk_entry_set_text(entry, text_entry);
+	}
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+	gebr_maestro_server_set_nfs_label(maestro, text_entry);
+
+	const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
+	gebr_maestro_settings_change_label(gebr.config.maestro_set, nfsid, text_entry);
+
+	// Send Label for Maestro
+	gebr_maestro_server_send_nfs_label(maestro);
+
+	project_line_info_update();
+}
+
+static void
 on_connect_to_maestro_clicked(GtkButton *button,
 			      GebrMaestroController *self)
 {
@@ -1546,6 +1581,20 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	GtkButton *connect_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_connect"));
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_to_maestro_clicked), self);
+
+	/*
+	 * Maestro alias
+	 */
+	GtkButton *alias_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_save"));
+	GtkEntry *alias_entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
+
+	gtk_widget_set_tooltip_text(GTK_WIDGET(alias_entry), _("Set an alias for this maestro."));
+	const gchar *text_entry  = gebr_maestro_server_get_nfs_label(maestro);
+	if (text_entry)
+		gtk_entry_set_text(alias_entry, text_entry);
+
+	g_signal_connect_swapped(alias_button, "clicked", G_CALLBACK(on_save_alias_maestro_clicked), self);
+	g_signal_connect_swapped(alias_entry, "activate", G_CALLBACK(on_save_alias_maestro_clicked), self);
 
 	/*
 	 * Servers treeview
@@ -2077,13 +2126,16 @@ update_maestro_view(GebrMaestroController *mc,
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 
-	if (state == SERVER_STATE_DISCONNECTED)
+	if (state == SERVER_STATE_DISCONNECTED) {
+		on_get_alias_maestro_clicked(mc);
 		gtk_list_store_clear(mc->priv->model);
-	else if (state == SERVER_STATE_LOGGED) {
+	} else if (state == SERVER_STATE_LOGGED) {
 		if (emit_daemon_changed)
 			on_daemons_changed(maestro, mc);
 		else
 			gebr_maestro_controller_update_daemon_model(maestro, mc);
+
+		on_get_alias_maestro_clicked(mc);
 	}
 
 	gebr_maestro_controller_update_chooser_model(maestro, mc, NULL);
@@ -2138,6 +2190,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 		    (state == SERVER_STATE_CONNECT || state == SERVER_STATE_LOGGED))
 			return;
 
+		gebr_config_maestro_save();
 		gebr_maestro_server_disconnect(self->priv->maestro, FALSE);
 		g_object_unref(self->priv->maestro);
 	}
@@ -2295,26 +2348,34 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
 		}
 	} else {
 		const gchar *local_maestro = g_get_host_name();
-		const gchar *current_maestro = gebr_maestro_server_get_address(maestro);
+		if (maestro) {
+			const gchar *current_maestro = gebr_maestro_server_get_address(maestro);
+			if (current_maestro && *current_maestro &&
+			    g_strcmp0(current_maestro, gebr.config.maestro_address->str) != 0) {
+				gtk_list_store_append(model, &iter);
+				gtk_list_store_set(model, &iter,
+				                   MAESTRO_DEFAULT_ADDR, current_maestro,
+				                   MAESTRO__DEFAULT_DESCRIPTION, _("Current maestro"),
+				                   -1);
+			}
 
-		if (g_strcmp0(current_maestro, gebr.config.maestro_address->str) != 0) {
 			gtk_list_store_append(model, &iter);
 			gtk_list_store_set(model, &iter,
-			                   MAESTRO_DEFAULT_ADDR, current_maestro,
-			                   MAESTRO__DEFAULT_DESCRIPTION, _("Current maestro"),
+			                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
+			                   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from File"),
 			                   -1);
-		}
 
-		gtk_list_store_append(model, &iter);
-		gtk_list_store_set(model, &iter,
-		                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-		                   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from File"),
-		                   -1);
-
-		if (g_strcmp0(local_maestro, current_maestro) != 0 &&
-		    g_strcmp0(local_maestro, gebr.config.maestro_address->str) != 0 &&
-		    g_strcmp0(current_maestro, "localhost") != 0 &&
-		    g_strcmp0(gebr.config.maestro_address->str, "localhost") != 0) {
+			if (g_strcmp0(local_maestro, current_maestro) != 0 &&
+			    g_strcmp0(local_maestro, gebr.config.maestro_address->str) != 0 &&
+			    g_strcmp0(current_maestro, "localhost") != 0 &&
+			    g_strcmp0(gebr.config.maestro_address->str, "localhost") != 0) {
+				gtk_list_store_append(model, &iter);
+				gtk_list_store_set(model, &iter,
+				                   MAESTRO_DEFAULT_ADDR, "localhost",
+				                   MAESTRO__DEFAULT_DESCRIPTION, _("Maestro for local machine"),
+				                   -1);
+			}
+		} else {
 			gtk_list_store_append(model, &iter);
 			gtk_list_store_set(model, &iter,
 			                   MAESTRO_DEFAULT_ADDR, "localhost",

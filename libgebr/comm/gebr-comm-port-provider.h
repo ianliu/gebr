@@ -27,6 +27,7 @@
 G_BEGIN_DECLS
 
 #define GEBR_PORT_PREFIX "gebr-port="
+#define GEBR_ADDR_PREFIX "gebr-addr="
 
 /**
  * GebrCommPortType:
@@ -47,12 +48,14 @@ typedef enum {
 /**
  * GebrCommPortProviderError:
  * @GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE: The type set in constructor is unknown, see #GebrCommPortType.
+ * @GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT: When maestro suggest another machine to connect
  */
 typedef enum {
 	GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE,
 	GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED,
 	GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
 	GEBR_COMM_PORT_PROVIDER_ERROR_SSH,
+	GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT,
 } GebrCommPortProviderError;
 
 /**

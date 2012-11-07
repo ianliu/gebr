@@ -297,9 +297,22 @@ on_comm_port_defined(GebrCommPortProvider *self,
 }
 
 static void
-on_comm_port_error(GebrCommPortProvider *self, GError *error)
+on_comm_port_error(GebrCommPortProvider *self,
+                   GError *error,
+                   GebrCommServer *server)
 {
-	g_critical("Error when launching gebrm/gebrd: %s", error->message);
+	switch (error->code) {
+	case GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT:
+		g_string_assign(server->address, error->message);
+		gebr_comm_server_connect(server, TRUE);
+		break;
+	case GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_SSH:
+		g_critical("Error when launching gebrm/gebrd: %s", error->message);
+		break;
+	}
 }
 
 static void

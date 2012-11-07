@@ -1,3 +1,9 @@
+gebrproject (0.19.8) lucid; urgency=low
+
+  * More bug fixes (#1143,1183,1195,1212,1270,1288,1292,1334,1336,1337,1360,1361,1362,1365,1366,1368,1371,1373,1374)
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 29 Oct 2012 11:23:03 -0200
+
 gebrproject (0.19.7) lucid; urgency=low
 
   * Fix loss of navigation bar on Fedora 17. (#1212)

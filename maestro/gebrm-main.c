@@ -33,6 +33,7 @@
 #include "gebrm-app.h"
 
 #include <libgebr/gebr-version.h>
+#include <libgebr/gebr-maestro-settings.h>
 
 #define GETTEXT_PACKAGE "gebrm"
 
@@ -136,55 +137,123 @@ main(int argc, char *argv[])
 		exit(EXIT_SUCCESS);
 	}
 
-	const gchar *lock = gebrm_app_get_lock_file();
-	const gchar *version_file  = gebrm_app_get_version_file();
+	const gchar *lock;
+	const gchar *version_file;
 	gchar *lock_contents;
-	GError *lock_error = NULL;
+	GError *lock_error;
+	gchar *curr_version;
 
-	gchar *curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+	const gchar *local_addr = g_get_host_name();
+	const gchar *addr;
+	gboolean same_host = FALSE;
+	gint index = 0;
+	GebrMaestroSettings *ms = gebrm_app_create_configuration();
+	const gchar *nfsid = gebrm_app_get_nfsid(ms);
 
-	if (g_access(lock, R_OK | W_OK) == 0) { //check lock_file
-		GError *version_error = NULL;
+	while (1) {
+		addr = gebr_maestro_settings_get_addr_for_domain(ms, nfsid, index);
+		index++;
 
-		g_file_get_contents(lock, &lock_contents, NULL, &lock_error);
-		if (lock_error) {
-			if (lock_error)
-				g_critical("Error reading lock/version: %s", lock_error->message);
-			g_free(lock_contents);
-			exit(1);
+		if (!addr || !*addr) {
+			lock = gebrm_app_get_lock_file();
+			version_file  = gebrm_app_get_version_file();
+			same_host = TRUE;
+		} else {
+			lock = gebrm_app_get_lock_file_for_addr(addr);
+			version_file = gebrm_app_get_version_file_for_addr(addr);
+
+			if (g_strcmp0(addr, local_addr) == 0)
+				same_host = TRUE;
 		}
-		g_free(lock_error);
 
-		gint port = atoi(lock_contents);
+		lock_error = NULL;
 
-		if (g_access(version_file, R_OK | W_OK) == 0) { //It has the version file
-			gchar *version_contents;
-			g_file_get_contents(version_file, &version_contents, NULL, &version_error);
-			if (version_error) {
-				if (version_error)
-					g_critical("Error reading lock/version: %s", version_error->message);
-				g_free(version_contents);
+		curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+
+		if (g_access(lock, R_OK | W_OK) == 0) { //check lock_file
+			GError *version_error = NULL;
+
+			g_file_get_contents(lock, &lock_contents, NULL, &lock_error);
+			if (lock_error) {
+				if (lock_error)
+					g_critical("Error reading lock/version: %s", lock_error->message);
+				g_free(lock_contents);
 				exit(1);
 			}
-			g_free(version_error);
+			g_free(lock_error);
 
-			if (!gebr_comm_listen_socket_is_local_port_available(port)) {
-				if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
-					g_print(GEBR_PORT_PREFIX "%s\n", lock_contents);
-					exit(0);
-				} else {		//It is running in a different version
-					gebr_kill_by_port(port);
+			gint port = atoi(lock_contents);
+
+			if (g_access(version_file, R_OK | W_OK) == 0) { //It has the version file
+				gchar *version_contents;
+				g_file_get_contents(version_file, &version_contents, NULL, &version_error);
+				if (version_error) {
+					if (version_error)
+						g_critical("Error reading lock/version: %s", version_error->message);
+					g_free(version_contents);
+					exit(1);
+				}
+				g_free(version_error);
+
+				if (gebr_comm_listen_socket_listen_on_port(port, addr) || !gebr_comm_listen_socket_is_local_port_available(port)) {
+					if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
+						const gchar *addrs = gebr_maestro_settings_get_addrs(ms, nfsid);
+						if (!g_strrstr(addrs, local_addr)) {
+							GString *new_addrs = g_string_new(addrs);
+
+							if (new_addrs->len > 1)
+								new_addrs = g_string_append_c(new_addrs, ',');
+
+							new_addrs = g_string_append(new_addrs, local_addr);
+							gebr_maestro_settings_add_addresses_on_domain(ms, nfsid, g_string_free(new_addrs, FALSE));
+							gebr_maestro_settings_save(ms);
+							gebr_maestro_settings_free(ms);
+						}
+
+						g_print("%s%s\n%s%s\n",
+						        GEBR_PORT_PREFIX, lock_contents,
+						        GEBR_ADDR_PREFIX, addr);
+						exit(0);
+					} else {		//It is running in a different version
+						gebr_kill_by_port(port);
+					}
+				}
+				g_free(version_contents);
+
+				if (same_host) {
+					g_free(lock_contents);
+					break;
 				}
 			}
-			g_free(version_contents);
-		} else {		//It does not have version file
-			gebr_kill_by_port(port);
-		}
-		g_free(lock_contents);
-	} else if (g_access(lock, F_OK) == 0) {
-		g_critical("Cannot read/write into %s", lock);
-		exit(1);
+			else {		//It does not have version file
+				gebr_kill_by_port(port);
+			}
+			g_free(lock_contents);
+		} else if (g_access(lock, F_OK) == 0) {
+			g_critical("Cannot read/write into %s", lock);
+			exit(1);
+		} else if (same_host)
+			break;
 	}
+
+	GString *new_addrs = g_string_new(NULL);
+	const gchar *addrs = gebr_maestro_settings_get_addrs(ms, nfsid);
+	gchar **hosts = g_strsplit(addrs, ",", -1);
+	for (gint i = 0; hosts[i]; i++) {
+		if (g_strcmp0(hosts[i], local_addr) == 0) {
+			if (new_addrs->len > 1)
+				new_addrs = g_string_prepend_c(new_addrs, ',');
+			new_addrs = g_string_prepend(new_addrs, hosts[i]);
+		} else {
+			if (new_addrs->len > 1)
+				new_addrs = g_string_append_c(new_addrs, ',');
+			new_addrs = g_string_append(new_addrs, hosts[i]);
+		}
+	}
+	gebr_maestro_settings_add_addresses_on_domain(ms, nfsid, g_string_free(new_addrs, FALSE));
+	gebr_maestro_settings_save(ms);
+	gebr_maestro_settings_free(ms);
+	g_strfreev(hosts);
 
 	if (!interactive)
 		fork_and_exit_main();
