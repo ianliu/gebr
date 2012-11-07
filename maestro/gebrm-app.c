@@ -1538,11 +1538,8 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gchar *clocks_diff = g_strdup_printf("%d", diff_secs);
 
-			guint16 client_display_port = gebrm_client_get_display_port(client);
-			gchar *port_str = g_strdup_printf("%d", client_display_port);
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 2,
-							      port_str,
+							      gebr_comm_protocol_defs.ret_def, 1,
 							      clocks_diff);
 			g_free(clocks_diff);
 
@@ -1564,8 +1561,6 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			if (app->priv->home)
 				gebrm_app_send_home_dir(app, socket, app->priv->home);
-
-			g_free(port_str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.path_def.code_hash) {
