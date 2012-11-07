@@ -191,24 +191,6 @@ on_sftp_port_error(GebrCommPortProvider *self,
 		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 }
 
-static void
-on_sftp_port_password(GebrCommPortProvider *self,
-		      GebrCommSsh *ssh,
-		      gboolean retry,
-		      GebrMaestroServer *maestro)
-{
-	g_debug("Password requested!");
-}
-
-static void
-on_sftp_port_question(GebrCommPortProvider *self,
-		      GebrCommSsh *ssh,
-		      const gchar *question,
-		      GebrMaestroServer *maestro)
-{
-	g_debug("Question requested!");
-}
-
 void
 gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 {
@@ -218,12 +200,10 @@ gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 	maestro->priv->has_connected_daemon = TRUE;
 
 	GebrCommPortProvider *port_provider =
-		gebr_comm_port_provider_new(GEBR_COMM_PORT_TYPE_SFTP, maestro->priv->server->address->str);
-	gebr_comm_port_provider_set_sftp_address(port_provider, addr);
+		gebr_comm_server_create_port_provider(maestro->priv->server, GEBR_COMM_PORT_TYPE_SFTP);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
-	g_signal_connect(port_provider, "password", G_CALLBACK(on_sftp_port_password), maestro);
-	g_signal_connect(port_provider, "question", G_CALLBACK(on_sftp_port_question), maestro);
+	gebr_comm_port_provider_set_sftp_address(port_provider, addr);
 	gebr_comm_port_provider_start(port_provider);
 }
 
@@ -555,7 +535,7 @@ parse_messages(GebrCommServer *comm_server,
 				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 					goto err;
 
-				GString *clocks_diff = g_list_nth_data(arguments, 1);
+				GString *clocks_diff = g_list_nth_data(arguments, 0);
 
 				gebr_maestro_server_set_clocks_diff(maestro, atoi(clocks_diff->str));
 
