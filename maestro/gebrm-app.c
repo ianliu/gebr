@@ -2060,8 +2060,10 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 		return FALSE;
 	}
 
-	/* success, send port */
-	gchar *port_str = g_strdup_printf(GEBR_PORT_PREFIX "%u\n", port);
+	/* success, send port and address */
+	gchar *port_str = g_strdup_printf("%s%u\n%s%s\n",
+	                                  GEBR_PORT_PREFIX, port,
+	                                  GEBR_ADDR_PREFIX, g_get_host_name());
 
 	if (write(fd, port_str, strlen(port_str)) == -1)
 		exit(-1);

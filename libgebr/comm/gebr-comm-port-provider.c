@@ -466,14 +466,16 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	guint remote_port;
 
 	gchar *redirect_addr = g_strrstr(buffer->str, GEBR_ADDR_PREFIX);
-	if (!redirect_addr) {
+	gchar *addr = g_strstrip(g_strdup(redirect_addr + strlen(GEBR_ADDR_PREFIX)));
+
+	if (g_strcmp0(self->priv->address, addr) == 0) {
 		remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
+		g_free(addr);
 	} else {
 		GError *err = NULL;
-		gchar *addr = g_strstrip(g_strdup(redirect_addr + strlen(GEBR_ADDR_PREFIX)));
 		g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR, GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT, "%s", addr);
-		g_free(addr);
 		emit_signals(self, 0, err);
+		g_free(addr);
 		return;
 	}
 
