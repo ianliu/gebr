@@ -787,11 +787,14 @@ gebr_config_set_current_nfs_info(const gchar *nfsid,
                                  const gchar *hosts,
                                  const gchar *label)
 {
-	if (!nfsid)
+	if (!nfsid || !hosts)
 		return;
 
 	g_string_assign(gebr.config.nfsid, nfsid);
 
+	gchar **list = g_strsplit(hosts, ",", -1);
+	for (int i = 0; list[i]; i++)
+		gebr_maestro_settings_append_address(gebr.config.maestro_set, nfsid, list[i]);
+
 	gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid, label, "");
-	gebr_maestro_settings_add_addresses_on_domain(gebr.config.maestro_set, nfsid, hosts);
 }

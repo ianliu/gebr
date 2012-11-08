@@ -199,7 +199,6 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 		}
 		daemon->priv->is_initialized = FALSE;
 		daemon->priv->uncompleted_tasks = 0;
-		gebr_remove_temporary_file(server->address->str, FALSE);
 	}
 	else if (server->state == SERVER_STATE_CONNECT) {
 		gebrm_daemon_set_error_type(daemon, NULL);
@@ -217,8 +216,7 @@ gebrm_server_op_ssh_login(GebrCommServer *server,
 {
 	GebrmDaemon *daemon = user_data;
 
-	gboolean accepts_key = gebr_check_if_server_accepts_key(server->address->str,
-	                                                        gebr_comm_server_is_maestro(server));
+	gboolean accepts_key = gebr_comm_server_get_accepts_key(server);
 
 	if (daemon->priv->client)
 		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
@@ -330,7 +328,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				if (use_key) {
 					gebr_comm_server_append_key(server, gebm_daemon_append_key_finished, daemon);
 				}
-				gebr_remove_temporary_file(server->address->str, FALSE);
 
 				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
 
@@ -512,8 +509,7 @@ on_password_request(GebrCommServer *server,
 		    const gchar *question,
 		    GebrmDaemon *daemon)
 {
-	gboolean accepts_key = gebr_check_if_server_accepts_key(server->address->str,
-	                                                        gebr_comm_server_is_maestro(server));
+	gboolean accepts_key = gebr_comm_server_get_accepts_key(server);
 
 	if (daemon->priv->client)
 		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
@@ -798,7 +794,12 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 		     GebrCommProtocolSocket *client)
 {
 	if (pass && *pass) {
+		/*
+		 * TODO: This method are deprecated, need to use new one
+		 * on GebrCommSsh
+		 *
 		gebr_comm_server_set_password(daemon->priv->server, pass);
+		*/
 
 		// This server is already connected, but its waiting for a
 		// password.
@@ -894,17 +895,6 @@ gebrm_daeamon_answer_question(GebrmDaemon *daemon,
 {
 	gboolean response = g_strcmp0(resp, "true") == 0;
 	gebr_comm_server_answer_question(daemon->priv->server, response);
-}
-
-void
-gebrm_daemon_continue_stuck_connection(GebrmDaemon *daemon,
-				       GebrCommProtocolSocket *socket)
-{
-	g_return_if_fail(daemon->priv->client == NULL);
-	g_return_if_fail(gebrm_daemon_get_state(daemon) == SERVER_STATE_RUN);
-
-	daemon->priv->client = g_object_ref(socket);
-	gebr_comm_server_emit_interactive_state_signals(daemon->priv->server);
 }
 
 void

@@ -270,13 +270,11 @@ on_maestro_button_clicked(GtkButton *button,
 	gtk_label_set_markup(GTK_LABEL(head_label), new_head);
 
 	/* Change maestro */
-	const gchar *change_nfsid, *change_nfslabel;
+	const gchar *change_nfslabel;
 	gchar *change_text;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-		change_nfsid = gebr_maestro_server_get_nfsid(maestro);
 		change_nfslabel = gebr_maestro_server_get_nfs_label(maestro);
-
 		change_text = g_markup_printf_escaped(_("Move this line to <b>%s</b>"), change_nfslabel);
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
 

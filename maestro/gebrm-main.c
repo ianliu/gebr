@@ -197,19 +197,8 @@ main(int argc, char *argv[])
 
 				if (gebr_comm_listen_socket_listen_on_port(port, addr) || !gebr_comm_listen_socket_is_local_port_available(port)) {
 					if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
-						const gchar *addrs = gebr_maestro_settings_get_addrs(ms, nfsid);
-						if (!g_strrstr(addrs, local_addr)) {
-							GString *new_addrs = g_string_new(addrs);
-
-							if (new_addrs->len > 1)
-								new_addrs = g_string_append_c(new_addrs, ',');
-
-							new_addrs = g_string_append(new_addrs, local_addr);
-							gebr_maestro_settings_add_addresses_on_domain(ms, nfsid, g_string_free(new_addrs, FALSE));
-							gebr_maestro_settings_save(ms);
-							gebr_maestro_settings_free(ms);
-						}
-
+						gebr_maestro_settings_append_address(ms, nfsid, local_addr);
+						gebr_maestro_settings_free(ms);
 						g_print("%s%s\n%s%s\n",
 						        GEBR_PORT_PREFIX, lock_contents,
 						        GEBR_ADDR_PREFIX, addr);
@@ -236,24 +225,8 @@ main(int argc, char *argv[])
 			break;
 	}
 
-	GString *new_addrs = g_string_new(NULL);
-	const gchar *addrs = gebr_maestro_settings_get_addrs(ms, nfsid);
-	gchar **hosts = g_strsplit(addrs, ",", -1);
-	for (gint i = 0; hosts[i]; i++) {
-		if (g_strcmp0(hosts[i], local_addr) == 0) {
-			if (new_addrs->len > 1)
-				new_addrs = g_string_prepend_c(new_addrs, ',');
-			new_addrs = g_string_prepend(new_addrs, hosts[i]);
-		} else {
-			if (new_addrs->len > 1)
-				new_addrs = g_string_append_c(new_addrs, ',');
-			new_addrs = g_string_append(new_addrs, hosts[i]);
-		}
-	}
-	gebr_maestro_settings_add_addresses_on_domain(ms, nfsid, g_string_free(new_addrs, FALSE));
-	gebr_maestro_settings_save(ms);
+	gebr_maestro_settings_prepend_address(ms, nfsid, local_addr);
 	gebr_maestro_settings_free(ms);
-	g_strfreev(hosts);
 
 	if (!interactive)
 		fork_and_exit_main();

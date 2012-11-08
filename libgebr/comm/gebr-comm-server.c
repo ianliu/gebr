@@ -36,7 +36,6 @@
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-protocol.h"
 #include "gebr-comm-uri.h"
-#include "gebr-comm-port-provider.h"
 
 /*
  * Declarations
@@ -58,6 +57,8 @@ struct _GebrCommServerPriv {
 	InteractiveState istate;
 	gchar *title;
 	gchar *description;
+
+	gboolean accepts_key;
 
 	GHashTable *qa_cache;
 };
@@ -287,7 +288,9 @@ gebr_comm_server_free(GebrCommServer *server)
 }
 
 static void
-on_comm_port_defined(GebrCommPortProvider *self, guint port, GebrCommServer *server)
+on_comm_port_defined(GebrCommPortProvider *self,
+		     guint port,
+		     GebrCommServer *server)
 {
 	GebrCommSocketAddress socket_address;
 	socket_address = gebr_comm_socket_address_ipv4_local(port);
@@ -295,9 +298,8 @@ on_comm_port_defined(GebrCommPortProvider *self, guint port, GebrCommServer *ser
 }
 
 static void
-on_comm_port_error(GebrCommPortProvider *self,
-                   GError *error,
-                   GebrCommServer *server)
+on_comm_ssh_error(GError *error,
+		  GebrCommServer *server)
 {
 	switch (error->code) {
 	case GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT:
@@ -314,10 +316,17 @@ on_comm_port_error(GebrCommPortProvider *self,
 }
 
 static void
-on_comm_port_password(GebrCommPortProvider *self,
-		      GebrCommSsh *ssh,
-		      gboolean retry,
-		      GebrCommServer *server)
+on_comm_port_error(GebrCommPortProvider *self,
+                   GError *error,
+                   GebrCommServer *server)
+{
+	on_comm_ssh_error(error, server);
+}
+
+static void
+on_comm_ssh_password(GebrCommSsh *ssh,
+		     gboolean retry,
+		     GebrCommServer *server)
 {
 	GString *string;
 	GString *password;
@@ -372,9 +381,8 @@ on_comm_port_password(GebrCommPortProvider *self,
 			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("No password provided."));
 			gebr_comm_ssh_kill(ssh);
 		} else {
-			gebr_comm_server_set_password(server, password->str);
 			gebr_comm_ssh_set_password(ssh, password->str);
-			g_string_free(password, TRUE);
+			server->password = g_string_free(password, FALSE);
 		}
 		server->tried_existant_pass = FALSE;
 	}
@@ -383,10 +391,18 @@ on_comm_port_password(GebrCommPortProvider *self,
 }
 
 static void
-on_comm_port_question(GebrCommPortProvider *self,
+on_comm_port_password(GebrCommPortProvider *self,
 		      GebrCommSsh *ssh,
-		      const gchar *question,
+		      gboolean retry,
 		      GebrCommServer *server)
+{
+	on_comm_ssh_password(ssh, retry, server);
+}
+
+static void
+on_comm_ssh_question(GebrCommSsh *ssh,
+		     const gchar *question,
+		     GebrCommServer *server)
 {
 	if (server->priv->is_interactive) {
 		if (server->priv->title)
@@ -427,13 +443,21 @@ on_comm_port_question(GebrCommPortProvider *self,
 	}
 }
 
-const gchar *
-get_real_addr(const gchar *addr)
+static void
+on_comm_port_question(GebrCommPortProvider *self,
+		      GebrCommSsh *ssh,
+		      const gchar *question,
+		      GebrCommServer *server)
 {
-	if (g_strcmp0(g_get_host_name(), addr) == 0)
-		return "127.0.0.1";
-	else
-		return addr;
+	on_comm_ssh_question(ssh, question, server);
+}
+
+static void
+on_comm_port_accepts_key(GebrCommPortProvider *self,
+                         gboolean accepts_key,
+                         GebrCommServer *server)
+{
+	server->priv->accepts_key = accepts_key;
 }
 
 void gebr_comm_server_connect(GebrCommServer *server,
@@ -456,13 +480,14 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	else
 		port_type = GEBR_COMM_PORT_TYPE_DAEMON;
 
-	const gchar *addr = get_real_addr(server->address->str);
 	GebrCommPortProvider *port_provider =
-		gebr_comm_port_provider_new(port_type, addr);
+		gebr_comm_port_provider_new(port_type, server->address->str);
+
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
 	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
+	g_signal_connect(port_provider, "accepts-key", G_CALLBACK(on_comm_port_accepts_key), server);
 	gebr_comm_port_provider_start(port_provider);
 }
 
@@ -526,70 +551,53 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	g_free(kill);
 }
 
-gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
+static gchar *
+get_x11_unix_file(void)
 {
-	gchar *display;
+	const gchar *display = g_getenv("DISPLAY");
+
+	if (!display)
+		return NULL;
+
 	guint16 display_number;
-	guint16 redirect_display_port;
+	if (sscanf(strchr(display, ':'), ":%hu.", &display_number) != 1)
+		return NULL;
 
-	gboolean ret = TRUE;
-	GString *string;
+	return g_strdup_printf("/tmp/.X11-unix/X%hu", display_number);
+}
 
-	/* initialization */
-	string = g_string_new(NULL);
+static void
+on_x11_port_defined(GebrCommPortProvider *self,
+		    guint port,
+		    GebrCommServer *server)
+{
+	gchar *x11_file = get_x11_unix_file();
+	server->x11_forward_unix = gebr_comm_process_new();
+	GString *cmdline = g_string_new(NULL);
+	g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", port, x11_file);
+	gebr_comm_process_start(server->x11_forward_unix, cmdline);
+	g_string_free(cmdline, TRUE);
+}
 
-	/* does we have a display? */
-	display = getenv("DISPLAY");
-	if (!(ret = !(display == NULL || !strlen(display))))
-		goto out;
-	GString *display_host = g_string_new_len(display, (strchr(display, ':')-display)/sizeof(gchar));
-	if (!display_host->len)
-		g_string_assign(display_host, "127.0.0.1");
-	GString *tmp = g_string_new(strchr(display, ':'));
-	if (sscanf(tmp->str, ":%hu.", &display_number) != 1)
-		display_number = 0;
-	g_string_free(tmp, TRUE);
+static void
+on_x11_port_error(GebrCommPortProvider *self,
+		  GError *error,
+		  GebrCommServer *server)
+{
+	g_critical("Error when forwarding x11: %s", error->message);
+}
 
-	/* free previous forward */
-	gebr_comm_server_free_x11_forward(server);
-
-	g_string_printf(string, "/tmp/.X11-unix/X%hu", display_number);
-	if (g_file_test(string->str, G_FILE_TEST_EXISTS)) {
-		/* set redirection port */
-		static gint start_port = 6010;
-		while (!gebr_comm_listen_socket_is_local_port_available(start_port))
-			++start_port;
-		redirect_display_port = start_port;
-		++start_port;
-
-		server->x11_forward_unix = gebr_comm_process_new();
-		GString *cmdline = g_string_new(NULL);
-		g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", redirect_display_port, string->str);
-		gebr_comm_process_start(server->x11_forward_unix, cmdline);
-		g_string_free(cmdline, TRUE);
-	} else
-		redirect_display_port = display_number+6000;
-
-	/* now ssh from server to redirect_display_port */
-	server->tried_existant_pass = FALSE;
-	server->x11_forward_process = gebr_comm_terminal_process_new();
-	g_signal_connect(server->x11_forward_process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
-
-	gchar *ssh_cmd = get_ssh_command_with_key();
-	g_string_printf(string, "%s -x -R %d:%s:%d %s -N", ssh_cmd, port, display_host->str, redirect_display_port, server->address->str);
-	g_free(ssh_cmd);
-
-	g_debug("X11 Forwarding %s", string->str);
-	gebr_comm_terminal_process_start(server->x11_forward_process, string);
-
-	/* log */
-	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Redirecting '%s' graphical output."),
-				     server->address->str);
-
-	/* frees */
- out:	g_string_free(string, TRUE);
-
-	return ret;
+void
+gebr_comm_server_forward_x11(GebrCommServer *server, guint16 remote_display)
+{
+	GebrCommPortProvider *port_provider =
+		gebr_comm_port_provider_new(GEBR_COMM_PORT_TYPE_X11, server->address->str);
+	gebr_comm_port_provider_set_display(port_provider, remote_display);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), server);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_port_error), server);
+	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
+	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 void
@@ -832,6 +840,7 @@ static void gebr_comm_server_disconnected_state(GebrCommServer *server,
 	 * maybe be used by Process's read callback */
 	server->port = 0;
 	server->socket->protocol->logged = FALSE;
+	g_free(server->password);
 	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 }
 
@@ -1063,28 +1072,6 @@ gebr_comm_server_set_interactive(GebrCommServer *server, gboolean setting)
 	server->priv->is_interactive = setting;
 }
 
-void
-gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server)
-{
-	g_return_if_fail(server->priv->is_interactive);
-
-	switch (server->priv->istate)
-	{
-	case ISTATE_NONE:
-		break;
-	case ISTATE_PASS:
-		g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
-			      server->priv->title,
-			      server->priv->description);
-		break;
-	case ISTATE_QUESTION:
-		g_signal_emit(server, signals[QUESTION_REQUEST], 0,
-			      server->priv->title,
-			      server->priv->description);
-		break;
-	}
-}
-
 static GebrCommTerminalProcess *
 gebr_comm_server_forward_port(GebrCommServer *server,
 			      guint16 port1,
@@ -1127,19 +1114,8 @@ gebr_comm_server_forward_remote_port(GebrCommServer *server,
 	return gebr_comm_server_forward_port(server, remote_port, local_port, "127.0.0.1", FALSE);
 }
 
-GebrCommTerminalProcess *
-gebr_comm_server_forward_local_port(GebrCommServer *server,
-				    guint16 remote_port,
-				    guint16 local_port,
-				    const gchar *addr)
-{
-	return gebr_comm_server_forward_port(server, local_port, remote_port, addr, TRUE);
-}
-
-gboolean
-gebr_comm_server_append_key(GebrCommServer *server,
-                            void * finished_callback,
-                            gpointer user_data)
+static gchar *
+get_append_key_command(GebrCommServer *server)
 {
 	gchar *path = gebr_key_filename(TRUE);
 	gchar *public_key;
@@ -1149,34 +1125,50 @@ gebr_comm_server_append_key(GebrCommServer *server,
 		return FALSE;
 	}
 
-	g_debug("Append gebr.key on PATH %s", path);
-
 	// FIXME: please handle GError of the g_file_get_contents
 	g_file_get_contents(path, &public_key, NULL, NULL);
 	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
 
-	GebrCommTerminalProcess *process;
-	server->process = process = gebr_comm_terminal_process_new();
-
-	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
-	if (finished_callback)
-		g_signal_connect(process, "finished", G_CALLBACK(finished_callback), user_data);
-	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
-
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
-	                "'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s (%s)\" >> $HOME/.ssh/authorized_keys'",
-	                ssh_cmd, server->address->str, public_key, gebr_comm_server_is_maestro(server) ? "gebr" : "gebrm");
+			"'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s (%s)\" >> $HOME/.ssh/authorized_keys'",
+			ssh_cmd, server->address->str, public_key, gebr_comm_server_is_maestro(server) ? "gebr" : "gebrm");
 
-	gebr_comm_terminal_process_start(process, cmd_line);
+	g_debug("Cmd line:'%s'", cmd_line->str);
 
-	g_string_free(cmd_line, TRUE);
 	g_free(path);
 	g_free(ssh_cmd);
 	g_free(public_key);
 
-	return TRUE;
+	return g_string_free(cmd_line, FALSE);
+}
+
+void
+gebr_comm_server_append_key(GebrCommServer *server,
+			    void *finished_callback,
+			    gpointer user_data)
+{
+	gchar *command;
+	command = get_append_key_command(server);
+
+	GebrCommSsh *ssh = gebr_comm_ssh_new();
+	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_comm_ssh_password), server);
+	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_comm_ssh_question), server);
+	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_comm_ssh_error), server);
+	g_signal_connect(ssh, "ssh-finished", G_CALLBACK(finished_callback), user_data);
+
+	command = get_append_key_command(server);
+	gebr_comm_ssh_set_command(ssh, command);
+	gebr_comm_ssh_run(ssh);
+
+	g_free(command);
+}
+
+gboolean
+gebr_comm_server_get_accepts_key(GebrCommServer *server)
+{
+	return server->priv->accepts_key;
 }
 
 void
@@ -1196,4 +1188,15 @@ gboolean
 gebr_comm_server_is_maestro(GebrCommServer *server)
 {
 	return server->priv->is_maestro;
+}
+
+GebrCommPortProvider *
+gebr_comm_server_create_port_provider(GebrCommServer *server,
+				      GebrCommPortType type)
+{
+	GebrCommPortProvider *port_provider =
+		gebr_comm_port_provider_new(type, server->address->str);
+	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
+	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
+	return port_provider;
 }

@@ -26,7 +26,7 @@
 #include <glib/gkeyfile.h>
 #include <glib/gi18n.h>
 
-#include "libgebr/utils.h"
+#include "utils.h"
 
 struct _GebrMaestroSettingsPriv {
 	gchar *path;
@@ -90,45 +90,72 @@ gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
 
 	g_key_file_set_string(ms->priv->maestro_key, domain, "label", label);
 
-	gebr_maestro_settings_add_address_on_domain(ms, domain, addr);
+	gebr_maestro_settings_append_address(ms, domain, addr);
 }
 
 void
-gebr_maestro_settings_add_addresses_on_domain(GebrMaestroSettings *ms,
-                                              const gchar *domain,
-                                              const gchar *addrs)
+gebr_maestro_settings_prepend_address(GebrMaestroSettings *ms,
+				      const gchar *domain,
+				      const gchar *addr)
 {
-	if (g_key_file_has_group(ms->priv->maestro_key, domain))
-		g_key_file_set_string(ms->priv->maestro_key, domain, "maestro", addrs);
-}
+	g_return_if_fail(ms != NULL);
+	g_return_if_fail(domain != NULL);
+	g_return_if_fail(addr != NULL);
 
-void
-gebr_maestro_settings_add_address_on_domain(GebrMaestroSettings *ms,
-                                            const gchar *domain,
-                                            const gchar *addr)
-{
-	gboolean has_addr = FALSE;
-	GString *maestro;
+	GString *maestro, *buf;
+	gchar **list;
 
-	if (g_key_file_has_group(ms->priv->maestro_key, domain))
-		maestro = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "maestro", "");
-	else
-		maestro = g_string_new(NULL);
+	buf = g_string_new(addr);
+	maestro = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "maestro", "");
+	list = g_strsplit(maestro->str, ",", -1);
 
-	gchar **list = g_strsplit(maestro->str, ",", -1);
 	if (list) {
-		for (gint i = 0; list[i] && !has_addr; i++)
-			has_addr = g_strcmp0(list[i], addr) == 0;
+		for (gint i = 0; list[i]; i++) {
+			if (g_strcmp0(list[i], addr) != 0) {
+				g_string_append_c(buf, ',');
+				g_string_append(buf, list[i]);
+			}
+		}
 	}
 
-	if (!has_addr) {
-		if (maestro->len > 1)
-			maestro = g_string_append_c(maestro, ',');
-		maestro = g_string_append(maestro, addr);
+	g_key_file_set_string(ms->priv->maestro_key, domain, "maestro", buf->str);
+	gebr_maestro_settings_save(ms);
 
-		g_key_file_set_string(ms->priv->maestro_key, domain, "maestro", g_string_free(maestro, FALSE));
+	g_string_free(buf, TRUE);
+	g_string_free(maestro, TRUE);
+	g_strfreev(list);
+}
+
+void
+gebr_maestro_settings_append_address(GebrMaestroSettings *ms,
+				     const gchar *domain,
+				     const gchar *addr)
+{
+	g_return_if_fail(ms != NULL);
+	g_return_if_fail(domain != NULL);
+	g_return_if_fail(addr != NULL);
+
+	GString *maestro, *buf;
+	gchar **list;
+
+	buf = g_string_new(addr);
+	maestro = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "maestro", "");
+	list = g_strsplit(maestro->str, ",", -1);
+
+	if (list) {
+		for (gint i = 0; list[i]; i++) {
+			if (g_strcmp0(list[i], addr) != 0) {
+				g_string_prepend_c(buf, ',');
+				g_string_prepend(buf, list[i]);
+			}
+		}
 	}
 
+	g_key_file_set_string(ms->priv->maestro_key, domain, "maestro", buf->str);
+	gebr_maestro_settings_save(ms);
+
+	g_string_free(buf, TRUE);
+	g_string_free(maestro, TRUE);
 	g_strfreev(list);
 }
 

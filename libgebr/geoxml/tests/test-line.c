@@ -141,7 +141,7 @@ void test_gebr_geoxml_line_get_path(void)
 void test_gebr_geoxml_line_get_group(void)
 {
 	GebrGeoXmlLine *line = NULL;
-	gchar *nfsid, *nfs_label;
+	gchar *nfsid;
 
 	line = gebr_geoxml_line_new();
 	gebr_geoxml_line_set_maestro(line, "foo");

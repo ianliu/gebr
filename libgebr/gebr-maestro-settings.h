@@ -66,22 +66,20 @@ void gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
                                       const gchar *addr);
 
 /**
- * gebr_maestro_settings_add_addresses_on_domain:
- *
- * Add @addrs (list of address) on keyfile at @domain
+ * gebr_maestro_settings_prepend_address:
  */
-void gebr_maestro_settings_add_addresses_on_domain(GebrMaestroSettings *ms,
-                                                   const gchar *domain,
-                                                   const gchar *addrs);
+void gebr_maestro_settings_prepend_address(GebrMaestroSettings *ms,
+					   const gchar *domain,
+					   const gchar *addr);
 
 /**
- * gebr_maestro_settings_add_address:
+ * gebr_maestro_settings_append_address:
  *
  * Add @addr on list of maestro of keyfile, at @domain
  */
-void gebr_maestro_settings_add_address_on_domain(GebrMaestroSettings *ms,
-                                                 const gchar *domain,
-                                                 const gchar *addr);
+void gebr_maestro_settings_append_address(GebrMaestroSettings *ms,
+					  const gchar *domain,
+					  const gchar *addr);
 
 /**
  * gebr_maestro_settings_change_label:

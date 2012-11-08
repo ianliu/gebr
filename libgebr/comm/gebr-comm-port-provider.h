@@ -66,6 +66,13 @@ typedef enum {
 #define GEBR_COMM_PORT_PROVIDER_ERROR (gebr_comm_port_provider_error_quark())
 GQuark gebr_comm_port_provider_error_quark(void);
 
+/**
+ * GebrCommPortForward:
+ *
+ * Survivor structure after death of GebrCommPortProvider.
+ */
+typedef struct _GebrCommPortForward GebrCommPortForward;
+
 #define GEBR_COMM_TYPE_PORT_PROVIDER            (gebr_comm_port_provider_get_type ())
 #define GEBR_COMM_PORT_PROVIDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_TYPE_PORT_PROVIDER, GebrCommPortProvider))
 #define GEBR_COMM_PORT_PROVIDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEBR_COMM_TYPE_PORT_PROVIDER, GebrCommPortProviderClass))
@@ -89,16 +96,10 @@ struct _GebrCommPortProviderClass {
 	void (*error) (GebrCommPortProvider *self, GError *error);
 	void (*password) (GebrCommPortProvider *self, GebrCommSsh *ssh, gboolean retry);
 	void (*question) (GebrCommPortProvider *self, GebrCommSsh *ssh, const gchar *question);
+	void (*accepts_key) (GebrCommPortProvider *self, gboolean accepts_key);
 };
 
 GType gebr_comm_port_provider_get_type(void) G_GNUC_CONST;
-
-/**
- * GebrCommPortForward:
- *
- * Survivor structure after death of GebrCommPortProvider
- */
-typedef struct _GebrCommPortForward GebrCommPortForward;
 
 /**
  * gebr_comm_port_provider_new:
@@ -127,6 +128,7 @@ void gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
 void
 gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
 					 const gchar *address);
+
 /**
  * gebr_comm_port_provider_start:
  *
@@ -134,6 +136,21 @@ gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
  * be emitted, where the port can be fetched.
  */
 void gebr_comm_port_provider_start(GebrCommPortProvider *self);
+
+/**
+ * gebr_comm_port_provider_get_forward:
+ *
+ * This method must be called after a #GebrCommPortProvider::port-defined
+ * signal.
+ *
+ * Returns the forward object relative to this port provider. This object can
+ * be closed with gebr_comm_port_forward_close() method, which will release the
+ * infraestructure for maintaining the forward.
+ *
+ * If the return value is %NULL, this means that this port provider doesn't
+ * need any infraestructure to support the forward.
+ */
+GebrCommPortForward *gebr_comm_port_provider_get_forward(GebrCommPortProvider *self);
 
 /**
  * gebr_comm_port_forward_close:

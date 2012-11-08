@@ -55,7 +55,7 @@ struct _GebrMaestroServerPriv {
 	/* GVFS */
 	gboolean has_connected_daemon;
 	GFile *mount_location;
-	GebrCommTerminalProcess *proc;
+	GebrCommPortForward *forward;
 
 	GtkListStore *groups_store;
 	GtkListStore *queues_model;
@@ -136,17 +136,24 @@ G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_CONNECTABLE,
 					      gebr_maestro_server_connectable_init));
 
-typedef struct {
-	GebrMaestroServer *maestro;
-	guint16 port;
-} TunnelPool;
-
-static gboolean
-mount_operation_pool(gpointer user_data)
+static void
+on_sftp_port_defined(GebrCommPortProvider *self,
+		     guint port,
+		     GebrMaestroServer *maestro)
 {
-	TunnelPool *data = user_data;
-	if (gebr_comm_listen_socket_is_local_port_available(data->port))
-		return TRUE;
+	maestro->priv->forward = gebr_comm_port_provider_get_forward(self);
+
+	gchar *uri;
+	gchar *user = gebr_maestro_server_get_user(maestro);
+	if (!*user)
+		uri = g_strdup_printf("sftp://localhost:%d", port);
+	else
+		uri = g_strdup_printf("sftp://%s@localhost:%d", user, port);
+
+	maestro->priv->mount_location = g_file_new_for_commandline_arg(uri);
+
+	g_free(uri);
+	g_free(user);
 
 	gebr_add_remove_ssh_key(FALSE);
 
@@ -165,16 +172,23 @@ mount_operation_pool(gpointer user_data)
 		window = GTK_WINDOW(gebr.window);
 
 	GMountOperation *op = gtk_mount_operation_new(window);
-	g_file_mount_enclosing_volume(data->maestro->priv->mount_location, 0, op, NULL,
+	g_file_mount_enclosing_volume(maestro->priv->mount_location, 0, op, NULL,
 				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
-				      data->maestro);
+				      maestro);
 
-	g_signal_emit(data->maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_PROGRESS);
+	g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_PROGRESS);
 
 	g_object_unref(window);
 	g_list_free(windows);
+}
 
-	return FALSE;
+static void
+on_sftp_port_error(GebrCommPortProvider *self,
+		   GError *error,
+		   GebrMaestroServer *maestro)
+{
+	if (error->code == GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED)
+		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 }
 
 void
@@ -183,31 +197,14 @@ gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 	if (maestro->priv->has_connected_daemon)
 		return;
 
-	guint16 port = 2000;
-	while (!gebr_comm_listen_socket_is_local_port_available(port))
-		port++;
-
-	GebrCommTerminalProcess *proc;
-	proc = gebr_comm_server_forward_local_port(maestro->priv->server,
-						   22, port, addr);
-	maestro->priv->proc = proc;
 	maestro->priv->has_connected_daemon = TRUE;
-	gchar *uri;
-	gchar *user = gebr_maestro_server_get_user(maestro);
-	if (!*user)
-		uri = g_strdup_printf("sftp://localhost:%d", port);
-	else
-		uri = g_strdup_printf("sftp://%s@localhost:%d", user, port);
-	g_free(user);
 
-	GFile *location = g_file_new_for_commandline_arg(uri);
-
-	TunnelPool *data = g_new0(TunnelPool, 1);
-	data->maestro = maestro;
-	data->port = port;
-	g_timeout_add(200, mount_operation_pool, data);
-	maestro->priv->mount_location = location;
-	g_free(uri);
+	GebrCommPortProvider *port_provider =
+		gebr_comm_server_create_port_provider(maestro->priv->server, GEBR_COMM_PORT_TYPE_SFTP);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
+	gebr_comm_port_provider_set_sftp_address(port_provider, addr);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 static void
@@ -221,19 +218,18 @@ unmount_gvfs(GebrMaestroServer *maestro,
 			return;
 	}
 
-	gebr_comm_terminal_process_kill(maestro->priv->proc);
-	gebr_comm_terminal_process_free(maestro->priv->proc);
+	if (maestro->priv->forward)
+		gebr_comm_port_forward_close(maestro->priv->forward);
 
 	maestro->priv->has_connected_daemon = FALSE;
 
 	if (!quit)
 		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_NOK);
 
-	if (!maestro->priv->mount_location)
-		return;
-
-	g_object_unref(maestro->priv->mount_location);
-	maestro->priv->mount_location = NULL;
+	if (maestro->priv->mount_location) {
+		g_object_unref(maestro->priv->mount_location);
+		maestro->priv->mount_location = NULL;
+	}
 
 	if (quit)
 		gebr_quit(FALSE);
@@ -336,7 +332,6 @@ state_changed(GebrCommServer *comm_server,
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
 		if (err && *err)
 			gebr_maestro_server_set_error(maestro, "error:ssh", err);
-		gebr_remove_temporary_file(comm_server->address->str, TRUE);
 	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
@@ -377,8 +372,7 @@ ssh_login(GebrCommServer *server,
 
 	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
 		      gebr_maestro_server_get_display_address(maestro),
-		      gebr_check_if_server_accepts_key(server->address->str,
-		                                       gebr_comm_server_is_maestro(server)), &pk);
+		      gebr_comm_server_get_accepts_key(server), &pk);
 
 	if (!pk || !pk->password)
 		return NULL;
@@ -535,16 +529,14 @@ parse_messages(GebrCommServer *comm_server,
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 					goto err;
 
-				GString *port = g_list_nth_data(arguments, 0);
-				GString *clocks_diff = g_list_nth_data(arguments, 1);
+				GString *clocks_diff = g_list_nth_data(arguments, 0);
 
 				gebr_maestro_server_set_clocks_diff(maestro, atoi(clocks_diff->str));
 
 				gebr_comm_server_set_logged(comm_server);
-				gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
 
 				gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
 				if (use_key) {
@@ -552,8 +544,6 @@ parse_messages(GebrCommServer *comm_server,
 				} else if (!maestro->priv->wizard_setup) {
 					gebr_maestro_server_connect_on_daemons(maestro);
 				}
-
-				gebr_remove_temporary_file(comm_server->address->str, TRUE);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
@@ -1023,6 +1013,18 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.prt_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *port = g_list_nth_data(arguments, 0);
+
+			gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -1671,7 +1673,7 @@ gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 }
 
 gchar *
-gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro)
+gebr_maestro_server_get_browse_prefix(GebrMaestroServer *maestro)
 {
 	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);
 
@@ -1799,7 +1801,7 @@ static gchar *
 gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface)
 {
 	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
-	return gebr_maestro_server_get_sftp_prefix(self->maestro);
+	return gebr_maestro_server_get_browse_prefix(self->maestro);
 }
 
 GebrMaestroInfo *

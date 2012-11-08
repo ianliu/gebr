@@ -81,6 +81,20 @@ struct _GebrCommSshClass {
 	 * output.
 	 */
 	void (*ssh_stdout) (GebrCommSsh *self, const GString *buffer);
+
+	/**
+	 * GebrCommSsh::ssh_key:
+	 *
+	 * This signal is emitted when ssh check accepts or no publickey.
+	 */
+	void (*ssh_key) (GebrCommSsh *self, gboolean accepts_key);
+
+	/**
+	 * GebrCommSsh::ssh_finished:
+	 *
+	 * This signal is emitted when the connection ssh is finished.
+	 */
+	void (*ssh_finished) (GebrCommSsh *self, gpointer user_data);
 };
 
 GType gebr_comm_ssh_get_type(void) G_GNUC_CONST;
@@ -92,6 +106,10 @@ void gebr_comm_ssh_set_command(GebrCommSsh *self, const gchar *command);
 void gebr_comm_ssh_run(GebrCommSsh *self);
 
 void gebr_comm_ssh_set_password(GebrCommSsh *self, const gchar *password);
+
+void gebr_comm_ssh_connect_finished_callback(GebrCommSsh *self,
+					     void *finished_callback,
+					     gpointer user_data);
 
 void gebr_comm_ssh_answer_question(GebrCommSsh *self, gboolean response);
 
