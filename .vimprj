@@ -1,1 +1,8 @@
 set cinoptions=:0,l1,g0,(0,W2s,t0
+
+fun! <SID>UpdateGPL(l1, l2)
+  let path = expand('<sfile>:h') . '/update-gpl-header.py'
+  execute a:l1 . "," . a:l2 . '!' . path . ' %'
+endf
+
+command! -range=% UpdateGPL :call <SID>UpdateGPL(<line1>, <line2>)
