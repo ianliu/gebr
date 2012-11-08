@@ -61,6 +61,8 @@ struct _GebrCommServerPriv {
 	gboolean accepts_key;
 
 	GHashTable *qa_cache;
+
+	GList *pending_connections;
 };
 
 G_DEFINE_TYPE(GebrCommServer, gebr_comm_server, G_TYPE_OBJECT);
@@ -126,6 +128,7 @@ gebr_comm_server_init(GebrCommServer *server)
 
 	server->priv->istate = ISTATE_NONE;
 	server->priv->is_interactive = FALSE;
+	server->priv->pending_connections = NULL;
 }
 
 static void
@@ -371,6 +374,8 @@ on_comm_ssh_password(GebrCommSsh *ssh,
 		g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
 			      server->priv->title,
 			      server->priv->description);
+
+		server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
 	} else {
 		password = server->ops->ssh_login(server, _("SSH login:"), string->str,
 						  server->user_data);
@@ -418,6 +423,8 @@ on_comm_ssh_question(GebrCommSsh *ssh,
 		g_signal_emit(server, signals[QUESTION_REQUEST], 0,
 			      server->priv->title,
 			      server->priv->description);
+
+		server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
 	} else {
 		gchar *cached_answer = g_hash_table_lookup(server->priv->qa_cache, question);
 		gboolean answer;
@@ -598,16 +605,6 @@ gebr_comm_server_forward_x11(GebrCommServer *server, guint16 remote_display)
 	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	gebr_comm_port_provider_start(port_provider);
-}
-
-void
-gebr_comm_server_close_x11_forward(GebrCommServer *server)
-{
-	if (server->x11_forward_process) {
-		gebr_comm_terminal_process_kill(server->x11_forward_process);
-		gebr_comm_terminal_process_free(server->x11_forward_process);
-		server->x11_forward_process = NULL;
-	}
 }
 
 /**
@@ -840,7 +837,6 @@ static void gebr_comm_server_disconnected_state(GebrCommServer *server,
 	 * maybe be used by Process's read callback */
 	server->port = 0;
 	server->socket->protocol->logged = FALSE;
-	g_free(server->password);
 	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 }
 
@@ -985,11 +981,6 @@ static void gebr_comm_server_free_x11_forward(GebrCommServer *server)
 		server->tunnel_pooling_source = 0;
 	}
 
-	if (server->x11_forward_process != NULL) {
-		gebr_comm_terminal_process_kill(server->x11_forward_process);
-		gebr_comm_terminal_process_free(server->x11_forward_process);
-		server->x11_forward_process = NULL;
-	}
 	if (server->x11_forward_unix != NULL) {
 		gebr_comm_process_free(server->x11_forward_unix);
 		server->x11_forward_unix = NULL;
@@ -1006,11 +997,6 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 
 	gebr_comm_protocol_reset(server->socket->protocol);
 	gebr_comm_server_free_x11_forward(server);
-
-	if (server->process) {
-		gebr_comm_terminal_process_free(server->process);
-		server->process = NULL;
-	}
 }
 
 static const gchar *state_hash[] = {
@@ -1050,20 +1036,22 @@ gebr_comm_server_set_password(GebrCommServer *server, const gchar *pass)
 {
 	server->password = g_strdup(pass);
 
-	if (server->priv->is_interactive
-	    && server->priv->istate == ISTATE_PASS)
-		write_pass_in_process(server->process, pass);
+	for (GList *i = server->priv->pending_connections; i; i = i->next)
+		gebr_comm_ssh_set_password(i->data, server->password);
+
+	g_list_free(server->priv->pending_connections);
+	server->priv->pending_connections = NULL;
 }
 
 void
 gebr_comm_server_answer_question(GebrCommServer *server,
 				 gboolean response)
 {
-	GString *answer = g_string_new(response ? "yes\n" : "no\n");
+	for (GList *i = server->priv->pending_connections; i; i = i->next)
+		gebr_comm_ssh_answer_question(i->data, response);
 
-	if (server->priv->is_interactive
-	    && server->priv->istate == ISTATE_QUESTION)
-		gebr_comm_terminal_process_write_string(server->process, answer);
+	g_list_free(server->priv->pending_connections);
+	server->priv->pending_connections = NULL;
 }
 
 void
