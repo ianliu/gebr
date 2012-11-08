@@ -36,7 +36,6 @@
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-protocol.h"
 #include "gebr-comm-uri.h"
-#include "gebr-comm-utils.h"
 
 /*
  * Declarations
@@ -581,20 +580,12 @@ on_x11_port_defined(GebrCommPortProvider *self,
 		    guint port,
 		    GebrCommServer *server)
 {
-	guint display_port;
-	gchar *x11_file, *host;
-	gebr_comm_get_display(&x11_file, &display_port, &host);
-
-	if (display_port != port) {
-		server->x11_forward_unix = gebr_comm_process_new();
-		GString *cmdline = g_string_new(NULL);
-		g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", port, x11_file);
-		gebr_comm_process_start(server->x11_forward_unix, cmdline);
-		g_string_free(cmdline, TRUE);
-	}
-
-	g_free(x11_file);
-	g_free(host);
+	gchar *x11_file = get_x11_unix_file();
+	server->x11_forward_unix = gebr_comm_process_new();
+	GString *cmdline = g_string_new(NULL);
+	g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", port, x11_file);
+	gebr_comm_process_start(server->x11_forward_unix, cmdline);
+	g_string_free(cmdline, TRUE);
 }
 
 static void
