@@ -44,6 +44,7 @@ enum {
 	SSH_ERROR,
 	SSH_STDOUT,
 	SSH_KEY,
+	SSH_FINISHED,
 	LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -127,6 +128,16 @@ gebr_comm_ssh_class_init(GebrCommSshClass *klass)
 			     g_cclosure_marshal_VOID__BOOLEAN,
 			     G_TYPE_NONE, 1,
 			     G_TYPE_BOOLEAN);
+
+	signals[SSH_FINISHED] =
+		g_signal_new("ssh-finished",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommSshClass, ssh_finished),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__POINTER,
+			     G_TYPE_NONE, 1,
+			     G_TYPE_POINTER);
 
 	g_type_class_add_private(klass, sizeof(GebrCommSshPriv));
 }

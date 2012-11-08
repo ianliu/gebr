@@ -298,9 +298,8 @@ on_comm_port_defined(GebrCommPortProvider *self,
 }
 
 static void
-on_comm_port_error(GebrCommPortProvider *self,
-                   GError *error,
-                   GebrCommServer *server)
+on_comm_ssh_error(GError *error,
+		  GebrCommServer *server)
 {
 	switch (error->code) {
 	case GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT:
@@ -317,10 +316,17 @@ on_comm_port_error(GebrCommPortProvider *self,
 }
 
 static void
-on_comm_port_password(GebrCommPortProvider *self,
-		      GebrCommSsh *ssh,
-		      gboolean retry,
-		      GebrCommServer *server)
+on_comm_port_error(GebrCommPortProvider *self,
+                   GError *error,
+                   GebrCommServer *server)
+{
+	on_comm_ssh_error(error, server);
+}
+
+static void
+on_comm_ssh_password(GebrCommSsh *ssh,
+		     gboolean retry,
+		     GebrCommServer *server)
 {
 	GString *string;
 	GString *password;
@@ -385,10 +391,18 @@ on_comm_port_password(GebrCommPortProvider *self,
 }
 
 static void
-on_comm_port_question(GebrCommPortProvider *self,
+on_comm_port_password(GebrCommPortProvider *self,
 		      GebrCommSsh *ssh,
-		      const gchar *question,
+		      gboolean retry,
 		      GebrCommServer *server)
+{
+	on_comm_ssh_password(ssh, retry, server);
+}
+
+static void
+on_comm_ssh_question(GebrCommSsh *ssh,
+		     const gchar *question,
+		     GebrCommServer *server)
 {
 	if (server->priv->is_interactive) {
 		if (server->priv->title)
@@ -430,6 +444,15 @@ on_comm_port_question(GebrCommPortProvider *self,
 }
 
 static void
+on_comm_port_question(GebrCommPortProvider *self,
+		      GebrCommSsh *ssh,
+		      const gchar *question,
+		      GebrCommServer *server)
+{
+	on_comm_ssh_question(ssh, question, server);
+}
+
+static void
 on_comm_port_accepts_key(GebrCommPortProvider *self,
                          gboolean accepts_key,
                          GebrCommServer *server)
@@ -459,6 +482,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(port_type, server->address->str);
+
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
 	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
@@ -1090,16 +1114,55 @@ gebr_comm_server_forward_remote_port(GebrCommServer *server,
 	return gebr_comm_server_forward_port(server, remote_port, local_port, "127.0.0.1", FALSE);
 }
 
-gboolean
-gebr_comm_server_append_key(GebrCommServer *server,
-                            void * finished_callback,
-                            gpointer user_data)
+static gchar *
+get_append_key_command(GebrCommServer *server)
 {
-	GebrCommPortProvider *port_provider = gebr_comm_server_create_port_provider(server, GEBR_COMM_PORT_TYPE_KEY);
+	gchar *path = gebr_key_filename(TRUE);
+	gchar *public_key;
 
-	gebr_comm_port_provider_append_key(port_provider, finished_callback, user_data);
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(path);
+		return FALSE;
+	}
 
-	return TRUE;
+	// FIXME: please handle GError of the g_file_get_contents
+	g_file_get_contents(path, &public_key, NULL, NULL);
+	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
+
+	gchar *ssh_cmd = get_ssh_command_with_key();
+	GString *cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
+			"'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s (%s)\" >> $HOME/.ssh/authorized_keys'",
+			ssh_cmd, server->address->str, public_key, gebr_comm_server_is_maestro(server) ? "gebr" : "gebrm");
+
+	g_debug("Cmd line:'%s'", cmd_line->str);
+
+	g_free(path);
+	g_free(ssh_cmd);
+	g_free(public_key);
+
+	return g_string_free(cmd_line, FALSE);
+}
+
+void
+gebr_comm_server_append_key(GebrCommServer *server,
+			    void *finished_callback,
+			    gpointer user_data)
+{
+	gchar *command;
+	command = get_append_key_command(server);
+
+	GebrCommSsh *ssh = gebr_comm_ssh_new();
+	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_comm_ssh_password), server);
+	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_comm_ssh_question), server);
+	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_comm_ssh_error), server);
+	g_signal_connect(ssh, "ssh-finished", G_CALLBACK(finished_callback), user_data);
+
+	command = get_append_key_command(server);
+	gebr_comm_ssh_set_command(ssh, command);
+	gebr_comm_ssh_run(ssh);
+
+	g_free(command);
 }
 
 gboolean

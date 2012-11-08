@@ -28,6 +28,7 @@
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/utils.h>
 #include <libgebr/comm/gebr-comm-port-provider.h>
+#include <libgebr/comm/gebr-comm-ssh.h>
 
 #include "gebr-comm-protocol-socket.h"
 #include "gebr-comm-terminalprocess.h"
@@ -260,18 +261,20 @@ GebrCommTerminalProcess *gebr_comm_server_forward_remote_port(GebrCommServer *se
 							      guint16 local_port);
 
 /**
- * gebr_comm_server_append_key:
- */
-gboolean gebr_comm_server_append_key(GebrCommServer *server,
-                                     void * finished_callback,
-                                     gpointer user_data);
-
-/**
  * gebr_comm_server_get_accepts_key:
  *
  * Return if the server accepts public key
  */
 gboolean gebr_comm_server_get_accepts_key(GebrCommServer *server);
+
+/**
+ * gebr_comm_server_append_key:
+ *
+ * Append key in the @server
+ */
+void gebr_comm_server_append_key(GebrCommServer *server,
+				 void *finished_callback,
+				 gpointer user_data);
 /**
  * gebr_comm_server_set_use_public_key:
  */
