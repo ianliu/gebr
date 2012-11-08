@@ -610,20 +610,30 @@ static gchar *
 get_x11_command(GebrCommPortProvider *self, guint *x11_port)
 {
 	gchar *ssh_cmd;
-	guint16 display_number;
+	guint16 display_number = 0;
 	GString *cmd_line;
 	GString *display_host = g_string_new(NULL);
 
 	gchar *display = getenv("DISPLAY");
 
-	if (display && strlen(display))
+	// GeBR has display and Maestro don't
+	if (display && strlen(display)) {
 		g_string_append_len(display_host, display, (strchr(display, ':')-display)/sizeof(gchar));
+
+		GString *tmp = g_string_new(strchr(display, ':'));
+		if (sscanf(tmp->str, ":%hu.", &display_number) != 1)
+			display_number = 0;
+	}
 
 	if (!display_host->len)
 		g_string_assign(display_host, "127.0.0.1");
 
-	while (!gebr_comm_listen_socket_is_local_port_available(*x11_port))
-		(*x11_port)++;
+	if (!display_number) {
+		while (!gebr_comm_listen_socket_is_local_port_available(*x11_port))
+			(*x11_port)++;
+	} else {
+		*x11_port = display_number + 6000;
+	}
 
 	ssh_cmd = get_ssh_command_with_key();
 	cmd_line = g_string_new(NULL);
