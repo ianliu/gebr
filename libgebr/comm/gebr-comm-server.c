@@ -309,11 +309,13 @@ on_comm_ssh_error(GError *error,
 		g_string_assign(server->address, error->message);
 		gebr_comm_server_connect(server, TRUE);
 		break;
+	case GEBR_COMM_PORT_PROVIDER_ERROR_SSH:
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH,
+		                                    "%s", g_strstrip(error->message));
+		break;
 	case GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE:
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED:
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN:
-	case GEBR_COMM_PORT_PROVIDER_ERROR_SSH:
-		g_critical("Error when launching gebrm/gebrd: %s", error->message);
 		break;
 	}
 }
