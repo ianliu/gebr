@@ -794,12 +794,7 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 		     GebrCommProtocolSocket *client)
 {
 	if (pass && *pass) {
-		/*
-		 * TODO: This method are deprecated, need to use new one
-		 * on GebrCommSsh
-		 *
 		gebr_comm_server_set_password(daemon->priv->server, pass);
-		*/
 
 		// This server is already connected, but its waiting for a
 		// password.
