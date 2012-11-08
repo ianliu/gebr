@@ -290,8 +290,6 @@ gboolean gebr_comm_server_get_use_public_key(GebrCommServer *server);
  */
 gboolean gebr_comm_server_is_maestro(GebrCommServer *server);
 
-void gebr_comm_server_close_x11_forward(GebrCommServer *server);
-
 void gebr_comm_server_maestro_connect_on_daemons(GebrCommServer *server);
 
 GebrCommPortProvider *gebr_comm_server_create_port_provider(GebrCommServer *server,

@@ -1966,8 +1966,7 @@ on_daemon_error(GebrMaestroServer *maestro,
 		message = NULL;
 	} else if (g_strcmp0(error_type, "error:nfs") == 0) {
 		message = _("This node has a different NFS");
-	} else if (g_strcmp0(error_type, "error:id") == 0 ||
-		   g_strcmp0(error_type, "error:connection-stolen-self") == 0) {
+	} else if (g_strcmp0(error_type, "error:id") == 0) {
 		message = _("Node already added");
 		second = g_strdup_printf(_("The node %s was already added in"
 					   " this maestro. It will be"
@@ -1975,8 +1974,6 @@ on_daemon_error(GebrMaestroServer *maestro,
 		show_dialog = TRUE;
 	} else if (g_strcmp0(error_type, "error:protocol") == 0) {
 		message = _("This node is using a different protocol version");
-	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
-		message = _("This node is already registered at another maestro");
 	} else if (g_strcmp0(error_type, "error:connection-refused-job") == 0) {
 		message = _("This node is working for another maestro");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {

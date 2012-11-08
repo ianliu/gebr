@@ -323,7 +323,6 @@ state_changed(GebrCommServer *comm_server,
 	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
 
 	if (state == SERVER_STATE_DISCONNECTED) {
-		gebr_comm_server_close_x11_forward(comm_server);
 		gtk_list_store_clear(maestro->priv->groups_store);
 
 		if (!gebr.quit)

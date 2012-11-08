@@ -68,16 +68,17 @@ fork_and_exit_main(void)
 
 	if (pid != 0) {
 		char c;
-		GString *buf = g_string_sized_new(10);
-		while (read(fd[0], &c, 1) > 0) {
-			g_string_append_c(buf, c);
-			if (c == '\n') {
-				g_string_append_c(buf, '\0');
-				break;
-			}
-		}
-		printf("%s", buf->str);
+		int n = 0;
+		GString *buf = g_string_new(NULL);
 
+		while (read(fd[0], &c, 1) != 0) {
+			if (c == '\n')
+				n++;
+			if (n == 2)
+				break;
+			g_string_append_c(buf, c);
+		}
+		puts(buf->str);
 		g_string_free(buf, TRUE);
 		exit(EXIT_SUCCESS);
 	}
@@ -144,17 +145,19 @@ main(int argc, char *argv[])
 	gchar *curr_version;
 
 	const gchar *local_addr = g_get_host_name();
-	const gchar *addr;
+	const gchar *addr = NULL;
 	gboolean same_host = FALSE;
 	gint index = 0;
 	GebrMaestroSettings *ms = gebrm_app_create_configuration();
 	const gchar *nfsid = gebrm_app_get_nfsid(ms);
 
 	while (1) {
-		addr = gebr_maestro_settings_get_addr_for_domain(ms, nfsid, index);
+		if (nfsid)
+			addr = gebr_maestro_settings_get_addr_for_domain(ms, nfsid, index);
 		index++;
 
 		if (!addr || !*addr) {
+			addr = local_addr;
 			lock = gebrm_app_get_lock_file();
 			version_file  = gebrm_app_get_version_file();
 			same_host = TRUE;
@@ -197,11 +200,12 @@ main(int argc, char *argv[])
 
 				if (gebr_comm_listen_socket_listen_on_port(port, addr) || !gebr_comm_listen_socket_is_local_port_available(port)) {
 					if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
-						gebr_maestro_settings_append_address(ms, nfsid, local_addr);
+						if (nfsid)
+							gebr_maestro_settings_append_address(ms, nfsid, local_addr);
 						gebr_maestro_settings_free(ms);
 						g_print("%s%s\n%s%s\n",
-						        GEBR_PORT_PREFIX, lock_contents,
-						        GEBR_ADDR_PREFIX, addr);
+							GEBR_PORT_PREFIX, lock_contents,
+							GEBR_ADDR_PREFIX, addr);
 						exit(0);
 					} else {		//It is running in a different version
 						gebr_kill_by_port(port);
@@ -225,7 +229,8 @@ main(int argc, char *argv[])
 			break;
 	}
 
-	gebr_maestro_settings_prepend_address(ms, nfsid, local_addr);
+	if (nfsid)
+		gebr_maestro_settings_prepend_address(ms, nfsid, local_addr);
 	gebr_maestro_settings_free(ms);
 
 	if (!interactive)
@@ -244,9 +249,13 @@ main(int argc, char *argv[])
 
 	gebr_geoxml_init();
 
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebrm",
-				       g_get_host_name(), "log", NULL);
+	gchar *dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrm",
+				      g_get_host_name(), NULL);
+	g_mkdir_with_parents(dir, 0755);
+
+	gchar *path = g_build_filename(dir, "log", NULL);
 	gebr_log_set_default(path);
+	g_free(dir);
 	g_free(path);
 
 	GebrmApp *app = gebrm_app_singleton_get();

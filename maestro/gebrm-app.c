@@ -263,16 +263,16 @@ send_groups_definitions(GebrCommProtocolSocket *client, GebrmDaemon *daemon)
 					      server, tags);
 }
 
-static GebrmDaemon *
-find_daemon_by_id(GebrmApp *app, const gchar *id)
-{
-	for (GList *i = app->priv->daemons; i; i = i->next) {
-		const gchar *tmp_id = gebrm_daemon_get_id(i->data);
-		if (g_strcmp0(id, tmp_id) == 0)
-			return i->data;
-	}
-	return NULL;
-}
+//static GebrmDaemon *
+//find_daemon_by_id(GebrmApp *app, const gchar *id)
+//{
+//	for (GList *i = app->priv->daemons; i; i = i->next) {
+//		const gchar *tmp_id = gebrm_daemon_get_id(i->data);
+//		if (g_strcmp0(id, tmp_id) == 0)
+//			return i->data;
+//	}
+//	return NULL;
+//}
 
 static void
 remove_daemon(GebrmApp *app, const gchar *addr)
@@ -497,20 +497,6 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				gebrm_daemon_set_reconnect(daemon, FALSE);
 				gebrm_daemon_connect(daemon, NULL, socket);
 			}
-		} else {
-			if (g_strcmp0(err, "error:connection-stolen") == 0) {
-				gebrm_daemon_set_error_type(daemon, NULL);
-				for (GList *i = app->priv->connections; i; i = i->next) {
-					GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
-					gebrm_daemon_connect(daemon, NULL, socket);
-				}
-			}
-			else if (g_strcmp0(err, "error:connection-stolen-self") == 0) {
-				const gchar *daemon_id = gebrm_daemon_get_error_msg(daemon);
-				GebrmDaemon *other_daemon = find_daemon_by_id(app, daemon_id);
-				if (other_daemon)
-					gebrm_daemon_set_reconnect(other_daemon, TRUE);
-			}
 		}
 	}
 
@@ -633,25 +619,6 @@ gebrm_app_singleton_get(void)
 	return __app;
 }
 
-static gboolean
-has_duplicated_daemons(GebrmApp *app, const gchar *id)
-{
-	gboolean has_duplicated = FALSE;
-	gboolean added_daemon = FALSE;
-	for (GList *i = app->priv->daemons; i; i = i->next) {
-		const gchar *tmp = gebrm_daemon_get_id(i->data);
-		if (!tmp) {
-			const gchar *err_type = gebrm_daemon_get_error_type(i->data);
-			if (!err_type || g_strcmp0(err_type, "connection-refused") == 0)
-				added_daemon = TRUE;
-		}
-		if (g_strcmp0(tmp, id) == 0)
-			has_duplicated = TRUE;;
-	}
-
-	return added_daemon && has_duplicated;
-}
-
 static void
 on_daemon_init(GebrmDaemon *daemon,
 	       const gchar *error_type,
@@ -665,33 +632,8 @@ on_daemon_init(GebrmDaemon *daemon,
 	gboolean home_defined = FALSE;
 	gboolean send_nfs = FALSE;
 
-	if (g_strcmp0(error_type, "connection-refused") == 0) {
-		if (has_duplicated_daemons(app, error_msg)) {
-			error = "error:id";
-			remove = TRUE;
-		} else {
-			error = "error:connection-refused";
-		}
-		goto err;
-	}
-
 	if (g_strcmp0(error_type, "connection-refused-job") == 0) {
-		if (has_duplicated_daemons(app, error_msg)) {
-			error = "error:connection-stolen-self";
-			remove = TRUE;
-		} else {
-			error = "error:connection-refused-job";
-		}
-		goto err;
-	}
-
-	if (g_strcmp0(error_type, "connection-stolen") == 0) {
-		if (has_duplicated_daemons(app, error_msg)) {
-			error = "error:connection-stolen-self";
-			remove = TRUE;
-		} else {
-			error = "error:connection-stolen";
-		}
+		error = "error:connection-refused-job";
 		goto err;
 	}
 
@@ -2065,8 +2007,12 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	                                  GEBR_PORT_PREFIX, port,
 	                                  GEBR_ADDR_PREFIX, g_get_host_name());
 
-	if (write(fd, port_str, strlen(port_str)) == -1)
-		exit(-1);
+	ssize_t s = 0;
+	do {
+		s = write(fd, port_str + s, strlen(port_str) - s);
+		if (s == -1)
+			exit(-1);
+	} while(s != 0);
 
 	g_free(port_str);
 
