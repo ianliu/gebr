@@ -26,7 +26,7 @@
 #include <glib/gkeyfile.h>
 #include <glib/gi18n.h>
 
-#include "libgebr/utils.h"
+#include "utils.h"
 
 struct _GebrMaestroSettingsPriv {
 	gchar *path;
