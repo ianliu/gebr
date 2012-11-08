@@ -611,21 +611,16 @@ get_x11_command(GebrCommPortProvider *self, guint *x11_port)
 {
 	gchar *ssh_cmd;
 	guint16 display_number;
-	GString *cmd_line, *display_host;
+	GString *cmd_line;
+	GString *display_host = g_string_new(NULL);
 
 	gchar *display = getenv("DISPLAY");
 
-	if (display == NULL || !strlen(display))
-		g_warn_if_reached();
-
-	display_host = g_string_new_len(display, (strchr(display, ':')-display)/sizeof(gchar));
+	if (display && strlen(display))
+		g_string_append_len(display_host, display, (strchr(display, ':')-display)/sizeof(gchar));
 
 	if (!display_host->len)
 		g_string_assign(display_host, "127.0.0.1");
-
-	GString *tmp = g_string_new(strchr(display, ':'));
-	if (sscanf(tmp->str, ":%hu.", &display_number) != 1)
-		display_number = 0;
 
 	while (!gebr_comm_listen_socket_is_local_port_available(*x11_port))
 		(*x11_port)++;
@@ -635,7 +630,6 @@ get_x11_command(GebrCommPortProvider *self, guint *x11_port)
 	g_string_printf(cmd_line, "%s -x -R %d:%s:%d %s -N", ssh_cmd, self->priv->display,
 			display_host->str, *x11_port, self->priv->address);
 
-	g_string_free(tmp, TRUE);
 	g_free(ssh_cmd);
 
 	return g_string_free(cmd_line, FALSE);
