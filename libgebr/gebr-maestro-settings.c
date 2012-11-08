@@ -94,15 +94,6 @@ gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
 }
 
 void
-gebr_maestro_settings_add_addresses_on_domain(GebrMaestroSettings *ms,
-                                              const gchar *domain,
-                                              const gchar *addrs)
-{
-	if (g_key_file_has_group(ms->priv->maestro_key, domain))
-		g_key_file_set_string(ms->priv->maestro_key, domain, "maestro", addrs);
-}
-
-void
 gebr_maestro_settings_prepend_address(GebrMaestroSettings *ms,
 				      const gchar *domain,
 				      const gchar *addr)
