@@ -30,6 +30,7 @@
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-process.h"
 #include "../marshalers.h"
+#include "gebr-comm-utils.h"
 
 struct _GebrCommPortForward {
 	GebrCommSsh *ssh;
@@ -609,51 +610,39 @@ remote_get_daemon_port(GebrCommPortProvider *self)
 static gchar *
 get_x11_command(GebrCommPortProvider *self, guint *x11_port)
 {
-	gchar *ssh_cmd;
-	guint16 display_number = 0;
-	GString *cmd_line;
-	GString *display_host = g_string_new(NULL);
+	guint port;
+	gchar *x11_file, *host;
+	gebr_comm_get_display(&x11_file, &port, &host);
 
-	gchar *display = getenv("DISPLAY");
+	gchar *cmd_line = NULL;
 
-	// GeBR has display and Maestro don't
-	if (display && strlen(display)) {
-		g_string_append_len(display_host, display, (strchr(display, ':')-display)/sizeof(gchar));
-
-		GString *tmp = g_string_new(strchr(display, ':'));
-		if (sscanf(tmp->str, ":%hu.", &display_number) != 1)
-			display_number = 0;
-	}
-
-	if (!display_host->len)
-		g_string_assign(display_host, "127.0.0.1");
-
-	if (!display_number) {
+	if (x11_file) {
 		while (!gebr_comm_listen_socket_is_local_port_available(*x11_port))
 			(*x11_port)++;
 	} else {
-		*x11_port = display_number + 6000;
+		*x11_port = port;
 	}
 
-	ssh_cmd = get_ssh_command_with_key();
-	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -x -R %d:%s:%d %s -N", ssh_cmd, self->priv->display,
-			display_host->str, *x11_port, self->priv->address);
+	gchar *ssh_cmd = get_ssh_command_with_key();
+	cmd_line = g_strdup_printf("%s -x -R %d:%s:%d %s -N", ssh_cmd, self->priv->display,
+				   host, *x11_port, self->priv->address);
 
 	g_free(ssh_cmd);
+	g_free(x11_file);
+	g_free(host);
 
-	return g_string_free(cmd_line, FALSE);
+	return cmd_line;
 }
 
 void
 remote_get_x11_port(GebrCommPortProvider *self)
 {
 	static guint x11_port = 6010;
+	gchar *command = get_x11_command(self, &x11_port);
 	GebrCommSsh *ssh = gebr_comm_ssh_new();
 	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
 	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
-	gchar *command = get_x11_command(self, &x11_port);
 	gebr_comm_ssh_set_command(ssh, command);
 	set_forward(self, ssh);
 	gebr_comm_ssh_run(ssh);
