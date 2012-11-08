@@ -2065,8 +2065,12 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	                                  GEBR_PORT_PREFIX, port,
 	                                  GEBR_ADDR_PREFIX, g_get_host_name());
 
-	if (write(fd, port_str, strlen(port_str)) == -1)
-		exit(-1);
+	ssize_t s = 0;
+	do {
+		s = write(fd, port_str + s, strlen(port_str) - s);
+		if (s == -1)
+			exit(-1);
+	} while(s != 0);
 
 	g_free(port_str);
 
