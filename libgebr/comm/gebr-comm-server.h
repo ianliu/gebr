@@ -248,19 +248,6 @@ void gebr_comm_server_set_interactive(GebrCommServer *server,
 				      gboolean setting);
 
 /**
- * gebr_comm_forward_remote_port:
- * @server: A #GebrCommServer.
- * @remote_port: The remote port in which connections will be made.
- * @local_port: The local port to be listened.
- *
- * Returns: The #GebrCommTerminalProcess of the ssh tunnel. You can call
- * gebr_comm_terminal_process_kill() to close the tunnel.
- */
-GebrCommTerminalProcess *gebr_comm_server_forward_remote_port(GebrCommServer *server,
-							      guint16 remote_port,
-							      guint16 local_port);
-
-/**
  * gebr_comm_server_get_accepts_key:
  *
  * Return if the server accepts public key

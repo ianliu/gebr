@@ -1060,48 +1060,6 @@ gebr_comm_server_set_interactive(GebrCommServer *server, gboolean setting)
 	server->priv->is_interactive = setting;
 }
 
-static GebrCommTerminalProcess *
-gebr_comm_server_forward_port(GebrCommServer *server,
-			      guint16 port1,
-			      guint16 port2,
-			      const gchar *addr,
-			      gboolean is_local)
-{
-	g_return_val_if_fail(server->state == SERVER_STATE_CONNECT
-			     || server->state == SERVER_STATE_LOGGED, NULL);
-
-	GebrCommTerminalProcess *proc = gebr_comm_terminal_process_new();
-
-	g_signal_connect(proc, "ready-read",
-			 G_CALLBACK(gebr_comm_ssh_read), server);
-
-	gchar *ssh_cmd = get_ssh_command_with_key();
-	GString *string = g_string_new(NULL);
-	g_string_printf(string, "%s -x -%s %d:%s:%d %s -N",
-			ssh_cmd,
-	                is_local ? "L" : "R",
-			port1,
-			addr,
-			port2,
-			server->address->str);
-
-	g_debug("Simple forward: %s", string->str);
-
-	gebr_comm_terminal_process_start(proc, string);
-	g_string_free(string, TRUE);
-	g_free(ssh_cmd);
-
-	return proc;
-}
-
-GebrCommTerminalProcess *
-gebr_comm_server_forward_remote_port(GebrCommServer *server,
-				     guint16 remote_port,
-				     guint16 local_port)
-{
-	return gebr_comm_server_forward_port(server, remote_port, local_port, "127.0.0.1", FALSE);
-}
-
 static gchar *
 get_append_key_command(GebrCommServer *server)
 {
@@ -1146,7 +1104,6 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_comm_ssh_error), server);
 	g_signal_connect(ssh, "ssh-finished", G_CALLBACK(finished_callback), user_data);
 
-	command = get_append_key_command(server);
 	gebr_comm_ssh_set_command(ssh, command);
 	gebr_comm_ssh_run(ssh);
 
