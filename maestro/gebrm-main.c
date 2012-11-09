@@ -203,9 +203,19 @@ main(int argc, char *argv[])
 						if (nfsid)
 							gebr_maestro_settings_append_address(ms, nfsid, local_addr);
 						gebr_maestro_settings_free(ms);
+						
+						gchar *new_addr;
+						const gchar *username = g_get_user_name();
+						if (username && *username)
+							new_addr = g_strdup_printf("%s@%s", username, addr);
+						else
+							new_addr = g_strdup(addr);
+
 						g_print("%s%s\n%s%s\n",
 							GEBR_PORT_PREFIX, lock_contents,
-							GEBR_ADDR_PREFIX, addr);
+							GEBR_ADDR_PREFIX, new_addr);
+						
+						g_free(new_addr);
 						exit(0);
 					} else {		//It is running in a different version
 						gebr_kill_by_port(port);
