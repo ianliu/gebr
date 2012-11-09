@@ -251,7 +251,7 @@ main(int argc, char *argv[])
 	gboolean valid = TRUE;
 
 	for (gint index = -1; valid; index++)
-		valid = is_maestro_spec_valid(ms, nfsid, index, &curr_version)
+		valid = is_maestro_spec_valid(ms, nfsid, index, &curr_version);
 
 	if (nfsid)
 		gebr_maestro_settings_prepend_address(ms, nfsid, local_addr);
