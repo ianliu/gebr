@@ -476,9 +476,10 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	guint port = 2125;
 	guint remote_port;
 
-	gchar *redirect_addr = g_strrstr(buffer->str, GEBR_ADDR_PREFIX) + strlen(GEBR_ADDR_PREFIX);
+	gchar *redirect_addr = g_strrstr(buffer->str, GEBR_ADDR_PREFIX);
 
 	if (redirect_addr) {
+		redirect_addr += strlen(GEBR_ADDR_PREFIX);
 		gchar *nl = strchr(redirect_addr, '\n');
 		gchar *addr;
 		if (nl)
