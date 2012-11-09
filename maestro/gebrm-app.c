@@ -1984,10 +1984,13 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	app->priv->address =
 		gebr_comm_socket_get_address(GEBR_COMM_SOCKET(app->priv->listener));
 	guint16 port = gebr_comm_socket_address_get_ip_port(&app->priv->address);
-	gchar *portstr = g_strdup_printf("%d", port);
+
+	gchar *lock_contents = g_strdup_printf("%s:%d", g_get_host_name(), port);
 
 	g_file_set_contents(gebrm_app_get_lock_file(),
-			    portstr, -1, &error_lock);
+			    lock_contents, -1, &error_lock);
+
+	g_free(lock_contents);
 
 	g_file_set_contents(gebrm_app_get_version_file(),
 			    version, -1, &error_version);
