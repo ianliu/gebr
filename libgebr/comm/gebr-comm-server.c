@@ -79,16 +79,6 @@ static void	gebr_comm_server_log_message	(GebrCommServer *server,
 						 GebrLogMessageType type,
 						 const gchar * message, ...);
 
-static gboolean	gebr_comm_ssh_parse_output	(GebrCommTerminalProcess *process,
-						 GebrCommServer *server,
-						 GString *output);
-
-static void	gebr_comm_ssh_read		(GebrCommTerminalProcess *process,
-						 GebrCommServer *server);
-
-static void	gebr_comm_ssh_finished		(GebrCommTerminalProcess *process,
-						 GebrCommServer *server);
-
 static void	gebr_comm_server_disconnected_state(GebrCommServer *server,
 						    enum gebr_comm_server_error error,
 						    const gchar * message, ...);
@@ -527,15 +517,8 @@ gboolean gebr_comm_server_is_local(GebrCommServer *server)
 
 void gebr_comm_server_kill(GebrCommServer *server)
 {
-	GebrCommTerminalProcess *process;
-
 	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Stopping machine at '%s'."),
 				     server->address->str);
-
-	server->tried_existant_pass = FALSE;
-	process = gebr_comm_terminal_process_new();
-	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
-	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
 
 	const gchar *bin;
 	if (gebr_comm_server_is_maestro(server))
@@ -554,7 +537,11 @@ void gebr_comm_server_kill(GebrCommServer *server)
 		g_free(ssh_cmd);
 	}
 
-	gebr_comm_terminal_process_start(process, cmd_line);
+	GebrCommSsh *ssh = gebr_comm_ssh_new();
+	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_comm_ssh_password), server);
+	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_comm_ssh_question), server);
+	gebr_comm_ssh_set_command(ssh, cmd_line->str);
+	gebr_comm_ssh_run(ssh);
 
 	g_string_free(cmd_line, TRUE);
 	g_free(kill);
@@ -624,198 +611,6 @@ gebr_comm_server_log_message(GebrCommServer *server, GebrLogMessageType type,
 	g_free(string);
 	g_free(msg);
 	va_end(argp);
-}
-
-static void
-write_pass_in_process(GebrCommTerminalProcess *process,
-		      const gchar *pass)
-{
-	gsize len = strlen(pass);
-	GString p = {(gchar*)pass, len, len};
-	gebr_comm_terminal_process_write_string(process, &p);
-	p.str = "\n";
-	p.len = p.allocated_len = 1;
-	gebr_comm_terminal_process_write_string(process, &p);
-}
-
-/*
- * Return TRUE if callee should not proceed.
- */
-static gboolean
-gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
-			   GebrCommServer *server,
-			   GString * output)
-{
-	if (output->len <= 2)
-		return TRUE;
-
-	gchar *start = g_strrstr(output->str, GEBR_PORT_PREFIX);
-	if (start) {
-		g_string_erase(output, 0, start - output->str + strlen(GEBR_PORT_PREFIX));
-		return FALSE;
-	}
-
-	for (gint i = 0; output->str[i]; i++) {
-		if (!g_ascii_isdigit(output->str[i]))
-			break;
-		return FALSE;
-	}
-
-	if (output->str[output->len - 2] == ':') {
-		GString *string;
-		GString *password;
-
-		// FIXME: This is a workaround to a problem faced when using this
-		// method for other SSH connections other than the server connection
-		// itself. See gebr_comm_server_forward_remote_port() for an example.
-		//
-		// If the server is already connected, the cached password is correct
-		// so we can just write it into the process.
-		gboolean is_connected = (server->state == SERVER_STATE_CONNECT
-					 || server->state == SERVER_STATE_LOGGED);
-
-		gboolean has_password = server->password && *server->password;
-
-		if (is_connected || (has_password && !server->tried_existant_pass)) {
-			write_pass_in_process(process, server->password);
-			server->tried_existant_pass = TRUE;
-			goto out;
-		}
-
-		string = g_string_new(NULL);
-		if (server->tried_existant_pass == FALSE)
-			g_string_printf(string, _("Machine '%s' needs SSH login.\n\n%s"),
-					server->address->str, output->str);
-		else
-			g_string_printf(string, _("Wrong password for machine '%s', please try again.\n\n%s"),
-					server->address->str, output->str);
-
-		if (server->priv->is_interactive) {
-			server->priv->istate = ISTATE_PASS;
-
-			if (server->priv->title)
-				g_free(server->priv->title);
-
-			if (server->priv->description)
-				g_free(server->priv->description);
-
-			server->priv->title = g_strdup(_("Please, enter password"));
-			server->priv->description = g_strdup(string->str);
-
-			g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
-				      server->priv->title,
-				      server->priv->description);
-		} else {
-			password = server->ops->ssh_login(server, _("SSH login:"), string->str,
-							  server->user_data);
-			if (password == NULL) {
-				g_free(server->password);
-				server->password = NULL;
-
-				gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("No password provided."));
-				gebr_comm_terminal_process_kill(process);
-			} else {
-				gebr_comm_server_set_password(server, password->str);
-				write_pass_in_process(process, password->str);
-				g_string_free(password, TRUE);
-			}
-			server->tried_existant_pass = FALSE;
-		}
-
-		g_string_free(string, TRUE);
-	} else if (output->str[output->len - 2] == '?') {
-		if (server->priv->is_interactive) {
-			if (server->priv->title)
-				g_free(server->priv->title);
-
-			if (server->priv->description)
-				g_free(server->priv->description);
-
-			server->priv->title = g_strdup(_("Please, answer the question"));
-			server->priv->description = g_strdup(output->str);
-
-			server->priv->istate = ISTATE_QUESTION;
-			g_signal_emit(server, signals[QUESTION_REQUEST], 0,
-				      server->priv->title,
-				      server->priv->description);
-		} else {
-			GString *answer = g_string_new(NULL);
-			gchar *cached_answer = g_hash_table_lookup(server->priv->qa_cache, output->str);
-
-			if (!cached_answer) {
-				if (server->ops->ssh_question(server, _("SSH host key question:"),
-				                              output->str, server->user_data) == FALSE) {
-					g_string_assign(answer, "no\n");
-					gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH host key rejected."));
-				} else
-					g_string_assign(answer, "yes\n");
-
-				g_hash_table_insert(server->priv->qa_cache,
-				                    g_strdup(output->str),
-				                    g_strdup(answer->str));
-			} else
-				g_string_assign(answer, cached_answer);
-
-			gebr_comm_terminal_process_write_string(process, answer);
-			g_string_free(answer, TRUE);
-		}
-	} else if (g_str_has_prefix(output->str, "@@@")) {
-		gebr_g_string_replace(output, "\r\n", "\n");
-		g_string_erase(output, strlen(output->str)-1, 1); //last \n
-
-		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH error: %s"), output->str);
-		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH error for machine '%s': %s"),
-					     server->address->str, output->str);
-	} else if (output->str[output->len - 4] == '.') {
-		gebr_g_string_replace(output, "\r\n", "\n");
-		g_string_erase(output, strlen(output->str)-1, 1); //last \n
-
-		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH message of machine '%s': %s"),
-					     server->address->str, output->str);
-	} else if (!strcmp(output->str, "yes\r\n")) {
-		goto out;
-	} else {
-		/* check for known error prefixes */
-		if (g_str_has_prefix(output->str, "ssh:") || g_str_has_prefix(output->str, "channel ")) {
-			gebr_g_string_replace(output, "\r\n", "\n");
-			g_string_erase(output, strlen(output->str)-1, 1); //last \n
-
-			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, 
-							    _("SSH reported the following error: \n%s"), output->str);
-			gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("SSH reported the following error for machine '%s': %s"),
-						     server->address->str, output->str);
-			return TRUE;
-		}
-	}
-
-out:	return TRUE;
-}
-
-/**
- * \internal
- * Simple ssh messages parser, like login questions and warnings
- */
-static void gebr_comm_ssh_read(GebrCommTerminalProcess * process, GebrCommServer *server)
-{
-	GString *output;
-
-	output = gebr_comm_terminal_process_read_string_all(process);
-	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_read: %s", output->str);
-
-	if (gebr_comm_ssh_parse_output(process, server, output) == TRUE)
-		goto out;
-
-out:	g_string_free(output, TRUE);
-}
-
-/**
- * \internal
- */
-
-static void gebr_comm_ssh_finished(GebrCommTerminalProcess * process, GebrCommServer *server)
-{
-	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_finished");
-	gebr_comm_terminal_process_free(process);
 }
 
 /**

@@ -421,38 +421,6 @@ get_wizard_status(struct ui_preferences *up)
 
 }
 
-#if 0
-static void
-on_stop_maestro_clicked(GtkButton *button,
-                        struct ui_preferences *up)
-{
-	GtkWidget *main_maestro = GTK_WIDGET(gtk_builder_get_object(up->builder, "maestro_chooser"));
-
-	if (up->maestro_addr)
-		g_free(up->maestro_addr);
-	up->maestro_addr = g_strdup(gtk_entry_get_text(up->maestro_entry));
-
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, up->maestro_addr);
-
-	if (!maestro)
-		return;
-
-	const gchar *error_type;
-	gebr_maestro_server_get_error(maestro, &error_type, NULL);
-
-	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED)
-		return;
-
-	g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
-
-	if (maestro) {
-		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_PROGRESS);
-		gebr_maestro_controller_stop(gebr.maestro_controller, up->maestro_addr);
-		gebr_maestro_server_set_error(maestro, "error:stop", NULL);
-	}
-}
-#endif
-
 static void
 on_connect_maestro_clicked(GtkButton *button,
                            struct ui_preferences *up)
