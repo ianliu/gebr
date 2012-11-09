@@ -2356,11 +2356,13 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
 				                   -1);
 			}
 
-			gtk_list_store_append(model, &iter);
-			gtk_list_store_set(model, &iter,
-			                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-			                   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from File"),
-			                   -1);
+			if (gebr.config.maestro_address->len > 1) {
+				gtk_list_store_append(model, &iter);
+				gtk_list_store_set(model, &iter,
+						   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
+						   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from File"),
+						   -1);
+			}
 
 			if (g_strcmp0(local_maestro, current_maestro) != 0 &&
 			    g_strcmp0(local_maestro, gebr.config.maestro_address->str) != 0 &&
