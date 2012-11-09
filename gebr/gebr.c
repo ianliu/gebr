@@ -170,8 +170,10 @@ gboolean gebr_quit(gboolean save_config)
 	g_hash_table_destroy(gebr.help_edit_windows);
 	g_hash_table_destroy(gebr.xmls_by_filename);
 
-	gebr_validator_free(gebr.validator);
-	gebr.validator = NULL;
+	if (gebr.validator) {
+		gebr_validator_free(gebr.validator);
+		gebr.validator = NULL;
+	}
 
 	/*
 	 * Data frees and cleanups
