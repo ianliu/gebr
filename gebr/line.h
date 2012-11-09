@@ -27,6 +27,15 @@
 
 #include <libgebr/geoxml/geoxml.h>
 
+/**
+ * Error types for import and base entry
+ */
+typedef enum {
+	OK_ENTRY,
+	EMPTY_ENTRY,
+	NOT_ABSOLUTE_ENTRY
+} GebrErrorEntry;
+
 G_BEGIN_DECLS
 
 /**

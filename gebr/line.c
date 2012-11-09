@@ -37,82 +37,66 @@
 #include "ui_project_line.h"
 #include "ui_document.h"
 
-static void
-on_assistant_base_validate(GtkEntry *entry,
-                           GtkAssistant *assistant)
-{
-	GtkWidget *current_page;
-	gint page_number;
-	const gchar *text;
-
-	page_number = gtk_assistant_get_current_page(assistant);
-	current_page = gtk_assistant_get_nth_page(assistant, page_number);
-	text = gtk_entry_get_text(entry);
-
-	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+static GebrErrorEntry
+check_directory_ok(const gchar *text){
 	if (text && *text) {
-		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME")) {
-			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-		} else {
-			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
-		}
-	} else {
-		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a BASE path."));
-	}
+		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME"))
+			return OK_ENTRY;
+		else
+			return NOT_ABSOLUTE_ENTRY;
+	} else
+		return EMPTY_ENTRY;
+
 }
-
 static void
-on_assistant_import_validate(GtkEntry *entry,
+on_assistant_base_import_validate(GtkEntry *entry,
                            GtkAssistant *assistant)
 {
+
 	GtkWidget *current_page;
 	gint page_number;
-	const gchar *text;
-
 	page_number = gtk_assistant_get_current_page(assistant);
 	current_page = gtk_assistant_get_nth_page(assistant, page_number);
-	text = gtk_entry_get_text(entry);
-
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
-	if (text && *text) {
-		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME")) {
-			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-		} else {
-			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
-		}
-	} else {
+	switch(check_directory_ok(gtk_entry_get_text(entry))){
+	case OK_ENTRY:
 		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		break;
+	case NOT_ABSOLUTE_ENTRY:
+		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
+		break;
+	case EMPTY_ENTRY:
+		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		break;
 	}
+
 }
 
 void
 on_properties_entry_changed(GtkEntry *entry,
 			    GtkWidget *widget)
 {
-	const gchar *text;
-
-	text = gtk_entry_get_text(entry);
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
-	if (text && *text){
-		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME"))
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-		else{
-			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
-		}
+	switch(check_directory_ok(gtk_entry_get_text(entry))){
+	case OK_ENTRY:
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_widget_set_sensitive(widget, TRUE);
-	}else{
-		gtk_widget_set_sensitive(widget, FALSE);
+		break;
+	case NOT_ABSOLUTE_ENTRY:
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
+		gtk_widget_set_sensitive(widget, TRUE);
+		break;
+	case EMPTY_ENTRY:
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a BASE path."));
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_widget_set_sensitive(widget, FALSE);
+		break;
 	}
 }
 
@@ -586,9 +570,9 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	on_assistant_email_changed(GTK_ENTRY(entry_email), data);
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_title_changed), data);
 	g_signal_connect(entry_email, "changed", G_CALLBACK(on_assistant_email_changed), data);
-	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
+	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_import_validate), assistant);
 	g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
-	g_signal_connect(entry_import, "changed", G_CALLBACK(on_assistant_import_validate), assistant);
+	g_signal_connect(entry_import, "changed", G_CALLBACK(on_assistant_base_import_validate), assistant);
 
 	gtk_widget_show(assistant);
 }
