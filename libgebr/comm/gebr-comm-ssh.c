@@ -363,7 +363,6 @@ gebr_comm_ssh_parse_output(GebrCommSsh *self,
 			   GString *output)
 {
 	g_string_append(self->priv->buffer, output->str);
-	g_debug("OUTPUT: %p ----------------> %s", self, output->str);
 	gchar *line = get_next_line(self);
 
 	while (line != NULL) {
