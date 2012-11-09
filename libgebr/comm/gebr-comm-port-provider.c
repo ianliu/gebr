@@ -30,6 +30,7 @@
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-process.h"
 #include "../marshalers.h"
+#include "gebr-comm-utils.h"
 
 struct _GebrCommPortForward {
 	GebrCommSsh *ssh;
@@ -488,7 +489,8 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 			addr = g_strdup(redirect_addr);
 		g_strstrip(addr);
 
-		if (g_strcmp0(self->priv->address, addr) == 0) {
+
+		if (gebr_comm_is_address_equal(self->priv->address, addr)) {
 			remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
 			g_free(addr);
 		} else {
@@ -516,9 +518,6 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	data->self = self;
 	data->port = port;
 	g_timeout_add(200, tunnel_poll_port, data);
-
-	// the ssh command for getting the maestro/daemon port isn't needed anymore.
-	g_object_unref(_ssh);
 }
 
 static gchar *

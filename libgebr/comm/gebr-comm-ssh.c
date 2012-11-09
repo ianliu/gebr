@@ -19,12 +19,23 @@
  */
 
 #include "gebr-comm-ssh.h"
+#include "libgebr-gettext.h"
 
 #include "gebr-comm-terminalprocess.h"
 #include <string.h>
 #include <libgebr.h>
+#include <glib/gi18n-lib.h>
 
 #define GEBR_PORT_PREFIX "gebr-port="
+#define FINGERPRINT_MSG "RSA key fingerprint is "
+#define CERTIFICATE_QUESTION "Are you sure"
+#define CERTIFICATE_ERROR "@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+#define QUESTION_SUFFIX "(yes/no)?"
+#define PASSWORD_SUFFIX "password:"
+#define ACCEPTS_PUBLIC_KEY "Authentications that can continue:"
+#define SSH_ERROR_PREFIX "ssh: "
+#define SENDING_COMMAND "Sending command: "
+
 
 G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
 
@@ -34,9 +45,9 @@ static void ssh_process_read(GebrCommTerminalProcess *process,
 static void ssh_process_finished(GebrCommTerminalProcess *process,
 				 GebrCommSsh *self);
 
-static gboolean gebr_comm_ssh_parse_output(GebrCommSsh *self,
-					   GebrCommTerminalProcess *process,
-					   GString * output);
+static void gebr_comm_ssh_parse_output(GebrCommSsh *self,
+				       GebrCommTerminalProcess *process,
+				       GString * output);
 
 enum {
 	SSH_PASSWORD,
@@ -57,11 +68,21 @@ typedef enum {
 	GEBR_COMM_SSH_STATE_FINISHED,
 } GebrCommSshState;
 
+typedef enum {
+	SSH_OUT_STATE_INIT,
+	SSH_OUT_STATE_COMMAND_OUTPUT,
+} SshOutState;
+
 struct _GebrCommSshPriv {
 	GebrCommSshState state;
 	GebrCommTerminalProcess *process;
 	gchar *command;
-	gboolean missed_password;
+	gint attempts;
+
+	GString *buffer;
+	GString *out_buffer;
+	SshOutState out_state;
+	gchar *fingerprint;
 };
 
 static void
@@ -150,7 +171,6 @@ gebr_comm_ssh_init(GebrCommSsh *self)
 						 GebrCommSshPriv);
 
 	self->priv->state = GEBR_COMM_SSH_STATE_INIT;
-	self->priv->missed_password = FALSE;
 
 	self->priv->process = gebr_comm_terminal_process_new();
 
@@ -178,9 +198,18 @@ gebr_comm_ssh_set_command(GebrCommSsh *self,
 void
 gebr_comm_ssh_run(GebrCommSsh *self)
 {
+	g_return_if_fail(GEBR_COMM_IS_SSH(self));
+	g_return_if_fail(self->priv->buffer == NULL);
+
 	GString *tmp = g_string_new(self->priv->command);
 	gebr_comm_terminal_process_start(self->priv->process, tmp);
 	g_string_free(tmp, TRUE);
+
+	self->priv->attempts = 0;
+	self->priv->buffer = g_string_new(NULL);
+	self->priv->out_buffer = g_string_new(NULL);
+	self->priv->fingerprint = NULL;
+	self->priv->out_state = SSH_OUT_STATE_INIT;
 }
 
 static void
@@ -198,6 +227,7 @@ write_pass_in_process(GebrCommTerminalProcess *process,
 void
 gebr_comm_ssh_set_password(GebrCommSsh *self, const gchar *password)
 {
+	self->priv->attempts++;
 	if (self->priv->state == GEBR_COMM_SSH_STATE_PASSWORD)
 		write_pass_in_process(self->priv->process, password);
 }
@@ -234,8 +264,7 @@ ssh_process_read(GebrCommTerminalProcess *process,
 	GString *output;
 	output = gebr_comm_terminal_process_read_string_all(process);
 
-	if (!gebr_comm_ssh_parse_output(self, process, output))
-		g_signal_emit(self, signals[SSH_STDOUT], 0, output);
+	gebr_comm_ssh_parse_output(self, process, output);
 }
 
 static void
@@ -246,61 +275,99 @@ ssh_process_finished(GebrCommTerminalProcess *process,
 	gebr_comm_terminal_process_free(process);
 }
 
-/*
- * Returns: %TRUE if an ssh message was parsed. Otherwise, the program's output
- * is being read.
- */
-static gboolean
-gebr_comm_ssh_parse_output(GebrCommSsh *self,
-			   GebrCommTerminalProcess *process,
-			   GString * output)
+static gchar *
+get_next_line(GebrCommSsh *self)
 {
-	if (output->len <= 2)
-		return TRUE;
+	gchar *buf = self->priv->buffer->str;
+	gchar *nl = strchr(buf, '\n');
+	gchar *line;
 
-	gchar *start = g_strrstr(output->str, GEBR_PORT_PREFIX);
-	if (start)
-		return FALSE;
+	if (!nl) {
+		if (!g_strrstr(buf, QUESTION_SUFFIX)
+		    && !g_strrstr(buf, PASSWORD_SUFFIX))
+			return NULL;
 
-	for (gint i = 0; output->str[i]; i++) {
-		if (!g_ascii_isdigit(output->str[i]))
-			break;
-		return FALSE;
+		line = g_strdup(buf);
+		g_string_assign(self->priv->buffer, "");
+	} else {
+		gssize size = (nl - buf) / sizeof(gchar);
+		line = g_strndup(buf, size);
+		g_string_erase(self->priv->buffer, 0, size + 1);
 	}
 
-	gchar *point;
+	return g_strstrip(line);
+}
 
-	if (output->str[output->len - 2] == ':') { 		/*Password*/
-		self->priv->state = GEBR_COMM_SSH_STATE_PASSWORD;
-		g_signal_emit(self, signals[SSH_PASSWORD], 0, self->priv->missed_password);
-	}
-	else if (output->str[output->len - 2] == '?') { 	/*Question*/
-		self->priv->state = GEBR_COMM_SSH_STATE_QUESTION;
-		g_signal_emit(self, signals[SSH_QUESTION], 0, output->str);
-	}
-	else if (g_str_has_prefix(output->str, "@@@")) { 	/*Error*/
-		self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
-		g_signal_emit(self, signals[SSH_ERROR], 0, output->str);
-	}
-	else if (!strcmp(output->str, "yes\r\n")) { 		/*User's positive feedback*/
-		g_debug("On '%s', function: '%s', USER ANSWERED YES, output:'%s'", __FILE__, __func__, output->str);
-	}
-	else if (g_str_has_prefix(output->str, "ssh:") || g_str_has_prefix(output->str, "channel ")) { 	/*Known errors*/
-		self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
-		g_signal_emit(self, signals[SSH_ERROR], 0, output->str);
-	}
-	else if ((point = g_strrstr(output->str, "Authentications that can continue:")) != NULL) { /* SSH Public Key */
-		if (point) {
-			gboolean accepts_key = FALSE;
-			gchar *last_point = g_strstr_len(point, strlen(point), "\n");
-			if (last_point) {
-				gchar *key_point = g_strstr_len(point, (last_point - point), "publickey");
-				if (key_point)
-					accepts_key = TRUE;
-			}
+static void
+process_ssh_line(GebrCommSsh *self,
+		 const gchar *line)
+{
+	if (self->priv->out_state == SSH_OUT_STATE_INIT) {
+		if (strstr(line, FINGERPRINT_MSG)) {
+			GString *tmp = g_string_new(line + strlen(FINGERPRINT_MSG));
+			if (tmp->str[tmp->len-1] == '.')
+				g_string_erase(tmp, tmp->len - 1, -1);
+
+			if (self->priv->fingerprint)
+				g_free(self->priv->fingerprint);
+			self->priv->fingerprint = g_string_free(tmp, FALSE);
+		}
+		else if (g_strrstr(line, CERTIFICATE_QUESTION)) {
+			self->priv->state = GEBR_COMM_SSH_STATE_QUESTION;
+
+			gchar *question;
+			question = g_strdup_printf(_("The authenticity of host can't be established."
+						     " Do you want to continue?"));
+			g_signal_emit(self, signals[SSH_QUESTION], 0, question);
+			g_free(question);
+		}
+		else if (g_strrstr(line, PASSWORD_SUFFIX))
+		{
+			self->priv->state = GEBR_COMM_SSH_STATE_PASSWORD;
+			g_signal_emit(self, signals[SSH_PASSWORD], 0, self->priv->attempts > 0);
+		}
+		else if (strstr(line, CERTIFICATE_ERROR)) {
+			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
+			g_signal_emit(self, signals[SSH_ERROR], 0, _("The known_hosts file is probably corrupted."
+								     " Contact your system administrator for help."));
+		}
+		else if (strstr(line, ACCEPTS_PUBLIC_KEY)) {
+			gboolean accepts_key;
+			if (g_strrstr(line, "publickey"))
+				accepts_key = TRUE;
+			else
+				accepts_key = FALSE;
 			g_signal_emit(self, signals[SSH_KEY], 0, accepts_key);
 		}
+		else if (g_str_has_prefix(line, SSH_ERROR_PREFIX)) {
+			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
+			g_signal_emit(self, signals[SSH_ERROR], 0, line + strlen(SSH_ERROR_PREFIX));
+		}
+		else if (strstr(line, SENDING_COMMAND)) {
+			self->priv->out_state = SSH_OUT_STATE_COMMAND_OUTPUT;
+		}
+	} else if (self->priv->out_state == SSH_OUT_STATE_COMMAND_OUTPUT) {
+		if (g_str_has_prefix(line, "debug1: ")) {
+			g_signal_emit(self, signals[SSH_STDOUT], 0, self->priv->out_buffer);
+			self->priv->out_state = SSH_OUT_STATE_INIT;
+		} else {
+			g_string_append(self->priv->out_buffer, line);
+			g_string_append_c(self->priv->out_buffer, '\n');
+		}
 	}
+}
 
-	return TRUE;
+static void
+gebr_comm_ssh_parse_output(GebrCommSsh *self,
+			   GebrCommTerminalProcess *process,
+			   GString *output)
+{
+	g_string_append(self->priv->buffer, output->str);
+	g_debug("OUTPUT: %p ----------------> %s", self, output->str);
+	gchar *line = get_next_line(self);
+
+	while (line != NULL) {
+		process_ssh_line(self, line);
+		line = get_next_line(self);
+	}
 }
