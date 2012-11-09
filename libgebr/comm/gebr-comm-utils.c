@@ -72,3 +72,38 @@ gebr_comm_get_display(gchar **x11_file, guint *port, gchar **host)
 	g_free(tmp);
 	g_strfreev(v);
 }
+
+gboolean
+gebr_comm_is_address_equal(const gchar *_addr1, const gchar *_addr2)
+{
+	gchar *u1, *u2;
+	gchar *a1, *a2;
+
+	a1 = strchr(_addr1, '@');
+	a2 = strchr(_addr2, '@');
+
+	if (!a1) {
+		u1 = g_strdup(g_get_user_name());
+		a1 = g_strdup(_addr1);
+	} else {
+		u1 = g_strndup(_addr1, (a1 - _addr1) / sizeof(gchar));
+		a1 = g_strdup(a1 + 1);
+	}
+
+	if (!a2) {
+		u2 = g_strdup(g_get_user_name());
+		a2 = g_strdup(_addr2);
+	} else {
+		u2 = g_strndup(_addr2, (a2 - _addr2) / sizeof(gchar));
+		a2 = g_strdup(a2 + 1);
+	}
+
+	gboolean ret = g_strcmp0(a1, a2) == 0 && g_strcmp0(u1, u2) == 0;
+
+	g_free(a1);
+	g_free(a2);
+	g_free(u1);
+	g_free(u2);
+
+	return ret;
+}
