@@ -162,8 +162,8 @@ main(int argc, char *argv[])
 			version_file  = gebrm_app_get_version_file();
 			same_host = TRUE;
 		} else {
-			lock = gebrm_app_get_lock_file_for_addr(addr);
-			version_file = gebrm_app_get_version_file_for_addr(addr);
+			lock = gebrm_app_get_lock_file();
+			version_file = gebrm_app_get_version_file();
 
 			if (g_strcmp0(addr, local_addr) == 0)
 				same_host = TRUE;

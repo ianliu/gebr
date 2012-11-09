@@ -178,7 +178,7 @@ gebrm_app_get_nfsid(GebrMaestroSettings *ms)
 static gchar *
 get_gebrm_dir_name(void)
 {
-	gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", g_get_host_name(), NULL);
+	gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", NULL);
 	if (!g_file_test(dirname, G_FILE_TEST_EXISTS))
 		g_mkdir_with_parents(dirname, 0755);
 	return dirname;
@@ -2046,7 +2046,7 @@ gebrm_app_get_lock_file(void)
 
 	if (!lock) {
 		gchar *dirname = get_gebrm_dir_name();
-		lock = g_build_filename(dirname, "lock", NULL);
+		lock = g_build_filename(dirname, "singleton_lock", NULL);
 		g_free(dirname);
 	}
 
