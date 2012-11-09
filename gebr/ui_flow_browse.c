@@ -1368,6 +1368,8 @@ flow_browse_setup_ui()
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_browse->view), FALSE);
 
+	gtk_widget_set_has_tooltip(GTK_WIDGET(ui_flow_browse->view),TRUE);
+
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_browse->view),
 						  (GebrGuiGtkPopupCallback) flow_browse_popup_menu, ui_flow_browse);
 
