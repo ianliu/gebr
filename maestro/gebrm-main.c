@@ -253,8 +253,7 @@ main(int argc, char *argv[])
 	for (gint index = -1; valid; index++)
 		valid = is_maestro_spec_valid(ms, nfsid, index, &curr_version);
 
-	if (nfsid)
-		gebr_maestro_settings_prepend_address(ms, nfsid, local_addr);
+	gebr_maestro_settings_prepend_address(ms, nfsid, local_addr);
 	gebr_maestro_settings_free(ms);
 
 	if (!interactive)
@@ -273,13 +272,9 @@ main(int argc, char *argv[])
 
 	gebr_geoxml_init();
 
-	gchar *dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrm",
-				      g_get_host_name(), NULL);
-	g_mkdir_with_parents(dir, 0755);
-
-	gchar *path = g_build_filename(dir, "log", NULL);
+	gebrm_app_create_folder_for_addr(local_addr);
+	gchar *path = gebrm_app_get_log_file_for_address(local_addr);
 	gebr_log_set_default(path);
-	g_free(dir);
 	g_free(path);
 
 	GebrmApp *app = gebrm_app_singleton_get();
