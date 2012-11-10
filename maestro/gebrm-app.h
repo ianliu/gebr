@@ -116,11 +116,13 @@ GebrmApp *gebrm_app_new(void);
  */
 gboolean gebrm_app_run(GebrmApp *app, int fd, const gchar *version);
 
+gboolean gebrm_app_create_folder_for_addr(const gchar *addr);
+
 const gchar *gebrm_app_get_lock_file(void);
 
 const gchar * gebrm_app_get_version_file(void);
 
-const gchar *gebrm_app_get_lock_file_for_addr(const gchar *addr);
+const gchar *gebrm_app_get_log_file_for_address(const gchar *addr);
 
 const gchar *gebrm_app_get_version_file_for_addr(const gchar *addr);
 

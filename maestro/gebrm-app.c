@@ -2042,16 +2042,32 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	return TRUE;
 }
 
+static gchar *
+gebrm_app_build_path(const gchar *last_folder)
+{
+	gchar *dirname = get_gebrm_dir_name();
+	gchar *path = g_build_filename(dirname, "last_folder", NULL);
+	g_free(dirname);
+
+	return path;
+}
+
+gboolean
+gebrm_app_create_folder_for_addr(const gchar *addr)
+{
+	gchar *path = gebrm_app_build_path(addr);
+	gboolean succ = g_mkdir_with_parents(path, 0755) == 0;
+	g_free(path);
+	return succ;
+}
+
 const gchar *
 gebrm_app_get_lock_file(void)
 {
 	static gchar *lock = NULL;
 
-	if (!lock) {
-		gchar *dirname = get_gebrm_dir_name();
-		lock = g_build_filename(dirname, "singleton_lock", NULL);
-		g_free(dirname);
-	}
+	if (!lock)
+		gebrm_app_build_path("singleton_lock");
 
 	return lock;
 }
@@ -2061,29 +2077,25 @@ gebrm_app_get_version_file(void)
 {
 	static gchar *version = NULL;
 
-	if (!version) {
-		gchar *dirname = get_gebrm_dir_name();
-		version = g_build_filename(dirname, "version", NULL);
-		g_free(dirname);
-	}
+	if (!version)
+		gebrm_app_build_path("version");
 
 	return version;
 }
 
 const gchar *
-gebrm_app_get_lock_file_for_addr(const gchar *addr)
+gebrm_app_get_log_file_for_address(const gchar *addr)
 {
-	static gchar *lock = NULL;
+	static gchar *logfile = NULL;
 
-	if (!lock) {
-		gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", addr, NULL);
-		lock = g_build_filename(dirname, "lock", NULL);
-		g_free(dirname);
+	if (!logfile) {
+		gchar *last_folder = g_build_filename(addr, "log", NULL);
+		logfile = gebrm_app_build_path(last_folder);
+		g_free(last_folder);
 	}
 
-	return lock;
+	return logfile;
 }
-
 const gchar *
 gebrm_app_get_version_file_for_addr(const gchar *addr)
 {
