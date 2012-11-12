@@ -189,6 +189,8 @@ void gebr_job_control_block_cursor_changed(GebrJobControl *jc);
 
 void gebr_job_control_unblock_cursor_changed(GebrJobControl *jc);
 
+void gebr_job_control_update_servers_model(GebrJobControl *jc);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_CONTROL_H__ */

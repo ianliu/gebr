@@ -54,6 +54,7 @@ struct _GebrJobPriv {
 	gchar *nice;
 	gchar *nprocs;
 	gchar *maestro_address;
+	gchar *nfs_label;
 	gchar *mpi_owner;
 	gchar *mpi_flavor;
 	gchar *snapshot_title;
@@ -839,6 +840,20 @@ const gchar *
 gebr_job_get_maestro_address(GebrJob *job)
 {
 	return job->priv->maestro_address;
+}
+
+void
+gebr_job_set_nfs_label(GebrJob *job, const gchar *nfs_label)
+{
+	if (job->priv->nfs_label)
+		g_free(job->priv->nfs_label);
+	job->priv->nfs_label = g_strdup(nfs_label);
+}
+
+const gchar *
+gebr_job_get_nfs_label(GebrJob *job)
+{
+	return job->priv->nfs_label;
 }
 
 const gchar *

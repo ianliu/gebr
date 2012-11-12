@@ -356,7 +356,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 	GObject *entry_base = gtk_builder_get_object(data->builder, "entry_base");
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
+	const gchar *nfs_label = gebr_maestro_server_get_nfs_label(maestro);
 	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 
 	if (page == 1) {
@@ -366,9 +366,9 @@ on_assistant_prepare(GtkAssistant *assistant,
                                                                   "the notion that the processing of a data "
                                                                   "set, acquired over a seismic line, is performed "
                                                                   "in several steps by the processing flows.\n\n"
-                                                                  "This line will be attached to the current maestro "
+                                                                  "This line will be attached to the current NFS "
                                                                   "(%s), which will be in charge of running its "
-                                                                  "processing flows."), maestro_addr);
+                                                                  "processing flows."), nfs_label);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
 	}
@@ -392,7 +392,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		GObject *label;
 		gchar *text_maestro = g_markup_printf_escaped(_("Below is the hierarchy of directories GêBR is about to create.\n\n"
-								"These directories will be created on the nodes of maestro <b>%s</b>."), maestro_addr);
+								"These directories will be created on <b>%s</b>."), nfs_label);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
@@ -426,7 +426,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		for (gint i = 0; keys[i]; i++) {
 			gchar *value;
 			if (!g_strcmp0(keys[i], "maestro"))
-				value = g_strdup(maestro_addr);
+				value = g_strdup(nfs_label);
 			else if (!g_strcmp0(keys[i], "base")) {
 				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
 				value = resolve_home_variable_to_base(aux, home);

@@ -1020,9 +1020,9 @@ job_control_fill_servers_info(GebrJobControl *jc)
 			if (g_strcmp0(groups, "") == 0)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to maestro <i>%s</i>, "
+		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to <i>%s</i>, "
 						   "split in %d %s%s\n"),
-						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
+						  gebr_job_get_hostname(job), gebr_job_get_nfs_label(job),
 						  total_procs,
 						  total_procs > 1 ? _("processes") :_("process"),
 						  g_strcmp0(niceness, "0")? _(", using only free resources of processing nodes.") : _(", disputing for resources of the processing nodes."));
@@ -1634,15 +1634,9 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
 	GString *msg_final = g_string_new("");
 
-	const gchar *maddr = gebr_job_get_maestro_address(job);
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
-
-	if (!g_strcmp0(msg, ""))
-		msg = g_strdup_printf("%s", gebr_maestro_server_get_display_address(maestro));
-	if (!g_strcmp0(msg, "127.0.0.1"))
-		msg = g_strdup(maddr); 
-
+	msg = g_strdup(gebr_job_get_nfs_label(job));
 	g_string_append(msg_final, msg);
+
 	if(g_utf8_strlen(msg, 16) > 15) {
 		g_string_erase(msg_final, 13, -1);
 		g_string_append(msg_final,"...");
@@ -2126,7 +2120,7 @@ on_maestro_server_filter_changed(GtkComboBox *combo,
 			continue;
 
 		if (!*group && type == MAESTRO_SERVER_TYPE_GROUP)
-			display = gebr_maestro_server_get_display_address(maestro);
+			display = g_strdup(gebr_maestro_server_get_nfs_label(maestro));
 		else
 			display = group;
 
@@ -3216,4 +3210,10 @@ gebr_job_control_unblock_cursor_changed(GebrJobControl *jc)
 {
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
 	g_signal_handlers_unblock_by_func(selection, job_control_on_cursor_changed, jc);
+}
+
+void
+gebr_job_control_update_servers_model(GebrJobControl *jc)
+{
+	on_maestro_server_filter_changed(jc->priv->server_combo, jc);
 }

@@ -512,6 +512,22 @@ have_logged_daemon(GebrMaestroServer *maestro)
 	return FALSE;
 }
 
+static void
+add_nfs_label(const gchar *key,
+              GebrJob *job,
+              GebrMaestroServer *maestro)
+{
+	const gchar *nfs_label = gebr_maestro_server_get_nfs_label(maestro);
+	gebr_job_set_nfs_label(job, nfs_label);
+}
+
+static void
+gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestro)
+{
+	g_hash_table_foreach(maestro->priv->jobs, (GHFunc)add_nfs_label, maestro);
+	gebr_job_control_update_servers_model(gebr.job_control);
+}
+
 void
 parse_messages(GebrCommServer *comm_server,
 	       gpointer user_data)
@@ -1009,6 +1025,8 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
 			gebr_maestro_server_set_nfs_label(maestro, label->str);
+
+			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
 
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);

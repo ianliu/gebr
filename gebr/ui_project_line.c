@@ -347,17 +347,17 @@ void
 save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	const gchar *addr = maestro ? gebr_maestro_server_get_address(maestro) : "";
+	const gchar *label = gebr_maestro_server_get_nfs_label(maestro);
 
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 						   NULL,
 						   _("Moving this line to current maestro."),
 						   _("Moving this line to current maestro."),
-						   _("Are you sure you want to move this line to maestro %s?"
+						   _("Are you sure you want to move this line to %s?"
 						     "\n\nIf you choose to move this line to current maestro,"
 						     " be sure to correct the paths of this line "
 						     "and its respective flows that can be broken."),
-						   addr);
+						   label);
 	if (confirm) {
 		gebr_geoxml_line_set_maestro(gebr.line, change_nfsid);
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_nfsid(gebr.maestro_controller, change_nfsid);

@@ -265,22 +265,22 @@ flows_check_maestro_connected(void)
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
 		return TRUE;
 
-	gchar *maestro_line = gebr_geoxml_line_get_maestro(gebr.line);
+	gchar *nfs_line = gebr_geoxml_line_get_maestro(gebr.line);
+	maestro = gebr_maestro_controller_get_maestro_for_nfsid(gebr.maestro_controller, nfs_line);
+	const gchar *label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, nfs_line);
 
 	GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL,
 	                                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                       GTK_MESSAGE_WARNING,
 	                                                       GTK_BUTTONS_OK,
 	                                                       _("<span size='large'><b>The maestro of this line is disconnected.</b></span>\n\n"
-	                                                	 "Connect to maestro <b>%s</b> to execute this line."), maestro_line);
+	                                                	 "Connect to maestro on <b>%s</b> to execute this line."), label);
 
 	gchar *win_title = g_strdup(_("Maestro disconnected"));
 	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
-
-	g_free(maestro_line);
 
 	on_configure_servers_activate();
 
