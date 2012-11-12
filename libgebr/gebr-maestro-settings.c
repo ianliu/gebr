@@ -137,18 +137,23 @@ gebr_maestro_settings_append_address(GebrMaestroSettings *ms,
 
 	GString *maestro, *buf;
 	gchar **list;
+	gboolean has_addr = FALSE;
 
-	buf = g_string_new(addr);
 	maestro = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "maestro", "");
+	buf = g_string_new(maestro->str);
 	list = g_strsplit(maestro->str, ",", -1);
 
 	if (list) {
 		for (gint i = 0; list[i]; i++) {
-			if (g_strcmp0(list[i], addr) != 0) {
-				g_string_prepend_c(buf, ',');
-				g_string_prepend(buf, list[i]);
-			}
+			if (g_strcmp0(list[i], addr) == 0)
+				has_addr = TRUE;
 		}
+	}
+
+	if (!has_addr) {
+		if (buf->len > 1)
+			g_string_append_c(buf, ',');
+		g_string_append(buf, addr);
 	}
 
 	g_key_file_set_string(ms->priv->maestro_key, domain, "maestro", buf->str);
