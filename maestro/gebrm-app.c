@@ -2046,7 +2046,7 @@ static gchar *
 gebrm_app_build_path(const gchar *last_folder)
 {
 	gchar *dirname = get_gebrm_dir_name();
-	gchar *path = g_build_filename(dirname, "last_folder", NULL);
+	gchar *path = g_build_filename(dirname, last_folder, NULL);
 	g_free(dirname);
 
 	return path;
@@ -2067,7 +2067,7 @@ gebrm_app_get_lock_file(void)
 	static gchar *lock = NULL;
 
 	if (!lock)
-		gebrm_app_build_path("singleton_lock");
+		lock = gebrm_app_build_path("singleton_lock");
 
 	return lock;
 }
@@ -2078,7 +2078,7 @@ gebrm_app_get_version_file(void)
 	static gchar *version = NULL;
 
 	if (!version)
-		gebrm_app_build_path("version");
+		version = gebrm_app_build_path("version");
 
 	return version;
 }
