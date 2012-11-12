@@ -50,6 +50,10 @@ static gchar *get_local_forward_command(GebrCommPortProvider *self,
 					const gchar *addr,
 					guint remote_port);
 
+static gboolean get_port_from_command_output(GebrCommPortProvider *self,
+                                             const gchar *buffer,
+                                             guint *port);
+
 GQuark
 gebr_comm_port_provider_error_quark(void)
 {
@@ -385,7 +389,8 @@ local_get_port(GebrCommPortProvider *self, gboolean maestro)
 		transform_spawn_sync_error(error, &local_error);
 		g_clear_error(&error);
 	} else if (output) {
-		port = atoi(output + strlen(GEBR_PORT_PREFIX));
+		if (!get_port_from_command_output(self, output, &port))
+			return;
 	} else {
 		g_warn_if_reached();
 	}
@@ -471,13 +476,12 @@ tunnel_poll_port(gpointer user_data)
 	return FALSE;
 }
 
-static void
-on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
+static gboolean
+get_port_from_command_output(GebrCommPortProvider *self,
+                             const gchar *buffer,
+                             guint *port)
 {
-	guint port = 2125;
-	guint remote_port;
-
-	gchar *redirect_addr = g_strrstr(buffer->str, GEBR_ADDR_PREFIX);
+	gchar *redirect_addr = g_strrstr(buffer, GEBR_ADDR_PREFIX);
 
 	if (redirect_addr) {
 		redirect_addr += strlen(GEBR_ADDR_PREFIX);
@@ -489,19 +493,30 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 			addr = g_strdup(redirect_addr);
 		g_strstrip(addr);
 
-
 		if (gebr_comm_is_address_equal(self->priv->address, addr)) {
-			remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
+			*port = atoi(buffer + strlen(GEBR_PORT_PREFIX));
 			g_free(addr);
 		} else {
 			GError *err = NULL;
 			g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR, GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT, "%s", addr);
 			emit_signals(self, 0, err);
 			g_free(addr);
-			return;
+			return FALSE;
 		}
 	} else
-		remote_port = atoi(buffer->str + strlen(GEBR_PORT_PREFIX));
+		*port = atoi(buffer + strlen(GEBR_PORT_PREFIX));
+
+	return TRUE;
+}
+
+static void
+on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
+{
+	guint port = 2125;
+	guint remote_port;
+
+	if (!get_port_from_command_output(self, buffer->str, &remote_port))
+		return;
 
 	gchar *command = get_local_forward_command(self, &port, "127.0.0.1", remote_port);
 
