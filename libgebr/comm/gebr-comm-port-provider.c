@@ -536,56 +536,11 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 }
 
 static gchar *
-gebr_get_dafault_keys(void)
-{
-	const gchar *default_keys[] = {"id_rsa", "id_dsa", "identity", NULL};
-	GString *keys = g_string_new(NULL);
-
-	for (gint i = 0; default_keys[i]; i++) {
-		gchar *default_key = g_build_filename(g_get_home_dir(), ".ssh", default_keys[i], NULL);
-
-		if (g_file_test(default_key, G_FILE_TEST_EXISTS)) {
-			gchar *cmd = g_strdup_printf(" -i %s", default_key);
-			keys = g_string_append(keys, cmd);
-			g_free(cmd);
-		}
-
-		g_free(default_key);
-	}
-
-	return g_string_free(keys, FALSE);
-}
-
-static gchar *
-get_ssh_command_with_key(void)
-{
-	const gchar *default_keys = gebr_get_dafault_keys();
-	gchar *basic_cmd;
-	if (default_keys)
-		basic_cmd = g_strdup_printf("ssh -o NoHostAuthenticationForLocalhost=yes %s", default_keys);
-	else
-		basic_cmd = g_strdup("ssh -o NoHostAuthenticationForLocalhost=yes");
-
-	gchar *path = gebr_key_filename(FALSE);
-	gchar *ssh_cmd;
-
-	if (g_file_test(path, G_FILE_TEST_EXISTS))
-		ssh_cmd = g_strconcat(basic_cmd, " -i ", path, NULL);
-	else
-		ssh_cmd = g_strdup(basic_cmd);
-
-	g_free(path);
-	g_free(basic_cmd);
-
-	return ssh_cmd;
-}
-
-static gchar *
 get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 {
 	const gchar *binary = is_maestro ? "gebrm" : "gebrd";
 
-	gchar *ssh_cmd = get_ssh_command_with_key();
+	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
@@ -656,7 +611,7 @@ get_x11_command(GebrCommPortProvider *self, guint *x11_port)
 		*x11_port = display_number + 6000;
 	}
 
-	ssh_cmd = get_ssh_command_with_key();
+	ssh_cmd = gebr_comm_get_ssh_command_with_key();
 	cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s -x -R %d:%s:%d %s -N", ssh_cmd, self->priv->display,
 			display_host->str, *x11_port, self->priv->address);
@@ -688,7 +643,7 @@ get_local_forward_command(GebrCommPortProvider *self,
 			  const gchar *addr,
 			  guint remote_port)
 {
-	gchar *ssh_cmd = get_ssh_command_with_key();
+	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 	GString *string = g_string_new(NULL);
 
 	while (!gebr_comm_listen_socket_is_local_port_available(*port))

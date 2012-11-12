@@ -44,6 +44,8 @@ void gebr_comm_get_display(gchar **x11_file, guint *port, gchar **host);
 
 gboolean gebr_comm_is_address_equal(const gchar *addr1, const gchar *addr2);
 
+gchar *gebr_comm_get_ssh_command_with_key(void);
+
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_COMM_UTILS_H__ */

@@ -149,51 +149,6 @@ gebr_comm_server_class_init(GebrCommServerClass *klass)
 	g_type_class_add_private(klass, sizeof(GebrCommServerPriv));
 }
 
-static gchar *
-gebr_get_dafault_keys(void)
-{
-	const gchar *default_keys[] = {"id_rsa", "id_dsa", "identity", NULL};
-	GString *keys = g_string_new(NULL);
-
-	for (gint i = 0; default_keys[i]; i++) {
-		gchar *default_key = g_build_filename(g_get_home_dir(), ".ssh", default_keys[i], NULL);
-
-		if (g_file_test(default_key, G_FILE_TEST_EXISTS)) {
-			gchar *cmd = g_strdup_printf(" -i %s", default_key);
-			keys = g_string_append(keys, cmd);
-			g_free(cmd);
-		}
-
-		g_free(default_key);
-	}
-
-	return g_string_free(keys, FALSE);
-}
-
-static gchar *
-get_ssh_command_with_key(void)
-{
-	const gchar *default_keys = gebr_get_dafault_keys();
-	gchar *basic_cmd;
-	if (default_keys)
-		basic_cmd = g_strdup_printf("ssh -o NoHostAuthenticationForLocalhost=yes %s", default_keys);
-	else
-		basic_cmd = g_strdup("ssh -o NoHostAuthenticationForLocalhost=yes");
-
-	gchar *path = gebr_key_filename(FALSE);
-	gchar *ssh_cmd;
-
-	if (g_file_test(path, G_FILE_TEST_EXISTS))
-		ssh_cmd = g_strconcat(basic_cmd, " -i ", path, NULL);
-	else
-		ssh_cmd = g_strdup(basic_cmd);
-
-	g_free(path);
-	g_free(basic_cmd);
-
-	return ssh_cmd;
-}
-
 gchar *
 gebr_comm_server_get_user(const gchar *address)
 {
@@ -532,7 +487,7 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	if (gebr_comm_server_is_local(server))
 		g_string_printf(cmd_line, "bash -c '%s'", kill);
 	else {
-		gchar *ssh_cmd = get_ssh_command_with_key();
+		gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 		g_string_printf(cmd_line, "%s -x %s '%s'", ssh_cmd, server->address->str, kill);
 		g_free(ssh_cmd);
 	}
@@ -872,7 +827,7 @@ get_append_key_command(GebrCommServer *server)
 	g_file_get_contents(path, &public_key, NULL, NULL);
 	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
 
-	gchar *ssh_cmd = get_ssh_command_with_key();
+	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
 			"'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s (%s)\" >> $HOME/.ssh/authorized_keys'",
