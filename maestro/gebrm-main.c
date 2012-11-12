@@ -273,9 +273,8 @@ main(int argc, char *argv[])
 	gebr_geoxml_init();
 
 	gebrm_app_create_folder_for_addr(local_addr);
-	gchar *path = gebrm_app_get_log_file_for_address(local_addr);
+	const gchar *path = gebrm_app_get_log_file_for_address(local_addr);
 	gebr_log_set_default(path);
-	g_free(path);
 
 	GebrmApp *app = gebrm_app_singleton_get();
 
