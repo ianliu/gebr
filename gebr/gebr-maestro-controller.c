@@ -1897,7 +1897,7 @@ on_maestro_error(GebrMaestroServer *maestro,
 		const gchar *error_msg,
 		GebrMaestroController *mc)
 {
-	if (!mc->priv->builder)
+	if (!mc->priv->builder || !maestro)
 		return;
 
 	gchar *message = gebr_maestro_server_translate_error(error_type, error_msg);
@@ -1905,6 +1905,10 @@ on_maestro_error(GebrMaestroServer *maestro,
 	GtkImage *status_image = GTK_IMAGE(gtk_builder_get_object(mc->priv->builder, "maestro_status"));
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	if (!server)
+		return;
+
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 
 	if (state == SERVER_STATE_DISCONNECTED) {
@@ -2120,6 +2124,10 @@ update_maestro_view(GebrMaestroController *mc,
 		return;
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	if (!server)
+		return;
+
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 
