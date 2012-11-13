@@ -49,9 +49,9 @@ gchar *gebr_comm_get_ssh_command_with_key(void);
 /**
  * gebr_comm_get_available_port:
  *
- * Returns an available port.
+ * Returns an available port starting from @start.
  */
-guint gebr_comm_get_available_port(void);
+guint gebr_comm_get_available_port(guint start);
 
 /**
  * gebr_comm_is_local_address:

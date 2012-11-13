@@ -156,12 +156,13 @@ gebr_comm_get_ssh_command_with_key(void)
 }
 
 guint
-gebr_comm_get_available_port(void)
+gebr_comm_get_available_port(guint start)
 {
-	guint port = 2000;
+	guint port = start;
 	while (!gebr_comm_listen_socket_is_local_port_available(port))
 		port++;
 	return port;
+}
 
 gboolean
 gebr_comm_is_local_address(const gchar *addr)
@@ -171,5 +172,4 @@ gebr_comm_is_local_address(const gchar *addr)
 	    || g_strcmp0(addr, "127.0.0.1") == 0)
 		return TRUE;
 	return FALSE;
-}
 }

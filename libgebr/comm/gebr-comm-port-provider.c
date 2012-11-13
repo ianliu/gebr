@@ -372,7 +372,11 @@ get_port(GebrCommPortProvider *self)
 	if (self->priv->port != 0)
 		return self->priv->port;
 
-	self->priv->port = gebr_comm_get_available_port();
+	if (self->priv->type == GEBR_COMM_PORT_TYPE_X11)
+		self->priv->port = gebr_comm_get_available_port(6000);
+	else
+		self->priv->port = gebr_comm_get_available_port(2000);
+
 	return self->priv->port;
 }
 
