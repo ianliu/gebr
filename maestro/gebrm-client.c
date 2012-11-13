@@ -28,6 +28,7 @@ struct _GebrmClientPriv {
 	gchar *cookie;
 	GList *forwards;
 	GHashTable *job_ids;
+	guint x11_port;
 };
 
 enum {
@@ -86,7 +87,8 @@ gebrm_client_init(GebrmClient *client)
 						   GEBRM_TYPE_CLIENT,
 						   GebrmClientPriv);
 
-	client->priv->job_ids = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	client->priv->job_ids = g_hash_table_new_full(g_str_hash, g_str_equal,
+						      g_free, g_free);
 }
 
 static void
@@ -155,6 +157,13 @@ gebrm_client_set_stream_socket(GebrmClient *client,
 			       GebrCommStreamSocket *stream)
 {
 	client->priv->socket = gebr_comm_protocol_socket_new_from_socket(stream);
+
+	client->priv->x11_port = gebr_comm_get_available_port(6010);
+	gchar *str = g_strdup_printf("%d", client->priv->x11_port);
+	gebr_comm_protocol_socket_oldmsg_send(client->priv->socket, FALSE,
+					      gebr_comm_protocol_defs.prt_def, 1,
+					      str);
+	g_free(str);
 }
 
 GebrCommProtocolSocket *
@@ -196,12 +205,6 @@ on_x11_port_defined(GebrCommPortProvider *self,
 		    guint port,
 		    GebrmClient *client)
 {
-	gchar *str = g_strdup_printf("%d", port);
-	gebr_comm_protocol_socket_oldmsg_send(client->priv->socket, FALSE,
-					      gebr_comm_protocol_defs.prt_def, 1,
-					      str);
-	g_free(str);
-
 	client->priv->forwards = g_list_prepend(client->priv->forwards,
 						gebr_comm_port_provider_get_forward(self));
 }
@@ -224,7 +227,7 @@ gebrm_client_add_forward(GebrmClient *client,
 	gebr_comm_port_provider_set_display(port_provider, remote_port);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), client);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_error), client);
-	gebr_comm_port_provider_start(port_provider);
+	gebr_comm_port_provider_start_with_port(port_provider, client->priv->x11_port);
 }
 
 void
