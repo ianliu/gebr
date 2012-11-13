@@ -152,7 +152,6 @@ struct _GebrCommServer {
 	gpointer user_data;
 
 	GebrCommTerminalProcess *process;
-	guint tunnel_pooling_source;
 };
 
 struct _GebrCommServerClass {

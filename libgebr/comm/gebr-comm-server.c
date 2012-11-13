@@ -52,6 +52,8 @@ struct _GebrCommServerPriv {
 
 	gchar *gebr_id;
 
+	GebrCommPortForward *connection_forward;
+
 	/* Interactive state variables */
 	gboolean is_interactive;
 	InteractiveState istate;
@@ -198,7 +200,6 @@ gebr_comm_server_new(const gchar * _address,
 	server->x11_forward_unix = NULL;
 	server->ops = ops;
 	server->user_data = NULL;
-	server->tunnel_pooling_source = 0;
 	server->last_error = g_string_new(NULL);
 	server->state = SERVER_STATE_UNKNOWN;
 	server->error = SERVER_ERROR_UNKNOWN;
@@ -240,6 +241,12 @@ on_comm_port_defined(GebrCommPortProvider *self,
 		     guint port,
 		     GebrCommServer *server)
 {
+	// The connection_forward must be reset when gebr_comm_server_connect
+	// is called.
+	g_warn_if_fail(server->priv->connection_forward == NULL);
+
+	server->priv->connection_forward = gebr_comm_port_provider_get_forward(self);
+
 	GebrCommSocketAddress socket_address;
 	socket_address = gebr_comm_socket_address_ipv4_local(port);
 	gebr_comm_protocol_socket_connect(server->socket, &socket_address, FALSE);
@@ -447,9 +454,9 @@ void gebr_comm_server_connect(GebrCommServer *server,
 
 void gebr_comm_server_disconnect(GebrCommServer *server)
 {
+	gebr_comm_protocol_socket_disconnect(server->socket);
 	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
 	gebr_comm_server_free_for_reuse(server);
-	gebr_comm_protocol_socket_disconnect(server->socket);
 }
 
 gboolean
@@ -728,11 +735,6 @@ gebr_comm_server_socket_old_parse_messages(GebrCommProtocolSocket *socket,
  */
 static void gebr_comm_server_free_x11_forward(GebrCommServer *server)
 {
-	if (server->tunnel_pooling_source) {
-		g_source_remove(server->tunnel_pooling_source);
-		server->tunnel_pooling_source = 0;
-	}
-
 	if (server->x11_forward_unix != NULL) {
 		gebr_comm_process_free(server->x11_forward_unix);
 		server->x11_forward_unix = NULL;
@@ -749,6 +751,12 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 
 	gebr_comm_protocol_reset(server->socket->protocol);
 	gebr_comm_server_free_x11_forward(server);
+
+	if (server->priv->connection_forward) {
+		gebr_comm_port_forward_close(server->priv->connection_forward);
+		gebr_comm_port_forward_free(server->priv->connection_forward);
+		server->priv->connection_forward = NULL;
+	}
 }
 
 static const gchar *state_hash[] = {
