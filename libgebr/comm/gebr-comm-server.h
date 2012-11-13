@@ -29,6 +29,7 @@
 #include <libgebr/utils.h>
 #include <libgebr/comm/gebr-comm-port-provider.h>
 #include <libgebr/comm/gebr-comm-ssh.h>
+#include <libgebr/comm/gebr-comm-utils.h>
 
 #include "gebr-comm-protocol-socket.h"
 #include "gebr-comm-terminalprocess.h"
