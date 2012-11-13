@@ -155,10 +155,22 @@ GebrCommPortForward *gebr_comm_port_provider_get_forward(GebrCommPortProvider *s
 /**
  * gebr_comm_port_forward_close:
  *
- * Finalize the structure GebrCommPortForward
+ * Closes the forward pointed by @port_forward. If the forward was already
+ * closed this method does nothing.
+ *
+ * See gebr_comm_port_provider_get_forward().
  */
 void gebr_comm_port_forward_close(GebrCommPortForward *port_forward);
+
+/**
+ * gebr_comm_port_forward_free:
+ *
+ * Frees the @port_forward structure. Note that this method does not closes the
+ * connection, it must be closed with gebr_comm_port_forward_close() first.
+ */
+void gebr_comm_port_forward_free(GebrCommPortForward *port_forward);
 
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_COMM_PORT_PROVIDER_H__ */
+

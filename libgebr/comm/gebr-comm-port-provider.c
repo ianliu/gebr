@@ -731,7 +731,16 @@ gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
 {
 	g_return_if_fail(port_forward != NULL);
 
-	gebr_comm_ssh_kill(port_forward->ssh);
-	g_object_unref(port_forward->ssh);
+	if (port_forward->ssh) {
+		gebr_comm_ssh_kill(port_forward->ssh);
+		g_object_unref(port_forward->ssh);
+		port_forward->ssh = NULL;
+	}
+}
+
+void
+gebr_comm_port_forward_free(GebrCommPortForward *port_forward)
+{
+	g_free(port_forward);
 }
 /* }}} */
