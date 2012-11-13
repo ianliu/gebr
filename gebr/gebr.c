@@ -412,6 +412,7 @@ restore_project_line_flow_selection(void)
 static void
 gebr_post_config(gboolean has_config)
 {
+	gboolean upgrade_gebr = FALSE;
 	// Generate gebr.key
 	gebr_generate_key();
 
@@ -435,21 +436,23 @@ gebr_post_config(gboolean has_config)
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
 	menu_list_populate();
-	if (!has_config)
-		preferences_setup_ui(TRUE, TRUE, TRUE, -1);
-	else {
+	if (!gebr_has_maestro_config() || g_strcmp0(gebr.config.version->str, "None") == 0)
+		upgrade_gebr = TRUE;
+
+	if (!has_config || upgrade_gebr) {
+		g_debug("On '%s' : '%s', CONNECTING TO LOCAL", __FILE__, __func__);
+		g_string_assign(gebr.config.maestro_address, g_get_host_name());
+		gebr_maestro_controller_connect(gebr.maestro_controller,
+						gebr.config.maestro_address->str);
+	} else {
 		gebr.restore_selection = FALSE;
 		gebr.populate_list = FALSE;
 
-		if (gebr_has_maestro_config() && g_strcmp0(gebr.config.version->str, "None")) {
-			gebr.populate_list = TRUE;
-			project_list_populate();
-			gebr_maestro_controller_connect(gebr.maestro_controller,
-			                                gebr.config.maestro_address->str);
-			gebr_config_save(FALSE);
-		} else {
-			preferences_setup_ui(TRUE, TRUE, FALSE, -1);
-		}
+		gebr.populate_list = TRUE;
+		project_list_populate();
+		gebr_maestro_controller_connect(gebr.maestro_controller,
+						gebr.config.maestro_address->str);
+		gebr_config_save(FALSE);
 	}
 }
 
