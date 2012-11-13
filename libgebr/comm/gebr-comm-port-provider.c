@@ -249,11 +249,7 @@ gebr_comm_port_provider_init(GebrCommPortProvider *self)
 static gboolean
 is_local_address(const gchar *addr)
 {
-	if (g_strcmp0(g_get_host_name(), addr) == 0
-	    || g_strcmp0(addr, "localhost") == 0
-	    || g_strcmp0(addr, "127.0.0.1") == 0)
-		return TRUE;
-	return FALSE;
+	return gebr_comm_is_local_address(addr);
 }
 
 /*
@@ -426,6 +422,7 @@ local_get_daemon_port(GebrCommPortProvider *self)
 void
 local_get_x11_port(GebrCommPortProvider *self)
 {
+	g_return_if_fail(self->priv->display != 0);
 	emit_signals(self, self->priv->display, NULL);
 }
 

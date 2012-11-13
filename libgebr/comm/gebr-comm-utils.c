@@ -162,4 +162,14 @@ gebr_comm_get_available_port(void)
 	while (!gebr_comm_listen_socket_is_local_port_available(port))
 		port++;
 	return port;
+
+gboolean
+gebr_comm_is_local_address(const gchar *addr)
+{
+	if (g_strcmp0(g_get_host_name(), addr) == 0
+	    || g_strcmp0(addr, "localhost") == 0
+	    || g_strcmp0(addr, "127.0.0.1") == 0)
+		return TRUE;
+	return FALSE;
+}
 }

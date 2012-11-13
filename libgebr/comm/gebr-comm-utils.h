@@ -53,6 +53,11 @@ gchar *gebr_comm_get_ssh_command_with_key(void);
  */
 guint gebr_comm_get_available_port(void);
 
+/**
+ * gebr_comm_is_local_address:
+ */
+gboolean gebr_comm_is_local_address(const gchar *addr);
+
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_COMM_UTILS_H__ */
