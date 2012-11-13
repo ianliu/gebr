@@ -69,9 +69,14 @@ on_assistant_base_import_validate(GtkEntry *entry,
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
 		break;
 	case EMPTY_ENTRY:
-		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
-		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		//check if user is setting import or base path
+		if(page_number == 3)
+			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
+		else{
+			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
+			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		}
 		break;
 	}
 
@@ -93,7 +98,7 @@ on_properties_entry_changed(GtkEntry *entry,
 		gtk_widget_set_sensitive(widget, TRUE);
 		break;
 	case EMPTY_ENTRY:
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a BASE path."));
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_widget_set_sensitive(widget, FALSE);
 		break;

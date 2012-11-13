@@ -407,8 +407,7 @@ void flow_export(void)
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flwx");
 
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flwz, *.flwx)"));
-	gtk_file_filter_add_pattern(file_filter, "*.flwz");
+	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flwx)"));
 	gtk_file_filter_add_pattern(file_filter, "*.flwx");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), box);
