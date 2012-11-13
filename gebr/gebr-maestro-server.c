@@ -308,11 +308,12 @@ gebr_maestro_server_get_error(GebrMaestroServer *maestro,
 			      const gchar **error_type,
 			      const gchar **error_msg)
 {
-	if (error_type)
-		*error_type = maestro->priv->error_type;
+	if (!maestro || !error_type || !error_msg)
+		return;
 
-	if (error_msg)
-		*error_msg = maestro->priv->error_msg;
+	*error_type = maestro->priv->error_type;
+
+	*error_msg = maestro->priv->error_msg;
 }
 
 void
