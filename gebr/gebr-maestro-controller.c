@@ -1794,13 +1794,13 @@ on_password_request(GebrMaestroServer *maestro,
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 5);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
-	GtkWidget *checkbox = gtk_check_button_new_with_label(_("Use encryption key to automatically authenticate the next session."));
+	GtkWidget *checkbox = gtk_check_button_new_with_label(_("Remember me."));
 	GtkWidget *down_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(down_vbox), checkbox, TRUE, TRUE, 5);
 
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), down_vbox, TRUE, TRUE, 5);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), TRUE);
 
 	if (acceps_key)
 		gtk_widget_set_sensitive(checkbox, TRUE);
