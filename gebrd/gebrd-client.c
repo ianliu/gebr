@@ -354,12 +354,20 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
 			GString *gid = g_list_nth_data(arguments, 0);
 			GString *cookie = g_list_nth_data(arguments, 1);
-			guint display = gebrd_get_x11_redirect_display();
+			GString *disp_str = g_list_nth_data(arguments, 2);
+
+			guint display;
+			if (g_strcmp0(disp_str->str, "0") == 0)
+				display = gebr_comm_get_available_port(6010);
+			else
+				display = atoi(disp_str->str);
+			display = MAX(display-6000, 0);
+
 			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), GUINT_TO_POINTER(display));
 
 			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);

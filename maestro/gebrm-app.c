@@ -558,9 +558,11 @@ process_xauth_queue(gpointer data)
 		return TRUE;
 
 	XauthQueueData *xauth = g_queue_pop_head(app->priv->xauth_queue);
+	const gchar *addr = gebrm_daemon_get_address(xauth->daemon);
 	gebrm_daemon_send_client_info(xauth->daemon,
 				      gebrm_client_get_id(xauth->client),
-				      gebrm_client_get_magic_cookie(xauth->client));
+				      gebrm_client_get_magic_cookie(xauth->client),
+				      gebrm_client_get_display_port(xauth->client, addr));
 	g_object_unref(xauth->daemon);
 	g_object_unref(xauth->client);
 	g_free(xauth);
