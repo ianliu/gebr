@@ -20,6 +20,7 @@
 
 #include "gebr-comm-utils.h"
 #include <libgebr/utils.h>
+#include "gebr-comm-listensocket.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -152,4 +153,13 @@ gebr_comm_get_ssh_command_with_key(void)
 	g_free(basic_cmd);
 
 	return ssh_cmd;
+}
+
+guint
+gebr_comm_get_available_port(void)
+{
+	guint port = 2000;
+	while (!gebr_comm_listen_socket_is_local_port_available(port))
+		port++;
+	return port;
 }
