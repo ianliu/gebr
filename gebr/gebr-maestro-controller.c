@@ -33,6 +33,8 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
 
+#define GEBR_DEFAULT_MAESTRO "GEBR_DEFAULT_MAESTRO"
+
 struct _GebrMaestroControllerPriv {
 	GebrMaestroServer *maestro;
 	GtkBuilder *builder;
@@ -2323,7 +2325,7 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
                                               GebrMaestroServer *maestro)
 {
 	GtkTreeIter iter;
-	const gchar *maestros_default = g_getenv("GEBR_DEFAULT_MAESTRO");
+	const gchar *maestros_default = g_getenv(GEBR_DEFAULT_MAESTRO);
 	gboolean has_config_maestro = FALSE;
 
 	if (maestros_default) {
@@ -2390,4 +2392,87 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
 			                   -1);
 		}
 	}
+}
+
+GKeyFile *
+gebr_maestro_controller_parse_maestros_env_variable(void)
+{
+	GKeyFile *maestros = NULL;
+	const gchar *maestros_default = g_getenv(GEBR_DEFAULT_MAESTRO);
+
+	if (!maestros_default)
+		return maestros;
+
+	maestros = g_key_file_new();
+
+	gchar **m = g_strsplit(maestros_default, ";", -1);
+
+	if (!m)
+		return NULL;
+
+	for (gint i = 0; m[i] && *m[i]; i++) {
+		gchar **entries = g_strsplit(m[i], ",", -1);
+
+		if (!entries)
+			return maestros;
+
+		g_key_file_set_string(maestros, entries[0], "description", entries[1]);
+
+		g_strfreev(entries);
+	}
+
+	g_strfreev(m);
+
+	return maestros;
+}
+
+
+GList *
+gebr_maestro_controller_get_known_maestros(void)
+{
+	gchar *maestros_list_path = gebr_get_maestros_list_path();
+	//TODO: fazer parse do arquivo dos maestros conhecidos
+	g_free(maestros_list_path);
+	return NULL;
+}
+
+GList *
+gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
+						 gboolean has_maestro_config,
+						 gboolean upgrade_gebr)
+{
+	//FIXME: STILL NOT VERIFYING DUPLICATES BEFORE ADDING TO THE LIST
+	GList *maestros = NULL;
+
+	GKeyFile *def_maestros_keyfile = gebr_maestro_controller_parse_maestros_env_variable();
+	GList *known_maestros = gebr_maestro_controller_get_known_maestros();
+
+	if (has_gebr_config && has_maestro_config) {	//In case there is gebr.conf and maestros.conf
+		gchar *maestros_conf_path = gebr_get_maestros_conf_path();
+		GebrMaestroSettings *ms = gebr_maestro_settings_new(maestros_conf_path);
+		const gchar *addrs = gebr_maestro_settings_get_addrs(ms, gebr.config.nfsid->str);
+		gchar **nfs_maestros = g_strsplit(addrs, ",", -1);
+		for (gint i = 0; nfs_maestros[i]; i++)
+			maestros = g_list_prepend(maestros, g_strdup(nfs_maestros[i]));
+		g_free(maestros_conf_path);
+		g_strfreev(nfs_maestros);
+		gebr_maestro_settings_free(ms);
+	}
+
+	if (def_maestros_keyfile) { 			//Environment variable
+		gchar **def_maestros = g_key_file_get_groups(def_maestros_keyfile, NULL);
+		for (gint i = 0; def_maestros[i]; i++)
+			maestros = g_list_prepend(maestros, g_strdup(def_maestros[i]));
+		g_strfreev(def_maestros);
+		g_key_file_free(def_maestros_keyfile);
+	}
+
+	if (known_maestros) {				//Known maestros file
+		g_debug("On '%s' : '%s', REGISTERED MAESTROS", __FILE__, __func__);
+		g_list_free(known_maestros);
+	}
+
+	maestros = g_list_prepend(maestros, g_strdup(g_get_host_name()));
+
+	return maestros;
 }

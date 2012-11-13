@@ -154,8 +154,17 @@ void gebr_maestro_controller_create_chooser_model (GtkListStore *model,
  * if pass %NULL in @combo, update use the combo on @mc to update
  */
 void gebr_maestro_controller_update_chooser_model(GebrMaestroServer *maestro,
-                                                  GebrMaestroController *mc,
-                                                  GtkComboBox *combo);
+						  GebrMaestroController *mc,
+						  GtkComboBox *combo);
+/*
+ * gebr_maestro_controller_get_possible_maestros:
+ *
+ * Creates a maestros list, to which gebr must try to connect in the
+ * proper order.
+ */
+GList *gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
+						     gboolean has_maestro_config,
+						     gboolean upgrade_gebr);
 
 G_END_DECLS
 
