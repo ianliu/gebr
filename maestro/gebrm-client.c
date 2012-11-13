@@ -264,3 +264,13 @@ gebrm_client_get_job_id_from_temp(GebrmClient *client,
 {
 	return g_hash_table_lookup(client->priv->job_ids, temp_id);
 }
+
+guint
+gebrm_client_get_display_port(GebrmClient *self,
+			      const gchar *addr)
+{
+	if (gebr_comm_is_local_address(addr))
+		return self->priv->x11_port;
+	else
+		return 0;
+}
