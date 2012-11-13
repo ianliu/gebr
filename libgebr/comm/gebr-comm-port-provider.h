@@ -138,6 +138,15 @@ gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
 void gebr_comm_port_provider_start(GebrCommPortProvider *self);
 
 /**
+ * gebr_comm_port_provider_start_with_port:
+ *
+ * After calling this method, the signal GebrCommPortProvider::port_defined may
+ * be emitted, where the port can be fetched. In this case, the defined port
+ * will be @port, but a tunnel may be created if the connection is remote.
+ */
+void gebr_comm_port_provider_start_with_port(GebrCommPortProvider *self, guint port);
+
+/**
  * gebr_comm_port_provider_get_forward:
  *
  * This method must be called after a #GebrCommPortProvider::port-defined

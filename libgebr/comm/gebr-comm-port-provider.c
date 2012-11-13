@@ -37,6 +37,7 @@ struct _GebrCommPortForward {
 };
 
 struct _GebrCommPortProviderPriv {
+	guint port;
 	GebrCommPortType type;
 	gchar *address;
 	gchar *sftp_address;
@@ -369,6 +370,16 @@ set_forward(GebrCommPortProvider *self, GebrCommSsh *ssh)
 	self->priv->forward->ssh = ssh;
 }
 
+static guint
+get_port(GebrCommPortProvider *self)
+{
+	if (self->priv->port != 0)
+		return self->priv->port;
+
+	self->priv->port = gebr_comm_get_available_port();
+	return self->priv->port;
+}
+
 /* Local port provider implementation {{{ */
 static void
 local_get_port(GebrCommPortProvider *self, gboolean maestro)
@@ -604,12 +615,10 @@ get_x11_command(GebrCommPortProvider *self, guint *x11_port)
 	if (!display_host->len)
 		g_string_assign(display_host, "127.0.0.1");
 
-	if (!display_number) {
-		while (!gebr_comm_listen_socket_is_local_port_available(*x11_port))
-			(*x11_port)++;
-	} else {
+	if (!display_number)
+		*x11_port = get_port(self);
+	else
 		*x11_port = display_number + 6000;
-	}
 
 	ssh_cmd = gebr_comm_get_ssh_command_with_key();
 	cmd_line = g_string_new(NULL);
@@ -646,8 +655,7 @@ get_local_forward_command(GebrCommPortProvider *self,
 	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 	GString *string = g_string_new(NULL);
 
-	while (!gebr_comm_listen_socket_is_local_port_available(*port))
-		(*port)++;
+	*port = get_port(self);
 
 	g_string_printf(string, "%s -x -L %d:%s:%d %s -N", ssh_cmd, *port,
 			addr, remote_port, self->priv->address);
@@ -708,6 +716,14 @@ gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
 void
 gebr_comm_port_provider_start(GebrCommPortProvider *self)
 {
+	gebr_comm_port_provider_start_with_port(self, 0);
+}
+
+void
+gebr_comm_port_provider_start_with_port(GebrCommPortProvider *self, guint port)
+{
+	self->priv->port = port;
+
 	struct PortProviderVirtualMethods *vmethods;
 
 	if (is_local_address(self->priv->address))
