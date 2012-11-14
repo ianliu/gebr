@@ -1585,3 +1585,11 @@ gebr_generate_nfs_label(void)
 
 	return label;
 }
+
+GList *
+gebr_glist_append_gchar_avoid_duplicates(GList *list, const gchar *data)
+{
+	if (!g_list_find_custom(list, data, (GCompareFunc) g_strcmp0) && *data)
+		list = g_list_append(list, g_strdup(data));
+	return list;
+}

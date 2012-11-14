@@ -444,6 +444,13 @@ const gchar *gebr_apply_pattern_on_address(const gchar *addr);
  */
 const gchar *gebr_generate_nfs_label(void);
 
+/*
+ * gebr_glist_append_gchar_avoid_duplicates:
+ *
+ * Append @data to the @list in case @data is not in the @list.
+ */
+GList *gebr_glist_append_gchar_avoid_duplicates(GList *list, const gchar *data);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
