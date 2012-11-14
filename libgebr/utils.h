@@ -449,7 +449,7 @@ const gchar *gebr_generate_nfs_label(void);
  *
  * Append @data to the @list in case @data is not in the @list.
  */
-GList *gebr_glist_append_gchar_avoid_duplicates(GList *list, const gchar *data);
+GList *gebr_glist_append_gchar_avoiding_duplicates(GList *list, const gchar *data);
 
 G_END_DECLS
 
