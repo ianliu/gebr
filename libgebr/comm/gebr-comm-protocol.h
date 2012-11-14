@@ -89,6 +89,8 @@ struct gebr_comm_protocol_defs {
 
 	struct gebr_comm_message_def qst_def;   // Question request     Maestro -> GeBR
 	struct gebr_comm_message_def pss_def;   // Password request     Maestro -> GeBR
+
+	struct gebr_comm_message_def harakiri_def;// Asks daemon to die Maestro -> Daemon
 };
 
 struct gebr_comm_message {

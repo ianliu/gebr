@@ -818,6 +818,10 @@ gebrm_daemon_disconnect(GebrmDaemon *daemon)
 	g_free(daemon->priv->id);
 	daemon->priv->nfsid = NULL;
 	daemon->priv->id = NULL;
+
+	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, TRUE,
+					      gebr_comm_protocol_defs.harakiri_def, 0);
+
 	gebr_comm_server_disconnect(daemon->priv->server);
 }
 

@@ -237,7 +237,6 @@ void _gebr_comm_socket_close(GebrCommSocket * socket)
 			g_source_remove(socket->read_watch_id);
 
 		error = NULL;
-		g_io_channel_shutdown(socket->io_channel, FALSE, &error);
 		g_io_channel_unref(socket->io_channel);
 		socket->io_channel = NULL;
 		g_byte_array_free(socket->queue_write_bytes, TRUE);

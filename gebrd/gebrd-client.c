@@ -96,14 +96,9 @@ client_disconnected(GebrCommProtocolSocket * socket,
 
 static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request, struct client *client)
 {
-	//g_message("url '%s'. contents: %s", request->url->str, request->content->str);
-	
 	if (!g_str_has_prefix(request->url->str, "/"))
 		return;
-	//TODO: go into object tree to get object/property
-	//gchar **splits = g_strsplit(request->url->str+1, "/", 0);
-	//for (int i = 0; splits[i]; ++i) {
-	//}
+
 	GObject *object = G_OBJECT(gebrd->user);
 	const gchar *property = request->url->str+1;
 
@@ -117,9 +112,7 @@ static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttp
 		gebr_comm_json_content_free(json);
 
 		gebr_comm_protocol_socket_send_response(socket, 200, NULL);
-	} //else
-
-	//g_strfreev(splits);
+	}
 }
 
 static void client_process_response(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request,
@@ -580,6 +573,10 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      gebr_comm_protocol_defs.ret_def, 2,
 							      gebrd->hostname,
 							      g_strdup_printf("%d", status_id));
+		} else if (message->hash == gebr_comm_protocol_defs.harakiri_def.code_hash) {
+			/* Maestro wants me killed */
+			g_debug("Harakiri");
+			gebrd_quit();
 		} else {
 			/* unknown message! */
 			goto err;
