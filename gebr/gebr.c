@@ -801,7 +801,7 @@ gebr_config_set_current_nfs_info(const gchar *nfsid,
 	for (int i = 0; list[i]; i++)
 		gebr_maestro_settings_append_address(gebr.config.maestro_set, nfsid, list[i]);
 
-	gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid, label, "");
+	gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid, label, "", "");
 }
 
 gchar *

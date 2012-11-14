@@ -672,9 +672,12 @@ err:
 			const gchar *label = gebr_maestro_settings_get_label_for_domain(app->priv->settings,
 			                                                                nfsid);
 
+			const gchar *gebrd_location = g_find_program_in_path("gebrd");
+
 			gebr_maestro_settings_set_domain(app->priv->settings, nfsid,
 			                                 label,
-			                                 g_get_host_name());
+			                                 g_get_host_name(),
+							 gebrd_location ? g_get_host_name() : "");
 		}
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
