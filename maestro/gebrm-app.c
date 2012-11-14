@@ -1803,6 +1803,20 @@ load_servers_from_key_file(GebrmApp *app,
 }
 
 gboolean
+gebrm_config_load_admin_servers(GebrmApp *app)
+{
+	GKeyFile *adm_servers = load_admin_servers_keyfile();
+
+	if (adm_servers) {
+		load_servers_from_key_file(app, adm_servers);
+		save_servers_keyfile(adm_servers);
+		g_key_file_free (adm_servers);
+	}
+
+	return TRUE;
+}
+
+gboolean
 gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 {
 	GKeyFile *servers = load_servers_keyfile();
@@ -1811,14 +1825,6 @@ gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 	if (succ) {
 		load_servers_from_key_file(app, servers);
 		g_key_file_free (servers);
-	} else {
-		GKeyFile *adm_servers = load_admin_servers_keyfile();
-
-		if (adm_servers) {
-			load_servers_from_key_file(app, adm_servers);
-			save_servers_keyfile(adm_servers);
-			g_key_file_free (adm_servers);
-		}
 	}
 
 	return TRUE;
@@ -1951,6 +1957,9 @@ on_new_connection(GebrCommListenSocket *listener,
 		// Reload Maestro Settings
 		gebr_maestro_settings_update(app->priv->settings);
 
+		// Create list for daemons to connect
+		gebrm_app_create_possible_daemon_list(app->priv->settings, app);
+
 		g_signal_connect(socket, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
 		g_signal_connect(socket, "process-request",
@@ -1966,6 +1975,53 @@ GebrmApp *
 gebrm_app_new(void)
 {
 	return g_object_new(GEBRM_TYPE_APP, NULL);
+}
+
+void
+gebrm_load_automatic_daemons(GebrMaestroSettings *ms,
+                             GebrmApp *app)
+{
+	const gchar *nfsid = gebrm_app_get_nfsid(ms);
+	const gchar *nodes = gebr_maestro_settings_get_nodes(ms, nfsid);
+
+	if (!nodes || !*nodes)
+		return;
+
+	gchar **daemons = g_strsplit(nodes, ",", -1);
+
+	if (!daemons)
+		return;
+
+	for (gint i = 0; daemons[i]; i++)
+		gebrm_add_server_to_list(app, daemons[i], NULL, "");
+
+	g_strfreev(daemons);
+}
+
+void
+gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
+                                      GebrmApp *app)
+{
+	/*
+	 * Add servers from user file
+	 */
+	const gchar *path = gebrm_app_get_servers_file();
+	gebrm_config_load_servers(app, path);
+
+	/*
+	 * Add servers from admin file
+	 */
+	gebrm_config_load_admin_servers(app);
+
+	/*
+	 * Add servers from automatic list generate by Maestro
+	 */
+	gebrm_load_automatic_daemons(ms, app);
+
+	/*
+	 * Add localhost
+	 */
+	gebrm_add_server_to_list(app, g_get_host_name(), NULL, "");
 }
 
 gboolean
@@ -2036,10 +2092,6 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 
 	// Create configuration for NFS
 	app->priv->settings = gebrm_app_create_configuration();
-
-	// Add server from user file
-	const gchar *path = gebrm_app_get_servers_file();
-	gebrm_config_load_servers(app, path);
 
 	g_main_loop_run(app->priv->main_loop);
 

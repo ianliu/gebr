@@ -137,6 +137,15 @@ GebrMaestroSettings *gebrm_app_create_configuration(void);
 
 gchar *gebrm_app_get_nfsid(GebrMaestroSettings *ms);
 
+/**
+ * gebrm_app_create_possible_daemon_list:
+ *
+ * Create a list with daemons from user/admin file
+ * and automatic found by GêBR
+ */
+void gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
+                                           GebrmApp *app);
+
 
 /* }}} GebrmApp methods */
 
