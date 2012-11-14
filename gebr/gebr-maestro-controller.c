@@ -1788,23 +1788,27 @@ on_password_request(GebrMaestroServer *maestro,
 	gchar *title = g_strdup_printf(_("Trying to connect on %s"), address);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 
-	gchar *message = g_markup_printf_escaped(_("<b>%s</b> is asking for your login password."), address);
-	GtkWidget *label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), message);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 5);
+	gchar *ssh_info = g_markup_printf_escaped(_("SSH connections are a standard way to access remote machines with\n"
+						    "reasonable level of security. <b>%s</b> is asking for your login\n"
+						    "password."), address);
+
+	GtkWidget *ssh_info_label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(ssh_info_label), ssh_info);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ssh_info_label, FALSE, TRUE, 5);
 
 	GtkWidget *entry = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 5);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
-	GtkWidget *checkbox = gtk_check_button_new_with_label(_("Remember me."));
-	GtkWidget *down_vbox = gtk_vbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(down_vbox), checkbox, TRUE, TRUE, 5);
+	gchar *ssh_info2 = g_markup_printf_escaped(_("Remember me"));
 
+	GtkWidget *checkbox = gtk_check_button_new_with_label(ssh_info2);
 
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), down_vbox, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), checkbox, TRUE, TRUE, 5);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), TRUE);
+
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
 
 	if (acceps_key)
 		gtk_widget_set_sensitive(checkbox, TRUE);
@@ -1841,7 +1845,7 @@ on_password_request(GebrMaestroServer *maestro,
 	gtk_widget_destroy(dialog);
 	gdk_threads_leave();
 
-	g_free(message);
+	//g_free(message);
 	g_free(title);
 	g_free(password);
 
