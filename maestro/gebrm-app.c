@@ -197,7 +197,7 @@ static void
 gebrm_app_send_nfsid(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *nfsid)
 {
 	const gchar *hosts = gebr_maestro_settings_get_addrs(app->priv->settings, nfsid);
-	const gchar *label = gebr_maestro_settings_get_label_for_domain(app->priv->settings, nfsid);
+	const gchar *label = gebr_maestro_settings_get_label_for_domain(app->priv->settings, nfsid, FALSE);
 
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.nfsid_def, 3,
@@ -673,7 +673,7 @@ err:
 
 		if (send_nfs) {
 			const gchar *label = gebr_maestro_settings_get_label_for_domain(app->priv->settings,
-			                                                                nfsid);
+			                                                                nfsid, FALSE);
 
 			gchar *gebrd_location = g_find_program_in_path("gebrd");
 

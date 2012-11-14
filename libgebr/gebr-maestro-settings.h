@@ -120,7 +120,8 @@ gchar *gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
  * Get label to represent the @domain
  */
 gchar *gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
-						  const gchar *domain);
+                                                  const gchar *domain,
+                                                  gboolean use_default);
 
 /**
  * gebr_maestro_settings_get_key_file:
@@ -144,6 +145,14 @@ gchar *gebr_maestro_settings_get_nodes(GebrMaestroSettings *ms, const gchar *dom
 void gebr_maestro_settings_add_node(GebrMaestroSettings *ms,
 				    const gchar *domain,
 				    const gchar *node);
+
+/*
+ * gebr_generate_nfs_label:
+ *
+ * Generate automatically NFS label for system
+ */
+gchar *gebr_maestro_settings_generate_nfs_label(GebrMaestroSettings *ms,
+                                                const gchar *nfsid);
 
 G_END_DECLS
 

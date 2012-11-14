@@ -267,7 +267,7 @@ flows_check_maestro_connected(void)
 
 	gchar *nfs_line = gebr_geoxml_line_get_maestro(gebr.line);
 	maestro = gebr_maestro_controller_get_maestro_for_nfsid(gebr.maestro_controller, nfs_line);
-	const gchar *label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, nfs_line);
+	const gchar *label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, nfs_line, TRUE);
 
 	GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL,
 	                                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,

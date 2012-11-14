@@ -438,13 +438,6 @@ void gebr_string_freeall(GString *string);
 const gchar *gebr_apply_pattern_on_address(const gchar *addr);
 
 /*
- * gebr_generate_nfs_label:
- *
- * Generate automatically NFS label for system
- */
-const gchar *gebr_generate_nfs_label(void);
-
-/*
  * gebr_gqueue_push_tail_avoiding_duplicates:
  *
  * Push @data on tail of the @queue the in case @data is not in the @queue.

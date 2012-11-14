@@ -1367,15 +1367,15 @@ on_save_alias_maestro_clicked(GebrMaestroController *self)
 	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
 	const gchar *text_entry = gtk_entry_get_text(entry);
 
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+	const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
+
 	if (!*text_entry) {
-		text_entry = gebr_generate_nfs_label();
+		text_entry = gebr_maestro_settings_generate_nfs_label(gebr.config.maestro_set, nfsid);
 		gtk_entry_set_text(entry, text_entry);
 	}
 
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
 	gebr_maestro_server_set_nfs_label(maestro, text_entry);
-
-	const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
 	gebr_maestro_settings_change_label(gebr.config.maestro_set, nfsid, text_entry);
 
 	// Send Label for Maestro

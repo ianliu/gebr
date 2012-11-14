@@ -122,6 +122,8 @@ static gchar *gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface);
 
 static gchar *gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface);
 
+static void gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestro);
+
 static const struct gebr_comm_server_ops maestro_ops = {
 	.log_message      = log_message,
 	.state_changed    = state_changed,
@@ -1023,14 +1025,22 @@ parse_messages(GebrCommServer *comm_server,
 
 			g_debug("NFSID = %s / LABEL = %s", nfsid->str, label->str);
 
+			/*
+			 * Send NFS Label to Maestro
+			 */
+			gchar *nfslabel = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set,
+			                                                             nfsid->str,
+			                                                             TRUE);
+
 			gebr_config_set_current_nfs_info(nfsid->str,
 			                                 hosts->str,
-			                                 label->str);
+			                                 nfslabel);
 
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
-			gebr_maestro_server_set_nfs_label(maestro, label->str);
-
+			gebr_maestro_server_set_nfs_label(maestro, nfslabel);
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
+
+			gebr_maestro_server_send_nfs_label(maestro);
 
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);

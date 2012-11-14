@@ -256,7 +256,7 @@ on_maestro_button_clicked(GtkButton *button,
 	GObject *image_change_button = gtk_builder_get_object(builder, "image_change_maestro");
 
 	const gchar *connect_nfsid = gebr_geoxml_line_get_maestro(gebr.line);
-	const gchar *nfslabel = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, connect_nfsid);
+	const gchar *nfslabel = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, connect_nfsid, TRUE);
 
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_line_maestro), dialog);
 
@@ -476,7 +476,7 @@ line_info_update(void)
 		nfs_label = gebr_maestro_server_get_nfs_label(maestro);
 	} else {
 		const gchar *nfsline = gebr_geoxml_line_get_maestro(gebr.line);
-		nfs_label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, nfsline);
+		nfs_label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, nfsline, TRUE);
 	}
 
 	gchar *text;

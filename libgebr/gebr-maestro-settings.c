@@ -97,7 +97,7 @@ gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
 				 const gchar *node)
 {
 	if (!label || !*label)
-		label = gebr_generate_nfs_label();
+		label = gebr_maestro_settings_generate_nfs_label(ms, domain);
 
 	g_key_file_set_string(ms->priv->maestro_key, domain, "label", label);
 
@@ -226,11 +226,20 @@ gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
 
 gchar *
 gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
-                                           const gchar *domain)
+                                           const gchar *domain,
+                                           gboolean use_default)
 {
+	gchar *label_default;
 	GString *label;
 
-	label = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "label", gebr_generate_nfs_label());
+	if (use_default)
+		label_default = gebr_maestro_settings_generate_nfs_label(ms, domain);
+	else
+		label_default = g_strdup("");
+
+	label = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "label", label_default);
+
+	g_free(label_default);
 
 	return g_string_free(label, FALSE);
 }
@@ -287,4 +296,29 @@ gebr_maestro_settings_add_node(GebrMaestroSettings *ms, const gchar *domain, con
 	g_strfreev(list);
 
 	return;
+}
+
+gchar *
+gebr_maestro_settings_generate_nfs_label(GebrMaestroSettings *ms,
+                                         const gchar *nfsid)
+{
+	gint pos = 1;
+	gsize length;
+	gchar **nfss;
+
+	nfss = g_key_file_get_groups(ms->priv->maestro_key, &length);
+
+	if (nfss && nfsid && *nfsid) {
+		for (gint i = 0; i < length; i++) {
+			if (g_strcmp0(nfss[i], nfsid) == 0) {
+				pos = i + 1;
+			}
+		}
+	}
+
+	gchar *label = g_strdup_printf("GêBR Domain %d", pos);
+
+	g_strfreev(nfss);
+
+	return label;
 }
