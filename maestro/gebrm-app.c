@@ -675,8 +675,6 @@ err:
 			gebr_maestro_settings_set_domain(app->priv->settings, nfsid,
 			                                 label,
 			                                 g_get_host_name());
-
-			gebr_maestro_settings_save(app->priv->settings);
 		}
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
@@ -1946,6 +1944,8 @@ on_new_connection(GebrCommListenSocket *listener,
 			const gchar *home = gebrm_daemon_get_home_dir(app->priv->daemons->data);
 			gebrm_app_send_home_dir(app, socket, home);
 		}
+		// Reload Maestro Settings
+		gebr_maestro_settings_update(app->priv->settings);
 
 		g_signal_connect(socket, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
