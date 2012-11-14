@@ -268,8 +268,14 @@ main(int argc, char *argv[])
 	gboolean valid;
 	valid = verify_singleton_lock(curr_version);
 
-	if (nfsid)
+	const gchar *gebrd_location = g_find_program_in_path("gebrd");
+
+	if (nfsid) {
 		gebr_maestro_settings_append_address(ms, nfsid, local_addr);
+		gebr_maestro_settings_add_node(ms,
+					       nfsid,
+					       gebrd_location ? g_get_host_name() : "");
+	}
 
 	gebr_maestro_settings_free(ms);
 

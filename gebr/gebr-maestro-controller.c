@@ -33,6 +33,8 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
 
+#define GEBR_DEFAULT_MAESTRO "GEBR_DEFAULT_MAESTRO"
+
 struct _GebrMaestroControllerPriv {
 	GebrMaestroServer *maestro;
 	GtkBuilder *builder;
@@ -42,6 +44,7 @@ struct _GebrMaestroControllerPriv {
 	GtkListStore *model;
 
 	gchar *last_tag;
+	GQueue *potential_maestros;
 
 	GtkWindow *window;
 };
@@ -639,7 +642,7 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 					       G_TYPE_BOOLEAN,
 	                                       G_TYPE_STRING);
 	self->priv->maestro = NULL;
-
+	self->priv->potential_maestros = g_queue_new();
 }
 
 static void
@@ -718,6 +721,7 @@ gebr_maestro_controller_finalize(GObject *object)
 	g_object_unref(mc->priv->builder);
 	g_free(mc->priv->last_tag);
 	g_object_unref(mc->priv->window);
+	g_queue_free(mc->priv->potential_maestros);
 
 	G_OBJECT_CLASS(gebr_maestro_controller_parent_class)->finalize(object);
 }
@@ -1897,7 +1901,7 @@ on_maestro_error(GebrMaestroServer *maestro,
 		const gchar *error_msg,
 		GebrMaestroController *mc)
 {
-	if (!mc->priv->builder)
+	if (!mc->priv->builder || !maestro)
 		return;
 
 	gchar *message = gebr_maestro_server_translate_error(error_type, error_msg);
@@ -1905,6 +1909,10 @@ on_maestro_error(GebrMaestroServer *maestro,
 	GtkImage *status_image = GTK_IMAGE(gtk_builder_get_object(mc->priv->builder, "maestro_status"));
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	if (!server)
+		return;
+
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 
 	if (state == SERVER_STATE_DISCONNECTED) {
@@ -2120,6 +2128,10 @@ update_maestro_view(GebrMaestroController *mc,
 		return;
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	if (!server)
+		return;
+
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 
@@ -2315,7 +2327,7 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
                                               GebrMaestroServer *maestro)
 {
 	GtkTreeIter iter;
-	const gchar *maestros_default = g_getenv("GEBR_DEFAULT_MAESTRO");
+	const gchar *maestros_default = g_getenv(GEBR_DEFAULT_MAESTRO);
 	gboolean has_config_maestro = FALSE;
 
 	if (maestros_default) {
@@ -2382,4 +2394,154 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
 			                   -1);
 		}
 	}
+}
+
+GKeyFile *
+gebr_maestro_controller_parse_maestros_env_variable(void)
+{
+	GKeyFile *maestros = NULL;
+	const gchar *maestros_default = g_getenv(GEBR_DEFAULT_MAESTRO);
+
+	if (!maestros_default)
+		return maestros;
+
+	maestros = g_key_file_new();
+
+	gchar **m = g_strsplit(maestros_default, ";", -1);
+
+	if (!m)
+		return NULL;
+
+	for (gint i = 0; m[i] && *m[i]; i++) {
+		gchar **entries = g_strsplit(m[i], ",", -1);
+
+		if (!entries)
+			return maestros;
+
+		g_key_file_set_string(maestros, entries[0], "description", entries[1]);
+
+		g_strfreev(entries);
+	}
+
+	g_strfreev(m);
+
+	return maestros;
+}
+
+
+GList *
+gebr_maestro_controller_get_known_maestros(void)
+{
+	gchar *maestros_list_path = gebr_get_maestros_list_path();
+	//TODO: fazer parse do arquivo dos maestros conhecidos
+	g_free(maestros_list_path);
+	return NULL;
+}
+
+static void
+append_maestros_of_nfsid(GebrMaestroSettings *ms,
+                         const gchar *nfsid,
+                         GQueue **maestros)
+{
+	const gchar *addrs = gebr_maestro_settings_get_addrs(ms, nfsid);
+	gchar **nfs_maestros = g_strsplit(addrs, ",", -1);
+
+	for (gint j = 0; nfs_maestros[j]; j++)
+		*maestros = gebr_gqueue_push_tail_avoiding_duplicates(*maestros, nfs_maestros[j]);
+
+	g_strfreev(nfs_maestros);
+}
+
+GQueue *
+gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
+					      gboolean has_maestro_config,
+					      gboolean upgrade_gebr)
+{
+	GQueue *maestros = g_queue_new();
+
+	GKeyFile *def_maestros_keyfile = gebr_maestro_controller_parse_maestros_env_variable();
+	gchar *maestros_conf_path = gebr_get_maestros_conf_path();
+	GebrMaestroSettings *ms = gebr_maestro_settings_new(maestros_conf_path);
+
+	/*
+	 * Include on list maestros from the last NFS of GêBR are connected
+	 */
+	if (has_gebr_config && has_maestro_config) //In case there is gebr.conf and maestros.conf
+		append_maestros_of_nfsid(ms, gebr.config.nfsid->str, &maestros);
+
+	/*
+	 * Get the maestro from environment variable
+	 */
+	if (def_maestros_keyfile) { 			//Environment variable
+		gchar **def_maestros = g_key_file_get_groups(def_maestros_keyfile, NULL);
+		for (gint i = 0; def_maestros[i]; i++)
+			maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, def_maestros[i]);
+		g_strfreev(def_maestros);
+		g_key_file_free(def_maestros_keyfile);
+	}
+
+	/*
+	 * Get maestros from another NFS
+	 */
+	gsize length;
+	GKeyFile *key_maestro_conf = gebr_maestro_settings_get_key_file(ms);
+	gchar **nfss = g_key_file_get_groups(key_maestro_conf, &length);
+	if (length) {
+		for (gint i = 0; i < length; i++) {
+			if (g_strcmp0(nfss[i], gebr.config.nfsid->str) == 0)
+				continue;
+
+			append_maestros_of_nfsid(ms, nfss[i], &maestros);
+		}
+	}
+	g_strfreev(nfss);
+
+	/*
+	 * Append localhost in end of the queue
+	 */
+	maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, g_strdup(g_get_host_name()));
+
+	g_free(maestros_conf_path);
+	gebr_maestro_settings_free(ms);
+
+	return maestros;
+}
+
+GQueue *
+gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc)
+{
+	return mc->priv->potential_maestros;
+}
+
+void
+gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc,
+                                               GQueue *queue)
+{
+	mc->priv->potential_maestros = g_queue_copy(queue);
+}
+
+gboolean
+gebr_maestro_controller_try_next_maestro(GebrMaestroController *mc)
+{
+	gchar *addr = g_queue_pop_head(mc->priv->potential_maestros);
+
+	if (!addr)
+		return FALSE;
+
+	gebr_g_string_replace(gebr.config.maestro_address, gebr.config.maestro_address->str, addr);
+	gebr_maestro_controller_connect(mc, addr);
+
+	g_free(addr);
+
+	return TRUE;
+}
+
+void
+gebr_maestro_controller_clean_potential_maestros(GebrMaestroController *mc)
+{
+	if (g_queue_is_empty(mc->priv->potential_maestros))
+		return;
+
+	g_queue_foreach(mc->priv->potential_maestros, (GFunc)g_free, NULL);
+	g_queue_clear(mc->priv->potential_maestros);
 }

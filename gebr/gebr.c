@@ -271,12 +271,11 @@ gebr_load_maestro_config(void)
 {
 	GebrMaestroSettings *ms;
 
-	GString *maestro_path = g_string_new(NULL);
-	g_string_printf(maestro_path, "%s/.gebr/gebr/maestros.conf", g_get_home_dir());
+	gchar *path = gebr_get_maestros_conf_path();
 
-	ms = gebr_maestro_settings_new(maestro_path->str);
+	ms = gebr_maestro_settings_new(path);
 
-	g_string_free(maestro_path, TRUE);
+	g_free(path);
 
 	return ms;
 }
@@ -410,8 +409,10 @@ restore_project_line_flow_selection(void)
  * menus. New config check must be after all default values loaded.
  */
 static void
-gebr_post_config(gboolean has_config)
+gebr_post_config(gboolean has_gebr_config)
 {
+	gboolean upgrade_gebr = FALSE;
+	gboolean has_maestro_config = gebr_has_maestro_config();
 	// Generate gebr.key
 	gebr_generate_key();
 
@@ -435,22 +436,27 @@ gebr_post_config(gboolean has_config)
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
 	menu_list_populate();
-	if (!has_config)
-		preferences_setup_ui(TRUE, TRUE, TRUE, -1);
-	else {
-		gebr.restore_selection = FALSE;
-		gebr.populate_list = FALSE;
+	
+	if (!gebr_has_maestro_config() || g_strcmp0(gebr.config.version->str, "None") == 0)
+		upgrade_gebr = TRUE;
 
-		if (gebr_has_maestro_config() && g_strcmp0(gebr.config.version->str, "None")) {
-			gebr.populate_list = TRUE;
-			project_list_populate();
-			gebr_maestro_controller_connect(gebr.maestro_controller,
-			                                gebr.config.maestro_address->str);
-			gebr_config_save(FALSE);
-		} else {
-			preferences_setup_ui(TRUE, TRUE, FALSE, -1);
-		}
-	}
+	gebr.restore_selection = FALSE;
+	gebr.populate_list = FALSE;
+
+	gebr.populate_list = TRUE;
+	project_list_populate();
+
+	GQueue *maestros = gebr_maestro_controller_get_possible_maestros(has_gebr_config, has_maestro_config, upgrade_gebr);
+
+	gchar *addr = g_queue_pop_head(maestros);
+	gebr.config.maestro_address = g_string_new(addr);
+	g_free(addr);
+
+	gebr_maestro_controller_set_potential_maestros(gebr.maestro_controller, maestros);
+	gebr_maestro_controller_connect(gebr.maestro_controller, gebr.config.maestro_address->str);
+
+	g_queue_free(maestros);
+	gebr_config_save(FALSE);
 }
 
 void gebr_config_apply(void)
@@ -773,13 +779,10 @@ gboolean
 gebr_has_maestro_config(void)
 {
 	gboolean has_config;
-	GString *path = g_string_new(NULL);
 
-	g_string_printf(path, "%s/.gebr/gebr/maestros.conf", g_get_home_dir());
-
-	has_config = g_access(path->str, F_OK | R_OK) == 0 ? TRUE : FALSE;
-
-	g_string_free(path, TRUE);
+	gchar *path = gebr_get_maestros_conf_path();
+	has_config = g_access(path, F_OK | R_OK) == 0 ? TRUE : FALSE;
+	g_free(path);
 
 	return has_config;
 }
@@ -798,5 +801,15 @@ gebr_config_set_current_nfs_info(const gchar *nfsid,
 	for (int i = 0; list[i]; i++)
 		gebr_maestro_settings_append_address(gebr.config.maestro_set, nfsid, list[i]);
 
-	gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid, label, "");
+	gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid, label, "", "");
+}
+
+gchar *
+gebr_get_maestros_conf_path(void) {
+	return (g_strdup_printf("%s/.gebr/gebr/maestros.conf", g_get_home_dir()));
+}
+
+gchar *
+gebr_get_maestros_list_path(void) {
+	return (g_strdup_printf("%s/.gebr/gebr/maestros.list", g_get_home_dir()));
 }

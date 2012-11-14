@@ -40,6 +40,13 @@ struct _GebrMaestroSettings {
 GebrMaestroSettings * gebr_maestro_settings_new(const gchar *path);
 
 /**
+ * gebr_maestro_settings_update:
+ *
+ * Update KeyFile from @ms to syncronize new informations
+ */
+void gebr_maestro_settings_update(GebrMaestroSettings *ms);
+
+/**
  * gebr_maestro_settings_save:
  *
  * Save the keyfile on file
@@ -61,9 +68,10 @@ void gebr_maestro_settings_free(GebrMaestroSettings *ms);
  * to include the address on list of maestros
  */
 void gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
-                                      const gchar *domain,
-                                      const gchar *label,
-                                      const gchar *addr);
+				      const gchar *domain,
+				      const gchar *label,
+				      const gchar *addr,
+				      const gchar *node);
 
 /**
  * gebr_maestro_settings_prepend_address:
@@ -87,32 +95,32 @@ void gebr_maestro_settings_append_address(GebrMaestroSettings *ms,
  * Change label of @domain to @label
  */
 void gebr_maestro_settings_change_label(GebrMaestroSettings *ms,
-                                        const gchar *domain,
-                                        const gchar *label);
+					const gchar *domain,
+					const gchar *label);
 
 /**
  * gebr_maestro_settings_get_addrs:
  *
  * Get all addresses of maestros on @domain
  */
-const gchar *gebr_maestro_settings_get_addrs(GebrMaestroSettings *ms,
-                                             const gchar *domain);
+gchar *gebr_maestro_settings_get_addrs(GebrMaestroSettings *ms,
+				       const gchar *domain);
 /**
  * gebr_maestro_settings_get_addr_for_domain:
  *
  * Get address of the maestro on @domain in @index position
  */
-const gchar * gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
-                                                        const gchar *domain,
-                                                        gint index);
+gchar *gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
+						 const gchar *domain,
+						 gint index);
 
 /**
  * gebr_maestro_settings_get_label_for_domain:
  *
  * Get label to represent the @domain
  */
-const gchar *gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
-                                                        const gchar *domain);
+gchar *gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
+						  const gchar *domain);
 
 /**
  * gebr_maestro_settings_get_key_file:
@@ -120,6 +128,22 @@ const gchar *gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
  * Get keyfile for the object @ms
  */
 GKeyFile *gebr_maestro_settings_get_key_file(GebrMaestroSettings *ms);
+
+/**
+ * gebr_maestro_settings_get_nodes:
+ *
+ * Get the nodes of @domain
+ */
+gchar *gebr_maestro_settings_get_nodes(GebrMaestroSettings *ms, const gchar *domain);
+
+/**
+ * gebr_maestro_settings_add_node:
+ *
+ * Append @node to the list of nodes of @domain
+ */
+void gebr_maestro_settings_add_node(GebrMaestroSettings *ms,
+				    const gchar *domain,
+				    const gchar *node);
 
 G_END_DECLS
 

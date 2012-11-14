@@ -1585,3 +1585,13 @@ gebr_generate_nfs_label(void)
 
 	return label;
 }
+
+GQueue *
+gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue,
+                                          const gchar *data)
+{
+	if (!g_queue_find_custom(queue, data, (GCompareFunc) g_strcmp0) && *data)
+		g_queue_push_tail(queue, g_strdup(data));
+
+	return queue;
+}

@@ -444,6 +444,13 @@ const gchar *gebr_apply_pattern_on_address(const gchar *addr);
  */
 const gchar *gebr_generate_nfs_label(void);
 
+/*
+ * gebr_gqueue_push_tail_avoiding_duplicates:
+ *
+ * Push @data on tail of the @queue the in case @data is not in the @queue.
+ */
+GQueue *gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue, const gchar *data);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

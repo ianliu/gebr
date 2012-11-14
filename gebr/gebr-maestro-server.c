@@ -308,11 +308,12 @@ gebr_maestro_server_get_error(GebrMaestroServer *maestro,
 			      const gchar **error_type,
 			      const gchar **error_msg)
 {
-	if (error_type)
-		*error_type = maestro->priv->error_type;
+	if (!maestro || !error_type || !error_msg)
+		return;
 
-	if (error_msg)
-		*error_msg = maestro->priv->error_msg;
+	*error_type = maestro->priv->error_type;
+
+	*error_msg = maestro->priv->error_msg;
 }
 
 void
@@ -329,11 +330,14 @@ state_changed(GebrCommServer *comm_server,
 			gebr_project_line_show(gebr.ui_project_line);
 
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
-		if (err && *err)
+		if (err && *err) {
 			gebr_maestro_server_set_error(maestro, "error:ssh", err);
+			gebr_maestro_controller_try_next_maestro(gebr.maestro_controller);
+		}
 	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
+		gebr_maestro_controller_clean_potential_maestros(gebr.maestro_controller);
 
 		gebr_project_line_show(gebr.ui_project_line);
 

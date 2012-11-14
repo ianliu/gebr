@@ -49,6 +49,16 @@ gebr_maestro_settings_new(const gchar *path)
 }
 
 void
+gebr_maestro_settings_update(GebrMaestroSettings *ms)
+{
+	g_return_if_fail(ms != NULL);
+
+	g_key_file_free(ms->priv->maestro_key);
+	ms->priv->maestro_key = g_key_file_new();
+	g_key_file_load_from_file(ms->priv->maestro_key, ms->priv->path, G_KEY_FILE_NONE, NULL);
+}
+
+void
 gebr_maestro_settings_save(GebrMaestroSettings *ms)
 {
 	gsize length;
@@ -81,9 +91,10 @@ gebr_maestro_settings_free(GebrMaestroSettings *ms)
 
 void
 gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
-                                 const gchar *domain,
-                                 const gchar *label,
-                                 const gchar *addr)
+				 const gchar *domain,
+				 const gchar *label,
+				 const gchar *addr,
+				 const gchar *node)
 {
 	if (!label || !*label)
 		label = gebr_generate_nfs_label();
@@ -91,6 +102,7 @@ gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
 	g_key_file_set_string(ms->priv->maestro_key, domain, "label", label);
 
 	gebr_maestro_settings_append_address(ms, domain, addr);
+	gebr_maestro_settings_add_node(ms, domain, node);
 }
 
 void
@@ -101,6 +113,9 @@ gebr_maestro_settings_prepend_address(GebrMaestroSettings *ms,
 	g_return_if_fail(ms != NULL);
 	g_return_if_fail(domain != NULL);
 	g_return_if_fail(addr != NULL);
+
+	if (!*addr)
+		return;
 
 	GString *maestro, *buf;
 	gchar **list;
@@ -134,6 +149,9 @@ gebr_maestro_settings_append_address(GebrMaestroSettings *ms,
 	g_return_if_fail(ms != NULL);
 	g_return_if_fail(domain != NULL);
 	g_return_if_fail(addr != NULL);
+
+	if (!*addr)
+		return;
 
 	GString *maestro, *buf;
 	gchar **list;
@@ -173,9 +191,9 @@ gebr_maestro_settings_change_label(GebrMaestroSettings *ms,
 		g_key_file_set_string(ms->priv->maestro_key, domain, "label", label);
 }
 
-const gchar *
+gchar *
 gebr_maestro_settings_get_addrs(GebrMaestroSettings *ms,
-                                const gchar *domain)
+				const gchar *domain)
 {
 	GString *maestros;
 
@@ -184,12 +202,12 @@ gebr_maestro_settings_get_addrs(GebrMaestroSettings *ms,
 	return g_string_free(maestros, FALSE);
 }
 
-const gchar *
+gchar *
 gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
-                                          const gchar *domain,
-                                          gint index)
+					  const gchar *domain,
+					  gint index)
 {
-	const gchar *maestro;
+	gchar *maestro;
 	GString *maestros;
 
 	maestros = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "maestro", "");
@@ -206,7 +224,7 @@ gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
 	return maestro;
 }
 
-const gchar *
+gchar *
 gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
                                            const gchar *domain)
 {
@@ -221,4 +239,52 @@ GKeyFile *
 gebr_maestro_settings_get_key_file(GebrMaestroSettings *ms)
 {
 	return ms->priv->maestro_key;
+}
+
+gchar *
+gebr_maestro_settings_get_nodes(GebrMaestroSettings *ms, const gchar *domain)
+{
+	GString *nodes = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "nodes", "");
+
+	return g_string_free(nodes, FALSE);
+}
+
+void
+gebr_maestro_settings_add_node(GebrMaestroSettings *ms, const gchar *domain, const gchar *node)
+{
+	g_return_if_fail(ms != NULL);
+	g_return_if_fail(domain != NULL);
+	g_return_if_fail(node != NULL);
+
+	if (!*node)
+		return;
+
+	GError *err = NULL;
+	gchar *nodes_old = g_key_file_get_value(ms->priv->maestro_key, domain, "nodes", &err);
+
+	GString *nodes = g_string_new(nodes_old);
+	gchar **list = g_strsplit(nodes_old, ",", -1);
+	gboolean has_addr = FALSE;
+
+	if (list) {
+		for (gint i = 0; list[i]; i++) {
+			if (g_strcmp0(list[i], node) == 0)
+				has_addr = TRUE;
+		}
+	}
+
+	if (!has_addr) {
+		if (nodes->len > 1)
+			g_string_append_c(nodes, ',');
+		g_string_append(nodes, node);
+	}
+
+	g_key_file_set_value(ms->priv->maestro_key, domain, "nodes", nodes->str);
+	gebr_maestro_settings_save(ms);
+
+	g_string_free(nodes, TRUE);
+	g_free(nodes_old);
+	g_strfreev(list);
+
+	return;
 }
