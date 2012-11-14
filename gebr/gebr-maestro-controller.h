@@ -159,16 +159,17 @@ void gebr_maestro_controller_update_chooser_model(GebrMaestroServer *maestro,
 /*
  * gebr_maestro_controller_get_possible_maestros:
  *
- * Creates a maestros list, to which gebr must try to connect in the
+ * Creates a maestros queue, to which gebr must try to connect in the
  * proper order.
  */
-GList *gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
+GQueue *gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 						     gboolean has_maestro_config,
 						     gboolean upgrade_gebr);
 
-GList *gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc);
+GQueue *gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc);
 
-void gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc, GList *list);
+void gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc,
+                                                    GQueue *list);
 
 G_END_DECLS
 

@@ -44,7 +44,7 @@ struct _GebrMaestroControllerPriv {
 	GtkListStore *model;
 
 	gchar *last_tag;
-	GList *potential_maestros;
+	GQueue *potential_maestros;
 
 	GtkWindow *window;
 };
@@ -642,7 +642,7 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 					       G_TYPE_BOOLEAN,
 	                                       G_TYPE_STRING);
 	self->priv->maestro = NULL;
-	self->priv->potential_maestros = NULL;
+	self->priv->potential_maestros = g_queue_new();
 }
 
 static void
@@ -721,6 +721,7 @@ gebr_maestro_controller_finalize(GObject *object)
 	g_object_unref(mc->priv->builder);
 	g_free(mc->priv->last_tag);
 	g_object_unref(mc->priv->window);
+	g_queue_free(mc->priv->potential_maestros);
 
 	G_OBJECT_CLASS(gebr_maestro_controller_parent_class)->finalize(object);
 }
@@ -2437,54 +2438,84 @@ gebr_maestro_controller_get_known_maestros(void)
 	return NULL;
 }
 
-GList *
+static void
+append_maestros_of_nfsid(GebrMaestroSettings *ms,
+                         const gchar *nfsid,
+                         GQueue **maestros)
+{
+	const gchar *addrs = gebr_maestro_settings_get_addrs(ms, nfsid);
+	gchar **nfs_maestros = g_strsplit(addrs, ",", -1);
+
+	for (gint j = 0; nfs_maestros[j]; j++)
+		*maestros = gebr_gqueue_push_tail_avoiding_duplicates(*maestros, nfs_maestros[j]);
+
+	g_strfreev(nfs_maestros);
+}
+
+GQueue *
 gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 					      gboolean has_maestro_config,
 					      gboolean upgrade_gebr)
 {
-	GList *maestros = NULL;
+	GQueue *maestros = g_queue_new();
 
 	GKeyFile *def_maestros_keyfile = gebr_maestro_controller_parse_maestros_env_variable();
-	GList *known_maestros = gebr_maestro_controller_get_known_maestros();
+	gchar *maestros_conf_path = gebr_get_maestros_conf_path();
+	GebrMaestroSettings *ms = gebr_maestro_settings_new(maestros_conf_path);
 
-	if (has_gebr_config && has_maestro_config) {	//In case there is gebr.conf and maestros.conf
-		gchar *maestros_conf_path = gebr_get_maestros_conf_path();
-		GebrMaestroSettings *ms = gebr_maestro_settings_new(maestros_conf_path);
-		const gchar *addrs = gebr_maestro_settings_get_addrs(ms, gebr.config.nfsid->str);
-		gchar **nfs_maestros = g_strsplit(addrs, ",", -1);
-		for (gint i = 0; nfs_maestros[i]; i++)
-			maestros = gebr_glist_append_gchar_avoiding_duplicates(maestros, nfs_maestros[i]);
-		g_free(maestros_conf_path);
-		g_strfreev(nfs_maestros);
-		gebr_maestro_settings_free(ms);
-	}
+	/*
+	 * Include on list maestros from the last NFS of GêBR are connected
+	 */
+	if (has_gebr_config && has_maestro_config) //In case there is gebr.conf and maestros.conf
+		append_maestros_of_nfsid(ms, gebr.config.nfsid->str, &maestros);
 
+	/*
+	 * Get the maestro from environment variable
+	 */
 	if (def_maestros_keyfile) { 			//Environment variable
 		gchar **def_maestros = g_key_file_get_groups(def_maestros_keyfile, NULL);
 		for (gint i = 0; def_maestros[i]; i++)
-			maestros = gebr_glist_append_gchar_avoiding_duplicates(maestros, def_maestros[i]);
+			maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, def_maestros[i]);
 		g_strfreev(def_maestros);
 		g_key_file_free(def_maestros_keyfile);
 	}
 
-	if (known_maestros) {				//Known maestros file
-		g_debug("On '%s' : '%s', REGISTERED MAESTROS", __FILE__, __func__);
-		g_list_free(known_maestros);
-	}
+	/*
+	 * Get maestros from another NFS
+	 */
+	gsize length;
+	GKeyFile *key_maestro_conf = gebr_maestro_settings_get_key_file(ms);
+	gchar **nfss = g_key_file_get_groups(key_maestro_conf, &length);
+	if (length) {
+		for (gint i = 0; i < length; i++) {
+			if (g_strcmp0(nfss[i], gebr.config.nfsid->str) == 0)
+				continue;
 
-	maestros = gebr_glist_append_gchar_avoiding_duplicates(maestros, g_get_host_name());
+			append_maestros_of_nfsid(ms, nfss[i], &maestros);
+		}
+	}
+	g_strfreev(nfss);
+
+	/*
+	 * Append localhost in end of the queue
+	 */
+	maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, g_get_host_name());
+
+	g_free(maestros_conf_path);
+	gebr_maestro_settings_free(ms);
 
 	return maestros;
 }
 
-GList *
+GQueue *
 gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc)
 {
 	return mc->priv->potential_maestros;
 }
 
 void
-gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc, GList *list)
+gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc,
+                                               GQueue *list)
 {
 	mc->priv->potential_maestros = list;
 }

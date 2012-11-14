@@ -446,16 +446,16 @@ gebr_post_config(gboolean has_gebr_config)
 	gebr.populate_list = TRUE;
 	project_list_populate();
 
-	GList *maestros = gebr_maestro_controller_get_possible_maestros(has_gebr_config, has_maestro_config, upgrade_gebr);
+	GQueue *maestros = gebr_maestro_controller_get_possible_maestros(has_gebr_config, has_maestro_config, upgrade_gebr);
 
-	//FIXME: colocar na variável do maestro controller
-	gebr.config.maestro_address = g_string_new(maestros->data);
-	maestros = g_list_remove(maestros, maestros);
+	gchar *addr = g_queue_pop_head(maestros);
+	gebr.config.maestro_address = g_string_new(addr);
+	g_free(addr);
 
+	gebr_maestro_controller_set_potential_maestros(gebr.maestro_controller, maestros);
 	gebr_maestro_controller_connect(gebr.maestro_controller, gebr.config.maestro_address->str);
-	//TODO : colocar numa variavel
 
-	g_list_free(maestros);
+	g_queue_free(maestros);
 	gebr_config_save(FALSE);
 }
 
