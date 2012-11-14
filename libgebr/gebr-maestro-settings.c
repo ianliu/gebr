@@ -96,9 +96,6 @@ gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
 				 const gchar *addr,
 				 const gchar *node)
 {
-	if (!label || !*label)
-		label = gebr_maestro_settings_generate_nfs_label(ms, domain);
-
 	g_key_file_set_string(ms->priv->maestro_key, domain, "label", label);
 
 	gebr_maestro_settings_append_address(ms, domain, addr);
@@ -310,9 +307,9 @@ gebr_maestro_settings_generate_nfs_label(GebrMaestroSettings *ms,
 
 	if (nfss && nfsid && *nfsid) {
 		for (gint i = 0; i < length; i++) {
-			if (g_strcmp0(nfss[i], nfsid) == 0) {
-				pos = i + 1;
-			}
+			pos += 1;
+			if (g_strcmp0(nfss[i], nfsid) == 0)
+				break;
 		}
 	}
 
