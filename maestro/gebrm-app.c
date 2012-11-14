@@ -673,12 +673,13 @@ err:
 			const gchar *label = gebr_maestro_settings_get_label_for_domain(app->priv->settings,
 			                                                                nfsid);
 
-			const gchar *gebrd_location = g_find_program_in_path("gebrd");
+			gchar *gebrd_location = g_find_program_in_path("gebrd");
 
 			gebr_maestro_settings_set_domain(app->priv->settings, nfsid,
 			                                 label,
 			                                 g_get_host_name(),
 							 gebrd_location ? g_get_host_name() : "");
+			g_free(gebrd_location);
 		}
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
@@ -1451,13 +1452,16 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 7)) == NULL)
 				goto err;
 
-			GString *version = g_list_nth_data(arguments, 0);
-			GString *cookie  = g_list_nth_data(arguments, 1);
-			GString *gebr_id = g_list_nth_data(arguments, 2);
-			GString *gebr_time_iso = g_list_nth_data(arguments, 3);
+			GString *address = g_list_nth_data(arguments, 0);
+			GString *version = g_list_nth_data(arguments, 1);
+			GString *cookie  = g_list_nth_data(arguments, 2);
+			GString *gebr_id = g_list_nth_data(arguments, 3);
+			GString *gebr_time_iso = g_list_nth_data(arguments, 4);
+			GString *has_maestro = g_list_nth_data(arguments, 5);
+			GString *has_daemon = g_list_nth_data(arguments, 6);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 			g_debug("Maestro received GeBR time: %s", gebr_time_iso->str);
@@ -1479,6 +1483,16 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gebrm_client_set_id(client, gebr_id->str);
 			gebrm_client_set_magic_cookie(client, cookie->str);
+
+			gchar *nfsid = gebrm_app_get_nfsid(app->priv->settings);
+			if (nfsid) {
+				if (atoi(has_maestro->str))
+					gebr_maestro_settings_add_node(app->priv->settings, nfsid, address->str);
+
+				if (atoi(has_daemon->str))
+					gebr_maestro_settings_append_address(app->priv->settings, nfsid, address->str);
+			}
+			g_free(nfsid);
 
 			gchar *clocks_diff = g_strdup_printf("%d", diff_secs);
 
