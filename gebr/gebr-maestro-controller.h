@@ -169,7 +169,17 @@ GQueue *gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 GQueue *gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc);
 
 void gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc,
-                                                    GQueue *list);
+                                                    GQueue *queue);
+
+/*
+ * gebr_maestro_controller_try_next_maestro:
+ *
+ * Get first address from the queue of potential maestros and try to connect it
+ * Returns %FALSE if queue are empty and %TRUE otherwise
+ */
+gboolean gebr_maestro_controller_try_next_maestro(GebrMaestroController *mc);
+
+void gebr_maestro_controller_clean_potential_maestros(GebrMaestroController *mc);
 
 G_END_DECLS
 

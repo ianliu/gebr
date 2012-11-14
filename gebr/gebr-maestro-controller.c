@@ -2499,7 +2499,7 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 	/*
 	 * Append localhost in end of the queue
 	 */
-	maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, g_get_host_name());
+	maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, g_strdup(g_get_host_name()));
 
 	g_free(maestros_conf_path);
 	gebr_maestro_settings_free(ms);
@@ -2515,7 +2515,33 @@ gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc)
 
 void
 gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc,
-                                               GQueue *list)
+                                               GQueue *queue)
 {
-	mc->priv->potential_maestros = list;
+	mc->priv->potential_maestros = g_queue_copy(queue);
+}
+
+gboolean
+gebr_maestro_controller_try_next_maestro(GebrMaestroController *mc)
+{
+	gchar *addr = g_queue_pop_head(mc->priv->potential_maestros);
+
+	if (!addr)
+		return FALSE;
+
+	gebr_g_string_replace(gebr.config.maestro_address, gebr.config.maestro_address->str, addr);
+	gebr_maestro_controller_connect(mc, addr);
+
+	g_free(addr);
+
+	return TRUE;
+}
+
+void
+gebr_maestro_controller_clean_potential_maestros(GebrMaestroController *mc)
+{
+	if (g_queue_is_empty(mc->priv->potential_maestros))
+		return;
+
+	g_queue_foreach(mc->priv->potential_maestros, (GFunc)g_free, NULL);
+	g_queue_clear(mc->priv->potential_maestros);
 }
