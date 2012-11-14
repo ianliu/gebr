@@ -30,21 +30,17 @@ gebr_comm_get_display(gchar **x11_file, guint *port, gchar **host)
 {
 	const gchar *display = g_getenv("DISPLAY");
 
-	if (!display || !*display) {
-		*x11_file = NULL;
-		*port = 0;
-		*host = NULL;
+	*x11_file = NULL;
+	*port = 0;
+	*host = NULL;
+
+	if (!display || !*display)
 		return;
-	}
 
 	gchar **v = g_strsplit(display, ":", -1);
 
-	if (g_strv_length(v) != 2) {
-		*x11_file = NULL;
-		*port = 0;
-		*host = NULL;
+	if (g_strv_length(v) != 2)
 		return;
-	}
 
 	const gchar *addr = v[0];
 	const gchar *numb = v[1];
@@ -57,18 +53,16 @@ gebr_comm_get_display(gchar **x11_file, guint *port, gchar **host)
 		tmp = g_strdup(numb);
 
 	if (strlen(addr) == 0) {
-		*port = 0;
-		*host = g_strdup("127.0.0.1");
-		*x11_file = NULL;
-	} else {
-		*port = atoi(tmp) + 6000;
-		*host = g_strdup(addr);
-		*x11_file = g_strdup_printf("/tmp/.X11-unix/X%d", *port);
+		*x11_file = g_strdup_printf("/tmp/.X11-unix/X%d", tmp);
 
 		if (!g_file_test(*x11_file, G_FILE_TEST_EXISTS)) {
 			g_free(*x11_file);
 			*x11_file = NULL;
+			*port = atoi(tmp) + 6000;
 		}
+	} else {
+		*port = atoi(tmp) + 6000;
+		*host = g_strdup(addr);
 	}
 
 	g_free(tmp);
