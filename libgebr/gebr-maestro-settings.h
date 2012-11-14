@@ -40,6 +40,13 @@ struct _GebrMaestroSettings {
 GebrMaestroSettings * gebr_maestro_settings_new(const gchar *path);
 
 /**
+ * gebr_maestro_settings_update:
+ *
+ * Update KeyFile from @ms to syncronize new informations
+ */
+void gebr_maestro_settings_update(GebrMaestroSettings *ms);
+
+/**
  * gebr_maestro_settings_save:
  *
  * Save the keyfile on file

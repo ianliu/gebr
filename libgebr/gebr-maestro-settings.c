@@ -49,6 +49,16 @@ gebr_maestro_settings_new(const gchar *path)
 }
 
 void
+gebr_maestro_settings_update(GebrMaestroSettings *ms)
+{
+	g_return_if_fail(ms != NULL);
+
+	g_key_file_free(ms->priv->maestro_key);
+	ms->priv->maestro_key = g_key_file_new();
+	g_key_file_load_from_file(ms->priv->maestro_key, ms->priv->path, G_KEY_FILE_NONE, NULL);
+}
+
+void
 gebr_maestro_settings_save(GebrMaestroSettings *ms)
 {
 	gsize length;
@@ -102,6 +112,9 @@ gebr_maestro_settings_prepend_address(GebrMaestroSettings *ms,
 	g_return_if_fail(domain != NULL);
 	g_return_if_fail(addr != NULL);
 
+	if (!*addr)
+		return;
+
 	GString *maestro, *buf;
 	gchar **list;
 
@@ -134,6 +147,9 @@ gebr_maestro_settings_append_address(GebrMaestroSettings *ms,
 	g_return_if_fail(ms != NULL);
 	g_return_if_fail(domain != NULL);
 	g_return_if_fail(addr != NULL);
+
+	if (!*addr)
+		return;
 
 	GString *maestro, *buf;
 	gchar **list;
