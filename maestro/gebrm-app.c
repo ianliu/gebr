@@ -650,6 +650,7 @@ on_daemon_init(GebrmDaemon *daemon,
 		goto err;
 	}
 
+	gebr_maestro_settings_add_node(app->priv->settings, nfsid, gebrm_daemon_get_address(daemon));
 err:
 	gebrm_daemon_set_error_type(daemon, error);
 	gebrm_daemon_set_error_msg(daemon, error_msg);

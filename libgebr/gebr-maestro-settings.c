@@ -266,8 +266,6 @@ gebr_maestro_settings_add_node(GebrMaestroSettings *ms, const gchar *domain, con
 	nodes = g_string_append(nodes, node);
 	nodes = g_string_append_c(nodes, ',');
 
-	g_debug("On '%s' : '%s', nodes->str:'%s'", __FILE__, __func__, nodes->str); 
-
 	g_key_file_set_value(ms->priv->maestro_key, domain, "nodes", nodes->str);
 	gebr_maestro_settings_save(ms);
 

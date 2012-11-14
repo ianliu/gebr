@@ -132,14 +132,14 @@ GKeyFile *gebr_maestro_settings_get_key_file(GebrMaestroSettings *ms);
 /**
  * gebr_maestro_settings_get_nodes:
  *
- * Get the nodes of @domain 
+ * Get the nodes of @domain
  */
 gchar *gebr_maestro_settings_get_nodes(GebrMaestroSettings *ms, const gchar *domain);
 
 /**
- * gebr_maestro_settings_set_nodes:
+ * gebr_maestro_settings_add_node:
  *
- * Append @node to the list of nodes of @domain 
+ * Append @node to the list of nodes of @domain
  */
 void gebr_maestro_settings_add_node(GebrMaestroSettings *ms,
 				    const gchar *domain,
