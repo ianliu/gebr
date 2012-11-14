@@ -2453,7 +2453,7 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 		const gchar *addrs = gebr_maestro_settings_get_addrs(ms, gebr.config.nfsid->str);
 		gchar **nfs_maestros = g_strsplit(addrs, ",", -1);
 		for (gint i = 0; nfs_maestros[i]; i++)
-			maestros = g_list_prepend(maestros, g_strdup(nfs_maestros[i]));
+			maestros = gebr_glist_append_gchar_avoid_duplicates(maestros, nfs_maestros[i]);
 		g_free(maestros_conf_path);
 		g_strfreev(nfs_maestros);
 		gebr_maestro_settings_free(ms);
@@ -2462,7 +2462,7 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 	if (def_maestros_keyfile) { 			//Environment variable
 		gchar **def_maestros = g_key_file_get_groups(def_maestros_keyfile, NULL);
 		for (gint i = 0; def_maestros[i]; i++)
-			maestros = g_list_prepend(maestros, g_strdup(def_maestros[i]));
+			maestros = gebr_glist_append_gchar_avoid_duplicates(maestros, def_maestros[i]);
 		g_strfreev(def_maestros);
 		g_key_file_free(def_maestros_keyfile);
 	}
@@ -2472,7 +2472,7 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 		g_list_free(known_maestros);
 	}
 
-	maestros = g_list_prepend(maestros, g_strdup(g_get_host_name()));
+	maestros = gebr_glist_append_gchar_avoid_duplicates(maestros, g_get_host_name());
 
 	return maestros;
 }

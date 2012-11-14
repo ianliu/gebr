@@ -448,12 +448,9 @@ gebr_post_config(gboolean has_gebr_config)
 
 	GList *maestros = gebr_maestro_controller_get_possible_maestros(has_gebr_config, has_maestro_config, upgrade_gebr);
 
-	if (!maestros)
-		gebr.config.maestro_address = g_string_new(g_get_host_name());
-	else {
-		gebr.config.maestro_address = g_string_new(maestros->data);
-		maestros = g_list_remove(maestros, maestros);
-	}
+	//FIXME: colocar na variável do maestro controller
+	gebr.config.maestro_address = g_string_new(maestros->data);
+	maestros = g_list_remove(maestros, maestros);
 
 	gebr_maestro_controller_connect(gebr.maestro_controller, gebr.config.maestro_address->str);
 	//TODO : colocar numa variavel
