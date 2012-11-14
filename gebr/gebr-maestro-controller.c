@@ -44,6 +44,7 @@ struct _GebrMaestroControllerPriv {
 	GtkListStore *model;
 
 	gchar *last_tag;
+	GList *potential_maestros;
 
 	GtkWindow *window;
 };
@@ -641,7 +642,7 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 					       G_TYPE_BOOLEAN,
 	                                       G_TYPE_STRING);
 	self->priv->maestro = NULL;
-
+	self->priv->potential_maestros = NULL;
 }
 
 static void
@@ -2438,8 +2439,8 @@ gebr_maestro_controller_get_known_maestros(void)
 
 GList *
 gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
-						 gboolean has_maestro_config,
-						 gboolean upgrade_gebr)
+					      gboolean has_maestro_config,
+					      gboolean upgrade_gebr)
 {
 	GList *maestros = NULL;
 
@@ -2474,4 +2475,16 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 	maestros = gebr_glist_append_gchar_avoiding_duplicates(maestros, g_get_host_name());
 
 	return maestros;
+}
+
+GList *
+gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc)
+{
+	return mc->priv->potential_maestros;
+}
+
+void
+gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc, GList *list)
+{
+	mc->priv->potential_maestros = list;
 }

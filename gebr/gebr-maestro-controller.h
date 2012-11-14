@@ -166,6 +166,10 @@ GList *gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 						     gboolean has_maestro_config,
 						     gboolean upgrade_gebr);
 
+GList *gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc);
+
+void gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc, GList *list);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_CONTROLLER_H__ */
