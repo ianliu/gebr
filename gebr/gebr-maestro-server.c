@@ -343,6 +343,11 @@ state_changed(GebrCommServer *comm_server,
 
 		gebr_project_line_show(gebr.ui_project_line);
 
+		if (g_strcmp0(maestro->priv->server->address->str, maestro->priv->address) != 0) {
+			g_free(maestro->priv->address);
+			maestro->priv->address = g_strdup(maestro->priv->server->address->str);
+		}
+
 		if (!gebr.populate_list) {
 			gebr.populate_list = TRUE;
 			project_list_populate();
