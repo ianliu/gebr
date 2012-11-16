@@ -1531,6 +1531,52 @@ on_combo_set_text(GtkCellLayout   *cell_layout,
 	g_free(description);
 }
 
+static void
+generate_automatic_label_for_maestro(GebrMaestroController *self)
+{
+	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
+	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+	const gchar *label = gebr_maestro_server_get_nfs_label(maestro);
+	const gchar *addr = gebr_maestro_server_get_address(maestro);
+
+	gchar *auto_label = g_strdup_printf("%s (%s)", label, addr);
+	gtk_entry_set_text(entry, auto_label);
+
+	GtkWidget *btn= GTK_WIDGET(gtk_builder_get_object(self->priv->builder, "btn_connect"));
+	gtk_widget_grab_focus(btn);
+}
+
+static gboolean
+on_maestro_focus_in(GtkWidget *entry,
+                    GdkEventFocus *event,
+                    GebrMaestroController *self)
+{
+	if (!entry)
+		return TRUE;
+
+	gtk_entry_set_text(GTK_ENTRY(entry), "");
+
+	return FALSE;
+}
+
+static gboolean
+on_maestro_focus_out(GtkWidget *entry,
+                     GdkEventFocus *event,
+                     GebrMaestroController *self)
+{
+	if (!entry)
+		return TRUE;
+
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(entry));
+	if (!text || !*text)
+		generate_automatic_label_for_maestro(self);
+
+	return FALSE;
+}
+
+
 void
 gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 {
@@ -1562,8 +1608,12 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GebrMaestroServer *maestro = self->priv->maestro;
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
-	gtk_entry_set_text(entry, gebr_maestro_server_get_address(maestro));
+
+	generate_automatic_label_for_maestro(self);
+
 	g_signal_connect(entry, "activate", G_CALLBACK(connect_to_maestro), self);
+	g_signal_connect(entry, "focus-in-event", G_CALLBACK(on_maestro_focus_in), self);
+	g_signal_connect(entry, "focus-out-event", G_CALLBACK(on_maestro_focus_out), self);
 
 	// Create maestro combo options
 	GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
@@ -1720,6 +1770,9 @@ connect_to_maestro(GtkEntry *entry,
 		   GebrMaestroController *self)
 {
 	const gchar *entry_text = gtk_entry_get_text(entry);
+	if (g_strrstr(entry_text, "("))
+		return;
+
 	const gchar *address = gebr_apply_pattern_on_address(entry_text);
 	gebr_maestro_controller_connect(self, address);
 }
@@ -2149,6 +2202,7 @@ update_maestro_view(GebrMaestroController *mc,
 			gebr_maestro_controller_update_daemon_model(maestro, mc);
 
 		on_get_alias_maestro_clicked(mc);
+		generate_automatic_label_for_maestro(mc);
 	}
 
 	gebr_maestro_controller_update_chooser_model(maestro, mc, NULL);
