@@ -658,7 +658,7 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 			gtk_window_present(GTK_WINDOW(window));
 		else {
 			window = create_help_edit_window(document);
-			g_hash_table_insert(gebr.help_edit_windows, document, window);
+			g_hash_table_insert(gebr.help_edit_windows, gebr_geoxml_document_ref(document), g_object_ref(window));
 			gtk_widget_show(window);
 		}
 	} else {

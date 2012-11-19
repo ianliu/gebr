@@ -110,7 +110,7 @@ gebr_init(gboolean has_config)
 
 	gebr.tmpfiles = NULL;
 
-	gebr.help_edit_windows = g_hash_table_new(NULL, NULL);
+	gebr.help_edit_windows = g_hash_table_new_full(NULL, NULL, (GDestroyNotify)gebr_geoxml_document_unref, g_object_unref);
 	gebr.xmls_by_filename = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	gebr.validator = gebr_validator_new((GebrGeoXmlDocument**)&gebr.flow,
