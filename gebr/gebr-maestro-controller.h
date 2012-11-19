@@ -181,6 +181,9 @@ gboolean gebr_maestro_controller_try_next_maestro(GebrMaestroController *mc);
 
 void gebr_maestro_controller_clean_potential_maestros(GebrMaestroController *mc);
 
+void gebr_maestro_controller_on_maestro_combo_changed(GtkComboBox *combo,
+                                                      GebrMaestroController *self);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_CONTROLLER_H__ */

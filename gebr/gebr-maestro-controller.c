@@ -1620,12 +1620,13 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, TRUE);
 	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(combo), renderer, on_combo_set_text, NULL, NULL);
 
-	GtkListStore *maestro_model = gtk_list_store_new(MAESTRO_DEFAULT_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING);
+	GtkListStore *maestro_model = gtk_list_store_new(MAESTRO_DEFAULT_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
 	gebr_maestro_controller_create_chooser_model(maestro_model, maestro);
 
 	gtk_combo_box_set_model(GTK_COMBO_BOX(combo), GTK_TREE_MODEL(maestro_model));
-	gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(combo), MAESTRO_DEFAULT_ADDR);
+	gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(combo), MAESTRO_DEFAULT_LABEL);
+	g_signal_connect(combo, "changed", G_CALLBACK(gebr_maestro_controller_on_maestro_combo_changed), self);
 
 	const gchar *error_type, *error_msg;
 	gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
@@ -2254,8 +2255,10 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	if (self->priv->maestro) {
 		GebrCommServerState state = gebr_maestro_server_get_state(self->priv->maestro);
 		if (g_strcmp0(address, gebr_maestro_server_get_address(self->priv->maestro)) == 0 &&
-		    (state == SERVER_STATE_CONNECT || state == SERVER_STATE_LOGGED))
+		    (state == SERVER_STATE_CONNECT || state == SERVER_STATE_LOGGED)) {
+			g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, self->priv->maestro);
 			return;
+		}
 
 		gebr_config_maestro_save();
 		gebr_maestro_server_disconnect(self->priv->maestro, FALSE);
@@ -2385,73 +2388,35 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
                                               GebrMaestroServer *maestro)
 {
 	GtkTreeIter iter;
-	const gchar *maestros_default = g_getenv(GEBR_DEFAULT_MAESTRO);
-	gboolean has_config_maestro = FALSE;
+	gboolean add_id = FALSE;
+	const gchar *local_maestro = g_get_host_name();
 
-	if (maestros_default) {
-		gchar **options = g_strsplit(maestros_default, ";", -1);
-		for (gint i = 0; options[i] && *options[i]; i++) {
-			gchar **m = g_strsplit(options[i], ",", -1);
+	gchar **ids = gebr_maestro_settings_get_ids(gebr.config.maestro_set);
+	for (gint j = 0; ids[j]; j++) {
+		add_id = TRUE;
+		gchar *maestro_id = gebr_maestro_settings_get_addr_for_domain(gebr.config.maestro_set, ids[j], 0);
+		gchar *label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, ids[j], TRUE);
 
-			if (g_strcmp0(gebr.config.maestro_address->str, m[0]) == 0)
-				has_config_maestro = TRUE;
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter,
+		                   MAESTRO_DEFAULT_LABEL, label,
+		                   MAESTRO__DEFAULT_DESCRIPTION, "Suggested domain",
+		                   MAESTRO_DEFAULT_ID, ids[j],
+		                   -1);
 
-			gtk_list_store_append(model, &iter);
-			gtk_list_store_set(model, &iter,
-			                   MAESTRO_DEFAULT_ADDR, m[0],
-			                   MAESTRO__DEFAULT_DESCRIPTION, m[1],
-			                   -1);
-
-			g_strfreev(m);
-		}
-		g_strfreev(options);
-
-		if (!maestro && g_strcmp0(gebr.config.maestro_address->str, "") && !has_config_maestro) {
-			gtk_list_store_append(model, &iter);
-			gtk_list_store_set(model, &iter,
-			                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-			                   MAESTRO__DEFAULT_DESCRIPTION, _("Suggested maestro"),
-			                   -1);
-		}
-	} else {
-		const gchar *local_maestro = g_get_host_name();
-		if (maestro) {
-			const gchar *current_maestro = gebr_maestro_server_get_address(maestro);
-			if (current_maestro && *current_maestro &&
-			    g_strcmp0(current_maestro, gebr.config.maestro_address->str) != 0) {
-				gtk_list_store_append(model, &iter);
-				gtk_list_store_set(model, &iter,
-				                   MAESTRO_DEFAULT_ADDR, current_maestro,
-				                   MAESTRO__DEFAULT_DESCRIPTION, _("Current maestro"),
-				                   -1);
-			}
-
-			if (gebr.config.maestro_address->len > 1) {
-				gtk_list_store_append(model, &iter);
-				gtk_list_store_set(model, &iter,
-						   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-						   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from File"),
-						   -1);
-			}
-
-			if (g_strcmp0(local_maestro, current_maestro) != 0 &&
-			    g_strcmp0(local_maestro, gebr.config.maestro_address->str) != 0 &&
-			    g_strcmp0(current_maestro, "localhost") != 0 &&
-			    g_strcmp0(gebr.config.maestro_address->str, "localhost") != 0) {
-				gtk_list_store_append(model, &iter);
-				gtk_list_store_set(model, &iter,
-				                   MAESTRO_DEFAULT_ADDR, "localhost",
-				                   MAESTRO__DEFAULT_DESCRIPTION, _("Maestro for local machine"),
-				                   -1);
-			}
-		} else {
-			gtk_list_store_append(model, &iter);
-			gtk_list_store_set(model, &iter,
-			                   MAESTRO_DEFAULT_ADDR, "localhost",
-			                   MAESTRO__DEFAULT_DESCRIPTION, _("Maestro for local machine"),
-			                   -1);
-		}
+		g_free(maestro_id);
+		g_free(label);
 	}
+
+	if (!add_id) {
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter,
+		                   MAESTRO_DEFAULT_LABEL, local_maestro,
+		                   MAESTRO__DEFAULT_DESCRIPTION, "Suggested domain",
+		                   MAESTRO_DEFAULT_ID, "",
+		                   -1);
+	}
+	g_strfreev(ids);
 }
 
 GKeyFile *
@@ -2602,4 +2567,34 @@ gebr_maestro_controller_clean_potential_maestros(GebrMaestroController *mc)
 
 	g_queue_foreach(mc->priv->potential_maestros, (GFunc)g_free, NULL);
 	g_queue_clear(mc->priv->potential_maestros);
+}
+
+void
+gebr_maestro_controller_on_maestro_combo_changed(GtkComboBox *combo,
+                                                 GebrMaestroController *self)
+{
+	gchar *id, *label;
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_combo_box_get_model(combo);
+
+	if (!gtk_combo_box_get_active_iter(combo, &iter))
+		return;
+
+	gtk_tree_model_get(model, &iter,
+	                   MAESTRO_DEFAULT_LABEL, &label,
+	                   MAESTRO_DEFAULT_ID, &id,
+	                   -1);
+
+	gchar *addr;
+
+	if (!id || !*id)
+		addr = g_strdup(label);
+	else
+		addr = gebr_maestro_settings_get_addr_for_domain(gebr.config.maestro_set, id, 0);
+
+	gebr_maestro_controller_connect(self, addr);
+
+	g_free(addr);
+	g_free(label);
+
 }
