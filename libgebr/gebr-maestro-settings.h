@@ -131,6 +131,13 @@ gchar *gebr_maestro_settings_get_label_for_domain(GebrMaestroSettings *ms,
 GKeyFile *gebr_maestro_settings_get_key_file(GebrMaestroSettings *ms);
 
 /**
+ * gebr_maestro_settings_get_ids:
+ *
+ * Get all ids from Keyfile for the @ms
+ */
+gchar **gebr_maestro_settings_get_ids(GebrMaestroSettings *ms);
+
+/**
  * gebr_maestro_settings_get_nodes:
  *
  * Get the nodes of @domain

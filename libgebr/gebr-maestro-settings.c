@@ -247,6 +247,17 @@ gebr_maestro_settings_get_key_file(GebrMaestroSettings *ms)
 	return ms->priv->maestro_key;
 }
 
+gchar **
+gebr_maestro_settings_get_ids(GebrMaestroSettings *ms)
+{
+	gsize len;
+	gchar **ids;
+
+	ids = g_key_file_get_groups(ms->priv->maestro_key, &len);
+
+	return ids;
+}
+
 gchar *
 gebr_maestro_settings_get_nodes(GebrMaestroSettings *ms, const gchar *domain)
 {
