@@ -680,7 +680,7 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		g_get_current_time(&gebr_time);
 		gchar *gebr_time_iso = g_time_val_to_iso8601(&gebr_time);
 		               gchar *maestro_location = g_find_program_in_path("gebrm");
-		               gchar *daemon_location = g_find_program_in_path("daemon");
+		               gchar *daemon_location = g_find_program_in_path("gebrd");
 
 			       gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 								     gebr_comm_protocol_defs.ini_def, 7,
