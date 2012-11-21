@@ -52,7 +52,7 @@ struct _GebrmDaemonPriv {
 
 	gint uncompleted_tasks;
 	gchar *mpi_flavors;
-	gboolean has_maestro;
+	gboolean has_gebrm;
 };
 
 enum {
@@ -309,7 +309,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *daemon_id    = g_list_nth_data (arguments, 8);
 				GString *home         = g_list_nth_data (arguments, 9);
 				GString *mpi_flavors  = g_list_nth_data (arguments, 10);
-				GString *has_maestro    = g_list_nth_data (arguments, 11);
+				GString *has_gebrm    = g_list_nth_data (arguments, 11);
 
 				gebr_comm_server_set_logged(server);
 				daemon->priv->is_initialized = TRUE;
@@ -321,8 +321,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
 				gebrm_daemon_set_home_dir(daemon, home->str);
-				gebrm_daemon_set_has_maestro(daemon, atoi(has_maestro->str) ? TRUE : FALSE);
-				g_debug("Definindo variavel mpi_flavors para '%s'", mpi_flavors->str);
+				gebrm_daemon_set_has_gebrm(daemon, atoi(has_gebrm->str) ? TRUE : FALSE);
+
 				gebrm_daemon_set_mpi_flavors(daemon, mpi_flavors->str);
 
 				gboolean use_key = gebr_comm_server_get_use_public_key(server);
@@ -330,7 +330,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 					gebr_comm_server_append_key(server, gebm_daemon_append_key_finished, daemon);
 				}
 
-				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
+				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL, gebrm_daemon_get_has_gebrm(daemon));
 
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -383,7 +383,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				if (!daemon->priv->is_initialized)
 					g_signal_emit(daemon, signals[DAEMON_INIT], 0,
-						      error_type->str, error_msg->str);
+						      error_type->str, error_msg->str,
+						      FALSE);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -612,8 +613,8 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrmDaemonClass, daemon_init),
 			     NULL, NULL,
-			     gebrm_cclosure_marshal_VOID__STRING_STRING,
-			     G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+			     gebrm_cclosure_marshal_VOID__STRING_STRING_BOOLEAN,
+			     G_TYPE_NONE, 3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	signals[PORT_DEFINE] =
 		g_signal_new("port-define",
@@ -701,6 +702,7 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 	daemon->priv->tasks = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	daemon->priv->mpi_flavors = NULL;
 	daemon->priv->timeout = -1;
+	daemon->priv->has_gebrm = FALSE;
 }
 
 GebrmDaemon *
@@ -1132,14 +1134,14 @@ gebrm_daemon_get_timeout(GebrmDaemon *daemon)
 }
 
 void
-gebrm_daemon_set_has_maestro(GebrmDaemon *daemon,
-			     gboolean has_maestro)
+gebrm_daemon_set_has_gebrm(GebrmDaemon *daemon,
+			   gboolean has_gebrm)
 {
-	daemon->priv->has_maestro = has_maestro;
+	daemon->priv->has_gebrm = has_gebrm;
 }
 
 gboolean
-gebrm_daemon_get_has_maestro(GebrmDaemon *daemon)
+gebrm_daemon_get_has_gebrm(GebrmDaemon *daemon)
 {
-	return daemon->priv->has_maestro;
+	return daemon->priv->has_gebrm;
 }

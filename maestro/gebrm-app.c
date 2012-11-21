@@ -625,6 +625,7 @@ static void
 on_daemon_init(GebrmDaemon *daemon,
 	       const gchar *error_type,
 	       const gchar *error_msg,
+	       gboolean has_gebrm,
 	       GebrmApp *app)
 {
 	const gchar *error = NULL;
@@ -653,6 +654,8 @@ on_daemon_init(GebrmDaemon *daemon,
 	}
 
 	gebr_maestro_settings_add_node(app->priv->settings, nfsid, gebrm_daemon_get_address(daemon));
+	if (has_gebrm)
+		gebr_maestro_settings_append_address(app->priv->settings, nfsid, gebrm_daemon_get_address(daemon));
 err:
 	gebrm_daemon_set_error_type(daemon, error);
 	gebrm_daemon_set_error_msg(daemon, error_msg);
@@ -689,8 +692,7 @@ err:
 			if (!home_defined)
 				gebrm_app_send_home_dir(app, socket, home);
 
-			if (send_nfs)
-				gebrm_app_send_nfsid(app, socket, nfsid);
+			gebrm_app_send_nfsid(app, socket, nfsid);
 
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon), state);
 

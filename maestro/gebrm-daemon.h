@@ -55,7 +55,8 @@ struct _GebrmDaemonClass {
 
 	void (*daemon_init) (GebrmDaemon *daemon,
 			     const gchar *error_type,
-			     const gchar *error_msg);
+			     const gchar *error_msg,
+			     gboolean has_gebrm);
 
 	void (*port_define) (GebrmDaemon *daemon,
 			     const gchar *gid,
@@ -227,9 +228,9 @@ void gebrm_daemon_set_timeout(GebrmDaemon *daemon,
 
 guint gebrm_daemon_get_timeout(GebrmDaemon *daemon);
 
-void gebrm_daemon_set_has_maestro(GebrmDaemon *daemon, gboolean has_maestro);
+void gebrm_daemon_set_has_gebrm(GebrmDaemon *daemon, gboolean has_gebrm);
 
-gboolean gebrm_daemon_get_has_maestro(GebrmDaemon *daemon);
+gboolean gebrm_daemon_get_has_gebrm(GebrmDaemon *daemon);
 
 G_END_DECLS
 
