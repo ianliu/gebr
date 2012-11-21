@@ -230,6 +230,8 @@ void gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_append_key_finished(void);
 
+gboolean gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro);
+
 void gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro,
                                     const gchar *addr);
 

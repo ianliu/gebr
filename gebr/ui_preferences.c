@@ -563,7 +563,8 @@ on_mount_gvfs_clicked(GtkButton *button,
 			continue;
 		}
 
-		gebr_maestro_server_mount_gvfs(maestro, gebr_daemon_server_get_address(daemon));
+		if (gebr_maestro_server_need_mount_gvfs (maestro))
+			gebr_maestro_server_mount_gvfs(maestro, gebr_daemon_server_get_address(daemon));
 		break;
 	}
 }
@@ -773,7 +774,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_signal_connect(button, "clicked", G_CALLBACK(on_mount_gvfs_clicked), up);
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-		if (gebr_maestro_server_has_connected_daemon(maestro))
+		if (gebr_maestro_server_has_connected_daemon(maestro) || !gebr_maestro_server_need_mount_gvfs (maestro))
 			set_status_for_mount(maestro, STATUS_MOUNT_OK, up);
 		else
 			set_status_for_mount(maestro, STATUS_MOUNT_NOK, up);

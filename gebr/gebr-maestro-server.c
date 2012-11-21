@@ -193,6 +193,18 @@ on_sftp_port_error(GebrCommPortProvider *self,
 		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 }
 
+gboolean
+gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro)
+{
+	if (maestro->priv->has_connected_daemon)
+		return FALSE;
+	const gchar *daemon_nfsid = gebr_maestro_server_get_nfsid(maestro);
+
+	if (g_strcmp0(gebr.config.nfsid->str, daemon_nfsid) == 0)
+		return FALSE;
+	return TRUE;
+}
+
 void
 gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 {
@@ -655,7 +667,7 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_daemon_server_set_cpu_model(daemon, cpu_model->str);
 			gebr_daemon_server_set_memory(daemon, memory->str);
 
-			if (state == SERVER_STATE_LOGGED && !maestro->priv->wizard_setup)
+			if (state == SERVER_STATE_LOGGED && !maestro->priv->wizard_setup && gebr_maestro_server_need_mount_gvfs (maestro))
 				gebr_maestro_server_mount_gvfs(maestro, addr->str);
 			else if (maestro->priv->has_connected_daemon && !have_logged_daemon(maestro))
 				unmount_gvfs(maestro, FALSE);
