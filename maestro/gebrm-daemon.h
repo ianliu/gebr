@@ -227,6 +227,10 @@ void gebrm_daemon_set_timeout(GebrmDaemon *daemon,
 
 guint gebrm_daemon_get_timeout(GebrmDaemon *daemon);
 
+void gebrm_daemon_set_has_maestro(GebrmDaemon *daemon, gboolean has_maestro);
+
+gboolean gebrm_daemon_get_has_maestro(GebrmDaemon *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */

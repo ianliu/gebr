@@ -311,7 +311,6 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			if (mpi_flavors->len > 0)
 				mpi_flavors = g_string_erase(mpi_flavors, mpi_flavors->len-1, 1);
 
-			g_debug("------------on daemon, Sending %s", mpi_flavors->str)  ;
 			const gchar *model_name;
 			const gchar *cpu_clock;
 			const gchar *total_memory;
@@ -321,9 +320,12 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			cpu_clock = gebrd_cpu_info_get (cpuinfo, 0, "cpu MHz");
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
+			gchar *gebrm_path = g_find_program_in_path("gebrm");
+			const gchar *has_maestro = gebrm_path ? "1" : "0";
+			g_free(gebrm_path);
 
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 11,
+							      gebr_comm_protocol_defs.ret_def, 12,
 							      gebrd->hostname,
 							      server_type,
 							      accounts_list->str,
@@ -334,7 +336,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      cpu_clock,
 							      gebrd_user_get_daemon_id(gebrd->user),
 							      g_get_home_dir(),
-							      mpi_flavors->str);
+							      mpi_flavors->str,
+							      has_maestro);
 			gebrd_cpu_info_free(cpuinfo);
 			gebrd_mem_info_free(meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);

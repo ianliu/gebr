@@ -52,6 +52,7 @@ struct _GebrmDaemonPriv {
 
 	gint uncompleted_tasks;
 	gchar *mpi_flavors;
+	gboolean has_maestro;
 };
 
 enum {
@@ -295,7 +296,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 11)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 12)) == NULL)
 					goto err;
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
@@ -308,11 +309,10 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *daemon_id    = g_list_nth_data (arguments, 8);
 				GString *home         = g_list_nth_data (arguments, 9);
 				GString *mpi_flavors  = g_list_nth_data (arguments, 10);
+				GString *has_maestro    = g_list_nth_data (arguments, 11);
 
 				gebr_comm_server_set_logged(server);
-
 				daemon->priv->is_initialized = TRUE;
-
 				server->socket->protocol->hostname = g_string_assign(server->socket->protocol->hostname, hostname->str);
 				gebrm_daemon_set_model_name(daemon, model_name->str);
 				gebrm_daemon_set_memory(daemon, total_memory->str);
@@ -321,6 +321,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
 				gebrm_daemon_set_home_dir(daemon, home->str);
+				gebrm_daemon_set_has_maestro(daemon, atoi(has_maestro->str) ? TRUE : FALSE);
 				g_debug("Definindo variavel mpi_flavors para '%s'", mpi_flavors->str);
 				gebrm_daemon_set_mpi_flavors(daemon, mpi_flavors->str);
 
@@ -1128,4 +1129,17 @@ guint
 gebrm_daemon_get_timeout(GebrmDaemon *daemon)
 {
 	return daemon->priv->timeout;
+}
+
+void
+gebrm_daemon_set_has_maestro(GebrmDaemon *daemon,
+			     gboolean has_maestro)
+{
+	daemon->priv->has_maestro = has_maestro;
+}
+
+gboolean
+gebrm_daemon_get_has_maestro(GebrmDaemon *daemon)
+{
+	return daemon->priv->has_maestro;
 }
