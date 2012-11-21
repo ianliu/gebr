@@ -29,6 +29,7 @@ struct _GebrmClientPriv {
 	GList *forwards;
 	GHashTable *job_ids;
 	guint x11_port;
+	gchar *x11_host;
 };
 
 enum {
@@ -114,6 +115,7 @@ gebrm_client_finalize(GObject *object)
 	g_list_free(client->priv->forwards);
 	g_object_unref(client->priv->socket);
 	g_free(client->priv->id);
+	g_free(client->priv->x11_host);
 	g_hash_table_destroy(client->priv->job_ids);
 
 	G_OBJECT_CLASS(gebrm_client_parent_class)->finalize(object);
@@ -170,13 +172,6 @@ gebrm_client_set_stream_socket(GebrmClient *client,
 			       GebrCommStreamSocket *stream)
 {
 	client->priv->socket = gebr_comm_protocol_socket_new_from_socket(stream);
-
-	client->priv->x11_port = gebr_comm_get_available_port(6010);
-	gchar *str = g_strdup_printf("%d", client->priv->x11_port);
-	gebr_comm_protocol_socket_oldmsg_send(client->priv->socket, FALSE,
-					      gebr_comm_protocol_defs.prt_def, 1,
-					      str);
-	g_free(str);
 }
 
 GebrCommProtocolSocket *
@@ -220,6 +215,12 @@ on_x11_port_defined(GebrCommPortProvider *self,
 {
 	data->forward = gebr_comm_port_provider_get_forward(self);
 	data->client->priv->forwards = g_list_prepend(data->client->priv->forwards, data);
+
+	gchar *tmp = g_strdup_printf("%d", port);
+	gebr_comm_protocol_socket_oldmsg_send(data->server->socket, FALSE,
+					      gebr_comm_protocol_defs.dsp_def, 1,
+					      tmp);
+	g_free(tmp);
 }
 
 static void
@@ -241,10 +242,10 @@ gebrm_client_add_forward(GebrmClient *client,
 
 	GebrCommPortProvider *port_provider =
 		gebr_comm_server_create_port_provider(server, GEBR_COMM_PORT_TYPE_X11);
-	gebr_comm_port_provider_set_display(port_provider, remote_port);
+	gebr_comm_port_provider_set_display(port_provider, client->priv->x11_port, client->priv->x11_host);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), data);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_error), client);
-	gebr_comm_port_provider_start_with_port(port_provider, client->priv->x11_port);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 void
@@ -291,11 +292,23 @@ gebrm_client_get_job_id_from_temp(GebrmClient *client,
 }
 
 guint
-gebrm_client_get_display_port(GebrmClient *self,
-			      const gchar *addr)
+gebrm_client_get_display_port(GebrmClient *self)
 {
-	if (gebr_comm_is_local_address(addr))
-		return self->priv->x11_port;
-	else
-		return 0;
+	return self->priv->x11_port;
+}
+
+const gchar *
+gebrm_client_get_display_host(GebrmClient *self)
+{
+	return self->priv->x11_host;
+}
+
+void
+gebrm_client_set_display(GebrmClient *client,
+                         guint display_port,
+                         const gchar *display_host)
+{
+	client->priv->x11_port = display_port;
+	client->priv->x11_host = g_strdup(display_host);
+
 }

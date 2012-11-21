@@ -334,25 +334,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			} else if (ret_hash == gebr_comm_protocol_defs.gid_def.code_hash) {
-				GList *arguments;
-
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-					goto err;
-
-				GString *gid  = g_list_nth_data(arguments, 0);
-				GString *port = g_list_nth_data(arguments, 1);
-
-				gebr_log(GEBR_LOG_INFO, "Got port %s for gid %s", port->str, gid->str);
-
-				if (g_strcmp0(port->str, "0") == 0) {
-					gebrm_daemon_set_error_type(daemon, "error:xauth");
-					gebrm_daemon_set_error_msg(daemon, "");
-				}
-
-				g_signal_emit(daemon, signals[PORT_DEFINE], 0, gid->str, port->str);
-
-				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
 				GList *arguments;
 				GString *daemon_addr, *status_id;

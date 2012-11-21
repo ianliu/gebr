@@ -41,7 +41,8 @@ struct _GebrCommPortProviderPriv {
 	GebrCommPortType type;
 	gchar *address;
 	gchar *sftp_address;
-	guint display;
+	guint display_port;
+	gchar *display_host;
 	GebrCommSsh *ssh_forward;
 	GebrCommPortForward *forward;
 };
@@ -132,6 +133,7 @@ gebr_comm_port_provider_finalize(GObject *object)
 {
 	GebrCommPortProvider *self = GEBR_COMM_PORT_PROVIDER(object);
 	g_free(self->priv->address);
+	g_free(self->priv->display_host);
 	g_free(self->priv->sftp_address);
 	G_OBJECT_CLASS(gebr_comm_port_provider_parent_class)->finalize(object);
 }
@@ -426,8 +428,8 @@ local_get_daemon_port(GebrCommPortProvider *self)
 void
 local_get_x11_port(GebrCommPortProvider *self)
 {
-	g_return_if_fail(self->priv->display != 0);
-	emit_signals(self, self->priv->display, NULL);
+	g_return_if_fail(self->priv->display_port != 0);
+	emit_signals(self, self->priv->display_port, NULL);
 }
 
 void
@@ -595,56 +597,54 @@ remote_get_daemon_port(GebrCommPortProvider *self)
 }
 
 static gchar *
-get_x11_command(GebrCommPortProvider *self, guint *x11_port)
+get_x11_command(GebrCommPortProvider *self)
 {
 	gchar *ssh_cmd;
-	guint16 display_number = 0;
 	GString *cmd_line;
-	GString *display_host = g_string_new(NULL);
-
-	gchar *display = getenv("DISPLAY");
-
-	// GeBR has display and Maestro don't
-	if (display && strlen(display)) {
-		g_string_append_len(display_host, display, (strchr(display, ':')-display)/sizeof(gchar));
-
-		GString *tmp = g_string_new(strchr(display, ':'));
-		if (sscanf(tmp->str, ":%hu.", &display_number) != 1)
-			display_number = 0;
-	}
-
-	if (!display_host->len)
-		g_string_assign(display_host, "127.0.0.1");
-
-	if (!display_number)
-		*x11_port = get_port(self);
-	else
-		*x11_port = display_number + 6000;
 
 	ssh_cmd = gebr_comm_get_ssh_command_with_key();
 	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -x -R %d:%s:%d %s -N", ssh_cmd, self->priv->display,
-			display_host->str, *x11_port, self->priv->address);
+	g_string_printf(cmd_line, "%s -v -x -R 0:%s:%d %s -N", ssh_cmd,
+			self->priv->display_host, self->priv->display_port, self->priv->address);
 
 	g_free(ssh_cmd);
 
 	return g_string_free(cmd_line, FALSE);
 }
 
+static void
+on_ssh_x11_stdout(GebrCommSsh *ssh,
+		  const GString *buffer,
+		  GebrCommPortProvider *self)
+{
+	gchar **parts = g_strsplit(buffer->str, " ", -1);
+
+	if (g_strv_length(parts) < 3)
+		g_return_if_reached();
+
+	guint forward_port = atoi(parts[2]);
+
+	if (forward_port == 0)
+		g_return_if_reached();
+
+	emit_signals(self, forward_port, NULL);
+
+	g_strfreev(parts);
+}
+
 void
 remote_get_x11_port(GebrCommPortProvider *self)
 {
-	static guint x11_port = 6010;
 	GebrCommSsh *ssh = gebr_comm_ssh_new();
 	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
 	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
+	g_signal_connect(ssh, "ssh-stdout", G_CALLBACK(on_ssh_x11_stdout), self);
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
-	gchar *command = get_x11_command(self, &x11_port);
+	gchar *command = get_x11_command(self);
 	gebr_comm_ssh_set_command(ssh, command);
 	set_forward(self, ssh);
 	gebr_comm_ssh_run(ssh);
 	g_free(command);
-	emit_signals(self, x11_port, NULL);
 }
 
 static gchar *
@@ -702,9 +702,16 @@ gebr_comm_port_provider_new(GebrCommPortType type,
 
 void
 gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
-				    guint display)
+				    guint display,
+				    const gchar *host)
 {
-	self->priv->display = display;
+	// Set dsplay port
+	self->priv->display_port = display;
+
+	// Set dsplay host
+	if (self->priv->display_host)
+		g_free(self->priv->display_host);
+	self->priv->display_host = g_strdup(host);
 }
 
 void

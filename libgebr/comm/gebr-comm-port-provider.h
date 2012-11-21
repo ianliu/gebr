@@ -119,7 +119,8 @@ GebrCommPortProvider *gebr_comm_port_provider_new(GebrCommPortType type,
  * the signal is the display itself.
  */
 void gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
-					 guint display);
+                                         guint display,
+                                         const gchar *host);
 
 /**
  * gebr_comm_port_provider_set_sftp_address:

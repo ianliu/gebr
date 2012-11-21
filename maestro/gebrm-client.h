@@ -102,16 +102,18 @@ void gebrm_client_add_temp_id(GebrmClient *client,
 const gchar *gebrm_client_get_job_id_from_temp(GebrmClient *client,
 					       const gchar *temp_id);
 
-/**
- * gebrm_client_get_display_port:
- *
- * Returns the display port for this client based on @addr. If @addr is the
- * local machine, returns the display port of this client, otherwise, returns
- * 0.
- */
-guint gebrm_client_get_display_port(GebrmClient *self,
-				    const gchar *addr);
+guint gebrm_client_get_display_port(GebrmClient *self);
 
+const gchar *gebrm_client_get_display_host(GebrmClient *self);
+
+/**
+ * gebrm_client_set_display:
+ *
+ * Sets the display for this client.
+ */
+void gebrm_client_set_display(GebrmClient *client,
+                              guint display_port,
+                              const gchar *display_host);
 
 G_END_DECLS
 

@@ -35,6 +35,7 @@
 #define ACCEPTS_PUBLIC_KEY "Authentications that can continue:"
 #define SSH_ERROR_PREFIX "ssh: "
 #define SENDING_COMMAND "Sending command: "
+#define REMOTE_FORWARD "remote forward success for:"
 
 
 G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
@@ -343,7 +344,7 @@ process_ssh_line(GebrCommSsh *self,
 			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
 			g_signal_emit(self, signals[SSH_ERROR], 0, line + strlen(SSH_ERROR_PREFIX));
 		}
-		else if (strstr(line, SENDING_COMMAND)) {
+		else if (strstr(line, SENDING_COMMAND) || strstr(line, REMOTE_FORWARD)) {
 			self->priv->out_state = SSH_OUT_STATE_COMMAND_OUTPUT;
 		}
 	} else if (self->priv->out_state == SSH_OUT_STATE_COMMAND_OUTPUT) {

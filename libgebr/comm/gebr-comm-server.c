@@ -509,32 +509,17 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	g_free(kill);
 }
 
-static gchar *
-get_x11_unix_file(void)
-{
-	const gchar *display = g_getenv("DISPLAY");
-
-	if (!display)
-		return NULL;
-
-	guint16 display_number;
-	if (sscanf(strchr(display, ':'), ":%hu.", &display_number) != 1)
-		return NULL;
-
-	return g_strdup_printf("/tmp/.X11-unix/X%hu", display_number);
-}
-
 static void
 on_x11_port_defined(GebrCommPortProvider *self,
 		    guint port,
 		    GebrCommServer *server)
 {
-	gchar *x11_file = get_x11_unix_file();
-	server->x11_forward_unix = gebr_comm_process_new();
-	GString *cmdline = g_string_new(NULL);
-	g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", port, x11_file);
-	gebr_comm_process_start(server->x11_forward_unix, cmdline);
-	g_string_free(cmdline, TRUE);
+	gchar *tmp = g_strdup_printf("%d", port);
+	gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
+					      gebr_comm_protocol_defs.dsp_def, 2,
+					      tmp,
+					      server->address->str);
+	g_free(tmp);
 }
 
 static void
@@ -545,17 +530,54 @@ on_x11_port_error(GebrCommPortProvider *self,
 	g_critical("Error when forwarding x11: %s", error->message);
 }
 
-void
-gebr_comm_server_forward_x11(GebrCommServer *server, guint16 remote_display)
+static guint
+get_gebr_display_port(GebrCommServer *server,
+                      gchar **display_host)
 {
+	gchar *x11_file, *host;
+	guint display_port;
+
+	gebr_comm_get_display(&x11_file, &display_port, &host);
+
+	if (display_host)
+		*display_host = g_strdup(host);
+
+	if (x11_file) {
+		display_port = gebr_comm_get_available_port(6012);
+		server->x11_forward_unix = gebr_comm_process_new();
+		GString *cmdline = g_string_new(NULL);
+		g_string_printf(cmdline, "gebr-comm-socketchannel %d %s", display_port, x11_file);
+		gebr_comm_process_start(server->x11_forward_unix, cmdline);
+		g_string_free(cmdline, TRUE);
+	} else if (display_port == 0) {
+		g_warn_if_reached();
+	}
+
+	g_free(host);
+	g_free(x11_file);
+
+	return display_port;
+}
+
+void
+gebr_comm_server_forward_x11(GebrCommServer *server)
+{
+	gchar *host;
+	guint display_port;
+
+	if (server->priv->is_maestro)
+		display_port = get_gebr_display_port(server, &host);
+
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(GEBR_COMM_PORT_TYPE_X11, server->address->str);
-	gebr_comm_port_provider_set_display(port_provider, remote_display);
+	gebr_comm_port_provider_set_display(port_provider, display_port, host);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_port_error), server);
 	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	gebr_comm_port_provider_start(port_provider);
+
+	g_free(host);
 }
 
 /**

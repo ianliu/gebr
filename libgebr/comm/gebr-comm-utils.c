@@ -53,7 +53,8 @@ gebr_comm_get_display(gchar **x11_file, guint *port, gchar **host)
 		tmp = g_strdup(numb);
 
 	if (strlen(addr) == 0) {
-		*x11_file = g_strdup_printf("/tmp/.X11-unix/X%d", tmp);
+		*x11_file = g_strdup_printf("/tmp/.X11-unix/X%s", tmp);
+		*host = g_strdup("127.0.0.1");
 
 		if (!g_file_test(*x11_file, G_FILE_TEST_EXISTS)) {
 			g_free(*x11_file);

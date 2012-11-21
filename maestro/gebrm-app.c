@@ -78,7 +78,14 @@ typedef struct {
 typedef struct {
 	GebrmDaemon *daemon;
 	GebrmClient *client;
+	guint port;
 } XauthQueueData;
+
+typedef struct {
+	GebrmApp *app;
+	GebrmClient *client;
+	GebrmDaemon *daemon;
+} GidInfo;
 
 /*
  * Global variables to implement GebrmAppSingleton methods.
@@ -558,11 +565,10 @@ process_xauth_queue(gpointer data)
 		return TRUE;
 
 	XauthQueueData *xauth = g_queue_pop_head(app->priv->xauth_queue);
-	const gchar *addr = gebrm_daemon_get_address(xauth->daemon);
 	gebrm_daemon_send_client_info(xauth->daemon,
 				      gebrm_client_get_id(xauth->client),
 				      gebrm_client_get_magic_cookie(xauth->client),
-				      gebrm_client_get_display_port(xauth->client, addr));
+				      xauth->port);
 	g_object_unref(xauth->daemon);
 	g_object_unref(xauth->client);
 	g_free(xauth);
@@ -571,12 +577,22 @@ process_xauth_queue(gpointer data)
 }
 
 static void
-queue_client_info(GebrmApp *app, GebrmDaemon *daemon, GebrmClient *client)
+queue_client_info(GebrmApp *app, GebrmDaemon *daemon, GebrmClient *client, guint port)
 {
 	XauthQueueData *xauth = g_new(XauthQueueData, 1);
 	xauth->daemon = g_object_ref(daemon);
 	xauth->client = g_object_ref(client);
+	xauth->port = port;
 	g_queue_push_tail(app->priv->xauth_queue, xauth);
+}
+
+static void
+on_x11_port_defined(GebrCommPortProvider *self,
+		    guint port,
+		    GidInfo *data)
+{
+	queue_client_info(data->app, data->daemon, data->client, port);
+	g_free(data);
 }
 
 static void
@@ -696,37 +712,22 @@ err:
 
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon), state);
 
+			GebrCommServer *serv = gebrm_daemon_get_server(daemon);
 
-			queue_client_info(app, daemon, i->data);
+			GidInfo *data = g_new(GidInfo, 1);
+			data->app = app;
+			data->daemon = daemon;
+			data->client = i->data;
+
+			GebrCommPortProvider *port_provider =
+				gebr_comm_server_create_port_provider(serv, GEBR_COMM_PORT_TYPE_X11);
+			g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), data);
+			gebr_comm_port_provider_set_display(port_provider,
+							    gebrm_client_get_display_port(data->client),
+							    gebrm_client_get_display_host(data->client));
+			gebr_comm_port_provider_start(port_provider);
+
 			gebrm_app_send_mpi_flavors(socket, daemon);
-		}
-	}
-}
-
-static void
-on_daemon_port_define(GebrmDaemon *daemon,
-		      const gchar *gid,
-		      const gchar *port,
-		      GebrmApp *app)
-{
-	GebrmClient *client = NULL;
-	for (GList *i = app->priv->connections; i; i = i->next) {
-		const gchar *id = gebrm_client_get_id(i->data);
-		if (g_strcmp0(id, gid) == 0) {
-			client = i->data;
-			break;
-		}
-	}
-
-	if (client) {
-		if (g_strcmp0(port, "0") == 0) {
-			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(client);
-			gebr_log(GEBR_LOG_ERROR, "Received port zero from %s for gid %s. Sending error to client.",
-				 gebrm_daemon_get_address(daemon), gid);
-			gebrm_daemon_send_error_message(daemon, socket);
-		} else {
-			GebrCommServer *server = gebrm_daemon_get_server(daemon);
-			gebrm_client_add_forward(client, server, atoi(port));
 		}
 	}
 }
@@ -776,8 +777,6 @@ gebrm_add_server_to_list(GebrmApp *app,
 			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
 	g_signal_connect(daemon, "daemon-init",
 			 G_CALLBACK(on_daemon_init), app);
-	g_signal_connect(daemon, "port-define",
-			 G_CALLBACK(on_daemon_port_define), app);
 	g_signal_connect(daemon, "ret-path",
 			 G_CALLBACK(on_daemon_ret_path), app);
 	g_signal_connect(daemon, "append-key",
@@ -1507,14 +1506,13 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				GebrCommServerState state = gebrm_daemon_get_state(i->data);
-				if ( state != SERVER_STATE_LOGGED)
+				if (state != SERVER_STATE_LOGGED)
 					state = SERVER_STATE_DISCONNECTED;
 
-				queue_client_info(app, i->data, client);
 				send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data), state);
 				send_groups_definitions(socket, i->data);
 
-				if ( state == SERVER_STATE_LOGGED) 
+				if (state == SERVER_STATE_LOGGED) 
 					gebrm_app_send_mpi_flavors(socket, i->data);
 			}
 
@@ -1567,6 +1565,40 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gebr_maestro_settings_change_label(app->priv->settings, nfsid->str, label->str);
 			gebr_maestro_settings_save(app->priv->settings);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.dsp_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *display = g_list_nth_data(arguments, 0);
+			GString *display_host = g_list_nth_data(arguments, 1);
+
+
+			guint display_port = atoi(display->str);
+			gebrm_client_set_display(client, display_port, display_host->str);
+
+			g_debug("MAESTRO RECEIVED PORT: %d and HOST: %s", display_port, display_host->str);
+
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				GebrCommServerState state = gebrm_daemon_get_state(i->data);
+				if (state != SERVER_STATE_LOGGED)
+					continue;
+				GebrCommServer *serv = gebrm_daemon_get_server(i->data);
+
+				GidInfo *data = g_new(GidInfo, 1);
+				data->app = app;
+				data->daemon = i->data;
+				data->client = client;
+
+				GebrCommPortProvider *port_provider =
+					gebr_comm_server_create_port_provider(serv, GEBR_COMM_PORT_TYPE_X11);
+				g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), data);
+				gebr_comm_port_provider_set_display(port_provider, display_port, display_host->str);
+				gebr_comm_port_provider_start(port_provider);
+			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -2000,6 +2032,10 @@ gebrm_load_automatic_daemons(GebrMaestroSettings *ms,
                              GebrmApp *app)
 {
 	const gchar *nfsid = gebrm_app_get_nfsid(ms);
+
+	if (!nfsid || !*nfsid)
+		return;
+
 	const gchar *nodes = gebr_maestro_settings_get_nodes(ms, nfsid);
 
 	if (!nodes || !*nodes)

@@ -357,12 +357,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *cookie = g_list_nth_data(arguments, 1);
 			GString *disp_str = g_list_nth_data(arguments, 2);
 
-			guint display;
-			if (g_strcmp0(disp_str->str, "0") == 0)
-				display = gebr_comm_get_available_port(6010);
-			else
-				display = atoi(disp_str->str);
-			display = MAX(display-6000, 0);
+			guint display = atoi(disp_str->str) - 6000;
 
 			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), GUINT_TO_POINTER(display));
 
@@ -375,13 +370,6 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 					display = 0;
 				g_free(tmp);
 			}
-
-			gchar *display_str = g_strdup_printf("%d", display ? display + 6000 : 0);
-			gebrd_message(GEBR_LOG_INFO, "Sending port %s to client %s!", display_str, gid->str);
-			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 2,
-							      gid->str, display_str);
-			g_free(display_str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}

@@ -588,6 +588,8 @@ parse_messages(GebrCommServer *comm_server,
 					gebr_maestro_server_connect_on_daemons(maestro);
 				}
 
+				gebr_comm_server_forward_x11(maestro->priv->server);
+
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
 				GList *arguments;
@@ -1066,18 +1068,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-		else if (message->hash == gebr_comm_protocol_defs.prt_def.code_hash) {
-			GList *arguments;
-
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-				goto err;
-
-			GString *port = g_list_nth_data(arguments, 0);
-
-			gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}

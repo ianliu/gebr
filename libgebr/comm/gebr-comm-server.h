@@ -194,7 +194,7 @@ void gebr_comm_server_kill(GebrCommServer *gebr_comm_server);
  *
  * Forward @remote_display to the local machine.
  */
-void gebr_comm_server_forward_x11(GebrCommServer *gebr_comm_server, guint16 remote_display);
+void gebr_comm_server_forward_x11(GebrCommServer *gebr_comm_server);
 
 const gchar *gebr_comm_server_state_to_string(GebrCommServerState state);
 
