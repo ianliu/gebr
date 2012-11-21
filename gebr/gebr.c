@@ -449,6 +449,7 @@ gebr_post_config(gboolean has_gebr_config)
 	GQueue *maestros = gebr_maestro_controller_get_possible_maestros(has_gebr_config, has_maestro_config, upgrade_gebr);
 
 	gchar *addr = g_queue_pop_head(maestros);
+	g_debug("On '%s' : '%s', %s", __FILE__, __func__, addr);
 	gebr.config.maestro_address = g_string_new(addr);
 	g_free(addr);
 

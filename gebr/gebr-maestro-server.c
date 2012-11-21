@@ -301,20 +301,24 @@ log_message(GebrCommServer *server,
 {
 }
 
-void
+gboolean
 gebr_maestro_server_set_error(GebrMaestroServer *maestro,
 			      const gchar *error_type,
 			      const gchar *error_msg)
 {
+	gboolean had_previous_error = FALSE;
 	gchar *tmp = g_strdup(error_type);
 	if (maestro->priv->error_type)
 		g_free(maestro->priv->error_type);
 	maestro->priv->error_type = tmp;
 
 	tmp = g_strdup(error_msg);
-	if (maestro->priv->error_msg)
+	if (maestro->priv->error_msg) {
 		g_free(maestro->priv->error_msg);
+		had_previous_error = TRUE;
+	}
 	maestro->priv->error_msg = tmp;
+	return had_previous_error;
 }
 
 void
@@ -345,8 +349,9 @@ state_changed(GebrCommServer *comm_server,
 
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
 		if (err && *err) {
-			gebr_maestro_server_set_error(maestro, "error:ssh", err);
-			gebr_maestro_controller_try_next_maestro(gebr.maestro_controller);
+			gboolean had_previous_error = gebr_maestro_server_set_error(maestro, "error:ssh", err);
+			if (!had_previous_error)	// Workaround to the issue of multiple emission of disconnected state
+				gebr_maestro_controller_try_next_maestro(gebr.maestro_controller);
 		}
 	}
 	else if (state == SERVER_STATE_LOGGED) {
