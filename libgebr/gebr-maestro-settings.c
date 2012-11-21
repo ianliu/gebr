@@ -279,15 +279,20 @@ gebr_maestro_settings_add_node(GebrMaestroSettings *ms, const gchar *domain, con
 	GError *err = NULL;
 	gchar *nodes_old = g_key_file_get_value(ms->priv->maestro_key, domain, "nodes", &err);
 
-	GString *nodes = g_string_new(nodes_old);
-	gchar **list = g_strsplit(nodes_old, ",", -1);
 	gboolean has_addr = FALSE;
+	GString *nodes = g_string_new(nodes_old);
 
-	if (list) {
-		for (gint i = 0; list[i]; i++) {
-			if (g_strcmp0(list[i], node) == 0)
-				has_addr = TRUE;
+	if (nodes->len > 1) {
+		gchar **list = g_strsplit(nodes_old, ",", -1);
+
+		if (list) {
+			for (gint i = 0; list[i]; i++) {
+				if (g_strcmp0(list[i], node) == 0)
+					has_addr = TRUE;
+			}
 		}
+
+		g_strfreev(list);
 	}
 
 	if (!has_addr) {
@@ -301,7 +306,6 @@ gebr_maestro_settings_add_node(GebrMaestroSettings *ms, const gchar *domain, con
 
 	g_string_free(nodes, TRUE);
 	g_free(nodes_old);
-	g_strfreev(list);
 
 	return;
 }
