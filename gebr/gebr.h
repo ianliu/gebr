@@ -158,6 +158,9 @@ struct gebr {
 		gboolean detailed_line_include_flow_report;
 		gboolean detailed_line_include_revisions_report;
 		GebrHelpParamTable detailed_line_parameter_table;
+
+		// Use key ssh instead of password
+		gboolean use_key_ssh;
 	} config;
 
 	/* Pixmaps */

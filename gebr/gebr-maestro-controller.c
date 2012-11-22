@@ -1867,7 +1867,7 @@ on_password_request(GebrMaestroServer *maestro,
 	GtkWidget *checkbox = gtk_check_button_new_with_label(ssh_info2);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), checkbox, TRUE, TRUE, 5);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), TRUE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), gebr.config.use_key_ssh);
 
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 10);
 
@@ -1890,18 +1890,17 @@ on_password_request(GebrMaestroServer *maestro,
 	}
 
 	gchar *password;
-	gboolean use_key;
 	if (confirmed) {
 		 password = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-		 use_key = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox));
+		 gebr.config.use_key_ssh = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox));
 	} else {
 		password = NULL;
-		use_key = FALSE;
+		gebr.config.use_key_ssh = FALSE;
 	}
 
 	PasswordKeys *pk = g_new(PasswordKeys, 1);
 	pk->password = g_strdup(password);
-	pk->use_public_key = use_key;
+	pk->use_public_key = gebr.config.use_key_ssh;
 
 	gtk_widget_destroy(dialog);
 	gdk_threads_leave();

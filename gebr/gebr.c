@@ -351,6 +351,7 @@ gebr_config_load(void)
 	gebr.config.save_preferences = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "save_preferences", TRUE);
 	gebr.config.detailed_flow_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", "gebr-report.css");
 	gebr.config.detailed_line_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "gebr-report.css");
+	gebr.config.use_key_ssh = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "use_key_ssh", TRUE);
 
 	/*gebr_g_key_file_load_int_key
 	 * For the sake of backwards compatibility...
@@ -495,6 +496,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean(gebr.config.key_file, "general", "native_editor", gebr.config.native_editor);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "save_preferences", gebr.config.save_preferences);
 	g_key_file_set_string(gebr.config.key_file, "general", "version", GEBR_VERSION);
+	g_key_file_set_boolean(gebr.config.key_file, "general", "use_key_ssh", gebr.config.use_key_ssh);
 
 	GString *home_variable;
 	home_variable = g_string_new(NULL);
