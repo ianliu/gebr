@@ -36,6 +36,7 @@
 #define SSH_ERROR_PREFIX "ssh: "
 #define SENDING_COMMAND "Sending command: "
 #define REMOTE_FORWARD "remote forward success for:"
+#define LIMITED_WRONG_PASSWORD "No more authentication methods to try"
 
 
 G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
@@ -228,6 +229,14 @@ write_pass_in_process(GebrCommTerminalProcess *process,
 void
 gebr_comm_ssh_set_password(GebrCommSsh *self, const gchar *password)
 {
+	if (!password) {
+		self->priv->attempts = 0;
+		self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
+		const gchar *err = "Please, type the password to connect.";
+		g_signal_emit(self, signals[SSH_ERROR], 0, err);
+		return;
+	}
+
 	self->priv->attempts++;
 	if (self->priv->state == GEBR_COMM_SSH_STATE_PASSWORD)
 		write_pass_in_process(self->priv->process, password);
@@ -343,6 +352,12 @@ process_ssh_line(GebrCommSsh *self,
 		else if (g_str_has_prefix(line, SSH_ERROR_PREFIX)) {
 			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
 			g_signal_emit(self, signals[SSH_ERROR], 0, line + strlen(SSH_ERROR_PREFIX));
+		}
+		else if (strstr(line, LIMITED_WRONG_PASSWORD)) {
+			self->priv->attempts = 0;
+			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
+			const gchar *err = "Wrong password. Please, try again.";
+			g_signal_emit(self, signals[SSH_ERROR], 0, err);
 		}
 		else if (strstr(line, SENDING_COMMAND) || strstr(line, REMOTE_FORWARD)) {
 			self->priv->out_state = SSH_OUT_STATE_COMMAND_OUTPUT;
