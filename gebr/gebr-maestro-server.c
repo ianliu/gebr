@@ -357,6 +357,13 @@ state_changed(GebrCommServer *comm_server,
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 		gebr_maestro_controller_clean_potential_maestros(gebr.maestro_controller);
+		gchar *gebrd_path = g_find_program_in_path("gebrd");
+		const gchar *hostname = g_get_host_name();
+
+		if (gebrd_path && g_strcmp0(maestro->priv->address, hostname) != 0)
+			gebr_maestro_controller_server_list_add(gebr.maestro_controller,
+			                                        hostname);
+		g_free(gebrd_path);
 
 		gebr_project_line_show(gebr.ui_project_line);
 
@@ -584,10 +591,7 @@ parse_messages(GebrCommServer *comm_server,
 				gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
 				if (use_key) {
 					gebr_comm_server_append_key(comm_server, gebr_maestro_server_append_key_finished, NULL);
-				} else if (!maestro->priv->wizard_setup) {
-					gebr_maestro_server_connect_on_daemons(maestro);
 				}
-
 				gebr_comm_server_forward_x11(maestro->priv->server);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);

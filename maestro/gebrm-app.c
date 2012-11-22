@@ -1177,6 +1177,35 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 }
 
 static void
+connect_all_daemons(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *addr)
+{
+	gboolean has_daemons = FALSE;
+	gboolean connect_daemon = FALSE;
+	app->priv->connect_all = TRUE;
+
+	for (GList *i = app->priv->daemons; i; i = i->next) {
+		has_daemons = TRUE;
+		GebrmDaemon *daemon = i->data;
+
+		gebrm_daemon_set_canceled(daemon, FALSE);
+
+		if (!connect_daemon && gebrm_daemon_get_state(daemon) != SERVER_STATE_LOGGED &&
+				g_strcmp0(gebrm_daemon_get_autoconnect(daemon), "on") == 0) {
+			gebrm_daemon_connect(daemon, NULL, socket);
+			connect_daemon = TRUE;
+		}
+	}
+	if (!has_daemons || addr) {
+		GebrmDaemon *d = gebrm_add_server_to_list(app, addr, "", NULL);
+
+		gebrm_daemon_connect(d, NULL, socket);
+		gebrm_config_save_server(d);
+	}
+	if (!connect_daemon)
+		app->priv->connect_all = FALSE;
+}
+
+static void
 on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
 		  GebrmApp *app)
@@ -1212,31 +1241,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_config_save_server(d);
 		}
 		else if (g_strcmp0(prefix, "/connect-daemons") == 0) {
-			gboolean has_daemons = FALSE;
-			gboolean connect_daemon = FALSE;
-			app->priv->connect_all = TRUE;
-			for (GList *i = app->priv->daemons; i; i = i->next) {
-				has_daemons = TRUE;
-				GebrmDaemon *daemon = i->data;
-
-				gebrm_daemon_set_canceled(daemon, FALSE);
-
-				if (!connect_daemon && gebrm_daemon_get_state(daemon) != SERVER_STATE_LOGGED &&
-				    g_strcmp0(gebrm_daemon_get_autoconnect(daemon), "on") == 0) {
-					gebrm_daemon_connect(daemon, NULL, socket);
-					connect_daemon = TRUE;
-				}
-			}
-			if (!has_daemons) {
-				const gchar *addr = gebr_comm_uri_get_param(uri, "address");
-
-				GebrmDaemon *d = gebrm_add_server_to_list(app, addr, "", NULL);
-
-				gebrm_daemon_connect(d, NULL, socket);
-				gebrm_config_save_server(d);
-			}
-			if (!connect_daemon)
-				app->priv->connect_all = FALSE;
+			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
+			connect_all_daemons(app, socket, addr);
 		}
 		else if (g_strcmp0(prefix, "/ssh-answer") == 0) {
 			GebrmDaemon *daemon = NULL;
@@ -2015,6 +2021,7 @@ on_new_connection(GebrCommListenSocket *listener,
 
 		// Create list for daemons to connect
 		gebrm_app_create_possible_daemon_list(app->priv->settings, app);
+		connect_all_daemons(app, socket, NULL);
 
 		g_signal_connect(socket, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
