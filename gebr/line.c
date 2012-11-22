@@ -622,8 +622,9 @@ create_base_import_file_chooser(gchar *title,
 
 	gchar *new_text;
 	const gchar *entry_text = gtk_entry_get_text(entry);
+	gboolean mount_gvfs = gebr_maestro_server_need_mount_gvfs (maestro);
 	gint response = gebr_file_chooser_set_remote_navigation(file_chooser,
-	                                                        entry_text, prefix, paths, FALSE,
+	                                                        entry_text, prefix, mount_gvfs, paths, FALSE,
 	                                                        &new_text);
 	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 

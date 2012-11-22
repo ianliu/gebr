@@ -1374,6 +1374,7 @@ gint
 gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
                                         const gchar *entry_text,
 					gchar *sftp_prefix,
+					gboolean need_gvfs,
                                         gchar ***paths,
                                         gboolean insert_bookmarks,
                                         gchar **new_text)
@@ -1389,7 +1390,8 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 		if (insert_bookmarks)
 			gebr_gtk_bookmarks_add_paths(filename, sftp_prefix, paths);
 	} else {
-		gebr_file_chooser_set_warning_widget(paths, filename, dialog);
+		if (need_gvfs)
+			gebr_file_chooser_set_warning_widget(paths, filename, dialog);
 	}
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);

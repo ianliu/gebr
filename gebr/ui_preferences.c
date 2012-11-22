@@ -636,7 +636,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
-			if (wizard_status == WIZARD_STATUS_WITHOUT_GVFS) {
+			if (wizard_status == WIZARD_STATUS_WITHOUT_GVFS && gebr_maestro_server_need_mount_gvfs (maestro)) {
 				gtk_label_set_markup(review_gvfs_label, _("<i>Disabled.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_gvfs_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
 			} else {
@@ -769,15 +769,20 @@ on_assistant_prepare(GtkAssistant *assistant,
 		}
 	}
 	else if (page == GVFS_PAGE) {
-		GtkButton *button = GTK_BUTTON(gtk_builder_get_object(up->builder, "mount_button"));
-
-		g_signal_connect(button, "clicked", G_CALLBACK(on_mount_gvfs_clicked), up);
-
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-		if (gebr_maestro_server_has_connected_daemon(maestro) || !gebr_maestro_server_need_mount_gvfs (maestro))
-			set_status_for_mount(maestro, STATUS_MOUNT_OK, up);
-		else
-			set_status_for_mount(maestro, STATUS_MOUNT_NOK, up);
+		if (!gebr_maestro_server_need_mount_gvfs (maestro)) {
+			up->prev_page = SERVERS_PAGE;
+			up->cancel_assistant = TRUE;
+			gtk_assistant_set_current_page(assistant, CANCEL_PAGE);
+		} else {
+			GtkButton *button = GTK_BUTTON(gtk_builder_get_object(up->builder, "mount_button"));
+			g_signal_connect(button, "clicked", G_CALLBACK(on_mount_gvfs_clicked), up);
+
+			if (gebr_maestro_server_has_connected_daemon(maestro) || !gebr_maestro_server_need_mount_gvfs (maestro))
+				set_status_for_mount(maestro, STATUS_MOUNT_OK, up);
+			else
+				set_status_for_mount(maestro, STATUS_MOUNT_NOK, up);
+		}
 	}
 }
 

@@ -163,6 +163,7 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 	gint response = gebr_file_chooser_set_remote_navigation(chooser_dialog,
 	                                                        entry_text,
 	                                                        file_entry->prefix,
+	                                                        TRUE,
 	                                                        paths, TRUE,
 	                                                        &new_text);
 
