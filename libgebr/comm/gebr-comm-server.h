@@ -125,16 +125,6 @@ struct _GebrCommServer {
 		void     (*state_changed)    (GebrCommServer *server,
 					      gpointer user_data);
 
-		GString *(*ssh_login)        (GebrCommServer *server,
-					      const gchar *title,
-					      const gchar *message,
-					      gpointer user_data);
-
-		gboolean (*ssh_question)     (GebrCommServer *server,
-					      const gchar *title,
-					      const gchar *message,
-					      gpointer user_data);
-
 		void     (*process_request)  (GebrCommServer *server,
 					      GebrCommHttpMsg *request,
 					      gpointer user_data);
@@ -228,22 +218,6 @@ void gebr_comm_server_set_password(GebrCommServer *server,
  */
 void gebr_comm_server_answer_question(GebrCommServer *server,
 				      gboolean response);
-
-/**
- * gebr_comm_server_set_interactive:
- * @server:
- * @setting:
- *
- * Whenever @server requires user interaction for typing password or answering
- * SSH question, @server will call the corresponding function in the operations
- * structure, but only if @setting is %FALSE, which is the default.
- *
- * If @setting is %TRUE, then the corresponding signal will be called, but no
- * answer will be expected; @server will wait until one of these functions is
- * called: gebr_comm_server_set_password(), gebr_comm_server_answer_question().
- */
-void gebr_comm_server_set_interactive(GebrCommServer *server,
-				      gboolean setting);
 
 /**
  * gebr_comm_server_get_accepts_key:

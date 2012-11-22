@@ -209,35 +209,6 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
 }
 
-static GString *
-gebrm_server_op_ssh_login(GebrCommServer *server,
-			  const gchar *title,
-			  const gchar *message,
-			  gpointer user_data)
-{
-	GebrmDaemon *daemon = user_data;
-
-	gboolean accepts_key = gebr_comm_server_get_accepts_key(server);
-
-	if (daemon->priv->client)
-		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
-						      gebr_comm_protocol_defs.pss_def, 2,
-						      server->address->str,
-						      accepts_key? "yes" : "no");
-
-	return NULL;
-}
-
-static gboolean
-gebrm_server_op_ssh_question(GebrCommServer *server,
-			     const gchar *title,
-			     const gchar *message,
-			     gpointer user_data)
-{
-	g_debug("[DAEMON] %s: Question %s %s", __func__, title, message);
-	return TRUE;
-}
-
 static void
 gebrm_server_op_process_request(GebrCommServer *server,
 				GebrCommHttpMsg *request,
@@ -447,8 +418,6 @@ err:	gebr_comm_message_free(message);
 static struct gebr_comm_server_ops daemon_ops = {
 	.log_message      = gebrm_server_op_log_message,
 	.state_changed    = gebrm_server_op_state_changed,
-	.ssh_login        = gebrm_server_op_ssh_login,
-	.ssh_question     = gebrm_server_op_ssh_question,
 	.process_request  = gebrm_server_op_process_request,
 	.process_response = gebrm_server_op_process_response,
 	.parse_messages   = gebrm_server_op_parse_messages
@@ -488,17 +457,17 @@ gebrm_daemon_get_property(GObject    *object,
 
 static void
 on_password_request(GebrCommServer *server,
-		    const gchar *title,
-		    const gchar *question,
+                    gboolean retry,
 		    GebrmDaemon *daemon)
 {
 	gboolean accepts_key = gebr_comm_server_get_accepts_key(server);
 
 	if (daemon->priv->client)
 		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
-						      gebr_comm_protocol_defs.pss_def, 2,
+						      gebr_comm_protocol_defs.pss_def, 3,
 						      server->address->str,
-						      accepts_key? "yes" : "no");
+						      accepts_key? "yes" : "no",
+						      retry? "yes" : "no");
 }
 
 static void
@@ -531,7 +500,6 @@ gebrm_daemon_set_property(GObject      *object,
 				 G_CALLBACK(on_password_request), daemon);
 		g_signal_connect(daemon->priv->server, "question-request",
 				 G_CALLBACK(on_question_request), daemon);
-		gebr_comm_server_set_interactive(daemon->priv->server, TRUE);
 		daemon->priv->server->user_data = daemon;
 		break;
 	default:

@@ -55,10 +55,7 @@ struct _GebrCommServerPriv {
 	GebrCommPortForward *connection_forward;
 
 	/* Interactive state variables */
-	gboolean is_interactive;
 	InteractiveState istate;
-	gchar *title;
-	gchar *description;
 
 	gboolean accepts_key;
 
@@ -119,7 +116,6 @@ gebr_comm_server_init(GebrCommServer *server)
 						   GebrCommServerPriv);
 
 	server->priv->istate = ISTATE_NONE;
-	server->priv->is_interactive = FALSE;
 	server->priv->pending_connections = NULL;
 }
 
@@ -134,9 +130,9 @@ gebr_comm_server_class_init(GebrCommServerClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrCommServerClass, password_request),
 			     NULL, NULL,
-			     _gebr_gui_marshal_VOID__STRING_STRING,
-			     G_TYPE_NONE, 2,
-			     G_TYPE_STRING, G_TYPE_STRING);
+			     g_cclosure_marshal_VOID__BOOLEAN,
+			     G_TYPE_NONE, 1,
+			     G_TYPE_BOOLEAN);
 
 	signals[QUESTION_REQUEST] =
 		g_signal_new("question-request",
@@ -283,9 +279,6 @@ on_comm_ssh_password(GebrCommSsh *ssh,
 		     gboolean retry,
 		     GebrCommServer *server)
 {
-	GString *string;
-	GString *password;
-
 	// FIXME: This is a workaround to a problem faced when using this
 	// method for other SSH connections other than the server connection
 	// itself. See gebr_comm_server_forward_remote_port() for an example.
@@ -297,54 +290,17 @@ on_comm_ssh_password(GebrCommSsh *ssh,
 
 	gboolean has_password = server->password && *server->password;
 
-	if (is_connected || (has_password && !server->tried_existant_pass)) {
+	if (is_connected || (!retry && has_password && !server->tried_existant_pass)) {
 		gebr_comm_ssh_set_password(ssh, server->password);
 		server->tried_existant_pass = TRUE;
 		return;
 	}
 
-	string = g_string_new(NULL);
-	if (!retry)
-		g_string_printf(string, _("Machine '%s' needs SSH login."),
-				server->address->str);
-	else
-		g_string_printf(string, _("Wrong password for machine '%s', please try again."),
-				server->address->str);
+	server->priv->istate = ISTATE_PASS;
 
-	if (server->priv->is_interactive) {
-		server->priv->istate = ISTATE_PASS;
+	server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
 
-		if (server->priv->title)
-			g_free(server->priv->title);
-
-		if (server->priv->description)
-			g_free(server->priv->description);
-
-		server->priv->title = g_strdup(_("Please, enter password"));
-		server->priv->description = g_strdup(string->str);
-
-		g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
-			      server->priv->title,
-			      server->priv->description);
-
-		server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
-	} else {
-		password = server->ops->ssh_login(server, _("SSH login:"), string->str,
-						  server->user_data);
-		if (password == NULL) {
-			g_free(server->password);
-			server->password = NULL;
-
-			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("No password provided."));
-			gebr_comm_ssh_kill(ssh);
-		} else {
-			gebr_comm_ssh_set_password(ssh, password->str);
-			server->password = g_string_free(password, FALSE);
-		}
-		server->tried_existant_pass = FALSE;
-	}
-
-	g_string_free(string, TRUE);
+	g_signal_emit(server, signals[PASSWORD_REQUEST], 0, retry);
 }
 
 static void
@@ -361,45 +317,19 @@ on_comm_ssh_question(GebrCommSsh *ssh,
 		     const gchar *question,
 		     GebrCommServer *server)
 {
-	if (server->priv->is_interactive) {
-		if (server->priv->title)
-			g_free(server->priv->title);
+	server->priv->istate = ISTATE_QUESTION;
 
-		if (server->priv->description)
-			g_free(server->priv->description);
+	gchar *title = g_strdup(_("Please, answer the question"));
+	gchar *description = g_strdup(question);
 
-		server->priv->title = g_strdup(_("Please, answer the question"));
-		server->priv->description = g_strdup(question);
+	g_signal_emit(server, signals[QUESTION_REQUEST], 0,
+	              title,
+	              description);
 
-		server->priv->istate = ISTATE_QUESTION;
-		g_signal_emit(server, signals[QUESTION_REQUEST], 0,
-			      server->priv->title,
-			      server->priv->description);
+	server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
 
-		server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
-	} else {
-		gchar *cached_answer = g_hash_table_lookup(server->priv->qa_cache, question);
-		gboolean answer;
-
-		if (!cached_answer) {
-			answer = server->ops->ssh_question(server,
-							   _("SSH host key question:"),
-							   question, server->user_data);
-
-			g_hash_table_insert(server->priv->qa_cache,
-					    g_strdup(question),
-					    g_strdup(answer?"yes":"no"));
-		} else {
-			answer = g_strcmp0(cached_answer, "yes") == 0;
-		}
-
-		gebr_comm_ssh_answer_question(ssh, answer);
-
-		if (!answer)
-			gebr_comm_server_disconnected_state(server,
-							    SERVER_ERROR_SSH,
-							    _("SSH host key rejected."));
-	}
+	g_free(title);
+	g_free(description);
 }
 
 static void
@@ -839,12 +769,6 @@ gebr_comm_server_answer_question(GebrCommServer *server,
 
 	g_list_free(server->priv->pending_connections);
 	server->priv->pending_connections = NULL;
-}
-
-void
-gebr_comm_server_set_interactive(GebrCommServer *server, gboolean setting)
-{
-	server->priv->is_interactive = setting;
 }
 
 static gchar *

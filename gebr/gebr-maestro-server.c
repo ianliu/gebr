@@ -95,12 +95,6 @@ static void log_message(GebrCommServer *server, GebrLogMessageType type,
 static void state_changed(GebrCommServer *comm_server,
 			       gpointer user_data);
 
-static GString *ssh_login(GebrCommServer *server, const gchar *title,
-			   const gchar *message, gpointer user_data);
-
-static gboolean ssh_question(GebrCommServer *server, const gchar *title,
-			      const gchar *message, gpointer user_data);
-
 static void process_request(GebrCommServer *server, GebrCommHttpMsg *request,
 			    gpointer user_data);
 
@@ -127,8 +121,6 @@ static void gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestr
 static const struct gebr_comm_server_ops maestro_ops = {
 	.log_message      = log_message,
 	.state_changed    = state_changed,
-	.ssh_login        = ssh_login,
-	.ssh_question     = ssh_question,
 	.process_request  = process_request,
 	.process_response = process_response,
 	.parse_messages   = parse_messages
@@ -393,43 +385,6 @@ state_changed(GebrCommServer *comm_server,
 	g_signal_emit(maestro, signals[MAESTRO_ERROR], 0,
 		      maestro->priv->address, error_type, error_msg);
 	g_signal_emit(maestro, signals[STATE_CHANGE], 0);
-}
-
-GString *
-ssh_login(GebrCommServer *server,
-	  const gchar *title,
-	  const gchar *message,
-	  gpointer user_data)
-{
-	PasswordKeys *pk;
-	GebrMaestroServer *maestro = user_data;
-
-	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
-		      gebr_maestro_server_get_display_address(maestro),
-		      gebr_comm_server_get_accepts_key(server), &pk);
-
-	if (!pk || !pk->password)
-		return NULL;
-
-	gebr_comm_server_set_use_public_key(server, pk->use_public_key);
-
-	return g_string_new(pk->password);
-}
-
-gboolean
-ssh_question(GebrCommServer *server,
-	     const gchar *title,
-	     const gchar *question,
-	     gpointer user_data)
-{
-	gboolean response;
-	GebrMaestroServer *maestro = user_data;
-
-	g_signal_emit(maestro, signals[QUESTION_REQUEST], 0,
-		      gebr_maestro_server_get_display_address(maestro),
-		      title, question, &response);
-
-	return response;
 }
 
 void
@@ -925,17 +880,19 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.pss_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
 			GString *addr = g_list_nth_data(arguments, 0);
 			GString *acpkey = g_list_nth_data(arguments, 1);
+			GString *retry = g_list_nth_data(arguments, 2);
 
 			PasswordKeys *pk;
 
 			gboolean accepts_key = g_strcmp0(acpkey->str, "yes") == 0;
+			gboolean retry_pass = g_strcmp0(retry->str, "yes") == 0;
 
-			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, addr->str, accepts_key, &pk);
+			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, addr->str, accepts_key, retry_pass, &pk);
 
 			if (pk) {
 				GebrCommUri *uri = gebr_comm_uri_new();
@@ -1204,8 +1161,9 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrMaestroServerClass, password_request),
 			     NULL, NULL,
-			     gebr_cclosure_marshal_POINTER__STRING_BOOL,
-			     G_TYPE_POINTER, 2, G_TYPE_STRING, G_TYPE_BOOLEAN);
+			     gebr_cclosure_marshal_POINTER__STRING_BOOL_BOOL,
+			     G_TYPE_POINTER, 3,
+			     G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN);
 
 	signals[DAEMONS_CHANGED] =
 			g_signal_new("daemons-changed",
@@ -1594,6 +1552,43 @@ gebr_maestro_server_disconnect(GebrMaestroServer *maestro,
 	gebr.config.execution_server_type = MAESTRO_SERVER_TYPE_GROUP;
 }
 
+static void
+on_password_request(GebrCommServer *server,
+                    gboolean retry,
+                    gpointer user_data)
+{
+	PasswordKeys *pk;
+	GebrMaestroServer *maestro = user_data;
+
+	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
+		      gebr_maestro_server_get_display_address(maestro),
+		      gebr_comm_server_get_accepts_key(server), retry, &pk);
+
+	if (!pk || !pk->password) {
+		gebr_comm_server_set_password(server, NULL);
+		return;
+	}
+
+	gebr_comm_server_set_use_public_key(server, pk->use_public_key);
+	gebr_comm_server_set_password(server, pk->password);
+}
+
+static void
+on_question_request(GebrCommServer *server,
+                    const gchar *title,
+                    const gchar *question,
+                    gpointer user_data)
+{
+	gboolean response;
+	GebrMaestroServer *maestro = user_data;
+
+	g_signal_emit(maestro, signals[QUESTION_REQUEST], 0,
+		      gebr_maestro_server_get_display_address(maestro),
+		      title, question, &response);
+
+	gebr_comm_server_answer_question(server, response);
+}
+
 void
 gebr_maestro_server_connect(GebrMaestroServer *maestro)
 {
@@ -1602,6 +1597,12 @@ gebr_maestro_server_connect(GebrMaestroServer *maestro)
 	maestro->priv->server = gebr_comm_server_new(maestro->priv->address,
 						     gebr_get_session_id(),
 						     &maestro_ops);
+
+	g_signal_connect(maestro->priv->server, "password-request",
+	                 G_CALLBACK(on_password_request), maestro);
+	g_signal_connect(maestro->priv->server, "question-request",
+	                 G_CALLBACK(on_question_request), maestro);
+
 	maestro->priv->server->user_data = maestro;
 	gebr_comm_server_connect(maestro->priv->server, TRUE);
 }

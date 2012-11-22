@@ -1825,7 +1825,8 @@ on_password_dialog_response(GtkDialog *dialog, gint response, gpointer pointer)
 static PasswordKeys *
 on_password_request(GebrMaestroServer *maestro,
 		    const gchar *address,
-		    gboolean acceps_key)
+		    gboolean acceps_key,
+		    gboolean retry)
 {
 	gdk_threads_enter();
 	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Enter password"),
@@ -1847,6 +1848,14 @@ on_password_request(GebrMaestroServer *maestro,
 	GtkWidget *ssh_info_label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(ssh_info_label), ssh_info);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ssh_info_label, FALSE, TRUE, 5);
+
+	if (retry) {
+		gchar *retry_msg = g_markup_printf_escaped(_("<i>Wrong password, please, try again.</i>"));
+		GtkWidget *ssh_pass_err = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(ssh_pass_err), retry_msg);
+		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ssh_pass_err, FALSE, TRUE, 1);
+		g_free(retry_msg);
+	}
 
 	GtkWidget *entry = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
