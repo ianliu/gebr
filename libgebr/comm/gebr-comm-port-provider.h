@@ -123,6 +123,14 @@ void gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
                                          const gchar *host);
 
 /**
+ * gebr_comm_port_provider_get_display_host:
+ *
+ * Returns: The display host when @self was constructed with
+ * GEBR_COMM_PORT_TYPE_X11 and after the port-defined signal was emitted.
+ */
+const gchar *gebr_comm_port_provider_get_display_host(GebrCommPortProvider *self);
+
+/**
  * gebr_comm_port_provider_set_sftp_address:
  * Sets the address to be used in a remote nfs case.
  */

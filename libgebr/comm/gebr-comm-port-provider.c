@@ -604,8 +604,8 @@ get_x11_command(GebrCommPortProvider *self)
 
 	ssh_cmd = gebr_comm_get_ssh_command_with_key();
 	cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -v -x -R 0:%s:%d %s -N", ssh_cmd,
-			self->priv->display_host, self->priv->display_port, self->priv->address);
+	g_string_printf(cmd_line, "%s -v -x -R 0:127.0.0.1:%d %s -N",
+			ssh_cmd, self->priv->display_port, self->priv->address);
 
 	g_free(ssh_cmd);
 
@@ -712,6 +712,15 @@ gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
 	if (self->priv->display_host)
 		g_free(self->priv->display_host);
 	self->priv->display_host = g_strdup(host);
+}
+
+const gchar *
+gebr_comm_port_provider_get_display_host(GebrCommPortProvider *self)
+{
+	if (is_local_address(self->priv->address))
+		return self->priv->display_host;
+	else
+		return "127.0.0.1";
 }
 
 void
