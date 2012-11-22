@@ -700,8 +700,11 @@ on_daemon_init(GebrmDaemon *daemon,
 	}
 
 	gebr_maestro_settings_add_node(app->priv->settings, nfsid, gebrm_daemon_get_address(daemon));
-	if (has_gebrm)
-		gebr_maestro_settings_append_address(app->priv->settings, nfsid, gebrm_daemon_get_address(daemon));
+	if (has_gebrm) {
+		gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), gebrm_daemon_get_address(daemon));
+		gebr_maestro_settings_append_address(app->priv->settings, nfsid, addr);
+		g_free(addr);
+	}
 err:
 	gebrm_daemon_set_error_type(daemon, error);
 	gebrm_daemon_set_error_msg(daemon, error_msg);
@@ -726,10 +729,13 @@ err:
 
 			gchar *gebrd_location = g_find_program_in_path("gebrd");
 
+			gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), g_get_host_name());
+
 			gebr_maestro_settings_set_domain(app->priv->settings, nfsid,
 			                                 label,
-			                                 g_get_host_name(),
+			                                 addr,
 							 gebrd_location ? g_get_host_name() : "");
+			g_free(addr);
 			g_free(gebrd_location);
 		}
 
@@ -1530,11 +1536,14 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gchar *nfsid = gebrm_app_get_nfsid(app->priv->settings);
 			if (nfsid) {
-				if (atoi(has_maestro->str))
-					gebr_maestro_settings_add_node(app->priv->settings, nfsid, address->str);
+				if (atoi(has_maestro->str)) {
+					gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), address->str);
+					gebr_maestro_settings_append_address(app->priv->settings, nfsid, addr);
+					g_free(addr);
+				}
 
 				if (atoi(has_daemon->str))
-					gebr_maestro_settings_append_address(app->priv->settings, nfsid, address->str);
+					gebr_maestro_settings_add_node(app->priv->settings, nfsid, address->str);
 			}
 			g_free(nfsid);
 

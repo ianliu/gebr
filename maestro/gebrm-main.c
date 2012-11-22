@@ -271,10 +271,12 @@ main(int argc, char *argv[])
 	const gchar *gebrd_location = g_find_program_in_path("gebrd");
 
 	if (nfsid) {
-		gebr_maestro_settings_append_address(ms, nfsid, local_addr);
+		gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), local_addr);
+		gebr_maestro_settings_append_address(ms, nfsid, addr);
 		gebr_maestro_settings_add_node(ms,
 					       nfsid,
 					       gebrd_location ? g_get_host_name() : "");
+		g_free(addr);
 	}
 
 	gebr_maestro_settings_free(ms);
