@@ -518,7 +518,7 @@ on_x11_port_defined(GebrCommPortProvider *self,
 	gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 					      gebr_comm_protocol_defs.dsp_def, 2,
 					      tmp,
-					      server->address->str);
+					      gebr_comm_port_provider_get_display_host(self));
 	g_free(tmp);
 }
 
