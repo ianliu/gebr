@@ -193,6 +193,7 @@ gebr_comm_server_new(const gchar * _address,
 
 	server->priv->gebr_id = g_strdup(gebr_id);
 	server->socket = gebr_comm_protocol_socket_new();
+	gebr_comm_protocol_reset(server->socket->protocol);
 	server->port = 0;
 	server->use_public_key = FALSE;
 	server->password = NULL;
@@ -200,14 +201,12 @@ gebr_comm_server_new(const gchar * _address,
 	server->x11_forward_unix = NULL;
 	server->ops = ops;
 	server->user_data = NULL;
-	server->last_error = g_string_new(NULL);
-	server->state = SERVER_STATE_UNKNOWN;
-	server->error = SERVER_ERROR_UNKNOWN;
+	server->last_error = g_string_new("");
+	server->state = SERVER_STATE_DISCONNECTED;
+	server->error = SERVER_ERROR_NONE;
+	server->socket->protocol->logged = FALSE;
 
 	server->priv->qa_cache = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-
-	gebr_comm_server_free_for_reuse(server);
-	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
 
 	g_signal_connect(server->socket, "connected",
 			 G_CALLBACK(gebr_comm_server_socket_connected), server);
@@ -628,13 +627,10 @@ static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServer
 		gebr_comm_server_state_to_string(server->state),
 		gebr_comm_server_state_to_string(state));
 
-	if (server->state != SERVER_STATE_UNKNOWN) {
-		if (state == SERVER_STATE_DISCONNECTED)
-			g_queue_clear(server->socket->protocol->waiting_ret_hashs);
-		server->state = state;
-		server->ops->state_changed(server, server->user_data);
-	} else
-		server->state = state;
+	if (state == SERVER_STATE_DISCONNECTED)
+		g_queue_clear(server->socket->protocol->waiting_ret_hashs);
+	server->state = state;
+	server->ops->state_changed(server, server->user_data);
 }
 
 /*
@@ -792,10 +788,8 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 }
 
 static const gchar *state_hash[] = {
-	"unknown",
 	"disconnected",
 	"run",
-	"open_tunnel",
 	"connect",
 	"logged",
 	NULL
@@ -814,7 +808,7 @@ gebr_comm_server_state_from_string(const gchar *string)
 		if (g_strcmp0(state_hash[i], string) == 0)
 			return (GebrCommServerState) i;
 
-	return SERVER_STATE_UNKNOWN;
+	return SERVER_STATE_DISCONNECTED;
 }
 
 GebrCommServerState

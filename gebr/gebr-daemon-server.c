@@ -166,7 +166,7 @@ gebr_daemon_server_class_init(GebrDaemonServerClass *klass)
 							 "State",
 							 "State",
 							 0, 100,
-							 SERVER_STATE_UNKNOWN,
+							 SERVER_STATE_DISCONNECTED,
 							 G_PARAM_READWRITE));
 
 	g_object_class_install_property(object_class,

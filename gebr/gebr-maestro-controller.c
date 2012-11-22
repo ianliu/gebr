@@ -1115,10 +1115,8 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 			visible = TRUE;
 			stock_id = GTK_STOCK_DISCONNECT;
 			break;
-		case SERVER_STATE_UNKNOWN:
 		case SERVER_STATE_CONNECT:
 		case SERVER_STATE_RUN:
-		case SERVER_STATE_OPEN_TUNNEL:
 			visible = FALSE;
 			stock_id = NULL;
 			break;

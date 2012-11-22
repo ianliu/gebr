@@ -1447,7 +1447,7 @@ gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 GebrCommServerState
 gebr_maestro_server_get_state(GebrMaestroServer *maestro)
 {
-	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), SERVER_STATE_UNKNOWN);
+	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), SERVER_STATE_DISCONNECTED);
 
 	return maestro->priv->server->state;
 }
