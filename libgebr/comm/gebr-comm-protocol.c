@@ -77,7 +77,7 @@ void gebr_comm_protocol_init(void)
 	gebr_comm_protocol_defs.tsk_def   = gebr_comm_message_def_create("TSK", FALSE, 1);
 	gebr_comm_protocol_defs.iss_def   = gebr_comm_message_def_create("ISS", FALSE, 1);
 	gebr_comm_protocol_defs.cmd_def   = gebr_comm_message_def_create("CMD", FALSE, 1);
-	gebr_comm_protocol_defs.pss_def   = gebr_comm_message_def_create("PSS", FALSE, 1);
+	gebr_comm_protocol_defs.pss_def   = gebr_comm_message_def_create("PSS", FALSE, 3);
 	gebr_comm_protocol_defs.qst_def   = gebr_comm_message_def_create("QST", FALSE, 3);
 	gebr_comm_protocol_defs.harakiri_def = gebr_comm_message_def_create("HRK", FALSE, 0);
 	gebr_comm_protocol_defs.dsp_def = gebr_comm_message_def_create("DSP", FALSE, 0);
