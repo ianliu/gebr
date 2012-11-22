@@ -643,6 +643,25 @@ gebrm_app_singleton_get(void)
 	return __app;
 }
 
+static gboolean
+has_duplicated_daemons(GebrmApp *app, const gchar *id)
+{
+	gboolean has_duplicated = FALSE;
+	gboolean added_daemon = FALSE;
+	for (GList *i = app->priv->daemons; i; i = i->next) {
+		const gchar *tmp = gebrm_daemon_get_id(i->data);
+		if (!tmp) {
+			const gchar *err_type = gebrm_daemon_get_error_type(i->data);
+			if (!err_type || g_strcmp0(err_type, "connection-refused") == 0)
+				added_daemon = TRUE;
+		}
+		if (g_strcmp0(tmp, id) == 0)
+			has_duplicated = TRUE;
+	}
+
+	return added_daemon && has_duplicated;
+}
+
 static void
 on_daemon_init(GebrmDaemon *daemon,
 	       const gchar *error_type,
@@ -657,9 +676,14 @@ on_daemon_init(GebrmDaemon *daemon,
 	gboolean home_defined = FALSE;
 	gboolean send_nfs = FALSE;
 
-	if (g_strcmp0(error_type, "connection-refused-job") == 0) {
-		error = "error:connection-refused-job";
-		goto err;
+	if (g_strcmp0(error_type, "connection-refused") == 0) {
+		if (has_duplicated_daemons(app, error_msg)) {
+                        error = "error:id";
+                        remove = TRUE;
+                } else {
+                        error = "error:connection-refused";
+                }
+                goto err;
 	}
 
 	if (g_strcmp0(error_type, "protocol") == 0) {
