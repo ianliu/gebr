@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-13 14:56-0200\n"
-"PO-Revision-Date: 2012-10-08 14:58-0300\n"
+"POT-Creation-Date: 2012-11-22 14:15-0200\n"
+"PO-Revision-Date: 2012-11-22 14:15-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -795,7 +795,7 @@ msgstr "Salvar '%s' como..."
 
 #: ../flow.c:410
 msgid "Flow file types (*.flwx)"
-msgstr "Tipos de arquivos de Fluxo (*flwz)"
+msgstr "Tipos de arquivos de Fluxo (*.flwx)"
 
 #: ../flow.c:449
 #, c-format
