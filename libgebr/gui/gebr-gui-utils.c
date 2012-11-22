@@ -1392,6 +1392,8 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 	} else {
 		if (need_gvfs)
 			gebr_file_chooser_set_warning_widget(paths, filename, dialog);
+		else
+			gebr_gtk_bookmarks_add_paths(filename, "file://", paths);
 	}
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
