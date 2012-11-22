@@ -1324,7 +1324,6 @@ on_servers_edited(GtkCellRendererText *cell,
 		return;
 
 	gebr_maestro_controller_server_list_add(mc, address);
-	insert_new_entry(mc);
 
 	GtkTreeIter iter;
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
@@ -1334,18 +1333,6 @@ on_servers_edited(GtkCellRendererText *cell,
 
 	g_free(address);
 }
-
-#if 0
-static void
-on_stop_to_maestro_clicked(GtkButton *button,
-                           GebrMaestroController *self)
-{
-	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
-	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
-
-	gebr_maestro_controller_stop(self, gtk_entry_get_text(entry));
-}
-#endif
 
 static void
 on_get_alias_maestro_clicked(GebrMaestroController *self)
@@ -2046,7 +2033,7 @@ on_daemon_error(GebrMaestroServer *maestro,
 		show_dialog = TRUE;
 	} else if (g_strcmp0(error_type, "error:protocol") == 0) {
 		message = _("This node is using a different protocol version");
-	} else if (g_strcmp0(error_type, "error:connection-refused-job") == 0) {
+	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
 		message = _("This node is working for another maestro");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {
 		message = error_msg;

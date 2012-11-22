@@ -575,8 +575,8 @@ parse_messages(GebrCommServer *comm_server,
 			GString *type = g_list_nth_data(arguments, 2);
 			GString *msg  = g_list_nth_data(arguments, 3);
 
-			g_debug("<<< DAEMON ERROR >>> Daemon %s reported an error of type %s : %s",
-				addr->str, type->str, msg->str);
+			g_debug("Error from %s: %s reported an error of type %s : %s",
+				prog->str, addr->str, type->str, msg->str);
 
 
 			if (g_strcmp0(prog->str, "daemon") == 0) {
