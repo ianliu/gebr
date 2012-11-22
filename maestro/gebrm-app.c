@@ -1197,9 +1197,10 @@ connect_all_daemons(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *
 	}
 	if (!has_daemons || addr) {
 		GebrmDaemon *d = gebrm_add_server_to_list(app, addr, "", NULL);
-
-		gebrm_daemon_connect(d, NULL, socket);
-		gebrm_config_save_server(d);
+		if(g_strcmp0(gebrm_daemon_get_autoconnect(d), "on") == 0) {
+			gebrm_daemon_connect(d, NULL, socket);
+			gebrm_config_save_server(d);
+		}
 	}
 	if (!connect_daemon)
 		app->priv->connect_all = FALSE;
