@@ -1345,13 +1345,11 @@ void project_line_export(void)
 	
 	file_filter = gtk_file_filter_new();
 	if (projects) {
-		gtk_file_filter_set_name(file_filter, _("Project (prjz, prjx)"));
-		gtk_file_filter_add_pattern(file_filter, "*.prjz");
+		gtk_file_filter_set_name(file_filter, _("Project (*.prjx)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjx");
 		extension = ".prjx";
 	} else {
-		gtk_file_filter_set_name(file_filter, _("Line (lnez, lnex)"));
-		gtk_file_filter_add_pattern(file_filter, "*.lnez");
+		gtk_file_filter_set_name(file_filter, _("Line (*.lnex)"));
 		gtk_file_filter_add_pattern(file_filter, "*.lnex");
 		extension = ".lnex";
 	}
