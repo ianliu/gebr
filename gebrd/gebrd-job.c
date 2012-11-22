@@ -561,30 +561,21 @@ void job_run_flow(GebrdJob *job)
 	/* command-line */
 	gsize bytes_written;
 	gchar *localized_cmd_line = g_filename_from_utf8(job->parent.cmd_line->str, -1, NULL, &bytes_written, NULL);
-	guint16 display_port = GPOINTER_TO_UINT(g_hash_table_lookup(gebrd->display_ports, job->gid->str));
-	g_debug("Looking for display port for gid %s: %d", job->gid->str, display_port);
-	if (display_port != 0) {
+	gchar *display = g_hash_table_lookup(gebrd->display_ports, job->gid->str);
+	g_debug("Looking for display port for gid %s: %s", job->gid->str, display);
+	if (display) {
 		GString *to_quote;
 		gchar *xauth_file = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", gebrd->hostname, "Xauthority", NULL);
 
 		to_quote = g_string_new(NULL);
-		if (job->parent.server_location == GEBR_COMM_SERVER_LOCATION_LOCAL) {
-			g_string_printf(to_quote, "export DISPLAY=:%d; export XAUTHORITY=%s; %s",
-					display_port, xauth_file, localized_cmd_line);
-			g_debug("I will run a flow on DISPLAY=:%d", display_port);
-			gchar * quoted = g_shell_quote(to_quote->str);
-			g_string_printf(cmd_line, "bash -l -c %s", quoted);
-			g_free(quoted);
-		} else {
-			g_string_printf(to_quote, "export DISPLAY=127.0.0.1:%d; export XAUTHORITY=%s; ",
-					display_port, xauth_file);
-			g_debug("Environment variables: %s", to_quote->str);
+		g_string_printf(to_quote, "export DISPLAY=%s; export XAUTHORITY=%s; ",
+				display, xauth_file);
+		g_debug("Environment variables: %s", to_quote->str);
 
-			g_string_append(to_quote, localized_cmd_line);
-			gchar * quoted = g_shell_quote(to_quote->str);
-			g_string_printf(cmd_line, "bash -l -c %s", quoted);
-			g_free(quoted);
-		}
+		g_string_append(to_quote, localized_cmd_line);
+		gchar * quoted = g_shell_quote(to_quote->str);
+		g_string_printf(cmd_line, "bash -l -c %s", quoted);
+		g_free(quoted);
 
 		g_string_free(to_quote, TRUE);
 		g_free(xauth_file);

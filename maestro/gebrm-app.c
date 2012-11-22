@@ -79,6 +79,7 @@ typedef struct {
 	GebrmDaemon *daemon;
 	GebrmClient *client;
 	guint port;
+	gchar *host;
 } XauthQueueData;
 
 typedef struct {
@@ -568,21 +569,24 @@ process_xauth_queue(gpointer data)
 	gebrm_daemon_send_client_info(xauth->daemon,
 				      gebrm_client_get_id(xauth->client),
 				      gebrm_client_get_magic_cookie(xauth->client),
+				      xauth->host,
 				      xauth->port);
 	g_object_unref(xauth->daemon);
 	g_object_unref(xauth->client);
+	g_free(xauth->host);
 	g_free(xauth);
 
 	return TRUE;
 }
 
 static void
-queue_client_info(GebrmApp *app, GebrmDaemon *daemon, GebrmClient *client, guint port)
+queue_client_info(GebrmApp *app, GebrmDaemon *daemon, GebrmClient *client, const gchar *host, guint port)
 {
 	XauthQueueData *xauth = g_new(XauthQueueData, 1);
 	xauth->daemon = g_object_ref(daemon);
 	xauth->client = g_object_ref(client);
 	xauth->port = port;
+	xauth->host = g_strdup(host);
 	g_queue_push_tail(app->priv->xauth_queue, xauth);
 }
 
@@ -591,7 +595,9 @@ on_x11_port_defined(GebrCommPortProvider *self,
 		    guint port,
 		    GidInfo *data)
 {
-	queue_client_info(data->app, data->daemon, data->client, port);
+	queue_client_info(data->app, data->daemon, data->client,
+			  gebr_comm_port_provider_get_display_host(self),
+			  port);
 	g_free(data);
 }
 

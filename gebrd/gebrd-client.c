@@ -350,24 +350,26 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
 
 			GString *gid = g_list_nth_data(arguments, 0);
 			GString *cookie = g_list_nth_data(arguments, 1);
-			GString *disp_str = g_list_nth_data(arguments, 2);
+			GString *display_host = g_list_nth_data(arguments, 2);
+			GString *disp_str = g_list_nth_data(arguments, 3);
 
-			guint display = atoi(disp_str->str) - 6000;
+			guint display_port = atoi(disp_str->str) - 6000;
+			gchar *display = g_strdup_printf("%s:%d", display_host->str, display_port);
 
-			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), GUINT_TO_POINTER(display));
+			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), display);
 
-			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);
+			g_debug("Received gid %s with cookie %s, DISPLAY=%s", gid->str, cookie->str, display);
 
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 				gebrd_message(GEBR_LOG_DEBUG, "Authorizing with system(xauth)");
-				gchar *tmp = g_strdup_printf(":%d", display);
+				gchar *tmp = g_strdup_printf(":%d", display_port);
 				if (!run_xauth_command("add", tmp, cookie->str))
-					display = 0;
+					display_port = 0;
 				g_free(tmp);
 			}
 

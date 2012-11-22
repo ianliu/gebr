@@ -190,6 +190,7 @@ GList *gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon);
 void gebrm_daemon_send_client_info(GebrmDaemon *daemon,
 				   const gchar *id,
 				   const gchar *cookie,
+				   const gchar *host,
 				   guint display_port);
 
 const gchar *gebrm_daemon_get_hostname(GebrmDaemon *daemon);
