@@ -2400,7 +2400,7 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter,
 		                   MAESTRO_DEFAULT_LABEL, label,
-		                   MAESTRO__DEFAULT_DESCRIPTION, "Suggested domain",
+		                   MAESTRO__DEFAULT_DESCRIPTION, "",
 		                   MAESTRO_DEFAULT_ID, ids[j],
 		                   -1);
 
@@ -2412,7 +2412,7 @@ gebr_maestro_controller_create_chooser_model (GtkListStore *model,
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter,
 		                   MAESTRO_DEFAULT_LABEL, local_maestro,
-		                   MAESTRO__DEFAULT_DESCRIPTION, "Suggested domain",
+		                   MAESTRO__DEFAULT_DESCRIPTION, "",
 		                   MAESTRO_DEFAULT_ID, "",
 		                   -1);
 	}
