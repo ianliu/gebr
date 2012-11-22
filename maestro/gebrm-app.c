@@ -1236,6 +1236,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 			if (pass) {
 				gebrm_daemon_connect(d, pass, socket);
 			} else {
+				gebrm_daemon_set_error_type(d, "error:ssh");
+				gebrm_daemon_set_error_msg(d, "Please, type the password to connect.");
+				gebrm_daemon_send_error_message(d, socket);
 				gebrm_daemon_set_canceled(d, TRUE);
 				gebrm_daemon_disconnect(d);
 			}
