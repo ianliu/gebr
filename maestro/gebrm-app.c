@@ -1221,6 +1221,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
 			const gchar *has_key = gebr_comm_uri_get_param(uri, "haskey");
+			addr = gebr_apply_pattern_on_address(addr);
 
 			gboolean use_key;
 			if (!g_strcmp0(has_key, "yes"))
