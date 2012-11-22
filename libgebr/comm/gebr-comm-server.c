@@ -215,8 +215,18 @@ gebr_comm_server_new(const gchar * _address,
 void
 gebr_comm_server_free(GebrCommServer *server)
 {
+	gebr_comm_server_free_x11_forward(server);
+
+	if (server->priv->qa_cache)
+		g_hash_table_remove_all(server->priv->qa_cache);
+
+	if (server->priv->connection_forward) {
+		gebr_comm_port_forward_close(server->priv->connection_forward);
+		gebr_comm_port_forward_free(server->priv->connection_forward);
+		server->priv->connection_forward = NULL;
+	}
+
 	g_string_free(server->last_error, TRUE);
-	gebr_comm_server_free_for_reuse(server);
 	g_string_free(server->address, TRUE);
 	g_free(server->password);
 	g_free(server->memory);
@@ -247,6 +257,7 @@ on_comm_ssh_error(GError *error,
 {
 	switch (error->code) {
 	case GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT:
+		gebr_comm_server_free_for_reuse(server);
 		g_string_assign(server->address, error->message);
 		gebr_comm_server_connect(server, TRUE);
 		break;
@@ -349,10 +360,12 @@ void gebr_comm_server_connect(GebrCommServer *server,
 {
 	GebrCommPortType port_type;
 
+	if (server->state != SERVER_STATE_DISCONNECTED)
+		return;
+
 	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("%p: Launching machine at '%s'."),
 				     server->socket, server->address->str);
 
-	gebr_comm_server_free_for_reuse(server);
 	gebr_comm_server_change_state(server, SERVER_STATE_RUN);
 
 	server->tried_existant_pass = FALSE;
@@ -377,7 +390,6 @@ void gebr_comm_server_connect(GebrCommServer *server,
 void gebr_comm_server_disconnect(GebrCommServer *server)
 {
 	gebr_comm_protocol_socket_disconnect(server->socket);
-	gebr_comm_server_free_for_reuse(server);
 }
 
 gboolean
@@ -650,7 +662,7 @@ static void
 gebr_comm_server_socket_disconnected(GebrCommProtocolSocket *socket,
 				     GebrCommServer *server)
 {
-	gebr_comm_server_disconnected_state(server, SERVER_ERROR_UNKNOWN, "");
+	gebr_comm_server_free_for_reuse(server);
 	gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Machine '%s' disconnected"), 
 				     server->address->str);
 }
@@ -696,7 +708,7 @@ static void gebr_comm_server_free_x11_forward(GebrCommServer *server)
  */
 static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 {
-	g_string_assign(server->last_error, "");
+	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
 
 	server->port = 0;
 	server->socket->protocol->logged = FALSE;
