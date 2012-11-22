@@ -193,7 +193,6 @@ gebr_comm_server_new(const gchar * _address,
 
 	server->priv->gebr_id = g_strdup(gebr_id);
 	server->socket = gebr_comm_protocol_socket_new();
-	gebr_comm_protocol_reset(server->socket->protocol);
 	server->port = 0;
 	server->use_public_key = FALSE;
 	server->password = NULL;
@@ -429,7 +428,6 @@ void gebr_comm_server_connect(GebrCommServer *server,
 				     server->socket, server->address->str);
 
 	gebr_comm_server_free_for_reuse(server);
-	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
 	gebr_comm_server_change_state(server, SERVER_STATE_RUN);
 
 	server->tried_existant_pass = FALSE;
@@ -454,7 +452,6 @@ void gebr_comm_server_connect(GebrCommServer *server,
 void gebr_comm_server_disconnect(GebrCommServer *server)
 {
 	gebr_comm_protocol_socket_disconnect(server->socket);
-	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
 	gebr_comm_server_free_for_reuse(server);
 }
 
@@ -774,11 +771,15 @@ static void gebr_comm_server_free_x11_forward(GebrCommServer *server)
  */
 static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 {
-	if (server->priv->qa_cache)
-		g_hash_table_remove_all(server->priv->qa_cache);
+	g_string_assign(server->last_error, "");
 
+	server->port = 0;
+	server->socket->protocol->logged = FALSE;
 	gebr_comm_protocol_reset(server->socket->protocol);
 	gebr_comm_server_free_x11_forward(server);
+
+	if (server->priv->qa_cache)
+		g_hash_table_remove_all(server->priv->qa_cache);
 
 	if (server->priv->connection_forward) {
 		gebr_comm_port_forward_close(server->priv->connection_forward);
