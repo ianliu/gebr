@@ -181,12 +181,7 @@ gebr_comm_server_new(const gchar * _address,
 	GebrCommServer *server;
 	server = g_object_new(GEBR_COMM_TYPE_SERVER, NULL);
 
-	if (g_strcmp0(_address, "127.0.0.1") == 0
-	    || g_strcmp0(_address, "localhost") == 0)
-		server->address = g_string_new(g_get_host_name());
-	else
-		server->address = g_string_new(_address);
-
+	server->address = g_string_new(gebr_apply_pattern_on_address(_address));
 	server->priv->gebr_id = g_strdup(gebr_id);
 	server->socket = gebr_comm_protocol_socket_new();
 	server->port = 0;
