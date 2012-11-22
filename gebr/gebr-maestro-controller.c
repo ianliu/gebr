@@ -96,6 +96,8 @@ static void on_maestro_error(GebrMaestroServer *maestro,
 			     const gchar *error_msg,
 			     GebrMaestroController *mc);
 
+static void generate_automatic_label_for_maestro(GebrMaestroController *self);
+
 static void gebr_maestro_controller_finalize(GObject *object);
 
 static void
@@ -1349,6 +1351,7 @@ on_get_alias_maestro_clicked(GebrMaestroController *self)
 static void
 on_save_alias_maestro_clicked(GebrMaestroController *self)
 {
+	GtkComboBox *combo = GTK_COMBO_BOX(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
 	const gchar *text_entry = gtk_entry_get_text(entry);
 
@@ -1362,6 +1365,10 @@ on_save_alias_maestro_clicked(GebrMaestroController *self)
 
 	gebr_maestro_server_set_nfs_label(maestro, text_entry);
 	gebr_maestro_settings_change_label(gebr.config.maestro_set, nfsid, text_entry);
+
+	// Update interface with new label
+	generate_automatic_label_for_maestro(self);
+	gebr_maestro_controller_update_chooser_model(maestro, self, combo);
 
 	// Send Label for Maestro
 	gebr_maestro_server_send_nfs_label(maestro);
@@ -1525,6 +1532,9 @@ generate_automatic_label_for_maestro(GebrMaestroController *self)
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
 	const gchar *label = gebr_maestro_server_get_nfs_label(maestro);
 	const gchar *addr = gebr_maestro_server_get_address(maestro);
+
+	if (!label)
+		label = "GêBR Domain";
 
 	gchar *auto_label = g_strdup_printf("%s (%s)", label, addr);
 	gtk_entry_set_text(entry, auto_label);
