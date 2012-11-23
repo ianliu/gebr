@@ -203,6 +203,9 @@ set_status_for_maestro(GebrMaestroController *self,
 		if (!label)
 			label = "GêBR Domain";
 
+		if (!g_strrstr(addr, "@"))
+			addr = g_strconcat(g_get_user_name(),"@", addr, NULL);
+
 		gchar *auto_label = g_strdup_printf("%s (%s)", label, addr);
 		gtk_entry_set_text(up->maestro_entry, auto_label);
 
