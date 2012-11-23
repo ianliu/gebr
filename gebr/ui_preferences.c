@@ -200,6 +200,9 @@ set_status_for_maestro(GebrMaestroController *self,
 		const gchar *label = gebr_maestro_server_get_nfs_label(maestro);
 		const gchar *addr = gebr_maestro_server_get_address(maestro);
 
+		if (!label)
+			label = "GêBR Domain";
+
 		gchar *auto_label = g_strdup_printf("%s (%s)", label, addr);
 		gtk_entry_set_text(up->maestro_entry, auto_label);
 
