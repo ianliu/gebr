@@ -1132,7 +1132,7 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 		}
 	}
 	else {
-		if (state != SERVER_STATE_DISCONNECTED)
+		if (state != SERVER_STATE_DISCONNECTED && state != SERVER_STATE_LOGGED)
 			visible = FALSE;
 		else
 			visible = TRUE;
