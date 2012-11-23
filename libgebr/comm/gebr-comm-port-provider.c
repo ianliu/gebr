@@ -37,7 +37,6 @@ struct _GebrCommPortForward {
 };
 
 struct _GebrCommPortProviderPriv {
-	guint port;
 	GebrCommPortType type;
 	gchar *address;
 	gchar *sftp_address;
@@ -45,6 +44,9 @@ struct _GebrCommPortProviderPriv {
 	gchar *display_host;
 	GebrCommSsh *ssh_forward;
 	GebrCommPortForward *forward;
+
+	guint port;
+	guint remote_port;
 };
 
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
@@ -55,6 +57,8 @@ static gchar *get_local_forward_command(GebrCommPortProvider *self,
 static gboolean get_port_from_command_output(GebrCommPortProvider *self,
                                              const gchar *buffer,
                                              guint *port);
+
+static void create_local_forward(GebrCommPortProvider *self);
 
 GQuark
 gebr_comm_port_provider_error_quark(void)
@@ -368,16 +372,27 @@ set_forward(GebrCommPortProvider *self, GebrCommSsh *ssh)
 	self->priv->forward->ssh = ssh;
 }
 
+static void
+clear_forward(GebrCommPortProvider *self)
+{
+	gebr_comm_port_forward_close(self->priv->forward);
+	gebr_comm_port_forward_free(self->priv->forward);
+	self->priv->forward = NULL;
+}
+
 static guint
 get_port(GebrCommPortProvider *self)
 {
+	static guint p1 = 6000;
+	static guint p2 = 3000;
+
 	if (self->priv->port != 0)
 		return self->priv->port;
 
 	if (self->priv->type == GEBR_COMM_PORT_TYPE_X11)
-		self->priv->port = gebr_comm_get_available_port(6000);
+		self->priv->port = p1++;
 	else
-		self->priv->port = gebr_comm_get_available_port(2000);
+		self->priv->port = p2++;
 
 	return self->priv->port;
 }
@@ -467,6 +482,18 @@ on_ssh_error(GebrCommSsh *ssh, const gchar *msg, GebrCommPortProvider *self)
 }
 
 static void
+on_local_forward_ssh_error(GebrCommSsh *ssh, const gchar *msg, GebrCommPortProvider *self)
+{
+	if (g_strcmp0(msg, GEBR_COMM_SSH_ERROR_LOCAL_FORWARD) == 0) {
+		clear_forward(self);
+		self->priv->port = 0;
+		create_local_forward(self);
+	} else {
+		on_ssh_error(ssh, msg, self);
+	}
+}
+
+static void
 on_ssh_key(GebrCommSsh *ssh, gboolean accepts_key, GebrCommPortProvider *self)
 {
 	g_signal_emit(self, signals[ACCEPTS_KEY], 0, accepts_key);
@@ -520,24 +547,23 @@ get_port_from_command_output(GebrCommPortProvider *self,
 	} else
 		*port = atoi(buffer + strlen(GEBR_PORT_PREFIX));
 
+	self->priv->remote_port = *port;
+
 	return TRUE;
 }
 
 static void
-on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
+create_local_forward(GebrCommPortProvider *self)
 {
-	guint port = 2125;
-	guint remote_port;
+	guint port;
+	gchar *command = get_local_forward_command(self, &port, "127.0.0.1", self->priv->remote_port);
 
-	if (!get_port_from_command_output(self, buffer->str, &remote_port))
-		return;
-
-	gchar *command = get_local_forward_command(self, &port, "127.0.0.1", remote_port);
+	g_debug("Got port %d for daemon %s", port, self->priv->address);
 
 	GebrCommSsh *ssh = gebr_comm_ssh_new();
 	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
 	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
-	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
+	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_local_forward_ssh_error), self);
 	gebr_comm_ssh_set_command(ssh, command);
 	set_forward(self, ssh);
 	gebr_comm_ssh_run(ssh);
@@ -547,6 +573,17 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	data->self = self;
 	data->port = port;
 	g_timeout_add(200, tunnel_poll_port, data);
+}
+
+static void
+on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
+{
+	guint remote_port;
+
+	if (!get_port_from_command_output(self, buffer->str, &remote_port))
+		return;
+
+	create_local_forward(self);
 }
 
 static gchar *
