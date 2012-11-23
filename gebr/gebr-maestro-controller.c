@@ -1835,11 +1835,10 @@ on_password_request(GebrMaestroServer *maestro,
 							NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
-	gchar *title = g_strdup_printf(_("Trying to connect on %s"), address);
+	gchar *title = g_strdup_printf(_("Connecting to %s"), address);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 
-	gchar *ssh_info = g_markup_printf_escaped(_("SSH connections are a standard way to access remote machines with\n"
-						    "reasonable level of security. <b>%s</b> is asking for your login\n"
+	gchar *ssh_info = g_markup_printf_escaped(_("<b>%s</b> is asking for your login\n"
 						    "password."), address);
 
 	GtkWidget *ssh_info_label = gtk_label_new(NULL);
@@ -1847,7 +1846,7 @@ on_password_request(GebrMaestroServer *maestro,
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ssh_info_label, FALSE, TRUE, 5);
 
 	if (retry) {
-		gchar *retry_msg = g_markup_printf_escaped(_("<i>Wrong password, please, try again.</i>"));
+		gchar *retry_msg = g_markup_printf_escaped(_("<i>Wrong password. Please, try again.</i>"));
 		GtkWidget *ssh_pass_err = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(ssh_pass_err), retry_msg);
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ssh_pass_err, FALSE, TRUE, 1);
