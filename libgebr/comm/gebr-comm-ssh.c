@@ -37,6 +37,7 @@
 #define SENDING_COMMAND "Sending command: "
 #define REMOTE_FORWARD "remote forward success for:"
 #define LIMITED_WRONG_PASSWORD "No more authentication methods to try"
+#define LOCAL_FORWARD_ERROR "Could not request local forwarding."
 
 
 G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
@@ -358,6 +359,10 @@ process_ssh_line(GebrCommSsh *self,
 			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
 			const gchar *err = "Wrong password. Please, try again.";
 			g_signal_emit(self, signals[SSH_ERROR], 0, err);
+		}
+		else if (strstr(line, LOCAL_FORWARD_ERROR)) {
+			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
+			g_signal_emit(self, signals[SSH_ERROR], 0, GEBR_COMM_SSH_ERROR_LOCAL_FORWARD);
 		}
 		else if (strstr(line, SENDING_COMMAND) || strstr(line, REMOTE_FORWARD)) {
 			self->priv->out_state = SSH_OUT_STATE_COMMAND_OUTPUT;

@@ -25,6 +25,8 @@
 
 G_BEGIN_DECLS
 
+#define GEBR_COMM_SSH_ERROR_LOCAL_FORWARD "error:local-forward"
+
 #define GEBR_COMM_TYPE_SSH            (gebr_comm_ssh_get_type ())
 #define GEBR_COMM_SSH(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_TYPE_SSH, GebrCommSsh))
 #define GEBR_COMM_SSH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEBR_COMM_TYPE_SSH, GebrCommSshClass))
