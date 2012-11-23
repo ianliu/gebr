@@ -241,7 +241,7 @@ on_title_entry_changed(GtkEntry *entry,
 		has_error = TRUE;
 	else
 		has_error = FALSE;
-	validate_entry(GTK_ENTRY(entry), has_error, _("Title cannot be empty"), _(""));
+	validate_entry(GTK_ENTRY(entry), has_error, _("Title cannot be empty"), NULL);
 	data->title_ready = !has_error;
 	on_changed_validate(data);
 }
@@ -2223,6 +2223,11 @@ validate_entry(GtkEntry *entry,
 	       const gchar *err_text,
 	       const gchar *clean_text)
 {
+	if (clean_text == NULL)
+		gtk_widget_set_has_tooltip (GTK_WIDGET(entry),FALSE);
+	else
+		gtk_widget_set_has_tooltip (GTK_WIDGET(entry),TRUE);
+
 	if (!error) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
