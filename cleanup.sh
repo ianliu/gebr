@@ -4,7 +4,7 @@ shopt -s nullglob
 shopt -s extglob
 signal=${2--15}
 
-function killg() {
+function killd() {
 echo Killing $1...
 for lock in $HOME/.gebr/$1/*/lock; do
     host=`basename ${lock%lock}`;
@@ -18,6 +18,22 @@ for lock in $HOME/.gebr/$1/*/lock; do
 done
 }
 
+function killm() {
+    echo Killing $1...
+    lock=$HOME/.gebr/$1/singleton_lock;
+    [ -e $lock ] && lock=`cat $lock` || return
+    lock=(${lock//:/ });
+    host=${lock[0]};
+    port=${lock[1]};
+    echo -en "$host\t"
+    ssh $host killall -q mpich-hello \; fuser -sk $signal $port/tcp
+    if [ $? -eq 1 ]; then
+        echo -e "CRASH"; rm -rf $lock
+    else
+        echo -e "OK"
+    fi
+}
+
 sync
 
 if [ -f $AUTH.cleanup ]; then
@@ -28,22 +44,21 @@ fi
 
 case x$1 in
     xgebrd | xd)
-      killg gebrd
+      killd gebrd
       ;;
     xgebrm | xm)
-      killg gebrm
+      killm gebrm
       ;;
     x-h | xhelp)
       echo "Usage: [-h|gebrd|gebrm|all|ALL]"
       ;;
     xall | x)
-      killg gebrd
-      killg gebrm
-      killg gebr-comm-socketchannel
+      killd gebrd
+      killm gebrm
       ;;
     xALL)
-      killg gebrd
-      killg gebrm
+      killd gebrd
+      killd gebrm
       [ -d ~/.gebr ] && mv ~/.gebr ~/.gebr-`date +%Y%m%d-%H%M%S`
       ;;
 esac
