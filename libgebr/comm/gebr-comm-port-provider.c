@@ -78,7 +78,7 @@ enum {
 enum {
 	PORT_DEFINED,
 	ERROR,
-	PASSWORD,
+	REPASS_PASSWORD,
 	QUESTION,
 	ACCEPTS_KEY,
 	LAST_SIGNAL
@@ -188,11 +188,11 @@ gebr_comm_port_provider_class_init(GebrCommPortProviderClass *klass)
 	/**
 	 * GebrCommPortProvider::password:
 	 */
-	signals[PASSWORD] =
-		g_signal_new("password",
+	signals[REPASS_PASSWORD] =
+		g_signal_new("repass-password",
 			     G_OBJECT_CLASS_TYPE(object_class),
 			     G_SIGNAL_RUN_LAST,
-			     G_STRUCT_OFFSET(GebrCommPortProviderClass, password),
+			     G_STRUCT_OFFSET(GebrCommPortProviderClass, repass_password),
 			     NULL, NULL,
 			     _gebr_gui_marshal_VOID__OBJECT_BOOLEAN,
 			     G_TYPE_NONE, 2,
@@ -462,7 +462,7 @@ local_get_sftp_port(GebrCommPortProvider *self)
 static void
 on_ssh_password(GebrCommSsh *ssh, gboolean retry, GebrCommPortProvider *self)
 {
-	g_signal_emit(self, signals[PASSWORD], 0, ssh, retry);
+	g_signal_emit(self, signals[REPASS_PASSWORD], 0, ssh, retry);
 }
 
 static void

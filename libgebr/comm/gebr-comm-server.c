@@ -67,7 +67,7 @@ struct _GebrCommServerPriv {
 G_DEFINE_TYPE(GebrCommServer, gebr_comm_server, G_TYPE_OBJECT);
 
 enum {
-	PASSWORD_REQUEST,
+	SERVER_PASSWORD_REQUEST,
 	QUESTION_REQUEST,
 	LAST_SIGNAL
 };
@@ -124,11 +124,11 @@ gebr_comm_server_class_init(GebrCommServerClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 
-	signals[PASSWORD_REQUEST] =
-		g_signal_new("password-request",
+	signals[SERVER_PASSWORD_REQUEST] =
+		g_signal_new("server-password-request",
 			     G_OBJECT_CLASS_TYPE(object_class),
 			     G_SIGNAL_RUN_LAST,
-			     G_STRUCT_OFFSET(GebrCommServerClass, password_request),
+			     G_STRUCT_OFFSET(GebrCommServerClass, server_password_request),
 			     NULL, NULL,
 			     g_cclosure_marshal_VOID__BOOLEAN,
 			     G_TYPE_NONE, 1,
@@ -288,17 +288,14 @@ on_comm_ssh_password(GebrCommSsh *ssh,
 	// FIXME: This is a workaround to a problem faced when using this
 	// method for other SSH connections other than the server connection
 	// itself. See gebr_comm_server_forward_remote_port() for an example.
-	//
-	// If the server is already connected, the cached password is correct
-	// so we can just write it into the process.
-	gboolean is_connected = (server->state == SERVER_STATE_CONNECT
-				 || server->state == SERVER_STATE_LOGGED);
 
-	gboolean has_password = server->password && *server->password;
+	if (retry) {
+		g_free(server->password);
+		server->password = NULL;
+	}
 
-	if (is_connected || (!retry && has_password && !server->tried_existant_pass)) {
+	if (server->password) {
 		gebr_comm_ssh_set_password(ssh, server->password);
-		server->tried_existant_pass = TRUE;
 		return;
 	}
 
@@ -306,7 +303,7 @@ on_comm_ssh_password(GebrCommSsh *ssh,
 
 	server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
 
-	g_signal_emit(server, signals[PASSWORD_REQUEST], 0, retry);
+	g_signal_emit(server, signals[SERVER_PASSWORD_REQUEST], 0, retry);
 }
 
 static void
@@ -368,7 +365,6 @@ void gebr_comm_server_connect(GebrCommServer *server,
 
 	gebr_comm_server_change_state(server, SERVER_STATE_RUN);
 
-	server->tried_existant_pass = FALSE;
 	server->priv->is_maestro = maestro;
 
 	if (maestro)
@@ -381,7 +377,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
-	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
+	g_signal_connect(port_provider, "repass-password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	g_signal_connect(port_provider, "accepts-key", G_CALLBACK(on_comm_port_accepts_key), server);
 	gebr_comm_port_provider_start(port_provider);
@@ -506,7 +502,7 @@ gebr_comm_server_forward_x11(GebrCommServer *server)
 	gebr_comm_port_provider_set_display(port_provider, display_port, host);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_port_error), server);
-	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
+	g_signal_connect(port_provider, "repass-password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	gebr_comm_port_provider_start(port_provider);
 
@@ -859,7 +855,7 @@ gebr_comm_server_create_port_provider(GebrCommServer *server,
 {
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(type, server->address->str);
-	g_signal_connect(port_provider, "password", G_CALLBACK(on_comm_port_password), server);
+	g_signal_connect(port_provider, "repass-password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	return port_provider;
 }

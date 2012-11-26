@@ -1564,10 +1564,8 @@ on_password_request(GebrCommServer *server,
 		      gebr_maestro_server_get_display_address(maestro),
 		      gebr_comm_server_get_accepts_key(server), retry, &pk);
 
-	if (!pk || !pk->password) {
-		gebr_comm_server_set_password(server, NULL);
+	if (!pk)
 		return;
-	}
 
 	gebr_comm_server_set_use_public_key(server, pk->use_public_key);
 	gebr_comm_server_set_password(server, pk->password);
@@ -1598,7 +1596,7 @@ gebr_maestro_server_connect(GebrMaestroServer *maestro)
 						     gebr_get_session_id(),
 						     &maestro_ops);
 
-	g_signal_connect(maestro->priv->server, "password-request",
+	g_signal_connect(maestro->priv->server, "server-password-request",
 	                 G_CALLBACK(on_password_request), maestro);
 	g_signal_connect(maestro->priv->server, "question-request",
 	                 G_CALLBACK(on_question_request), maestro);

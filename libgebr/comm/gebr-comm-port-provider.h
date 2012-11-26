@@ -94,7 +94,7 @@ struct _GebrCommPortProviderClass {
 
 	void (*port_defined) (GebrCommPortProvider *self, guint port);
 	void (*error) (GebrCommPortProvider *self, GError *error);
-	void (*password) (GebrCommPortProvider *self, GebrCommSsh *ssh, gboolean retry);
+	void (*repass_password) (GebrCommPortProvider *self, GebrCommSsh *ssh, gboolean retry);
 	void (*question) (GebrCommPortProvider *self, GebrCommSsh *ssh, const gchar *question);
 	void (*accepts_key) (GebrCommPortProvider *self, gboolean accepts_key);
 };

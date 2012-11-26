@@ -145,9 +145,9 @@ struct _GebrCommServer {
 struct _GebrCommServerClass {
 	GObjectClass parent_class;
 
-	void (*password_request) (GebrCommServer *server,
-				  const gchar *title,
-				  const gchar *message);
+	void (*server_password_request) (GebrCommServer *server,
+					 const gchar *title,
+				         const gchar *message);
 
 	void (*question_request) (GebrCommServer *server,
 				  const gchar *title,
