@@ -2200,7 +2200,6 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 
 	// Create list for daemons to connect
 	gebrm_app_create_possible_daemon_list(app->priv->settings, app);
-	connect_all_daemons(app, NULL, NULL);
 
 	g_main_loop_run(app->priv->main_loop);
 
