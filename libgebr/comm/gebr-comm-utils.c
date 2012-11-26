@@ -162,9 +162,15 @@ gebr_comm_get_available_port(guint start)
 gboolean
 gebr_comm_is_local_address(const gchar *addr)
 {
-	if (g_strcmp0(g_get_host_name(), addr) == 0
-	    || g_strcmp0(addr, "localhost") == 0
-	    || g_strcmp0(addr, "127.0.0.1") == 0)
-		return TRUE;
-	return FALSE;
+	gboolean ret;
+	gchar *tmp = gebr_get_address_without_user(addr);
+
+	if (g_strcmp0(g_get_host_name(), tmp) == 0
+	    || g_strcmp0(tmp, "localhost") == 0
+	    || g_strcmp0(tmp, "127.0.0.1") == 0)
+		ret = TRUE;
+	else
+		ret = FALSE;
+	g_free(tmp);
+	return ret;
 }
