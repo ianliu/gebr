@@ -93,7 +93,6 @@ struct _GebrCommServer {
 	/* ssh stuff */
 	gboolean use_public_key;
 	gchar *password;
-	gboolean tried_existant_pass;
 	gint16 tunnel_port;
 	GebrCommTerminalProcess *x11_forward_process;
 	GebrCommProcess *x11_forward_unix;
