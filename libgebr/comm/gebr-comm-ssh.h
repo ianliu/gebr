@@ -117,6 +117,9 @@ void gebr_comm_ssh_answer_question(GebrCommSsh *self, gboolean response);
 
 void gebr_comm_ssh_kill(GebrCommSsh *self);
 
+void gebr_comm_ssh_password_error(GebrCommSsh *self,
+                                  gboolean wrong_pass);
+
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_COMM_SSH_H__ */

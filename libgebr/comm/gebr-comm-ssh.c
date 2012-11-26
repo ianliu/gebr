@@ -228,13 +228,26 @@ write_pass_in_process(GebrCommTerminalProcess *process,
 }
 
 void
+gebr_comm_ssh_password_error(GebrCommSsh *self,
+                             gboolean wrong_pass)
+{
+	self->priv->attempts = 0;
+	self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
+
+	const gchar *err;
+	if (wrong_pass)
+		err = "Wrong password. Please, try again.";
+	else
+		err = "Please, type the password to connect.";
+
+	g_signal_emit(self, signals[SSH_ERROR], 0, err);
+}
+
+void
 gebr_comm_ssh_set_password(GebrCommSsh *self, const gchar *password)
 {
 	if (!password) {
-		self->priv->attempts = 0;
-		self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
-		const gchar *err = "Please, type the password to connect.";
-		g_signal_emit(self, signals[SSH_ERROR], 0, err);
+		gebr_comm_ssh_password_error(self, FALSE);
 		return;
 	}
 
@@ -355,10 +368,7 @@ process_ssh_line(GebrCommSsh *self,
 			g_signal_emit(self, signals[SSH_ERROR], 0, line + strlen(SSH_ERROR_PREFIX));
 		}
 		else if (strstr(line, LIMITED_WRONG_PASSWORD)) {
-			self->priv->attempts = 0;
-			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
-			const gchar *err = "Wrong password. Please, try again.";
-			g_signal_emit(self, signals[SSH_ERROR], 0, err);
+			gebr_comm_ssh_password_error(self, TRUE);
 		}
 		else if (strstr(line, LOCAL_FORWARD_ERROR)) {
 			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
