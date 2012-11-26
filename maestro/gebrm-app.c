@@ -2057,10 +2057,6 @@ on_new_connection(GebrCommListenSocket *listener,
 		// Reload Maestro Settings
 		gebr_maestro_settings_update(app->priv->settings);
 
-		// Create list for daemons to connect
-		gebrm_app_create_possible_daemon_list(app->priv->settings, app);
-		connect_all_daemons(app, socket, NULL);
-
 		g_signal_connect(socket, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
 		g_signal_connect(socket, "process-request",
@@ -2197,6 +2193,10 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 
 	// Create configuration for NFS
 	app->priv->settings = gebrm_app_create_configuration();
+
+	// Create list for daemons to connect
+	gebrm_app_create_possible_daemon_list(app->priv->settings, app);
+	connect_all_daemons(app, NULL, NULL);
 
 	g_main_loop_run(app->priv->main_loop);
 
