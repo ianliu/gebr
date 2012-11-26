@@ -96,7 +96,7 @@ struct _GebrCommSshClass {
 	 *
 	 * This signal is emitted when the connection ssh is finished.
 	 */
-	void (*ssh_finished) (GebrCommSsh *self, gpointer user_data);
+	void (*ssh_finished) (GebrCommSsh *self);
 };
 
 GType gebr_comm_ssh_get_type(void) G_GNUC_CONST;

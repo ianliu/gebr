@@ -159,9 +159,8 @@ gebr_comm_ssh_class_init(GebrCommSshClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrCommSshClass, ssh_finished),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__POINTER,
-			     G_TYPE_NONE, 1,
-			     G_TYPE_POINTER);
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(GebrCommSshPriv));
 }
@@ -297,6 +296,7 @@ ssh_process_finished(GebrCommTerminalProcess *process,
 {
 	self->priv->state = GEBR_COMM_SSH_STATE_FINISHED;
 	gebr_comm_terminal_process_free(process);
+	g_signal_emit(self, signals[SSH_FINISHED], 0);
 }
 
 static gchar *
