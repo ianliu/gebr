@@ -131,6 +131,15 @@ void gebrm_daemon_connect(GebrmDaemon            *daemon,
 void gebrm_daemon_set_password(GebrmDaemon *daemon,
                                const gchar *pass);
 
+/**
+ * gebrm_daemon_invalid_password:
+ * @daemon: The daemon to connect.
+ *
+ * When @daemon doesn't have password, setting errors and
+ * clean all pending connections.
+ */
+void gebrm_daemon_invalid_password(GebrmDaemon *daemon);
+
 void gebrm_daemon_disconnect(GebrmDaemon *daemon);
 
 GebrCommServer *gebrm_daemon_get_server(GebrmDaemon *daemon);

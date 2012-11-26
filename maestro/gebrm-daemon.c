@@ -741,6 +741,18 @@ gebrm_daemon_has_group(GebrmDaemon *daemon,
 }
 
 void
+gebrm_daemon_invalid_password(GebrmDaemon *daemon)
+{
+	gebr_comm_server_invalid_password(daemon->priv->server);
+
+	gebrm_daemon_set_error_type(daemon, "error:ssh");
+	gebrm_daemon_set_error_msg(daemon, "Please, type the password to connect.");
+
+	gebrm_daemon_set_canceled(daemon, TRUE);
+	gebrm_daemon_disconnect(daemon);
+}
+
+void
 gebrm_daemon_set_password(GebrmDaemon *daemon,
                           const gchar *pass)
 {
