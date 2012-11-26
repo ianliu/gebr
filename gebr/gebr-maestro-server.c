@@ -544,9 +544,11 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_comm_server_set_logged(comm_server);
 
 				gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
-				if (use_key) {
+				if (use_key)
 					gebr_comm_server_append_key(comm_server, gebr_maestro_server_append_key_finished, NULL);
-				}
+				else
+					gebr_maestro_server_connect_on_daemons(maestro);
+
 				gebr_comm_server_forward_x11(maestro->priv->server);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
