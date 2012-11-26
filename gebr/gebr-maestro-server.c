@@ -896,11 +896,11 @@ parse_messages(GebrCommServer *comm_server,
 
 			if (pk) {
 				GebrCommUri *uri = gebr_comm_uri_new();
-				gebr_comm_uri_set_prefix(uri, "/server");
+				gebr_comm_uri_set_prefix(uri, "/set-password");
 				gebr_comm_uri_add_param(uri, "address", addr->str);
 				if (pk->password)
 					gebr_comm_uri_add_param(uri, "pass", pk->password);
-				gebr_comm_uri_add_param(uri, "haskey", pk->use_public_key? "yes" : "no");
+
 				gchar *url = gebr_comm_uri_to_string(uri);
 				gebr_comm_uri_free(uri);
 
@@ -1307,7 +1307,6 @@ gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/server");
 	gebr_comm_uri_add_param(uri, "address", address);
-	gebr_comm_uri_add_param(uri, "pass", "");
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 

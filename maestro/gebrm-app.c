@@ -117,7 +117,6 @@ static gboolean gebrm_config_set_autoconnect(GebrmApp *app,
 
 static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
-					     const gchar *pass,
 					     const gchar *tags);
 
 static gboolean gebrm_update_tags_on_list_of_servers(GebrmApp *app,
@@ -441,7 +440,7 @@ gebrm_app_continue_connections_of_daemons(GebrmApp *app,
 		    && !gebrm_daemon_get_canceled(d)) {
 			for (GList *j = app->priv->connections; j; j = j->next) {
 				GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(j->data);
-				gebrm_daemon_connect(d, NULL, socket);
+				gebrm_daemon_connect(d, socket);
 			}
 			if (!from_append_key)
 				return;
@@ -503,7 +502,7 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 			for (GList *i = app->priv->connections; i; i = i->next) {
 				GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 				gebrm_daemon_set_reconnect(daemon, FALSE);
-				gebrm_daemon_connect(daemon, NULL, socket);
+				gebrm_daemon_connect(daemon, socket);
 			}
 		}
 	}
@@ -792,10 +791,8 @@ on_daemon_append_key(GebrmDaemon *daemon,
 }
 
 static GebrmDaemon *
-gebrm_add_server_to_list(GebrmApp *app,
-			 const gchar *address,
-			 const gchar *pass,
-			 const gchar *tags)
+gebrm_get_daemon_for_address(GebrmApp *app,
+                             const gchar *address)
 {
 	GebrmDaemon *daemon;
 
@@ -805,6 +802,20 @@ gebrm_add_server_to_list(GebrmApp *app,
 			return daemon;
 		}
 	}
+
+	return  NULL;
+}
+
+static GebrmDaemon *
+gebrm_add_server_to_list(GebrmApp *app,
+			 const gchar *address,
+			 const gchar *tags)
+{
+	GebrmDaemon *daemon;
+
+	daemon = gebrm_get_daemon_for_address(app, address);
+	if (daemon)
+		return daemon;
 
 	daemon = gebrm_daemon_new(address);
 	g_signal_connect(daemon, "state-change",
@@ -839,13 +850,7 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 	GebrmDaemon *daemon = NULL;
 	gboolean exist = FALSE;
 
-	for (GList *i = app->priv->daemons; i; i = i->next) {
-		daemon = i->data;
-		if (g_strcmp0(address, gebrm_daemon_get_address(daemon)) == 0) {
-			exist = TRUE;
-			break;
-		}
-	}
+	exist = gebrm_get_daemon_for_address(app, address) != NULL;
 
 	if (!exist)
 		g_warn_if_reached();
@@ -1221,14 +1226,14 @@ connect_all_daemons(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *
 
 		if (!connect_daemon && gebrm_daemon_get_state(daemon) != SERVER_STATE_LOGGED &&
 				g_strcmp0(gebrm_daemon_get_autoconnect(daemon), "on") == 0) {
-			gebrm_daemon_connect(daemon, NULL, socket);
+			gebrm_daemon_connect(daemon, socket);
 			connect_daemon = TRUE;
 		}
 	}
 	if (!has_daemons || addr) {
-		GebrmDaemon *d = gebrm_add_server_to_list(app, addr, "", NULL);
+		GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
 		if(g_strcmp0(gebrm_daemon_get_autoconnect(d), "on") == 0) {
-			gebrm_daemon_connect(d, NULL, socket);
+			gebrm_daemon_connect(d, socket);
 			gebrm_config_save_server(d);
 		}
 	}
@@ -1249,7 +1254,6 @@ on_client_request(GebrCommProtocolSocket *socket,
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_strcmp0(prefix, "/server") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
-			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
 			const gchar *has_key = gebr_comm_uri_get_param(uri, "haskey");
 			addr = gebr_apply_pattern_on_address(addr);
 
@@ -1259,21 +1263,31 @@ on_client_request(GebrCommProtocolSocket *socket,
 			else
 				use_key = FALSE;
 
-			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, pass, NULL);
+			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
 
 			GebrCommServer *server = gebrm_daemon_get_server(d);
 			gebr_comm_server_set_use_public_key(server, use_key);
 
-			if (pass) {
-				gebrm_daemon_connect(d, pass, socket);
-			} else {
-				gebrm_daemon_set_error_type(d, "error:ssh");
-				gebrm_daemon_set_error_msg(d, "Please, type the password to connect.");
-				gebrm_daemon_send_error_message(d, socket);
-				gebrm_daemon_set_canceled(d, TRUE);
-				gebrm_daemon_disconnect(d);
-			}
+			gebrm_daemon_connect(d, socket);
 			gebrm_config_save_server(d);
+		}
+		else if (g_strcmp0(prefix, "/set-password") == 0) {
+			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
+			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
+
+			GebrmDaemon *daemon = gebrm_get_daemon_for_address(app, addr);
+			if (daemon) {
+				if (pass) {
+					gebrm_daemon_set_password(daemon, pass);
+				} else {
+					gebrm_daemon_set_error_type(daemon, "error:ssh");
+					gebrm_daemon_set_error_msg(daemon, "Please, type the password to connect.");
+					gebrm_daemon_send_error_message(daemon, socket);
+					gebrm_daemon_set_canceled(daemon, TRUE);
+					gebrm_daemon_disconnect(daemon);
+				}
+			}
+
 		}
 		else if (g_strcmp0(prefix, "/connect-daemons") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
@@ -1284,9 +1298,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			const gchar *resp = gebr_comm_uri_get_param(uri, "response");
 
-			for (GList *i = app->priv->daemons; !daemon && i; i = i->next)
-				if (g_strcmp0(addr, gebrm_daemon_get_address(i->data)) == 0)
-					daemon = i->data;
+			daemon = gebrm_get_daemon_for_address(app, addr);
 			if (daemon)
 				gebrm_daeamon_answer_question(daemon, resp);
 		}
@@ -1459,25 +1471,20 @@ on_client_request(GebrCommProtocolSocket *socket,
 				g_free(tags);
 			}
 		} else if (g_strcmp0(prefix, "/autoconnect") == 0) {
-			const gchar *server = gebr_comm_uri_get_param(uri, "server");
+			const gchar *server_addr = gebr_comm_uri_get_param(uri, "server");
 			const gchar *is_ac  = gebr_comm_uri_get_param(uri, "ac");
 
 			GebrmDaemon *daemon = NULL;
-			for (GList *i = app->priv->daemons; i; i = i->next) {
-				const gchar *addr = gebrm_daemon_get_address(i->data);
-				if (g_strcmp0(addr, server) == 0) {
-					daemon = i->data;
-					break;
-				}
-			}
-			gebrm_daemon_set_autoconnect(daemon, is_ac);
+			daemon = gebrm_get_daemon_for_address(app, server_addr);
+			if (daemon)
+				gebrm_daemon_set_autoconnect(daemon, is_ac);
 
-			if (gebrm_config_set_autoconnect(app, server, is_ac)) {
+			if (gebrm_config_set_autoconnect(app, server_addr, is_ac)) {
 				for (GList *i = app->priv->connections; i; i = i->next) {
 					GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
 					gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
 					                                      gebr_comm_protocol_defs.ac_def, 2,
-					                                      server,
+					                                      server_addr,
 					                                      is_ac);
 				}
 			}
@@ -1893,7 +1900,7 @@ load_servers_from_key_file(GebrmApp *app,
 		for (int i = 0; groups[i]; i++) {
 			const gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
 			const gchar *ac = g_key_file_get_string(servers, groups[i], "autoconnect", NULL);
-			GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], NULL, tags);
+			GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], tags);
 			gebrm_daemon_set_autoconnect(daemon, ac);
 		}
 	}
@@ -2094,7 +2101,7 @@ gebrm_load_automatic_daemons(GebrMaestroSettings *ms,
 		return;
 
 	for (gint i = 0; daemons[i]; i++)
-		gebrm_add_server_to_list(app, daemons[i], NULL, "");
+		gebrm_add_server_to_list(app, daemons[i], "");
 
 	g_strfreev(daemons);
 }
@@ -2122,7 +2129,7 @@ gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
 	/*
 	 * Add localhost
 	 */
-	gebrm_add_server_to_list(app, g_get_host_name(), NULL, "");
+	gebrm_add_server_to_list(app, g_get_host_name(), "");
 }
 
 gboolean
