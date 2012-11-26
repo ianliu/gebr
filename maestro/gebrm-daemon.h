@@ -114,17 +114,22 @@ gboolean gebrm_daemon_has_group(GebrmDaemon *daemon,
  * @pass:   The password to connecto to @daemon.
  * @client: The client that made this requisition.
  *
- * Connects to this @daemon sending @pass as password. If @pass is %NULL and
- * @daemon needs a password, then @client will be asked for a password.
- * Otherwise @client and @pass are not used.
- *
- * If @pass and @client are %NULL and @daemon needs a password, then @daemon
- * will wait for future user interaction, provided by
- * gebrm_daemon_continue_stuck_connection().
+ * Connects to this @daemon.
+ * If @daemon needs a password, then @client will be asked for a password.
+ * Otherwise @client are not used.
  */
 void gebrm_daemon_connect(GebrmDaemon            *daemon,
-			  const gchar            *pass,
 			  GebrCommProtocolSocket *client);
+
+/**
+ * gebrm_daemon_set_password:
+ * @daemon: The daemon to connect.
+ * @pass:   The password to connecto to @daemon.
+ *
+ * Sets @pass on @daemon.
+ */
+void gebrm_daemon_set_password(GebrmDaemon *daemon,
+                               const gchar *pass);
 
 void gebrm_daemon_disconnect(GebrmDaemon *daemon);
 
