@@ -1608,6 +1608,7 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 				                                      old_path->str,
 				                                      option->str);
 			}
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.nfsid_def.code_hash) {
 			GList *arguments;
 
