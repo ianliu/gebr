@@ -207,6 +207,14 @@ void gebr_comm_server_set_password(GebrCommServer *server,
 				   const gchar *pass);
 
 /**
+ * gebr_comm_server_invalid_password:
+ *
+ * Set password error for all pending connections,
+ * and clean list after that.
+ */
+void gebr_comm_server_invalid_password(GebrCommServer *server);
+
+/**
  * gebr_comm_server_answer_question:
  *
  * Writes a response into @server.

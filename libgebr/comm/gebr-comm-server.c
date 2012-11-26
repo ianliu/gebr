@@ -264,6 +264,8 @@ on_comm_ssh_error(GError *error,
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SSH:
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH,
 		                                    "%s", g_strstrip(error->message));
+		g_free(server->password);
+		server->password = NULL;
 		break;
 	case GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE:
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED:
@@ -749,6 +751,16 @@ GebrCommServerState
 gebr_comm_server_get_state(GebrCommServer *server)
 {
 	return server->state;
+}
+
+void
+gebr_comm_server_invalid_password(GebrCommServer *server)
+{
+	for (GList *i = server->priv->pending_connections; i; i = i->next)
+		gebr_comm_ssh_password_error(i->data, FALSE);
+
+	g_list_free(server->priv->pending_connections);
+	server->priv->pending_connections = NULL;
 }
 
 void
