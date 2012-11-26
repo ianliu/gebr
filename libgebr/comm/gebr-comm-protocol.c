@@ -64,7 +64,7 @@ void gebr_comm_protocol_init(void)
 	gebr_comm_protocol_defs.nfsid_def = gebr_comm_message_def_create("NFS", FALSE, 1);
 	gebr_comm_protocol_defs.mpi_def = gebr_comm_message_def_create("MPI", FALSE, 2);
 
-	gebr_comm_protocol_defs.gid_def  = gebr_comm_message_def_create("GID", TRUE,  1);
+	gebr_comm_protocol_defs.gid_def  = gebr_comm_message_def_create("GID", FALSE,  1);
 
 	gebr_comm_protocol_defs.ssta_def = gebr_comm_message_def_create("SST", FALSE,  5);
 	gebr_comm_protocol_defs.srm_def = gebr_comm_message_def_create("SRM", FALSE,  1);
