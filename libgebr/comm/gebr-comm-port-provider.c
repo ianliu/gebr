@@ -45,6 +45,8 @@ struct _GebrCommPortProviderPriv {
 	GebrCommSsh *ssh_forward;
 	GebrCommPortForward *forward;
 
+	guint port_timeout;
+
 	guint port;
 	guint remote_port;
 };
@@ -378,6 +380,9 @@ clear_forward(GebrCommPortProvider *self)
 	gebr_comm_port_forward_close(self->priv->forward);
 	gebr_comm_port_forward_free(self->priv->forward);
 	self->priv->forward = NULL;
+
+	if (self->priv->port_timeout)
+		g_source_remove(self->priv->port_timeout);
 }
 
 static guint
@@ -572,7 +577,7 @@ create_local_forward(GebrCommPortProvider *self)
 	struct TunnelPollData *data = g_new(struct TunnelPollData, 1);
 	data->self = self;
 	data->port = port;
-	g_timeout_add(200, tunnel_poll_port, data);
+	self->priv->port_timeout = g_timeout_add(200, tunnel_poll_port, data);
 }
 
 static void
