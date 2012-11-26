@@ -380,9 +380,6 @@ clear_forward(GebrCommPortProvider *self)
 	gebr_comm_port_forward_close(self->priv->forward);
 	gebr_comm_port_forward_free(self->priv->forward);
 	self->priv->forward = NULL;
-
-	if (self->priv->port_timeout)
-		g_source_remove(self->priv->port_timeout);
 }
 
 static guint
@@ -489,6 +486,9 @@ on_ssh_error(GebrCommSsh *ssh, const gchar *msg, GebrCommPortProvider *self)
 static void
 on_local_forward_ssh_error(GebrCommSsh *ssh, const gchar *msg, GebrCommPortProvider *self)
 {
+	if (self->priv->port_timeout)
+		g_source_remove(self->priv->port_timeout);
+
 	if (g_strcmp0(msg, GEBR_COMM_SSH_ERROR_LOCAL_FORWARD) == 0) {
 		clear_forward(self);
 		self->priv->port = 0;
