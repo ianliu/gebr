@@ -1889,13 +1889,12 @@ on_password_request(GebrMaestroServer *maestro,
 	}
 
 	gchar *password;
-	if (confirmed) {
-		 password = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-		 gebr.config.use_key_ssh = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox));
-	} else {
+	if (confirmed)
+		password = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
+	else
 		password = NULL;
-		gebr.config.use_key_ssh = FALSE;
-	}
+
+	gebr.config.use_key_ssh = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox));
 
 	PasswordKeys *pk = g_new(PasswordKeys, 1);
 	pk->password = g_strdup(password);
