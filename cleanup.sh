@@ -21,10 +21,10 @@ done
 function killm() {
     echo Killing $1...
     lock=$HOME/.gebr/$1/singleton_lock;
-    [ -e $lock ] && lock=`cat $lock` || return
-    lock=(${lock//:/ });
-    host=${lock[0]};
-    port=${lock[1]};
+    [ -e $lock ] && _lock=`cat $lock` || return
+    _lock=(${_lock//:/ });
+    host=${_lock[0]};
+    port=${_lock[1]};
     echo -en "$host\t"
     ssh $host killall -q mpich-hello \; fuser -sk $signal $port/tcp
     if [ $? -eq 1 ]; then
@@ -58,7 +58,7 @@ case x$1 in
       ;;
     xALL)
       killd gebrd
-      killd gebrm
+      killm gebrm
       [ -d ~/.gebr ] && mv ~/.gebr ~/.gebr-`date +%Y%m%d-%H%M%S`
       ;;
 esac
