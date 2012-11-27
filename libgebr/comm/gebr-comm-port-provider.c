@@ -600,8 +600,10 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	guint remote_port;
 
 
-	if (g_strcmp0(buffer->str, "")) /* Command did not return any message*/
+	if (g_strcmp0(buffer->str, "")) {/* Command did not return any message*/
 		emit_empty_stdout_signal(self);
+		return;
+	}
 
 	if (!get_port_from_command_output(self, buffer->str, &remote_port))
 		return;
