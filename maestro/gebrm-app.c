@@ -182,15 +182,6 @@ gebrm_app_get_nfsid(GebrMaestroSettings *ms)
 
 // }}}
 
-static gchar *
-get_gebrm_dir_name(void)
-{
-	gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", NULL);
-	if (!g_file_test(dirname, G_FILE_TEST_EXISTS))
-		g_mkdir_with_parents(dirname, 0755);
-	return dirname;
-}
-
 static void
 gebrm_app_send_home_dir(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *home)
 {
@@ -426,7 +417,7 @@ static void
 gebrm_app_continue_connections_of_daemons(GebrmApp *app,
                                           gboolean from_append_key)
 {
-	for(GList *i = app->priv->daemons; i; i = i->next) {
+	for (GList *i = app->priv->daemons; i; i = i->next) {
 		GebrmDaemon *d = i->data;
 
 		if (!from_append_key) {
@@ -698,7 +689,10 @@ on_daemon_init(GebrmDaemon *daemon,
 		goto err;
 	}
 
-	gebr_maestro_settings_add_node(app->priv->settings, nfsid, gebrm_daemon_get_address(daemon));
+	gebr_maestro_settings_add_node(app->priv->settings,
+				       gebrm_daemon_get_address(daemon),
+				       gebrm_daemon_get_tags(daemon),
+				       gebrm_daemon_get_autoconnect(daemon));
 	if (has_gebrm) {
 		gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), gebrm_daemon_get_address(daemon));
 		gebr_maestro_settings_append_address(app->priv->settings, nfsid, addr);
@@ -730,10 +724,10 @@ err:
 
 			gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), g_get_host_name());
 
-			gebr_maestro_settings_set_domain(app->priv->settings, nfsid,
-			                                 label,
-			                                 addr,
-							 gebrd_location ? g_get_host_name() : "");
+			gebr_maestro_settings_set_domain(app->priv->settings, nfsid, label, addr);
+			if (gebrd_location)
+				gebr_maestro_settings_add_node(app->priv->settings,
+							       g_get_host_name(), "", "on");
 			g_free(addr);
 			g_free(gebrd_location);
 		}
@@ -1223,19 +1217,21 @@ connect_all_daemons(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *
 
 		gebrm_daemon_set_canceled(daemon, FALSE);
 
-		if (!connect_daemon && gebrm_daemon_get_state(daemon) != SERVER_STATE_LOGGED &&
-				g_strcmp0(gebrm_daemon_get_autoconnect(daemon), "on") == 0) {
+		if (!connect_daemon && gebrm_daemon_get_state(daemon) == SERVER_STATE_DISCONNECTED &&
+		    g_strcmp0(gebrm_daemon_get_autoconnect(daemon), "on") == 0) {
 			gebrm_daemon_connect(daemon, socket);
 			connect_daemon = TRUE;
 		}
 	}
-	if (!has_daemons || addr) {
+
+	if (addr) {
 		GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
-		if(g_strcmp0(gebrm_daemon_get_autoconnect(d), "on") == 0) {
+		if (g_strcmp0(gebrm_daemon_get_autoconnect(d), "on") == 0) {
 			gebrm_daemon_connect(d, socket);
 			gebrm_config_save_server(d);
 		}
 	}
+
 	if (!connect_daemon)
 		app->priv->connect_all = FALSE;
 }
@@ -1546,7 +1542,8 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 				}
 
 				if (atoi(has_daemon->str))
-					gebr_maestro_settings_add_node(app->priv->settings, nfsid, address->str);
+					gebr_maestro_settings_add_node(app->priv->settings,
+								       address->str, "", "on");
 			}
 			g_free(nfsid);
 
@@ -1672,7 +1669,7 @@ err:
 static GKeyFile *
 load_servers_keyfile(void)
 {
-	const gchar *path = gebrm_app_get_servers_file();
+	const gchar *path = gebr_maestro_settings_get_servers_file();
 	GKeyFile *keyfile = g_key_file_new();
 
 	if (!g_key_file_load_from_file(keyfile, path, G_KEY_FILE_NONE, NULL)) {
@@ -1704,7 +1701,7 @@ save_servers_keyfile(GKeyFile *keyfile)
 	gboolean succ = FALSE;
 
 	if (content) {
-		const gchar *path = gebrm_app_get_servers_file();
+		const gchar *path = gebr_maestro_settings_get_servers_file();
 		succ = g_file_set_contents(path, content, -1, NULL);
 		g_free(content);
 	}
@@ -1841,7 +1838,7 @@ static void
 gebrm_config_save_server(GebrmDaemon *daemon)
 {
 	GKeyFile *servers = g_key_file_new ();
-	const gchar *path = gebrm_app_get_servers_file();
+	const gchar *path = gebr_maestro_settings_get_servers_file();
 	gchar *tags = gebrm_daemon_get_tags(daemon);
 	const gchar *daemon_addr = gebrm_daemon_get_address(daemon);
 
@@ -1870,7 +1867,7 @@ gebrm_config_delete_server(const gchar *server)
 
 	servers = g_key_file_new ();
 
-	const gchar *path = gebrm_app_get_servers_file();
+	const gchar *path = gebr_maestro_settings_get_servers_file();
 
 	g_key_file_load_from_file (servers, path, G_KEY_FILE_NONE, NULL);
 
@@ -1913,8 +1910,11 @@ gebrm_config_load_admin_servers(GebrmApp *app)
 
 	if (adm_servers) {
 		load_servers_from_key_file(app, adm_servers);
-		save_servers_keyfile(adm_servers);
-		g_key_file_free (adm_servers);
+
+		const gchar *path = gebrm_app_get_admin_servers_file();
+		if (!g_file_test(path, G_FILE_TEST_EXISTS))
+			save_servers_keyfile(adm_servers);
+		g_key_file_free(adm_servers);
 	}
 
 	return TRUE;
@@ -2082,54 +2082,18 @@ gebrm_app_new(void)
 }
 
 void
-gebrm_load_automatic_daemons(GebrMaestroSettings *ms,
-                             GebrmApp *app)
-{
-	const gchar *nfsid = gebrm_app_get_nfsid(ms);
-
-	if (!nfsid || !*nfsid)
-		return;
-
-	const gchar *nodes = gebr_maestro_settings_get_nodes(ms, nfsid);
-
-	if (!nodes || !*nodes)
-		return;
-
-	gchar **daemons = g_strsplit(nodes, ",", -1);
-
-	if (!daemons)
-		return;
-
-	for (gint i = 0; daemons[i]; i++)
-		gebrm_add_server_to_list(app, daemons[i], "");
-
-	g_strfreev(daemons);
-}
-
-void
 gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
                                       GebrmApp *app)
 {
-	/*
-	 * Add servers from user file
-	 */
-	const gchar *path = gebrm_app_get_servers_file();
-	gebrm_config_load_servers(app, path);
-
-	/*
-	 * Add servers from admin file
-	 */
+	/* Add servers from admin file */
 	gebrm_config_load_admin_servers(app);
 
-	/*
-	 * Add servers from automatic list generate by Maestro
-	 */
-	gebrm_load_automatic_daemons(ms, app);
-
-	/*
-	 * Add localhost
-	 */
+	/* Add localhost */
 	gebrm_add_server_to_list(app, g_get_host_name(), "");
+
+	/* Add servers from user file */
+	const gchar *path = gebr_maestro_settings_get_servers_file();
+	gebrm_config_load_servers(app, path);
 }
 
 gboolean
@@ -2209,10 +2173,8 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 static gchar *
 gebrm_app_build_path(const gchar *last_folder)
 {
-	gchar *dirname = get_gebrm_dir_name();
+	const gchar *dirname = gebr_maestro_settings_get_directory();
 	gchar *path = g_build_filename(dirname, last_folder, NULL);
-	g_free(dirname);
-
 	return path;
 }
 
@@ -2272,20 +2234,6 @@ gebrm_app_get_version_file_for_addr(const gchar *addr)
 	}
 
 	return version;
-}
-
-const gchar *
-gebrm_app_get_servers_file(void)
-{
-	static gchar *path = NULL;
-
-	if (!path) {
-		gchar *dirname = get_gebrm_dir_name();
-		path = g_build_filename(dirname, "servers.conf", NULL);
-		g_free(dirname);
-	}
-
-	return path;
 }
 
 const gchar *

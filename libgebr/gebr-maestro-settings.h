@@ -70,8 +70,7 @@ void gebr_maestro_settings_free(GebrMaestroSettings *ms);
 void gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
 				      const gchar *domain,
 				      const gchar *label,
-				      const gchar *addr,
-				      const gchar *node);
+				      const gchar *addr);
 
 /**
  * gebr_maestro_settings_prepend_address:
@@ -150,8 +149,9 @@ gchar *gebr_maestro_settings_get_nodes(GebrMaestroSettings *ms, const gchar *dom
  * Append @node to the list of nodes of @domain
  */
 void gebr_maestro_settings_add_node(GebrMaestroSettings *ms,
-				    const gchar *domain,
-				    const gchar *node);
+				    const gchar *node,
+				    const gchar *tags,
+				    const gchar *ac);
 
 /*
  * gebr_generate_nfs_label:

@@ -120,13 +120,10 @@ void
 gebr_maestro_settings_set_domain(GebrMaestroSettings *ms,
 				 const gchar *domain,
 				 const gchar *label,
-				 const gchar *addr,
-				 const gchar *node)
+				 const gchar *addr)
 {
 	g_key_file_set_string(ms->priv->maestro_key, domain, "label", label);
-
 	gebr_maestro_settings_append_address(ms, domain, addr);
-	gebr_maestro_settings_add_node(ms, domain, node);
 }
 
 void
@@ -294,47 +291,30 @@ gebr_maestro_settings_get_nodes(GebrMaestroSettings *ms, const gchar *domain)
 }
 
 void
-gebr_maestro_settings_add_node(GebrMaestroSettings *ms, const gchar *domain, const gchar *node)
+gebr_maestro_settings_add_node(GebrMaestroSettings *ms,
+			       const gchar *node,
+			       const gchar *tags,
+			       const gchar *ac)
 {
 	g_return_if_fail(ms != NULL);
-	g_return_if_fail(domain != NULL);
 	g_return_if_fail(node != NULL);
 
-	if (!*node)
-		return;
+	GKeyFile *servers = g_key_file_new();
+	const gchar *path = gebr_maestro_settings_get_servers_file();
 
-	GError *err = NULL;
-	gchar *nodes_old = g_key_file_get_value(ms->priv->maestro_key, domain, "nodes", &err);
+	g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
+	if (!g_key_file_has_group(servers, node))
+	{
+		g_key_file_set_string(servers, node, "tags", tags);
+		g_key_file_set_string(servers, node, "autoconnect", ac);
 
-	gboolean has_addr = FALSE;
-	GString *nodes = g_string_new(nodes_old);
+		gchar *content = g_key_file_to_data(servers, NULL, NULL);
+		if (content)
+			g_file_set_contents(path, content, -1, NULL);
 
-	if (nodes->len > 1) {
-		gchar **list = g_strsplit(nodes_old, ",", -1);
-
-		if (list) {
-			for (gint i = 0; list[i]; i++) {
-				if (g_strcmp0(list[i], node) == 0)
-					has_addr = TRUE;
-			}
-		}
-
-		g_strfreev(list);
+		g_free(content);
 	}
-
-	if (!has_addr) {
-		if (nodes->len > 1)
-			g_string_append_c(nodes, ',');
-		g_string_append(nodes, node);
-	}
-
-	g_key_file_set_value(ms->priv->maestro_key, domain, "nodes", nodes->str);
-	gebr_maestro_settings_save(ms);
-
-	g_string_free(nodes, TRUE);
-	g_free(nodes_old);
-
-	return;
+	g_key_file_free(servers);
 }
 
 gchar *

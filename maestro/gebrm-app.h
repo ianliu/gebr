@@ -126,8 +126,6 @@ const gchar *gebrm_app_get_log_file_for_address(const gchar *addr);
 
 const gchar *gebrm_app_get_version_file_for_addr(const gchar *addr);
 
-const gchar *gebrm_app_get_servers_file(void);
-
 const gchar *gebrm_app_get_admin_servers_file(void);
 
 /*

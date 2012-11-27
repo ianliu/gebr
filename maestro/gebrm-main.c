@@ -273,9 +273,8 @@ main(int argc, char *argv[])
 	if (nfsid) {
 		gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), local_addr);
 		gebr_maestro_settings_append_address(ms, nfsid, addr);
-		gebr_maestro_settings_add_node(ms,
-					       nfsid,
-					       gebrd_location ? g_get_host_name() : "");
+		if (gebrd_location)
+			gebr_maestro_settings_add_node(ms, g_get_host_name(), "", "on");
 		g_free(addr);
 	}
 
