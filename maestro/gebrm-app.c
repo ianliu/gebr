@@ -850,9 +850,9 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 	GebrmDaemon *daemon = NULL;
 	gboolean exist = FALSE;
 
-	exist = gebrm_get_daemon_for_address(app, address) != NULL;
+	daemon = gebrm_get_daemon_for_address(app, address);
 
-	if (!exist)
+	if (!daemon)
 		g_warn_if_reached();
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
