@@ -859,7 +859,8 @@ parse_messages(GebrCommServer *comm_server,
 			GString *addr = i->data; i = i->next;
 			GString *title = i->data; i = i->next;
 			GString *question = i->data; i = i->next;
-			gboolean *response;
+
+			gboolean response;
 
 			g_signal_emit(maestro, signals[QUESTION_REQUEST], 0,
 				      addr->str, title->str, question->str, &response);

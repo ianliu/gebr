@@ -38,6 +38,7 @@
 #define REMOTE_FORWARD "remote forward success for:"
 #define LIMITED_WRONG_PASSWORD "No more authentication methods to try"
 #define LOCAL_FORWARD_ERROR "Could not request local forwarding."
+#define HOST_VERIFICATION_ERROR "Host key verification failed."
 
 
 G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
@@ -345,8 +346,11 @@ process_ssh_line(GebrCommSsh *self,
 			g_signal_emit(self, signals[SSH_QUESTION], 0, question);
 			g_free(question);
 		}
-		else if (g_strrstr(line, PASSWORD_SUFFIX))
-		{
+		else if (strstr(line, HOST_VERIFICATION_ERROR)) {
+			self->priv->state = GEBR_COMM_SSH_STATE_ERROR;
+			g_signal_emit(self, signals[SSH_ERROR], 0, _("Host key verification failed."));
+		}
+		else if (g_strrstr(line, PASSWORD_SUFFIX)) {
 			self->priv->state = GEBR_COMM_SSH_STATE_PASSWORD;
 			g_signal_emit(self, signals[SSH_PASSWORD], 0, self->priv->attempts > 0);
 		}
