@@ -903,6 +903,7 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_comm_uri_add_param(uri, "address", addr->str);
 				if (pk->password)
 					gebr_comm_uri_add_param(uri, "pass", pk->password);
+				gebr_comm_uri_add_param(uri, "haskey", pk->use_public_key? "yes" : "no");
 
 				gchar *url = gebr_comm_uri_to_string(uri);
 				gebr_comm_uri_free(uri);

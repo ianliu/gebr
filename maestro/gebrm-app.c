@@ -1249,19 +1249,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_strcmp0(prefix, "/server") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
-			const gchar *has_key = gebr_comm_uri_get_param(uri, "haskey");
 			addr = gebr_apply_pattern_on_address(addr);
 
-			gboolean use_key;
-			if (!g_strcmp0(has_key, "yes"))
-				use_key = TRUE;
-			else
-				use_key = FALSE;
-
 			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
-
-			GebrCommServer *server = gebrm_daemon_get_server(d);
-			gebr_comm_server_set_use_public_key(server, use_key);
 
 			gebrm_daemon_connect(d, socket);
 			gebrm_config_save_server(d);
@@ -1269,9 +1259,19 @@ on_client_request(GebrCommProtocolSocket *socket,
 		else if (g_strcmp0(prefix, "/set-password") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
+			const gchar *has_key = gebr_comm_uri_get_param(uri, "haskey");
 
 			GebrmDaemon *daemon = gebrm_get_daemon_for_address(app, addr);
 			if (daemon) {
+				gboolean use_key;
+				if (!g_strcmp0(has_key, "yes"))
+					use_key = TRUE;
+				else
+					use_key = FALSE;
+
+				GebrCommServer *server = gebrm_daemon_get_server(daemon);
+				gebr_comm_server_set_use_public_key(server, use_key);
+
 				if (pass) {
 					gebrm_daemon_set_password(daemon, pass);
 				} else {
