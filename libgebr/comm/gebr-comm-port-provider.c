@@ -584,6 +584,14 @@ static void
 on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
 {
 	guint remote_port;
+	GError *error = NULL;
+
+	if (g_strcmp0(buffer->str, "")) { /* Command did not return any message*/
+		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
+		            GEBR_COMM_PORT_PROVIDER_ERROR_EMPTY,
+		            "There is no maestro installed in this host.");
+		emit_signals(self, 0, error);
+	}
 
 	if (!get_port_from_command_output(self, buffer->str, &remote_port))
 		return;
