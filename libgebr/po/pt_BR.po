@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-13 14:48-0200\n"
+"POT-Creation-Date: 2012-11-27 19:20-0200\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -21,71 +21,41 @@ msgstr ""
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../comm/gebr-comm-server.c:303
-#, fuzzy, c-format
-msgid "Machine '%s' needs SSH login."
-msgstr ""
-"Máquina '%s' precisa de login SSH.\n"
-"\n"
-"%s"
-
-#: ../comm/gebr-comm-server.c:306
-#, fuzzy, c-format
-msgid "Wrong password for machine '%s', please try again."
-msgstr ""
-"Senha incorreta para a máquina '%s', por favor tente novamente.\n"
-"\n"
-"%s"
-
-#: ../comm/gebr-comm-server.c:318
-msgid "Please, enter password"
-msgstr "Por favor, digite sua senha"
-
-#: ../comm/gebr-comm-server.c:327
-msgid "SSH login:"
-msgstr "Login SSH:"
-
-#: ../comm/gebr-comm-server.c:333
-msgid "No password provided."
-msgstr "Nenhuma senha informada."
-
-#: ../comm/gebr-comm-server.c:366
+#: ../comm/gebr-comm-server.c:328
 msgid "Please, answer the question"
 msgstr "Por favor, responda a pergunta"
 
-#: ../comm/gebr-comm-server.c:381
-msgid "SSH host key question:"
-msgstr "Chave do servidor:"
-
-#: ../comm/gebr-comm-server.c:396
-msgid "SSH host key rejected."
-msgstr "A chave SSH foi rejeitada."
-
-#: ../comm/gebr-comm-server.c:422
+#: ../comm/gebr-comm-server.c:366
 #, c-format
 msgid "%p: Launching machine at '%s'."
 msgstr "%p: Iniciando máquina em '%s'."
 
-#: ../comm/gebr-comm-server.c:475
+#: ../comm/gebr-comm-server.c:414
 #, c-format
 msgid "Stopping machine at '%s'."
 msgstr "Parando máquina '%s'."
 
-#: ../comm/gebr-comm-server.c:697
+#: ../comm/gebr-comm-server.c:668
 #, c-format
 msgid "Machine '%s' disconnected"
 msgstr "Máquina '%s' desconectada"
 
-#: ../comm/gebr-comm-ssh.c:319
+#: ../comm/gebr-comm-ssh.c:344
 #, c-format
 msgid "The authenticity of host can't be established. Do you want to continue?"
-msgstr ""
+msgstr "A máquina não pode ser autenticada. Você deseja continuar mesmo assim?"
 
-#: ../comm/gebr-comm-ssh.c:331
+#: ../comm/gebr-comm-ssh.c:351
+msgid "Host key verification failed."
+msgstr "Verificação da chave sem sucesso."
+
+#: ../comm/gebr-comm-ssh.c:359
 msgid ""
 "The known_hosts file is probably corrupted. Contact your system "
 "administrator for help."
 msgstr ""
+"O arquivo known_hosts está provavelmente corrompido. Contacte oadministrador "
+"de sistemas."
 
 #: ../comm/socketchannel/socketchannel.c:28 ../geoxml-utils/upgrade.c:48
 #: ../geoxml-utils/validate.c:54
@@ -268,6 +238,10 @@ msgstr "Aceita apenas valores positivos"
 #, c-format
 msgid "%s on \"%s\""
 msgstr "%s on \"%s\""
+
+#: ../gebr-maestro-settings.c:99
+msgid "Could not save configuration."
+msgstr "Não foi possível salvar o arquivo de configuração."
 
 #: ../geoxml-utils/upgrade.c:29 ../geoxml-utils/validate.c:34
 msgid "file1.flw file2.mnu file3.prj file4.lne ..."
@@ -928,7 +902,7 @@ msgstr ""
 "Os arquivos apresentados são de sua <b>máquina local</b> e podem não "
 "representar os arquivos nas <b>máquinas de processamento</b>."
 
-#: ../gui/gebr-gui-utils.c:1458
+#: ../gui/gebr-gui-utils.c:1462
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se de que ele está instalado."
@@ -1279,6 +1253,35 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
+
+#, fuzzy
+#~ msgid "Machine '%s' needs SSH login."
+#~ msgstr ""
+#~ "Máquina '%s' precisa de login SSH.\n"
+#~ "\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Wrong password for machine '%s', please try again."
+#~ msgstr ""
+#~ "Senha incorreta para a máquina '%s', por favor tente novamente.\n"
+#~ "\n"
+#~ "%s"
+
+#~ msgid "Please, enter password"
+#~ msgstr "Por favor, digite sua senha"
+
+#~ msgid "SSH login:"
+#~ msgstr "Login SSH:"
+
+#~ msgid "No password provided."
+#~ msgstr "Nenhuma senha informada."
+
+#~ msgid "SSH host key question:"
+#~ msgstr "Chave do servidor:"
+
+#~ msgid "SSH host key rejected."
+#~ msgstr "A chave SSH foi rejeitada."
 
 #~ msgid "Redirecting '%s' graphical output."
 #~ msgstr "Redirecionando saída gráfica de '%s'."
