@@ -1278,7 +1278,6 @@ gebr_maestro_controller_server_list_add(GebrMaestroController *mc,
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/server");
 	gebr_comm_uri_add_param(uri, "address", address);
-	gebr_comm_uri_add_param(uri, "pass", "");
 
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
