@@ -33,6 +33,33 @@ struct _GebrMaestroSettingsPriv {
 	GKeyFile *maestro_key;
 };
 
+const gchar *
+gebr_maestro_settings_get_directory(void)
+{
+	static gchar *dirname = NULL;
+
+	if (!dirname) {
+		dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", NULL);
+		if (!g_file_test(dirname, G_FILE_TEST_EXISTS))
+			g_mkdir_with_parents(dirname, 0755);
+	}
+
+	return dirname;
+}
+
+const gchar *
+gebr_maestro_settings_get_servers_file(void)
+{
+	static gchar *path = NULL;
+
+	if (!path) {
+		const gchar *dirname = gebr_maestro_settings_get_directory();
+		path = g_build_filename(dirname, "servers.conf", NULL);
+	}
+
+	return path;
+}
+
 GebrMaestroSettings *
 gebr_maestro_settings_new(const gchar *path)
 {
