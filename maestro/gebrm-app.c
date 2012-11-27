@@ -848,7 +848,6 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 				     const gchar *tags)
 {
 	GebrmDaemon *daemon = NULL;
-	gboolean exist = FALSE;
 
 	daemon = gebrm_get_daemon_for_address(app, address);
 
