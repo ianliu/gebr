@@ -62,6 +62,8 @@ static gboolean get_port_from_command_output(GebrCommPortProvider *self,
 
 static void create_local_forward(GebrCommPortProvider *self);
 
+void emit_empty_stdout_signal(GebrCommPortProvider *self);
+
 GQuark
 gebr_comm_port_provider_error_quark(void)
 {
@@ -416,6 +418,8 @@ local_get_port(GebrCommPortProvider *self, gboolean maestro)
 	guint port;
 
 	if (error || (WIFEXITED(status) && WEXITSTATUS(status) != 0)) {
+		if (g_strrstr(error->message, "No such file or directory")) /* Command did not return any message*/
+			emit_empty_stdout_signal(self);
 		transform_spawn_sync_error(error, &local_error);
 		g_clear_error(&error);
 	} else if (output) {
@@ -580,18 +584,24 @@ create_local_forward(GebrCommPortProvider *self)
 	self->priv->port_timeout = g_timeout_add(200, tunnel_poll_port, data);
 }
 
+void
+emit_empty_stdout_signal(GebrCommPortProvider *self)
+{
+	GError *error = NULL;
+	g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
+	            GEBR_COMM_PORT_PROVIDER_ERROR_EMPTY,
+	            "There is no maestro installed in this host.");
+	emit_signals(self, 0, error);
+}
+
 static void
 on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
 {
 	guint remote_port;
-	GError *error = NULL;
 
-	if (g_strcmp0(buffer->str, "")) { /* Command did not return any message*/
-		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
-		            GEBR_COMM_PORT_PROVIDER_ERROR_EMPTY,
-		            "There is no maestro installed in this host.");
-		emit_signals(self, 0, error);
-	}
+
+	if (g_strcmp0(buffer->str, "")) /* Command did not return any message*/
+		emit_empty_stdout_signal(self);
 
 	if (!get_port_from_command_output(self, buffer->str, &remote_port))
 		return;
