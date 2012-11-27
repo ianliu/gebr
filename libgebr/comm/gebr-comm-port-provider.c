@@ -418,8 +418,10 @@ local_get_port(GebrCommPortProvider *self, gboolean maestro)
 	guint port;
 
 	if (error || (WIFEXITED(status) && WEXITSTATUS(status) != 0)) {
-		if (g_strrstr(error->message, "No such file or directory")) /* Command did not return any message*/
+		if (g_strrstr(error->message, "No such file or directory")) {/* Command did not return any message*/
 			emit_empty_stdout_signal(self);
+			return;
+		}
 		transform_spawn_sync_error(error, &local_error);
 		g_clear_error(&error);
 	} else if (output) {
@@ -599,8 +601,7 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 {
 	guint remote_port;
 
-
-	if (g_strcmp0(buffer->str, "")) {/* Command did not return any message*/
+	if (g_strcmp0(buffer->str, "") == 0) {/* Command did not return any message*/
 		emit_empty_stdout_signal(self);
 		return;
 	}
