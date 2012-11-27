@@ -16,6 +16,7 @@ comm/socketchannel/socketchannel.c
 date.c
 gebr-arith-expr.c
 gebr-validator.c
+gebr-maestro-settings.c
 geoxml-utils/upgrade.c
 geoxml-utils/validate.c
 geoxml/document.c
