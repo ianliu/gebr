@@ -1837,7 +1837,12 @@ on_password_request(GebrMaestroServer *maestro,
 							NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
+	GebrDaemonServer *daemon = gebr_maestro_controller_get_daemon_from_address (gebr.maestro_controller, address);
+	const gchar *msg = gebr_daemon_server_get_error(daemon);
+
 	gchar *title = g_strdup_printf(_("Connecting to %s"), address);
+	if (g_strcmp0(msg,"This node has stopped.") == 0)
+		title = g_strdup_printf(_("Stopping %s"), address);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 
 	gchar *ssh_info = g_markup_printf_escaped(_("<b>%s</b> is asking for your login\n"
@@ -2049,48 +2054,24 @@ on_daemon_error(GebrMaestroServer *maestro,
 		message = error_msg;
 	} else if (g_strcmp0(error_type, "error:xauth") == 0) {
 		message = _("This node cannot connect to display. Try reconnect it");
+	} else if (g_strcmp0(error_type, "error:stop") == 0) {
+		message = _("This node has stopped.");
 	}
 
 	if (show_dialog) {
 		gdk_threads_enter();
-		GebrDaemonServer *daemon;
-		gebr_gui_gtk_tree_model_foreach(iter, model) {
-			gtk_tree_model_get(model, &iter,
-			                   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
-
-			if (!daemon)
-				continue;
-
-			if (g_strcmp0(addr, gebr_daemon_server_get_address(daemon)) == 0) {
-				guint timeout = gebr_daemon_server_get_timeout(daemon);
-				if (timeout != -1) {
-					if (g_source_remove(timeout))
-						gebr_daemon_server_set_timeout(daemon, -1);
-				}
-			}
+		GebrDaemonServer *daemon = gebr_maestro_controller_get_daemon_from_address (mc, addr);
+		guint timeout = gebr_daemon_server_get_timeout(daemon);
+		if (timeout != -1) {
+			if (g_source_remove(timeout))
+				gebr_daemon_server_set_timeout(daemon, -1);
 		}
-
 		gebr_gui_message_dialog(GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, NULL,
 					NULL, message, second);
 		gdk_threads_leave();
 	} else {
-		GebrDaemonServer *daemon;
-		gebr_gui_gtk_tree_model_foreach(iter, model) {
-			gtk_tree_model_get(model, &iter,
-					   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
-
-			if (!daemon)
-				continue;
-
-			if (g_strcmp0(addr, gebr_daemon_server_get_address(daemon)) == 0) {
-				gebr_daemon_server_set_error(daemon, message);
-
-				GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-				gtk_tree_model_row_changed(model, path, &iter);
-
-				break;
-			}
-		}
+		GebrDaemonServer *daemon = gebr_maestro_controller_get_daemon_from_address (mc, addr);
+		gebr_daemon_server_set_error(daemon, message);
 	}
 
 	if (second)
@@ -2600,4 +2581,28 @@ gebr_maestro_controller_on_maestro_combo_changed(GtkComboBox *combo,
 	g_free(addr);
 	g_free(label);
 
+}
+
+GebrDaemonServer *
+gebr_maestro_controller_get_daemon_from_address (GebrMaestroController *self,
+                                                 const gchar *address)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(self->priv->model);
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter,
+		                   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+
+		if (!daemon)
+			continue;
+
+		if (g_strcmp0(address, gebr_daemon_server_get_address(daemon)) == 0) {
+			GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+			gtk_tree_model_row_changed(model, path, &iter);
+
+			break;
+		}
+	}
+	return daemon;
 }
