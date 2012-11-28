@@ -1290,7 +1290,7 @@ flow_browse_setup_ui()
 	GtkWidget *infopage;
 
 	/* alloc */
-	ui_flow_browse = g_new(GebrUiFlowBrowse, 1);
+	ui_flow_browse = g_new0(GebrUiFlowBrowse, 1);
 
 	ui_flow_browse->graph_process = NULL;
 	ui_flow_browse->select_flows = NULL;
@@ -2027,6 +2027,18 @@ flow_browse_static_info_update(void)
 		g_free(last_text);
 	}
 	return TRUE;
+}
+
+static GList *
+gebr_flow_browse_get_jobs_from_flow(GebrGeoXmlFlow *flow,
+                                    GebrUiFlowBrowse *fb)
+{
+	const gchar *flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
+	GList *jobs;
+
+	jobs = g_hash_table_lookup(fb->flow_jobs, flow_id);
+
+	return jobs;
 }
 
 void flow_browse_info_update(void)
@@ -3336,25 +3348,12 @@ gebr_flow_browse_append_job_on_flow(GebrGeoXmlFlow *flow,
 
 	if (g_list_length(jobs) == 20) {
 		GList *last_job = g_list_last(jobs);
-		jobs = g_list_remove_link(jobs, last_job);
+		g_free(last_job->data);
+		jobs = g_list_delete_link(jobs, last_job);
 	}
-	jobs = g_list_prepend(jobs, (gchar*)job_id);
+	jobs = g_list_prepend(jobs, g_strdup(job_id));
 
-	g_hash_table_insert(fb->flow_jobs, g_strdup(flow_id), g_list_copy(jobs));
-
-	g_list_free(jobs);
-}
-
-GList *
-gebr_flow_browse_get_jobs_from_flow(GebrGeoXmlFlow *flow,
-                                    GebrUiFlowBrowse *fb)
-{
-	const gchar *flow_id = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow));
-	GList *jobs;
-
-	jobs = g_hash_table_lookup(fb->flow_jobs, flow_id);
-
-	return jobs;
+	g_hash_table_insert(fb->flow_jobs, g_strdup(flow_id), jobs);
 }
 
 void
