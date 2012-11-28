@@ -1541,6 +1541,9 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			}
 			g_free(nfsid);
 
+			// Create list for daemons to connect
+			gebrm_app_create_possible_daemon_list(app->priv->settings, app);
+
 			gchar *clocks_diff = g_strdup_printf("%d", diff_secs);
 
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
@@ -2054,9 +2057,6 @@ on_new_connection(GebrCommListenSocket *listener,
 		}
 		// Reload Maestro Settings
 		gebr_maestro_settings_update(app->priv->settings);
-
-		// Create list for daemons to connect
-		gebrm_app_create_possible_daemon_list(app->priv->settings, app);
 
 		g_signal_connect(socket, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
