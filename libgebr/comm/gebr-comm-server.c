@@ -173,6 +173,32 @@ gebr_comm_server_get_last_error(GebrCommServer *server)
 	return server->last_error->str;
 }
 
+static void
+gebr_comm_server_set_last_errorv(GebrCommServer *server,
+				 enum gebr_comm_server_error error,
+				 const gchar * message,
+				 va_list argp)
+{
+	if (error != SERVER_ERROR_UNKNOWN) {
+		server->error = error;
+		gchar *string = g_strdup_vprintf(message, argp);
+		g_string_assign(server->last_error, string);
+		g_free(string);
+	}
+}
+
+void
+gebr_comm_server_set_last_error(GebrCommServer *server,
+				enum gebr_comm_server_error error,
+				const gchar * message,
+				...)
+{
+	va_list argp;
+	va_start(argp, message);
+	gebr_comm_server_set_last_errorv(server, error, message, argp);
+	va_end(argp);
+}
+
 GebrCommServer *
 gebr_comm_server_new(const gchar * _address,
 		     const gchar *gebr_id,
@@ -536,15 +562,10 @@ static void gebr_comm_server_disconnected_state(GebrCommServer *server,
 						enum gebr_comm_server_error error,
 						const gchar * message, ...)
 {
-	if (error != SERVER_ERROR_UNKNOWN) {
-		server->error = error;
-		va_list argp;
-		va_start(argp, message);
-		gchar *string = g_strdup_vprintf(message, argp);
-		g_string_assign(server->last_error, string);
-		g_free(string);
-		va_end(argp);
-	}
+	va_list argp;
+	va_start(argp, message);
+	gebr_comm_server_set_last_errorv(server, error, message, argp);
+	va_end(argp);
 
 	/* take care not to free the process here cause this function
 	 * maybe be used by Process's read callback */

@@ -110,6 +110,7 @@ struct _GebrCommServer {
 		SERVER_ERROR_CONNECT,
 		SERVER_ERROR_SERVER,
 		SERVER_ERROR_SSH,
+		SERVER_ERROR_PROTOCOL_VERSION,
 	} error;
 
 	GString *last_error;
@@ -160,6 +161,11 @@ GebrCommServer *gebr_comm_server_new(const gchar *_address,
 				     const struct gebr_comm_server_ops *ops);
 
 const gchar *gebr_comm_server_get_last_error(GebrCommServer *server);
+
+void gebr_comm_server_set_last_error(GebrCommServer *server,
+				     enum gebr_comm_server_error error,
+				     const gchar * message,
+				     ...);
 
 void gebr_comm_server_free(GebrCommServer *gebr_comm_server);
 
