@@ -2436,16 +2436,6 @@ gebr_maestro_controller_parse_maestros_env_variable(void)
 	return maestros;
 }
 
-
-GList *
-gebr_maestro_controller_get_known_maestros(void)
-{
-	gchar *maestros_list_path = gebr_get_maestros_list_path();
-	//TODO: fazer parse do arquivo dos maestros conhecidos
-	g_free(maestros_list_path);
-	return NULL;
-}
-
 static void
 append_maestros_of_nfsid(GebrMaestroSettings *ms,
                          const gchar *nfsid,
@@ -2468,14 +2458,30 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 	GQueue *maestros = g_queue_new();
 
 	GKeyFile *def_maestros_keyfile = gebr_maestro_controller_parse_maestros_env_variable();
-	gchar *maestros_conf_path = gebr_get_maestros_conf_path();
-	GebrMaestroSettings *ms = gebr_maestro_settings_new(maestros_conf_path);
+
+	/*
+	 * If maestros_conf file has old tag [maestro],
+	 * add that address on queue and clean KeyFile
+	 */
+	GKeyFile *maestros_key = gebr_maestro_settings_get_key_file(gebr.config.maestro_set);
+	if (g_key_file_has_group(maestros_key, "maestro")) {
+		GString *addr;
+		addr = gebr_g_key_file_load_string_key(maestros_key, "maestro", "address", "");
+
+		if (addr->len > 1) {
+			gchar *user_addr = g_strdup_printf("%s@%s", g_get_user_name(), addr->str);
+			maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, user_addr);
+			g_free(user_addr);
+		}
+		gebr_maestro_settings_clean_old_maestros(gebr.config.maestro_set);
+		g_string_free(addr, TRUE);
+	}
 
 	/*
 	 * Include on list maestros from the last NFS of GêBR are connected
 	 */
 	if (has_gebr_config && has_maestro_config) //In case there is gebr.conf and maestros.conf
-		append_maestros_of_nfsid(ms, gebr.config.nfsid->str, &maestros);
+		append_maestros_of_nfsid(gebr.config.maestro_set, gebr.config.nfsid->str, &maestros);
 
 	/*
 	 * Get the maestro from environment variable
@@ -2492,14 +2498,14 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 	 * Get maestros from another NFS
 	 */
 	gsize length;
-	GKeyFile *key_maestro_conf = gebr_maestro_settings_get_key_file(ms);
+	GKeyFile *key_maestro_conf = gebr_maestro_settings_get_key_file(gebr.config.maestro_set);
 	gchar **nfss = g_key_file_get_groups(key_maestro_conf, &length);
 	if (length) {
 		for (gint i = 0; i < length; i++) {
 			if (g_strcmp0(nfss[i], gebr.config.nfsid->str) == 0)
 				continue;
 
-			append_maestros_of_nfsid(ms, nfss[i], &maestros);
+			append_maestros_of_nfsid(gebr.config.maestro_set, nfss[i], &maestros);
 		}
 	}
 	g_strfreev(nfss);
@@ -2508,9 +2514,6 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 	 * Append localhost in end of the queue
 	 */
 	maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, g_strdup(g_get_host_name()));
-
-	g_free(maestros_conf_path);
-	gebr_maestro_settings_free(ms);
 
 	return maestros;
 }
