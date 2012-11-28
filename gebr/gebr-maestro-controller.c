@@ -2208,6 +2208,9 @@ static void
 on_state_change(GebrMaestroServer *maestro,
 		GebrMaestroController *self)
 {
+	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED)
+		gebr_maestro_controller_try_next_maestro(gebr.maestro_controller);
+
 	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);
 }
 
