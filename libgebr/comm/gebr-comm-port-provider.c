@@ -34,6 +34,7 @@
 
 struct _GebrCommPortForward {
 	GebrCommSsh *ssh;
+	gchar *address;
 };
 
 struct _GebrCommPortProviderPriv {
@@ -374,6 +375,7 @@ set_forward(GebrCommPortProvider *self, GebrCommSsh *ssh)
 	g_return_if_fail(self->priv->forward == NULL);
 	self->priv->forward = g_new0(GebrCommPortForward, 1);
 	self->priv->forward->ssh = ssh;
+	self->priv->forward->address = g_strdup(self->priv->address);
 }
 
 static void
@@ -822,10 +824,17 @@ gebr_comm_port_provider_get_forward(GebrCommPortProvider *self)
 
 /* GebrCommPortForward methods */
 
+const gchar *
+gebr_comm_port_forward_get_address(GebrCommPortForward *port_forward)
+{
+	return port_forward->address;
+}
+
 void
 gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
 {
-	g_return_if_fail(port_forward != NULL);
+	if (!port_forward)
+		return;
 
 	if (port_forward->ssh) {
 		gebr_comm_ssh_kill(port_forward->ssh);
@@ -837,6 +846,10 @@ gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
 void
 gebr_comm_port_forward_free(GebrCommPortForward *port_forward)
 {
+	if (!port_forward)
+		return;
+
+	g_free(port_forward->address);
 	g_free(port_forward);
 }
 /* }}} */

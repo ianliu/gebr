@@ -172,6 +172,13 @@ void gebr_comm_port_provider_start_with_port(GebrCommPortProvider *self, guint p
 GebrCommPortForward *gebr_comm_port_provider_get_forward(GebrCommPortProvider *self);
 
 /**
+ * gebr_comm_port_forward_get_address:
+ *
+ * Returns the remote address of this forward.
+ */
+const gchar *gebr_comm_port_forward_get_address(GebrCommPortForward *port_forward);
+
+/**
  * gebr_comm_port_forward_close:
  *
  * Closes the forward pointed by @port_forward. If the forward was already
