@@ -1320,7 +1320,7 @@ on_servers_edited(GtkCellRendererText *cell,
 	}
 
 
-	gchar *address = gebr_get_address_without_user(new_text);
+	gchar *address = gebr_get_host_from_address(new_text);
 	if (!address)
 		return;
 

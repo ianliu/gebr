@@ -1397,11 +1397,29 @@ gebr_add_remove_ssh_key(gboolean remove)
 }
 
 gchar *
-gebr_get_address_without_user(const gchar *address)
+gebr_get_user_from_address(const gchar *address)
 {
-	if (!address || !*address || address[0] == '@') {
+	if (!address || !*address)
 		return NULL;
-	}
+
+	gchar **at_split = g_strsplit(address, "@", 2);
+	gchar *user;
+
+	if (g_strv_length(at_split) == 2)
+		user = g_strdup(at_split[0]);
+	else
+		user = g_strdup(g_get_user_name());
+
+	g_strfreev(at_split);
+
+	return user;
+}
+
+gchar *
+gebr_get_host_from_address(const gchar *address)
+{
+	if (!address || !*address)
+		return NULL;
 
 	gchar **at_split = g_strsplit(address, "@", -1);
 	gchar **space_split;
@@ -1424,7 +1442,7 @@ gebr_get_address_without_user(const gchar *address)
 gboolean
 gebr_verify_address_without_username(const gchar *address)
 {
-	gchar *new_addr = gebr_get_address_without_user (address);
+	gchar *new_addr = gebr_get_host_from_address(address);
 	gboolean ret;
 	if (g_strcmp0(address, new_addr) != 0) {
 		ret = FALSE;

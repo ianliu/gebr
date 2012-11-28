@@ -1977,7 +1977,7 @@ gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
 
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/connect-daemons");
-	gchar *addr_without_user = gebr_get_address_without_user(server->address->str);
+	gchar *addr_without_user = gebr_get_host_from_address(server->address->str);
 
 	gebr_comm_uri_add_param(uri, "address", addr_without_user);
 	gchar *url = gebr_comm_uri_to_string(uri);

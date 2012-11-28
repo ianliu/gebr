@@ -375,13 +375,20 @@ gboolean gebr_generate_key();
 gboolean gebr_add_remove_ssh_key(gboolean remove);
 
 /**
- * gebr_get_address_without_user:
+ * gebr_get_user_from_address:
+ *
+ * Get substring before the first @ from @address.
+ * In case there's no @, get the returns the local user.
+ */
+gchar *gebr_get_user_from_address(const gchar *address);
+
+/**
+ * gebr_get_host_from_address:
  *
  * Get substring after the first @ and before the first space
  * In case there's no @, get the substring before the first space
- *
  */
-gchar *gebr_get_address_without_user(const gchar *address);
+gchar *gebr_get_host_from_address(const gchar *address);
 
 /*
  *verify_address_without_username
