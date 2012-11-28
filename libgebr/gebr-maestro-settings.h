@@ -161,6 +161,8 @@ void gebr_maestro_settings_add_node(GebrMaestroSettings *ms,
 gchar *gebr_maestro_settings_generate_nfs_label(GebrMaestroSettings *ms,
                                                 const gchar *nfsid);
 
+void gebr_maestro_settings_clean_old_maestros(GebrMaestroSettings *ms);
+
 const gchar *gebr_maestro_settings_get_directory(void);
 
 const gchar *gebr_maestro_settings_get_servers_file(void);

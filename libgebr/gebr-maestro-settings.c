@@ -341,3 +341,13 @@ gebr_maestro_settings_generate_nfs_label(GebrMaestroSettings *ms,
 
 	return label;
 }
+
+void
+gebr_maestro_settings_clean_old_maestros(GebrMaestroSettings *ms)
+{
+	if(!g_key_file_has_group(ms->priv->maestro_key, "maestro"))
+		return;
+
+	if (g_key_file_remove_group(ms->priv->maestro_key, "maestro", NULL))
+		gebr_maestro_settings_save(ms);
+}
