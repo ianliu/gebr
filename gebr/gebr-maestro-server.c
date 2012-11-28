@@ -190,10 +190,17 @@ gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro)
 {
 	if (maestro->priv->has_connected_daemon)
 		return FALSE;
+
+	const gchar *client_nfsid = gebr_get_client_nfsid();
+
+	if (!client_nfsid)
+		return TRUE;
+
 	const gchar *daemon_nfsid = gebr_maestro_server_get_nfsid(maestro);
 
-	if (g_strcmp0(gebr.config.nfsid->str, daemon_nfsid) == 0)
+	if (g_strcmp0(client_nfsid, daemon_nfsid) == 0)
 		return FALSE;
+
 	return TRUE;
 }
 
@@ -635,9 +642,7 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_daemon_server_set_cpu_model(daemon, cpu_model->str);
 			gebr_daemon_server_set_memory(daemon, memory->str);
 
-			if (state == SERVER_STATE_LOGGED && !maestro->priv->wizard_setup && gebr_maestro_server_need_mount_gvfs (maestro))
-				gebr_maestro_server_mount_gvfs(maestro, addr->str);
-			else if (maestro->priv->has_connected_daemon && !have_logged_daemon(maestro))
+			if (maestro->priv->has_connected_daemon && !have_logged_daemon(maestro))
 				unmount_gvfs(maestro, FALSE);
 
 			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
@@ -1030,6 +1035,23 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
 
 			gebr_maestro_server_send_nfs_label(maestro);
+
+			// Mount SFTP if needed
+			if (gebr_maestro_server_need_mount_gvfs (maestro) && !maestro->priv->wizard_setup) {
+				gchar *addr;
+
+				gchar *comma = strstr(hosts->str, ",");
+				if (comma)
+					addr = g_strndup(hosts->str, (comma - hosts->str)/sizeof(gchar));
+				else
+					addr = g_strdup(hosts->str);
+
+				gebr_maestro_server_mount_gvfs(maestro, addr);
+
+				g_free(addr);
+			} else {
+				g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
+			}
 
 			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
