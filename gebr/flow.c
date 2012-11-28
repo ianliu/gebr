@@ -1330,8 +1330,8 @@ gebr_flow_set_toolbar_sensitive(void)
 			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (maestro_disconnected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
-					   _("The maestro of this line is disconnected,\nthen you cannot edit flows.\n"
-					     "Try changing its maestro or connecting it."));
+					   _("The domain of this line is disconnected,\nthen you cannot edit flows.\n"
+					     "Try reconnecting its domain or moving this line to another one."));
 			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (flows_nrows  !=  1) {
 			gchar *label_msg;

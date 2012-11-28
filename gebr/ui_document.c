@@ -1776,7 +1776,7 @@ time_out_error(gpointer user_data)
 	gtk_label_set_markup(GTK_LABEL(summary), tmp);
 	g_free(tmp);
 	gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nTry reconnecting your maestro."));
+	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nTry reconnecting your domain."));
 	update_buttons_visibility(data, PROPERTIES_ERROR);
 
 	GebrMaestroServer *maestro =

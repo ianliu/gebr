@@ -244,9 +244,9 @@ line_check_maestro_connected(void)
 	                                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                       GTK_MESSAGE_WARNING,
 	                                                       GTK_BUTTONS_OK,
-	                                                       _("\nA connected maestro is required to accomplish this task.\n"));
+	                                                       _("\nA connected domain is required to accomplish this task.\n"));
 
-	gchar *win_title = g_strdup(_("Maestro disconnected"));
+	gchar *win_title = g_strdup(_("Domain disconnected"));
 	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -273,10 +273,10 @@ flows_check_maestro_connected(void)
 	                                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                       GTK_MESSAGE_WARNING,
 	                                                       GTK_BUTTONS_OK,
-	                                                       _("<span size='large'><b>The maestro of this line is disconnected.</b></span>\n\n"
-	                                                	 "Connect to maestro on <b>%s</b> to execute this line."), label);
+	                                                       _("<span size='large'><b>The domain of this line is disconnected.</b></span>\n\n"
+	                                                	 "Connect to domain <b>%s</b> to execute this line."), label);
 
-	gchar *win_title = g_strdup(_("Maestro disconnected"));
+	gchar *win_title = g_strdup(_("Domain disconnected"));
 	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
 
 	gtk_dialog_run(GTK_DIALOG(dialog));

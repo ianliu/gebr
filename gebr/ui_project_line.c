@@ -262,10 +262,10 @@ on_maestro_button_clicked(GtkButton *button,
 
 	/* Head Label */
 	gchar *new_head;
-	new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line is not handled by any maestro</span></b>"));
+	new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line does not belong to any domain</span></b>"));
 
 	if (g_strcmp0(connect_nfsid, "") != 0)
-		new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line is handled by %s</span></b>"), nfslabel);
+		new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line belongs to domain %s</span></b>"), nfslabel);
 
 	gtk_label_set_markup(GTK_LABEL(head_label), new_head);
 
@@ -281,7 +281,7 @@ on_maestro_button_clicked(GtkButton *button,
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro), dialog);
 	} else {
 		gtk_image_set_from_stock(GTK_IMAGE(image_change_button), "gtk-disconnect", GTK_ICON_SIZE_DND);
-		change_text = g_markup_printf_escaped(_("Connect to another maestro"));
+		change_text = g_markup_printf_escaped(_("Connect to another domain"));
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro_disconnected), dialog);
 	}
@@ -291,7 +291,7 @@ on_maestro_button_clicked(GtkButton *button,
 	if (g_strcmp0(connect_nfsid, "") != 0) {
 		connect_text = g_markup_printf_escaped(_("Connect to <b>%s</b>"), nfslabel);
 	} else {
-		connect_text = g_strdup(_("This Line does not have maestro"));
+		connect_text = g_strdup(_("This Line does not belong to any domain"));
 		gtk_widget_set_sensitive(GTK_WIDGET(connect_button), FALSE);
 	}
 
@@ -351,10 +351,10 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid)
 
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 						   NULL,
-						   _("Moving this line to current maestro."),
-						   _("Moving this line to current maestro."),
+						   _("Moving this line to current domain."),
+						   _("Moving this line to current domain."),
 						   _("Are you sure you want to move this line to %s?"
-						     "\n\nIf you choose to move this line to current maestro,"
+						     "\n\nIf you choose to move this line to current domain,"
 						     " be sure to correct the paths of this line "
 						     "and its respective flows that can be broken."),
 						   label);
@@ -504,7 +504,7 @@ line_info_update(void)
 
 			if (g_strcmp0(type, "error:none") == 0) {
 				stockid = GTK_STOCK_DISCONNECT;
-				tooltip = g_strdup(_("Click here to connect or change maestro for this line"));
+				tooltip = g_strdup(_("Click here to connect or change the domain for this line"));
 			} else {
 				stockid = GTK_STOCK_DIALOG_WARNING;
 				tooltip = gebr_maestro_server_translate_error(type, msg);
@@ -518,7 +518,7 @@ line_info_update(void)
 		home_path = g_strdup(gebr_maestro_server_get_home_dir(maestro));
 	} else {
 		stockid = GTK_STOCK_DISCONNECT;
-		tooltip = g_strdup(_("Click here to connect or change maestro for this line"));
+		tooltip = g_strdup(_("Click here to connect or change the domain for this line"));
 		home_path = g_strdup("");
 		gtk_widget_show(GTK_WIDGET(maestro_button));
 		gtk_widget_hide(GTK_WIDGET(image_maestro_connect));

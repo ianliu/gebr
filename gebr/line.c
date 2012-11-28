@@ -260,7 +260,7 @@ time_out_error(gpointer user_data)
 	gtk_label_set_markup(GTK_LABEL(summary), tmp);
 	g_free(tmp);
 	gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nCheck if your maestro is connected."));
+	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nCheck if your domain is connected."));
 
 	gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 	                            page2, GTK_ASSISTANT_PAGE_CONFIRM);

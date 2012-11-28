@@ -1439,8 +1439,8 @@ flow_browse_setup_ui()
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED && !gebr.line) {
 		ui_flow_browse->warn_window = gtk_label_new(_("No line is selected\n"));
 	} else
-		ui_flow_browse->warn_window = gtk_label_new(_("The maestro of this line is disconnected,\nthen you cannot edit flows.\n"
-							      "Try changing its maestro or connecting it."));
+		ui_flow_browse->warn_window = gtk_label_new(_("The domain of this line is disconnected,\nthen you cannot edit flows.\n"
+							      "Try reconnecting its domain or moving this line to another one."));
 
 	gtk_widget_set_sensitive(ui_flow_browse->warn_window, FALSE);
 	gtk_box_pack_start(GTK_BOX(infopage), ui_flow_browse->warn_window, TRUE, TRUE, 0);
@@ -3479,7 +3479,7 @@ flow_browse_set_run_widgets_sensitiveness(GebrUiFlowBrowse *fb,
 	} else {
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
-			tooltip_disconn = _("The maestro of this line is disconnected.\nConnecting to it to execute a flow.");
+			tooltip_disconn = _("The domain of this line is disconnected.\nConnecting to it to execute a flow.");
 		else if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
 			tooltip_disconn = _("This line does not contain flows\nCreate a flow to use this line");
 		else

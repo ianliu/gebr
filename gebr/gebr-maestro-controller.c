@@ -1640,7 +1640,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkButton *alias_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_save"));
 	GtkEntry *alias_entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
 
-	gtk_widget_set_tooltip_text(GTK_WIDGET(alias_entry), _("Set an alias for this maestro."));
+	gtk_widget_set_tooltip_text(GTK_WIDGET(alias_entry), _("Set an alias for this domain."));
 	const gchar *text_entry  = gebr_maestro_server_get_nfs_label(maestro);
 	if (text_entry)
 		gtk_entry_set_text(alias_entry, text_entry);
@@ -2041,13 +2041,13 @@ on_daemon_error(GebrMaestroServer *maestro,
 	} else if (g_strcmp0(error_type, "error:id") == 0) {
 		message = _("Node already added");
 		second = g_strdup_printf(_("The node %s was already added in"
-					   " this maestro. It will be"
+					   " this domain. It will be"
 					   " automatically removed."), addr);
 		show_dialog = TRUE;
 	} else if (g_strcmp0(error_type, "error:protocol") == 0) {
 		message = _("This node is using a different protocol version");
 	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
-		message = _("This node is working for another maestro");
+		message = _("This node is working for another domain");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {
 		message = error_msg;
 	} else if (g_strcmp0(error_type, "error:xauth") == 0) {

@@ -1128,7 +1128,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		gchar *mpi_issue_message;
 
 		if (!*info.group)
-			mpi_issue_message = g_strdup_printf("There is no processing node that supports %s in maestro <b>%s</b>", tmp->str, info.hostname);
+			mpi_issue_message = g_strdup_printf("There is no processing node that supports %s in domain <b>%s</b>", tmp->str, info.hostname);
 		else if (g_strcmp0(group_type,"daemon"))
 			mpi_issue_message = g_strdup_printf("There is no processing node that supports %s in group <b>%s</b>", tmp->str, info.group);
 		else

@@ -270,7 +270,7 @@ Although it is not mandatory to adhere to this structure, it is highly recommend
             <property name="visible">True</property>
             <property name="label" translatable="yes">&lt;small&gt;Remember that the processing takes place at the processing nodes. So, the structure which is being defined here will be created there.
 
-To be able to browse files in these directory, the &lt;i&gt;remote browsing&lt;/i&gt; feature must be enable in the maestro.&lt;/small&gt;</property>
+To be able to browse files in these directory, the &lt;i&gt;remote browsing&lt;/i&gt; feature must be enable in the domain.&lt;/small&gt;</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
