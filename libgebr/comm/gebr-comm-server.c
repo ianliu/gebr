@@ -728,10 +728,9 @@ static void gebr_comm_server_free_x11_forward(GebrCommServer *server)
  */
 static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 {
-	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
-
 	server->port = 0;
 	server->socket->protocol->logged = FALSE;
+	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 	gebr_comm_protocol_reset(server->socket->protocol);
 	gebr_comm_server_free_x11_forward(server);
 

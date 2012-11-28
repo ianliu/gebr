@@ -310,6 +310,13 @@ gebr_maestro_server_set_error(GebrMaestroServer *maestro,
 		had_previous_error = TRUE;
 	}
 	maestro->priv->error_msg = tmp;
+
+	if (maestro->priv->server && g_strcmp0(error_type, "error:protocol") == 0) {
+		gebr_comm_server_set_last_error(maestro->priv->server,
+						SERVER_ERROR_PROTOCOL_VERSION,
+						"Protocol version mismatch");
+	}
+
 	return had_previous_error;
 }
 
