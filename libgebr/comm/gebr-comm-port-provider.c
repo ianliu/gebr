@@ -827,6 +827,9 @@ gebr_comm_port_provider_get_forward(GebrCommPortProvider *self)
 const gchar *
 gebr_comm_port_forward_get_address(GebrCommPortForward *port_forward)
 {
+	if (!port_forward)
+		return NULL;
+
 	return port_forward->address;
 }
 
