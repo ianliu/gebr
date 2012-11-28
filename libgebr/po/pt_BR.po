@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-27 19:20-0200\n"
+"POT-Creation-Date: 2012-11-28 18:00-0200\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -21,21 +21,21 @@ msgstr ""
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../comm/gebr-comm-server.c:328
+#: ../comm/gebr-comm-server.c:354
 msgid "Please, answer the question"
 msgstr "Por favor, responda a pergunta"
 
-#: ../comm/gebr-comm-server.c:366
+#: ../comm/gebr-comm-server.c:392
 #, c-format
 msgid "%p: Launching machine at '%s'."
 msgstr "%p: Iniciando máquina em '%s'."
 
-#: ../comm/gebr-comm-server.c:414
+#: ../comm/gebr-comm-server.c:442
 #, c-format
 msgid "Stopping machine at '%s'."
 msgstr "Parando máquina '%s'."
 
-#: ../comm/gebr-comm-server.c:668
+#: ../comm/gebr-comm-server.c:688
 #, c-format
 msgid "Machine '%s' disconnected"
 msgstr "Máquina '%s' desconectada"
