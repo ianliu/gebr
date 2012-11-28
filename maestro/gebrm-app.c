@@ -720,16 +720,10 @@ err:
 			const gchar *label = gebr_maestro_settings_get_label_for_domain(app->priv->settings,
 			                                                                nfsid, FALSE);
 
-			gchar *gebrd_location = g_find_program_in_path("gebrd");
-
 			gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), g_get_host_name());
-
 			gebr_maestro_settings_set_domain(app->priv->settings, nfsid, label, addr);
-			if (gebrd_location)
-				gebr_maestro_settings_add_node(app->priv->settings,
-							       g_get_host_name(), "", "on");
+
 			g_free(addr);
-			g_free(gebrd_location);
 		}
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
@@ -1909,11 +1903,11 @@ gebrm_config_load_admin_servers(GebrmApp *app)
 	GKeyFile *adm_servers = load_admin_servers_keyfile();
 
 	if (adm_servers) {
-		load_servers_from_key_file(app, adm_servers);
-
-		const gchar *path = gebrm_app_get_admin_servers_file();
-		if (!g_file_test(path, G_FILE_TEST_EXISTS))
+		const gchar *path = gebr_maestro_settings_get_servers_file();
+		if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+			load_servers_from_key_file(app, adm_servers);
 			save_servers_keyfile(adm_servers);
+		}
 		g_key_file_free(adm_servers);
 	}
 
@@ -2088,12 +2082,12 @@ gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
 	/* Add servers from admin file */
 	gebrm_config_load_admin_servers(app);
 
-	/* Add localhost */
-	gebrm_add_server_to_list(app, g_get_host_name(), "");
-
 	/* Add servers from user file */
 	const gchar *path = gebr_maestro_settings_get_servers_file();
 	gebrm_config_load_servers(app, path);
+
+	/* Add localhost */
+	gebrm_add_server_to_list(app, g_get_host_name(), "");
 }
 
 gboolean
