@@ -961,17 +961,16 @@ set_maestro_chooser_page(GtkBuilder *builder,
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, TRUE);
 	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(combo), renderer, on_combo_set_text, NULL, NULL);
 
-	GtkListStore *model = gtk_list_store_new(MAESTRO_DEFAULT_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
+	GtkListStore *model = gtk_list_store_new(MAESTRO_DEFAULT_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gebr_maestro_controller_create_chooser_model(model, maestro);
-
-	g_signal_connect(combo, "changed", G_CALLBACK(gebr_maestro_controller_on_maestro_combo_changed), gebr.maestro_controller);
-
 	gtk_combo_box_set_model(combo, GTK_TREE_MODEL(model));
+
 	gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(combo), MAESTRO_DEFAULT_LABEL);
 	gtk_combo_box_set_active(combo, 0);
+
+	g_signal_connect(combo, "changed", G_CALLBACK(gebr_maestro_controller_on_maestro_combo_changed), gebr.maestro_controller);
 }
 
 static void
