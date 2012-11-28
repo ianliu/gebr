@@ -2030,8 +2030,6 @@ on_daemon_error(GebrMaestroServer *maestro,
 		const gchar *error_msg,
 		GebrMaestroController *mc)
 {
-	GtkTreeIter iter;
-	GtkTreeModel *model = GTK_TREE_MODEL(mc->priv->model);
 	const gchar *message = NULL;
 	gchar *second = NULL;
 	gboolean show_dialog = FALSE;
