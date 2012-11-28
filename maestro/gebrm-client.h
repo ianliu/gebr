@@ -79,11 +79,10 @@ const gchar *gebrm_client_get_magic_cookie(GebrmClient *client);
 /**
  * gebrm_client_add_forward:
  *
- * Adds a remote forward from @remote_port of @server to this client.
+ * Adds a forward on client.
  */
 void gebrm_client_add_forward(GebrmClient *client,
-			      GebrCommServer *server,
-			      guint16 remote_port);
+                              GebrCommPortForward *forward);
 
 /**
  * gebrm_client_kill_forward_by_address:

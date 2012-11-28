@@ -588,6 +588,10 @@ on_x11_port_defined(GebrCommPortProvider *self,
 	queue_client_info(data->app, data->daemon, data->client,
 			  gebr_comm_port_provider_get_display_host(self),
 			  port);
+
+	GebrCommPortForward *forward = gebr_comm_port_provider_get_forward(self);
+	gebrm_client_add_forward(data->client, forward);
+
 	g_free(data);
 }
 

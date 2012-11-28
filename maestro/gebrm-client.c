@@ -39,12 +39,6 @@ enum {
 	PROP_DISPLAY_PORT,
 };
 
-typedef struct {
-	GebrmClient *client;
-	GebrCommServer *server;
-	GebrCommPortForward *forward;
-} X11ForwardData;
-
 static void gebrm_client_finalize(GObject *object);
 
 static void gebrm_client_set_property(GObject      *object,
@@ -99,10 +93,10 @@ gebrm_client_init(GebrmClient *client)
 }
 
 static void
-x11_forward_data_close_and_free(X11ForwardData *data)
+close_and_free_client_forward(GebrCommPortForward *forward)
 {
-	gebr_comm_port_forward_close(data->forward);
-	g_free(data);
+	gebr_comm_port_forward_close(forward);
+	gebr_comm_port_forward_free(forward);
 }
 
 static void
@@ -111,7 +105,7 @@ gebrm_client_finalize(GObject *object)
 	GebrmClient *client = GEBRM_CLIENT(object);
 	
 	g_list_foreach(client->priv->forwards,
-		       (GFunc)x11_forward_data_close_and_free, NULL);
+		       (GFunc)close_and_free_client_forward, NULL);
 	g_list_free(client->priv->forwards);
 	g_object_unref(client->priv->socket);
 	g_free(client->priv->id);
@@ -208,44 +202,11 @@ gebrm_client_get_magic_cookie(GebrmClient *client)
 	return client->priv->cookie;
 }
 
-static void
-on_x11_port_defined(GebrCommPortProvider *self,
-		    guint port,
-		    X11ForwardData *data)
-{
-	data->forward = gebr_comm_port_provider_get_forward(self);
-	data->client->priv->forwards = g_list_prepend(data->client->priv->forwards, data);
-
-	gchar *tmp = g_strdup_printf("%d", port);
-	gebr_comm_protocol_socket_oldmsg_send(data->server->socket, FALSE,
-					      gebr_comm_protocol_defs.dsp_def, 1,
-					      tmp);
-	g_free(tmp);
-}
-
-static void
-on_x11_error(GebrCommPortProvider *self,
-	     GError *error,
-	     GebrmClient *client)
-{
-	g_debug("%s", error->message);
-}
-
 void
 gebrm_client_add_forward(GebrmClient *client,
-			 GebrCommServer *server,
-			 guint16 remote_port)
+			 GebrCommPortForward *forward)
 {
-	X11ForwardData *data = g_new(X11ForwardData, 1);
-	data->client = client;
-	data->server = server;
-
-	GebrCommPortProvider *port_provider =
-		gebr_comm_server_create_port_provider(server, GEBR_COMM_PORT_TYPE_X11);
-	gebr_comm_port_provider_set_display(port_provider, client->priv->x11_port, client->priv->x11_host);
-	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), data);
-	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_error), client);
-	gebr_comm_port_provider_start(port_provider);
+	client->priv->forwards = g_list_prepend(client->priv->forwards, forward);
 }
 
 void
@@ -253,11 +214,10 @@ gebrm_client_kill_forward_by_address(GebrmClient *client,
 				     const gchar *addr)
 {
 	for (GList *i = client->priv->forwards; i; i = i->next) {
-		X11ForwardData *data = i->data;
-		if (g_strcmp0(addr, data->server->address->str) == 0) {
-			gebr_comm_port_forward_close(data->forward);
+		GebrCommPortForward *forward = i->data;
+		if (g_strcmp0(addr, gebr_comm_port_forward_get_address(forward)) == 0) {
+			close_and_free_client_forward(forward);
 			client->priv->forwards = g_list_delete_link(client->priv->forwards, i);
-			g_free(data);
 			return;
 		}
 	}
@@ -269,7 +229,7 @@ gebrm_client_remove_forwards(GebrmClient *client)
 	g_debug("Removing client %s forwards...", client->priv->id);
 
 	g_list_foreach(client->priv->forwards,
-		       (GFunc)x11_forward_data_close_and_free, NULL);
+		       (GFunc)close_and_free_client_forward, NULL);
 	g_list_free(client->priv->forwards);
 	client->priv->forwards = NULL;
 }
