@@ -1,3 +1,18 @@
+gebrproject (0.19.10) lucid; urgency=medium
+
+  * Fixes integration tests to build without internet connection in lauchpad ppa.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Wed, 28 Nov 2012 20:09:15 -0200
+
+gebrproject (0.19.9) lucid; urgency=medium
+
+  * No more login prompts to use local machine resources. (#1311)
+  * Automatic resource and coordination discovery with autopilot. (#1382)
+  * Avoid Line's Maestro reconfiguration in the same file system. (#1383)
+  * Simplified login with "Remember me" feature. (#1384)
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Wed, 28 Nov 2012 19:49:25 -0200
+
 gebrproject (0.19.8) lucid; urgency=low
 
   * More bug fixes (#1143,1183,1195,1212,1270,1288,1292,1334,1336,1337,1360,1361,1362,1365,1366,1368,1371,1373,1374)

@@ -1,3 +1,35 @@
+2012-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: fix connection-refused error
+	* maestro: daemon: fix x11 forward
+
+2012-11-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change X11 forward of GeBR and Maestro using port defined by SSH
+	command
+
+2012-11-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Daemon communicates to its maestro whether it has or not
+	gebrm installed
+
+2012-11-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: send kill message to daemon before disconnecting
+
+2012-11-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* protocol: change gid_def protocol to send a display port
+
+2012-11-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove deprecated errors of Gebrd and their treatments on maestro
+	and gebr
+
+2012-11-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.8: Spring cleaning [Sprint 68]
+
 2012-10-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Little translation improvements.

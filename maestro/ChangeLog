@@ -1,3 +1,223 @@
+2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add forward on client when X11 port is defined and remove old
+	structure to use only GebrCommPortForward in list of forwards
+
+2012-11-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using "Domain" instead of "Maestro" on interface, except on wizard
+	and on maestro/nodes dialog.
+
+2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move creation of possible daemons list from new-connection signal to
+	ini_def message
+	* Fix method gebrm_config_load_admin_servers to copy and add nodes
+	just one time, and remove unnecessary code on daemon_init
+
+2012-11-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move parameter haskey to /set-password message to fix append key on
+	daemons
+
+2012-11-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: remove duplicate data in servers.conf and maestros.conf
+
+2012-11-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Remove unused variable in gebrm-app
+	* maestro: Fix creation of groups
+
+2012-11-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* maestro: Fix memory leak on parse messages
+	* Create list to possible daemon when gebr connect on maestro
+	* Do not connect on daemons automatically when maestro run
+	* Refactoring /set-password message to use new method of invalid
+	password
+	* Add new method to treats invalid password on daemon
+	* Create new message /set-password, removing password from /server
+	message
+	* Refactoring method to connect daemon, creating a new method to set
+	password
+	* Change password signals and improve method on_ssh_password in
+	CommServer
+
+2012-11-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Transfer loading of possible daemons to app_run
+
+2012-11-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Save maestro on Keyfile with username
+
+2012-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: recover error for duplicate daemon
+	* maestro: transform address before connecting to daemon
+
+2012-11-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change signals and messages of password and question request to
+	receive retry variable of connection when type wrong password
+	* Create treatments when cancel dialog of password of daemon
+
+2012-11-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making the connection daemon respect the choice of autoconnect
+	option.
+
+2012-11-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Sends to maestro whether the client machine has gebrm
+	installed
+
+2012-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: daemon: fix x11 forward
+
+2012-11-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change X11 forward of GeBR and Maestro using port defined by SSH
+	command
+
+2012-11-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Maestro sends to clients whether the daemons has or not
+	gebrm installed
+	* maestro: Daemon communicates to its maestro whether it has or not
+	gebrm installed
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Generate NFS label only in GêBR and send back to maestro, moving
+	method to generate default label from libgebr/utils to maestro-
+	settings
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge branch autopilot to default
+
+2012-11-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Change protocol of ini_def to include whether client has
+	gebrm and gebrd
+
+2012-11-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: send kill message to daemon before disconnecting
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Maestro connects at all possible nodes that we find
+
+2012-11-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Add daemon address to the list when maestro connects to a
+	daemon
+	* libgebr: Add method to add/get nodes to the maestro keyfile
+
+2012-11-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: fix removal of X11 forward
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update MaestroSettings structure when maestro receives a new
+	connection
+
+2012-11-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: create display port upon GeBR connection
+	* protocol: change gid_def protocol to send a display port
+	* maestro: add method gebrm_client_get_display_port
+
+2012-11-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Refactor and fix logic of maestro to check lock file and suggest
+	another maestro
+
+2012-11-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Fix wrong freeing of variable
+
+2012-11-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: fix methods for building maestro paths
+
+2012-11-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Use newly created methods of build of paths
+	* maestro: Refactor methods of build of paths of maestro
+
+2012-11-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Fix compilation of previous commit
+	* maestro: First refactor of gebrm-main
+	* maestro: Change location of the maestro lock
+
+2012-11-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Append username on addr when maestro returns port and address
+
+2012-11-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove deprecated errors of Gebrd and their treatments on maestro
+	and gebr
+	* Fix method GebrmClient::kill_forward_by_address removing deprecated
+	code
+	* Back code to set password on server
+
+2012-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: fix maestro when there is no configuration file
+	* libgebr: use new MaestroSettings methods to manipulate addresses
+
+2012-11-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use new signals to pass if server can use public key besides temp
+	file, and remove some deprecated methods and codes
+	* Send port and address always when GeBR starts and create better
+	treatment to the address avoiding loop connection on same maestro
+
+2012-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: send display port upon daemons connection
+	* maestro: don't return display port to GeBR
+
+2012-11-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update maestro config file when connect or try on new one
+	* Use new method to check if has maestro on remote address and port
+	* Fix maestro to accepts remote connections
+
+2012-11-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.8: Spring cleaning [Sprint 68]
+
+2012-11-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use method to check if remote ports has maestro listen
+
+2012-11-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Check maestro config file before execute maestro to check if there
+	other maestro on the same NFS
+	* Add methods to get lock/version file for given address and turn
+	public methods to create maestro config and get NFSid of config
+	* Create key configuration on maestro and change GeBR to syncronize
+	all informations with the maestro file
+
+2012-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve maestro to send just one time NFS id to client
+
+2012-10-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send NFSid when client connect on maestro
+	* Send NFSid from maestro to client
+
 2012-10-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.19.7: Feature Freeze [Sprint 67]
