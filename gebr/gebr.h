@@ -235,8 +235,6 @@ void restore_project_line_flow_selection(void);
 
 gchar *gebr_get_maestros_conf_path(void);
 
-gchar *gebr_get_maestros_list_path(void);
-
 G_END_DECLS
 
 #endif				//__GEBR_H

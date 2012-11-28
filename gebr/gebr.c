@@ -838,9 +838,3 @@ gebr_get_maestros_conf_path(void)
 {
 	return (g_strdup_printf("%s/.gebr/gebr/maestros.conf", g_get_home_dir()));
 }
-
-gchar *
-gebr_get_maestros_list_path(void)
-{
-	return (g_strdup_printf("%s/.gebr/gebr/maestros.list", g_get_home_dir()));
-}
