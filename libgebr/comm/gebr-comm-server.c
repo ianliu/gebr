@@ -414,7 +414,9 @@ void gebr_comm_server_connect(GebrCommServer *server,
 
 void gebr_comm_server_disconnect(GebrCommServer *server)
 {
-	gebr_comm_protocol_socket_disconnect(server->socket);
+	if (server->state == SERVER_STATE_CONNECT
+	    || server->state == SERVER_STATE_LOGGED)
+		gebr_comm_protocol_socket_disconnect(server->socket);
 }
 
 gboolean
