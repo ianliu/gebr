@@ -346,6 +346,10 @@ state_changed(GebrCommServer *comm_server,
 
 		if (!gebr.quit)
 			gebr_project_line_show(gebr.ui_project_line);
+
+		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
+                if (err && *err)
+                        gebr_maestro_server_set_error(maestro, "error:ssh", err);
 	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
