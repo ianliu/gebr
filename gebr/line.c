@@ -37,8 +37,9 @@
 #include "ui_project_line.h"
 #include "ui_document.h"
 
-static GebrErrorEntry
-check_directory_ok(const gchar *text){
+GebrErrorEntry
+check_directory_ok(const gchar *text)
+{
 	if (text && *text) {
 		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME"))
 			return OK_ENTRY;

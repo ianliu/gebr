@@ -98,10 +98,16 @@ void line_load_flows(void);
  * Move flow top
  */
 void line_move_flow_top(void);
+
 /** 
  * Move flow bottom
  */
 void line_move_flow_bottom(void);
+
+/**
+ * Check if BASE ok
+ */
+GebrErrorEntry check_directory_ok(const gchar *text);
 
 /**
  *

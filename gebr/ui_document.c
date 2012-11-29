@@ -1701,6 +1701,8 @@ save_document_properties(GebrPropertiesData *data)
 	/* Update title in apropriated store */
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+		// Set new base for line
+		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), data->new_base);
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
@@ -1868,6 +1870,8 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 	GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
 
 	GString *_new_base = g_string_new(gtk_entry_get_text(entry_base));
+
+
 	gchar *tmp = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(data->document), "BASE");
 	GString *_old_base = g_string_new(tmp);
 	gebr_path_resolve_home_variable(_new_base);
@@ -1879,12 +1883,11 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 
 	gboolean base_changed = g_strcmp0(new_base, old_base) != 0;
 
-	if (!base_changed) {
+	if (!base_changed && check_directory_ok(_new_base->str) == OK_ENTRY)
 		return FALSE;
-	} else {
-		*option = GEBR_COMM_PROTOCOL_PATH_CREATE;
-		*newmsg = g_strdup(new_base);
-	}
+
+	*option = GEBR_COMM_PROTOCOL_PATH_CREATE;
+	*newmsg = g_strdup(new_base);
 	*oldmsg = g_strdup(old_base);
 
 	g_free(old_base);
@@ -2006,8 +2009,6 @@ on_response_ok(GtkButton *button,
 	gtk_widget_hide(GTK_WIDGET(message));
 	gtk_widget_show(GTK_WIDGET(progress));
 
-	// Set new base for line
-	gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), newmsg);
 	// Send new base to create on maestro
 	gebr_ui_document_send_paths_to_maestro(maestro, option, oldmsg, newmsg);
 
