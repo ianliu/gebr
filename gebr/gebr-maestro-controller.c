@@ -2255,6 +2255,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	}
 
 	maestro = gebr_maestro_server_new(address);
+	gebr_maestro_server_set_nfsid(maestro, gebr.config.nfsid->str);
 	self->priv->maestro = maestro;
 
 	g_signal_connect(maestro, "job-define",
