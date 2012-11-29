@@ -451,7 +451,7 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	gchar *kill = g_strdup_printf("fuser -sk -15 $(cat $HOME/.gebr/%s/$HOSTNAME/lock)/tcp", bin);
 	GString *cmd_line = g_string_new(NULL);
 
-	if (gebr_comm_server_is_local(server))
+	if (gebr_comm_is_local_address(server->address->str))
 		g_string_printf(cmd_line, "bash -c '%s'", kill);
 	else {
 		gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
