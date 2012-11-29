@@ -153,8 +153,12 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 static void on_value_type_editing_canceled(GtkCellRenderer *cell, struct dict_edit_data *data);
 
 static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct dict_edit_data *data);
+
 static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 				     struct dict_edit_data *data);
+
+static void on_dict_edit_keyword_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+                                             struct dict_edit_data *data);
 
 static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter, GebrGeoXmlParameter * parameter);
 
@@ -749,7 +753,7 @@ void document_dict_edit_setup_ui(void)
 	gtk_tree_view_column_pack_start(column, cell_renderer, FALSE);
 	data->cell_renderer_array[DICT_EDIT_KEYWORD] = cell_renderer;
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
-	g_signal_connect(cell_renderer, "edited", G_CALLBACK(on_dict_edit_cell_edited), data);
+	g_signal_connect(cell_renderer, "edited", G_CALLBACK(on_dict_edit_keyword_cell_edited), data);
 	g_signal_connect(cell_renderer, "editing-canceled", G_CALLBACK(on_dict_edit_editing_cell_canceled), data);
 	g_signal_connect(cell_renderer, "editing-started", G_CALLBACK(on_dict_edit_renderer_editing_started), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "markup", DICT_EDIT_KEYWORD);
@@ -1405,6 +1409,22 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 	else
 		data->is_inserting_new = FALSE;
 
+}
+
+static void on_dict_edit_keyword_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+                                             struct dict_edit_data *data)
+{
+	GtkTreeIter iter;
+	gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string);
+
+	GebrGeoXmlProgramParameter *parameter;
+
+	gtk_tree_model_get(data->tree_model, &iter,
+	                   DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
+
+	gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
+
+	on_dict_edit_cell_edited(cell, path_string, new_text, data);
 }
 
 /*
