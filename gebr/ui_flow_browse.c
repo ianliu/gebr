@@ -224,15 +224,10 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 	if (!gebr.line)
 		return;
 
-	gchar *addr1 = gebr_geoxml_line_get_maestro(gebr.line);
-	const gchar *addr2 = gebr_maestro_server_get_address(maestro);
-
-	if (g_strcmp0(addr1, addr2) != 0)
-		goto out;
-
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
 		flow_browse_set_run_widgets_sensitiveness(fb, FALSE, TRUE);
+		flow_browse_load();
 		break;
 	case SERVER_STATE_LOGGED:
 		gebr_flow_browse_update_server(fb, maestro);
@@ -241,9 +236,6 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 		break;
 	}
 	gebr_flow_set_toolbar_sensitive();
-
-out:
-	g_free(addr1);
 }
 
 /*

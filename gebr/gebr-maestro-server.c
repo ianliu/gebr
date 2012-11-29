@@ -1044,7 +1044,6 @@ parse_messages(GebrCommServer *comm_server,
 				g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 			}
 
-			gebr_project_line_show(gebr.ui_project_line);
 			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
