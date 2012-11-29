@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-29 10:34-0200\n"
+"POT-Creation-Date: 2012-11-29 14:34-0200\n"
 "PO-Revision-Date: 2012-08-02 15:37-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -20,6 +20,11 @@ msgstr ""
 "Content-Transfer-Encoding: Generator: Lokalize 0.3\n"
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../comm/gebr-comm-port-provider.c:596
+#, c-format
+msgid "There is no %s installed in this host."
+msgstr "Não há %s instalado nesta máquina."
 
 #: ../comm/gebr-comm-server.c:354
 msgid "Please, answer the question"

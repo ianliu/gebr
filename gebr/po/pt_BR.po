@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-29 11:03-0200\n"
+"POT-Creation-Date: 2012-11-29 14:33-0200\n"
 "PO-Revision-Date: 2012-11-22 14:42-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -24,7 +24,7 @@ msgid ""
 "A connected domain is required to accomplish this task.\n"
 msgstr ""
 "\n"
-"É necessário um domínio conectado para realizar esta operação.\n"
+"É necessário ter um domínio conectado para realizar esta operação.\n"
 
 #: ../callbacks.c:249 ../callbacks.c:279
 msgid "Domain disconnected"
@@ -77,7 +77,7 @@ msgstr "<b>Descrição:</b>"
 
 #: ../data/document-properties.glade.h:4
 msgid "<b>Directories hierarchy</b>"
-msgstr "<b>Hierarquia de Diretórios </b>"
+msgstr "<b>Hierarquia de diretórios </b>"
 
 #: ../data/document-properties.glade.h:5
 msgid "<b>E-mail:</b>"
@@ -631,17 +631,17 @@ msgstr "Tirar uma foto e prosseguir"
 msgid "document"
 msgstr "documento"
 
-#: ../document.c:226 ../gebr-report.c:902 ../ui_document.c:1635
+#: ../document.c:226 ../gebr-report.c:902 ../ui_document.c:1637
 #: ../ui_help.c:200 ../ui_help.c:287
 msgid "project"
 msgstr "projeto"
 
-#: ../document.c:227 ../gebr-report.c:880 ../ui_document.c:1637
+#: ../document.c:227 ../gebr-report.c:880 ../ui_document.c:1639
 #: ../ui_help.c:197 ../ui_help.c:291
 msgid "line"
 msgstr "linha"
 
-#: ../document.c:228 ../gebr-report.c:889 ../ui_document.c:1639
+#: ../document.c:228 ../gebr-report.c:889 ../ui_document.c:1641
 #: ../ui_help.c:194 ../ui_help.c:295
 msgid "flow"
 msgstr "fluxo"
@@ -1316,17 +1316,17 @@ msgstr "Pergunta do SSH de %s"
 msgid "Enter password"
 msgstr "Entre com a senha"
 
-#: ../gebr-maestro-controller.c:1843
-#, c-format
-msgid "Connecting to %s"
-msgstr "Conectando-se a %s"
-
 #: ../gebr-maestro-controller.c:1845
 #, c-format
 msgid "Stopping %s"
 msgstr "Interrompendo %s"
 
-#: ../gebr-maestro-controller.c:1848
+#: ../gebr-maestro-controller.c:1847
+#, c-format
+msgid "Connecting to %s"
+msgstr "Conectando-se a %s"
+
+#: ../gebr-maestro-controller.c:1851
 #, c-format
 msgid ""
 "<b>%s</b> is asking for your login\n"
@@ -1335,17 +1335,17 @@ msgstr ""
 "<b>%s</b> está requisitando senha\n"
 "de login."
 
-#: ../gebr-maestro-controller.c:1856
+#: ../gebr-maestro-controller.c:1859
 #, c-format
 msgid "<i>Wrong password. Please, try again.</i>"
 msgstr "<i>Senha incorreta. Por favor, tente novamente.</i>"
 
-#: ../gebr-maestro-controller.c:1868
+#: ../gebr-maestro-controller.c:1871
 #, c-format
 msgid "Remember me"
 msgstr "Lembrar senha"
 
-#: ../gebr-maestro-controller.c:1934
+#: ../gebr-maestro-controller.c:1937
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1354,7 +1354,7 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente desconectá-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1937
+#: ../gebr-maestro-controller.c:1940
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1363,7 +1363,7 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1940
+#: ../gebr-maestro-controller.c:1943
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1372,27 +1372,27 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente para-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1989 ../ui_log.c:153
+#: ../gebr-maestro-controller.c:1992 ../ui_log.c:153
 msgid "Disconnected"
 msgstr "Desconectado"
 
-#: ../gebr-maestro-controller.c:1997
+#: ../gebr-maestro-controller.c:2000
 msgid "Connected"
 msgstr "Conectado"
 
-#: ../gebr-maestro-controller.c:2018
+#: ../gebr-maestro-controller.c:2021
 msgid "Connecting"
 msgstr "Conectando"
 
-#: ../gebr-maestro-controller.c:2040
+#: ../gebr-maestro-controller.c:2043
 msgid "This node has a different NFS"
 msgstr "Este nó de processamento tem um sistema de arquivos diferente"
 
-#: ../gebr-maestro-controller.c:2042
+#: ../gebr-maestro-controller.c:2045
 msgid "Node already added"
 msgstr "Nó de processamento já adicionado"
 
-#: ../gebr-maestro-controller.c:2043
+#: ../gebr-maestro-controller.c:2046
 #, c-format
 msgid ""
 "The node %s was already added in this domain. It will be automatically "
@@ -1401,34 +1401,34 @@ msgstr ""
 "O nó de processamento %s já foi adicionado a este domínio. Ele será "
 "automaticamente removido."
 
-#: ../gebr-maestro-controller.c:2048
+#: ../gebr-maestro-controller.c:2051
 msgid "This node is using a different protocol version"
 msgstr "Este nó de processamento usa uma versão de protocolo diferente"
 
-#: ../gebr-maestro-controller.c:2050
+#: ../gebr-maestro-controller.c:2053
 msgid "This node is working for another domain"
 msgstr "Este nó de processamento já está registrado a um outro domínio"
 
-#: ../gebr-maestro-controller.c:2054
+#: ../gebr-maestro-controller.c:2057
 msgid "This node cannot connect to display. Try reconnect it"
 msgstr ""
 "Não foi possível conectar-se ao ambiente gráfico do nó de processamento. "
 "Tente reconectá-lo."
 
-#: ../gebr-maestro-controller.c:2056
+#: ../gebr-maestro-controller.c:2059
 msgid "This node has stopped."
 msgstr "Este nó foi interrompido."
 
-#: ../gebr-maestro-server.c:1505
+#: ../gebr-maestro-server.c:1509
 msgid "Local domain"
 msgstr "Domínio local"
 
-#: ../gebr-maestro-server.c:1507
+#: ../gebr-maestro-server.c:1511
 #, c-format
 msgid "Maestro %s"
 msgstr "Maestro %s"
 
-#: ../gebr-maestro-server.c:2033
+#: ../gebr-maestro-server.c:2037
 #, c-format
 msgid "Domain protocol version mismatch: %s"
 msgstr "Versão de protocolo do domínio incompatível: %s"
@@ -1509,16 +1509,16 @@ msgstr "Caminhos da Linha:"
 
 #. Variables table
 #: ../gebr-report.c:669 ../gebr-report.c:679 ../gebr-report.c:692
-#: ../ui_document.c:1635
+#: ../ui_document.c:1637
 msgid "Project"
 msgstr "Projeto"
 
 #: ../gebr-report.c:682 ../gebr-report.c:696 ../line.c:525
-#: ../ui_document.c:1637
+#: ../ui_document.c:1639
 msgid "Line"
 msgstr "Linha"
 
-#: ../gebr-report.c:698 ../ui_document.c:1639
+#: ../gebr-report.c:698 ../ui_document.c:1641
 msgid "Flow"
 msgstr "Fluxo"
 
@@ -1538,11 +1538,11 @@ msgstr "Linha composta pelo(s) fluxo(s):"
 msgid "Variables"
 msgstr "Variáveis"
 
-#: ../gebr-report.c:986 ../ui_document.c:745
+#: ../gebr-report.c:986 ../ui_document.c:747
 msgid "Keyword"
 msgstr "Palavra-chave"
 
-#: ../gebr-report.c:986 ../gebr-report.c:1428 ../ui_document.c:768
+#: ../gebr-report.c:986 ../gebr-report.c:1428 ../ui_document.c:770
 msgid "Value"
 msgstr "Valor"
 
@@ -1550,7 +1550,7 @@ msgstr "Valor"
 msgid "Result"
 msgstr "Resultado"
 
-#: ../gebr-report.c:986 ../ui_document.c:806
+#: ../gebr-report.c:986 ../ui_document.c:808
 msgid "Comment"
 msgstr "Comentário"
 
@@ -1860,11 +1860,11 @@ msgstr "Escolha um caminho válido"
 msgid "Title cannot be empty"
 msgstr "Título não pode estar vazio"
 
-#: ../line.c:155 ../ui_document.c:2215 ../ui_preferences.c:494
+#: ../line.c:155 ../ui_document.c:2217 ../ui_preferences.c:494
 msgid "Invalid email"
 msgstr "Email inválido"
 
-#: ../line.c:155 ../ui_document.c:2215 ../ui_preferences.c:494
+#: ../line.c:155 ../ui_document.c:2217 ../ui_preferences.c:494
 #: ../ui_preferences.c:853
 msgid "Your email address"
 msgstr "Seu endereço de e-mail"
@@ -1893,7 +1893,7 @@ msgstr ""
 msgid "Error!"
 msgstr "Erro!"
 
-#: ../line.c:211 ../ui_document.c:1733
+#: ../line.c:211 ../ui_document.c:1735
 msgid "The directory could not be created!"
 msgstr "O diretório não pode ser criado!"
 
@@ -1909,11 +1909,11 @@ msgstr ""
 msgid "Warning!"
 msgstr "Aviso!"
 
-#: ../line.c:223 ../ui_document.c:1741
+#: ../line.c:223 ../ui_document.c:1743
 msgid "The directory already exists!"
 msgstr "O diretório já existe!"
 
-#: ../line.c:259 ../ui_document.c:1775
+#: ../line.c:259 ../ui_document.c:1777
 msgid "Timed Out!"
 msgstr "Limite de tempo excedido!"
 
@@ -1967,7 +1967,7 @@ msgstr "<i>&lt;BASE&gt;: <b>%s</b></i>"
 msgid "<i>not defined</i>"
 msgstr "<i>Não definido</i>"
 
-#: ../line.c:464 ../line.c:555 ../ui_document.c:1980
+#: ../line.c:464 ../line.c:555 ../ui_document.c:1982
 msgid "Creating directories..."
 msgstr "Criando diretórios..."
 
@@ -2128,52 +2128,52 @@ msgstr ""
 "<i>Você navegará nos arquivos e pastas do <b>%s</b>.\n"
 "Esta estrutura de diretórios pode não ser a mesma na sua máquina local.</i>"
 
-#: ../ui_document.c:692
+#: ../ui_document.c:694
 #, c-format
 msgid "Dictionary of variables for %s \"%s\""
 msgstr "Dicionário de variáveis para %s \"%s\""
 
-#: ../ui_document.c:783 ../ui_document.c:1129
+#: ../ui_document.c:785 ../ui_document.c:1131
 msgid "Number"
 msgstr "Número"
 
-#: ../ui_document.c:785 ../ui_document.c:1127
+#: ../ui_document.c:787 ../ui_document.c:1129
 msgid "String"
 msgstr "Texto"
 
-#: ../ui_document.c:890
+#: ../ui_document.c:892
 msgid "Click 'New' to create a variable."
 msgstr "Clique em 'Nova' para criar uma variável."
 
-#: ../ui_document.c:900
+#: ../ui_document.c:902
 msgid "Please enter a unique variable name."
 msgstr "Por favor, digite um nome de variável único."
 
-#: ../ui_document.c:908
+#: ../ui_document.c:910
 msgid "Please enter a number or expression."
 msgstr "Por favor, digite um número ou expressão."
 
-#: ../ui_document.c:912
+#: ../ui_document.c:914
 msgid "Please enter a text."
 msgstr "Por favor, insira um texto."
 
-#: ../ui_document.c:920
+#: ../ui_document.c:922
 msgid "Please enter a comment."
 msgstr "Por favor, digite um comentário."
 
-#: ../ui_document.c:1109
+#: ../ui_document.c:1111
 msgid "Click to select type for a new parameter"
 msgstr "Clique para escolher o tipo de um novo parâmetro"
 
-#: ../ui_document.c:1182
+#: ../ui_document.c:1184
 msgid "Cannot use reserved keyword 'iter'."
 msgstr "A palavra-chave 'iter' não pode ser usada."
 
-#: ../ui_document.c:1187
+#: ../ui_document.c:1189
 msgid "This keyword is reserved."
 msgstr "Esta palavra-chave é reservada."
 
-#: ../ui_document.c:1192
+#: ../ui_document.c:1194
 msgid ""
 "Valid keywords are lower case characters from 'a' to 'z', numbers or "
 "underscore."
@@ -2181,33 +2181,33 @@ msgstr ""
 "Palavras-chaves válidas são compostas por letras minúsculas, números e "
 "sublinhado '_'."
 
-#: ../ui_document.c:1520
+#: ../ui_document.c:1522
 msgid ""
 "There is a parameter which already uses this keyword. Please choose another."
 msgstr ""
 "Outro parâmetro já utiliza esta palavra-chave. Por favor escolha outra."
 
-#: ../ui_document.c:1560
+#: ../ui_document.c:1562
 msgid "<i>New</i>"
 msgstr "<i>Nova</i>"
 
-#: ../ui_document.c:1641
+#: ../ui_document.c:1643
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: ../ui_document.c:1641
+#: ../ui_document.c:1643
 msgid "unknown"
 msgstr "desconhecido"
 
-#: ../ui_document.c:1722
+#: ../ui_document.c:1724
 msgid "Sucess!"
 msgstr "Sucesso!"
 
-#: ../ui_document.c:1724
+#: ../ui_document.c:1726
 msgid "The directory were successfully created!"
 msgstr "Os diretórios foram criados com sucesso!"
 
-#: ../ui_document.c:1730
+#: ../ui_document.c:1732
 msgid ""
 "Press the back buttom to change the BASE directory\n"
 "or the line title."
@@ -2215,7 +2215,7 @@ msgstr ""
 "Pressione o botão voltar para mudar o diretório BASE\n"
 " ou o título desta linha."
 
-#: ../ui_document.c:1738
+#: ../ui_document.c:1740
 msgid ""
 "You can change the BASE directory by pressing the\n"
 "back buttom or use this folder anyway."
@@ -2223,7 +2223,7 @@ msgstr ""
 "Você pode mudar o diretório BASE pressionando o\n"
 "botão voltar ou usar esta pasta assim mesmo."
 
-#: ../ui_document.c:1779
+#: ../ui_document.c:1781
 msgid ""
 "Could not create directory.\n"
 "Try reconnecting your domain."
