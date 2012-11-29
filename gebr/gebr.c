@@ -142,10 +142,7 @@ gebr_init(gboolean has_config)
 
 	gebr_post_config(has_config);
 
-	/* check for a menu list change */
-	//TODO: DO IT!
-//	if (menu_refresh_needed() == TRUE)
-		menu_list_populate();
+	menu_list_populate();
 }
 
 static void
