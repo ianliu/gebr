@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-28 17:48-0200\n"
+"POT-Creation-Date: 2012-11-29 11:03-0200\n"
 "PO-Revision-Date: 2012-11-22 14:42-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -31,12 +31,13 @@ msgid "Domain disconnected"
 msgstr "Domínio desconectado"
 
 #: ../callbacks.c:276
+#, c-format
 msgid ""
 "<span size='large'><b>The domain of this line is disconnected.</b></span>\n"
 "\n"
 "Connect to domain <b>%s</b> to execute this line."
 msgstr ""
-"<span size='large'><b>O maestro desta linha está desconectado.</b></span>\n"
+"<span size='large'><b>O domain desta linha está desconectado.</b></span>\n"
 "\n"
 "Conecte-se ao domínio <b>%s</b> para executar esta linha."
 
@@ -154,8 +155,8 @@ msgid ""
 "To be able to browse files in these directory, the <i>remote browsing</i> "
 "feature must be enable in the domain.</small>"
 msgstr ""
-"<small>Lembre-se de que o processamento ocorre nos nós de processamento. Então, "
-"a estrutura definida será criada lá.\n"
+"<small>Lembre-se de que o processamento ocorre nos nós de processamento. "
+"Então, a estrutura definida será criada lá.\n"
 "\n"
 "Para poder navegar no arquivos destes diretórios, a funcionalidade de "
 "<i>navegação remota</i> deve estar habilitada no domínio.</small>"
@@ -1392,6 +1393,7 @@ msgid "Node already added"
 msgstr "Nó de processamento já adicionado"
 
 #: ../gebr-maestro-controller.c:2043
+#, c-format
 msgid ""
 "The node %s was already added in this domain. It will be automatically "
 "removed."
@@ -1418,8 +1420,8 @@ msgid "This node has stopped."
 msgstr "Este nó foi interrompido."
 
 #: ../gebr-maestro-server.c:1505
-msgid "Local maestro"
-msgstr "Maestro local"
+msgid "Local domain"
+msgstr "Domínio local"
 
 #: ../gebr-maestro-server.c:1507
 #, c-format
@@ -1428,8 +1430,8 @@ msgstr "Maestro %s"
 
 #: ../gebr-maestro-server.c:2033
 #, c-format
-msgid "Maestro protocol version mismatch: %s"
-msgstr "Versão de protocolo do Maestro incompatível: %s"
+msgid "Domain protocol version mismatch: %s"
+msgstr "Versão de protocolo do domínio incompatível: %s"
 
 #: ../gebr-menu-view.c:190
 msgid "Close this help and back to menus list"
@@ -2227,7 +2229,7 @@ msgid ""
 "Try reconnecting your domain."
 msgstr ""
 "Não foi possível criar o diretório.\n"
-"Tente reconectar seu maestro."
+"Tente reconectar seu domain."
 
 #: ../ui_flow_browse.c:185
 msgid "This flow already contains a loop"
@@ -2725,8 +2727,8 @@ msgstr "Digite nome_da_maquina[.dominio] ou endereço"
 
 #: ../ui_preferences.c:194
 #, c-format
-msgid "<span size='large'>Successfully connected to maestro <b>%s</b>!</span>"
-msgstr "<span size='large'>Conectado com êxito ao maestro <b>%s</b>!</span>"
+msgid "<span size='large'>Successfully connected to domain <b>%s</b>!</span>"
+msgstr "<span size='large'>Conectado com êxito ao domínio <b>%s</b>!</span>"
 
 #: ../ui_preferences.c:221 ../ui_preferences.c:535
 msgid "Connecting..."
@@ -2734,13 +2736,13 @@ msgstr "Conectando..."
 
 #: ../ui_preferences.c:225
 #, c-format
-msgid "<span size='large'>Connecting to maestro <b>%s</b>!</span>"
-msgstr "<span size='large'>Conectando ao maestro <b>%s</b>!</span>"
+msgid "<span size='large'>Connecting to domain <b>%s</b>!</span>"
+msgstr "<span size='large'>Conectando ao domínio <b>%s</b>!</span>"
 
 #: ../ui_preferences.c:231
 #, c-format
-msgid "<span size='large'>Maestro <b>%s</b> disconnected!</span>!"
-msgstr "<span size='large'>Desconectado do Maestro <b>%s</b>!</span>"
+msgid "<span size='large'>Domain <b>%s</b> disconnected!</span>!"
+msgstr "<span size='large'>Desconectado do domínio <b>%s</b>!</span>"
 
 #: ../ui_preferences.c:236
 #, c-format
@@ -2749,9 +2751,9 @@ msgstr "Parado!"
 
 #: ../ui_preferences.c:243
 #, c-format
-msgid "<span size='large'>Could not connect to maestro <b>%s</b></span>!"
+msgid "<span size='large'>Could not connect to domain <b>%s</b></span>!"
 msgstr ""
-"<span size='large'>Não foi possível conectar ao maestro <b>%s</b></span>!"
+"<span size='large'>Não foi possível conectar ao domínio <b>%s</b></span>!"
 
 #: ../ui_preferences.c:256
 #, c-format
@@ -2823,12 +2825,12 @@ msgstr "Maestro"
 #: ../ui_preferences.c:731
 #, c-format
 msgid ""
-"Maestro <b>%s</b> needs at least one <i>connected node</i> to run processing "
-"flows. You must either connect to a new one or connect your already "
-"registered nodes.\n"
+"The domain <b>%s</b> needs at least one <i>connected node</i> to run "
+"processing flows. You must either connect to a new one or connect your "
+"already registered nodes.\n"
 msgstr ""
-"Maestro <b>%s</b> precisa de ao menos um <i>nóconectado</i> para executar os "
-"fluxos de processamento. Você deve adicionar uma nova máquina de "
+"O domínio <b>%s</b> precisa de ao menos um <i>nó conectado</i> para executar "
+"os fluxos de processamento. Você deve adicionar uma nova máquina de "
 "processamento ou conectar-se às máquinas registradas abaixo.\n"
 
 #: ../ui_preferences.c:840
@@ -2877,6 +2879,7 @@ msgid "Index"
 msgstr "Índice"
 
 #: ../ui_project_line.c:265
+#, c-format
 msgid ""
 "<b><span size=\"large\">This line does not belong to any domain</span></b>"
 msgstr ""
@@ -2884,8 +2887,10 @@ msgstr ""
 "span></b>"
 
 #: ../ui_project_line.c:268
+#, c-format
 msgid "<b><span size=\"large\">This line belongs to domain %s</span></b>"
-msgstr "<b><span size=\"large\">Esta linha está vinculada ao domínio %s</span></b>"
+msgstr ""
+"<b><span size=\"large\">Esta linha está vinculada ao domínio %s</span></b>"
 
 #: ../ui_project_line.c:278
 #, c-format
@@ -2893,6 +2898,7 @@ msgid "Move this line to <b>%s</b>"
 msgstr "Mover esta linha a <b>%s</b>."
 
 #: ../ui_project_line.c:284
+#, c-format
 msgid "Connect to another domain"
 msgstr "Conectar-se a outro domínio"
 
@@ -2910,6 +2916,7 @@ msgid "Moving this line to current domain."
 msgstr "Mover esta linha para o domínio atual."
 
 #: ../ui_project_line.c:356
+#, c-format
 msgid ""
 "Are you sure you want to move this line to %s?\n"
 "\n"

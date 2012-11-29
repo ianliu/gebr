@@ -1506,7 +1506,7 @@ gebr_maestro_server_get_display_address(GebrMaestroServer *maestro)
 	const gchar *addr = maestro->priv->address;
 
 	if (g_strcmp0(addr, "127.0.0.1") == 0)
-		return g_strdup(_("Local maestro"));
+		return g_strdup(_("Local domain"));
 
 	return g_strdup_printf(_("Maestro %s"), addr);
 }
@@ -2034,7 +2034,7 @@ gebr_maestro_server_translate_error(const gchar *error_type,
 	gchar *message = NULL;
 
 	if (g_strcmp0(error_type, "error:protocol") == 0)
-		message = g_strdup_printf(_("Maestro protocol version mismatch: %s"), error_msg);
+		message = g_strdup_printf(_("Domain protocol version mismatch: %s"), error_msg);
 	else if (g_strcmp0(error_type, "error:ssh") == 0)
 		message = g_strdup(error_msg);
 

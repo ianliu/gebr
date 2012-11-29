@@ -191,7 +191,7 @@ set_status_for_maestro(GebrMaestroController *self,
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, TRUE);
 
-		summary_txt = g_markup_printf_escaped(_("<span size='large'>Successfully connected to maestro <b>%s</b>!</span>"),
+		summary_txt = g_markup_printf_escaped(_("<span size='large'>Successfully connected to domain <b>%s</b>!</span>"),
 		                                      address);
 
 		gtk_label_set_markup(GTK_LABEL(status_title), summary_txt);
@@ -222,13 +222,13 @@ set_status_for_maestro(GebrMaestroController *self,
 
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
 
-			summary_txt = g_markup_printf_escaped(_("<span size='large'>Connecting to maestro <b>%s</b>!</span>"),
+			summary_txt = g_markup_printf_escaped(_("<span size='large'>Connecting to domain <b>%s</b>!</span>"),
 			                                      address);
 
 			gtk_label_set_markup(GTK_LABEL(status_title), summary_txt);
 			g_free(summary_txt);
 		} else if (!g_strcmp0(type, "error:stop")) {
-			gchar *title = g_markup_printf_escaped(_("<span size='large'>Maestro <b>%s</b> disconnected!</span>!"), address);
+			gchar *title = g_markup_printf_escaped(_("<span size='large'>Domain <b>%s</b> disconnected!</span>!"), address);
 			gtk_label_set_markup(GTK_LABEL(status_title), title);
 			g_free(title);
 
@@ -240,7 +240,7 @@ set_status_for_maestro(GebrMaestroController *self,
 			gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
 		} else {
-			gchar *title = g_markup_printf_escaped(_("<span size='large'>Could not connect to maestro <b>%s</b></span>!"), address);
+			gchar *title = g_markup_printf_escaped(_("<span size='large'>Could not connect to domain <b>%s</b></span>!"), address);
 			gtk_label_set_markup(GTK_LABEL(status_title), title);
 			g_free(title);
 
@@ -728,7 +728,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs at least one <i>connected node</i> "
+			gchar *main_servers_text = g_markup_printf_escaped(_("The domain <b>%s</b> needs at least one <i>connected node</i> "
                                                                              "to run processing flows. You must either connect to a new "
                                                                              "one or connect your already registered nodes.\n"),
 									   gebr_maestro_server_get_address(maestro));
