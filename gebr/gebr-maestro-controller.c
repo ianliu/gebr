@@ -1107,7 +1107,7 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
 	const gchar *stock_id = NULL;
 
-	const gchar *error = gebr_daemon_server_get_error(daemon);
+	const gchar *error = gebr_daemon_server_get_error_msg(daemon);
 	gboolean visible = TRUE;
 
 	if (!error || !*error)
@@ -1432,7 +1432,7 @@ server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		if (!daemon)
 			return FALSE;
 
-		const gchar *error = gebr_daemon_server_get_error(daemon);
+		const gchar *error = gebr_daemon_server_get_error_msg(daemon);
 
 		if (!error || !*error)
 			return FALSE;
@@ -1838,11 +1838,14 @@ on_password_request(GebrMaestroServer *maestro,
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
 	GebrDaemonServer *daemon = gebr_maestro_controller_get_daemon_from_address (gebr.maestro_controller, address);
-	const gchar *msg = gebr_daemon_server_get_error(daemon);
 
-	gchar *title = g_strdup_printf(_("Connecting to %s"), address);
-	if (g_strcmp0(msg,"This node has stopped.") == 0)
+	gchar *title;
+	const gchar *error_type = gebr_daemon_server_get_error_type(daemon);
+	if (g_strcmp0(error_type, "error:stop") == 0)
 		title = g_strdup_printf(_("Stopping %s"), address);
+	else
+		title = g_strdup_printf(_("Connecting to %s"), address);
+
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 
 	gchar *ssh_info = g_markup_printf_escaped(_("<b>%s</b> is asking for your login\n"
@@ -2069,7 +2072,8 @@ on_daemon_error(GebrMaestroServer *maestro,
 		gdk_threads_leave();
 	} else {
 		GebrDaemonServer *daemon = gebr_maestro_controller_get_daemon_from_address (mc, addr);
-		gebr_daemon_server_set_error(daemon, message);
+		gebr_daemon_server_set_error_msg(daemon, message);
+		gebr_daemon_server_set_error_type(daemon, error_type);
 	}
 
 	if (second)

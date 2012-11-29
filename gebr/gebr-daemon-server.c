@@ -29,7 +29,8 @@ struct _GebrDaemonServerPriv {
 	gchar *address;
 	gchar *hostname;
 	gboolean ac;
-	gchar *error;
+	gchar *error_msg;
+	gchar *error_type;
 	GebrCommServerState state;
 	GList *tags;
 	gchar *maestro_addr;
@@ -291,15 +292,28 @@ gebr_daemon_server_set_ac(GebrDaemonServer *daemon, gboolean ac)
 	daemon->priv->ac = ac;
 }
 void
-gebr_daemon_server_set_error(GebrDaemonServer *daemon, const gchar *error)
+gebr_daemon_server_set_error_msg(GebrDaemonServer *daemon, const gchar *error)
 {
-	if (daemon->priv->error)
-		g_free(daemon->priv->error);
-	daemon->priv->error = g_strdup(error);
+	if (daemon->priv->error_msg)
+		g_free(daemon->priv->error_msg);
+	daemon->priv->error_msg = g_strdup(error);
 }
-const gchar *gebr_daemon_server_get_error(GebrDaemonServer *daemon)
+const gchar *gebr_daemon_server_get_error_msg(GebrDaemonServer *daemon)
 {
-	return daemon->priv->error;
+	return daemon->priv->error_msg;
+}
+
+void
+gebr_daemon_server_set_error_type(GebrDaemonServer *daemon, const gchar *type)
+{
+	if (daemon->priv->error_type)
+		g_free(daemon->priv->error_type);
+	daemon->priv->error_type = g_strdup(type);
+}
+
+const gchar *gebr_daemon_server_get_error_type(GebrDaemonServer *daemon)
+{
+	return daemon->priv->error_type;
 }
 
 void

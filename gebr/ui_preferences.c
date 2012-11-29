@@ -344,7 +344,7 @@ server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		if (!daemon)
 			return FALSE;
 
-		const gchar *error = gebr_daemon_server_get_error(daemon);
+		const gchar *error = gebr_daemon_server_get_error_msg(daemon);
 
 		if (!error || !*error)
 			return FALSE;
