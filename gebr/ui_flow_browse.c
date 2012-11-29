@@ -2888,6 +2888,7 @@ flow_browse_on_query_tooltip(GtkTreeView * treeview,
 	GtkTreeModel *model;
 	gchar *message = NULL;
 	GebrUiFlowBrowseType type;
+	const gchar *text;
 
 	if (!gtk_tree_view_get_tooltip_context(treeview, &x, &y, keyboard_tip, &model, NULL, &iter))
 		return;
@@ -2917,16 +2918,18 @@ flow_browse_on_query_tooltip(GtkTreeView * treeview,
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_program,
 		                   -1);
-
-		message = g_strdup(gebr_ui_flow_program_get_tooltip(ui_program));
-		gtk_tooltip_set_text(tooltip, message);
+		text = gebr_ui_flow_program_get_tooltip(ui_program);
+		if (text)
+			message = g_markup_printf_escaped("%s", text);
+		gtk_tooltip_set_markup(tooltip, message);
 	} else if (type == STRUCT_TYPE_IO) {
 		GebrUiFlowsIo *ui_io;
 		gtk_tree_model_get(model, &iter,
 		                   FB_STRUCT, &ui_io,
 		                   -1);
-
-		message = g_strdup(gebr_ui_flows_io_get_tooltip(ui_io));
+		text = gebr_ui_flows_io_get_tooltip(ui_io);
+		if (text)
+			message = g_markup_printf_escaped("%s", text);
 		gtk_tooltip_set_markup(tooltip, message);
 	}
 
