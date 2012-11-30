@@ -341,8 +341,10 @@ process_ssh_line(GebrCommSsh *self,
 			self->priv->state = GEBR_COMM_SSH_STATE_QUESTION;
 
 			gchar *question;
-			question = g_strdup_printf(_("The authenticity of host can't be established."
-						     " Do you want to continue?"));
+			question = g_strdup_printf(_("This host has never been authenticated and"
+						     " has the fingerprint %s.\n"
+						     "Do you trust this host?"),
+						     self->priv->fingerprint);
 			g_signal_emit(self, signals[SSH_QUESTION], 0, question);
 			g_free(question);
 		}
