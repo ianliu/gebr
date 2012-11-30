@@ -2135,18 +2135,9 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 		return FALSE;
 	}
 
-	/* success, send port and address */
-	const gchar *username = g_get_user_name();
-	gchar *addr;
-	if (username && *username)
-		addr = g_strdup_printf("%s@%s", username, g_get_host_name());
-	else
-		addr = g_strdup(g_get_host_name());
-
-	gchar *port_str = g_strdup_printf("%s%u\n%s%s\n",
-	                                  GEBR_PORT_PREFIX, port,
-	                                  GEBR_ADDR_PREFIX, addr);
-	g_free(addr);
+	/* success, send port */
+	gchar *port_str = g_strdup_printf("%s%u\n",
+	                                  GEBR_PORT_PREFIX, port);
 
 	ssize_t s = 0;
 	do {

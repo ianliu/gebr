@@ -29,6 +29,7 @@
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/log.h>
 #include <fcntl.h>
+#include <gio/gio.h>
 
 #include "gebrm-app.h"
 
@@ -48,6 +49,51 @@ static GOptionEntry entries[] = {
 		"Show GeBR daemon version", NULL},
 	{NULL}
 };
+
+void
+fork_and_exit_half_main(void)
+{
+	int fd[2];
+
+	if (pipe(fd) == -1) {
+		perror("pipe");
+		exit(EXIT_FAILURE);
+	}
+
+	pid_t pid = fork();
+
+	if (pid == (pid_t)-1) {
+		perror("fork");
+		exit(EXIT_FAILURE);
+	}
+
+	if (pid != 0)
+		exit(EXIT_SUCCESS);
+
+	umask(0);
+
+	if (setsid() == (pid_t)-1) {
+		perror("setsid");
+		exit(EXIT_FAILURE);
+	}
+
+	if (chdir("/") == -1) {
+		perror("chdir");
+		exit(EXIT_FAILURE);
+	}
+
+	output_fd = fd[1];
+	int null = open("/dev/null", O_RDWR);
+	(void)dup2(null, STDIN_FILENO);
+	(void)dup2(null, STDOUT_FILENO);
+	(void)dup2(null, STDERR_FILENO);
+
+	/* Gebr opens the file des number 3 when calling
+	 * Maestro's binary. We close it as a workaround
+	 * to the double-connection bug.
+	 */
+	close(3);
+}
 
 void
 fork_and_exit_main(void)
@@ -74,7 +120,7 @@ fork_and_exit_main(void)
 		while (read(fd[0], &c, 1) != 0) {
 			if (c == '\n')
 				n++;
-			if (n == 2)
+			if (n == 1)
 				break;
 			g_string_append_c(buf, c);
 		}
@@ -135,6 +181,145 @@ get_version_contents_from_file(const gchar *version_file)
 	return version_contents;
 }
 
+typedef struct {
+	gchar *addr;
+	guint port;
+} ForwardData;
+
+static void
+start_forward(gint fd1,
+              gint fd2)
+{
+	gchar buf[1024];
+	GByteArray *buff_fd1 = g_byte_array_new();
+	GByteArray *buff_fd2 = g_byte_array_new();
+	fd_set readfds, writefds;
+
+	for ( ; ; ) {
+		FD_ZERO(&readfds);
+		FD_ZERO(&writefds);
+
+		FD_SET(fd1, &readfds);
+		FD_SET(fd2, &readfds);
+
+		FD_SET(fd1, &writefds);
+		FD_SET(fd2, &writefds);
+
+		gint nfds = MAX(fd1, fd2);
+
+		gint ret = select (nfds + 1, &readfds, &writefds, NULL, NULL);
+
+		if (ret == -1) {
+			perror("select");
+			exit(0);
+		}
+
+		if (FD_ISSET(fd1, &readfds)) {
+			gssize len;
+			len = read(fd1, &buf, sizeof(buf));
+			g_byte_array_append(buff_fd1, (const guint8*) &buf, len);
+		}
+
+		if (FD_ISSET(fd2, &readfds)) {
+			gssize len;
+			len = read(fd2, &buf, sizeof(buf));
+			g_byte_array_append(buff_fd2, (const guint8*) &buf, len);
+		}
+
+		if (FD_ISSET(fd1, &writefds) && buff_fd2->len > 0) {
+			gssize len;
+			len = write(fd1, buff_fd2->data, buff_fd2->len);
+
+			if (len > 0)
+				g_byte_array_remove_range(buff_fd2, 0, len);
+		}
+
+		if (FD_ISSET(fd2, &writefds) && buff_fd1->len > 0) {
+			gssize len;
+			len = write(fd2, buff_fd1->data, buff_fd1->len);
+
+			if (len > 0)
+				g_byte_array_remove_range(buff_fd1, 0, len);
+		}
+	}
+}
+
+static gboolean
+on_client_listener_connect(GThreadedSocketService *service,
+                           GSocketConnection      *connection,
+                           GObject                *source_object,
+                           ForwardData		  *data)
+{
+	gint fd1, fd2;
+	GSocketConnectable *addr;
+	GSocketAddressEnumerator *enumerator;
+	GSocketAddress *sockaddr;
+
+	GSocket *socket = g_socket_new(G_SOCKET_FAMILY_IPV4,
+	                               G_SOCKET_TYPE_STREAM,
+	                               G_SOCKET_PROTOCOL_TCP,
+	                               NULL);
+
+	if (!socket)
+		return FALSE;
+
+	addr = g_network_address_new (data->addr, data->port);
+	enumerator = g_socket_connectable_enumerate (addr);
+	g_object_unref (addr);
+
+	gboolean valid = FALSE;
+	while (!valid && (sockaddr = g_socket_address_enumerator_next (enumerator, NULL, NULL)))
+	{
+		valid = g_socket_connect(socket, sockaddr, NULL, NULL);
+		g_object_unref (sockaddr);
+	}
+	g_object_unref (enumerator);
+
+	GSocket *user_socket = g_socket_connection_get_socket(connection);
+
+	fd1 = g_socket_get_fd(user_socket);
+	fd2 = g_socket_get_fd(socket);
+
+	start_forward(fd1, fd2);
+
+	return FALSE;
+}
+
+static guint16
+start_forward_listener(const gchar *remote_addr,
+                       guint remote_port)
+{
+	GInetAddress *loopback = g_inet_address_new_loopback(G_SOCKET_FAMILY_IPV4);
+	GSocketAddress *addr = g_inet_socket_address_new(loopback, 0);
+
+	GSocket *socket = g_socket_new(G_SOCKET_FAMILY_IPV4,
+	                               G_SOCKET_TYPE_STREAM,
+	                               G_SOCKET_PROTOCOL_TCP,
+	                               NULL);
+
+	if (!g_socket_bind(socket, addr, TRUE, NULL))
+		return -1;
+
+	if (!g_socket_listen(socket, NULL))
+		return -1;
+
+	GSocketAddress *local_addr = g_socket_get_local_address(socket, NULL);
+	guint16 port = g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(local_addr));
+
+	GSocketService *service = g_threaded_socket_service_new(-1);
+
+	ForwardData *data = g_new0(ForwardData, 1);
+	data->addr = g_strdup(remote_addr);
+	data->port = remote_port;
+
+	g_signal_connect(service, "run", G_CALLBACK(on_client_listener_connect), data);
+
+	g_socket_listener_add_socket(G_SOCKET_LISTENER(service), socket, NULL, NULL);
+	g_socket_service_start(service);
+
+	return port;
+}
+
 static gboolean
 check_if_port_is_busy(const gchar *addr,
                       gint port,
@@ -143,18 +328,18 @@ check_if_port_is_busy(const gchar *addr,
 {
 	if (!gebr_comm_listen_socket_is_local_port_available(port) || gebr_comm_listen_socket_listen_on_port(port, addr)) {
 		if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
-			gchar *new_addr;
-			const gchar *username = g_get_user_name();
-			if (username && *username)
-				new_addr = g_strdup_printf("%s@%s", username, addr);
-			else
-				new_addr = g_strdup(addr);
+			guint16 local_port;
 
-			g_print("%s%d\n%s%s\n",
-			        GEBR_PORT_PREFIX, port,
-			        GEBR_ADDR_PREFIX, new_addr);
+			local_port = start_forward_listener(addr, port);
 
-			g_free(new_addr);
+			g_print("%s%d\n",
+			        GEBR_PORT_PREFIX, local_port);
+
+			fork_and_exit_half_main();
+
+			GMainLoop *loop;
+			loop = g_main_loop_new(NULL, FALSE);
+			g_main_loop_run(loop);
 
 			return TRUE;
 		} else {		//It is running in a different version
@@ -265,6 +450,10 @@ main(int argc, char *argv[])
 	gchar *curr_version = NULL;
 	curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
 
+	gebrm_app_create_folder_for_addr(local_addr);
+	const gchar *path = gebrm_app_get_log_file_for_address(local_addr);
+	gebr_log_set_default(path);
+
 	gboolean valid;
 	valid = verify_singleton_lock(curr_version);
 
@@ -301,10 +490,6 @@ main(int argc, char *argv[])
 		perror("sigaction");
 
 	gebr_geoxml_init();
-
-	gebrm_app_create_folder_for_addr(local_addr);
-	const gchar *path = gebrm_app_get_log_file_for_address(local_addr);
-	gebr_log_set_default(path);
 
 	GebrmApp *app = gebrm_app_singleton_get();
 

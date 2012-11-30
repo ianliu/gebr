@@ -536,30 +536,7 @@ get_port_from_command_output(GebrCommPortProvider *self,
                              const gchar *buffer,
                              guint *port)
 {
-	gchar *redirect_addr = g_strrstr(buffer, GEBR_ADDR_PREFIX);
-
-	if (redirect_addr) {
-		redirect_addr += strlen(GEBR_ADDR_PREFIX);
-		gchar *nl = strchr(redirect_addr, '\n');
-		gchar *addr;
-		if (nl)
-			addr = g_strndup(redirect_addr, (nl - redirect_addr)/sizeof(gchar));
-		else
-			addr = g_strdup(redirect_addr);
-		g_strstrip(addr);
-
-		if (gebr_comm_is_address_equal(self->priv->address, addr)) {
-			*port = atoi(buffer + strlen(GEBR_PORT_PREFIX));
-			g_free(addr);
-		} else {
-			GError *err = NULL;
-			g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR, GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT, "%s", addr);
-			emit_signals(self, 0, err);
-			g_free(addr);
-			return FALSE;
-		}
-	} else
-		*port = atoi(buffer + strlen(GEBR_PORT_PREFIX));
+	*port = atoi(buffer + strlen(GEBR_PORT_PREFIX));
 
 	self->priv->remote_port = *port;
 
@@ -597,7 +574,7 @@ emit_empty_stdout_signal(GebrCommPortProvider *self, gboolean is_maestro)
 	                                 is_maestro ? "maestro" : "node");
 	g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
 	            GEBR_COMM_PORT_PROVIDER_ERROR_EMPTY,
-	            err_msg);
+	            "%s", err_msg);
 	g_free(err_msg);
 	emit_signals(self, 0, error);
 }
