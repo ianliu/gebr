@@ -330,12 +330,22 @@ check_if_port_is_busy(const gchar *addr,
 		if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
 			guint16 local_port;
 
+			fork_and_exit_main();
+
 			local_port = start_forward_listener(addr, port);
 
-			g_print("%s%d\n",
-			        GEBR_PORT_PREFIX, local_port);
+			/* success, send port */
+			gchar *port_str = g_strdup_printf("%s%u\n",
+			                                  GEBR_PORT_PREFIX, port);
 
-			fork_and_exit_half_main();
+			ssize_t s = 0;
+			do {
+				s = write(output_fd, port_str + s, strlen(port_str) - s);
+				if (s == -1)
+					exit(-1);
+			} while(s != 0);
+
+			g_free(port_str);
 
 			GMainLoop *loop;
 			loop = g_main_loop_new(NULL, FALSE);
