@@ -354,11 +354,11 @@ on_comm_ssh_question(GebrCommSsh *ssh,
 	gchar *title = g_strdup(_("Please, answer the question"));
 	gchar *description = g_strdup(question);
 
+	server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
+
 	g_signal_emit(server, signals[QUESTION_REQUEST], 0,
 	              title,
 	              description);
-
-	server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
 
 	g_free(title);
 	g_free(description);
