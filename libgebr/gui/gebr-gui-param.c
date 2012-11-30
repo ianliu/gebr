@@ -1843,6 +1843,10 @@ gebr_gui_group_validate(GebrValidator *validator,
 	GebrGeoXmlSequence *instance;
 
 	group = gebr_geoxml_parameter_get_group(parameter);
+
+	if (!group)
+		return;
+
 	gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
 	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 		i = gebr_gui_group_instance_validate(validator, instance, icon);
