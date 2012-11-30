@@ -891,7 +891,8 @@ parse_messages(GebrCommServer *comm_server,
 			gboolean accepts_key = g_strcmp0(acpkey->str, "yes") == 0;
 			gboolean retry_pass = g_strcmp0(retry->str, "yes") == 0;
 
-			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, addr->str, accepts_key, retry_pass, &pk);
+			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, NULL);
+			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, daemon, accepts_key, retry_pass, &pk);
 
 			if (pk) {
 				GebrCommUri *uri = gebr_comm_uri_new();
@@ -1177,9 +1178,11 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrMaestroServerClass, password_request),
 			     NULL, NULL,
-			     gebr_cclosure_marshal_POINTER__STRING_BOOL_BOOL,
+			     gebr_cclosure_marshal_POINTER__OBJECT_BOOL_BOOL,
 			     G_TYPE_POINTER, 3,
-			     G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN);
+			     G_TYPE_OBJECT,
+			     G_TYPE_BOOLEAN,
+			     G_TYPE_BOOLEAN);
 
 	signals[DAEMONS_CHANGED] =
 			g_signal_new("daemons-changed",
@@ -1576,8 +1579,10 @@ on_password_request(GebrCommServer *server,
 	GebrMaestroServer *maestro = user_data;
 
 	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
-		      gebr_maestro_server_get_display_address(maestro),
-		      gebr_comm_server_get_accepts_key(server), retry, &pk);
+		      maestro,
+		      gebr_comm_server_get_accepts_key(server),
+		      retry,
+		      &pk);
 
 	if (!pk)
 		return;

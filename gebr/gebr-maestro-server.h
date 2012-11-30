@@ -65,7 +65,7 @@ struct _GebrMaestroServerClass {
 				      const gchar       *question);
 
 	PasswordKeys * (*password_request) (GebrMaestroServer *maestro,
-					    const gchar       *address,
+					    GObject	      object,
 					    gboolean	      accepts_key,
 					    gboolean 	      retry);
 

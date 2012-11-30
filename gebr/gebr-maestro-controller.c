@@ -1823,33 +1823,46 @@ on_password_dialog_response(GtkDialog *dialog, gint response, gpointer pointer)
 }
 static PasswordKeys *
 on_password_request(GebrMaestroServer *maestro,
-		    const gchar *address,
+		    GObject *object,
 		    gboolean acceps_key,
-		    gboolean retry)
+		    gboolean retry,
+		    GebrMaestroController *self)
 {
-	gdk_threads_enter();
-	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Enter password"),
-							NULL,
-							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-							GTK_STOCK_OK, GTK_RESPONSE_OK,
-							GTK_STOCK_HELP, GTK_RESPONSE_HELP,
-							NULL);
-	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
-
-	GebrDaemonServer *daemon = gebr_maestro_controller_get_daemon_from_address (gebr.maestro_controller, address);
+	if (!GEBR_IS_MAESTRO_SERVER(object) && !GEBR_IS_DAEMON_SERVER(object))
+		g_return_val_if_reached(NULL);
 
 	gchar *title;
-	const gchar *error_type = gebr_daemon_server_get_error_type(daemon);
-	if (g_strcmp0(error_type, "error:stop") == 0)
-		title = g_strdup_printf(_("Stopping %s"), address);
-	else
+	gchar *ssh_info;
+	GtkWidget *dialog;
+	const gchar *address;
+
+	gdk_threads_enter();
+	dialog = gtk_dialog_new_with_buttons(_("Enter password"),
+					     NULL,
+					     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					     GTK_STOCK_OK, GTK_RESPONSE_OK,
+					     GTK_STOCK_HELP, GTK_RESPONSE_HELP,
+					     NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+
+	if (GEBR_IS_MAESTRO_SERVER(object)) {
+		address = gebr_maestro_server_get_address(GEBR_MAESTRO_SERVER(object));
 		title = g_strdup_printf(_("Connecting to %s"), address);
+		ssh_info = g_markup_printf_escaped(_("Maestro <b>%s</b> is asking for your login\n"
+						     "password."), address);
+	} else {
+		address = gebr_daemon_server_get_address(GEBR_DAEMON_SERVER(object));
+		const gchar *error_type = gebr_daemon_server_get_error_type(GEBR_DAEMON_SERVER(object));
+		if (g_strcmp0(error_type, "error:stop") == 0)
+			title = g_strdup_printf(_("Stopping %s"), address);
+		else
+			title = g_strdup_printf(_("Connecting to %s"), address);
+		ssh_info = g_markup_printf_escaped(_("<b>%s</b> is asking for your login\n"
+						     "password."), address);
+	}
 
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
-
-	gchar *ssh_info = g_markup_printf_escaped(_("<b>%s</b> is asking for your login\n"
-						    "password."), address);
 
 	GtkWidget *ssh_info_label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(ssh_info_label), ssh_info);
@@ -2213,7 +2226,7 @@ on_state_change(GebrMaestroServer *maestro,
 		GebrMaestroController *self)
 {
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED)
-		gebr_maestro_controller_try_next_maestro(gebr.maestro_controller);
+		gebr_maestro_controller_try_next_maestro(self);
 
 	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);
 }
@@ -2598,7 +2611,7 @@ gebr_maestro_controller_get_daemon_from_address (GebrMaestroController *self,
 {
 	GtkTreeModel *model = GTK_TREE_MODEL(self->priv->model);
 	GtkTreeIter iter;
-	GebrDaemonServer *daemon;
+	GebrDaemonServer *daemon = NULL;
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gtk_tree_model_get(model, &iter,
 		                   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
