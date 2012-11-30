@@ -696,6 +696,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 		if (maestro) {
+			on_maestro_state_changed(gebr.maestro_controller, maestro, up);
 			GebrCommServerState state = gebr_maestro_server_get_state(maestro);
 			if (state == SERVER_STATE_LOGGED || SERVER_STATE_DISCONNECTED) {
 				gtk_widget_hide(status_label);
