@@ -1,3 +1,7 @@
+2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.10: Autopilot [Sprint 69] [Sprint 70]
+
 2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Add forward on client when X11 port is defined and remove old

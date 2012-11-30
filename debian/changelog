@@ -1,3 +1,10 @@
+gebrproject (0.19.11~precise2) precise; urgency=low
+
+  * Many fixes on autopilot and connections.
+  * Closes: #1309: Last selected flow is reopened on startup.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Fri, 30 Nov 2012 17:19:20 -0200
+
 gebrproject (0.19.10) lucid; urgency=medium
 
   * Fixes integration tests to build without internet connection in lauchpad ppa.
