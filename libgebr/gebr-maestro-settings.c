@@ -22,8 +22,8 @@
 #include "gebr-maestro-settings.h"
 #include <unistd.h>
 
-#include <glib/gstdio.h>
-#include <glib/gkeyfile.h>
+#include <stdio.h>
+#include <glib.h>
 #include <glib/gi18n.h>
 
 #include "utils.h"
