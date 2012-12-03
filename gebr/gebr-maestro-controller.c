@@ -1364,6 +1364,7 @@ on_save_alias_maestro_clicked(GebrMaestroController *self)
 
 	gebr_maestro_server_set_nfs_label(maestro, text_entry);
 	gebr_maestro_settings_change_label(gebr.config.maestro_set, nfsid, text_entry);
+	gebr_log_update_maestro_info(gebr.ui_log, maestro);
 
 	// Update interface with new label
 	generate_automatic_label_for_maestro(self);
