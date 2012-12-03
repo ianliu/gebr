@@ -21,12 +21,14 @@
 #include "gebr-comm-port-provider.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
 #include "gebr-comm-ssh.h"
 #include <libgebr/utils.h>
 #include "gebr-comm-terminalprocess.h"
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-process.h"
@@ -417,8 +419,9 @@ local_get_port(GebrCommPortProvider *self, gboolean maestro)
 	gint status;
 	GError *error = NULL;
 
-	if (self->priv->need_cleanup)
-		cmd = g_strdup_printf("bash -c 'fuser -sk -15 $(cat $HOME/.gebr/%s/$HOSTNAME/lock)/tcp; %s'", binary, binary);
+	const gchar *path = g_strdup_printf("$HOME/.gebr/%s/$HOSTNAME/lock", binary);
+	if (self->priv->need_cleanup && !g_access(path, F_OK | R_OK))
+		cmd = g_strdup_printf("bash -c 'fuser -sk -15 $(cat %s)/tcp; %s'", path, binary);
 	else
 		cmd = g_strdup(binary);
 
@@ -637,8 +640,9 @@ get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 
 	gchar *clean_cmd;
-	if (is_maestro && self->priv->need_cleanup)
-		clean_cmd = g_strdup_printf("'fuser -sk -15 $(cat $HOME/.gebr/%s/$HOSTNAME/lock)/tcp';", binary);
+	const gchar *path = g_strdup_printf("$HOME/.gebr/%s/$HOSTNAME/lock", binary);
+	if (is_maestro && self->priv->need_cleanup && !g_access(path, F_OK | R_OK))
+		clean_cmd = g_strdup_printf("'fuser -sk -15 $(cat %s)/tcp';", path, binary);
 	else
 		clean_cmd = g_strdup("");
 
