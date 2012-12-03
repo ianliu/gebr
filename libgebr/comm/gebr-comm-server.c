@@ -355,7 +355,7 @@ on_comm_ssh_question(GebrCommSsh *ssh,
 {
 	server->priv->istate = ISTATE_QUESTION;
 
-	gchar *title = g_strdup(_("Do you trust this host?"));
+	gchar *title = g_markup_printf_escaped("%s", _("Do you trust this host?"));
 	gchar *description = g_strdup(question);
 
 	server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);

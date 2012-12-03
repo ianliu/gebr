@@ -27,7 +27,7 @@
 #include <glib/gi18n-lib.h>
 
 #define GEBR_PORT_PREFIX "gebr-port="
-#define FINGERPRINT_MSG "RSA key fingerprint is "
+#define FINGERPRINT_MSG "fingerprint is "
 #define CERTIFICATE_QUESTION "Are you sure"
 #define CERTIFICATE_ERROR "@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 #define QUESTION_SUFFIX "(yes/no)?"
@@ -341,10 +341,9 @@ process_ssh_line(GebrCommSsh *self,
 			self->priv->state = GEBR_COMM_SSH_STATE_QUESTION;
 
 			gchar *question;
-			question = g_strdup_printf(_("This host has never been authenticated and"
-						     " has the fingerprint %s.\n"
-						     "Do you trust this host?"),
-						     self->priv->fingerprint);
+			question = g_markup_printf_escaped(_("This host has never been authenticated and"
+							     " has the fingerprint %s.\n"),
+							     self->priv->fingerprint);
 			g_signal_emit(self, signals[SSH_QUESTION], 0, question);
 			g_free(question);
 		}
