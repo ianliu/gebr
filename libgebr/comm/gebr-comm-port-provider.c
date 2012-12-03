@@ -51,6 +51,8 @@ struct _GebrCommPortProviderPriv {
 
 	guint port;
 	guint remote_port;
+
+	gboolean need_cleanup;
 };
 
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
@@ -409,12 +411,20 @@ static void
 local_get_port(GebrCommPortProvider *self, gboolean maestro)
 {
 	const gchar *binary = maestro ? "gebrm":"gebrd";
+	gchar *cmd;
 	gchar *output = NULL;
 	gchar *err = NULL;
 	gint status;
 	GError *error = NULL;
 
-	g_spawn_command_line_sync(binary, &output, &err, &status, &error);
+	if (self->priv->need_cleanup)
+		cmd = g_strdup_printf("bash -c 'fuser -sk -15 $(cat $HOME/.gebr/%s/$HOSTNAME/lock)/tcp; %s'", binary, binary);
+	else
+		cmd = g_strdup(binary);
+
+	g_spawn_command_line_sync(cmd, &output, &err, &status, &error);
+
+ 	g_free(cmd);
 
 	GError *local_error = NULL;
 
@@ -626,13 +636,22 @@ get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 
 	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 
+	gchar *clean_cmd;
+	if (is_maestro && self->priv->need_cleanup)
+		clean_cmd = g_strdup_printf("'fuser -sk -15 $(cat $HOME/.gebr/%s/$HOSTNAME/lock)/tcp';", binary);
+	else
+		clean_cmd = g_strdup("");
+
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
-	                ssh_cmd, self->priv->address, binary);
+	g_string_printf(cmd_line, "%s -v -x %s %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
+	                ssh_cmd, self->priv->address, clean_cmd, binary);
 	gchar *cmd = g_shell_quote(cmd_line->str);
+
+	g_debug("CMD: %s", cmd_line->str);
 
 	g_string_printf(cmd_line, "bash -c %s", cmd);
 
+	g_free(clean_cmd);
 	g_free(cmd);
 	g_free(ssh_cmd);
 
@@ -768,6 +787,13 @@ gebr_comm_port_provider_new(GebrCommPortType type,
 			    "type", type,
 			    "address", address,
 			    NULL);
+}
+
+void
+gebr_comm_port_provider_set_need_cleanup(GebrCommPortProvider *self,
+                                         gboolean need_cleanup)
+{
+	self->priv->need_cleanup = need_cleanup;
 }
 
 void

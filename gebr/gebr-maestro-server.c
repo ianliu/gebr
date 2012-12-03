@@ -1614,6 +1614,7 @@ gebr_maestro_server_connect(GebrMaestroServer *maestro)
 
 	maestro->priv->server = gebr_comm_server_new(maestro->priv->address,
 						     gebr_get_session_id(),
+						     gebr.config.need_cleanup,
 						     &maestro_ops);
 
 	g_signal_connect(maestro->priv->server, "server-password-request",
