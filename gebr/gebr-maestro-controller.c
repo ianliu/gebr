@@ -1336,6 +1336,16 @@ on_servers_edited(GtkCellRendererText *cell,
 }
 
 static void
+cleanup_alias(GebrMaestroController *self)
+{
+	if (!self->priv->builder)
+		return;
+
+	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
+	gtk_entry_set_text(entry, "");
+}
+
+static void
 on_get_alias_maestro_clicked(GebrMaestroController *self)
 {
 	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
@@ -2265,6 +2275,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 
 		gebr_config_maestro_save();
 		gebr_maestro_server_disconnect(self->priv->maestro, FALSE);
+		cleanup_alias(self);
 		g_object_unref(self->priv->maestro);
 	}
 
