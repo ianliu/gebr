@@ -114,5 +114,12 @@ GebrErrorEntry check_directory_ok(const gchar *text);
  */
 void on_properties_entry_changed(GtkEntry *entry, GtkWidget *ok_button);
 
+/**
+ *
+ */
+void
+on_properties_import_entry_changed(GtkEntry *entry,
+			    GtkWidget *widget);
+
 G_END_DECLS
 #endif				//__LINE_H

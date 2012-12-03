@@ -469,6 +469,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), import_box, gtk_label_new(_("IMPORT Path")));
 
 		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+		g_signal_connect(entry_import, "changed", G_CALLBACK(on_properties_import_entry_changed), data->ok_button);
 		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
 
 		gchar *import_path = NULL;
