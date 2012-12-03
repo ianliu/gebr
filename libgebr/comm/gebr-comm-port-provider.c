@@ -647,8 +647,6 @@ get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 	                ssh_cmd, self->priv->address, clean_cmd, binary);
 	gchar *cmd = g_shell_quote(cmd_line->str);
 
-	g_debug("CMD: %s", cmd_line->str);
-
 	g_string_printf(cmd_line, "bash -c %s", cmd);
 
 	g_free(clean_cmd);
