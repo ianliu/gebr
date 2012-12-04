@@ -293,6 +293,8 @@ on_comm_ssh_error(GError *error,
 		break;
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SSH:
 	case GEBR_COMM_PORT_PROVIDER_ERROR_NOT_FOUND:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_PORT:
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH,
 		                                    "%s", g_strstrip(error->message));
 		g_free(server->password);
@@ -300,7 +302,6 @@ on_comm_ssh_error(GError *error,
 		break;
 	case GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE:
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED:
-	case GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN:
 		break;
 	}
 }

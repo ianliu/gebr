@@ -84,6 +84,7 @@ struct _GebrCommSshPriv {
 	gint attempts;
 
 	GString *buffer;
+	GString *ssh_output;
 	GString *out_buffer;
 	SshOutState out_state;
 	gchar *fingerprint;
@@ -94,6 +95,7 @@ gebr_comm_ssh_finalize(GObject *object)
 {
 	GebrCommSsh *self = GEBR_COMM_SSH(object);
 	g_free(self->priv->command);
+	g_string_free(self->priv->ssh_output, TRUE);
 	gebr_comm_terminal_process_free(self->priv->process);
 	G_OBJECT_CLASS(gebr_comm_ssh_parent_class)->finalize(object);
 }
@@ -176,6 +178,7 @@ gebr_comm_ssh_init(GebrCommSsh *self)
 	self->priv->state = GEBR_COMM_SSH_STATE_INIT;
 
 	self->priv->process = gebr_comm_terminal_process_new();
+	self->priv->ssh_output = g_string_new("");
 
 	g_signal_connect(self->priv->process, "ready-read",
 			 G_CALLBACK(ssh_process_read), self);
@@ -394,6 +397,15 @@ process_ssh_line(GebrCommSsh *self,
 }
 
 static void
+fill_ssh_output(GebrCommSsh *self, const gchar *line)
+{
+	if (self->priv->out_state != SSH_OUT_STATE_COMMAND_OUTPUT) {
+		g_string_append(self->priv->ssh_output, line);
+		g_string_append_c(self->priv->ssh_output, '\n');
+	}
+}
+
+static void
 gebr_comm_ssh_parse_output(GebrCommSsh *self,
 			   GebrCommTerminalProcess *process,
 			   GString *output)
@@ -403,6 +415,13 @@ gebr_comm_ssh_parse_output(GebrCommSsh *self,
 
 	while (line != NULL) {
 		process_ssh_line(self, line);
+		fill_ssh_output(self, line);
 		line = get_next_line(self);
 	}
+}
+
+const gchar *
+gebr_comm_ssh_get_ssh_output(GebrCommSsh *ssh)
+{
+	return ssh->priv->ssh_output->str;
 }

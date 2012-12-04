@@ -42,7 +42,14 @@ struct _GebrCommPortForward {
 	gchar *address;
 };
 
+typedef enum {
+	STATE_INIT,
+	STATE_PORT_DEFINED,
+	STATE_ERROR
+} PortProviderState;
+
 struct _GebrCommPortProviderPriv {
+	PortProviderState state;
 	GebrCommPortType type;
 	gchar *address;
 	gchar *sftp_address;
@@ -260,6 +267,7 @@ gebr_comm_port_provider_init(GebrCommPortProvider *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
 						 GEBR_COMM_TYPE_PORT_PROVIDER,
 						 GebrCommPortProviderPriv);
+	self->priv->state = STATE_INIT;
 }
 /* }}} */
 
@@ -282,10 +290,13 @@ is_local_address(const gchar *addr)
 static void
 emit_signals(GebrCommPortProvider *self, guint port, GError *error)
 {
-	if (!error)
+	if (!error) {
+		self->priv->state = STATE_PORT_DEFINED;
 		g_signal_emit(self, signals[PORT_DEFINED], 0, port);
-	else
+	} else {
+		self->priv->state = STATE_ERROR;
 		g_signal_emit(self, signals[ERROR], 0, error);
+	}
 }
 
 /*
@@ -376,7 +387,7 @@ transform_spawn_sync_error(GebrCommPortProvider *self, GError *error, GError **l
 		g_set_error(local_error,
 			    GEBR_COMM_PORT_PROVIDER_ERROR,
 			    GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
-			    _("Error in the process execution"));
+			    "%s", error->message);
 		break;
 	}
 }
@@ -527,6 +538,21 @@ on_ssh_key(GebrCommSsh *ssh, gboolean accepts_key, GebrCommPortProvider *self)
 	g_signal_emit(self, signals[ACCEPTS_KEY], 0, accepts_key);
 }
 
+static void
+on_ssh_finished(GebrCommSsh *ssh,
+		GebrCommPortProvider *self)
+{
+	if (self->priv->state == STATE_INIT) {
+		GError *error = NULL;
+		const gchar *out = gebr_comm_ssh_get_ssh_output(ssh);
+		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
+			    GEBR_COMM_PORT_PROVIDER_ERROR_SSH,
+			    "%s", out);
+		emit_signals(self, 0, error);
+		g_clear_error(&error);
+	}
+}
+
 struct TunnelPollData {
 	GebrCommPortProvider *self;
 	guint port;
@@ -566,9 +592,10 @@ get_port_from_command_output(GebrCommPortProvider *self,
 	} else if (!port_str) {
 		g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR,
 			    GEBR_COMM_PORT_PROVIDER_ERROR_PORT,
-			    _("Could not compute port for %s at %s"),
+			    _("Unexpected output from %s at %s: %s"),
 			    is_maestro ? "maestro" : "daemon",
-			    self->priv->address);
+			    self->priv->address,
+			    buffer);
 	} else if (redirect_addr) {
 		redirect_addr += strlen(GEBR_ADDR_PREFIX);
 		gchar *nl = strchr(redirect_addr, '\n');
@@ -677,6 +704,7 @@ remote_get_port(GebrCommPortProvider *self, gboolean is_maestro)
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
 	g_signal_connect(ssh, "ssh-stdout", G_CALLBACK(on_ssh_stdout), self);
 	g_signal_connect(ssh, "ssh-key", G_CALLBACK(on_ssh_key), self);
+	g_signal_connect(ssh, "ssh-finished", G_CALLBACK(on_ssh_finished), self);
 	gchar *command = get_launch_command(self, is_maestro);
 	gebr_comm_ssh_set_command(ssh, command);
 	gebr_comm_ssh_run(ssh);
