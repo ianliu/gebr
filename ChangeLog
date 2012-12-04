@@ -1,3 +1,53 @@
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixes makefile of tests
+
+2012-12-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix kill of old maestro when get remote port
+
+2012-12-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Clear gebrm-daemon error when appropriate
+
+2012-12-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: build local lock file correctly
+
+2012-12-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Check nfs before include gebr-host as a node
+
+2012-12-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show the NFS Label in the line's report.
+	* Add emblem on maestro status icon in Project and Lines tab.
+	* Improving text about to bring the line to current maestro.
+
+2012-12-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Clean alias entry when change maestro on MaestroController
+	* gebr: update domain on log bar
+	* Check if there is lock file before try to kill old maestro
+	* Improve message eht host untrusted and update translate of that
+	messages
+
+2012-12-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove unnecessary debug on PortProvider
+	* Pass parameter need_cleanup to CommServer and PortProvider to kill
+	maestro before connect when needs cleanup
+	* Set flag of maestro needs cleanup if gebr check is on upgrade
+
+2012-12-03  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix validation on properties, import path
+
+2012-11-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.11 for changeset d54b66f48233
+	* Release 0.19.11: Autopilot fixes
+
 2012-11-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Fixing wrong description of maestro state on conections wizard.
