@@ -27,6 +27,8 @@
 #include <libgebr/gebr-maestro-info.h>
 #include <libgebr/gebr-maestro-settings.h>
 #include <stdlib.h>
+#include <glib/gstdio.h>
+#include <unistd.h>
 
 #include "gebr.h" // for gebr_get_session_id()
 #include "project.h" // for populate project/lines
@@ -514,6 +516,32 @@ gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestro)
 {
 	g_hash_table_foreach(maestro->priv->jobs, (GHFunc)add_nfs_label, maestro);
 	gebr_job_control_update_servers_model(gebr.job_control);
+}
+
+static gboolean
+check_client_is_in_the_same_nfs_as_daemons(GString *nfsid)
+{
+	gboolean same_nfs = FALSE;
+	gchar *gebrd_lock_filename = g_strdup_printf("%s/.gebr/run/gebrd-fslock.run", g_get_home_dir());
+	gchar *gebrd_nfsid = NULL;
+
+	gchar *gebrd_bin_path = g_find_program_in_path("gebrd");
+	gboolean lock_exists = g_access(gebrd_lock_filename, R_OK) == 0;
+	gboolean read_ok = g_file_get_contents(gebrd_lock_filename, &gebrd_nfsid, NULL, NULL);
+	gboolean has_gebrd = gebrd_bin_path ? TRUE : FALSE;
+
+	g_debug("nfsFromFiles'%s', nfsFromDaemon:'%s', has_gebrd:%d,"
+			"lock_exists:%d, read_ok:%d",
+			gebrd_nfsid, nfsid->str, has_gebrd,
+			lock_exists, read_ok);
+
+	if (has_gebrd && lock_exists && read_ok && g_strcmp0(gebrd_nfsid, nfsid->str) == 0)
+		same_nfs = TRUE;
+
+	g_free(gebrd_bin_path);
+	g_free(gebrd_nfsid);
+
+	return same_nfs;
 }
 
 void
@@ -1026,6 +1054,9 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_maestro_server_set_nfs_label(maestro, nfslabel);
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
 
+			if (check_client_is_in_the_same_nfs_as_daemons(nfsid))
+				gebr_maestro_controller_server_list_add(gebr.maestro_controller, g_get_host_name(), TRUE);
+
 			gebr_maestro_server_send_nfs_label(maestro);
 
 			// Mount SFTP if needed
@@ -1326,7 +1357,9 @@ gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/server");
 	gebr_comm_uri_add_param(uri, "address", address);
+	gebr_comm_uri_add_param(uri, "respect-ac", "0");
 	gchar *url = gebr_comm_uri_to_string(uri);
+
 	gebr_comm_uri_free(uri);
 
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
