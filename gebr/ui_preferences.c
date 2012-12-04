@@ -312,7 +312,7 @@ on_add_server_clicked(GtkButton *button,
 	if (!g_strcmp0(addr, DEFAULT_SERVERS_ENTRY_TEXT))
 		return;
 
-	gebr_maestro_controller_server_list_add(gebr.maestro_controller, addr);
+	gebr_maestro_controller_server_list_add(gebr.maestro_controller, addr, FALSE);
 
 	gebr_gui_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(up->server_entry), "");
 }

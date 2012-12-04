@@ -1273,11 +1273,13 @@ daemon_server_memory_func(GtkTreeViewColumn *tree_column,
  */
 void
 gebr_maestro_controller_server_list_add(GebrMaestroController *mc,
-                                        const gchar * address)
+                                        const gchar * address,
+                                        gboolean respect_ac)
 {
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/server");
 	gebr_comm_uri_add_param(uri, "address", address);
+	gebr_comm_uri_add_param(uri, "respect-ac", "0");
 
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
@@ -1324,7 +1326,7 @@ on_servers_edited(GtkCellRendererText *cell,
 	if (!address)
 		return;
 
-	gebr_maestro_controller_server_list_add(mc, address);
+	gebr_maestro_controller_server_list_add(mc, address, FALSE);
 
 	GtkTreeIter iter;
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));

@@ -1246,13 +1246,19 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_strcmp0(prefix, "/server") == 0) {
+			const gchar *respect_ac = gebr_comm_uri_get_param(uri, "respect-ac");
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
-			addr = gebr_apply_pattern_on_address(addr);
+			gchar *ac = NULL;
 
-			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
+			gebr_maestro_settings_get_node_info(app->priv->settings, addr, NULL, &ac);
+			if (!atoi(respect_ac) || (atoi(respect_ac) && g_strcmp0(ac, "on") == 0)) {
+				addr = gebr_apply_pattern_on_address(addr);
 
-			gebrm_daemon_connect(d, socket);
-			gebrm_config_save_server(d);
+				GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
+
+				gebrm_daemon_connect(d, socket);
+				gebrm_config_save_server(d);
+			}
 		}
 		else if (g_strcmp0(prefix, "/set-password") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
@@ -1508,7 +1514,6 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			GString *gebr_id = g_list_nth_data(arguments, 3);
 			GString *gebr_time_iso = g_list_nth_data(arguments, 4);
 			GString *has_maestro = g_list_nth_data(arguments, 5);
-			GString *has_daemon = g_list_nth_data(arguments, 6);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 			g_debug("Maestro received GeBR time: %s", gebr_time_iso->str);
@@ -1539,9 +1544,9 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 					g_free(addr);
 				}
 
-				if (atoi(has_daemon->str))
-					gebr_maestro_settings_add_node(app->priv->settings,
-								       address->str, "", "on");
+//				if (atoi(has_daemon->str))
+//					gebr_maestro_settings_add_node(app->priv->settings,
+//								       address->str, "", "on");
 			}
 			g_free(nfsid);
 
