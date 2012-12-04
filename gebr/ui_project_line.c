@@ -275,7 +275,7 @@ on_maestro_button_clicked(GtkButton *button,
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		change_nfslabel = gebr_maestro_server_get_nfs_label(maestro);
-		change_text = g_markup_printf_escaped(_("Move this line to <b>%s</b>"), change_nfslabel);
+		change_text = g_markup_printf_escaped(_("Bring this line to <b>%s</b>"), change_nfslabel);
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
 
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro), dialog);
@@ -348,16 +348,14 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	const gchar *label = gebr_maestro_server_get_nfs_label(maestro);
+	const gchar *header = g_markup_printf_escaped(_("Are you sure you want to bring this line to %s?"), label);
 
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 						   NULL,
-						   _("Moving this line to current domain."),
-						   _("Moving this line to current domain."),
-						   _("Are you sure you want to move this line to %s?"
-						     "\n\nIf you choose to move this line to current domain,"
+						   _("Bring this line to current domain?"), header,
+						   _("If you choose to bring this line to current domain,"
 						     " be sure to correct the paths of this line "
-						     "and its respective flows that can be broken."),
-						   label);
+						     "and its respective flows that can be broken."));
 	if (confirm) {
 		gebr_geoxml_line_set_maestro(gebr.line, change_nfsid);
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_nfsid(gebr.maestro_controller, change_nfsid);
