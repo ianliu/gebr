@@ -1,6 +1,6 @@
 include $(top_srcdir)/Makefile.decl
 
-noinst_PROGRAMS = $(TEST_PROGS)
+noinst_PROGRAMS = $(TEST_PROGS) $(INT_TEST_PROGS)
 
 AM_CFLAGS = $(COMMON_CFLAGS)
 
