@@ -439,7 +439,7 @@ local_get_port(GebrCommPortProvider *self, gboolean maestro)
 	GError *local_error = NULL;
 	guint port;
 
-	const gchar *path = g_strdup_printf("$HOME/.gebr/%s/$HOSTNAME/lock", binary);
+	const gchar *path = g_build_filename(g_get_home_dir(), ".gebr", binary, g_get_host_name(), "lock", NULL);
 	if (self->priv->need_cleanup && !g_access(path, F_OK | R_OK))
 		cmd = g_strdup_printf("bash -c 'fuser -sk -15 $(cat %s)/tcp; %s'", path, binary);
 	else
