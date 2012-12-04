@@ -204,6 +204,7 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 	else if (server->state == SERVER_STATE_CONNECT) {
 		gebrm_daemon_set_error_type(daemon, NULL);
 		gebrm_daemon_set_error_msg(daemon, NULL);
+		gebr_comm_server_set_last_error(server, SERVER_ERROR_NONE, "");
 	}
 
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
