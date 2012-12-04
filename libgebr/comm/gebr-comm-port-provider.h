@@ -197,6 +197,9 @@ void gebr_comm_port_forward_close(GebrCommPortForward *port_forward);
  */
 void gebr_comm_port_forward_free(GebrCommPortForward *port_forward);
 
+void gebr_comm_port_provider_set_need_cleanup(GebrCommPortProvider *self,
+					      gboolean need_cleanup);
+
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_COMM_PORT_PROVIDER_H__ */
