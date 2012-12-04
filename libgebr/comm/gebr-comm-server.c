@@ -292,7 +292,7 @@ on_comm_ssh_error(GError *error,
 		gebr_comm_server_connect(server, TRUE);
 		break;
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SSH:
-	case GEBR_COMM_PORT_PROVIDER_ERROR_EMPTY:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_NOT_FOUND:
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH,
 		                                    "%s", g_strstrip(error->message));
 		g_free(server->password);
