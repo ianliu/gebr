@@ -2232,12 +2232,32 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 	project_line_info_update();
 }
 
+static void
+on_prop_notify(GebrMaestroServer *maestro,
+	       GParamSpec *pspec,
+	       GebrMaestroController *self)
+{
+	gebr_maestro_controller_maestro_state_changed_real(self, maestro);
+}
+
 static void 
 on_state_change(GebrMaestroServer *maestro,
 		GebrMaestroController *self)
 {
-	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED)
+	GebrCommServerState state = gebr_maestro_server_get_state(maestro);
+	if (state == SERVER_STATE_DISCONNECTED) {
 		gebr_maestro_controller_try_next_maestro(self);
+
+		const gchar *type;
+		const gchar *msg;
+		gebr_maestro_server_get_error(maestro, &type, &msg);
+
+		if (g_strcmp0(type, "error:none") != 0)
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, msg);
+	} else if (state == SERVER_STATE_LOGGED) {
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Succesfully connected to host %s"),
+			     gebr_maestro_server_get_address(maestro));
+	}
 
 	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);
 }
@@ -2305,6 +2325,10 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 			 G_CALLBACK(on_maestro_error), self);
 	g_signal_connect(maestro, "confirm",
 	                 G_CALLBACK(on_maestro_confirm), self);
+	g_signal_connect(maestro, "notify::nfsid",
+			 G_CALLBACK(on_prop_notify), self);
+	g_signal_connect(maestro, "notify::home",
+			 G_CALLBACK(on_prop_notify), self);
 
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
