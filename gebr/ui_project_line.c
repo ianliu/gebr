@@ -515,14 +515,24 @@ line_info_update(void)
 		}
 		home_path = g_strdup(gebr_maestro_server_get_home_dir(maestro));
 	} else {
-		stockid = GTK_STOCK_DISCONNECT;
 		tooltip = g_strdup(_("Click here to connect or change the domain for this line"));
 		home_path = g_strdup("");
+
+		/* Maestro Status Icon */
+		gchar *disconnect_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "48x48", "stock", "gtk-disconnect.png", NULL);
+		GIcon *disconnect_icon = g_icon_new_for_string(disconnect_icon_path, NULL);
+		gchar *status_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "22x22", "stock", "dialog-warning.png", NULL);
+		GIcon *status_icon = g_icon_new_for_string(status_icon_path, NULL);
+		GEmblem *status_emblem = g_emblem_new(status_icon);
+		GIcon *icon = g_emblemed_icon_new(disconnect_icon, status_emblem);
+
 		gtk_widget_show(GTK_WIDGET(maestro_button));
 		gtk_widget_hide(GTK_WIDGET(image_maestro_connect));
-		gtk_image_set_from_stock(GTK_IMAGE(image_maestro), stockid, GTK_ICON_SIZE_DIALOG);
+		gtk_image_set_from_gicon(GTK_IMAGE(image_maestro), icon, GTK_ICON_SIZE_DIALOG);
 		gtk_widget_set_tooltip_text(GTK_WIDGET(maestro_button), tooltip);
 		g_free(tooltip);
+		g_free(status_icon_path);
+		g_free(disconnect_icon_path);
 	}
 
 	/* Line's paths information */
