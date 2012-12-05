@@ -124,6 +124,15 @@ void gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
                                          const gchar *host);
 
 /**
+ * gebr_comm_port_provider_set_need_cleanup:
+ *
+ * Sets a flag on @self to alert if before connect on maestro or daemon,
+ * the connection needs clean old stuff, like old maestros
+ */
+void gebr_comm_port_provider_set_need_cleanup(GebrCommPortProvider *self,
+                                              gboolean need_cleanup);
+
+/**
  * gebr_comm_port_provider_get_display_host:
  *
  * Returns: The display host when @self was constructed with
