@@ -39,6 +39,7 @@
 #define LIMITED_WRONG_PASSWORD "No more authentication methods to try"
 #define LOCAL_FORWARD_ERROR "Could not request local forwarding."
 #define HOST_VERIFICATION_ERROR "Host key verification failed."
+#define DEBUG_LINE "debug1:"
 
 
 G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
@@ -399,7 +400,8 @@ process_ssh_line(GebrCommSsh *self,
 static void
 fill_ssh_output(GebrCommSsh *self, const gchar *line)
 {
-	if (self->priv->out_state != SSH_OUT_STATE_COMMAND_OUTPUT) {
+	if (self->priv->out_state != SSH_OUT_STATE_COMMAND_OUTPUT &&
+	    g_str_has_prefix(line, DEBUG_LINE) == FALSE) {
 		g_string_append(self->priv->ssh_output, line);
 		g_string_append_c(self->priv->ssh_output, '\n');
 	}
