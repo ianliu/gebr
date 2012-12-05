@@ -45,6 +45,7 @@ struct _GebrCommPortForward {
 typedef enum {
 	STATE_INIT,
 	STATE_PORT_DEFINED,
+	STATE_FORWARD,
 	STATE_ERROR
 } PortProviderState;
 
@@ -635,6 +636,8 @@ create_local_forward(GebrCommPortProvider *self)
 {
 	guint port;
 	gchar *command = get_local_forward_command(self, &port, "127.0.0.1", self->priv->remote_port);
+
+	self->priv->state = STATE_FORWARD;
 
 	g_debug("Got port %d for daemon %s", port, self->priv->address);
 
