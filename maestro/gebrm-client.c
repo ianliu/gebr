@@ -30,6 +30,7 @@ struct _GebrmClientPriv {
 	GHashTable *job_ids;
 	guint x11_port;
 	gchar *x11_host;
+	gboolean sent_nfsid;
 };
 
 enum {
@@ -90,6 +91,7 @@ gebrm_client_init(GebrmClient *client)
 
 	client->priv->job_ids = g_hash_table_new_full(g_str_hash, g_str_equal,
 						      g_free, g_free);
+	client->priv->sent_nfsid = FALSE;
 }
 
 static void
@@ -271,4 +273,14 @@ gebrm_client_set_display(GebrmClient *client,
 	client->priv->x11_port = display_port;
 	client->priv->x11_host = g_strdup(display_host);
 
+}
+
+void gebrm_client_set_sent_nfsid(GebrmClient *self, gboolean sent_nfsid)
+{
+	self->priv->sent_nfsid = sent_nfsid;
+}
+
+gboolean gebrm_client_get_sent_nfsid(GebrmClient *self)
+{
+	return self->priv->sent_nfsid;
 }

@@ -202,6 +202,9 @@ gebrm_app_send_nfsid(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar 
 					      nfsid,
 					      hosts,
 					      label);
+
+	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
+	gebrm_client_set_sent_nfsid(client, TRUE);
 }
 
 static gboolean
@@ -735,7 +738,8 @@ err:
 			if (!home_defined)
 				gebrm_app_send_home_dir(app, socket, home);
 
-			gebrm_app_send_nfsid(app, socket, nfsid);
+			if (!gebrm_client_get_sent_nfsid(i->data))
+				gebrm_app_send_nfsid(app, socket, nfsid);
 
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon), state);
 
