@@ -412,7 +412,8 @@ line_info_update(void)
 	g_free(tmp);
 
 	/* Set email/Author */
-	gchar *email_text = gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line));
+	gchar *email_tmp = gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line));
+	gchar *email_text = g_strchomp(email_tmp);
 	if (!*email_text){
 		gtk_link_button_set_uri(GTK_LINK_BUTTON(linkbutton_email), "");
 		gtk_widget_set_tooltip_text(GTK_WIDGET(linkbutton_email),NULL);
