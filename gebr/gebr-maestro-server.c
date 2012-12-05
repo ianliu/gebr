@@ -534,11 +534,6 @@ check_client_is_in_the_same_nfs_as_daemons(GString *nfsid)
 	gboolean read_ok = g_file_get_contents(gebrd_lock_filename, &gebrd_nfsid, NULL, NULL);
 	gboolean has_gebrd = gebrd_bin_path ? TRUE : FALSE;
 
-	g_debug("nfsFromFiles'%s', nfsFromDaemon:'%s', has_gebrd:%d,"
-			"lock_exists:%d, read_ok:%d",
-			gebrd_nfsid, nfsid->str, has_gebrd,
-			lock_exists, read_ok);
-
 	if (has_gebrd && lock_exists && read_ok && g_strcmp0(gebrd_nfsid, nfsid->str) == 0)
 		same_nfs = TRUE;
 

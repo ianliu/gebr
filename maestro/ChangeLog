@@ -1,3 +1,17 @@
+2012-12-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Clear gebrm-daemon error when appropriate
+	* gebr: Check nfs before include gebr-host as a node
+
+2012-12-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Pass parameter need_cleanup to CommServer and PortProvider to kill
+	maestro before connect when needs cleanup
+
+2012-11-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.11: Autopilot fixes
+
 2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.19.10: Autopilot [Sprint 69] [Sprint 70]

@@ -675,19 +675,21 @@ get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 
 	gchar *clean_cmd;
-	const gchar *path = g_strdup_printf("$HOME/.gebr/%s/$HOSTNAME/lock", binary);
+	gchar *host = gebr_get_host_from_address(self->priv->address);
+	const gchar *path = g_build_filename(g_get_home_dir(), ".gebr", binary, host, "lock", NULL);
 	if (is_maestro && self->priv->need_cleanup && !g_access(path, F_OK | R_OK))
-		clean_cmd = g_strdup_printf("'fuser -sk -15 $(cat %s)/tcp';", path);
+		clean_cmd = g_strdup_printf("fuser -sk -15 $(cat %s)/tcp;", path);
 	else
 		clean_cmd = g_strdup("");
 
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -v -x %s %s \"bash -l -c '%s >&3' 3>&1 >/dev/null\"",
+	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s%s >&3' 3>&1 >/dev/null 2>&1\"",
 	                ssh_cmd, self->priv->address, clean_cmd, binary);
 	gchar *cmd = g_shell_quote(cmd_line->str);
 
 	g_string_printf(cmd_line, "bash -c %s", cmd);
 
+	g_free(host);
 	g_free(clean_cmd);
 	g_free(cmd);
 	g_free(ssh_cmd);
