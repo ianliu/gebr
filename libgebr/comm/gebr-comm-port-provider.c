@@ -790,7 +790,7 @@ get_local_forward_command(GebrCommPortProvider *self,
 
 	*port = get_port(self);
 
-	g_string_printf(string, "%s -x -L %d:%s:%d %s -N", ssh_cmd, *port,
+	g_string_printf(string, "%s -v -x -L %d:%s:%d %s -N", ssh_cmd, *port,
 			addr, remote_port, self->priv->address);
 
 	g_free(ssh_cmd);
@@ -915,7 +915,7 @@ gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
 
 	if (port_forward->ssh) {
 		gebr_comm_ssh_kill(port_forward->ssh);
-		g_object_unref(port_forward->ssh);
+		g_idle_add((GSourceFunc)g_object_unref, port_forward->ssh);
 		port_forward->ssh = NULL;
 	}
 }
