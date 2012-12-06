@@ -78,8 +78,9 @@ static void on_job_info_status_changed(GebrJob *job,
                                        const gchar *parameter,
                                        GtkWidget *container);
 
-void gebr_flow_browse_cursor_changed(GtkTreeView *tree_view,
-                                     GebrUiFlowBrowse *fb);
+static gboolean on_left_tree_button_release(GtkTreeView *tree,
+					    GdkEventButton *event,
+					    GebrUiFlowBrowse *fb);
 
 static void flow_browse_on_query_tooltip(GtkTreeView * treeview,
 					 gint x,
@@ -1412,8 +1413,8 @@ flow_browse_setup_ui()
 	gtk_tree_view_column_set_expand(col, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, ui_flow_browse->action_renderer, gebr_flow_browse_action_icon, NULL, NULL);
 
-	g_signal_connect_after(ui_flow_browse->view, "cursor-changed",
-	                       G_CALLBACK(gebr_flow_browse_cursor_changed), ui_flow_browse);
+	g_signal_connect_after(ui_flow_browse->view, "button-release-event",
+	                       G_CALLBACK(on_left_tree_button_release), ui_flow_browse);
 
 	/*
 	 * Right side: flow info tab
@@ -3118,7 +3119,6 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
                               GtkTreeIter *iter,
                               gpointer data)
 {
-	GebrGeoXmlFlow * flow;
 	GebrUiFlowBrowseType type;
 	gtk_tree_model_get(model, iter,
 	                   FB_STRUCT_TYPE, &type,
@@ -3132,9 +3132,7 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 		                   FB_STRUCT, &ui_flow,
 		                   -1);
 
-		flow = gebr_ui_flow_get_flow(ui_flow);
-
-		if (gebr_geoxml_flow_get_revisions_number(flow) > 0)
+		if (gebr_ui_flow_has_snapshots(ui_flow))
 			g_object_set(cell, "stock-id", "photos", NULL);
 		else
 			g_object_set(cell, "stock-id", NULL, NULL);
@@ -3162,8 +3160,7 @@ gebr_flow_browse_action_icon (GtkTreeViewColumn *tree_column,
 
 static void
 flow_browse_open_activated(GebrUiFlowBrowse *fb,
-                           GebrUiFlowsIo *ui_io,
-                           const gchar *path)
+                           GebrUiFlowsIo *ui_io)
 {
 	gchar *entry_text;
 
@@ -3250,7 +3247,7 @@ gebr_flow_browse_select_file_column(GtkTreeView *tree_view,
 
 	gtk_tree_view_unset_rows_drag_source(tree_view);
 
-	flow_browse_open_activated(fb, ui_io, path_str);
+	flow_browse_open_activated(fb, ui_io);
 
 	gtk_tree_model_row_changed(GTK_TREE_MODEL(fb->store), path, iter);
 
@@ -3283,7 +3280,7 @@ gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
 		return;
 
 	gint pos, wid;
-	if(!gtk_tree_view_column_cell_get_position(column, fb->action_renderer, &pos, &wid)) {
+	if (!gtk_tree_view_column_cell_get_position(column, fb->action_renderer, &pos, &wid)) {
 		if (!fb->flow_main_view) {
 			fb->flow_main_view = TRUE;
 			gebr_flow_browse_define_context_to_show(CONTEXT_FLOW, fb);
@@ -3305,30 +3302,60 @@ gebr_flow_browse_select_snapshot_column(GtkTreeView *tree_view,
 	gtk_tree_path_free(path);
 }
 
-void
-gebr_flow_browse_cursor_changed(GtkTreeView *tree_view,
-                                GebrUiFlowBrowse *fb)
+static gboolean
+on_left_tree_button_release(GtkTreeView *tree,
+			    GdkEventButton *event,
+			    GebrUiFlowBrowse *fb)
 {
-	gint nrows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view)));
-	if (nrows > 1)
-		return;
-
-	GtkTreeIter iter;
-	if (!flow_browse_get_selected(&iter, TRUE))
-		return;
-
-	gebr_gui_gtk_tree_view_set_drag_source_dest(tree_view);
-
 	GebrUiFlowBrowseType type;
-	gtk_tree_model_get(GTK_TREE_MODEL(fb->store), &iter,
-	                   FB_STRUCT_TYPE, &type,
-	                   -1);
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GtkTreePath *path;
+	GtkTreeViewColumn *column;
+	gint cell_x, cell_w, x, y;
 
-	if (type == STRUCT_TYPE_FLOW)
-		gebr_flow_browse_select_snapshot_column(tree_view, &iter, fb);
+	x = (gint) event->x;
+	y = (gint) event->y;
 
-	else if (type == STRUCT_TYPE_IO)
-		gebr_flow_browse_select_file_column(tree_view, &iter, fb);
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view));
+	gint nrows = gtk_tree_selection_count_selected_rows(selection);
+
+	if (nrows > 1)
+		return FALSE;
+
+	if (!gtk_tree_view_get_path_at_pos(tree, x, y, &path, &column, &cell_x, NULL))
+		return FALSE;
+
+	if (!gtk_tree_view_column_cell_get_position(column, fb->action_renderer, NULL, &cell_w))
+		goto out;
+
+	model = gtk_tree_view_get_model(tree);
+
+	if (!gtk_tree_model_get_iter(model, &iter, path))
+		goto out;
+
+	if (cell_x < 0 || cell_x > cell_w)
+		goto out;
+
+	gtk_tree_model_get(model, &iter, FB_STRUCT_TYPE, &type, -1);
+
+	if (type == STRUCT_TYPE_FLOW) {
+		GebrUiFlow *ui_flow;
+		gtk_tree_model_get(model, &iter, FB_STRUCT, &ui_flow, -1);
+		if (gebr_ui_flow_has_snapshots(ui_flow)) {
+			fb->flow_main_view = FALSE;
+			gebr_flow_browse_define_context_to_show(CONTEXT_SNAPSHOTS, fb);
+		}
+	} else if (type == STRUCT_TYPE_IO) {
+		GebrUiFlowsIo *ui_io;
+		gtk_tree_model_get(model, &iter, FB_STRUCT, &ui_io, -1);
+		if (gebr_ui_flows_io_get_active(ui_io))
+			flow_browse_open_activated(fb, ui_io);
+	}
+
+out:
+	gtk_tree_path_free(path);
+	return FALSE;
 }
 
 void
