@@ -287,5 +287,7 @@ void flow_browse_show_search_bar(GebrUiFlowBrowse *fb);
 
 void gebr_ui_flow_browse_update_dict_complete(GebrUiFlowBrowse *fb);
 
+void gebr_flow_browse_save_parameter (GebrUiFlowBrowse *fb);
+
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

@@ -2305,9 +2305,6 @@ save_parameters(GebrGuiProgramEdit *program_edit)
 	flow_browse_validate_io(gebr.ui_flow_browse);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
-	/* Update parameters review on Flow Browse */
-	gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, FALSE);
-
 	flow_browse_info_update();
 
 	gebr.ui_flow_browse->program_edit = NULL;
@@ -2457,8 +2454,12 @@ static void flow_browse_load(void)
 	                   FB_STRUCT_TYPE, &type,
 	                   -1);
 
-	if (gebr.ui_flow_browse->program_edit)
+	if (gebr.ui_flow_browse->program_edit) {
 		save_parameters(gebr.ui_flow_browse->program_edit);
+
+		/* Update parameters review on Flow Browse */
+		gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, FALSE);
+	}
 
 	GebrGeoXmlFlow *old_flow = gebr.flow;
 	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(old_flow));
@@ -3516,14 +3517,22 @@ gebr_flow_browse_define_context_to_show(GebrUiFlowBrowseContext current_context,
 }
 
 void
+gebr_flow_browse_save_parameter (GebrUiFlowBrowse *fb)
+{
+	if (gtk_widget_get_visible(fb->context[CONTEXT_PARAMETERS])) {
+		if (gebr.ui_flow_browse->program_edit)
+			save_parameters(gebr.ui_flow_browse->program_edit);
+	}
+}
+
+void
 gebr_flow_browse_escape_context(GebrUiFlowBrowse *fb)
 {
 	if (gtk_widget_get_visible(fb->context[CONTEXT_FLOW]))
 		return;
 
 	if (gtk_widget_get_visible(fb->context[CONTEXT_PARAMETERS])) {
-		if (gebr.ui_flow_browse->program_edit)
-		save_parameters(gebr.ui_flow_browse->program_edit);
+		gebr_flow_browse_save_parameter(fb);
 	}
 	else if (gtk_widget_get_visible(fb->context[CONTEXT_JOBS])) {
 		flow_browse_info_update();
