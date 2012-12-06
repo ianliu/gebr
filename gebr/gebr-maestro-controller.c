@@ -1096,7 +1096,7 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
 	                   -1);
 
-	if(editable) {
+	if (editable) {
 		g_object_set(cell, "visible", FALSE, "stock-id", NULL, NULL);
 		return;
 	}
@@ -1119,6 +1119,7 @@ gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column
 			break;
 		case SERVER_STATE_CONNECT:
 		case SERVER_STATE_RUN:
+		case SERVER_STATE_REDIRECT:
 			visible = FALSE;
 			stock_id = NULL;
 			break;

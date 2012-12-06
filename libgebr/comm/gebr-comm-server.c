@@ -287,7 +287,7 @@ on_comm_ssh_error(GError *error,
 {
 	switch (error->code) {
 	case GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT:
-		gebr_comm_server_free_for_reuse(server);
+		gebr_comm_server_change_state(server, SERVER_STATE_REDIRECT);
 		g_string_assign(server->address, error->message);
 		gebr_comm_server_connect(server, TRUE);
 		break;
@@ -391,7 +391,8 @@ void gebr_comm_server_connect(GebrCommServer *server,
 {
 	GebrCommPortType port_type;
 
-	if (server->state != SERVER_STATE_DISCONNECTED)
+	if (server->state != SERVER_STATE_DISCONNECTED
+	    && server->state != SERVER_STATE_REDIRECT)
 		return;
 
 	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("%p: Launching machine at '%s'."),
@@ -756,6 +757,7 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 static const gchar *state_hash[] = {
 	"disconnected",
 	"run",
+	"redirect",
 	"connect",
 	"logged",
 	NULL
