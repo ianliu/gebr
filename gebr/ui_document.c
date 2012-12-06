@@ -1702,8 +1702,6 @@ save_document_properties(GebrPropertiesData *data)
 	/* Update title in apropriated store */
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
-		// Set new base for line
-		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), data->new_base);
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
@@ -1884,7 +1882,7 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 
 	gboolean base_changed = g_strcmp0(new_base, old_base) != 0;
 
-	if (!base_changed && check_directory_ok(_new_base->str) == OK_ENTRY)
+	if (!base_changed && check_directory_ok(new_base) == OK_ENTRY)
 		return FALSE;
 
 	*option = GEBR_COMM_PROTOCOL_PATH_CREATE;
