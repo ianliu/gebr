@@ -2330,7 +2330,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	GebrMaestroServer *maestro;
 
 	if (self->priv->maestro) {
-		gebr_config_maestro_save();
+		gebr_config_save(FALSE);
 		gebr_maestro_server_disconnect(self->priv->maestro, FALSE);
 		cleanup_alias(self);
 		g_object_unref(self->priv->maestro);

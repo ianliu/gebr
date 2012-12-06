@@ -1617,12 +1617,6 @@ gebr_maestro_server_disconnect(GebrMaestroServer *maestro,
 
 	gebr_comm_server_disconnect(maestro->priv->server);
 	unmount_gvfs(maestro, quit);
-
-	/* Reset group option of execution */
-	if (gebr.config.execution_server_name->len)
-		g_string_free(gebr.config.execution_server_name, TRUE);
-	gebr.config.execution_server_name = g_string_new("");
-	gebr.config.execution_server_type = MAESTRO_SERVER_TYPE_GROUP;
 }
 
 static void
