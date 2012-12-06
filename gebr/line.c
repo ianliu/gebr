@@ -101,7 +101,7 @@ on_properties_entry_changed(GtkEntry *entry,
 	case EMPTY_ENTRY:
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-		gtk_widget_set_sensitive(widget, FALSE);
+		gtk_widget_set_sensitive(widget, TRUE);
 		break;
 	}
 }
@@ -115,7 +115,7 @@ on_properties_import_entry_changed(GtkEntry *entry,
 	case NOT_ABSOLUTE_ENTRY:
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
-		gtk_widget_set_sensitive(widget, TRUE);
+		gtk_widget_set_sensitive(widget, FALSE);
 		break;
 	default:
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
