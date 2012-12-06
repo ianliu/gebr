@@ -875,8 +875,16 @@ on_job_status(GebrJob *job,
 {
 	gebr_jc_update_status_and_time(jc, job, new_status);
 
-	if (old_status == JOB_STATUS_QUEUED && new_status == JOB_STATUS_RUNNING)
+	if (old_status == JOB_STATUS_QUEUED && new_status == JOB_STATUS_RUNNING) {
 		job_control_fill_servers_info(jc);
+		on_job_output(job, 0, _("\n --- The execution has been started. --- \n\n"), jc);
+	} else if (old_status == JOB_STATUS_RUNNING && new_status == JOB_STATUS_FINISHED) {
+		on_job_output(job, 0, _("\n --- The execution finished successfully. --- \n"), jc);
+	} else if (old_status == JOB_STATUS_RUNNING && new_status == JOB_STATUS_CANCELED) {
+		on_job_output(job, 0, _("\n --- The execution has been canceled. --- \n"), jc);
+	} else if (old_status == JOB_STATUS_RUNNING && new_status == JOB_STATUS_FAILED) {
+		on_job_output(job, 0, _("\n --- The execution failed. --- \n"), jc);
+	}
 
 	GtkTreeIter *iter = gebr_job_get_iter(job);
 	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(jc->priv->store), iter);
@@ -1673,7 +1681,21 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gebr_job_control_include_cmd_line(jc, job);
 
 	/* output */
+	if (status == JOB_STATUS_QUEUED) {
+		g_string_append(info, _("\n --- The execution is queued. --- \n\n"));
+	} else {
+		g_string_append(info, _("\n --- The execution has been started. --- \n\n"));
+	}
+
 	g_string_append(info, gebr_job_get_output(job));
+
+	if (status == JOB_STATUS_FINISHED) {
+		g_string_append(info, _("\n --- The execution finished successfully. --- \n"));
+	} else if (status == JOB_STATUS_CANCELED) {
+		g_string_append(info, _("\n --- The execution has been canceled. --- \n"));
+	} else if (status == JOB_STATUS_FAILED) {
+		g_string_append(info, _("\n --- The execution failed. --- \n"));
+	}
 
 	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &end_iter);
 	gtk_text_buffer_insert(jc->priv->text_buffer, &end_iter, info->str, info->len);
