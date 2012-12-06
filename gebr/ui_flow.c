@@ -224,3 +224,9 @@ gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow, gboolean multiple)
 
 	return GTK_MENU(menu);
 }
+
+gboolean
+gebr_ui_flow_has_snapshots(GebrUiFlow *ui_flow)
+{
+	return gebr_geoxml_flow_get_revisions_number(ui_flow->priv->flow) > 0;
+}
