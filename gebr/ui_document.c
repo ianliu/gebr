@@ -118,6 +118,8 @@ typedef struct {
 	gboolean title_ready;
 	gboolean description_ready;
 	gboolean email_ready;
+	gboolean base_ready;
+	gboolean import_ready;
 } GebrPropertiesData;
 
 enum {
@@ -296,6 +298,55 @@ on_document_help_button_clicked (GtkButton *button,
 	}
 }
 
+void
+on_document_base_import_entry_changed(GebrPropertiesData *data)
+{
+	gtk_widget_set_sensitive(data->ok_button, (data->base_ready && data->import_ready));
+}
+
+void
+on_document_base_entry_changed(GtkEntry *entry,
+                               GebrPropertiesData *data)
+{
+	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+	switch(check_directory_ok(gtk_entry_get_text(entry))){
+	case OK_ENTRY:
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		data->base_ready = TRUE;
+		break;
+	case NOT_ABSOLUTE_ENTRY:
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
+		data->base_ready = FALSE;
+		break;
+	case EMPTY_ENTRY:
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		data->base_ready = FALSE;
+		break;
+	}
+	on_document_base_import_entry_changed(data);
+}
+
+void
+on_document_import_entry_changed(GtkEntry *entry,
+                                  GebrPropertiesData *data)
+{
+	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+	switch(check_directory_ok(gtk_entry_get_text(entry))){
+	case NOT_ABSOLUTE_ENTRY:
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
+		data->import_ready = FALSE;
+		break;
+	default:
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		data->import_ready = TRUE;
+		break;
+	}
+	on_document_base_import_entry_changed(data);
+}
+
 void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
@@ -329,6 +380,8 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	data->title_ready = TRUE;
 	data->description_ready = TRUE;
 	data->email_ready = TRUE;
+	data->base_ready = TRUE;
+	data->import_ready = TRUE;
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		flow_browse_single_selection();
@@ -461,7 +514,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		g_free(base_path);
 		g_free(base_path2);
 
-		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
+		g_signal_connect(entry_base, "changed", G_CALLBACK(on_document_base_entry_changed), data);
 		g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
 
 		/* Import Path Tab */
@@ -469,7 +522,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), import_box, gtk_label_new(_("IMPORT Path")));
 
 		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
-		g_signal_connect(entry_import, "changed", G_CALLBACK(on_properties_import_entry_changed), data->ok_button);
+		g_signal_connect(entry_import, "changed", G_CALLBACK(on_document_import_entry_changed), data);
 		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
 
 		gchar *import_path = NULL;
