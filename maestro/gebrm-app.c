@@ -714,6 +714,7 @@ err:
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			gebrm_daemon_send_error_message(daemon, socket);
 		}
+		gebrm_daemon_disconnect(daemon);
 
 		if (remove)
 			remove_daemon(app, gebrm_daemon_get_address(daemon));
