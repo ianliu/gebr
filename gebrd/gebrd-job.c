@@ -1084,30 +1084,35 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 	GError *err = NULL;
 
 	program = gebr_geoxml_flow_get_control_program(job->flow);
-	status = gebr_geoxml_program_get_status(program);
-	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
-	    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-	{
-		gchar *iter_expr;
-		gchar *ini, *step;
-		GebrGeoXmlProgramParameter *pparam;
-		n = gebr_geoxml_program_control_get_n(program, &step, &ini);
-		gebr_validator_evaluate(gebrd_get_validator(gebrd), n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, &err);
-		if (err) {
-			*issue_number += 1;
-			job_issue(job, _("%u) %s '%s'.\n"),
-			          *issue_number, err->message,
-			          gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
-			g_clear_error(&err);
+	if (program) {
+		status = gebr_geoxml_program_get_status(program);
+		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
+		    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+		{
+			gchar *iter_expr;
+			gchar *ini, *step;
+			GebrGeoXmlProgramParameter *pparam;
+			n = gebr_geoxml_program_control_get_n(program, &step, &ini);
+			gebr_validator_evaluate(gebrd_get_validator(gebrd), n,
+						GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						GEBR_GEOXML_DOCUMENT_TYPE_LINE,
+						&result, &err);
+			if (err) {
+				*issue_number += 1;
+				job_issue(job, _("%u) %s '%s'.\n"),
+					  *issue_number, err->message,
+					  gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+				g_clear_error(&err);
+			}
+			result = g_strdup_printf("%d", atoi(result));
+			iter_expr = g_strdup_printf("(%s) + (%s) * '\"$counter\"'", ini, step);
+			pparam = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(gebrd->flow));
+			gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, iter_expr);
+			g_free(iter_expr);
+			g_free(ini);
+			g_free(step);
+			g_free(n);
 		}
-		result = g_strdup_printf("%d", atoi(result));
-		iter_expr = g_strdup_printf("(%s) + (%s) * '\"$counter\"'", ini, step);
-		pparam = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(gebrd->flow));
-		gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, iter_expr);
-		g_free(iter_expr);
-		g_free(ini);
-		g_free(step);
-		g_free(n);
 	}
 
 	GebrGeoXmlDocument *docs[3] = {
