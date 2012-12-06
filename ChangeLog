@@ -1,3 +1,65 @@
+2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix criticals of clocks diff on GêBR after redirect of maestro
+
+2012-12-06  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix: setting ok button insensitive on absolute entries and empty
+	entries
+	* Fix broken link on gnu license
+
+2012-12-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show the correct node that executes a job on details of job.
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: check if there is a loop before defining BC variables
+
+2012-12-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Saving parameters when open dictionary or report.
+
+2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to verify change in title and base and save of import
+	path
+
+2012-12-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Maestro disconnects from daemon when it enters in a error
+	state
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: servers change to the new REDIRECT state when redirecting
+	* libgebr: do not unref ssh object inside its own signal
+
+2012-12-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new state to STATE_FORWARD for PortProvider
+	* Fix SSH output buffer
+
+2012-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Avoid multiple sending of nfs_id to the clients
+
+2012-12-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with 0.19.12
+	* gebr: Improve entry of maestro
+	* libgebr: Add on header file public method of PortProvider
+
+2012-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Avoid links of empty emails
+	* gebr: Remove previously included g_debug's
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.12 for changeset 5a23afbcf255
+	* Release 0.19.12: More autopilot fixes
+
 2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Fixes makefile of tests

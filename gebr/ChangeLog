@@ -1,3 +1,40 @@
+2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix criticals of clocks diff on GêBR after redirect of maestro
+
+2012-12-06  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix: setting ok button insensitive on absolute entries and empty
+	entries
+
+2012-12-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show the correct node that executes a job on details of job.
+	* Saving parameters when open dictionary or report.
+
+2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to verify change in title and base and save of import
+	path
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: servers change to the new REDIRECT state when redirecting
+
+2012-12-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with 0.19.12
+	* gebr: Improve entry of maestro
+
+2012-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Avoid links of empty emails
+	* gebr: Remove previously included g_debug's
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.12: More autopilot fixes
+
 2012-12-04  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* gebr: Check nfs before include gebr-host as a node
