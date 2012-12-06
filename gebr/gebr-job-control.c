@@ -1634,7 +1634,8 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
 	GString *msg_final = g_string_new("");
 
-	msg = g_strdup(gebr_job_get_nfs_label(job));
+	if (!msg || !*msg)
+		msg = g_strdup(gebr_job_get_nfs_label(job));
 	g_string_append(msg_final, msg);
 
 	if(g_utf8_strlen(msg, 16) > 15) {
