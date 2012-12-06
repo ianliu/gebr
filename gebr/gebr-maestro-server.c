@@ -357,16 +357,17 @@ state_changed(GebrCommServer *comm_server,
 		else
                         gebr_maestro_server_set_error(maestro, "error:none", NULL);
 	}
+	else if (state == SERVER_STATE_CONNECT) {
+		if (g_strcmp0(maestro->priv->server->address->str, maestro->priv->address) != 0) {
+			g_free(maestro->priv->address);
+			maestro->priv->address = g_strdup(maestro->priv->server->address->str);
+		}
+	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 		gebr_maestro_controller_clean_potential_maestros(gebr.maestro_controller);
 
 		gebr_project_line_show(gebr.ui_project_line);
-
-		if (g_strcmp0(maestro->priv->server->address->str, maestro->priv->address) != 0) {
-			g_free(maestro->priv->address);
-			maestro->priv->address = g_strdup(maestro->priv->server->address->str);
-		}
 
 		if (!gebr.populate_list) {
 			gebr.populate_list = TRUE;
