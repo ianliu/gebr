@@ -877,7 +877,7 @@ on_job_status(GebrJob *job,
 
 	if (old_status == JOB_STATUS_QUEUED && new_status == JOB_STATUS_RUNNING) {
 		job_control_fill_servers_info(jc);
-		on_job_output(job, 0, _("\n --- The execution has been started. --- \n\n"), jc);
+		on_job_output(job, 0, _("\n --- The execution started. --- \n\n"), jc);
 	} else if (old_status == JOB_STATUS_RUNNING && new_status == JOB_STATUS_FINISHED) {
 		on_job_output(job, 0, _("\n --- The execution finished successfully. --- \n"), jc);
 	} else if (old_status == JOB_STATUS_RUNNING && new_status == JOB_STATUS_CANCELED) {
