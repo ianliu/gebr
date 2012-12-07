@@ -143,10 +143,6 @@ static void gebr_comm_protocol_socket_read(GebrCommStreamSocket *socket, GebrCom
 
 	g_string_free(data, TRUE);
 }
-static void gebr_comm_protocol_socket_error(GebrCommProtocolSocket * self, enum GebrCommSocketError error)
-{
-	//TODO: translate and treat more errors
-}
 static void gebr_comm_protocol_socket_init(GebrCommProtocolSocket * self)
 {
 	self->protocol = gebr_comm_protocol_new();
@@ -179,8 +175,6 @@ gebr_comm_protocol_socket_set_property(GObject * object, guint property_id, cons
 				 G_CALLBACK(gebr_comm_protocol_socket_disconnected), self);
 		g_signal_connect(self->priv->socket, "ready-read",
 				 G_CALLBACK(gebr_comm_protocol_socket_read), self);
-		g_signal_connect(self->priv->socket, "error",
-				 G_CALLBACK(gebr_comm_protocol_socket_error), self);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);

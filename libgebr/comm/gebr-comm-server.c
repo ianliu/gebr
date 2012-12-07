@@ -89,6 +89,10 @@ static void	gebr_comm_server_change_state	(GebrCommServer *server,
 static void	gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 						  GebrCommServer *server);
 
+static void gebr_comm_server_socket_error(GebrCommStreamSocket *socket,
+                                          enum GebrCommSocketError error,
+                                          GebrCommServer *server);
+
 static void	gebr_comm_server_socket_disconnected(GebrCommProtocolSocket * socket,
 						     GebrCommServer *server);
 
@@ -238,6 +242,11 @@ gebr_comm_server_new(const gchar * _address,
 			 G_CALLBACK(gebr_comm_server_socket_process_response), server);
 	g_signal_connect(server->socket, "old-parse-messages",
 			 G_CALLBACK(gebr_comm_server_socket_old_parse_messages), server);
+
+	GebrCommStreamSocket *stream_socket;
+	g_object_get(server->socket, "stream-socket", &stream_socket, NULL);
+	g_signal_connect(stream_socket, "error",
+	                 G_CALLBACK(gebr_comm_server_socket_error), server);
 
 	return server;
 }
@@ -686,6 +695,24 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 						      hostname);
 	}
 
+}
+
+static void
+gebr_comm_server_socket_error(GebrCommStreamSocket *socket,
+                              enum GebrCommSocketError error,
+                              GebrCommServer *server)
+{
+	switch (error) {
+	case GEBR_COMM_SOCKET_ERROR_SERVER_TIMED_OUT:
+	case GEBR_COMM_SOCKET_ERROR_LOOKUP:
+	case GEBR_COMM_SOCKET_ERROR_CONNECTION_REFUSED:
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_CONNECT,
+		                                    _("Connection refused"));
+		break;
+	case GEBR_COMM_SOCKET_ERROR_UNKNOWN:
+	case GEBR_COMM_SOCKET_ERROR_NONE:
+		break;
+	}
 }
 
 static void
