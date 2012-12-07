@@ -136,33 +136,43 @@ get_version_contents_from_file(const gchar *version_file)
 }
 
 static gboolean
-check_if_port_is_busy(const gchar *addr,
-                      gint port,
-                      const gchar *curr_version,
-                      const gchar *version_contents)
+need_cleanup(const gchar *v1,
+             const gchar *v2)
 {
-	if (!gebr_comm_listen_socket_is_local_port_available(port) || gebr_comm_listen_socket_listen_on_port(port, addr)) {
-		if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
-			gchar *new_addr;
-			const gchar *username = g_get_user_name();
-			if (username && *username)
-				new_addr = g_strdup_printf("%s@%s", username, addr);
-			else
-				new_addr = g_strdup(addr);
+	if (g_strcmp0(v1, v2) == 0)
+		return FALSE;
 
-			g_print("%s%d\n%s%s\n",
-			        GEBR_PORT_PREFIX, port,
-			        GEBR_ADDR_PREFIX, new_addr);
+	return TRUE;
+}
 
-			g_free(new_addr);
+static gboolean
+is_current_maestro_valid(const gchar *addr,
+                         gint port,
+                         const gchar *curr_version,
+                         const gchar *version_contents)
+{
+	gchar *new_addr;
 
-			return TRUE;
-		} else {		//It is running in a different version
+	if (g_strcmp0(addr, g_get_host_name()) == 0) {
+		if (need_cleanup(curr_version, version_contents)) {
 			gebr_kill_by_port(port);
+			return FALSE;
 		}
 	}
 
-	return FALSE;
+	const gchar *username = g_get_user_name();
+	if (username && *username)
+		new_addr = g_strdup_printf("%s@%s", username, addr);
+	else
+		new_addr = g_strdup(addr);
+
+	g_print("%s%d\n%s%s\n",
+	        GEBR_PORT_PREFIX, port,
+	        GEBR_ADDR_PREFIX, new_addr);
+
+	g_free(new_addr);
+
+	return TRUE;
 }
 
 static gboolean
@@ -220,7 +230,7 @@ verify_singleton_lock(const gchar *curr_version)
 			if (!version_contents)
 				exit(1);
 
-			if (check_if_port_is_busy(addr, port, curr_version, version_contents)) {
+			if (is_current_maestro_valid(addr, port, curr_version, version_contents)) {
 				g_free(version_contents);
 				return TRUE;
 			}
@@ -265,8 +275,8 @@ main(int argc, char *argv[])
 	gchar *curr_version = NULL;
 	curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
 
-	gboolean valid;
-	valid = verify_singleton_lock(curr_version);
+	gboolean has_lock;
+	has_lock = verify_singleton_lock(curr_version);
 
 	const gchar *gebrd_location = g_find_program_in_path("gebrd");
 
@@ -281,7 +291,7 @@ main(int argc, char *argv[])
 	gebr_maestro_settings_free(ms);
 
 	// Singleton lock is valid and suggest the correct maestro
-	if (valid) {
+	if (has_lock) {
 		g_free(curr_version);
 		exit(0);
 	}
