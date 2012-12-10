@@ -31,3 +31,9 @@ gebr_maestro_info_get_home_mount_point(GebrMaestroInfo *self)
 {
 	return self->get_home_mount_point(self);
 }
+
+gboolean
+gebr_maestro_info_get_need_gvfs(GebrMaestroInfo *self)
+{
+	return self->get_need_gvfs(self);
+}
