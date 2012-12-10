@@ -1353,6 +1353,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->maestro_info_iface.maestro = maestro;
 	maestro->priv->maestro_info_iface.iface.get_home_uri = gebr_maestro_server_get_home_uri;
 	maestro->priv->maestro_info_iface.iface.get_home_mount_point = gebr_maestro_server_get_home_mount_point;
+	maestro->priv->maestro_info_iface.iface.get_need_gvfs = gebr_maestro_server_get_need_gvfs;
 
 	gebr_maestro_server_set_error(maestro, "error:none", NULL);
 
@@ -1902,6 +1903,13 @@ gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface)
 {
 	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
 	return gebr_maestro_server_get_sftp_root(self->maestro);
+}
+
+gboolean
+gebr_maestro_server_get_need_gvfs(GebrMaestroInfo *iface)
+{
+	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
+	return gebr_maestro_server_need_mount_gvfs(self->maestro);
 }
 
 void 

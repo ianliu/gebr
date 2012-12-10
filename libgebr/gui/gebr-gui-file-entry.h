@@ -20,6 +20,7 @@
 
 #include <gtk/gtk.h>
 #include <libgebr/geoxml/geoxml.h>
+#include <libgebr/gebr-maestro-info.h>
 
 G_BEGIN_DECLS
 
@@ -51,6 +52,7 @@ struct _GebrGuiFileEntry {
 
 	GebrGeoXmlLine *line;
 	gchar *prefix;
+	gboolean need_gvfs;
 };
 
 struct _GebrGuiFileEntryClass {

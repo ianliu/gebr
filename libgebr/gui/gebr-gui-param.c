@@ -814,10 +814,13 @@ gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 						parameter_widget);
 		GebrGeoXmlDocument *line;
 		gebr_validator_get_documents(parameter_widget->validator, NULL, &line, NULL);
-		if (line)
+		if (line) {
 			gebr_gui_file_entry_set_paths_from_line(GEBR_GUI_FILE_ENTRY(file_entry),
 								gebr_maestro_info_get_home_uri(parameter_widget->info),
 								GEBR_GEOXML_LINE(line));
+			gebr_gui_file_entry_set_need_gvfs(GEBR_GUI_FILE_ENTRY(file_entry),
+			                                  gebr_maestro_info_get_need_gvfs(parameter_widget->info));
+		}
 		activatable_entry = GTK_ENTRY (GEBR_GUI_FILE_ENTRY (file_entry)->entry);
 		if (may_complete) {
 			completion_model = generate_completion_model(parameter_widget);
