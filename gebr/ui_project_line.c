@@ -1655,6 +1655,47 @@ void project_line_free(void)
 	project_line_info_update();
 }
 
+void
+on_maestro_nfsid_defined(GebrMaestroServer *maestro,
+                         GebrUiProjectLine *upl)
+{
+	GebrGeoXmlLine *line;
+	GtkTreeIter parent, iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(upl->store);
+
+	gebr_gui_gtk_tree_model_foreach(parent, model) {
+		gboolean valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		while (valid) {
+			gboolean sensitive;
+
+			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
+
+			const gchar *line_nfsid = gebr_geoxml_line_get_maestro(line);
+			if (!line_nfsid || !*line_nfsid) {
+				if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+					const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
+					if (nfsid) {
+						gebr_geoxml_line_set_maestro(line, nfsid);
+						document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, FALSE);
+					}
+				}
+			}
+
+			GebrMaestroServer *m = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+
+			if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED)
+				sensitive = TRUE;
+			else
+				sensitive = FALSE;
+
+			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
+			valid = gtk_tree_model_iter_next(model, &iter);
+		}
+	}
+
+	update_control_sensitive(upl);
+}
+
 static void
 on_maestro_state_change(GebrMaestroController *mc,
                         GebrMaestroServer *maestro,
