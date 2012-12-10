@@ -681,7 +681,7 @@ get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s%s >&3' 3>&1 >/dev/null 2>&1\"",
+	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s%s'\"",
 	                ssh_cmd, self->priv->address, binary, force_init? " -f" : "");
 	gchar *cmd = g_shell_quote(cmd_line->str);
 
