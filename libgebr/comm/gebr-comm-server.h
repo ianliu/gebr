@@ -159,7 +159,6 @@ GType gebr_comm_server_get_type(void) G_GNUC_CONST;
 
 GebrCommServer *gebr_comm_server_new(const gchar *_address,
 				     const gchar *gebr_id,
-				     gboolean need_cleanup,
 				     const struct gebr_comm_server_ops *ops);
 
 const gchar *gebr_comm_server_get_last_error(GebrCommServer *server);
@@ -172,7 +171,8 @@ void gebr_comm_server_set_last_error(GebrCommServer *server,
 void gebr_comm_server_free(GebrCommServer *gebr_comm_server);
 
 void gebr_comm_server_connect(GebrCommServer *server,
-			      gboolean maestro);
+			      gboolean maestro,
+			      gboolean force_init);
 
 void gebr_comm_server_disconnect(GebrCommServer *gebr_comm_server);
 

@@ -113,8 +113,6 @@ struct gebr {
 		GKeyFile *key_file;
 		GString *path;
 
-		gboolean need_cleanup;
-
 		GebrMaestroSettings *maestro_set;
 
 		GString *version;

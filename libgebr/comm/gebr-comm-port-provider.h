@@ -125,13 +125,13 @@ void gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
                                          const gchar *host);
 
 /**
- * gebr_comm_port_provider_set_need_cleanup:
+ * gebr_comm_port_provider_set_force_init:
  *
- * Sets a flag on @self to alert if before connect on maestro or daemon,
- * the connection needs clean old stuff, like old maestros
+ * Sets a flag on @self to alert if need to pass an argument to
+ * maestro connection, to force init.
  */
-void gebr_comm_port_provider_set_need_cleanup(GebrCommPortProvider *self,
-                                              gboolean need_cleanup);
+void gebr_comm_port_provider_set_force_init(GebrCommPortProvider *self,
+                                            gboolean force_init);
 
 /**
  * gebr_comm_port_provider_get_display_host:

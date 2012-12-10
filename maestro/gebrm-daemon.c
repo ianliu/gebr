@@ -496,7 +496,7 @@ gebrm_daemon_set_property(GObject      *object,
 	{
 	case PROP_ADDRESS:
 		daemon->priv->server = gebr_comm_server_new(g_value_get_string(value),
-							    NULL, FALSE, &daemon_ops);
+							    NULL, &daemon_ops);
 		g_signal_connect(daemon->priv->server, "server-password-request",
 				 G_CALLBACK(on_password_request), daemon);
 		g_signal_connect(daemon->priv->server, "question-request",
@@ -773,7 +773,7 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 	if (client)
 		daemon->priv->client = g_object_ref(client);
 
-	gebr_comm_server_connect(daemon->priv->server, FALSE);
+	gebr_comm_server_connect(daemon->priv->server, FALSE, FALSE);
 }
 
 void

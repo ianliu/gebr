@@ -292,8 +292,6 @@ gebr_config_load(void)
 	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
 	double tmp;
 
-	gebr.config.need_cleanup = FALSE;
-
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
 	has_config = g_access(gebr.config.path->str, F_OK | R_OK) == 0 ? TRUE : FALSE;

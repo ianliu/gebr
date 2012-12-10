@@ -64,7 +64,7 @@ struct _GebrCommPortProviderPriv {
 	guint port;
 	guint remote_port;
 
-	gboolean need_cleanup;
+	gboolean force_init;
 };
 
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
@@ -440,9 +440,8 @@ local_get_port(GebrCommPortProvider *self, gboolean maestro)
 	GError *local_error = NULL;
 	guint port;
 
-	const gchar *path = g_build_filename(g_get_home_dir(), ".gebr", binary, g_get_host_name(), "lock", NULL);
-	if (self->priv->need_cleanup && !g_access(path, F_OK | R_OK))
-		cmd = g_strdup_printf("bash -c 'fuser -sk -15 $(cat %s)/tcp; %s'", path, binary);
+	if (self->priv->force_init && maestro)
+		cmd = g_strdup_printf("%s -f", binary);
 	else
 		cmd = g_strdup(binary);
 
@@ -674,26 +673,20 @@ static gchar *
 get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 {
 	const gchar *binary = is_maestro ? "gebrm" : "gebrd";
+	gboolean force_init = FALSE;
+
+	if (is_maestro && self->priv->force_init)
+		force_init = TRUE;
 
 	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 
-	gchar *clean_cmd;
-	gchar *host = gebr_get_host_from_address(self->priv->address);
-	const gchar *path = g_build_filename(g_get_home_dir(), ".gebr", binary, host, "lock", NULL);
-	if (is_maestro && self->priv->need_cleanup && !g_access(path, F_OK | R_OK))
-		clean_cmd = g_strdup_printf("fuser -sk -15 $(cat %s)/tcp;", path);
-	else
-		clean_cmd = g_strdup("");
-
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s%s >&3' 3>&1 >/dev/null 2>&1\"",
-	                ssh_cmd, self->priv->address, clean_cmd, binary);
+	                ssh_cmd, self->priv->address, binary, force_init? " -f" : "");
 	gchar *cmd = g_shell_quote(cmd_line->str);
 
 	g_string_printf(cmd_line, "bash -c %s", cmd);
 
-	g_free(host);
-	g_free(clean_cmd);
 	g_free(cmd);
 	g_free(ssh_cmd);
 
@@ -833,10 +826,10 @@ gebr_comm_port_provider_new(GebrCommPortType type,
 }
 
 void
-gebr_comm_port_provider_set_need_cleanup(GebrCommPortProvider *self,
-                                         gboolean need_cleanup)
+gebr_comm_port_provider_set_force_init(GebrCommPortProvider *self,
+                                       gboolean force_init)
 {
-	self->priv->need_cleanup = need_cleanup;
+	self->priv->force_init = force_init;
 }
 
 void

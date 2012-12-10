@@ -2369,7 +2369,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
-	gebr_maestro_server_connect(self->priv->maestro);
+	gebr_maestro_server_connect(self->priv->maestro, FALSE);
 
 	gebr_log_update_maestro_info_signal(gebr.ui_log, self->priv->maestro);
 }
@@ -2560,7 +2560,6 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 		addr = gebr_g_key_file_load_string_key(maestros_key, "maestro", "address", "");
 
 		if (addr->len > 1) {
-			gebr.config.need_cleanup = TRUE;
 			gchar *user_addr = g_strdup_printf("%s@%s", g_get_user_name(), addr->str);
 			maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, user_addr);
 			g_free(user_addr);

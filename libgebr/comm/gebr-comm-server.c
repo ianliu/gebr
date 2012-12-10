@@ -50,7 +50,6 @@ typedef enum {
 struct _GebrCommServerPriv {
 	gboolean is_maestro;
 
-	gboolean need_cleanup;
 	gchar *gebr_id;
 
 	GebrCommPortForward *connection_forward;
@@ -207,13 +206,10 @@ gebr_comm_server_set_last_error(GebrCommServer *server,
 GebrCommServer *
 gebr_comm_server_new(const gchar * _address,
 		     const gchar *gebr_id,
-		     gboolean need_cleanup,
 		     const struct gebr_comm_server_ops *ops)
 {
 	GebrCommServer *server;
 	server = g_object_new(GEBR_COMM_TYPE_SERVER, NULL);
-
-	server->priv->need_cleanup = need_cleanup;
 
 	server->address = g_string_new(gebr_apply_pattern_on_address(_address));
 	server->priv->gebr_id = g_strdup(gebr_id);
@@ -298,7 +294,7 @@ on_comm_ssh_error(GError *error,
 	case GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT:
 		gebr_comm_server_change_state(server, SERVER_STATE_REDIRECT);
 		g_string_assign(server->address, error->message);
-		gebr_comm_server_connect(server, TRUE);
+		gebr_comm_server_connect(server, TRUE, FALSE);
 		break;
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SSH:
 	case GEBR_COMM_PORT_PROVIDER_ERROR_NOT_FOUND:
@@ -396,7 +392,8 @@ on_comm_port_accepts_key(GebrCommPortProvider *self,
 }
 
 void gebr_comm_server_connect(GebrCommServer *server,
-			      gboolean maestro)
+			      gboolean maestro,
+			      gboolean force_init)
 {
 	GebrCommPortType port_type;
 
@@ -419,7 +416,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(port_type, server->address->str);
 
-	gebr_comm_port_provider_set_need_cleanup(port_provider, server->priv->need_cleanup);
+	gebr_comm_port_provider_set_force_init(port_provider, force_init);
 
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);

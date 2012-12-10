@@ -153,7 +153,8 @@ GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_disconnect(GebrMaestroServer *maestro, gboolean quit);
 
-void gebr_maestro_server_connect(GebrMaestroServer *maestro);
+void gebr_maestro_server_connect(GebrMaestroServer *maestro,
+                                 gboolean force_init);
 
 void gebr_maestro_server_add_temporary_job(GebrMaestroServer *maestro, GebrJob *job);
 

@@ -352,10 +352,13 @@ state_changed(GebrCommServer *comm_server,
 			gebr_project_line_show(gebr.ui_project_line);
 
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
-                if (err && *err)
+                if (err && *err) {
+                	if (comm_server->error == SERVER_ERROR_CONNECT)
+                		gebr_maestro_server_connect(maestro, TRUE);
                         gebr_maestro_server_set_error(maestro, "error:ssh", err);
-		else
+                } else {
                         gebr_maestro_server_set_error(maestro, "error:none", NULL);
+                }
 	}
 	else if (state == SERVER_STATE_CONNECT) {
 		if (g_strcmp0(maestro->priv->server->address->str, maestro->priv->address) != 0) {
@@ -1657,13 +1660,13 @@ on_question_request(GebrCommServer *server,
 }
 
 void
-gebr_maestro_server_connect(GebrMaestroServer *maestro)
+gebr_maestro_server_connect(GebrMaestroServer *maestro,
+                            gboolean force_init)
 {
 	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
 
 	maestro->priv->server = gebr_comm_server_new(maestro->priv->address,
 						     gebr_get_session_id(),
-						     gebr.config.need_cleanup,
 						     &maestro_ops);
 
 	g_signal_connect(maestro->priv->server, "server-password-request",
@@ -1672,7 +1675,7 @@ gebr_maestro_server_connect(GebrMaestroServer *maestro)
 	                 G_CALLBACK(on_question_request), maestro);
 
 	maestro->priv->server->user_data = maestro;
-	gebr_comm_server_connect(maestro->priv->server, TRUE);
+	gebr_comm_server_connect(maestro->priv->server, TRUE, force_init);
 }
 
 void
