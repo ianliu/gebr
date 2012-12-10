@@ -39,6 +39,7 @@
 
 static gboolean interactive;
 static gboolean show_version;
+static gboolean force_init;
 static int output_fd = STDOUT_FILENO;
 
 static GOptionEntry entries[] = {
@@ -46,6 +47,8 @@ static GOptionEntry entries[] = {
 		"Run server in interactive mode, not as a daemon", NULL},
 	{"version", 'v', 0, G_OPTION_ARG_NONE, &show_version,
 		"Show GeBR daemon version", NULL},
+	{"force", 'f', 0, G_OPTION_ARG_NONE, &force_init,
+		"Force to run server, ignoring lock", NULL},
 	{NULL}
 };
 
@@ -275,8 +278,10 @@ main(int argc, char *argv[])
 	gchar *curr_version = NULL;
 	curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
 
-	gboolean has_lock;
-	has_lock = verify_singleton_lock(curr_version);
+	gboolean has_lock = FALSE;
+
+	if (!force_init)
+		has_lock = verify_singleton_lock(curr_version);
 
 	const gchar *gebrd_location = g_find_program_in_path("gebrd");
 
