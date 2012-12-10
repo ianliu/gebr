@@ -1,3 +1,23 @@
+2012-12-06  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix broken link on gnu license
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: servers change to the new REDIRECT state when redirecting
+	* libgebr: do not unref ssh object inside its own signal
+
+2012-12-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new state to STATE_FORWARD for PortProvider
+	* Fix SSH output buffer
+	* Merge with 0.19.12
+	* libgebr: Add on header file public method of PortProvider
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.12: More autopilot fixes
+
 2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Fixes makefile of tests
