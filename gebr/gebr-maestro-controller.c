@@ -2558,13 +2558,15 @@ gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
 	if (g_key_file_has_group(maestros_key, "maestro")) {
 		GString *addr;
 		addr = gebr_g_key_file_load_string_key(maestros_key, "maestro", "address", "");
+		gchar *address = gebr_get_host_from_address(addr->str);
 
 		if (addr->len > 1) {
-			gchar *user_addr = g_strdup_printf("%s@%s", g_get_user_name(), addr->str);
+			gchar *user_addr = g_strdup_printf("%s@%s", g_get_user_name(), address);
 			maestros = gebr_gqueue_push_tail_avoiding_duplicates(maestros, user_addr);
 			g_free(user_addr);
 		}
 		gebr_maestro_settings_clean_old_maestros(gebr.config.maestro_set);
+		g_free(address);
 		g_string_free(addr, TRUE);
 	}
 
