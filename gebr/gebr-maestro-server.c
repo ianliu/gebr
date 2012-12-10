@@ -220,6 +220,7 @@ gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 		gebr_comm_server_create_port_provider(maestro->priv->server, GEBR_COMM_PORT_TYPE_SFTP);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
+	g_debug("on %s, address:'%s'", __func__, addr);
 	gebr_comm_port_provider_set_sftp_address(port_provider, addr);
 	gebr_comm_port_provider_start(port_provider);
 }
