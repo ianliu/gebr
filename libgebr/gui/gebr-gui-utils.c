@@ -1257,7 +1257,6 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 				     gchar *file,
 				     GtkWidget *chooser_dialog)
 {
-	gboolean success = gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), g_get_home_dir());
 	gebr_gtk_bookmarks_add_paths(file, "file://", paths);
 
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
@@ -1285,71 +1284,37 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
 	gtk_widget_show_all(vbox);
-	gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER(chooser_dialog), vbox);
-	return success;
+	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(chooser_dialog), vbox);
+	return TRUE;
 }
 
 void
-gebr_file_chooser_set_current_directory (const gchar *entry_text, const gchar *prefix, gchar ***paths, GtkWidget *dialog, gchar **error)
+gebr_file_chooser_set_current_directory(const gchar *entry_text,
+                                        const gchar *prefix,
+                                        gchar ***paths,
+                                        GtkWidget *dialog,
+                                        gboolean need_gvfs,
+                                        gchar **error)
 {
-	gchar *folder = NULL;
-	gboolean err_entry = FALSE;
-	gboolean err_dir = FALSE;
+	gchar *home_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(paths, "HOME"), paths);
+	gchar *base_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(paths, "BASE"), paths);
+	gboolean validated = FALSE;
 
-	if (!entry_text || !*entry_text ) {
-		err_entry = TRUE;
-		error = NULL;
-	} else {
-		gchar *err_msg = NULL;
-		gchar *aux = gebr_resolve_relative_path(entry_text, paths);
-		if (!gebr_validate_path(aux, paths, &err_msg)) {
-			for (gint i = 0; paths && paths[i]; i++) {
-				if (g_strcmp0(paths[i][1], "HOME") == 0) {
-				    g_free(aux);
-				    aux = g_strdup(paths[i][0]);
-				    break;
-				}
-			}
-		}
-		*error = err_msg;
-		gchar *folder = g_build_filename(prefix, aux, NULL);
+	gchar *aux = gebr_resolve_relative_path(entry_text, paths);	/*Relativize*/
+	gebr_validate_path(aux, paths, error);	/*Sets error messages*/
 
-		gboolean could_set_folder = gtk_file_chooser_set_uri(GTK_FILE_CHOOSER(dialog), folder);
+	gchar *substitute = base_dir ? base_dir : home_dir;
 
-		if (!could_set_folder)
-			g_warn_if_reached();
+	aux = aux ? aux : g_strdup("");
 
-		g_free(aux);
-		g_free(folder);
-	}
+	gchar *path = g_build_filename(prefix, *aux ? aux : substitute, NULL);
 
-	if (err_entry || err_dir) {
-		gchar *base_dir = NULL, *home_dir = NULL;
-		for (gint i = 0; paths && paths[i]; i++) {
-			if (g_strcmp0(paths[i][1], "HOME") == 0)
-				home_dir = g_strdup(paths[i][0]);
+	if (!gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), path))
+		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), home_dir);
 
-			if (g_strcmp0(paths[i][1], "BASE") == 0) {
-				base_dir = g_strdup(paths[i][0]);
-				break;
-			}
-		}
-
-		gchar *curr_dir;
-		if (base_dir)
-			curr_dir = gebr_resolve_relative_path(base_dir, paths);
-		else
-			curr_dir = gebr_resolve_relative_path(home_dir, paths);
-
-		folder = g_build_filename(prefix, curr_dir, NULL);
-		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
-
-
-		g_free(curr_dir);
-		g_free(home_dir);
-		g_free(base_dir);
-		g_free(folder);
-	}
+	g_free(aux);
+	g_free(home_dir);
+	g_free(base_dir);
 }
 
 static void
@@ -1373,7 +1338,7 @@ on_response_event(GtkDialog *dialog,
 gint
 gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
                                         const gchar *entry_text,
-					gchar *sftp_prefix,
+					gchar *sftp_pref,
 					gboolean need_gvfs,
                                         gchar ***paths,
                                         gboolean insert_bookmarks,
@@ -1385,16 +1350,12 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);;
 	gchar *err_filechooser = NULL;
 
-	if (sftp_prefix) {
-		gebr_file_chooser_set_current_directory (entry_text, sftp_prefix, paths, dialog, &err_filechooser);
-		if (insert_bookmarks)
-			gebr_gtk_bookmarks_add_paths(filename, sftp_prefix, paths);
-	} else {
-		if (need_gvfs)
-			gebr_file_chooser_set_warning_widget(paths, filename, dialog);
-		else
-			gebr_gtk_bookmarks_add_paths(filename, "file://", paths);
-	}
+	gchar *sftp_prefix = sftp_pref ? sftp_pref: "file://";
+	gebr_gtk_bookmarks_add_paths(filename, sftp_prefix, paths);
+	gebr_file_chooser_set_current_directory(entry_text, sftp_prefix, paths,
+	                                        dialog, need_gvfs, &err_filechooser);
+	if (need_gvfs && !sftp_prefix)
+		gebr_file_chooser_set_warning_widget(paths, filename, dialog);
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
 

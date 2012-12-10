@@ -1577,3 +1577,15 @@ gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue,
 
 	return queue;
 }
+
+const gchar*
+gebr_paths_get_value_by_key(const gchar ***paths,
+                            const gchar *key)
+{
+	for (gint i = 0; paths && paths[i]; i++) {
+		if (g_strcmp0(paths[i][1], key) == 0) {
+			return paths[i][0];
+		}
+	}
+	return NULL;
+}

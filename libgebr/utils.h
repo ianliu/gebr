@@ -451,6 +451,15 @@ const gchar *gebr_apply_pattern_on_address(const gchar *addr);
  */
 GQueue *gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue, const gchar *data);
 
+/*
+ * gebr_paths_get_value_by_key:
+ *
+ * Gets the value of @key in @paths.
+ */
+const gchar *gebr_paths_get_value_by_key(const gchar ***paths,
+                                         const gchar *key);
+
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
