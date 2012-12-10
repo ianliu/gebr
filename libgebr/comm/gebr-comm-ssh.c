@@ -332,8 +332,9 @@ process_ssh_line(GebrCommSsh *self,
 		 const gchar *line)
 {
 	if (self->priv->out_state == SSH_OUT_STATE_INIT) {
-		if (strstr(line, FINGERPRINT_MSG)) {
-			GString *tmp = g_string_new(line + strlen(FINGERPRINT_MSG));
+		gchar *finger = strstr(line, FINGERPRINT_MSG);
+		if (finger) {
+			GString *tmp = g_string_new(finger + strlen(FINGERPRINT_MSG));
 			if (tmp->str[tmp->len-1] == '.')
 				g_string_erase(tmp, tmp->len - 1, -1);
 
