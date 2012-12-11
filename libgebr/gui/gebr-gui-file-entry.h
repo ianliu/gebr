@@ -98,6 +98,9 @@ void gebr_gui_file_entry_set_paths_from_line(GebrGuiFileEntry *self,
 					     const gchar *prefix,
 					     GebrGeoXmlLine *line);
 
+void gebr_gui_file_entry_set_need_gvfs(GebrGuiFileEntry *self,
+				       gboolean need_gvfs);
+
 G_END_DECLS
 
 #endif /* __GEBR_GUI_FILE_ENTRY_H */

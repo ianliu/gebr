@@ -1296,8 +1296,9 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
                                         gboolean need_gvfs,
                                         gchar **error)
 {
-	gchar *home_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(paths, "HOME"), paths);
-	gchar *base_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(paths, "BASE"), paths);
+	const gchar ***tmp = (const gchar ***)paths;
+	gchar *home_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(tmp, "HOME"), paths);
+	gchar *base_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(tmp, "BASE"), paths);
 
 	if (need_gvfs && !prefix)
 		return;
