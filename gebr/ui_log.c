@@ -135,6 +135,9 @@ struct ui_log *log_setup_ui(void)
 	 */
 	GtkWidget *internal_box = gtk_hbox_new(FALSE, 5);
 
+	ui_log->maestro_label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->maestro_label, FALSE, FALSE, 5);
+
 	GtkWidget *event_maestro = gtk_event_box_new();
 	ui_log->maestro_icon = gtk_image_new();
 	gtk_container_add(GTK_CONTAINER(event_maestro), ui_log->maestro_icon);
@@ -248,7 +251,9 @@ on_maestro_error(GebrMaestroServer *maestro,
 
 		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
-		gchar *text = g_strdup_printf(_("Error on %s:\n%s"),addr, g_strstrip(msg));
+		gchar *err = g_strdup_printf("Error on %s", addr);
+		gchar *text = g_strdup_printf(_("%s:\n%s"), err, g_strstrip(msg));
+		gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), err);
 		gtk_widget_set_tooltip_text(ui_log->maestro_icon, text);
 		g_free(text);
 
@@ -285,11 +290,13 @@ on_state_change(GebrMaestroServer *maestro,
 
 			gchar *text = g_markup_printf_escaped(_("Connected to %s"), gebr_maestro_server_get_nfs_label(maestro));
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), gebr_maestro_server_get_nfs_label(maestro));
 			g_free(text);
 		} else {
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
 			gchar *text = g_markup_printf_escaped(_("No nodes connected"));
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
 			g_free(text);
 		}
 	} else {
@@ -302,6 +309,7 @@ on_state_change(GebrMaestroServer *maestro,
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
 			gchar *text = g_markup_printf_escaped(_("Error on <b>%s</b>:\n%s"),addr, g_strstrip(msg));
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
 
 			g_free(text);
 			g_free(msg);
@@ -309,6 +317,7 @@ on_state_change(GebrMaestroServer *maestro,
 			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
 			gchar *text = g_markup_printf_escaped(_("Not connected"));
 			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), text);
 			g_free(text);
 		}
 	}
