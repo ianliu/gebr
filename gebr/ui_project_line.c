@@ -102,8 +102,7 @@ gebr_project_line_hide(GebrUiProjectLine *self)
 void
 gebr_project_line_show(GebrUiProjectLine *self)
 {
-	project_line_load();
-	return;
+	project_line_info_update();
 }
 
 struct ui_project_line *project_line_setup_ui(void)
