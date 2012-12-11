@@ -1413,7 +1413,7 @@ flow_browse_setup_ui()
 	gtk_tree_view_column_set_expand(col, FALSE);
 	gtk_tree_view_column_set_cell_data_func(col, ui_flow_browse->action_renderer, gebr_flow_browse_action_icon, NULL, NULL);
 
-	g_signal_connect_after(ui_flow_browse->view, "button-release-event",
+	g_signal_connect(ui_flow_browse->view, "button-release-event",
 	                       G_CALLBACK(on_left_tree_button_release), ui_flow_browse);
 
 	/*
@@ -3320,18 +3320,20 @@ on_left_tree_button_release(GtkTreeView *tree,
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(fb->view));
 	gint nrows = gtk_tree_selection_count_selected_rows(selection);
 
-	if (nrows > 1)
+	if (nrows != 1)
 		return FALSE;
 
 	if (!gtk_tree_view_get_path_at_pos(tree, x, y, &path, &column, &cell_x, NULL))
 		return FALSE;
+
+	GList *row = gtk_tree_selection_get_selected_rows(selection, NULL);
 
 	if (!gtk_tree_view_column_cell_get_position(column, fb->action_renderer, NULL, &cell_w))
 		goto out;
 
 	model = gtk_tree_view_get_model(tree);
 
-	if (!gtk_tree_model_get_iter(model, &iter, path))
+	if (!gtk_tree_model_get_iter(model, &iter, row->data))
 		goto out;
 
 	if (cell_x < 0 || cell_x > cell_w)
@@ -3355,6 +3357,8 @@ on_left_tree_button_release(GtkTreeView *tree,
 
 out:
 	gtk_tree_path_free(path);
+	g_list_foreach(row, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(row);
 	return FALSE;
 }
 
