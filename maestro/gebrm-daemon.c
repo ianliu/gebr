@@ -959,9 +959,6 @@ void
 gebrm_daemon_send_error_message(GebrmDaemon *daemon,
                                 GebrCommProtocolSocket *socket)
 {
-	if (g_strcmp0(daemon->priv->last_error_type, daemon->priv->error_type) == 0)
-		return;
-
 	if (daemon->priv->server->state == SERVER_STATE_DISCONNECTED
 	    && g_strcmp0(daemon->priv->error_type, "error:ssh") == 0)
 		goto send_error;
