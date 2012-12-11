@@ -1,3 +1,57 @@
+2012-12-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Fix previous commit
+	* libgebr: Refactor set_current_directory to open the filebrowser in
+	the right place
+
+2012-12-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change order of daemon errors to prioritize NFS error
+	* Stop sending errors to /dev/null on maestro/daemon connection
+	* libgebr: Fix parser of fingerprint on SSH
+	* Fix address get from old maestro disregarding the user
+
+2012-12-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Verify if mounting is necessary on filechooser opening
+
+2012-12-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update interface of lines when gebr receives a NFSid from maestro
+	* Remove need_cleanup flag and add force_init flag to connect on
+	maestro.
+	* Add new argument force_init (-f) on maestro
+
+2012-12-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create treatment to connection refused on GêBR when try to connect
+	on invalid port
+	* maestro: Trust in lock file when starting maestro
+	* maestro: Fix security problem
+
+2012-12-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Change message of execution start
+
+2012-12-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making a smarter validation of Base/Import paths.
+	* Show message in output area to prevent white screen.
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: do not activate flow buttons when navigating with keyboard
+	* gebr: new method gebr_ui_flow_has_snapshots
+
+2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix loose of some execution information after change current maestro
+
+2012-12-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.13 for changeset 3181741b854c
+	* Release 0.19.13: SSH parser fixes
+
 2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Fix criticals of clocks diff on GêBR after redirect of maestro
