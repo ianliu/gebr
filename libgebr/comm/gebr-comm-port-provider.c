@@ -63,6 +63,7 @@ struct _GebrCommPortProviderPriv {
 
 	guint port;
 	guint remote_port;
+	const gchar *remote_address;
 
 	gboolean force_init;
 };
@@ -666,6 +667,7 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 		return;
 	}
 
+	self->priv->remote_address = "127.0.0.1";
 	create_local_forward(self);
 }
 
@@ -794,21 +796,10 @@ get_local_forward_command(GebrCommPortProvider *self,
 void
 remote_get_sftp_port(GebrCommPortProvider *self)
 {
-	guint port = 2000;
-	GebrCommSsh *ssh = gebr_comm_ssh_new();
-	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
-	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
-	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
-	gchar *command = get_local_forward_command(self, &port, self->priv->sftp_address, 22);
-	gebr_comm_ssh_set_command(ssh, command);
-	set_forward(self, ssh);
-	gebr_comm_ssh_run(ssh);
-	g_free(command);
+	self->priv->remote_port = 22;
+	self->priv->remote_address = self->priv->sftp_address;
 
-	struct TunnelPollData *data = g_new(struct TunnelPollData, 1);
-	data->self = self;
-	data->port = port;
-	g_timeout_add(200, tunnel_poll_port, data);
+	create_local_forward(self);
 }
 
 /* Authentication keys methods*/
