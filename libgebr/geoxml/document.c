@@ -1246,6 +1246,7 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
 
 	str = gdome_str_mkref(name);
 	document = gdome_di_createDocument(dom_implementation, NULL, str, doctype, &exception);
+	gdome_dt_unref(doctype, &exception);
 
 	__gebr_geoxml_document_new_data((GebrGeoXmlDocument *)document, "");
 	gdome_str_unref(str);
@@ -1810,11 +1811,11 @@ gebr_geoxml_document_update_header(GdomeDOMImplementation *dom_implementation,
                                    const gchar *name,
                                    const gchar *version)
 {
-	GdomeDocument *aux = *document;
-	gdome_doc_ref(aux, &exception);
 	GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, name, version);
-	*document = __gebr_geoxml_document_clone_doc(*document, doctype);
-	gdome_doc_unref(aux, &exception);
+	GdomeDocument *document_clone = __gebr_geoxml_document_clone_doc(*document, doctype);
+	gdome_dt_unref(doctype, &exception);
+	gdome_doc_unref(*document, &exception);
+	*document = document_clone;
 }
 
 GdomeDocumentType *
