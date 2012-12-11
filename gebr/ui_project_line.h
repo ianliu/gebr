@@ -91,8 +91,9 @@ void project_line_new(void);
 /**
  * Update NFSid from logged maestro on line without previously NFS tag
  */
-void on_maestro_nfsid_defined(GebrMaestroServer *maestro,
-                              GebrUiProjectLine *upl);
+void update_xml_parameters(GebrMaestroServer *maestro,
+                           GebrUiProjectLine *upl,
+                           gboolean home_def);
 
 /**
  * Update information shown about the selected project or line.

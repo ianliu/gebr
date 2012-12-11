@@ -1027,6 +1027,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_maestro_server_set_home_dir(maestro, home->str);
 			flow_browse_validate_io(gebr.ui_flow_browse);
+			update_xml_parameters(maestro, gebr.ui_project_line, TRUE);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -1057,7 +1058,7 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_maestro_server_set_nfs_label(maestro, nfslabel);
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
 
-			on_maestro_nfsid_defined(maestro, gebr.ui_project_line);
+			update_xml_parameters(maestro, gebr.ui_project_line, FALSE);
 
 			if (check_client_is_in_the_same_nfs_as_daemons(nfsid))
 				gebr_maestro_controller_server_list_add(gebr.maestro_controller, g_get_host_name(), TRUE);

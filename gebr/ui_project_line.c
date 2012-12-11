@@ -1655,12 +1655,14 @@ void project_line_free(void)
 }
 
 void
-on_maestro_nfsid_defined(GebrMaestroServer *maestro,
-                         GebrUiProjectLine *upl)
+update_xml_parameters(GebrMaestroServer *maestro,
+                      GebrUiProjectLine *upl,
+                      gboolean home_def)
 {
 	GebrGeoXmlLine *line;
 	GtkTreeIter parent, iter;
 	GtkTreeModel *model = GTK_TREE_MODEL(upl->store);
+	gboolean logged = gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED;
 
 	gebr_gui_gtk_tree_model_foreach(parent, model) {
 		gboolean valid = gtk_tree_model_iter_children(model, &iter, &parent);
@@ -1668,18 +1670,16 @@ on_maestro_nfsid_defined(GebrMaestroServer *maestro,
 			gboolean sensitive;
 
 			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
-
 			const gchar *line_nfsid = gebr_geoxml_line_get_maestro(line);
-			if (!line_nfsid || !*line_nfsid) {
-				if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-					const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
-					if (nfsid) {
-						gebr_geoxml_line_set_maestro(line, nfsid);
-						document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, FALSE);
-					}
-				}
-			}
+			const gchar *new_home = gebr_maestro_server_get_home_dir(maestro);
+			const gchar *new_nfsid = gebr_maestro_server_get_nfsid(maestro);
 
+			if (logged && home_def && new_home) /* Callback of the home_def*/
+				gebr_geoxml_line_set_path_by_name(line, "HOME", new_home);
+			else if (logged && new_nfsid && (!line_nfsid || !*line_nfsid)) /* Callback of the nfsid_def*/
+				gebr_geoxml_line_set_maestro(line, new_nfsid);
+
+			document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, FALSE);
 			GebrMaestroServer *m = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
 
 			if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED)
