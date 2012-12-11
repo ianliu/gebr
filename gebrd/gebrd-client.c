@@ -317,7 +317,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GebrdCpuInfo *cpuinfo = gebrd_cpu_info_new();
 			GebrdMemInfo *meminfo = gebrd_mem_info_new();
 			model_name = gebrd_cpu_info_get (cpuinfo, 0, "model name");
-			cpu_clock = gebrd_cpu_info_get (cpuinfo, 0, "cpu MHz");
+			cpu_clock = gebrd_cpu_info_get_clock (cpuinfo, 0, "cpu MHz");
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gchar *gebrm_path = g_find_program_in_path("gebrm");

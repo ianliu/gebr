@@ -49,6 +49,15 @@ const gchar *gebrd_cpu_info_get (GebrdCpuInfo *self,
 				 const gchar *prop);
 
 /**
+ * gebrd_cpu_info_get_clock:
+ *
+ * Returns the real CPU clock, in case the clock are scaled.
+ */
+const gchar * gebrd_cpu_info_get_clock(GebrdCpuInfo *self,
+                                       guint proc_id,
+                                       const gchar *prop);
+
+/**
  * gebrd_cpu_info_n_procs:
  * @self: A #GebrdCpuInfo object created with gebrd_cpu_info_new()
  *

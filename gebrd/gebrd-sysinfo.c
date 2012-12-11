@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <glib/gstdio.h>
 
 #include "gebrd-sysinfo.h"
 
@@ -85,6 +87,30 @@ const gchar *gebrd_cpu_info_get (GebrdCpuInfo *self,
 	value = g_hash_table_lookup (tb, prop);
 
 	return value;
+}
+
+const gchar *
+gebrd_cpu_info_get_clock(GebrdCpuInfo *self,
+                         guint proc_id,
+                         const gchar *prop)
+{
+	const gchar *filename = "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq";
+	if (g_access(filename, R_OK)) {
+		gchar *output;
+		gchar *cmd = g_strdup_printf("cat %s", filename);
+
+		g_spawn_command_line_sync(cmd, &output, NULL, NULL, NULL);
+
+		g_free(cmd);
+
+		if (output && *output) {
+			gdouble clock = atoi(output)/1000;
+			g_free(output);
+			return g_strdup_printf("%f", clock);
+		}
+	}
+
+	return gebrd_cpu_info_get(self, 0, "cpu MHz");
 }
 
 guint gebrd_cpu_info_n_procs (GebrdCpuInfo *self)
