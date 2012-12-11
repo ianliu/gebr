@@ -517,26 +517,26 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		g_signal_connect(entry_base, "changed", G_CALLBACK(on_document_base_entry_changed), data);
 		g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
 
-		/* Import Path Tab */
-		GtkWidget *import_box = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
-		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), import_box, gtk_label_new(_("IMPORT Path")));
-
-		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
-		g_signal_connect(entry_import, "changed", G_CALLBACK(on_document_import_entry_changed), data);
-		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
-
-		gchar *import_path = NULL;
-		for (gint i=0; paths[i] != NULL; i++){
-			if (g_strcmp0(paths[i][1], "IMPORT") == 0){
-				import_path = paths[i][0];
-				g_debug("Configuring <IMPORT> to %s", import_path);
-				break;
-			}
-		}
-		if (import_path) {
-			gtk_entry_set_text(entry_import, import_path);
-			g_free(import_path);
-		}
+//		/* Import Path Tab */
+//		GtkWidget *import_box = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
+//		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), import_box, gtk_label_new(_("IMPORT Path")));
+//
+//		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+//		g_signal_connect(entry_import, "changed", G_CALLBACK(on_document_import_entry_changed), data);
+//		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
+//
+//		gchar *import_path = NULL;
+//		for (gint i=0; paths[i] != NULL; i++){
+//			if (g_strcmp0(paths[i][1], "IMPORT") == 0){
+//				import_path = paths[i][0];
+//				g_debug("Configuring <IMPORT> to %s", import_path);
+//				break;
+//			}
+//		}
+//		if (import_path) {
+//			gtk_entry_set_text(entry_import, import_path);
+//			g_free(import_path);
+//		}
 	}
 
 	gtk_widget_show(window);
