@@ -1207,7 +1207,6 @@ void project_line_import(void)
 {
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *file_filter;
-	gchar *filename;
 
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose a project or line to open"),
 						     GTK_WINDOW(gebr.window),
@@ -1228,15 +1227,22 @@ void project_line_import(void)
 	gtk_file_filter_add_pattern(file_filter, "*.lnex");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
+	gchar *new_text;
+	gboolean mount_gvfs = gebr_maestro_server_need_mount_gvfs (maestro);
+	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
+	gchar ***paths = gebr_generate_paths_with_home(home);
+	gint response = gebr_file_chooser_set_remote_navigation(chooser_dialog, home,
+	                                                        prefix, mount_gvfs, paths, FALSE,
+	                                                        &new_text);
 	/* show file chooser */
-	gtk_widget_show(chooser_dialog);
-	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) == GTK_RESPONSE_YES) {
-		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-		gtk_widget_destroy(chooser_dialog);
-		project_line_import_path(filename);
-		g_free(filename);
-	} else
-		gtk_widget_destroy(chooser_dialog);
+	if (response == GTK_RESPONSE_YES)
+		project_line_import_path(new_text);
+
+	g_free(new_text);
+	g_free(prefix);
+	gebr_pairstrfreev(paths);
 }
 
 static void
