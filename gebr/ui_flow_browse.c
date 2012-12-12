@@ -3056,6 +3056,7 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 
 		g_free(_title);
 
+		g_object_set(cell, "ypad", 3, NULL);
 		g_object_set(cell, "sensitive", TRUE, NULL);
 		g_object_set(cell, "editable", FALSE, NULL);
 		g_object_set(cell, "cell-background-gdk", &(style->bg[GTK_STATE_NORMAL]), NULL);
@@ -3078,18 +3079,16 @@ gebr_flow_browse_text(GtkTreeViewColumn *tree_column,
 		if (gebr_ui_flows_io_get_active(io)) {
 			g_object_set(cell, "sensitive", TRUE, NULL);
 			g_object_set(cell, "editable", TRUE, NULL);
+			g_object_set(cell, "foreground-gdk", &style->black, NULL);
 		} else {
 			g_object_set(cell, "sensitive", FALSE, NULL);
 			g_object_set(cell, "editable", FALSE, NULL);
 			g_free(title);
 			title = g_strdup(gebr_ui_flows_io_get_label_markup(io));
+			g_object_set(cell, "foreground-gdk", &style->text[GTK_STATE_INSENSITIVE], NULL);
 		}
 		g_object_set(cell, "cell-background-gdk", &style->white, NULL);
 
-		if (gebr_ui_flows_io_get_active(io))
-			g_object_set(cell, "foreground-gdk", &style->black, NULL);
-		else
-			g_object_set(cell, "foreground-gdk", &style->text[GTK_STATE_INSENSITIVE], NULL);
 	}
 	else if (type == STRUCT_TYPE_PROGRAM) {
 		GebrUiFlowProgram *program;
