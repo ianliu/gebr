@@ -1293,15 +1293,17 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
                                         const gchar *prefix,
                                         gchar ***paths,
                                         GtkWidget *dialog,
-                                        gboolean need_gvfs,
+                                        gboolean has_error,
                                         gchar **error)
 {
+	if (has_error) {
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), g_get_home_dir());
+		return;
+	}
+
 	const gchar ***tmp = (const gchar ***)paths;
 	gchar *home_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(tmp, "HOME"), paths);
 	gchar *base_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(tmp, "BASE"), paths);
-
-	if (need_gvfs && !prefix)
-		return;
 
 	gchar *aux = gebr_resolve_relative_path(entry_text, paths);	/*Relativize*/
 	gebr_validate_path(aux, paths, error);	/*Sets error messages*/
@@ -1354,10 +1356,12 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 	gchar *err_filechooser = NULL;
 
 	gchar *sftp_prefix = sftp_pref ? sftp_pref : "file://";
+	gboolean has_error = need_gvfs && !sftp_pref;
 	gebr_gtk_bookmarks_add_paths(filename, sftp_prefix, paths);
 	gebr_file_chooser_set_current_directory(entry_text, sftp_prefix, paths,
-	                                        dialog, need_gvfs, &err_filechooser);
-	if (need_gvfs && !sftp_pref)
+	                                        dialog, has_error, &err_filechooser);
+
+	if (has_error)
 		gebr_file_chooser_set_warning_widget(paths, filename, dialog);
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
