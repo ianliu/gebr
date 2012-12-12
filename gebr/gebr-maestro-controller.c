@@ -2013,30 +2013,20 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 
 	if (g_strcmp0(type, "disconnect") == 0)
 		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
-			 "Do you really want to disconnect it and cancel these jobs?</span>");
+			 "You need to cancel these jobs to disconnect this server.</span>");
 	else if (g_strcmp0(type, "remove") == 0)
 		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
-			 "Do you really want to remove it and cancel these jobs?</span>");
+			 "You need to cancel these jobs to remove this server.</span>");
 	else if (g_strcmp0(type, "stop") == 0)
 		msg = N_("<span size='large' weight='bold'>The node %s is executing jobs.\n"
-			 "Do you really want to stop it and cancel these jobs?</span>");
+			 "You need to cancel these jobs to stop this server.</span>");
 
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-	                                                        GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+	                                                        GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
 	                                                        _(msg), addr);
 
 	gdk_threads_enter();
-	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
-
-	if (response == GTK_RESPONSE_YES) {
-		gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
-		                            addr, "yes");
-
-		if (g_strcmp0(type, "remove") == 0)
-			gebr_connectable_remove(GEBR_CONNECTABLE(mc->priv->maestro), addr);
-		else if (g_strcmp0(type, "stop") == 0)
-			gebr_connectable_stop(GEBR_CONNECTABLE(mc->priv->maestro), addr, "yes");
-	}
+	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 	gdk_threads_leave();
 }
