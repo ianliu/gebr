@@ -311,8 +311,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			if (mpi_flavors->len > 0)
 				mpi_flavors = g_string_erase(mpi_flavors, mpi_flavors->len-1, 1);
 
+			gchar *cpu_clock;
 			const gchar *model_name;
-			const gchar *cpu_clock;
 			const gchar *total_memory;
 			GebrdCpuInfo *cpuinfo = gebrd_cpu_info_new();
 			GebrdMemInfo *meminfo = gebrd_mem_info_new();
@@ -345,6 +345,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_string_free(queue_list, TRUE);
 			g_string_free(display_port, TRUE);
 			g_free(ncores);
+			g_free(cpu_clock);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.gid_def.code_hash) {
 			GList *arguments;

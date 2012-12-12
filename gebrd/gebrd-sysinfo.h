@@ -53,7 +53,7 @@ const gchar *gebrd_cpu_info_get (GebrdCpuInfo *self,
  *
  * Returns the real CPU clock, in case the clock are scaled.
  */
-const gchar * gebrd_cpu_info_get_clock(GebrdCpuInfo *self,
+gchar * gebrd_cpu_info_get_clock(GebrdCpuInfo *self,
                                        guint proc_id,
                                        const gchar *prop);
 

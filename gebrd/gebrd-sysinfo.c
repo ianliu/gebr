@@ -89,28 +89,25 @@ const gchar *gebrd_cpu_info_get (GebrdCpuInfo *self,
 	return value;
 }
 
-const gchar *
+gchar *
 gebrd_cpu_info_get_clock(GebrdCpuInfo *self,
                          guint proc_id,
                          const gchar *prop)
 {
 	const gchar *filename = "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq";
-	if (g_access(filename, R_OK)) {
-		gchar *output;
-		gchar *cmd = g_strdup_printf("cat %s", filename);
+	if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
+		gchar *contents;
 
-		g_spawn_command_line_sync(cmd, &output, NULL, NULL, NULL);
-
-		g_free(cmd);
-
-		if (output && *output) {
-			gdouble clock = atoi(output)/1000;
-			g_free(output);
-			return g_strdup_printf("%f", clock);
+		if (g_file_get_contents(filename, &contents, NULL, NULL)) {
+			if (contents && *contents) {
+				gint clock = atoi(contents)/1000;
+				g_free(contents);
+				return g_strdup_printf("%d", clock);
+			}
 		}
 	}
 
-	return gebrd_cpu_info_get(self, 0, "cpu MHz");
+	return g_strdup(gebrd_cpu_info_get(self, 0, "cpu MHz"));
 }
 
 guint gebrd_cpu_info_n_procs (GebrdCpuInfo *self)
