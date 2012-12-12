@@ -891,15 +891,23 @@ gebr_comm_port_forward_get_address(GebrCommPortForward *port_forward)
 	return port_forward->address;
 }
 
+static gboolean
+release_ssh_object(gpointer data)
+{
+	GebrCommSsh *ssh = data;
+	g_object_unref(ssh);
+	return FALSE;
+}
+
 void
 gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
 {
 	if (!port_forward)
 		return;
 
-	if (port_forward->ssh) {
+	if (GEBR_COMM_IS_SSH(port_forward->ssh)) {
 		gebr_comm_ssh_kill(port_forward->ssh);
-		g_idle_add((GSourceFunc)g_object_unref, port_forward->ssh);
+		g_idle_add(release_ssh_object, port_forward->ssh);
 		port_forward->ssh = NULL;
 	}
 }
