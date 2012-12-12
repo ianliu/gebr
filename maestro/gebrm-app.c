@@ -678,15 +678,16 @@ on_daemon_init(GebrmDaemon *daemon,
 		app->priv->nfsid = g_strdup(nfsid);
 	}
 
+	if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
+		error = "error:nfs";
+		goto err;
+	}
+
 	if (g_strcmp0(error_type, "connection-refused") == 0) {
 		if (has_duplicated_daemons(app, error_msg)) {
                         error = "error:id";
                         remove = TRUE;
                 } else {
-                	if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
-                		error = "error:nfs";
-                		goto err;
-                	}
                         error = "error:connection-refused";
                 }
                 goto err;
