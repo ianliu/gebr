@@ -414,7 +414,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 			"author",
 			"email",
 			"base",
-			"import",
 			"maestro",
 			NULL};
 

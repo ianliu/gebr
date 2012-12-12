@@ -1202,7 +1202,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
   </object>
   <object class="GtkTable" id="vbox_review">
     <property name="visible">True</property>
-    <property name="n_rows">7</property>
+    <property name="n_rows">6</property>
     <property name="n_columns">3</property>
     <property name="column_spacing">20</property>
     <child>
@@ -1272,7 +1272,7 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
         <property name="visible">True</property>
         <property name="xalign">0</property>
         <property name="xpad">15</property>
-        <property name="label" translatable="yes">&lt;b&gt;maestro:&lt;/b&gt;</property>
+        <property name="label" translatable="yes">&lt;b&gt;Domain:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -1294,22 +1294,6 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       <packing>
         <property name="top_attach">5</property>
         <property name="bottom_attach">6</property>
-        <property name="x_options">GTK_FILL</property>
-        <property name="y_options"></property>
-        <property name="y_padding">5</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkLabel" id="label53">
-        <property name="visible">True</property>
-        <property name="xalign">0</property>
-        <property name="xpad">15</property>
-        <property name="label" translatable="yes">&lt;b&gt;IMPORT:&lt;/b&gt;</property>
-        <property name="use_markup">True</property>
-      </object>
-      <packing>
-        <property name="top_attach">6</property>
-        <property name="bottom_attach">7</property>
         <property name="x_options">GTK_FILL</property>
         <property name="y_options"></property>
         <property name="y_padding">5</property>
@@ -1410,22 +1394,6 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="label_rev_import">
-        <property name="visible">True</property>
-        <property name="xalign">0</property>
-        <property name="label">#label</property>
-        <property name="wrap">True</property>
-        <property name="wrap_mode">word-char</property>
-      </object>
-      <packing>
-        <property name="left_attach">1</property>
-        <property name="right_attach">2</property>
-        <property name="top_attach">6</property>
-        <property name="bottom_attach">7</property>
-        <property name="y_options"></property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkImage" id="image_rev_title">
         <property name="stock">gtk-refresh</property>
       </object>
@@ -1497,19 +1465,6 @@ These directories will be created on nodes of maestro &lt;b&gt;XXX&lt;/b&gt;.</p
         <property name="right_attach">3</property>
         <property name="top_attach">5</property>
         <property name="bottom_attach">6</property>
-        <property name="x_options"></property>
-        <property name="y_options"></property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkImage" id="image_rev_import">
-        <property name="stock">gtk-refresh</property>
-      </object>
-      <packing>
-        <property name="left_attach">2</property>
-        <property name="right_attach">3</property>
-        <property name="top_attach">6</property>
-        <property name="bottom_attach">7</property>
         <property name="x_options"></property>
         <property name="y_options"></property>
       </packing>

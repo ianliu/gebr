@@ -403,7 +403,6 @@ line_info_update(void)
 
 	GObject *label_home = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_home");
 	GObject *label_base = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_base");
-	GObject *label_import = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_import");
 
 	/* Set title */
 	tmp = g_markup_printf_escaped("<span size='xx-large'>%s</span>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
@@ -538,30 +537,23 @@ line_info_update(void)
 	/* Line's paths information */
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
 	gchar *base_path = NULL;
-	gchar *import_path = NULL;
 
 	for (gint i = 0; paths[i]; i++) {
-		if (base_path && import_path)
+		if (base_path)
 			break;
 		else if (g_strcmp0(paths[i][1], "BASE") == 0)
 			base_path = g_strdup(paths[i][0]);
-		else if (g_strcmp0(paths[i][1], "IMPORT") == 0)
-			import_path = g_strdup(paths[i][0]);
 	}
 	if (!base_path || !*base_path)
 		base_path = g_strdup(_("None"));
-	if (!import_path || !*import_path)
-		import_path = g_strdup(_("None"));
 	if (!home_path || !*home_path)
 		home_path = g_strdup(_("None"));
 
 	gtk_label_set_text(GTK_LABEL(label_home), home_path);
 	gtk_label_set_text(GTK_LABEL(label_base), base_path);
-	gtk_label_set_text(GTK_LABEL(label_import), import_path);
 
 	gebr_pairstrfreev(paths);
 	g_free(base_path);
-	g_free(import_path);
 	g_free(home_path);
 }
 
