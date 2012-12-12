@@ -1684,7 +1684,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	if (status == JOB_STATUS_QUEUED) {
 		g_string_append(info, _("\n --- The execution is queued. --- \n\n"));
 	} else {
-		g_string_append(info, _("\n --- The execution has been started. --- \n\n"));
+		g_string_append(info, _("\n --- The execution started. --- \n\n"));
 	}
 
 	g_string_append(info, gebr_job_get_output(job));
