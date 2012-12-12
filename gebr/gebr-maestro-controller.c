@@ -720,7 +720,6 @@ gebr_maestro_controller_finalize(GObject *object)
 	GebrMaestroController *mc = GEBR_MAESTRO_CONTROLLER(object);
 
 	g_object_unref(mc->priv->maestro);
-	g_object_unref(mc->priv->builder);
 	g_free(mc->priv->last_tag);
 	g_object_unref(mc->priv->window);
 	g_queue_free(mc->priv->potential_maestros);
@@ -1035,6 +1034,13 @@ update_spinner(gpointer user_data)
 	return TRUE;
 }
 
+static void
+destroy_spinner_timeout(gpointer data)
+{
+	ProgressData *progress = data;
+	g_free(progress);
+}
+
 void
 gebr_maestro_controller_daemon_server_progress_func(GtkTreeViewColumn *tree_column,
                                                     GtkCellRenderer *cell,
@@ -1074,7 +1080,10 @@ gebr_maestro_controller_daemon_server_progress_func(GtkTreeViewColumn *tree_colu
 			ProgressData *user_data = g_new(ProgressData, 1);
 			user_data->cell = cell;
 			user_data->model = model;
-			timeout = g_timeout_add(83, (GSourceFunc) update_spinner, user_data);
+			timeout = g_timeout_add_full(G_PRIORITY_DEFAULT, 83,
+			                             (GSourceFunc) update_spinner,
+			                             user_data,
+			                             destroy_spinner_timeout);
 			gebr_daemon_server_set_timeout(daemon, timeout);
 		}
 	}
@@ -1470,6 +1479,7 @@ on_dialog_response(GtkDialog *dialog,
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
 		gebr_maestro_server_reset_daemons_timeout(maestro);
 
+		gtk_widget_destroy(self->priv->spinner);
 		gtk_widget_destroy(GTK_WIDGET(dialog));
 	}
 	else if (response == GTK_RESPONSE_HELP) {
