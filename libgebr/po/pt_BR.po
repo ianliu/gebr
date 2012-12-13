@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-03 19:07-0200\n"
-"PO-Revision-Date: 2012-08-02 15:37-0300\n"
+"POT-Creation-Date: 2012-12-13 10:05-0200\n"
+"PO-Revision-Date: 2012-12-13 10:10-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -21,40 +21,49 @@ msgstr ""
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../comm/gebr-comm-port-provider.c:606
+#: ../comm/gebr-comm-port-provider.c:384 ../comm/gebr-comm-port-provider.c:590
 #, c-format
-msgid "There is no %s installed in this host."
-msgstr "Não há %s instalado nesta máquina."
+msgid "%s not found at %s"
+msgstr "%s não encontrado em %s"
 
-#: ../comm/gebr-comm-server.c:358
+#: ../comm/gebr-comm-port-provider.c:596
+#, c-format
+msgid "Unexpected output from %s at %s: %s"
+msgstr "Saída não esperado de %s em %s: %s"
+
+#: ../comm/gebr-comm-server.c:364
 msgid "Do you trust this host?"
 msgstr "Esta máquina é confiável?"
 
-#: ../comm/gebr-comm-server.c:396
+#: ../comm/gebr-comm-server.c:404
 #, c-format
 msgid "%p: Launching machine at '%s'."
 msgstr "%p: Iniciando máquina em '%s'."
 
-#: ../comm/gebr-comm-server.c:448
+#: ../comm/gebr-comm-server.c:456
 #, c-format
 msgid "Stopping machine at '%s'."
 msgstr "Parando máquina '%s'."
 
-#: ../comm/gebr-comm-server.c:694
+#: ../comm/gebr-comm-server.c:707
+msgid "Connection refused"
+msgstr "Conexão recusada"
+
+#: ../comm/gebr-comm-server.c:720
 #, c-format
 msgid "Machine '%s' disconnected"
 msgstr "Máquina '%s' desconectada"
 
-#: ../comm/gebr-comm-ssh.c:344
+#: ../comm/gebr-comm-ssh.c:349
 #, c-format
 msgid "This host has never been authenticated and has the fingerprint %s.\n"
 msgstr "Esta máquina nunca foi autenticada e sua identificação é %s.\n"
 
-#: ../comm/gebr-comm-ssh.c:352
+#: ../comm/gebr-comm-ssh.c:357
 msgid "Host key verification failed."
 msgstr "Verificação da chave sem sucesso."
 
-#: ../comm/gebr-comm-ssh.c:360
+#: ../comm/gebr-comm-ssh.c:365
 msgid ""
 "The known_hosts file is probably corrupted. Contact your system "
 "administrator for help."
@@ -212,7 +221,7 @@ msgid "Expression result is too big"
 msgstr "Resultado da expressão é muito grande"
 
 #: ../gebr-validator.c:574 ../gebr-validator.c:909 ../gebr-validator.c:1042
-#: ../gui/gebr-gui-param.c:1738
+#: ../gui/gebr-gui-param.c:1741
 #, c-format
 msgid "This parameter is required"
 msgstr "Parâmetro obrigatório"
@@ -725,7 +734,7 @@ msgstr "GêBR Core Team"
 
 #: ../gui/gebr-gui-about.c:96
 msgid ""
-"Copyright (C) 2007-2012 GêBR core team (http://www.gebrproject.com/)\n"
+"Copyright (C) 2007-2012 GêBR core team ( http://www.gebrproject.com/ )\n"
 "\n"
 "This program is free software: you can redistribute it and/or modify it "
 "under the terms of the GNU General Public License as published by the Free "
@@ -738,7 +747,7 @@ msgid ""
 "more details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License along with "
-"this program.  If not, see <http://www.gnu.org/licenses/>.\n"
+"this program.  If not, see http://www.gnu.org/licenses/ .\n"
 "\n"
 "In Brazil, this program is under protection against unauthorized usage, in "
 "accordance to brazilian laws #9609, Feb 19, 1998, #2556, Apr 20, 1998, and "
@@ -757,7 +766,7 @@ msgstr ""
 "detalhes.\n"
 "\n"
 "Você deve ter recebido uma cópia da GNU General Public License junto deste "
-"programa. Se não, visite <http://www.gnu.org/licenses/>.\n"
+"programa. Se não, visite http://www.gnu.org/licenses/.\n"
 "\n"
 "No Brasil, este programa está sobre proteção contra uso não autorizado,de "
 "acordo com as leis brasileiras #9609, 19 de fevereio de 1998, #2556, 20 de "
@@ -768,11 +777,11 @@ msgstr ""
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
 
-#: ../gui/gebr-gui-file-entry.c:146
+#: ../gui/gebr-gui-file-entry.c:147
 msgid "Choose file"
 msgstr "Escolha um arquivo"
 
-#: ../gui/gebr-gui-file-entry.c:146
+#: ../gui/gebr-gui-file-entry.c:147
 msgid "Choose directory"
 msgstr "Escolha um diretório"
 
@@ -854,20 +863,20 @@ msgstr ""
 msgid "All"
 msgstr "Todos"
 
-#: ../gui/gebr-gui-param.c:914
+#: ../gui/gebr-gui-param.c:917
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../gui/gebr-gui-param.c:1061
+#: ../gui/gebr-gui-param.c:1064
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-param.c:1802
+#: ../gui/gebr-gui-param.c:1805
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-param.c:1804
+#: ../gui/gebr-gui-param.c:1807
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
@@ -898,7 +907,7 @@ msgstr "\\u2205"
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
 
-#: ../gui/gebr-gui-utils.c:1273
+#: ../gui/gebr-gui-utils.c:1272
 #, c-format
 msgid ""
 "The presented files are from your <b>local machine</b> and may not represent "
@@ -907,7 +916,7 @@ msgstr ""
 "Os arquivos apresentados são de sua <b>máquina local</b> e podem não "
 "representar os arquivos nas <b>máquinas de processamento</b>."
 
-#: ../gui/gebr-gui-utils.c:1462
+#: ../gui/gebr-gui-utils.c:1431
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se de que ele está instalado."
@@ -1258,3 +1267,6 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
+
+#~ msgid "There is no %s installed in this host."
+#~ msgstr "Não há %s instalado nesta máquina."
