@@ -245,7 +245,9 @@ gchar *gebr_maestro_server_translate_error(const gchar *error_type, const gchar 
 
 GtkTreeModel *gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model);
 
-void gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro);
+void gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro,
+                                        const gchar *nfsid,
+                                        const gchar *label);
 
 G_END_DECLS
 

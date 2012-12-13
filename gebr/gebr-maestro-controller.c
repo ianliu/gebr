@@ -1393,7 +1393,7 @@ on_save_alias_maestro_clicked(GebrMaestroController *self)
 	gebr_maestro_controller_update_chooser_model(maestro, self, combo);
 
 	// Send Label for Maestro
-	gebr_maestro_server_send_nfs_label(maestro);
+	gebr_maestro_server_send_nfs_label(maestro, nfsid, text_entry);
 
 	project_line_info_update();
 }
@@ -2301,6 +2301,7 @@ on_state_change(GebrMaestroServer *maestro,
 	} else if (state == SERVER_STATE_LOGGED) {
 		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Succesfully connected to host %s"),
 			     gebr_maestro_server_get_address(maestro));
+		on_get_alias_maestro_clicked(self);
 	}
 
 	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);

@@ -1046,9 +1046,18 @@ parse_messages(GebrCommServer *comm_server,
 			/*
 			 * Send NFS Label to Maestro
 			 */
-			gchar *nfslabel = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set,
-			                                                             nfsid->str,
-			                                                             TRUE);
+
+			gchar *nfslabel;
+			if (label->len == 0) {
+				nfslabel = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set,
+				                                                      nfsid->str,
+				                                                      TRUE);
+				gebr_maestro_server_send_nfs_label(maestro,
+				                                   nfsid->str,
+				                                   nfslabel);
+			} else {
+				nfslabel = g_strdup(label->str);
+			}
 
 			gebr_config_set_current_nfs_info(nfsid->str,
 			                                 hosts->str,
@@ -1062,8 +1071,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			if (check_client_is_in_the_same_nfs_as_daemons(nfsid))
 				gebr_maestro_controller_server_list_add(gebr.maestro_controller, g_get_host_name(), TRUE);
-
-			gebr_maestro_server_send_nfs_label(maestro);
 
 			// Mount SFTP if needed
 			if (gebr_maestro_server_need_mount_gvfs (maestro) && !maestro->priv->wizard_setup) {
@@ -1081,6 +1088,8 @@ parse_messages(GebrCommServer *comm_server,
 			} else {
 				g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 			}
+
+			g_free(nfslabel);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -2139,12 +2148,11 @@ gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model)
 }
 
 void
-gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro)
+gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro,
+                                   const gchar *nfsid,
+                                   const gchar *label)
 {
 	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
-
-	const gchar *nfsid = maestro->priv->nfsid;
-	const gchar *label = maestro->priv->nfs_label;
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 
