@@ -340,11 +340,10 @@ void __menu_list_populate(const gchar *path,
 			gchar *title;
 			gchar *desc;
 			gchar *file;
-			if (*menus_list[j] == '.') {
-				file = g_strconcat(path, (menus_list[j] + 1), NULL);
-			} else {
+			if (menus_list[j][0] != '/')
+				file = g_build_filename(path, menus_list[j], NULL);
+			else
 				file = g_strdup(menus_list[j]);
-			}
 			title = g_key_file_get_string(menu_key_file, menus_list[j], "title", NULL);
 			desc = g_key_file_get_string(menu_key_file, menus_list[j], "description", NULL);
 
