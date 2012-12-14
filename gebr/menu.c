@@ -133,12 +133,14 @@ menu_path_has_index(const gchar *path,
 }
 
 static gboolean
-menu_path_internal_index_is_valid(const gchar *path,
-				  const gchar *local_folder,
-				  gchar **index_menu,
-				  gchar **index_category)
+get_index_files_for_path(const gchar *path,
+			 const gchar *local_folder,
+			 gchar **index_menu,
+			 gchar **index_category)
 {
-	gboolean need = FALSE;
+	if (menu_path_has_index(path, index_menu, index_category))
+		return TRUE;
+
 	GString *filename_menu = g_string_new(path);
 	gchar *local_filename_menu;
 	gchar *local_filename_cat;
@@ -154,6 +156,8 @@ menu_path_internal_index_is_valid(const gchar *path,
 
 	local_filename_menu = g_build_filename(local_folder, filename_menu->str, NULL);
 	local_filename_cat = g_build_filename(local_folder, filename_cat->str, NULL);
+	g_string_free(filename_menu, TRUE);
+	g_string_free(filename_cat, TRUE);
 
 	struct stat menu_info, categ_info;
 
@@ -165,19 +169,14 @@ menu_path_internal_index_is_valid(const gchar *path,
 	gboolean need_update = menu_compare_times(path, menu_info.st_mtime, TRUE) || menu_compare_times(path, categ_info.st_mtime, TRUE);
 
 	if (!file_exists || (file_exists && need_update))
-			need = TRUE;
+		return FALSE;
 
-	g_string_free(filename_menu, TRUE);
-	g_string_free(filename_cat, TRUE);
+	if (index_menu)
+		*index_menu = local_filename_menu;
+	if (index_category)
+		*index_category = local_filename_cat;
 
-	if (!need) {
-		if (index_menu)
-			*index_menu = local_filename_menu;
-		if (index_category)
-			*index_category = local_filename_cat;
-	}
-
-	return need;
+	return TRUE;
 }
 
 typedef struct {
@@ -218,13 +217,11 @@ menu_list_populate(void)
 		gebr_directory_foreach_file(filename, directory) {
 			gchar *path = g_build_filename(directory, filename, NULL);
 			if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
-				if (!menu_path_has_index(path, &index_menu, &index_category)) {
-					if (menu_path_internal_index_is_valid(path, gebr_home, &index_menu, &index_category)) {
-						need_update = TRUE;
-						if (!menu_list_create_index(path, &index_menu, &index_category, FALSE)) {
-							g_warning("Could not create index for %s", path);
-							continue;
-						}
+				if (!get_index_files_for_path(path, gebr_home, &index_menu, &index_category)) {
+					need_update = TRUE;
+					if (!menu_list_create_index(path, &index_menu, &index_category, FALSE)) {
+						g_warning("Could not create index for %s", path);
+						continue;
 					}
 				}
 				if (need_update || first_time) {
@@ -253,7 +250,7 @@ menu_list_populate(void)
 	GString *path = g_string_new(NULL);
 	g_string_printf(path, "%s/.gebr/gebr/menus", g_get_home_dir());
 
-	if (menu_path_internal_index_is_valid(path->str, gebr_home, &index_menu, &index_category)) {
+	if (!get_index_files_for_path(path->str, gebr_home, &index_menu, &index_category)) {
 		need_update = TRUE;
 		menu_list_create_index(path->str, &index_menu, &index_category, FALSE);
 	}
@@ -276,7 +273,7 @@ menu_list_populate(void)
 	/* Scan user's folder and create index */
 
 	need_update = FALSE;
-	if (menu_path_internal_index_is_valid(gebr.config.usermenus->str, gebr_home, &index_menu, &index_category)) {
+	if (!get_index_files_for_path(gebr.config.usermenus->str, gebr_home, &index_menu, &index_category)) {
 		need_update = TRUE;
 		menu_list_create_index(gebr.config.usermenus->str, &index_menu, &index_category, FALSE);
 	}
