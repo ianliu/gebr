@@ -136,6 +136,7 @@ struct ui_log *log_setup_ui(void)
 	GtkWidget *internal_box = gtk_hbox_new(FALSE, 5);
 
 	ui_log->maestro_label = gtk_label_new(NULL);
+	gtk_widget_set_tooltip_text(ui_log->maestro_label, _("Current domain"));
 	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->maestro_label, FALSE, FALSE, 5);
 
 	GtkWidget *event_maestro = gtk_event_box_new();
