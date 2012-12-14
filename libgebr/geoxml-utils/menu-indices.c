@@ -66,14 +66,14 @@ gebr_geoxml_scan_menu_dir(const gchar * directory, GKeyFile * menu_key_file, GHa
 
 				GString *categ_menus_old = g_hash_table_lookup(categ_hash, categ);
 				GString *categ_menus = g_string_new(categ_menus_old ? categ_menus_old->str : NULL);
-				g_string_append(categ_menus, path);
+				g_string_append(categ_menus, filename);
 				g_string_append_c(categ_menus, ';');
 				g_hash_table_replace(categ_hash, categ, categ_menus);
 			}
 
-			g_key_file_set_string(menu_key_file, path, "category", categ_str ? categ_str->str : "");
-			g_key_file_set_string(menu_key_file, path, "title", title ? title : "");
-			g_key_file_set_string(menu_key_file, path, "description", description ? description : "");
+			g_key_file_set_string(menu_key_file, filename, "category", categ_str ? categ_str->str : "");
+			g_key_file_set_string(menu_key_file, filename, "title", title ? title : "");
+			g_key_file_set_string(menu_key_file, filename, "description", description ? description : "");
 
 			g_string_free(categ_str, TRUE);
 			g_free(title);
