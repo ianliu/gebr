@@ -3170,7 +3170,7 @@ flow_browse_open_activated(GebrUiFlowBrowse *fb,
 	if (type == GEBR_IO_TYPE_INPUT) {
 		entry_text = gebr_geoxml_flow_io_get_input(gebr.flow);
 
-		action = GTK_FILE_CHOOSER_ACTION_OPEN;
+		action = GTK_FILE_CHOOSER_ACTION_SAVE;
 		stock = GTK_STOCK_OPEN;
 		title = g_strdup(_("Choose an input file"));
 	} else {
