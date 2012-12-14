@@ -3194,6 +3194,14 @@ flow_browse_open_activated(GebrUiFlowBrowse *fb,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), FALSE);
 
+	if (!entry_text || !*entry_text) {
+		gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+		gchar *data = gebr_geoxml_line_get_path_by_name(gebr.line, "DATA");
+		entry_text = gebr_resolve_relative_path(data,paths);
+		gebr_pairstrfreev(paths);
+		g_free(data);
+	}
+
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
 	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
