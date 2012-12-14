@@ -73,7 +73,7 @@ static gboolean server_run_lock(gboolean *already_running)
 	g_string_printf(port_gstring, "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
 
 	g_mkdir_with_parents(gebrd_dir, 0700);
-	gchar *lock = gebr_lock_file(lock_file, port_gstring->str, FALSE);
+	gchar *lock = gebr_lock_file(lock_file, port_gstring->str);
 
 	if (lock && (g_strcmp0(lock, port_gstring->str) != 0)) {
 		guint16 port = atoi(lock);
@@ -120,7 +120,7 @@ static gboolean server_fs_lock(void)
 	GString *filename = g_string_new("");
 	g_string_printf(filename, "%s/.gebr/run/gebrd-fslock.run", g_get_home_dir());
 	gchar *lock_hash = gebr_id_random_create(32);
-	gchar *fs_lock = gebr_lock_file(filename->str, lock_hash, FALSE);
+	gchar *fs_lock = gebr_lock_file(filename->str, lock_hash);
 	g_free(lock_hash);
 	g_string_free(filename, TRUE);
 
