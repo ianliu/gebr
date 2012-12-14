@@ -227,11 +227,9 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
-		flow_browse_set_run_widgets_sensitiveness(fb, FALSE, TRUE);
-		flow_browse_load();
-		break;
 	case SERVER_STATE_LOGGED:
 		gebr_flow_browse_update_server(fb, maestro);
+		flow_browse_load();
 		break;
 	default:
 		break;
