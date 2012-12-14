@@ -1063,6 +1063,8 @@ parse_messages(GebrCommServer *comm_server,
 			                                 hosts->str,
 			                                 nfslabel);
 
+			gtk_label_set_markup(GTK_LABEL(gebr.ui_log->maestro_label), nfslabel);
+
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
 			gebr_maestro_server_set_nfs_label(maestro, nfslabel);
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
