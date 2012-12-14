@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-13 10:11-0200\n"
+"POT-Creation-Date: 2012-12-14 12:11-0200\n"
 "PO-Revision-Date: 2012-12-13 10:20-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -504,7 +504,7 @@ msgstr "Saída"
 
 #: ../data/gebr-maestro-dialog.glade.h:1
 msgid " Alias: "
-msgstr " Pseudônimo: "
+msgstr " Apelido: "
 
 #: ../data/gebr-maestro-dialog.glade.h:2
 msgid "<b>Groups</b>"
@@ -1469,16 +1469,16 @@ msgstr "Este nó foi interrompido."
 msgid "Succesfully connected to host %s"
 msgstr "Conectado com êxito a %s"
 
-#: ../gebr-maestro-server.c:1574
+#: ../gebr-maestro-server.c:1583
 msgid "Local domain"
 msgstr "Domínio local"
 
-#: ../gebr-maestro-server.c:1576
+#: ../gebr-maestro-server.c:1585
 #, c-format
 msgid "Maestro %s"
 msgstr "Maestro %s"
 
-#: ../gebr-maestro-server.c:2108
+#: ../gebr-maestro-server.c:2117
 #, c-format
 msgid "Domain protocol version mismatch: %s"
 msgstr "Versão de protocolo do domínio incompatível: %s"
@@ -2109,15 +2109,15 @@ msgid "ERROR: Local menu directory is not defined in GeBR's settings.\n"
 msgstr ""
 "ERRO: Diretório de menus local não definido nas configurações da GêBR.\n"
 
-#: ../menu.c:417 ../menu.c:431
+#: ../menu.c:413 ../menu.c:427
 msgid "Unable to write Menus' index."
 msgstr "Não foi possível escrever o índice de Menus."
 
-#: ../menu.c:629
+#: ../menu.c:625
 msgid "Empty"
 msgstr "vazio"
 
-#: ../menu.c:654
+#: ../menu.c:650
 msgid ""
 "Install Seismic Unix package.\n"
 "Click here to get the script of Seismic Unix on GêBR Project website."
