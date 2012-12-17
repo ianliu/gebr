@@ -31,6 +31,7 @@
 #include <fcntl.h>
 
 #include "gebrm-app.h"
+#include "gebrm-proxy.h"
 
 #include <libgebr/gebr-version.h>
 #include <libgebr/gebr-maestro-settings.h>
@@ -77,7 +78,7 @@ fork_and_exit_main(void)
 		while (read(fd[0], &c, 1) != 0) {
 			if (c == '\n')
 				n++;
-			if (n == 2)
+			if (n == 1)
 				break;
 			g_string_append_c(buf, c);
 		}
@@ -148,32 +149,32 @@ need_cleanup(const gchar *v1,
 	return TRUE;
 }
 
+static void
+start_proxy_maestro(const gchar *address,
+		    guint port)
+{
+	GebrmProxy *proxy = gebrm_proxy_new(address, port);
+	gebrm_proxy_run(proxy, output_fd);
+	gebrm_proxy_free(proxy);
+}
+
 static gboolean
 is_current_maestro_valid(const gchar *addr,
                          gint port,
                          const gchar *curr_version,
                          const gchar *version_contents)
 {
-	gchar *new_addr;
-
 	if (g_strcmp0(addr, g_get_host_name()) == 0) {
 		if (need_cleanup(curr_version, version_contents)) {
 			gebr_kill_by_port(port);
 			return FALSE;
 		}
+
+		g_print("%s%d\n", GEBR_PORT_PREFIX, port);
+	} else {
+		fork_and_exit_main();
+		start_proxy_maestro(addr, port);
 	}
-
-	const gchar *username = g_get_user_name();
-	if (username && *username)
-		new_addr = g_strdup_printf("%s@%s", username, addr);
-	else
-		new_addr = g_strdup(addr);
-
-	g_print("%s%d\n%s%s\n",
-	        GEBR_PORT_PREFIX, port,
-	        GEBR_ADDR_PREFIX, new_addr);
-
-	g_free(new_addr);
 
 	return TRUE;
 }

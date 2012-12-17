@@ -2155,9 +2155,7 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	else
 		addr = g_strdup(g_get_host_name());
 
-	gchar *port_str = g_strdup_printf("%s%u\n%s%s\n",
-	                                  GEBR_PORT_PREFIX, port,
-	                                  GEBR_ADDR_PREFIX, addr);
+	gchar *port_str = g_strdup_printf("%s%u\n", GEBR_PORT_PREFIX, port);
 	g_free(addr);
 
 	ssize_t s = 0;
