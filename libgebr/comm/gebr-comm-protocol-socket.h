@@ -61,18 +61,27 @@ struct _GebrCommProtocolSocketClass {
 };
 
 GebrCommProtocolSocket * gebr_comm_protocol_socket_new(void);
+
 GebrCommProtocolSocket * gebr_comm_protocol_socket_new_from_socket(GebrCommStreamSocket *socket);
 
 gboolean gebr_comm_protocol_socket_connect(GebrCommProtocolSocket *self, GebrCommSocketAddress * socket_address, gboolean wait);
+
 void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self);
 
 GebrCommHttpMsg *gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
 							const gchar *url, GebrCommJsonContent *content);
+
 void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, GebrCommJsonContent *content);
+
+void gebr_comm_protocol_socket_resend_message(GebrCommProtocolSocket *self,
+					      gboolean blocking,
+					      struct gebr_comm_message *message);
 
 void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboolean blocking,
 					   struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
+
 GList *gebr_comm_protocol_socket_oldmsg_split(GString * arguments, guint parts);
+
 void gebr_comm_protocol_socket_oldmsg_split_free(GList * split);
 
 G_END_DECLS

@@ -290,6 +290,31 @@ void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int 
 	gebr_comm_http_msg_free(msg);
 }
 
+void
+gebr_comm_protocol_socket_resend_message(GebrCommProtocolSocket *self,
+					 gboolean blocking,
+					 struct gebr_comm_message *message)
+{
+	gebr_comm_return_if_not_connected(self);
+
+	struct gebr_comm_message_def *def = g_hash_table_lookup(gebr_comm_protocol_defs.code_hash_table, GUINT_TO_POINTER(message->hash));
+	GString *message_str = g_string_new(NULL);
+	g_string_printf(message_str, "%s %d %s", def->code, message->argument_size, message->argument->str);
+
+	/* does this message need return? */
+	if (def->returns)
+		g_queue_push_tail(self->protocol->waiting_ret_hashs,
+				  GUINT_TO_POINTER(def->code_hash));
+
+	/* send it */
+	if (blocking)
+		gebr_comm_socket_write_string_immediately(GEBR_COMM_SOCKET(self->priv->socket), message_str);
+	else 
+		gebr_comm_socket_write_string(GEBR_COMM_SOCKET(self->priv->socket), message_str);
+
+	g_string_free(message_str, TRUE);
+}
+
 void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboolean blocking,
 					   struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...)
 {
