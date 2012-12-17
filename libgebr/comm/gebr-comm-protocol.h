@@ -48,6 +48,7 @@ typedef enum {
 
 struct gebr_comm_protocol_defs {
 	GHashTable *hash_table;
+	GHashTable *code_hash_table;
 
 	/* messages identifiers hashes */
 	struct gebr_comm_message_def ret_def;
