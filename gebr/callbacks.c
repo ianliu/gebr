@@ -180,6 +180,7 @@ void on_document_properties_activate(void)
 
 void on_document_dict_edit_activate(void)
 {
+	gebr_flow_browse_save_parameter (gebr.ui_flow_browse);
 	document_dict_edit_setup_ui();
 }
 
@@ -585,7 +586,8 @@ void import_demo(GtkWidget *menu_item, const gchar *path)
 
 void on_flow_browse_show_help(void)
 {
-    flow_browse_show_help();
+	gebr_flow_browse_save_parameter (gebr.ui_flow_browse);
+	flow_browse_show_help();
 }
 
 void on_flow_browse_edit_help(void)

@@ -1,3 +1,23 @@
+2012-12-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.13: SSH parser fixes
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: check if there is a loop before defining BC variables
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.12: More autopilot fixes
+
+2012-11-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.11: Autopilot fixes
+
+2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.10: Autopilot [Sprint 69] [Sprint 70]
+
 2012-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* gebrd: fix connection-refused error

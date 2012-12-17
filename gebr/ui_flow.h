@@ -80,6 +80,8 @@ gboolean gebr_ui_flow_get_flow_has_error(GebrUiFlow *ui_flow);
 
 GtkMenu *gebr_ui_flow_popup_menu(GebrUiFlow *ui_flow, gboolean multiple);
 
+gboolean gebr_ui_flow_has_snapshots(GebrUiFlow *ui_flow);
+
 G_END_DECLS
 
 #endif /* __UI_FLOW_H__ */

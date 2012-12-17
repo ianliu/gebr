@@ -664,13 +664,14 @@ gchar *gebr_id_random_create(gssize bytes)
 	return id;
 }
 
-gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gboolean symlink)
+gchar * gebr_lock_file(const gchar *path, const gchar *content)
 {
-	/* TODO */
-	if (symlink)
-		return NULL;
-
-	gchar *contents = NULL;
+	if (!content) {
+		gchar *str;
+		if (!g_file_get_contents(path, &str, NULL, NULL))
+			return NULL;
+		return g_strstrip(str);
+	}
 
 	struct flock fl;
 	fl.l_type = F_WRLCK;
@@ -679,33 +680,25 @@ gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gbo
 	fl.l_len = 0;
 	fl.l_pid = getpid();
 
-	int fd = open(pathname, O_CREAT | O_WRONLY, gebr_home_mode());
-	fcntl(fd, F_SETLKW, &fl);
+	int fd = open(path, O_CREAT | O_WRONLY, gebr_home_mode());
 
-	GError *error = NULL;
-	gsize length = 0;
-	if (g_file_test(pathname, G_FILE_TEST_IS_REGULAR) &&
-	    g_file_get_contents(pathname, &contents, &length, &error) &&
-	    length > 0) {
-		/* file exists and could be read, make it a null-terminated string */
-		gchar * tmp = g_new(gchar, length+1);
-		strncpy(tmp, contents, length);
-		tmp[length] = '\0';
-		g_free(contents);
-		contents = tmp;
-	} else {
-		length = strlen(new_lock_content);
-		if (write(fd, new_lock_content, length) > 0)
-			contents = g_strdup(new_lock_content);
-		else
-			contents = NULL;
+	if (fd == -1) {
+		perror("open");
+		return NULL;
 	}
 
-	close(fd);
+	fcntl(fd, F_SETLKW, &fl);
+
+	if (!g_file_set_contents(path, content, -1, NULL)) {
+		close(fd);
+		return NULL;
+	}
+
 	fl.l_type = F_UNLCK;
 	fcntl(fd, F_SETLK, &fl);
+	close(fd);
 
-	return contents;
+	return NULL;
 }
 
 gchar *gebr_str_word_before_pos(const gchar *str, gint *pos)
@@ -1576,4 +1569,16 @@ gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue,
 		g_queue_push_tail(queue, g_strdup(data));
 
 	return queue;
+}
+
+const gchar*
+gebr_paths_get_value_by_key(const gchar ***paths,
+                            const gchar *key)
+{
+	for (gint i = 0; paths && paths[i]; i++) {
+		if (g_strcmp0(paths[i][1], key) == 0) {
+			return paths[i][0];
+		}
+	}
+	return NULL;
 }

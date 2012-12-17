@@ -153,7 +153,8 @@ GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_disconnect(GebrMaestroServer *maestro, gboolean quit);
 
-void gebr_maestro_server_connect(GebrMaestroServer *maestro);
+void gebr_maestro_server_connect(GebrMaestroServer *maestro,
+                                 gboolean force_init);
 
 void gebr_maestro_server_add_temporary_job(GebrMaestroServer *maestro, GebrJob *job);
 
@@ -212,6 +213,8 @@ void gebr_maestro_server_set_clocks_diff(GebrMaestroServer *maestro, gint secs);
 
 gint gebr_maestro_server_get_clocks_diff(GebrMaestroServer *maestro);
 
+gboolean gebr_maestro_server_get_need_gvfs(GebrMaestroInfo *iface);
+
 GebrMaestroInfo *gebr_maestro_server_get_info(GebrMaestroServer *maestro);
 
 gint gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
@@ -242,7 +245,9 @@ gchar *gebr_maestro_server_translate_error(const gchar *error_type, const gchar 
 
 GtkTreeModel *gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model);
 
-void gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro);
+void gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro,
+                                        const gchar *nfsid,
+                                        const gchar *label);
 
 G_END_DECLS
 

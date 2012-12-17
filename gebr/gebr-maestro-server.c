@@ -27,6 +27,8 @@
 #include <libgebr/gebr-maestro-info.h>
 #include <libgebr/gebr-maestro-settings.h>
 #include <stdlib.h>
+#include <glib/gstdio.h>
+#include <unistd.h>
 
 #include "gebr.h" // for gebr_get_session_id()
 #include "project.h" // for populate project/lines
@@ -84,6 +86,8 @@ static guint signals[LAST_SIGNAL] = { 0, };
 enum {
 	PROP_0,
 	PROP_ADDRESS,
+	PROP_NFSID,
+	PROP_HOME,
 };
 
 static void mount_enclosing_ready_cb(GFile *location, GAsyncResult *res,
@@ -109,8 +113,8 @@ static gchar *gebr_maestro_server_get_user(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *window);
 
-void gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
-				      const gchar *home);
+static void gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
+					     const gchar *home);
 
 static gchar *gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface);
 
@@ -216,6 +220,7 @@ gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 		gebr_comm_server_create_port_provider(maestro->priv->server, GEBR_COMM_PORT_TYPE_SFTP);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
+	g_debug("on %s, address:'%s'", __func__, addr);
 	gebr_comm_port_provider_set_sftp_address(port_provider, addr);
 	gebr_comm_port_provider_start(port_provider);
 }
@@ -348,19 +353,25 @@ state_changed(GebrCommServer *comm_server,
 			gebr_project_line_show(gebr.ui_project_line);
 
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
-                if (err && *err)
+                if (err && *err) {
+                	if (comm_server->error == SERVER_ERROR_CONNECT)
+                		gebr_maestro_server_connect(maestro, TRUE);
                         gebr_maestro_server_set_error(maestro, "error:ssh", err);
+                } else {
+                        gebr_maestro_server_set_error(maestro, "error:none", NULL);
+                }
+	}
+	else if (state == SERVER_STATE_CONNECT) {
+		if (g_strcmp0(maestro->priv->server->address->str, maestro->priv->address) != 0) {
+			g_free(maestro->priv->address);
+			maestro->priv->address = g_strdup(maestro->priv->server->address->str);
+		}
 	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 		gebr_maestro_controller_clean_potential_maestros(gebr.maestro_controller);
 
 		gebr_project_line_show(gebr.ui_project_line);
-
-		if (g_strcmp0(maestro->priv->server->address->str, maestro->priv->address) != 0) {
-			g_free(maestro->priv->address);
-			maestro->priv->address = g_strdup(maestro->priv->server->address->str);
-		}
 
 		if (!gebr.populate_list) {
 			gebr.populate_list = TRUE;
@@ -514,6 +525,27 @@ gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestro)
 {
 	g_hash_table_foreach(maestro->priv->jobs, (GHFunc)add_nfs_label, maestro);
 	gebr_job_control_update_servers_model(gebr.job_control);
+}
+
+static gboolean
+check_client_is_in_the_same_nfs_as_daemons(GString *nfsid)
+{
+	gboolean same_nfs = FALSE;
+	gchar *gebrd_lock_filename = g_strdup_printf("%s/.gebr/run/gebrd-fslock.run", g_get_home_dir());
+	gchar *gebrd_nfsid = NULL;
+
+	gchar *gebrd_bin_path = g_find_program_in_path("gebrd");
+	gboolean lock_exists = g_access(gebrd_lock_filename, R_OK) == 0;
+	gboolean read_ok = g_file_get_contents(gebrd_lock_filename, &gebrd_nfsid, NULL, NULL);
+	gboolean has_gebrd = gebrd_bin_path ? TRUE : FALSE;
+
+	if (has_gebrd && lock_exists && read_ok && g_strcmp0(gebrd_nfsid, nfsid->str) == 0)
+		same_nfs = TRUE;
+
+	g_free(gebrd_bin_path);
+	g_free(gebrd_nfsid);
+
+	return same_nfs;
 }
 
 void
@@ -995,7 +1027,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_maestro_server_set_home_dir(maestro, home->str);
 			flow_browse_validate_io(gebr.ui_flow_browse);
-			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -1014,19 +1045,31 @@ parse_messages(GebrCommServer *comm_server,
 			/*
 			 * Send NFS Label to Maestro
 			 */
-			gchar *nfslabel = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set,
-			                                                             nfsid->str,
-			                                                             TRUE);
+
+			gchar *nfslabel;
+			if (label->len == 0) {
+				nfslabel = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set,
+				                                                      nfsid->str,
+				                                                      TRUE);
+				gebr_maestro_server_send_nfs_label(maestro,
+				                                   nfsid->str,
+				                                   nfslabel);
+			} else {
+				nfslabel = g_strdup(label->str);
+			}
 
 			gebr_config_set_current_nfs_info(nfsid->str,
 			                                 hosts->str,
 			                                 nfslabel);
 
+			gtk_label_set_markup(GTK_LABEL(gebr.ui_log->maestro_label), nfslabel);
+
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
 			gebr_maestro_server_set_nfs_label(maestro, nfslabel);
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
 
-			gebr_maestro_server_send_nfs_label(maestro);
+			if (check_client_is_in_the_same_nfs_as_daemons(nfsid))
+				gebr_maestro_controller_server_list_add(gebr.maestro_controller, g_get_host_name(), TRUE);
 
 			// Mount SFTP if needed
 			if (gebr_maestro_server_need_mount_gvfs (maestro) && !maestro->priv->wizard_setup) {
@@ -1045,7 +1088,7 @@ parse_messages(GebrCommServer *comm_server,
 				g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 			}
 
-			g_signal_emit(maestro, signals[STATE_CHANGE], 0);
+			g_free(nfslabel);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -1073,6 +1116,12 @@ gebr_maestro_server_get(GObject    *object,
 
 	switch (prop_id)
 	{
+	case PROP_NFSID:
+		g_value_set_string(value, gebr_maestro_server_get_nfsid(maestro));
+		break;
+	case PROP_HOME:
+		g_value_set_string(value, gebr_maestro_server_get_home_dir(maestro));
+		break;
 	case PROP_ADDRESS:
 		g_value_set_string(value, maestro->priv->server->address->str);
 		break;
@@ -1092,6 +1141,9 @@ gebr_maestro_server_set(GObject      *object,
 
 	switch (prop_id)
 	{
+	case PROP_NFSID:
+		gebr_maestro_server_set_nfsid(maestro, g_value_get_string(value));
+		break;
 	case PROP_ADDRESS:
 		maestro->priv->address = g_value_dup_string(value);
 		break;
@@ -1266,6 +1318,22 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             G_TYPE_NONE, 1, G_TYPE_INT);
 
 	g_object_class_install_property(object_class,
+					PROP_NFSID,
+					g_param_spec_string("nfsid",
+							    "Nfsid",
+							    "NFS identification",
+							    NULL,
+							    G_PARAM_READWRITE));
+
+	g_object_class_install_property(object_class,
+					PROP_HOME,
+					g_param_spec_string("home",
+							    "Home",
+							    "Home directory",
+							    NULL,
+							    G_PARAM_READWRITE));
+
+	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
 					g_param_spec_string("address",
 							    "Address",
@@ -1295,6 +1363,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->maestro_info_iface.maestro = maestro;
 	maestro->priv->maestro_info_iface.iface.get_home_uri = gebr_maestro_server_get_home_uri;
 	maestro->priv->maestro_info_iface.iface.get_home_mount_point = gebr_maestro_server_get_home_mount_point;
+	maestro->priv->maestro_info_iface.iface.get_need_gvfs = gebr_maestro_server_get_need_gvfs;
 
 	gebr_maestro_server_set_error(maestro, "error:none", NULL);
 
@@ -1326,7 +1395,9 @@ gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/server");
 	gebr_comm_uri_add_param(uri, "address", address);
+	gebr_comm_uri_add_param(uri, "respect-ac", "0");
 	gchar *url = gebr_comm_uri_to_string(uri);
+
 	gebr_comm_uri_free(uri);
 
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
@@ -1562,12 +1633,6 @@ gebr_maestro_server_disconnect(GebrMaestroServer *maestro,
 
 	gebr_comm_server_disconnect(maestro->priv->server);
 	unmount_gvfs(maestro, quit);
-
-	/* Reset group option of execution */
-	if (gebr.config.execution_server_name->len)
-		g_string_free(gebr.config.execution_server_name, TRUE);
-	gebr.config.execution_server_name = g_string_new("");
-	gebr.config.execution_server_type = MAESTRO_SERVER_TYPE_GROUP;
 }
 
 static void
@@ -1608,7 +1673,8 @@ on_question_request(GebrCommServer *server,
 }
 
 void
-gebr_maestro_server_connect(GebrMaestroServer *maestro)
+gebr_maestro_server_connect(GebrMaestroServer *maestro,
+                            gboolean force_init)
 {
 	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
 
@@ -1622,7 +1688,7 @@ gebr_maestro_server_connect(GebrMaestroServer *maestro)
 	                 G_CALLBACK(on_question_request), maestro);
 
 	maestro->priv->server->user_data = maestro;
-	gebr_comm_server_connect(maestro->priv->server, TRUE);
+	gebr_comm_server_connect(maestro->priv->server, TRUE, force_init);
 }
 
 void
@@ -1758,6 +1824,7 @@ gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
 	if (maestro->priv->nfsid)
 		g_free(maestro->priv->nfsid);
 	maestro->priv->nfsid = g_strdup(nfsid);
+	g_object_notify(G_OBJECT(maestro), "nfsid");
 }
 
 const gchar *
@@ -1790,7 +1857,7 @@ gebr_maestro_server_get_nfs_label(GebrMaestroServer *maestro)
 	return maestro->priv->nfs_label;
 }
 
-void
+static void
 gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 				 const gchar *home)
 {
@@ -1799,6 +1866,7 @@ gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 	if (maestro->priv->home)
 		g_free(maestro->priv->home);
 	maestro->priv->home = g_strdup(home);
+	g_object_notify(G_OBJECT(maestro), "home");
 }
 
 const gchar *
@@ -1845,6 +1913,13 @@ gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface)
 {
 	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
 	return gebr_maestro_server_get_sftp_root(self->maestro);
+}
+
+gboolean
+gebr_maestro_server_get_need_gvfs(GebrMaestroInfo *iface)
+{
+	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
+	return gebr_maestro_server_need_mount_gvfs(self->maestro);
 }
 
 void 
@@ -2072,12 +2147,11 @@ gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model)
 }
 
 void
-gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro)
+gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro,
+                                   const gchar *nfsid,
+                                   const gchar *label)
 {
 	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
-
-	const gchar *nfsid = maestro->priv->nfsid;
-	const gchar *label = maestro->priv->nfs_label;
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 

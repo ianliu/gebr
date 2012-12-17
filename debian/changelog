@@ -1,3 +1,30 @@
+gebrproject (0.19.14) lucid; urgency=low
+
+  * Show start/stop time to avoid blank console execution feedback.
+  * Now GeBR can force_init the gebrm/gebrd with stale lock.
+  * Always run the current installed version of gebrm/gebrd.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Tue, 11 Dec 2012 10:10:39 -0200
+
+gebrproject (0.19.13) lucid; urgency=low
+
+  * More release fixes. (#1420,1421,1424,1425,1427,1428,1429)
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Thu, 06 Dec 2012 14:11:50 -0200
+
+gebrproject (0.19.12) lucid; urgency=low
+
+  * More release fixes, please see ChangeLog.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Tue, 04 Dec 2012 18:13:15 -0200
+
+gebrproject (0.19.11) lucid; urgency=low
+
+  * Many fixes on autopilot and connections.
+  * Closes: #1309: Last selected flow is reopened on startup.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Fri, 30 Nov 2012 17:19:20 -0200
+
 gebrproject (0.19.10) lucid; urgency=medium
 
   * Fixes integration tests to build without internet connection in lauchpad ppa.

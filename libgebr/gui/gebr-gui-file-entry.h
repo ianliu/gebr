@@ -20,6 +20,7 @@
 
 #include <gtk/gtk.h>
 #include <libgebr/geoxml/geoxml.h>
+#include <libgebr/gebr-maestro-info.h>
 
 G_BEGIN_DECLS
 
@@ -51,6 +52,7 @@ struct _GebrGuiFileEntry {
 
 	GebrGeoXmlLine *line;
 	gchar *prefix;
+	gboolean need_gvfs;
 };
 
 struct _GebrGuiFileEntryClass {
@@ -95,6 +97,9 @@ void gebr_gui_file_entry_unset_warning(GebrGuiFileEntry * self, const gchar * to
 void gebr_gui_file_entry_set_paths_from_line(GebrGuiFileEntry *self,
 					     const gchar *prefix,
 					     GebrGeoXmlLine *line);
+
+void gebr_gui_file_entry_set_need_gvfs(GebrGuiFileEntry *self,
+				       gboolean need_gvfs);
 
 G_END_DECLS
 

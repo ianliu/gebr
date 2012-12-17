@@ -88,6 +88,10 @@ static void	gebr_comm_server_change_state	(GebrCommServer *server,
 static void	gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 						  GebrCommServer *server);
 
+static void gebr_comm_server_socket_error(GebrCommStreamSocket *socket,
+                                          enum GebrCommSocketError error,
+                                          GebrCommServer *server);
+
 static void	gebr_comm_server_socket_disconnected(GebrCommProtocolSocket * socket,
 						     GebrCommServer *server);
 
@@ -235,6 +239,11 @@ gebr_comm_server_new(const gchar * _address,
 	g_signal_connect(server->socket, "old-parse-messages",
 			 G_CALLBACK(gebr_comm_server_socket_old_parse_messages), server);
 
+	GebrCommStreamSocket *stream_socket;
+	g_object_get(server->socket, "stream-socket", &stream_socket, NULL);
+	g_signal_connect(stream_socket, "error",
+	                 G_CALLBACK(gebr_comm_server_socket_error), server);
+
 	return server;
 }
 
@@ -283,12 +292,14 @@ on_comm_ssh_error(GError *error,
 {
 	switch (error->code) {
 	case GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT:
-		gebr_comm_server_free_for_reuse(server);
+		gebr_comm_server_change_state(server, SERVER_STATE_REDIRECT);
 		g_string_assign(server->address, error->message);
-		gebr_comm_server_connect(server, TRUE);
+		gebr_comm_server_connect(server, TRUE, FALSE);
 		break;
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SSH:
-	case GEBR_COMM_PORT_PROVIDER_ERROR_EMPTY:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_NOT_FOUND:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN:
+	case GEBR_COMM_PORT_PROVIDER_ERROR_PORT:
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH,
 		                                    "%s", g_strstrip(error->message));
 		g_free(server->password);
@@ -296,7 +307,6 @@ on_comm_ssh_error(GError *error,
 		break;
 	case GEBR_COMM_PORT_PROVIDER_ERROR_UNKNOWN_TYPE:
 	case GEBR_COMM_PORT_PROVIDER_ERROR_SFTP_NOT_REQUIRED:
-	case GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN:
 		break;
 	}
 }
@@ -351,7 +361,7 @@ on_comm_ssh_question(GebrCommSsh *ssh,
 {
 	server->priv->istate = ISTATE_QUESTION;
 
-	gchar *title = g_strdup(_("Do you trust this host?"));
+	gchar *title = g_markup_printf_escaped("%s", _("Do you trust this host?"));
 	gchar *description = g_strdup(question);
 
 	server->priv->pending_connections = g_list_append(server->priv->pending_connections, ssh);
@@ -382,11 +392,13 @@ on_comm_port_accepts_key(GebrCommPortProvider *self,
 }
 
 void gebr_comm_server_connect(GebrCommServer *server,
-			      gboolean maestro)
+			      gboolean maestro,
+			      gboolean force_init)
 {
 	GebrCommPortType port_type;
 
-	if (server->state != SERVER_STATE_DISCONNECTED)
+	if (server->state != SERVER_STATE_DISCONNECTED
+	    && server->state != SERVER_STATE_REDIRECT)
 		return;
 
 	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("%p: Launching machine at '%s'."),
@@ -403,6 +415,8 @@ void gebr_comm_server_connect(GebrCommServer *server,
 
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(port_type, server->address->str);
+
+	gebr_comm_port_provider_set_force_init(port_provider, force_init);
 
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
@@ -681,6 +695,24 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 }
 
 static void
+gebr_comm_server_socket_error(GebrCommStreamSocket *socket,
+                              enum GebrCommSocketError error,
+                              GebrCommServer *server)
+{
+	switch (error) {
+	case GEBR_COMM_SOCKET_ERROR_SERVER_TIMED_OUT:
+	case GEBR_COMM_SOCKET_ERROR_LOOKUP:
+	case GEBR_COMM_SOCKET_ERROR_CONNECTION_REFUSED:
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_CONNECT,
+		                                    _("Connection refused"));
+		break;
+	case GEBR_COMM_SOCKET_ERROR_UNKNOWN:
+	case GEBR_COMM_SOCKET_ERROR_NONE:
+		break;
+	}
+}
+
+static void
 gebr_comm_server_socket_disconnected(GebrCommProtocolSocket *socket,
 				     GebrCommServer *server)
 {
@@ -749,6 +781,7 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 static const gchar *state_hash[] = {
 	"disconnected",
 	"run",
+	"redirect",
 	"connect",
 	"logged",
 	NULL

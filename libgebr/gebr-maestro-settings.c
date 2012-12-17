@@ -317,6 +317,38 @@ gebr_maestro_settings_add_node(GebrMaestroSettings *ms,
 	g_key_file_free(servers);
 }
 
+void
+gebr_maestro_settings_get_node_info(GebrMaestroSettings *ms,
+                                    const gchar *node,
+                                    gchar **tags,
+                                    gchar **ac)
+{
+	g_return_if_fail(ms != NULL);
+	g_return_if_fail(node != NULL);
+
+	GKeyFile *servers = g_key_file_new();
+	const gchar *path = gebr_maestro_settings_get_servers_file();
+
+	GError *err_tags = NULL;
+	GError *err_ac = NULL;
+
+	g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
+
+	if (tags) {
+		*tags = g_key_file_get_string(servers, node, "tags", &err_tags);
+		if (err_tags)
+			*tags = NULL;
+	}
+
+	if (ac) {
+		g_key_file_get_string(servers, node, "autoconnect", &err_ac);
+		if (err_ac)
+			*ac = NULL;
+	}
+
+	g_key_file_free(servers);
+}
+
 gchar *
 gebr_maestro_settings_generate_nfs_label(GebrMaestroSettings *ms,
                                          const gchar *nfsid)

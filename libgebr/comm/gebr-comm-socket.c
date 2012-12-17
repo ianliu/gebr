@@ -77,7 +77,7 @@ static gboolean __gebr_comm_socket_read(GIOChannel * source, GIOCondition condit
 		return FALSE;
 	}
 	if (condition & G_IO_ERR) {
-		/* TODO: */
+		_gebr_comm_socket_emit_error(socket, GEBR_COMM_SOCKET_ERROR_CONNECTION_REFUSED);
 		return FALSE;
 	}
 	if (condition & G_IO_HUP) {

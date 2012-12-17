@@ -1,3 +1,50 @@
+2012-12-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change order of daemon errors to prioritize NFS error
+	* Remove need_cleanup flag and add force_init flag to connect on
+	maestro.
+	* Add new argument force_init (-f) on maestro
+
+2012-12-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* maestro: Trust in lock file when starting maestro
+	* maestro: Fix security problem
+
+2012-12-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.13: SSH parser fixes
+
+2012-12-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Maestro disconnects from daemon when it enters in a error
+	state
+
+2012-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Avoid multiple sending of nfs_id to the clients
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.12: More autopilot fixes
+
+2012-12-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Clear gebrm-daemon error when appropriate
+	* gebr: Check nfs before include gebr-host as a node
+
+2012-12-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Pass parameter need_cleanup to CommServer and PortProvider to kill
+	maestro before connect when needs cleanup
+
+2012-11-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.11: Autopilot fixes
+
+2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.10: Autopilot [Sprint 69] [Sprint 70]
+
 2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Add forward on client when X11 port is defined and remove old

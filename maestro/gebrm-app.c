@@ -202,6 +202,9 @@ gebrm_app_send_nfsid(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar 
 					      nfsid,
 					      hosts,
 					      label);
+
+	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
+	gebrm_client_set_sent_nfsid(client, TRUE);
 }
 
 static gboolean
@@ -670,6 +673,16 @@ on_daemon_init(GebrmDaemon *daemon,
 	gboolean home_defined = FALSE;
 	gboolean send_nfs = FALSE;
 
+	if (!app->priv->nfsid) {
+		send_nfs = TRUE;
+		app->priv->nfsid = g_strdup(nfsid);
+	}
+
+	if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
+		error = "error:nfs";
+		goto err;
+	}
+
 	if (g_strcmp0(error_type, "connection-refused") == 0) {
 		if (has_duplicated_daemons(app, error_msg)) {
                         error = "error:id";
@@ -682,14 +695,6 @@ on_daemon_init(GebrmDaemon *daemon,
 
 	if (g_strcmp0(error_type, "protocol") == 0) {
 		error = "error:protocol";
-		goto err;
-	}
-
-	if (!app->priv->nfsid) {
-		send_nfs = TRUE;
-		app->priv->nfsid = g_strdup(nfsid);
-	} else if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
-		error = "error:nfs";
 		goto err;
 	}
 
@@ -711,6 +716,7 @@ err:
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			gebrm_daemon_send_error_message(daemon, socket);
 		}
+		gebrm_daemon_disconnect(daemon);
 
 		if (remove)
 			remove_daemon(app, gebrm_daemon_get_address(daemon));
@@ -735,7 +741,8 @@ err:
 			if (!home_defined)
 				gebrm_app_send_home_dir(app, socket, home);
 
-			gebrm_app_send_nfsid(app, socket, nfsid);
+			if (!gebrm_client_get_sent_nfsid(i->data))
+				gebrm_app_send_nfsid(app, socket, nfsid);
 
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon), state);
 
@@ -1246,13 +1253,19 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_strcmp0(prefix, "/server") == 0) {
+			const gchar *respect_ac = gebr_comm_uri_get_param(uri, "respect-ac");
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
-			addr = gebr_apply_pattern_on_address(addr);
+			gchar *ac = NULL;
 
-			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
+			gebr_maestro_settings_get_node_info(app->priv->settings, addr, NULL, &ac);
+			if (!atoi(respect_ac) || (atoi(respect_ac) && g_strcmp0(ac, "on") == 0)) {
+				addr = gebr_apply_pattern_on_address(addr);
 
-			gebrm_daemon_connect(d, socket);
-			gebrm_config_save_server(d);
+				GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
+
+				gebrm_daemon_connect(d, socket);
+				gebrm_config_save_server(d);
+			}
 		}
 		else if (g_strcmp0(prefix, "/set-password") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
@@ -1508,7 +1521,6 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			GString *gebr_id = g_list_nth_data(arguments, 3);
 			GString *gebr_time_iso = g_list_nth_data(arguments, 4);
 			GString *has_maestro = g_list_nth_data(arguments, 5);
-			GString *has_daemon = g_list_nth_data(arguments, 6);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 			g_debug("Maestro received GeBR time: %s", gebr_time_iso->str);
@@ -1539,9 +1551,9 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 					g_free(addr);
 				}
 
-				if (atoi(has_daemon->str))
-					gebr_maestro_settings_add_node(app->priv->settings,
-								       address->str, "", "on");
+//				if (atoi(has_daemon->str))
+//					gebr_maestro_settings_add_node(app->priv->settings,
+//								       address->str, "", "on");
 			}
 			g_free(nfsid);
 
@@ -2100,7 +2112,7 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	GError *error_lock = NULL;
 	GError *error_version = NULL;
 
-	GebrCommSocketAddress address = gebr_comm_socket_address_ipv4("0.0.0.0", 0);
+	GebrCommSocketAddress address = gebr_comm_socket_address_ipv4("127.0.0.1", 0);
 	app->priv->listener = gebr_comm_listen_socket_new();
 
 	g_signal_connect(app->priv->listener, "new-connection",
@@ -2135,9 +2147,18 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 		return FALSE;
 	}
 
-	/* success, send port */
-	gchar *port_str = g_strdup_printf("%s%u\n",
-	                                  GEBR_PORT_PREFIX, port);
+	/* success, send port and address */
+	const gchar *username = g_get_user_name();
+	gchar *addr;
+	if (username && *username)
+		addr = g_strdup_printf("%s@%s", username, g_get_host_name());
+	else
+		addr = g_strdup(g_get_host_name());
+
+	gchar *port_str = g_strdup_printf("%s%u\n%s%s\n",
+	                                  GEBR_PORT_PREFIX, port,
+	                                  GEBR_ADDR_PREFIX, addr);
+	g_free(addr);
 
 	ssize_t s = 0;
 	do {

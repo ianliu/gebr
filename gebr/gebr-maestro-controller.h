@@ -106,7 +106,8 @@ void gebr_maestro_controller_set_window(GebrMaestroController *mc,
 					GtkWindow *window);
 
 void gebr_maestro_controller_server_list_add(GebrMaestroController *mc,
-                                             const gchar * address);
+                                             const gchar * address,
+                                             gboolean respect_ac);
 
 void gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_column,
                                                         GtkCellRenderer *cell,

@@ -105,6 +105,10 @@ guint gebrm_client_get_display_port(GebrmClient *self);
 
 const gchar *gebrm_client_get_display_host(GebrmClient *self);
 
+void gebrm_client_set_sent_nfsid(GebrmClient *self, gboolean sent_nfsid);
+
+gboolean gebrm_client_get_sent_nfsid(GebrmClient *self);
+
 /**
  * gebrm_client_set_display:
  *

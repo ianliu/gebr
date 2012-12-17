@@ -37,6 +37,17 @@
 #include "ui_project_line.h"
 #include "ui_document.h"
 
+enum {
+	WIZARD_LINE_MAIN_PROPERTIES,
+	WIZARD_LINE_PATHS_INFO,
+	WIZARD_LINE_PATHS_BASE,
+	WIZARD_LINE_PATHS_IMPORT,
+	WIZARD_LINE_PATHS_HIERARCHY,
+	WIZARD_LINE_REVIEW,
+	WIZARD_LINE_PROGRESS,
+	WIZARD_LINE_N_PAGES
+};
+
 GebrErrorEntry
 check_directory_ok(const gchar *text)
 {
@@ -57,6 +68,10 @@ on_assistant_base_import_validate(GtkEntry *entry,
 	GtkWidget *current_page;
 	gint page_number;
 	page_number = gtk_assistant_get_current_page(assistant);
+
+	if (page_number == WIZARD_LINE_PATHS_INFO)
+		page_number++; // from on_assistant_prepare will validate the next page
+
 	current_page = gtk_assistant_get_nth_page(assistant, page_number);
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	switch(check_directory_ok(gtk_entry_get_text(entry))){
@@ -71,7 +86,7 @@ on_assistant_base_import_validate(GtkEntry *entry,
 		break;
 	case EMPTY_ENTRY:
 		//check if user is setting import or base path
-		if(page_number == 3)
+		if(page_number == WIZARD_LINE_PATHS_IMPORT)
 			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
 		else{
 			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
@@ -81,29 +96,6 @@ on_assistant_base_import_validate(GtkEntry *entry,
 		break;
 	}
 
-}
-
-void
-on_properties_entry_changed(GtkEntry *entry,
-			    GtkWidget *widget)
-{
-	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
-	switch(check_directory_ok(gtk_entry_get_text(entry))){
-	case OK_ENTRY:
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-		gtk_widget_set_sensitive(widget, TRUE);
-		break;
-	case NOT_ABSOLUTE_ENTRY:
-		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
-		gtk_widget_set_sensitive(widget, TRUE);
-		break;
-	case EMPTY_ENTRY:
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
-		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-		gtk_widget_set_sensitive(widget, FALSE);
-		break;
-	}
 }
 
 static void
@@ -282,7 +274,7 @@ on_assistant_close(GtkAssistant *assistant,
 {
 	gint page = gtk_assistant_get_current_page(assistant) + 1;
 
-	if (page == 7) {
+	if (page == WIZARD_LINE_PROGRESS) {
 		GtkTreeIter iter;
 
 		gebr_ui_document_set_properties_from_builder(GEBR_GEOXML_DOCUMENT(gebr.line), data->builder);
@@ -365,7 +357,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 	const gchar *nfs_label = gebr_maestro_server_get_nfs_label(maestro);
 	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 
-	if (page == 1) {
+	if (page == WIZARD_LINE_PATHS_INFO) {
 		GObject *info_label= gtk_builder_get_object(data->builder, "info_label");
 		gchar *info_label_text= g_markup_printf_escaped(_("The <i>line</i> structure in GêBR gathers many "
                                                                   "processing flows.\n\nThe term <i>line</i> comes from "
@@ -378,7 +370,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
 	}
-	else if (page == 3) {
+	else if (page == WIZARD_LINE_PATHS_BASE) {
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
 		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
 		gchar *path = g_build_filename("<HOME>", "GeBR", line_key, NULL);
@@ -386,14 +378,14 @@ on_assistant_prepare(GtkAssistant *assistant,
 		const gchar *entr_text = gtk_entry_get_text(GTK_ENTRY(entry_base));
 		if (!entr_text || !entr_text[0])
 			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
-
+		on_assistant_base_import_validate(GTK_ENTRY(entry_base), assistant);
 		GtkWidget *paths_help_button = GTK_WIDGET(gtk_builder_get_object(data->builder, "paths_help_button"));
 		g_signal_connect(GTK_BUTTON(paths_help_button), "clicked", G_CALLBACK(on_paths_button_clicked), NULL);
 
 		g_free(line_key);
 		g_free(path);
 	}
-	else if (page == 5) {
+	else if (page == WIZARD_LINE_PATHS_HIERARCHY) {
 		const gchar *base = gtk_entry_get_text(GTK_ENTRY(entry_base));
 
 		GObject *label;
@@ -412,7 +404,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_free(text_base);
 		g_free(used_base);
 	}
-	else if (page == 6) {
+	else if (page == WIZARD_LINE_REVIEW) {
 		GHashTable *labels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 		GHashTable *entries = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL) ;
 
@@ -422,7 +414,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 			"author",
 			"email",
 			"base",
-			"import",
 			"maestro",
 			NULL};
 
@@ -458,7 +449,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_hash_table_destroy(labels);
 		g_hash_table_destroy(entries);
 	}
-	else if (page == 7) {
+	else if (page == WIZARD_LINE_PROGRESS) {
 		GObject *container_progress = gtk_builder_get_object(data->builder, "container_progressbar");
 		GObject *container_message = gtk_builder_get_object(data->builder, "container_message");
 		GObject *label_summary = gtk_builder_get_object(data->builder, "label_summary");
@@ -499,7 +490,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
 	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "paths_info"));
 	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_base"));
-	GtkWidget *page4 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
+//	GtkWidget *page4 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
 	GtkWidget *page5 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_hierarchy"));
 	GtkWidget *page6 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_review"));
 	GtkWidget *page7 = GTK_WIDGET(gtk_builder_get_object(builder, "main_progress"));
@@ -536,10 +527,11 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page3, GTK_ASSISTANT_PAGE_CONTENT);
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page3, _("BASE Path"));
 
-	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page4);
-	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page4, TRUE);
-	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page4, GTK_ASSISTANT_PAGE_CONTENT);
-	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page4, _("IMPORT Path"));
+//	IMPORT
+//	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page4);
+//	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page4, TRUE);
+//	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page4, GTK_ASSISTANT_PAGE_CONTENT);
+//	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page4, _("IMPORT Path"));
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page5);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page5, TRUE);

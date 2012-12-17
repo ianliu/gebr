@@ -71,6 +71,7 @@ GebrCommServerType gebr_comm_server_get_id(const gchar * name);
 typedef enum {
 	SERVER_STATE_DISCONNECTED,
 	SERVER_STATE_RUN,
+	SERVER_STATE_REDIRECT,
 	SERVER_STATE_CONNECT,
 	SERVER_STATE_LOGGED,
 } GebrCommServerState;
@@ -170,7 +171,8 @@ void gebr_comm_server_set_last_error(GebrCommServer *server,
 void gebr_comm_server_free(GebrCommServer *gebr_comm_server);
 
 void gebr_comm_server_connect(GebrCommServer *server,
-			      gboolean maestro);
+			      gboolean maestro,
+			      gboolean force_init);
 
 void gebr_comm_server_disconnect(GebrCommServer *gebr_comm_server);
 

@@ -93,7 +93,7 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about.dialog), _("GêBR Core Team"));
 
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about.dialog),
-				     _("Copyright (C) 2007-2012 GêBR core team (http://www.gebrproject.com/)\n" "\n"
+				     _("Copyright (C) 2007-2012 GêBR core team ( http://www.gebrproject.com/ )\n" "\n"
 				       "This program is free software: you can redistribute it and/or modify "
 				       "it under the terms of the GNU General Public License as published by "
 				       "the Free Software Foundation, either version 3 of the License, or "
@@ -103,7 +103,7 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 				       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
 				       "GNU General Public License for more details.\n" "\n"
 				       "You should have received a copy of the GNU General Public License "
-				       "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n" "\n"
+				       "along with this program.  If not, see http://www.gnu.org/licenses/ .\n" "\n"
 				       "In Brazil, this program is under protection against unauthorized usage, "
 				       "in accordance to brazilian laws #9609, Feb 19, 1998, #2556, "
 				       "Apr 20, 1998, and #9610, Feb 19, 1998, and is registered in "

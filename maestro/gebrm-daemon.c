@@ -204,6 +204,7 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 	else if (server->state == SERVER_STATE_CONNECT) {
 		gebrm_daemon_set_error_type(daemon, NULL);
 		gebrm_daemon_set_error_msg(daemon, NULL);
+		gebr_comm_server_set_last_error(server, SERVER_ERROR_NONE, "");
 	}
 
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
@@ -772,7 +773,7 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 	if (client)
 		daemon->priv->client = g_object_ref(client);
 
-	gebr_comm_server_connect(daemon->priv->server, FALSE);
+	gebr_comm_server_connect(daemon->priv->server, FALSE, FALSE);
 }
 
 void
@@ -958,9 +959,6 @@ void
 gebrm_daemon_send_error_message(GebrmDaemon *daemon,
                                 GebrCommProtocolSocket *socket)
 {
-	if (g_strcmp0(daemon->priv->last_error_type, daemon->priv->error_type) == 0)
-		return;
-
 	if (daemon->priv->server->state == SERVER_STATE_DISCONNECTED
 	    && g_strcmp0(daemon->priv->error_type, "error:ssh") == 0)
 		goto send_error;

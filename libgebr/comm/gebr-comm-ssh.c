@@ -27,7 +27,7 @@
 #include <glib/gi18n-lib.h>
 
 #define GEBR_PORT_PREFIX "gebr-port="
-#define FINGERPRINT_MSG "RSA key fingerprint is "
+#define FINGERPRINT_MSG "fingerprint is "
 #define CERTIFICATE_QUESTION "Are you sure"
 #define CERTIFICATE_ERROR "@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 #define QUESTION_SUFFIX "(yes/no)?"
@@ -39,6 +39,7 @@
 #define LIMITED_WRONG_PASSWORD "No more authentication methods to try"
 #define LOCAL_FORWARD_ERROR "Could not request local forwarding."
 #define HOST_VERIFICATION_ERROR "Host key verification failed."
+#define DEBUG_LINE "debug1:"
 
 
 G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
@@ -84,6 +85,7 @@ struct _GebrCommSshPriv {
 	gint attempts;
 
 	GString *buffer;
+	GString *ssh_output;
 	GString *out_buffer;
 	SshOutState out_state;
 	gchar *fingerprint;
@@ -94,6 +96,7 @@ gebr_comm_ssh_finalize(GObject *object)
 {
 	GebrCommSsh *self = GEBR_COMM_SSH(object);
 	g_free(self->priv->command);
+	g_string_free(self->priv->ssh_output, TRUE);
 	gebr_comm_terminal_process_free(self->priv->process);
 	G_OBJECT_CLASS(gebr_comm_ssh_parent_class)->finalize(object);
 }
@@ -176,6 +179,7 @@ gebr_comm_ssh_init(GebrCommSsh *self)
 	self->priv->state = GEBR_COMM_SSH_STATE_INIT;
 
 	self->priv->process = gebr_comm_terminal_process_new();
+	self->priv->ssh_output = g_string_new("");
 
 	g_signal_connect(self->priv->process, "ready-read",
 			 G_CALLBACK(ssh_process_read), self);
@@ -328,8 +332,9 @@ process_ssh_line(GebrCommSsh *self,
 		 const gchar *line)
 {
 	if (self->priv->out_state == SSH_OUT_STATE_INIT) {
-		if (strstr(line, FINGERPRINT_MSG)) {
-			GString *tmp = g_string_new(line + strlen(FINGERPRINT_MSG));
+		gchar *finger = strstr(line, FINGERPRINT_MSG);
+		if (finger) {
+			GString *tmp = g_string_new(finger + strlen(FINGERPRINT_MSG));
 			if (tmp->str[tmp->len-1] == '.')
 				g_string_erase(tmp, tmp->len - 1, -1);
 
@@ -341,10 +346,9 @@ process_ssh_line(GebrCommSsh *self,
 			self->priv->state = GEBR_COMM_SSH_STATE_QUESTION;
 
 			gchar *question;
-			question = g_strdup_printf(_("This host has never been authenticated and"
-						     " has the fingerprint %s.\n"
-						     "Do you trust this host?"),
-						     self->priv->fingerprint);
+			question = g_markup_printf_escaped(_("This host has never been authenticated and"
+							     " has the fingerprint %s.\n"),
+							     self->priv->fingerprint);
 			g_signal_emit(self, signals[SSH_QUESTION], 0, question);
 			g_free(question);
 		}
@@ -395,6 +399,16 @@ process_ssh_line(GebrCommSsh *self,
 }
 
 static void
+fill_ssh_output(GebrCommSsh *self, const gchar *line)
+{
+	if (self->priv->out_state != SSH_OUT_STATE_COMMAND_OUTPUT &&
+	    g_str_has_prefix(line, DEBUG_LINE) == FALSE) {
+		g_string_append(self->priv->ssh_output, line);
+		g_string_append_c(self->priv->ssh_output, '\n');
+	}
+}
+
+static void
 gebr_comm_ssh_parse_output(GebrCommSsh *self,
 			   GebrCommTerminalProcess *process,
 			   GString *output)
@@ -404,6 +418,13 @@ gebr_comm_ssh_parse_output(GebrCommSsh *self,
 
 	while (line != NULL) {
 		process_ssh_line(self, line);
+		fill_ssh_output(self, line);
 		line = get_next_line(self);
 	}
+}
+
+const gchar *
+gebr_comm_ssh_get_ssh_output(GebrCommSsh *ssh)
+{
+	return ssh->priv->ssh_output->str;
 }

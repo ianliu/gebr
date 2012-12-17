@@ -56,7 +56,8 @@ typedef enum {
 	GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
 	GEBR_COMM_PORT_PROVIDER_ERROR_SSH,
 	GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT,
-	GEBR_COMM_PORT_PROVIDER_ERROR_EMPTY,
+	GEBR_COMM_PORT_PROVIDER_ERROR_NOT_FOUND,
+	GEBR_COMM_PORT_PROVIDER_ERROR_PORT,
 } GebrCommPortProviderError;
 
 /**
@@ -122,6 +123,15 @@ GebrCommPortProvider *gebr_comm_port_provider_new(GebrCommPortType type,
 void gebr_comm_port_provider_set_display(GebrCommPortProvider *self,
                                          guint display,
                                          const gchar *host);
+
+/**
+ * gebr_comm_port_provider_set_force_init:
+ *
+ * Sets a flag on @self to alert if need to pass an argument to
+ * maestro connection, to force init.
+ */
+void gebr_comm_port_provider_set_force_init(GebrCommPortProvider *self,
+                                            gboolean force_init);
 
 /**
  * gebr_comm_port_provider_get_display_host:

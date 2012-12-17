@@ -21,24 +21,36 @@
 #include "gebr-comm-port-provider.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
 #include "gebr-comm-ssh.h"
 #include <libgebr/utils.h>
 #include "gebr-comm-terminalprocess.h"
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-process.h"
 #include "../marshalers.h"
 #include "gebr-comm-utils.h"
 
+#define COMMAND_NOT_FOUND "command not found"
+
 struct _GebrCommPortForward {
 	GebrCommSsh *ssh;
 	gchar *address;
 };
 
+typedef enum {
+	STATE_INIT,
+	STATE_PORT_DEFINED,
+	STATE_FORWARD,
+	STATE_ERROR
+} PortProviderState;
+
 struct _GebrCommPortProviderPriv {
+	PortProviderState state;
 	GebrCommPortType type;
 	gchar *address;
 	gchar *sftp_address;
@@ -51,6 +63,9 @@ struct _GebrCommPortProviderPriv {
 
 	guint port;
 	guint remote_port;
+	const gchar *remote_address;
+
+	gboolean force_init;
 };
 
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
@@ -60,11 +75,10 @@ static gchar *get_local_forward_command(GebrCommPortProvider *self,
 
 static gboolean get_port_from_command_output(GebrCommPortProvider *self,
                                              const gchar *buffer,
-                                             guint *port);
+                                             guint *port,
+					     GError **error);
 
 static void create_local_forward(GebrCommPortProvider *self);
-
-static void emit_empty_stdout_signal(GebrCommPortProvider *self, gboolean is_maestro);
 
 GQuark
 gebr_comm_port_provider_error_quark(void)
@@ -255,6 +269,7 @@ gebr_comm_port_provider_init(GebrCommPortProvider *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
 						 GEBR_COMM_TYPE_PORT_PROVIDER,
 						 GebrCommPortProviderPriv);
+	self->priv->state = STATE_INIT;
 }
 /* }}} */
 
@@ -277,10 +292,13 @@ is_local_address(const gchar *addr)
 static void
 emit_signals(GebrCommPortProvider *self, guint port, GError *error)
 {
-	if (!error)
+	if (!error) {
+		self->priv->state = STATE_PORT_DEFINED;
 		g_signal_emit(self, signals[PORT_DEFINED], 0, port);
-	else
+	} else {
+		self->priv->state = STATE_ERROR;
 		g_signal_emit(self, signals[ERROR], 0, error);
+	}
 }
 
 /*
@@ -352,22 +370,28 @@ start(GebrCommPortProvider *self, struct PortProviderVirtualMethods *vmethods)
 
 /* Set our own error*/
 static void
-transform_spawn_sync_error(GError *error, GError **local_error)
+transform_spawn_sync_error(GebrCommPortProvider *self, GError *error, GError **local_error)
 {
 	if (!error)
 		return;
 
-	GebrCommPortProviderError error_type;
-	const gchar *error_msg = NULL;
+	gboolean is_maestro = self->priv->type == GEBR_COMM_PORT_TYPE_MAESTRO;
 
-	error_type = GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN;
-	error_msg = "Error in the process execution";
-
-	g_set_error(local_error,
-		    GEBR_COMM_PORT_PROVIDER_ERROR,
-		    error_type,
-		    "%s",
-		    error_msg);
+	switch (error->code) {
+	case G_SPAWN_ERROR_NOENT:
+		g_set_error(local_error, GEBR_COMM_PORT_PROVIDER_ERROR,
+			    GEBR_COMM_PORT_PROVIDER_ERROR_NOT_FOUND,
+			    _("%s not found at %s"),
+			    is_maestro ? "Maestro" : "Daemon",
+			    self->priv->address);
+		break;
+	default:
+		g_set_error(local_error,
+			    GEBR_COMM_PORT_PROVIDER_ERROR,
+			    GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
+			    "%s", error->message);
+		break;
+	}
 }
 
 static void
@@ -409,33 +433,35 @@ static void
 local_get_port(GebrCommPortProvider *self, gboolean maestro)
 {
 	const gchar *binary = maestro ? "gebrm":"gebrd";
+	gchar *cmd;
 	gchar *output = NULL;
 	gchar *err = NULL;
 	gint status;
 	GError *error = NULL;
-
-	g_spawn_command_line_sync(binary, &output, &err, &status, &error);
-
 	GError *local_error = NULL;
-
 	guint port;
 
+	if (self->priv->force_init && maestro)
+		cmd = g_strdup_printf("%s -f", binary);
+	else
+		cmd = g_strdup(binary);
+
+	g_spawn_command_line_sync(cmd, &output, &err, &status, &error);
+ 	g_free(cmd);
+
 	if (error || (WIFEXITED(status) && WEXITSTATUS(status) != 0)) {
-		if (g_strrstr(error->message, "No such file or directory")) {/* Command did not return any message*/
-			emit_empty_stdout_signal(self, maestro);
-			return;
-		}
-		transform_spawn_sync_error(error, &local_error);
-		g_clear_error(&error);
+		transform_spawn_sync_error(self, error, &local_error);
+		if (error)
+			g_clear_error(&error);
 	} else if (output) {
-		if (!get_port_from_command_output(self, output, &port))
-			return;
+		get_port_from_command_output(self, output, &port, &local_error);
 	} else {
 		g_warn_if_reached();
 	}
 
-	emit_signals(self, port, error);
-
+	emit_signals(self, port, local_error);
+	if (local_error)
+		g_clear_error(&local_error);
 	g_free(output);
 }
 
@@ -513,6 +539,21 @@ on_ssh_key(GebrCommSsh *ssh, gboolean accepts_key, GebrCommPortProvider *self)
 	g_signal_emit(self, signals[ACCEPTS_KEY], 0, accepts_key);
 }
 
+static void
+on_ssh_finished(GebrCommSsh *ssh,
+		GebrCommPortProvider *self)
+{
+	if (self->priv->state == STATE_INIT) {
+		GError *error = NULL;
+		const gchar *out = gebr_comm_ssh_get_ssh_output(ssh);
+		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
+			    GEBR_COMM_PORT_PROVIDER_ERROR_SSH,
+			    "%s", out);
+		emit_signals(self, 0, error);
+		g_clear_error(&error);
+	}
+}
+
 struct TunnelPollData {
 	GebrCommPortProvider *self;
 	guint port;
@@ -534,11 +575,58 @@ tunnel_poll_port(gpointer user_data)
 static gboolean
 get_port_from_command_output(GebrCommPortProvider *self,
                              const gchar *buffer,
-                             guint *port)
+                             guint *port,
+			     GError **error)
 {
-	*port = atoi(buffer + strlen(GEBR_PORT_PREFIX));
+	gboolean is_maestro = self->priv->type == GEBR_COMM_PORT_TYPE_MAESTRO;
+	GError *err = NULL;
 
-	self->priv->remote_port = *port;
+	gchar *redirect_addr = g_strrstr(buffer, GEBR_ADDR_PREFIX);
+	gchar *port_str = g_strrstr(buffer, GEBR_PORT_PREFIX);
+
+	if (strstr(buffer, COMMAND_NOT_FOUND)) {
+		g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR,
+			    GEBR_COMM_PORT_PROVIDER_ERROR_NOT_FOUND,
+			    _("%s not found at %s"),
+			    is_maestro ? "Maestro" : "Daemon",
+			    self->priv->address);
+	} else if (!port_str) {
+		g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR,
+			    GEBR_COMM_PORT_PROVIDER_ERROR_PORT,
+			    _("Unexpected output from %s at %s: %s"),
+			    is_maestro ? "maestro" : "daemon",
+			    self->priv->address,
+			    buffer);
+	} else if (redirect_addr) {
+		redirect_addr += strlen(GEBR_ADDR_PREFIX);
+		gchar *nl = strchr(redirect_addr, '\n');
+		gchar *addr;
+		if (nl)
+			addr = g_strndup(redirect_addr, (nl - redirect_addr)/sizeof(gchar));
+		else
+			addr = g_strdup(redirect_addr);
+		g_strstrip(addr);
+
+		if (gebr_comm_is_address_equal(self->priv->address, addr)) {
+			*port = atoi(port_str + strlen(GEBR_PORT_PREFIX));
+			g_free(addr);
+		} else {
+			g_set_error(&err, GEBR_COMM_PORT_PROVIDER_ERROR,
+				    GEBR_COMM_PORT_PROVIDER_ERROR_REDIRECT,
+				    "%s", addr);
+			g_free(addr);
+		}
+	} else
+		*port = atoi(port_str + strlen(GEBR_PORT_PREFIX));
+
+	if (err) {
+		if (error)
+			*error = g_error_copy(err);
+		g_clear_error(&err);
+		return FALSE;
+	} else {
+		self->priv->remote_port = *port;
+	}
 
 	return TRUE;
 }
@@ -548,6 +636,8 @@ create_local_forward(GebrCommPortProvider *self)
 {
 	guint port;
 	gchar *command = get_local_forward_command(self, &port, "127.0.0.1", self->priv->remote_port);
+
+	self->priv->state = STATE_FORWARD;
 
 	g_debug("Got port %d for daemon %s", port, self->priv->address);
 
@@ -567,32 +657,17 @@ create_local_forward(GebrCommPortProvider *self)
 }
 
 static void
-emit_empty_stdout_signal(GebrCommPortProvider *self, gboolean is_maestro)
-{
-	GError *error = NULL;
-	gchar *err_msg = g_strdup_printf(_("There is no %s installed in this host."),
-	                                 is_maestro ? "maestro" : "node");
-	g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
-	            GEBR_COMM_PORT_PROVIDER_ERROR_EMPTY,
-	            "%s", err_msg);
-	g_free(err_msg);
-	emit_signals(self, 0, error);
-}
-
-static void
 on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *self)
 {
+	GError *error = NULL;
 	guint remote_port;
 
-	if (g_strcmp0(buffer->str, "") == 0) {/* Command did not return any message*/
-		gboolean is_maestro = self->priv->type == GEBR_COMM_PORT_TYPE_MAESTRO;
-		emit_empty_stdout_signal(self, is_maestro);
+	if (!get_port_from_command_output(self, buffer->str, &remote_port, &error)) {
+		emit_signals(self, 0, error);
 		return;
 	}
 
-	if (!get_port_from_command_output(self, buffer->str, &remote_port))
-		return;
-
+	self->priv->remote_address = "127.0.0.1";
 	create_local_forward(self);
 }
 
@@ -600,12 +675,16 @@ static gchar *
 get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 {
 	const gchar *binary = is_maestro ? "gebrm" : "gebrd";
+	gboolean force_init = FALSE;
+
+	if (is_maestro && self->priv->force_init)
+		force_init = TRUE;
 
 	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
 
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
-	                ssh_cmd, self->priv->address, binary);
+	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s%s'\"",
+	                ssh_cmd, self->priv->address, binary, force_init? " -f" : "");
 	gchar *cmd = g_shell_quote(cmd_line->str);
 
 	g_string_printf(cmd_line, "bash -c %s", cmd);
@@ -625,6 +704,7 @@ remote_get_port(GebrCommPortProvider *self, gboolean is_maestro)
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
 	g_signal_connect(ssh, "ssh-stdout", G_CALLBACK(on_ssh_stdout), self);
 	g_signal_connect(ssh, "ssh-key", G_CALLBACK(on_ssh_key), self);
+	g_signal_connect(ssh, "ssh-finished", G_CALLBACK(on_ssh_finished), self);
 	gchar *command = get_launch_command(self, is_maestro);
 	gebr_comm_ssh_set_command(ssh, command);
 	gebr_comm_ssh_run(ssh);
@@ -705,7 +785,7 @@ get_local_forward_command(GebrCommPortProvider *self,
 
 	*port = get_port(self);
 
-	g_string_printf(string, "%s -x -L %d:%s:%d %s -N", ssh_cmd, *port,
+	g_string_printf(string, "%s -v -x -L %d:%s:%d %s -N", ssh_cmd, *port,
 			addr, remote_port, self->priv->address);
 
 	g_free(ssh_cmd);
@@ -716,21 +796,10 @@ get_local_forward_command(GebrCommPortProvider *self,
 void
 remote_get_sftp_port(GebrCommPortProvider *self)
 {
-	guint port = 2000;
-	GebrCommSsh *ssh = gebr_comm_ssh_new();
-	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_ssh_password), self);
-	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
-	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
-	gchar *command = get_local_forward_command(self, &port, self->priv->sftp_address, 22);
-	gebr_comm_ssh_set_command(ssh, command);
-	set_forward(self, ssh);
-	gebr_comm_ssh_run(ssh);
-	g_free(command);
+	self->priv->remote_port = 22;
+	self->priv->remote_address = self->priv->sftp_address;
 
-	struct TunnelPollData *data = g_new(struct TunnelPollData, 1);
-	data->self = self;
-	data->port = port;
-	g_timeout_add(200, tunnel_poll_port, data);
+	create_local_forward(self);
 }
 
 /* Authentication keys methods*/
@@ -745,6 +814,13 @@ gebr_comm_port_provider_new(GebrCommPortType type,
 			    "type", type,
 			    "address", address,
 			    NULL);
+}
+
+void
+gebr_comm_port_provider_set_force_init(GebrCommPortProvider *self,
+                                       gboolean force_init)
+{
+	self->priv->force_init = force_init;
 }
 
 void
@@ -815,15 +891,23 @@ gebr_comm_port_forward_get_address(GebrCommPortForward *port_forward)
 	return port_forward->address;
 }
 
+static gboolean
+release_ssh_object(gpointer data)
+{
+	GebrCommSsh *ssh = data;
+	g_object_unref(ssh);
+	return FALSE;
+}
+
 void
 gebr_comm_port_forward_close(GebrCommPortForward *port_forward)
 {
 	if (!port_forward)
 		return;
 
-	if (port_forward->ssh) {
+	if (GEBR_COMM_IS_SSH(port_forward->ssh)) {
 		gebr_comm_ssh_kill(port_forward->ssh);
-		g_object_unref(port_forward->ssh);
+		g_idle_add(release_ssh_object, port_forward->ssh);
 		port_forward->ssh = NULL;
 	}
 }

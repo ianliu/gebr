@@ -174,12 +174,13 @@ gchar *gebr_date_get_localized (const gchar *format, const gchar *locale);
  */
 gchar *gebr_id_random_create(gssize bytes);
 
-/*
- * Open a file for writing. If the file already exists, its contents is returned.
- * If not \p new_lock_content is written to the file. 
- * A newly allocated string with the contents of \p pathname is returned.
+/**
+ * gebr_lock_file:
+ *
+ * If @content is %NULL, returns the content of @path. Otherwise, @content is
+ * written in @path in a safe way.
  */
-gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gboolean symlink);
+gchar *gebr_lock_file(const gchar *path, const gchar *content);
 
 /**
  * gebr_str_ascii_word_at:
@@ -450,6 +451,15 @@ const gchar *gebr_apply_pattern_on_address(const gchar *addr);
  * Push @data on tail of the @queue the in case @data is not in the @queue.
  */
 GQueue *gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue, const gchar *data);
+
+/*
+ * gebr_paths_get_value_by_key:
+ *
+ * Gets the value of @key in @paths.
+ */
+const gchar *gebr_paths_get_value_by_key(const gchar ***paths,
+                                         const gchar *key);
+
 
 G_END_DECLS
 

@@ -153,6 +153,12 @@ void gebr_maestro_settings_add_node(GebrMaestroSettings *ms,
 				    const gchar *tags,
 				    const gchar *ac);
 
+void
+gebr_maestro_settings_get_node_info(GebrMaestroSettings *ms,
+                                    const gchar *node,
+                                    gchar **tags,
+                                    gchar **ac);
+
 /*
  * gebr_generate_nfs_label:
  *

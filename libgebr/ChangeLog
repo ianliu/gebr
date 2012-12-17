@@ -1,3 +1,114 @@
+2012-12-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Fix previous commit
+	* libgebr: Refactor set_current_directory to open the filebrowser in
+	the right place
+
+2012-12-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Stop sending errors to /dev/null on maestro/daemon connection
+	* libgebr: Fix parser of fingerprint on SSH
+
+2012-12-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Verify if mounting is necessary on filechooser opening
+
+2012-12-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove need_cleanup flag and add force_init flag to connect on
+	maestro.
+
+2012-12-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create treatment to connection refused on GêBR when try to connect
+	on invalid port
+
+2012-12-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.13: SSH parser fixes
+
+2012-12-06  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix broken link on gnu license
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: servers change to the new REDIRECT state when redirecting
+	* libgebr: do not unref ssh object inside its own signal
+
+2012-12-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new state to STATE_FORWARD for PortProvider
+	* Fix SSH output buffer
+	* Merge with 0.19.12
+	* libgebr: Add on header file public method of PortProvider
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.12: More autopilot fixes
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixes makefile of tests
+
+2012-12-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix kill of old maestro when get remote port
+
+2012-12-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: build local lock file correctly
+
+2012-12-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Check nfs before include gebr-host as a node
+
+2012-12-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Check if there is lock file before try to kill old maestro
+	* Improve message eht host untrusted and update translate of that
+	messages
+
+2012-12-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove unnecessary debug on PortProvider
+	* Pass parameter need_cleanup to CommServer and PortProvider to kill
+	maestro before connect when needs cleanup
+
+2012-11-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.11: Autopilot fixes
+
+2012-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix warning on group after change another parameter
+
+2012-11-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving message of ssh dialog to add server in known_hosts.
+
+2012-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve SSH question for host authentication
+	* Fix creation of pending connections list on SSH question
+
+2012-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: remove internal glib includes
+
+2012-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Use the new method to verify whether the host is local or
+	not
+	* i18n: Minor translation of the message inserted in the previous
+	commit
+	* gebr: Set a proper error message when there is no gebrd installed
+	* gebr: Remove remaining word maestro occurences
+
+2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.10: Autopilot [Sprint 69] [Sprint 70]
+
 2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Add method to clean old maestros config
