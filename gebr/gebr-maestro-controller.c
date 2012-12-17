@@ -2277,10 +2277,20 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 }
 
 static void
-on_prop_notify(GebrMaestroServer *maestro,
-	       GParamSpec *pspec,
-	       GebrMaestroController *self)
+on_prop_home_notify(GebrMaestroServer *maestro,
+                    GParamSpec *pspec,
+                    GebrMaestroController *self)
 {
+	update_xml_parameters(maestro, gebr.ui_project_line, TRUE);
+	gebr_maestro_controller_maestro_state_changed_real(self, maestro);
+}
+
+static void
+on_prop_nfsid_notify(GebrMaestroServer *maestro,
+                     GParamSpec *pspec,
+                     GebrMaestroController *self)
+{
+	update_xml_parameters(maestro, gebr.ui_project_line, FALSE);
 	gebr_maestro_controller_maestro_state_changed_real(self, maestro);
 }
 
@@ -2364,9 +2374,9 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	g_signal_connect(maestro, "confirm",
 	                 G_CALLBACK(on_maestro_confirm), self);
 	g_signal_connect(maestro, "notify::nfsid",
-			 G_CALLBACK(on_prop_notify), self);
+			 G_CALLBACK(on_prop_nfsid_notify), self);
 	g_signal_connect(maestro, "notify::home",
-			 G_CALLBACK(on_prop_notify), self);
+			 G_CALLBACK(on_prop_home_notify), self);
 
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
