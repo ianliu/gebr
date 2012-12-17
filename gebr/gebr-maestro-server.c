@@ -1057,7 +1057,7 @@ parse_messages(GebrCommServer *comm_server,
 			} else {
 				nfslabel = g_strdup(label->str);
 			}
-
+			g_signal_emit_by_name(maestro, "state-change");
 			gebr_config_set_current_nfs_info(nfsid->str,
 			                                 hosts->str,
 			                                 nfslabel);
