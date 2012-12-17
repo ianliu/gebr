@@ -1,3 +1,15 @@
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* maestro: Fix treatment of NFS id error
+
+2012-12-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Preserves errors from previous daemons in GebrmDaemon
+
+2012-12-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.14: Upgrade fixes
+
 2012-12-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Change order of daemon errors to prioritize NFS error

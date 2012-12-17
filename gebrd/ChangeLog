@@ -1,3 +1,27 @@
+2012-12-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: clean up system if an inconsistency is found
+
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: improve gebr_lock_file method
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix wait pid problem when execute many tasks on same daemon
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* daemon: Improve and fix method to get non-scaled CPU clock
+
+2012-12-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Try to get non-scaled CPU clock of daemon
+
+2012-12-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.14: Upgrade fixes
+
 2012-12-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.19.13: SSH parser fixes

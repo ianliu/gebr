@@ -1,3 +1,149 @@
+2012-12-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* gebr: Update xml of lines after maestro send home/nfsid
+
+2012-12-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: clean up system if an inconsistency is found
+
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: improve gebr_lock_file method
+
+2012-12-14  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Open filechooser at DATA when io field is empty.
+
+2012-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Show nfs label in infobar (even) when gebr starts
+
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: allow selection of nonexistent files in input file chooser
+
+2012-12-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix update of Flows interface when maestro change state
+
+2012-12-14  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding tooltip on Domain label in ui_log.
+
+2012-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Change translation of 'alias' (pseudonimo -> apelido)
+	* gui: Green icon is back again
+
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: do not generate local index if remote is present
+	* gebr: fix reading of relative paths in menus indices
+
+2012-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* geoxml-utils: Generate indices with relative paths
+
+2012-12-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use label from maestro besides GeBR label, unless label are empty
+	* i18n: Update pt_BR po files
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change flow-icon to pipe/files version
+
+2012-12-12  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving the import file chooser to uniformize the treatment with
+	the others.
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* gebr: Add vertical spacing in flow line to improve visual
+	* maestro: Fix treatment of NFS id error
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: 'Greenize' the flow icon
+
+2012-12-12  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Avoiding remove/stop/disconnect server when they have running jobs.
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Remove IMPORT references from interface
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix wait pid problem when execute many tasks on same daemon
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Set to local home when mount is not possible
+	* gebr: Change feedback message of job control
+	* gui: Exhibit Domain instead of maestro in the botton infobar
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix critical when close maestro controller dialog, and fix a minor
+	memory leak
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Refactor repetitive codes of ui_log.c
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* daemon: Improve and fix method to get non-scaled CPU clock
+
+2012-12-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix unref of Ssh object in PortProvider
+
+2012-12-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding the IMPORT path from interface.
+
+2012-12-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Always show currently connected maestro
+	* maestro: Preserves errors from previous daemons in GebrmDaemon
+
+2012-12-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: fix invalid memory access when loading projects
+
+2012-12-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix some memory leaks of libgebr-geoxml
+	* Fix relativising path when it's chosen by browser.
+
+2012-12-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: clicking snapshots button no longer opens file chooser
+
+2012-12-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Update home path of the XMLs when gebr receives home_def from
+	maestro
+
+2012-12-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Try to get non-scaled CPU clock of daemon
+	* Treats SFTP forward like local forward to fix mount problem
+
+2012-12-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: do not select current line when changing tabs
+	* Fix compilation warnings
+
+2012-12-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.14 for changeset 27ee629f837a
+	* Release 0.19.14: Upgrade fixes
+
 2012-12-10  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* libgebr: Fix previous commit

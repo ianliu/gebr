@@ -1,8 +1,16 @@
+gebrproject (0.19.15) lucid; urgency=low
+
+  * Memory leak fixes.
+  * Only generate menu's index if necessary.
+  * Always run the current installed version of gebrd.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 17 Dec 2012 11:51:46 -0200
+
 gebrproject (0.19.14) lucid; urgency=low
 
   * Show start/stop time to avoid blank console execution feedback.
   * Now GeBR can force_init the gebrm/gebrd with stale lock.
-  * Always run the current installed version of gebrm/gebrd.
+  * Always run the current installed version of gebrm.
 
  -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Tue, 11 Dec 2012 10:10:39 -0200
 

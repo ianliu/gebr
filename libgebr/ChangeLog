@@ -1,3 +1,46 @@
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: improve gebr_lock_file method
+
+2012-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Green icon is back again
+	* geoxml-utils: Generate indices with relative paths
+
+2012-12-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* i18n: Update pt_BR po files
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change flow-icon to pipe/files version
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: 'Greenize' the flow icon
+	* gebr: Set to local home when mount is not possible
+
+2012-12-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix unref of Ssh object in PortProvider
+
+2012-12-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix some memory leaks of libgebr-geoxml
+	* Fix relativising path when it's chosen by browser.
+
+2012-12-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Treats SFTP forward like local forward to fix mount problem
+
+2012-12-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix compilation warnings
+
+2012-12-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.14: Upgrade fixes
+
 2012-12-10  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* libgebr: Fix previous commit
