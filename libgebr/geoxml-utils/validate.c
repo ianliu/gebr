@@ -21,7 +21,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib/gi18n.h>
+#include "libgebr-gettext.h"
+#include <glib/gi18n-lib.h>
 #include <libgebr.h>
 #include "geoxml.h"
 #include <glib/gstdio.h>

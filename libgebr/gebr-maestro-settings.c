@@ -24,7 +24,8 @@
 
 #include <stdio.h>
 #include <glib.h>
-#include <glib/gi18n.h>
+#include "libgebr-gettext.h"
+#include <glib/gi18n-lib.h>
 
 #include "utils.h"
 

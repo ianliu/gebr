@@ -35,7 +35,8 @@
 #include <locale.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <glib/gi18n.h>
+#include "libgebr-gettext.h"
+#include <glib/gi18n-lib.h>
 
 #include "utils.h"
 
