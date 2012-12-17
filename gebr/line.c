@@ -611,7 +611,11 @@ create_base_import_file_chooser(gchar *title,
 
 	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
 	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
-	gchar ***paths = gebr_generate_paths_with_home(home);
+	gchar ***paths = NULL;
+	paths = gebr_geoxml_line_get_paths(gebr.line);
+
+	if (!paths)
+		paths = gebr_generate_paths_with_home(home);
 
 	gchar *new_text;
 	const gchar *entry_text = gtk_entry_get_text(entry);

@@ -1302,8 +1302,10 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
 	}
 
 	const gchar ***tmp = (const gchar ***)paths;
-	gchar *home_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(tmp, "HOME"), paths);
-	gchar *base_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(tmp, "BASE"), paths);
+	const gchar *home_by_key = gebr_paths_get_value_by_key(tmp, "HOME");
+	const gchar *base_by_key = gebr_paths_get_value_by_key(tmp, "BASE");
+	gchar *home_dir = gebr_resolve_relative_path(home_by_key, paths);
+	gchar *base_dir = gebr_resolve_relative_path(base_by_key, paths);
 
 	gchar *aux = gebr_resolve_relative_path(entry_text, paths);	/*Relativize*/
 	gebr_validate_path(aux, paths, error);	/*Sets error messages*/
