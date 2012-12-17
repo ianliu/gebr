@@ -1360,9 +1360,12 @@ cleanup_alias(GebrMaestroController *self)
 static void
 on_get_alias_maestro_clicked(GebrMaestroController *self)
 {
-	GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
+	GtkEntry *entry;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
 	const gchar *text_entry  = gebr_maestro_server_get_nfs_label(maestro);
+	if (!self->priv->builder)
+		return;
+	entry = GTK_ENTRY(gtk_builder_get_object(self->priv->builder, "label_maestro"));
 	if (text_entry && *text_entry)
 		gtk_entry_set_text(entry, text_entry);
 	else
