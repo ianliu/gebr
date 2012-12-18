@@ -504,9 +504,9 @@ on_x11_port_error(GebrCommPortProvider *self,
 	g_critical("Error when forwarding x11: %s", error->message);
 }
 
-static guint
-get_gebr_display_port(GebrCommServer *server,
-                      gchar **display_host)
+guint
+gebr_comm_server_get_display_port(GebrCommServer *server,
+				  gchar **display_host)
 {
 	gchar *x11_file, *host;
 	guint display_port;
@@ -534,24 +534,18 @@ get_gebr_display_port(GebrCommServer *server,
 }
 
 void
-gebr_comm_server_forward_x11(GebrCommServer *server)
+gebr_comm_server_forward_x11(GebrCommServer *server,
+			     const gchar *display_host,
+			     guint display_port)
 {
-	gchar *host;
-	guint display_port;
-
-	if (server->priv->is_maestro)
-		display_port = get_gebr_display_port(server, &host);
-
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(GEBR_COMM_PORT_TYPE_X11, server->address->str);
-	gebr_comm_port_provider_set_display(port_provider, display_port, host);
+	gebr_comm_port_provider_set_display(port_provider, display_port, display_host);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_port_error), server);
 	g_signal_connect(port_provider, "repass-password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	gebr_comm_port_provider_start(port_provider);
-
-	g_free(host);
 }
 
 /**

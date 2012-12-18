@@ -579,7 +579,12 @@ parse_messages(GebrCommServer *comm_server,
 				else
 					gebr_maestro_server_connect_on_daemons(maestro);
 
-				gebr_comm_server_forward_x11(maestro->priv->server);
+				gchar *display_host;
+				guint display_port;
+
+				display_port = gebr_comm_server_get_display_port(comm_server, &display_host);
+				gebr_comm_server_forward_x11(maestro->priv->server, display_host, display_port);
+				g_free(display_host);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
