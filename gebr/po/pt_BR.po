@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-14 13:35-0200\n"
+"POT-Creation-Date: 2012-12-18 12:36-0200\n"
 "PO-Revision-Date: 2012-12-13 10:20-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -849,11 +849,11 @@ msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../flow.c:1329 ../ui_flow_browse.c:1433
+#: ../flow.c:1329 ../ui_flow_browse.c:1431
 msgid "No line is selected\n"
 msgstr "Nenhuma linha foi selecionada\n"
 
-#: ../flow.c:1333 ../ui_flow_browse.c:1435
+#: ../flow.c:1333 ../ui_flow_browse.c:1433
 msgid ""
 "The domain of this line is disconnected,\n"
 "then you cannot edit flows.\n"
@@ -1063,7 +1063,7 @@ msgid "<b>Input file</b>: %s"
 msgstr "<b>Arquivo de entrada</b>: %s"
 
 #: ../gebr-job-control.c:1609 ../gebr-job-control.c:1620
-#: ../gebr-job-control.c:1631 ../ui_flow_browse.c:1315
+#: ../gebr-job-control.c:1631 ../ui_flow_browse.c:1313
 #: ../ui_project_line.c:548 ../ui_project_line.c:550
 msgid "None"
 msgstr "Nenhum"
@@ -1258,7 +1258,7 @@ msgstr "Arraste nós de processamento para cá para incrementar este grupo!"
 msgid "_Remove from group"
 msgstr "Remover do grupo"
 
-#: ../gebr-maestro-controller.c:579 ../gebr-maestro-controller.c:1751
+#: ../gebr-maestro-controller.c:579 ../gebr-maestro-controller.c:1754
 msgid "Address"
 msgstr "Endereço"
 
@@ -1302,39 +1302,39 @@ msgstr ""
 "\n"
 "A entrada %s será automaticamente removida."
 
-#: ../gebr-maestro-controller.c:1420
+#: ../gebr-maestro-controller.c:1423
 msgid "Connect to this node when GêBR starts"
 msgstr "Conectar-se a este nó ao iniciar a GêBR"
 
-#: ../gebr-maestro-controller.c:1422
+#: ../gebr-maestro-controller.c:1425
 msgid "Do not connect to this node when GêBR starts"
 msgstr "Não conectar-se a este nó de processamento ao iniciar a GêBR"
 
-#: ../gebr-maestro-controller.c:1700
+#: ../gebr-maestro-controller.c:1703
 msgid "Set an alias for this domain."
 msgstr "Definir um pseudônimo a este domínio."
 
-#: ../gebr-maestro-controller.c:1725
+#: ../gebr-maestro-controller.c:1728
 msgid "AC"
 msgstr "AC"
 
-#: ../gebr-maestro-controller.c:1780
+#: ../gebr-maestro-controller.c:1783
 msgid "CPU Clock"
 msgstr "Clock da CPU"
 
-#: ../gebr-maestro-controller.c:1792
+#: ../gebr-maestro-controller.c:1795
 msgid "Memory"
 msgstr "Memória"
 
-#: ../gebr-maestro-controller.c:1808
+#: ../gebr-maestro-controller.c:1811
 msgid "GêBR - Maestro / Nodes"
 msgstr "GêBR - Maestro / Nós de processamento"
 
-#: ../gebr-maestro-controller.c:1810
+#: ../gebr-maestro-controller.c:1813
 msgid "Help"
 msgstr "Ajuda"
 
-#: ../gebr-maestro-controller.c:1862
+#: ../gebr-maestro-controller.c:1865
 #, c-format
 msgid ""
 "<span size='large'>%s</span>\n"
@@ -1343,21 +1343,21 @@ msgstr ""
 "<span size='large'>%s</span>\n"
 "%s"
 
-#: ../gebr-maestro-controller.c:1865
+#: ../gebr-maestro-controller.c:1868
 #, c-format
 msgid "SSH question from %s"
 msgstr "Pergunta do SSH de %s"
 
-#: ../gebr-maestro-controller.c:1905
+#: ../gebr-maestro-controller.c:1908
 msgid "Enter password"
 msgstr "Entre com a senha"
 
-#: ../gebr-maestro-controller.c:1916 ../gebr-maestro-controller.c:1925
+#: ../gebr-maestro-controller.c:1919 ../gebr-maestro-controller.c:1928
 #, c-format
 msgid "Connecting to %s"
 msgstr "Conectando-se a %s"
 
-#: ../gebr-maestro-controller.c:1917
+#: ../gebr-maestro-controller.c:1920
 #, c-format
 msgid ""
 "Maestro <b>%s</b> is asking for your login\n"
@@ -1366,12 +1366,12 @@ msgstr ""
 "Maestro <b>%s</b> está requisitando sua senha\n"
 "de login."
 
-#: ../gebr-maestro-controller.c:1923
+#: ../gebr-maestro-controller.c:1926
 #, c-format
 msgid "Stopping %s"
 msgstr "Interrompendo %s"
 
-#: ../gebr-maestro-controller.c:1926
+#: ../gebr-maestro-controller.c:1929
 #, c-format
 msgid ""
 "<b>%s</b> is asking for your login\n"
@@ -1380,17 +1380,17 @@ msgstr ""
 "<b>%s</b> está requisitando senha\n"
 "de login."
 
-#: ../gebr-maestro-controller.c:1937
+#: ../gebr-maestro-controller.c:1940
 #, c-format
 msgid "<i>Wrong password. Please, try again.</i>"
 msgstr "<i>Senha incorreta. Por favor, tente novamente.</i>"
 
-#: ../gebr-maestro-controller.c:1949
+#: ../gebr-maestro-controller.c:1952
 #, c-format
 msgid "Remember me"
 msgstr "Lembrar senha"
 
-#: ../gebr-maestro-controller.c:2015
+#: ../gebr-maestro-controller.c:2018
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1399,7 +1399,7 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente desconectá-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:2018
+#: ../gebr-maestro-controller.c:2021
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1408,7 +1408,7 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:2021
+#: ../gebr-maestro-controller.c:2024
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1417,27 +1417,27 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:2060 ../ui_log.c:157
+#: ../gebr-maestro-controller.c:2063 ../ui_log.c:157
 msgid "Disconnected"
 msgstr "Desconectado"
 
-#: ../gebr-maestro-controller.c:2068
+#: ../gebr-maestro-controller.c:2071
 msgid "Connected"
 msgstr "Conectado"
 
-#: ../gebr-maestro-controller.c:2089
+#: ../gebr-maestro-controller.c:2092
 msgid "Connecting"
 msgstr "Conectando"
 
-#: ../gebr-maestro-controller.c:2111
+#: ../gebr-maestro-controller.c:2114
 msgid "This node has a different NFS"
 msgstr "Este nó de processamento tem um sistema de arquivos diferente"
 
-#: ../gebr-maestro-controller.c:2113
+#: ../gebr-maestro-controller.c:2116
 msgid "Node already added"
 msgstr "Nó de processamento já adicionado"
 
-#: ../gebr-maestro-controller.c:2114
+#: ../gebr-maestro-controller.c:2117
 #, c-format
 msgid ""
 "The node %s was already added in this domain. It will be automatically "
@@ -1446,39 +1446,39 @@ msgstr ""
 "O nó de processamento %s já foi adicionado a este domínio. Ele será "
 "automaticamente removido."
 
-#: ../gebr-maestro-controller.c:2119
+#: ../gebr-maestro-controller.c:2122
 msgid "This node is using a different protocol version"
 msgstr "Este nó de processamento usa uma versão de protocolo diferente"
 
-#: ../gebr-maestro-controller.c:2121
+#: ../gebr-maestro-controller.c:2124
 msgid "This node is working for another domain"
 msgstr "Este nó de processamento já está registrado a um outro domínio"
 
-#: ../gebr-maestro-controller.c:2125
+#: ../gebr-maestro-controller.c:2128
 msgid "This node cannot connect to display. Try reconnect it"
 msgstr ""
 "Não foi possível conectar-se ao ambiente gráfico do nó de processamento. "
 "Tente reconectá-lo."
 
-#: ../gebr-maestro-controller.c:2127
+#: ../gebr-maestro-controller.c:2130
 msgid "This node has stopped."
 msgstr "Este nó foi interrompido."
 
-#: ../gebr-maestro-controller.c:2302
+#: ../gebr-maestro-controller.c:2316
 #, c-format
 msgid "Succesfully connected to host %s"
 msgstr "Conectado com êxito a %s"
 
-#: ../gebr-maestro-server.c:1583
+#: ../gebr-maestro-server.c:1584
 msgid "Local domain"
 msgstr "Domínio local"
 
-#: ../gebr-maestro-server.c:1585
+#: ../gebr-maestro-server.c:1586
 #, c-format
 msgid "Maestro %s"
 msgstr "Maestro %s"
 
-#: ../gebr-maestro-server.c:2117
+#: ../gebr-maestro-server.c:2118
 #, c-format
 msgid "Domain protocol version mismatch: %s"
 msgstr "Versão de protocolo do domínio incompatível: %s"
@@ -1712,7 +1712,7 @@ msgstr "Exemplos"
 msgid "New project"
 msgstr "Novo projeto"
 
-#: ../interface.c:82 ../interface.c:83 ../line.c:679
+#: ../interface.c:82 ../interface.c:83 ../line.c:683
 msgid "New line"
 msgstr "Nova linha"
 
@@ -1773,12 +1773,12 @@ msgstr "Importar fluxos"
 msgid "Export selected flows"
 msgstr "Exportar fluxos selecionados"
 
-#: ../interface.c:120 ../interface.c:121 ../ui_flow_browse.c:3510
-#: ../ui_flow_browse.c:3512 ../ui_flow_execution.c:1150
+#: ../interface.c:120 ../interface.c:121 ../ui_flow_browse.c:3516
+#: ../ui_flow_browse.c:3518 ../ui_flow_execution.c:1157
 msgid "Run"
 msgstr "Executar"
 
-#: ../interface.c:123 ../ui_flow_browse.c:3513
+#: ../interface.c:123 ../ui_flow_browse.c:3519
 msgid "Setup & Run"
 msgstr "Configurar e executar"
 
@@ -2042,22 +2042,22 @@ msgid "Summary"
 msgstr "Sumário"
 
 #. log action
-#: ../line.c:726
+#: ../line.c:730
 #, c-format
 msgid "Deleting child Flow '%s'."
 msgstr "Apagando o Fluxo filho '%s'."
 
-#: ../line.c:740
+#: ../line.c:744
 #, c-format
 msgid "Deleting line '%s'."
 msgstr "Apagando a linha '%s'."
 
-#: ../line.c:742
+#: ../line.c:746
 #, c-format
 msgid "Deleting line '%s' from project '%s'."
 msgstr "Apagando a linha '%s' do projeto '%s'."
 
-#: ../line.c:829
+#: ../line.c:833
 msgid "Flows loaded."
 msgstr "Fluxos carregados."
 
@@ -2281,11 +2281,11 @@ msgstr ""
 msgid "This flow already contains a loop"
 msgstr "Este fluxo já tem um loop."
 
-#: ../ui_flow_browse.c:1542
+#: ../ui_flow_browse.c:1540
 msgid "Remove this snapshot permanently?"
 msgstr "Remover esta foto permanentemente?"
 
-#: ../ui_flow_browse.c:1545
+#: ../ui_flow_browse.c:1543
 msgid ""
 "If you choose to remove this snapshot you will not be able to recover it "
 "later."
@@ -2293,7 +2293,7 @@ msgstr ""
 "Se você optar por remover esta foto, você não conseguirá recuperá-la mais "
 "tarde."
 
-#: ../ui_flow_browse.c:1549
+#: ../ui_flow_browse.c:1547
 msgid ""
 "If you choose to remove these snapshots you will not be able to recover them "
 "later."
@@ -2301,73 +2301,73 @@ msgstr ""
 "Se você optar por remover estas fotos, você não conseguirá recuperá-las mais "
 "tarde."
 
-#: ../ui_flow_browse.c:1728
+#: ../ui_flow_browse.c:1726
 #, c-format
 msgid "Could not revert to snapshot with ID %s"
 msgstr "Não foi possível reverter para a foto de ID %s"
 
-#: ../ui_flow_browse.c:1886
+#: ../ui_flow_browse.c:1884
 msgid "The graph can't be created."
 msgstr "O gráfico não pode ser criado!"
 
-#: ../ui_flow_browse.c:1920
+#: ../ui_flow_browse.c:1918
 #, c-format
 msgid "Output of <span font_style='italic'>"
 msgstr "Saída de  <span font_style='italic'>"
 
-#: ../ui_flow_browse.c:1927
+#: ../ui_flow_browse.c:1925
 msgid "finished"
 msgstr "Finalizado"
 
-#: ../ui_flow_browse.c:1931
+#: ../ui_flow_browse.c:1929
 msgid "started"
 msgstr "iniciado"
 
-#: ../ui_flow_browse.c:1935
+#: ../ui_flow_browse.c:1933
 msgid "canceled"
 msgstr "cancelado"
 
-#: ../ui_flow_browse.c:1939
+#: ../ui_flow_browse.c:1937
 msgid "failed"
 msgstr "falhou"
 
-#: ../ui_flow_browse.c:1945
+#: ../ui_flow_browse.c:1943
 msgid "submitted"
 msgstr "submetido"
 
-#: ../ui_flow_browse.c:1947
+#: ../ui_flow_browse.c:1945
 msgid "This job doesn't have output yet"
 msgstr "Esta tarefa ainda não tem saídas"
 
 #. Update snapshots context
-#: ../ui_flow_browse.c:1976
+#: ../ui_flow_browse.c:1974
 msgid "No Flow selected."
 msgstr "Nenhum Fluxo selecionado"
 
-#: ../ui_flow_browse.c:1987 ../ui_project_line.c:438
+#: ../ui_flow_browse.c:1985 ../ui_project_line.c:438
 #, c-format
 msgid "<span size='x-large'>No description available</span>"
 msgstr "<span size='x-large'>Nenhuma descrição disponível</span>"
 
-#: ../ui_flow_browse.c:2001
+#: ../ui_flow_browse.c:1999
 #, c-format
 msgid "Modified on %s"
 msgstr "Alterado em %s"
 
-#: ../ui_flow_browse.c:2011
+#: ../ui_flow_browse.c:2009
 msgid "This flow has never been executed"
 msgstr "Este fluxo nunca foi executado"
 
-#: ../ui_flow_browse.c:2014
+#: ../ui_flow_browse.c:2012
 #, c-format
 msgid "Submitted on %s"
 msgstr "Submetido em %s"
 
-#: ../ui_flow_browse.c:2087
+#: ../ui_flow_browse.c:2085
 msgid "No Flow selected"
 msgstr "Nenhum Fluxo selecionado"
 
-#: ../ui_flow_browse.c:2555
+#: ../ui_flow_browse.c:2553
 #, c-format
 msgid ""
 "%d Flows selected.\n"
@@ -2386,7 +2386,7 @@ msgstr ""
 "Para isso, clique no \n"
 "no ícone da câmera."
 
-#: ../ui_flow_browse.c:2568
+#: ../ui_flow_browse.c:2566
 msgid ""
 "There are no snapshots.\n"
 "\n"
@@ -2399,46 +2399,46 @@ msgstr ""
 "las a qualquer momento. Para tirar uma foto, clique no ícone da câmera e dê "
 "uma descrição."
 
-#: ../ui_flow_browse.c:2903
+#: ../ui_flow_browse.c:2901
 #, c-format
 msgid "<i>%s</i>"
 msgstr " <i>%s</i>"
 
-#: ../ui_flow_browse.c:2906
+#: ../ui_flow_browse.c:2904
 #, c-format
 msgid "Flow <i>%s</i> is ready to execute"
 msgstr "Fluxo <i>%s</i> está pronto para executar"
 
-#: ../ui_flow_browse.c:3177
+#: ../ui_flow_browse.c:3175
 msgid "Choose an input file"
 msgstr "Escolha um arquivo de entrada"
 
-#: ../ui_flow_browse.c:3184
+#: ../ui_flow_browse.c:3182
 msgid "Choose an output file"
 msgstr "Escolha um arquivo de saída"
 
-#: ../ui_flow_browse.c:3188
+#: ../ui_flow_browse.c:3186
 msgid "Choose a log file"
 msgstr "Escolha um arquivo de log"
 
-#: ../ui_flow_browse.c:3192
+#: ../ui_flow_browse.c:3190
 msgid "Choose file"
 msgstr "Escolha um arquivo"
 
-#: ../ui_flow_browse.c:3480
+#: ../ui_flow_browse.c:3486
 #, c-format
 msgid "Broken flow: %s"
 msgstr "Fluxo quebrado: %s"
 
-#: ../ui_flow_browse.c:3500
+#: ../ui_flow_browse.c:3506
 msgid "Select a line to execute a flow"
 msgstr "Selecione uma linha deste projeto para executar um fluxo."
 
-#: ../ui_flow_browse.c:3502
+#: ../ui_flow_browse.c:3508
 msgid "Select a line of this project to execute a flow"
 msgstr "Selecione a linha deste projeto para executar um fluxo."
 
-#: ../ui_flow_browse.c:3506
+#: ../ui_flow_browse.c:3512
 msgid ""
 "The domain of this line is disconnected.\n"
 "Connecting to it to execute a flow."
@@ -2446,7 +2446,7 @@ msgstr ""
 "O domínio desta linha está desconectado.\n"
 "Conecte-se ao domínio <b>%s</b> para executar esta linha"
 
-#: ../ui_flow_browse.c:3508
+#: ../ui_flow_browse.c:3514
 msgid ""
 "This line does not contain flows\n"
 "Create a flow to use this line"
@@ -2454,7 +2454,7 @@ msgstr ""
 "Esta linha não contém fluxos\n"
 "Crie um fluxo para executar esta linha"
 
-#: ../ui_flow_browse.c:3616
+#: ../ui_flow_browse.c:3622
 #, c-format
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
@@ -2481,40 +2481,44 @@ msgstr ""
 "\n"
 "O nó selecionado (<b>%s</b>) não está conectado."
 
-#: ../ui_flow_execution.c:697
+#: ../ui_flow_execution.c:451
+msgid "Please select a flow."
+msgstr "Por favor, selecione um fluxo."
+
+#: ../ui_flow_execution.c:701
 msgid "Choose automatically"
 msgstr "Escolha automaticamente"
 
-#: ../ui_flow_execution.c:750
+#: ../ui_flow_execution.c:754
 msgid "Immediately"
 msgstr "Imediatamente"
 
-#: ../ui_flow_execution.c:752
+#: ../ui_flow_execution.c:756
 #, c-format
 msgid "After %s #%s"
 msgstr "Depois de %s #%s"
 
-#: ../ui_flow_execution.c:932
+#: ../ui_flow_execution.c:938
 msgid "This flow execution cannot be split."
 msgstr "A execução deste fluxo não pode ser dividida"
 
-#: ../ui_flow_execution.c:1038
+#: ../ui_flow_execution.c:1044
 #, c-format
 msgid "<small>The nominal capacity of this set of nodes is %d cores.</small>"
 msgstr "<small>A capacidade nominal deste conjunto de nós é %d cores.</small>"
 
-#: ../ui_flow_execution.c:1089
+#: ../ui_flow_execution.c:1096
 #, c-format
 msgid "Execute this flow <i>immediately</i> or <i>after another job</i>?"
 msgstr ""
 "Executar esta tarefa <i>imediatamente</i> ou <i>depois de outra tarefa</i>?"
 
-#: ../ui_flow_execution.c:1091
+#: ../ui_flow_execution.c:1098
 #, c-format
 msgid "In which set of nodes should this flow be executed?"
 msgstr "Em qual conjunto de nós este fluxo deve ser executado?"
 
-#: ../ui_flow_execution.c:1093
+#: ../ui_flow_execution.c:1100
 #, c-format
 msgid ""
 "The execution of this flow can be split to speed it up.\n"
@@ -2523,7 +2527,7 @@ msgstr ""
 "Esta tarefa pode ser dividida para acelerar sua execução\n"
 "Em quantas partes ela deve ser dividida?"
 
-#: ../ui_flow_execution.c:1096
+#: ../ui_flow_execution.c:1103
 #, c-format
 msgid ""
 "How should the execution of this flow compete with\n"
@@ -2715,26 +2719,24 @@ msgstr ""
 msgid "Remote browsing disabled"
 msgstr "A navegação remota está desabilitada"
 
-#: ../ui_log.c:295
+#: ../ui_log.c:296
 #, c-format
 msgid "Connected to %s"
 msgstr "Conectado a %s"
 
-#: ../ui_log.c:298
+#: ../ui_log.c:300
 #, c-format
 msgid "No nodes connected in %s"
 msgstr "Nenhum nó conectado em %s"
 
-#: ../ui_log.c:304
-#, c-format
+#: ../ui_log.c:308
+#, fuzzy, c-format
 msgid ""
-"Error on %s:\n"
+"Could not connect to domain %s:\n"
 "%s"
-msgstr ""
-"Erro em %s:\n"
-"%s"
+msgstr "Não foi possível conectar ao domínio %s"
 
-#: ../ui_log.c:307
+#: ../ui_log.c:312
 #, c-format
 msgid "Not connected"
 msgstr "Desconectado"
