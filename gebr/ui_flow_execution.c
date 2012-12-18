@@ -447,6 +447,10 @@ gebr_ui_flow_run(GebrUiFlowExecution *ui_flow_execution,
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
 	nrows = gtk_tree_selection_count_selected_rows(selection);
 
+	if (rows == 0) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a flow."));
+		return;
+	}
 	/*Verify if the selection has a program*/
 	path = rows->data;
 	gtk_tree_model_get_iter(model, &iter, path);
