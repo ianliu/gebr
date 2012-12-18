@@ -1,3 +1,48 @@
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving behaviour of maestro combo on maestro/servers dialog and
+	avoiding gtk-criticals.
+	* Doing word-wrap of the text of the dictionary's table in report.
+	* Improving behaviour of maestro combo on maestro/servers dialog.
+
+2012-12-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Translating last commit
+	* Fix null on domain disconnected
+
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding sentinel to prevent a execution without flow selected.
+
+2012-12-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Unfill the icon of flow (and of BrokenFlow)
+
+2012-12-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix null on nfsid domain: code review
+
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Ellipsize queue combo in the middle in detailed execution dialog.
+
+2012-12-17  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix emitting a status change signal on connection
+
+2012-12-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Add the appropriate library of i18n to the libgebr files
+
+2012-12-17  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix warning on edit properties, base, filechooser
+
+2012-12-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.15 for changeset af35f7823571
+	* Release 0.19.15: Code Freeze [Sprint 72]
+
 2012-12-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* gebr: Update xml of lines after maestro send home/nfsid

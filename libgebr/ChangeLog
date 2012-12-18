@@ -1,3 +1,23 @@
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Doing word-wrap of the text of the dictionary's table in report.
+
+2012-12-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Unfill the icon of flow (and of BrokenFlow)
+
+2012-12-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Add the appropriate library of i18n to the libgebr files
+
+2012-12-17  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix warning on edit properties, base, filechooser
+
+2012-12-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.15: Code Freeze [Sprint 72]
+
 2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* libgebr: improve gebr_lock_file method

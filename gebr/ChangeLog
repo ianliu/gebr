@@ -1,3 +1,35 @@
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving behaviour of maestro combo on maestro/servers dialog and
+	avoiding gtk-criticals.
+	* Improving behaviour of maestro combo on maestro/servers dialog.
+
+2012-12-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Translating last commit
+	* Fix null on domain disconnected
+
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding sentinel to prevent a execution without flow selected.
+
+2012-12-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix null on nfsid domain: code review
+
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Ellipsize queue combo in the middle in detailed execution dialog.
+
+2012-12-17  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix emitting a status change signal on connection
+	* Fix warning on edit properties, base, filechooser
+
+2012-12-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.15: Code Freeze [Sprint 72]
+
 2012-12-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* gebr: Update xml of lines after maestro send home/nfsid
