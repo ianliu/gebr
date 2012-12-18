@@ -288,29 +288,39 @@ on_state_change(GebrMaestroServer *maestro,
 	const gchar *error_msg;
 	const gchar *error_type;
 	const gchar *nfs_domain = gebr_maestro_server_get_nfs_label(maestro);
+	gboolean show_label = TRUE;
 
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		if (gebr_maestro_server_has_servers(maestro, TRUE)) {
 			icon = GTK_STOCK_CONNECT;
 			text = g_markup_printf_escaped(_("Connected to %s"), nfs_domain);
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 		} else {
 			icon = GTK_STOCK_DIALOG_WARNING;
 			text = g_markup_printf_escaped(_("No nodes connected in %s"), nfs_domain);
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 		}
 	} else {
 		gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
 		if (g_strcmp0(error_type, "error:none") != 0) {
+			nfs_domain = gebr_maestro_server_get_address(maestro);
 			icon = GTK_STOCK_DIALOG_WARNING;
-			text = g_markup_printf_escaped(_("Error on %s:\n%s"), nfs_domain, error_msg);
+			text = g_markup_printf_escaped(_("Could not connect to domain %s:\n%s"), nfs_domain, error_msg);
+			show_label = FALSE;
 		} else {
 			icon = GTK_STOCK_DISCONNECT;
 			text = g_markup_printf_escaped(_("Not connected"));
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 		}
 	}
 
+	if (show_label)
+		gtk_widget_show(ui_log->maestro_label);
+	else
+		gtk_widget_hide(ui_log->maestro_label);
+
 	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
-	gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 	g_free(text);
 }
 
