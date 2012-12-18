@@ -1665,6 +1665,9 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.sftp_def.code_hash) {
+			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 1, "22");
 		}
 
 		gebr_comm_message_free(message);

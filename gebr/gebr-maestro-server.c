@@ -57,7 +57,7 @@ struct _GebrMaestroServerPriv {
 	/* GVFS */
 	gboolean has_connected_daemon;
 	GFile *mount_location;
-	GebrCommPortForward *forward;
+	GebrCommPortForward *sftp_forward;
 
 	GtkListStore *groups_store;
 	GtkListStore *queues_model;
@@ -139,7 +139,7 @@ on_sftp_port_defined(GebrCommPortProvider *self,
 		     guint port,
 		     GebrMaestroServer *maestro)
 {
-	maestro->priv->forward = gebr_comm_port_provider_get_forward(self);
+	maestro->priv->sftp_forward = gebr_comm_port_provider_get_forward(self);
 
 	gchar *uri;
 	gchar *user = gebr_maestro_server_get_user(maestro);
@@ -189,6 +189,22 @@ on_sftp_port_error(GebrCommPortProvider *self,
 		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 }
 
+static void
+mount_sftp(GebrMaestroServer *maestro, guint remote_port)
+{
+	if (maestro->priv->has_connected_daemon)
+		return;
+
+	maestro->priv->has_connected_daemon = TRUE;
+
+	GebrCommPortProvider *port_provider =
+		gebr_comm_server_create_port_provider(maestro->priv->server, GEBR_COMM_PORT_TYPE_SFTP);
+	gebr_comm_port_provider_set_sftp_port(port_provider, remote_port);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
+	gebr_comm_port_provider_start(port_provider);
+}
+
 gboolean
 gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro)
 {
@@ -209,20 +225,10 @@ gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro)
 }
 
 void
-gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
+gebr_maestro_server_request_sftp(GebrMaestroServer *maestro)
 {
-	if (maestro->priv->has_connected_daemon)
-		return;
-
-	maestro->priv->has_connected_daemon = TRUE;
-
-	GebrCommPortProvider *port_provider =
-		gebr_comm_server_create_port_provider(maestro->priv->server, GEBR_COMM_PORT_TYPE_SFTP);
-	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
-	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
-	g_debug("on %s, address:'%s'", __func__, addr);
-	gebr_comm_port_provider_set_sftp_address(port_provider, addr);
-	gebr_comm_port_provider_start(port_provider);
+	gebr_comm_protocol_socket_oldmsg_send(maestro->priv->server->socket, FALSE,
+	                                      gebr_comm_protocol_defs.sftp_def, 0);
 }
 
 static void
@@ -235,8 +241,8 @@ unmount_gvfs(GebrMaestroServer *maestro,
 		return;
 	}
 
-	if (maestro->priv->forward)
-		gebr_comm_port_forward_close(maestro->priv->forward);
+	if (maestro->priv->sftp_forward)
+		gebr_comm_port_forward_close(maestro->priv->sftp_forward);
 
 	maestro->priv->has_connected_daemon = FALSE;
 
@@ -599,6 +605,20 @@ parse_messages(GebrCommServer *comm_server,
 				gint ret_id = atoi(status_id->str);
 				g_signal_emit(maestro, signals[PATH_ERROR], 0, ret_id);
 
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			} else if (ret_hash == gebr_comm_protocol_defs.sftp_def.code_hash) {
+				GList *arguments;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+					goto err;
+
+				GString *remote_port_str = g_list_nth_data(arguments, 0);
+				guint remote_port = atoi(remote_port_str->str);
+
+				if (remote_port > 0)
+					mount_sftp(maestro, remote_port);
+				else
+					g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_NOK);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
@@ -1077,21 +1097,10 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_maestro_controller_server_list_add(gebr.maestro_controller, g_get_host_name(), TRUE);
 
 			// Mount SFTP if needed
-			if (gebr_maestro_server_need_mount_gvfs (maestro) && !maestro->priv->wizard_setup) {
-				gchar *addr;
-
-				gchar *comma = strstr(hosts->str, ",");
-				if (comma)
-					addr = g_strndup(hosts->str, (comma - hosts->str)/sizeof(gchar));
-				else
-					addr = g_strdup(hosts->str);
-
-				gebr_maestro_server_mount_gvfs(maestro, addr);
-
-				g_free(addr);
-			} else {
+			if (gebr_maestro_server_need_mount_gvfs (maestro) && !maestro->priv->wizard_setup)
+				gebr_maestro_server_request_sftp(maestro);
+			else
 				g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
-			}
 
 			g_free(nfslabel);
 

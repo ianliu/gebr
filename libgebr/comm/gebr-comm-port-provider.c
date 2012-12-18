@@ -53,7 +53,6 @@ struct _GebrCommPortProviderPriv {
 	PortProviderState state;
 	GebrCommPortType type;
 	gchar *address;
-	gchar *sftp_address;
 	guint display_port;
 	gchar *display_host;
 	GebrCommSsh *ssh_forward;
@@ -158,7 +157,6 @@ gebr_comm_port_provider_finalize(GObject *object)
 	GebrCommPortProvider *self = GEBR_COMM_PORT_PROVIDER(object);
 	g_free(self->priv->address);
 	g_free(self->priv->display_host);
-	g_free(self->priv->sftp_address);
 	G_OBJECT_CLASS(gebr_comm_port_provider_parent_class)->finalize(object);
 }
 
@@ -797,7 +795,7 @@ void
 remote_get_sftp_port(GebrCommPortProvider *self)
 {
 	self->priv->remote_port = 22;
-	self->priv->remote_address = self->priv->sftp_address;
+	self->priv->remote_address = "127.0.0.1";
 
 	create_local_forward(self);
 }
@@ -844,13 +842,6 @@ gebr_comm_port_provider_get_display_host(GebrCommPortProvider *self)
 		return self->priv->display_host;
 	else
 		return "127.0.0.1";
-}
-
-void
-gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
-					 const gchar *address)
-{
-	self->priv->sftp_address = g_strdup(address);
 }
 
 void
@@ -920,5 +911,12 @@ gebr_comm_port_forward_free(GebrCommPortForward *port_forward)
 
 	g_free(port_forward->address);
 	g_free(port_forward);
+}
+
+void
+gebr_comm_port_provider_set_sftp_port(GebrCommPortProvider *port_provider,
+				      guint remote_port)
+{
+	port_provider->priv->remote_port = remote_port;
 }
 /* }}} */

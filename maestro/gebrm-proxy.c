@@ -65,25 +65,78 @@ gebrm_proxy_server_op_process_response(GebrCommServer *server,
 }
 
 static void
+on_sftp_port_defined(GebrCommPortProvider *self,
+		     guint port,
+		     GebrmProxy *proxy)
+{
+	gchar *tmp = g_strdup_printf("%d", port);
+	gebr_comm_protocol_socket_oldmsg_send(proxy->maestro->socket, FALSE,
+	                                      gebr_comm_protocol_defs.ret_def, 1, tmp);
+	g_free(tmp);
+}
+
+static void
+on_sftp_port_error(GebrCommPortProvider *self,
+		   GError *error,
+		   GebrmProxy *proxy)
+{
+	gebr_comm_protocol_socket_oldmsg_send(proxy->maestro->socket, FALSE,
+	                                      gebr_comm_protocol_defs.ret_def, 1, "0");
+}
+
+static void
+setup_sftp_tunnel(GebrmProxy *proxy, guint remote_port)
+{
+	GebrCommPortProvider *port_provider =
+		gebr_comm_server_create_port_provider(proxy->maestro, GEBR_COMM_PORT_TYPE_SFTP);
+	gebr_comm_port_provider_set_sftp_port(port_provider, remote_port);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), proxy);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), proxy);
+}
+
+static void
 gebrm_proxy_server_op_parse_messages(GebrCommServer *comm_server,
 				     gpointer user_data)
 {
 	GList *link;
 	struct gebr_comm_message *message;
 
+	gboolean resend_message = TRUE;
 	GebrmProxy *proxy = user_data;
 
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
-		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash)
-			g_queue_pop_head(comm_server->socket->protocol->waiting_ret_hashs);
+		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
+			guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(comm_server->socket->protocol->waiting_ret_hashs));
+			if (ret_hash == gebr_comm_protocol_defs.sftp_def.code_hash) {
+				GList *arguments;
 
-		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(proxy->client);
-		gebr_comm_protocol_socket_resend_message(socket, FALSE, message);
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+					goto err;
+
+				GString *remote_port_str = g_list_nth_data(arguments, 0);
+				guint remote_port = atoi(remote_port_str->str);
+
+				setup_sftp_tunnel(proxy, remote_port);
+				resend_message = FALSE;
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			}
+		}
+
+		if (resend_message) {
+			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(proxy->client);
+			gebr_comm_protocol_socket_resend_message(socket, FALSE, message);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
 	}
+
+	return;
+err:
+	gebr_comm_message_free(message);
+	gebr_comm_server_disconnect(proxy->maestro);
 }
 
 static struct gebr_comm_server_ops proxy_ops = {

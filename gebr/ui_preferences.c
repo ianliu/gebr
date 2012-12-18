@@ -569,8 +569,8 @@ on_mount_gvfs_clicked(GtkButton *button,
 			continue;
 		}
 
-		if (gebr_maestro_server_need_mount_gvfs (maestro))
-			gebr_maestro_server_mount_gvfs(maestro, gebr_daemon_server_get_address(daemon));
+		if (gebr_maestro_server_need_mount_gvfs(maestro))
+			gebr_maestro_server_request_sftp(maestro);
 		break;
 	}
 }
