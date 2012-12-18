@@ -1566,6 +1566,9 @@ get_addr_inside_label(const gchar *text)
 static void
 generate_automatic_label_for_maestro(GebrMaestroController *self)
 {
+	if (!self->priv->builder)
+		return;
+
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 
@@ -1660,7 +1663,10 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 
-	generate_automatic_label_for_maestro(self);
+	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+		generate_automatic_label_for_maestro(self);
+	else
+		gtk_entry_set_text(entry, gebr_maestro_server_get_address(maestro));
 
 	g_signal_connect(entry, "activate", G_CALLBACK(connect_to_maestro), self);
 	g_signal_connect(entry, "focus-in-event", G_CALLBACK(on_maestro_focus_in), self);
