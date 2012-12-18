@@ -299,7 +299,7 @@ gebr_comm_protocol_socket_resend_message(GebrCommProtocolSocket *self,
 
 	struct gebr_comm_message_def *def = g_hash_table_lookup(gebr_comm_protocol_defs.code_hash_table, GUINT_TO_POINTER(message->hash));
 	GString *message_str = g_string_new(NULL);
-	g_string_printf(message_str, "%s %d %s", def->code, message->argument_size, message->argument->str);
+	g_string_printf(message_str, "%s %"G_GSIZE_FORMAT" %s\n", def->code, message->argument_size, message->argument->str);
 
 	/* does this message need return? */
 	if (def->returns)

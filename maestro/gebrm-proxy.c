@@ -82,7 +82,7 @@ gebrm_proxy_server_op_parse_messages(GebrCommServer *comm_server,
 		gebr_comm_protocol_socket_resend_message(socket, FALSE, message);
 
 		gebr_comm_message_free(message);
-		socket->protocol->messages = g_list_delete_link(socket->protocol->messages, link);
+		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
 	}
 }
 
@@ -109,7 +109,7 @@ on_proxy_client_request(GebrCommProtocolSocket *socket,
 {
 	g_return_if_fail(proxy->maestro != NULL);
 
-	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(request->content->str);
+	GebrCommJsonContent *content = gebr_comm_json_content_new(request->content->str);
 	gebr_comm_protocol_socket_send_request(proxy->maestro->socket,
 					       request->method,
 					       request->url->str,
@@ -148,10 +148,10 @@ on_proxy_client_parse_messages(GebrCommProtocolSocket *socket,
 			gebr_comm_server_connect(proxy->maestro, TRUE, FALSE);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else {
+			if (proxy->maestro)
+				gebr_comm_protocol_socket_resend_message(proxy->maestro->socket, FALSE, message);
 		}
-
-		if (proxy->maestro)
-			gebr_comm_protocol_socket_resend_message(proxy->maestro->socket, FALSE, message);
 
 		gebr_comm_message_free(message);
 		socket->protocol->messages = g_list_delete_link(socket->protocol->messages, link);
