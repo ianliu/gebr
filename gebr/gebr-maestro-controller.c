@@ -2294,6 +2294,7 @@ on_prop_nfsid_notify(GebrMaestroServer *maestro,
                      GebrMaestroController *self)
 {
 	update_xml_parameters(maestro, gebr.ui_project_line, FALSE);
+	gebr_log_update_maestro_info(gebr.ui_log, maestro);
 	gebr_maestro_controller_maestro_state_changed_real(self, maestro);
 }
 

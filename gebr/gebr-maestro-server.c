@@ -1057,16 +1057,18 @@ parse_messages(GebrCommServer *comm_server,
 			} else {
 				nfslabel = g_strdup(label->str);
 			}
-			g_signal_emit_by_name(maestro, "state-change");
+
 			gebr_config_set_current_nfs_info(nfsid->str,
 			                                 hosts->str,
 			                                 nfslabel);
 
 			gtk_label_set_markup(GTK_LABEL(gebr.ui_log->maestro_label), nfslabel);
 
-			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
 			gebr_maestro_server_set_nfs_label(maestro, nfslabel);
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
+
+			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
+
 
 			if (check_client_is_in_the_same_nfs_as_daemons(nfsid))
 				gebr_maestro_controller_server_list_add(gebr.maestro_controller, g_get_host_name(), TRUE);
