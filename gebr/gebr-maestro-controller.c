@@ -1587,17 +1587,6 @@ generate_automatic_label_for_maestro(GebrMaestroController *self)
 }
 
 static gboolean
-on_entry_button_release_event (GtkWidget      *widget,
-                               GdkEventButton *event)
-{
-	const gchar *addr = gtk_entry_get_text(GTK_ENTRY(widget));
-
-	gtk_editable_select_region(GTK_EDITABLE(widget), 0, strlen(addr));
-
-	return FALSE;
-}
-
-static gboolean
 on_maestro_focus_in(GtkWidget *entry,
                     GdkEventFocus *event,
                     GebrMaestroController *self)
@@ -1612,8 +1601,6 @@ on_maestro_focus_in(GtkWidget *entry,
 	if (addr) {
 		gtk_entry_set_text(GTK_ENTRY(entry), addr);
 		g_free(addr);
-	} else {
-		gtk_entry_set_text(GTK_ENTRY(entry), "");
 	}
 
 	return FALSE;
@@ -1627,7 +1614,15 @@ on_maestro_focus_out(GtkWidget *entry,
 	if (!entry)
 		return TRUE;
 
-	generate_automatic_label_for_maestro(self);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(self);
+	const gchar *text_entry = gtk_entry_get_text(GTK_ENTRY(entry));
+	const gchar *addr = gebr_maestro_server_get_address(maestro);
+
+	if (!g_strrstr(addr, "@"))
+		addr = g_strconcat(g_get_user_name(),"@", addr, NULL);
+
+	if ((!g_strcmp0(addr, text_entry) || !g_strcmp0("", text_entry) ) && (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED))
+		generate_automatic_label_for_maestro(self);
 
 	return FALSE;
 }
@@ -1669,7 +1664,6 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	g_signal_connect(entry, "activate", G_CALLBACK(connect_to_maestro), self);
 	g_signal_connect(entry, "focus-in-event", G_CALLBACK(on_maestro_focus_in), self);
-	g_signal_connect(entry, "button-release-event", G_CALLBACK(on_entry_button_release_event), NULL);
 	g_signal_connect(entry, "focus-out-event", G_CALLBACK(on_maestro_focus_out), self);
 
 	// Create maestro combo options
