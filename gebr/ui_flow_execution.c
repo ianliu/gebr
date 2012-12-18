@@ -754,6 +754,8 @@ on_queue_set_text(GtkCellLayout   *cell_layout,
 		                             gebr_job_get_job_counter(job));
 
 	g_object_set(cell, "text", name_queue, NULL);
+	gtk_widget_set_tooltip_markup(GTK_WIDGET(cell_layout), name_queue);
+
 	g_free(name_queue);
 }
 
@@ -1074,7 +1076,8 @@ create_detailed_execution_queue_combo(GebrUiFlowExecution *ui_flow_execution,
 	ui_flow_execution->priv->queue_combo = GTK_COMBO_BOX(queue_combo);
 
 	GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
-	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	g_object_set(renderer, "ellipsize-set", TRUE, "ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
+
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combo), renderer, TRUE);
 
 	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(queue_combo), renderer,
