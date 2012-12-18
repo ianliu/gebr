@@ -148,7 +148,21 @@ on_proxy_client_parse_messages(GebrCommProtocolSocket *socket,
 			gebr_comm_server_connect(proxy->maestro, TRUE, FALSE);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else {
+		}
+		else if (message->hash == gebr_comm_protocol_defs.dsp_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *port = g_list_nth_data(arguments, 0);
+			GString *host = g_list_nth_data(arguments, 1);
+
+			gebr_comm_server_forward_x11(proxy->maestro, host->str, atoi(port->str));
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else {
 			if (proxy->maestro)
 				gebr_comm_protocol_socket_resend_message(proxy->maestro->socket, FALSE, message);
 		}
