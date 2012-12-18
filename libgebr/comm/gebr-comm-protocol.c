@@ -81,6 +81,7 @@ void gebr_comm_protocol_init(void)
 	gebr_comm_protocol_defs.qst_def   = gebr_comm_message_def_create("QST", FALSE, 3);
 	gebr_comm_protocol_defs.harakiri_def = gebr_comm_message_def_create("HRK", FALSE, 0);
 	gebr_comm_protocol_defs.dsp_def = gebr_comm_message_def_create("DSP", FALSE, 0);
+	gebr_comm_protocol_defs.sftp_def = gebr_comm_message_def_create("SFTP", TRUE, 0);
 
 	/* hashes them */
 	gebr_comm_protocol_defs.hash_table = g_hash_table_new(g_str_hash, g_str_equal);
@@ -118,6 +119,7 @@ void gebr_comm_protocol_init(void)
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.qst_def.code, &gebr_comm_protocol_defs.qst_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.harakiri_def.code, &gebr_comm_protocol_defs.harakiri_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.dsp_def.code, &gebr_comm_protocol_defs.dsp_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.sftp_def.code, &gebr_comm_protocol_defs.sftp_def);
 
 	gebr_comm_protocol_defs.code_hash_table = g_hash_table_new(NULL, NULL);
 	g_hash_table_insert(gebr_comm_protocol_defs.code_hash_table, GUINT_TO_POINTER(gebr_comm_protocol_defs.ret_def.code_hash),  &gebr_comm_protocol_defs.ret_def);
@@ -154,6 +156,7 @@ void gebr_comm_protocol_init(void)
 	g_hash_table_insert(gebr_comm_protocol_defs.code_hash_table, GUINT_TO_POINTER(gebr_comm_protocol_defs.qst_def.code_hash), &gebr_comm_protocol_defs.qst_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.code_hash_table, GUINT_TO_POINTER(gebr_comm_protocol_defs.harakiri_def.code_hash), &gebr_comm_protocol_defs.harakiri_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.code_hash_table, GUINT_TO_POINTER(gebr_comm_protocol_defs.dsp_def.code_hash), &gebr_comm_protocol_defs.dsp_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.code_hash_table, GUINT_TO_POINTER(gebr_comm_protocol_defs.sftp_def.code_hash), &gebr_comm_protocol_defs.sftp_def);
 }
 
 void gebr_comm_protocol_destroy(void)

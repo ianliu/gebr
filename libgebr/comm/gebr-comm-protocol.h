@@ -93,6 +93,7 @@ struct gebr_comm_protocol_defs {
 
 	struct gebr_comm_message_def harakiri_def;// Asks daemon to die Maestro -> Daemon
 	struct gebr_comm_message_def dsp_def;   // Display info         Gebr    -> Maestro & Maestro -> Daemon
+	struct gebr_comm_message_def sftp_def;
 };
 
 struct gebr_comm_message {
