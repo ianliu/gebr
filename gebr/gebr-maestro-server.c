@@ -609,7 +609,7 @@ parse_messages(GebrCommServer *comm_server,
 			} else if (ret_hash == gebr_comm_protocol_defs.sftp_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 					goto err;
 
 				GString *remote_port_str = g_list_nth_data(arguments, 0);
