@@ -70,7 +70,8 @@ on_sftp_port_defined(GebrCommPortProvider *self,
 		     GebrmProxy *proxy)
 {
 	gchar *tmp = g_strdup_printf("%d", port);
-	gebr_comm_protocol_socket_return_message(proxy->maestro->socket, FALSE,
+	GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(proxy->client);
+	gebr_comm_protocol_socket_return_message(socket, FALSE,
 						 gebr_comm_protocol_defs.sftp_def, 1, tmp);
 	g_free(tmp);
 }
@@ -80,7 +81,8 @@ on_sftp_port_error(GebrCommPortProvider *self,
 		   GError *error,
 		   GebrmProxy *proxy)
 {
-	gebr_comm_protocol_socket_return_message(proxy->maestro->socket, FALSE,
+	GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(proxy->client);
+	gebr_comm_protocol_socket_return_message(socket, FALSE,
 						 gebr_comm_protocol_defs.sftp_def, 1, "0");
 }
 
