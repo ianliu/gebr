@@ -566,7 +566,7 @@ parse_messages(GebrCommServer *comm_server,
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(comm_server->socket->protocol->waiting_ret_hashs));
+			guint ret_hash = message->ret_hash;
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 

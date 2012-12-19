@@ -80,6 +80,11 @@ void gebr_comm_protocol_socket_resend_message(GebrCommProtocolSocket *self,
 void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboolean blocking,
 					   struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
 
+void gebr_comm_protocol_socket_return_message(GebrCommProtocolSocket * self,
+					      gboolean blocking,
+					      struct gebr_comm_message_def ret_msg,
+					      guint n_params, ...);
+
 GList *gebr_comm_protocol_socket_oldmsg_split(GString * arguments, guint parts);
 
 void gebr_comm_protocol_socket_oldmsg_split_free(GList * split);

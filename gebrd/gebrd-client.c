@@ -324,20 +324,20 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			const gchar *has_maestro = gebrm_path ? "1" : "0";
 			g_free(gebrm_path);
 
-			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 12,
-							      gebrd->hostname,
-							      server_type,
-							      accounts_list->str,
-							      model_name,
-							      total_memory,
-							      gebrd->fs_lock->str,
-							      ncores,
-							      cpu_clock,
-							      gebrd_user_get_daemon_id(gebrd->user),
-							      g_get_home_dir(),
-							      mpi_flavors->str,
-							      has_maestro);
+			gebr_comm_protocol_socket_return_message(client->socket, FALSE,
+								 gebr_comm_protocol_defs.ini_def, 12,
+								 gebrd->hostname,
+								 server_type,
+								 accounts_list->str,
+								 model_name,
+								 total_memory,
+								 gebrd->fs_lock->str,
+								 ncores,
+								 cpu_clock,
+								 gebrd_user_get_daemon_id(gebrd->user),
+								 g_get_home_dir(),
+								 mpi_flavors->str,
+								 has_maestro);
 			gebrd_cpu_info_free(cpuinfo);
 			gebrd_mem_info_free(meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -563,10 +563,10 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			/* frees */
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 2,
-							      gebrd->hostname,
-							      g_strdup_printf("%d", status_id));
+			gebr_comm_protocol_socket_return_message(socket, FALSE,
+								 gebr_comm_protocol_defs.path_def, 2,
+								 gebrd->hostname,
+								 g_strdup_printf("%d", status_id));
 		} else if (message->hash == gebr_comm_protocol_defs.harakiri_def.code_hash) {
 			/* Maestro wants me killed */
 			g_debug("Harakiri");

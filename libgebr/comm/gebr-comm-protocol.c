@@ -193,7 +193,6 @@ struct gebr_comm_protocol *gebr_comm_protocol_new(void)
 	protocol->message = NULL;
 	protocol->messages = NULL;
 	protocol->hostname = g_string_new(NULL);
-	protocol->waiting_ret_hashs = g_queue_new();
 
 	gebr_comm_protocol_reset(protocol);
 
@@ -220,7 +219,6 @@ void gebr_comm_protocol_free(struct gebr_comm_protocol *protocol)
 	g_list_foreach(protocol->messages, (GFunc)gebr_comm_message_free, NULL);
 	g_list_free(protocol->messages);
 	g_string_free(protocol->hostname, TRUE);
-	g_queue_free(protocol->waiting_ret_hashs);
 	g_free(protocol);
 }
 
@@ -244,12 +242,28 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 			if (n_tokens < 2)
 				goto err;
 
+			gchar *ret_msg = g_strrstr(splits[0], ":");
+			if (ret_msg) {
+				ret_msg[0] = '\0';
+				ret_msg += 1;
+			}
+
 			/* code */
-			if (g_hash_table_lookup(gebr_comm_protocol_defs.hash_table, splits[0]) == NULL) {
+			if (!g_hash_table_lookup(gebr_comm_protocol_defs.hash_table, splits[0])) {
 				g_string_assign(data, "");
 				goto err;
 			}
+
+			if (ret_msg && !g_hash_table_lookup(gebr_comm_protocol_defs.hash_table, ret_msg)) {
+				g_string_assign(data, "");
+				goto err;
+			}
+
 			protocol->message->hash = g_str_hash(splits[0]);
+
+			if (ret_msg)
+				protocol->message->ret_hash = g_str_hash(ret_msg);
+
 			/* argument size */
 			strtol_endptr = NULL;
 			protocol->message->argument_size = strtol(splits[1], &strtol_endptr, 10);
@@ -260,6 +274,9 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 			missing = protocol->message->argument_size;
 			/* erase code and size from data */
 			erase_len = strlen(splits[0]) + 1 + strlen(splits[1]) + ((n_tokens == 2) ? 0 : 1);
+			if (ret_msg)
+				erase_len += strlen(ret_msg) + 1;
+
 			g_string_erase(data, 0, erase_len);
 
 			g_strfreev(splits);
@@ -295,6 +312,11 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 
 GString * gebr_comm_protocol_build_messagev(struct gebr_comm_message_def msg_def, guint n_params, va_list ap)
 {
+	return gebr_comm_protocol_build_any_messagev(msg_def, FALSE, n_params, ap);
+}
+
+GString *gebr_comm_protocol_build_any_messagev(struct gebr_comm_message_def msg_def, gboolean is_return, guint n_params, va_list ap)
+{
 	GString * data;
 	GString * message;
 
@@ -311,8 +333,16 @@ GString * gebr_comm_protocol_build_messagev(struct gebr_comm_message_def msg_def
 
 	/* assembly message */
 	message = g_string_new(NULL);
-	g_string_printf(message, "%s %zu %s\n", msg_def.code, data->len, data->str);
+
+	gchar *head;
+	if (!is_return)
+		head = g_strdup(msg_def.code);
+	else
+		head = g_strdup_printf("%s:%s", gebr_comm_protocol_defs.ret_def.code, msg_def.code);
+
+	g_string_printf(message, "%s %zu %s\n", head, data->len, data->str);
 	g_string_free(data, TRUE);
+	g_free(head);
 
 	return message;
 }

@@ -263,7 +263,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 
 		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(server->socket->protocol->waiting_ret_hashs));
+			guint ret_hash = message->ret_hash;
 
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;

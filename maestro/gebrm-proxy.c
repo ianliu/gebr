@@ -70,8 +70,8 @@ on_sftp_port_defined(GebrCommPortProvider *self,
 		     GebrmProxy *proxy)
 {
 	gchar *tmp = g_strdup_printf("%d", port);
-	gebr_comm_protocol_socket_oldmsg_send(proxy->maestro->socket, FALSE,
-	                                      gebr_comm_protocol_defs.ret_def, 1, tmp);
+	gebr_comm_protocol_socket_return_message(proxy->maestro->socket, FALSE,
+						 gebr_comm_protocol_defs.sftp_def, 1, tmp);
 	g_free(tmp);
 }
 
@@ -80,8 +80,8 @@ on_sftp_port_error(GebrCommPortProvider *self,
 		   GError *error,
 		   GebrmProxy *proxy)
 {
-	gebr_comm_protocol_socket_oldmsg_send(proxy->maestro->socket, FALSE,
-	                                      gebr_comm_protocol_defs.ret_def, 1, "0");
+	gebr_comm_protocol_socket_return_message(proxy->maestro->socket, FALSE,
+						 gebr_comm_protocol_defs.sftp_def, 1, "0");
 }
 
 static void
@@ -107,7 +107,7 @@ gebrm_proxy_server_op_parse_messages(GebrCommServer *comm_server,
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(comm_server->socket->protocol->waiting_ret_hashs));
+			guint ret_hash = message->ret_hash;
 			if (ret_hash == gebr_comm_protocol_defs.sftp_def.code_hash) {
 				GList *arguments;
 

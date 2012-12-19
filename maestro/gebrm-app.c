@@ -774,10 +774,10 @@ on_daemon_ret_path(GebrmDaemon *daemon,
 {
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
-		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.ret_def, 2,
-						      daemon_addr,
-						      status_id);
+		gebr_comm_protocol_socket_return_message(socket, FALSE,
+							 gebr_comm_protocol_defs.path_def, 2,
+							 daemon_addr,
+							 status_id);
 	}
 }
 
@@ -1562,9 +1562,9 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gchar *clocks_diff = g_strdup_printf("%d", diff_secs);
 
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 1,
-							      clocks_diff);
+			gebr_comm_protocol_socket_return_message(socket, FALSE,
+								 gebr_comm_protocol_defs.ini_def, 1,
+								 clocks_diff);
 			g_free(clocks_diff);
 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
@@ -1666,8 +1666,8 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.sftp_def.code_hash) {
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 1, "22");
+			gebr_comm_protocol_socket_return_message(socket, FALSE,
+								 gebr_comm_protocol_defs.sftp_def, 1, "22");
 		}
 
 		gebr_comm_message_free(message);
