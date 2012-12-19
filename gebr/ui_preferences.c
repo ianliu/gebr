@@ -469,6 +469,23 @@ on_connect_maestro_clicked(GtkButton *button,
 		set_status_for_maestro(gebr.maestro_controller, maestro, up, gebr_maestro_server_get_state(maestro));
 }
 
+/*
+ * Refactoring: Duplicate code (gebr-maestro-controller)
+ */
+static gchar *
+get_addr_inside_label(const gchar *text)
+{
+	gchar *inside_addr = NULL;
+
+	gchar *init = strstr(text, "(");
+	gchar *finish = g_strrstr(text, ")");
+
+	if (init && finish)
+		inside_addr = g_strndup(init + 1, (finish - (init + 1))/sizeof(gchar));
+
+	return inside_addr;
+}
+
 static gboolean
 on_focus_in_event(GtkWidget *entry,
                   GdkEventFocus *event,
@@ -477,7 +494,14 @@ on_focus_in_event(GtkWidget *entry,
 	if (!entry)
 		return TRUE;
 
-	gtk_entry_set_text(GTK_ENTRY(entry), "");
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(entry));
+
+	gchar *addr = get_addr_inside_label(text);
+
+	if (addr) {
+		gtk_entry_set_text(GTK_ENTRY(entry), addr);
+		g_free(addr);
+	}
 
 	return FALSE;
 }
