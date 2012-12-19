@@ -57,7 +57,7 @@ get_version_file(void)
 {
 	static gchar *file = NULL;
 	if (!file)
-		file = g_build_filename(g_get_home_dir(), "gebrd", g_get_host_name(), "version", NULL);
+		file = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), "version", NULL);
 	return file;
 }
 
