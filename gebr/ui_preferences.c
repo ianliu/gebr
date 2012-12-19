@@ -165,6 +165,24 @@ on_maestro_state_changed(GebrMaestroController *self,
 }
 
 static void
+update_maestro_label(GebrMaestroServer *maestro,
+                     GParamSpec *pspec,
+                     struct ui_preferences *up)
+{
+	const gchar *label = gebr_maestro_server_get_nfs_label(maestro);
+	const gchar *addr = gebr_maestro_server_get_address(maestro);
+
+	if (!label)
+		label = "GêBR Domain";
+
+	if (!g_strrstr(addr, "@"))
+		addr = g_strconcat(g_get_user_name(),"@", addr, NULL);
+
+	gchar *auto_label = g_strdup_printf("%s (%s)", label, addr);
+	gtk_entry_set_text(up->maestro_entry, auto_label);
+}
+
+static void
 set_status_for_maestro(GebrMaestroController *self,
                        GebrMaestroServer     *maestro,
                        struct ui_preferences *up,
@@ -197,24 +215,16 @@ set_status_for_maestro(GebrMaestroController *self,
 		gtk_label_set_markup(GTK_LABEL(status_title), summary_txt);
 		g_free(summary_txt);
 
-		const gchar *label = gebr_maestro_server_get_nfs_label(maestro);
-		const gchar *addr = gebr_maestro_server_get_address(maestro);
+		g_signal_connect(maestro, "notify::nfsid", G_CALLBACK(update_maestro_label), up);
 
-		if (!label)
-			label = "GêBR Domain";
-
-		if (!g_strrstr(addr, "@"))
-			addr = g_strconcat(g_get_user_name(),"@", addr, NULL);
-
-		gchar *auto_label = g_strdup_printf("%s (%s)", label, addr);
-		gtk_entry_set_text(up->maestro_entry, auto_label);
+		update_maestro_label(maestro, NULL, up);
 
 		gebr_config_maestro_save();
 	}
 	else {
 		const gchar *type, *msg;
 		gebr_maestro_server_get_error(maestro, &type, &msg);
-
+		gtk_entry_set_text(up->maestro_entry, g_get_host_name());
 		if (!g_strcmp0(type, "error:none")) {
 			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_DIALOG);
 
