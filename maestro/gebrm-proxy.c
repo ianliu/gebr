@@ -92,6 +92,7 @@ setup_sftp_tunnel(GebrmProxy *proxy, guint remote_port)
 	gebr_comm_port_provider_set_sftp_port(port_provider, remote_port);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), proxy);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), proxy);
+	gebr_comm_port_provider_start(port_provider);
 }
 
 static void
