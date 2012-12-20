@@ -1166,7 +1166,7 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	if (type != ITER_FILE)
 		return FALSE;
 
-	dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
+	debr.edit_menu = dialog = gtk_dialog_new_with_buttons(_("Edit menu"),
 					     GTK_WINDOW(debr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,

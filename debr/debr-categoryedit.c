@@ -593,12 +593,19 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 	}
 
 	if (retval) {
-		const gchar *title = _("Category already exists");
-		gchar *str_mrk;
-		str_mrk = g_strdup_printf("The category <i>%s</i> already exists in the list, the operation will be cancelled.", i_categ);
-		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-					 title, title,
-					 str_mrk);
+		GtkWidget *dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(debr.edit_menu),
+		                                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		                                                       GTK_MESSAGE_ERROR,
+		                                                       GTK_BUTTONS_OK,
+		                                                       _("<b>Category already exists</b>"));
+
+		gtk_window_set_title(GTK_WINDOW(dialog), _("Category already exists"));
+		gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dialog),_("The category <i>%s</i> already exists in the list, the operation will be cancelled."), i_categ);
+		gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+
+		if (response == GTK_RESPONSE_OK)
+			gtk_widget_destroy(dialog);
+
 		g_free(i_categ);
 	}
 
