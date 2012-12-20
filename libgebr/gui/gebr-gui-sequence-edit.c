@@ -299,7 +299,7 @@ static void gebr_gui_sequence_edit_class_init(GebrGuiSequenceEditClass *klass)
 					 g_param_spec_pointer ("list-store",
 							       "List store",
 							       "List store, model for view",
-							       (GParamFlags) (G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE)));
+							       G_PARAM_READWRITE));
 
 	/**
 	 * GebrGuiSequenceEdit:may-rename:

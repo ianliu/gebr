@@ -533,11 +533,10 @@ GtkWidget *category_edit_new(GebrGeoXmlFlow * menu, gboolean new_menu)
 	GebrGeoXmlSequence *category;
 	gebr_geoxml_flow_get_category(menu, &category, 0);
 	category_edit = g_object_new(TYPE_CATEGORY_EDIT,
+	                             "has-scroll", TRUE,
 				     "value-widget", hbox,
-				     "list-store", list_store,
-				     "category", category,
 				     NULL);
-
+	g_object_set(category_edit, "list-store", list_store, "category", category, NULL);
 	category_edit->categories_combo = categories_combo;
 	category_edit->validate_image = validate_image;
 	category_edit->menu = menu;
