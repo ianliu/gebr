@@ -641,6 +641,13 @@ static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 	return FALSE;
 }
 
+void
+on_param_combo_changed(GtkComboBox *widget,
+                       GebrGuiParam *parameter_widget)
+{
+	gtk_widget_set_tooltip_markup(GTK_WIDGET(widget), gtk_combo_box_get_active_text(widget));
+}
+
 /* Widget construction function {{{ */
 
 /*
@@ -857,6 +864,7 @@ gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 		GebrGeoXmlSequence *enum_option;
 
 		parameter_widget->value_widget = combo_box = gtk_combo_box_new_text();
+		g_object_set(combo_box, "width-request", 220, NULL);
 		if (!gebr_geoxml_program_parameter_get_required(parameter_widget->program_parameter))
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
 		gebr_geoxml_program_parameter_get_enum_option(parameter_widget->program_parameter,
@@ -869,7 +877,7 @@ gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 				: gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option));
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), text);
 		}
-
+		g_signal_connect(combo_box, "changed", G_CALLBACK(on_param_combo_changed), parameter_widget);
 		break;
 	}
 	case GEBR_GEOXML_PARAMETER_TYPE_FLAG: {
