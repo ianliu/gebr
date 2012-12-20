@@ -796,6 +796,9 @@ on_cb_changed(GtkComboBox *combo,
 			update_user_defined_filters(jc);
 	}
 
+	gtk_widget_set_tooltip_markup(GTK_WIDGET(jc->priv->flow_combo), gtk_combo_box_get_active_text(jc->priv->flow_combo));
+	gtk_widget_set_tooltip_markup(GTK_WIDGET(jc->priv->server_combo), gtk_combo_box_get_active_text(jc->priv->server_combo));
+
 	on_select_non_single_job(jc, NULL);
 	update_tree_view(jc);
 }
@@ -2410,12 +2413,14 @@ gebr_job_control_new(void)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(flow_cb), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(flow_cb), cell, "text", 0);
 	jc->priv->flow_combo = flow_cb;
+	g_object_set(GTK_WIDGET(jc->priv->flow_combo), "width-request", 150, NULL);
 
 	GtkComboBox *server_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-cb"));
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(server_cb), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(server_cb), cell, "text", 0);
 	jc->priv->server_combo = server_cb;
+	g_object_set(GTK_WIDGET(jc->priv->server_combo), "width-request", 150, NULL);
 
 	GtkComboBox *status_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-status-cb"));
 	cell = gtk_cell_renderer_pixbuf_new();
@@ -2425,6 +2430,7 @@ gebr_job_control_new(void)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_cb), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(status_cb), cell, "text", ST_TEXT);
 	jc->priv->status_combo = status_cb;
+	g_object_set(GTK_WIDGET(jc->priv->server_combo), "width-request", 150, NULL);
 
 //	g_signal_connect(gebr.maestro_controller, "maestro-list-changed",
 //			 G_CALLBACK(on_maestro_list_changed), jc);
