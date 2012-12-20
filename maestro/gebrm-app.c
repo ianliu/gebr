@@ -2302,8 +2302,6 @@ gebrm_app_append_key(void)
 	FILE *auth = fopen(authorized_key, "a");
 	fprintf(auth, "%s (gebrm)\n", public_key);
 
-	gebr_add_remove_ssh_key(FALSE);
-
 	fclose(auth);
 	g_free(path);
 	g_free(public_key);
