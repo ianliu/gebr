@@ -673,16 +673,6 @@ on_daemon_init(GebrmDaemon *daemon,
 	gboolean home_defined = FALSE;
 	gboolean send_nfs = FALSE;
 
-	if (!app->priv->nfsid) {
-		send_nfs = TRUE;
-		app->priv->nfsid = g_strdup(nfsid);
-	}
-
-	if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
-		error = "error:nfs";
-		goto err;
-	}
-
 	if (g_strcmp0(error_type, "connection-refused") == 0) {
 		if (has_duplicated_daemons(app, error_msg)) {
                         error = "error:id";
@@ -695,6 +685,16 @@ on_daemon_init(GebrmDaemon *daemon,
 
 	if (g_strcmp0(error_type, "protocol") == 0) {
 		error = "error:protocol";
+		goto err;
+	}
+
+	if (!app->priv->nfsid) {
+		send_nfs = TRUE;
+		app->priv->nfsid = g_strdup(nfsid);
+	}
+
+	if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
+		error = "error:nfs";
 		goto err;
 	}
 

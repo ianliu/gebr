@@ -268,12 +268,13 @@ GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, GdomeDoc
 
 	/* import all elements */
 	GdomeElement *element = __gebr_geoxml_get_first_element(source_root_element, "*");
-	for (; element != NULL; element = __gebr_geoxml_next_element(element)) {
+	GdomeElement *aux;
+	for (; element != NULL; element = __gebr_geoxml_next_element(aux), gdome_el_unref(aux, &exception)) {
 		GdomeNode *new_node = gdome_doc_importNode(document, (GdomeNode*)element, TRUE, &exception);
 		GdomeNode *result = gdome_el_appendChild(root_element, new_node, &exception);
 		gdome_n_unref(new_node, &exception);
 		gdome_n_unref(result, &exception);
-		gdome_el_unref(element, &exception);
+		aux = element;
 	}
 
 	gdome_el_unref(source_root_element, &exception);
@@ -653,9 +654,8 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:	{
 
-			gebr_geoxml_document_update_header(dom_implementation, document, "project", GEBR_GEOXML_PROJECT_VERSION);
-
 			gdome_el_unref(root_element, &exception);
+			gebr_geoxml_document_update_header(dom_implementation, document, "project", GEBR_GEOXML_PROJECT_VERSION);
 			root_element = gebr_geoxml_document_root_element(*document);
 
 			GHashTable * keys_to_canonized = NULL;
@@ -788,9 +788,8 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.6");
 
-			gebr_geoxml_document_update_header(dom_implementation, document, "line", GEBR_GEOXML_LINE_VERSION);
-
 			gdome_el_unref(root_element, &exception);
+			gebr_geoxml_document_update_header(dom_implementation, document, "line", GEBR_GEOXML_LINE_VERSION);
 			root_element = gebr_geoxml_document_root_element(*document);
 
 			GdomeElement *first_el = __gebr_geoxml_get_first_element(root_element, "path");
@@ -923,9 +922,8 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		} 
 		else if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 
-			gebr_geoxml_document_update_header(dom_implementation, document, "line", GEBR_GEOXML_LINE_VERSION);
-
 			gdome_el_unref(root_element, &exception);
+			gebr_geoxml_document_update_header(dom_implementation, document, "line", GEBR_GEOXML_LINE_VERSION);
 			root_element = gebr_geoxml_document_root_element(*document);
 
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.7");
@@ -1007,9 +1005,8 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	if (strcmp(version, "0.4.0") < 0) {
 		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 
-			gebr_geoxml_document_update_header(dom_implementation, document, "flow", GEBR_GEOXML_FLOW_VERSION);
-
 			gdome_el_unref(root_element, &exception);
+			gebr_geoxml_document_update_header(dom_implementation, document, "flow", GEBR_GEOXML_FLOW_VERSION);
 			root_element = gebr_geoxml_document_root_element(*document);
 
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.4.0");
