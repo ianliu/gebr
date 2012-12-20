@@ -36,6 +36,17 @@ struct _GebrmProxy
 };
 
 static void
+gebrm_proxy_quit(GebrmProxy *proxy)
+{
+	GebrCommServerState state = gebr_comm_server_get_state(proxy->maestro);
+
+	if (state != SERVER_STATE_DISCONNECTED)
+		gebr_comm_server_disconnect(proxy->maestro);
+
+	g_main_loop_quit(proxy->loop);
+}
+
+static void
 gebrm_proxy_server_op_log_message(GebrCommServer *server,
 				  GebrLogMessageType type,
 				  const gchar *message,
@@ -47,6 +58,10 @@ static void
 gebrm_proxy_server_op_state_changed(GebrCommServer *comm_server,
 				    gpointer user_data)
 {
+	GebrmProxy *proxy = user_data;
+	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
+	if (state == SERVER_STATE_DISCONNECTED)
+		gebrm_proxy_quit(proxy);
 }
 
 static void
@@ -154,8 +169,7 @@ static void
 on_proxy_client_disconnect(GebrCommProtocolSocket *socket,
 			   GebrmProxy *proxy)
 {
-	gebr_comm_server_disconnect(proxy->maestro);
-	g_main_loop_quit(proxy->loop);
+	gebrm_proxy_quit(proxy);
 }
 
 static void
