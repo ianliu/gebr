@@ -109,7 +109,7 @@ static void parse_messages(GebrCommServer *comm_server, gpointer user_data);
 
 static void gebr_maestro_server_connectable_init(GebrConnectableIface *iface);
 
-static gchar *gebr_maestro_server_get_user(GebrMaestroServer *maestro);
+gchar *gebr_maestro_server_get_user(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *window);
 
@@ -2023,7 +2023,7 @@ gebr_maestro_server_has_connected_daemon(GebrMaestroServer *maestro)
 	return maestro->priv->has_connected_daemon;
 }
 
-static gchar *
+gchar *
 gebr_maestro_server_get_user(GebrMaestroServer *maestro)
 {
 	g_return_val_if_fail(GEBR_IS_MAESTRO_SERVER(maestro), NULL);

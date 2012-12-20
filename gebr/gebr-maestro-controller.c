@@ -1903,6 +1903,8 @@ on_password_request(GebrMaestroServer *maestro,
 	gchar *ssh_info;
 	GtkWidget *dialog;
 	const gchar *address;
+	gchar *addr = NULL;
+	gchar *user = NULL;
 
 	gdk_threads_enter();
 	dialog = gtk_dialog_new_with_buttons(_("Enter password"),
@@ -1916,19 +1918,27 @@ on_password_request(GebrMaestroServer *maestro,
 
 	if (GEBR_IS_MAESTRO_SERVER(object)) {
 		address = gebr_maestro_server_get_address(GEBR_MAESTRO_SERVER(object));
-		title = g_strdup_printf(_("Connecting to %s"), address);
+		user = gebr_maestro_server_get_user(GEBR_MAESTRO_SERVER(object));
+		if (!g_strrstr(address, "@"))
+			addr = g_strdup_printf("%s@%s", user, address);
+		title = g_strdup_printf(_("Connecting to %s"), addr);
 		ssh_info = g_markup_printf_escaped(_("Maestro <b>%s</b> is asking for your login\n"
 						     "password."), address);
 	} else {
 		address = gebr_daemon_server_get_address(GEBR_DAEMON_SERVER(object));
+		user = gebr_maestro_server_get_user(maestro);
+		if (!g_strrstr(address, "@"))
+			addr = g_strdup_printf("%s@%s", user, address);
 		const gchar *error_type = gebr_daemon_server_get_error_type(GEBR_DAEMON_SERVER(object));
 		if (g_strcmp0(error_type, "error:stop") == 0)
-			title = g_strdup_printf(_("Stopping %s"), address);
+			title = g_strdup_printf(_("Stopping %s"), addr);
 		else
-			title = g_strdup_printf(_("Connecting to %s"), address);
+			title = g_strdup_printf(_("Connecting to %s"), addr);
 		ssh_info = g_markup_printf_escaped(_("<b>%s</b> is asking for your login\n"
 						     "password."), address);
 	}
+
+	g_free(user);
 
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 

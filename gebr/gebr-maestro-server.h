@@ -227,6 +227,8 @@ gboolean gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
 
 gboolean gebr_maestro_server_has_connected_daemon(GebrMaestroServer *maestro);
 
+gchar *gebr_maestro_server_get_user(GebrMaestroServer *maestro);
+
 void gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
                                           gboolean is_wizard_setup);
 
