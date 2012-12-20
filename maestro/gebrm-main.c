@@ -154,6 +154,11 @@ start_proxy_maestro(const gchar *address,
 		    guint port)
 {
 	GebrmProxy *proxy = gebrm_proxy_new(address, port);
+
+	//Generate gebr.key
+	gebr_generate_key();
+	gebrm_app_append_key();
+
 	gebrm_proxy_run(proxy, output_fd);
 	gebrm_proxy_free(proxy);
 }

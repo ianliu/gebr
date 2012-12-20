@@ -2172,6 +2172,7 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 
 	//Generate gebr.key
 	gebr_generate_key();
+	gebrm_app_append_key();
 
 	// Create configuration for NFS
 	app->priv->settings = gebrm_app_create_configuration();
@@ -2268,4 +2269,43 @@ gebrm_app_increment_jobs_counter(GebrmApp *app, const gchar *flow_id)
 	g_hash_table_replace(app->priv->jobs_counter, g_strdup(flow_id), new_counter);
 
 	return *new_counter;
+}
+
+void
+gebrm_app_append_key(void)
+{
+	gchar *path = gebr_key_filename(TRUE);
+	gchar *public_key;
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS))
+		gebr_generate_key();
+
+	// FIXME: please handle GError of the g_file_get_contents
+	if (!g_file_get_contents(path, &public_key, NULL, NULL))
+		g_warn_if_reached();
+
+	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
+
+	gchar *contents = NULL;
+	gchar *authorized_key = g_build_filename(g_get_home_dir(), ".ssh", "authorized_keys", NULL);
+
+	if (g_file_get_contents(authorized_key, &contents, NULL, NULL)) {
+		if (strstr(contents, public_key)) {
+			g_free(contents);
+			g_free(public_key);
+			g_free(authorized_key);
+			g_free(path);
+			return;
+		}
+	} else {
+		g_warn_if_reached();
+	}
+
+	FILE *auth = fopen(authorized_key, "a");
+	fprintf(auth, "%s (gebrm)\n", public_key);
+
+	fclose(auth);
+	g_free(path);
+	g_free(public_key);
+	g_free(authorized_key);
 }

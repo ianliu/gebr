@@ -144,6 +144,13 @@ gchar *gebrm_app_get_nfsid(GebrMaestroSettings *ms);
 void gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
                                            GebrmApp *app);
 
+/**
+ * gebrm_append_key:
+ *
+ * Append gebr.key on Authorized Keys of maestro or proxy
+ */
+void gebrm_app_append_key(void);
+
 
 /* }}} GebrmApp methods */
 
