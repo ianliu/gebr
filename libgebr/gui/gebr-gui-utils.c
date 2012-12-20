@@ -1316,8 +1316,16 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
 
 	gchar *path = g_build_filename(prefix, *aux ? aux : substitute, NULL);
 
-	if (!gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), path))
+	gchar *entry_name = path;
+	if (!gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), path)) {
+		entry_name = home_dir;
 		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), home_dir);
+	}
+
+	gchar *filename = g_strrstr(entry_name, "/");
+	filename = filename + 1;
+	if (filename)
+		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
 
 	g_free(aux);
 	g_free(home_dir);
