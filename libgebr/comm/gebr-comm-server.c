@@ -51,6 +51,7 @@ struct _GebrCommServerPriv {
 	gboolean is_maestro;
 
 	gchar *gebr_id;
+	gchar *cookie;
 
 	GebrCommPortForward *connection_forward;
 
@@ -261,6 +262,8 @@ gebr_comm_server_free(GebrCommServer *server)
 		server->priv->connection_forward = NULL;
 	}
 
+	g_free(server->priv->cookie);
+	g_free(server->priv->gebr_id);
 	g_string_free(server->last_error, TRUE);
 	g_string_free(server->address, TRUE);
 	g_free(server->password);
@@ -389,6 +392,14 @@ on_comm_port_accepts_key(GebrCommPortProvider *self,
                          GebrCommServer *server)
 {
 	server->priv->accepts_key = accepts_key;
+}
+
+void
+gebr_comm_server_set_x11_cookie(GebrCommServer *server, const gchar *cookie)
+{
+	if (server->priv->cookie)
+		g_free(server->priv->cookie);
+	server->priv->cookie = g_strdup(cookie);
 }
 
 void gebr_comm_server_connect(GebrCommServer *server,
@@ -599,8 +610,11 @@ static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServer
  * get this X session magic cookie
  */
 gchar *
-get_xauth_cookie(const gchar *display_number)
+get_xauth_cookie(GebrCommServer *server, const gchar *display_number)
 {
+	if (server->priv->cookie)
+		return g_strdup(server->priv->cookie);
+
 	if (!display_number)
 		return g_strdup("");
 
@@ -655,7 +669,7 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 	gebr_comm_server_change_state(server, SERVER_STATE_CONNECT);
 
 	if (server->priv->is_maestro) {
-		gchar *mcookie_str = get_xauth_cookie(display_number);
+		gchar *mcookie_str = get_xauth_cookie(server, display_number);
 		GTimeVal gebr_time;
 		g_get_current_time(&gebr_time);
 		gchar *gebr_time_iso = g_time_val_to_iso8601(&gebr_time);

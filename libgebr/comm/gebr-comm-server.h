@@ -170,6 +170,12 @@ void gebr_comm_server_set_last_error(GebrCommServer *server,
 
 void gebr_comm_server_free(GebrCommServer *gebr_comm_server);
 
+/**
+ * gebr_comm_server_set_x11_cookie:
+ */
+void gebr_comm_server_set_x11_cookie(GebrCommServer *server,
+				     const gchar *cookie);
+
 void gebr_comm_server_connect(GebrCommServer *server,
 			      gboolean maestro,
 			      gboolean force_init);
