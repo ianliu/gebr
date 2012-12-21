@@ -34,3 +34,4 @@
 #include <comm/gebr-comm-streamsocket.h>
 #include <comm/gebr-comm-terminalprocess.h>
 #include <comm/gebr-comm-uri.h>
+#include <comm/gebr-comm-errors.h>

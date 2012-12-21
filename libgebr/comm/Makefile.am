@@ -64,6 +64,7 @@ libgebr_commsubincludedir = $(includedir)/libgebr/comm
 libgebr_commsubinclude_HEADERS = \
 	gebr-comm-channelsocket.h	\
 	gebr-comm-daemon.h		\
+	gebr-comm-errors.h		\
 	gebr-comm-hostinfo.h		\
 	gebr-comm-http-msg.h 		\
 	gebr-comm-job.h			\
