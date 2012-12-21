@@ -440,6 +440,8 @@ void gebr_comm_server_disconnect(GebrCommServer *server)
 	if (server->state == SERVER_STATE_CONNECT
 	    || server->state == SERVER_STATE_LOGGED)
 		gebr_comm_protocol_socket_disconnect(server->socket);
+	else
+		gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 }
 
 gboolean
@@ -598,6 +600,9 @@ static void gebr_comm_server_disconnected_state(GebrCommServer *server,
 
 static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServerState state)
 {
+	if (state == server->state)
+		return;
+
 	g_debug("State of machine %s changed from %s to %s",
 		server->address->str,
 		gebr_comm_server_state_to_string(server->state),
