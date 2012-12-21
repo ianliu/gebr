@@ -241,8 +241,11 @@ unmount_gvfs(GebrMaestroServer *maestro,
 		return;
 	}
 
-	if (maestro->priv->sftp_forward)
+	if (maestro->priv->sftp_forward) {
 		gebr_comm_port_forward_close(maestro->priv->sftp_forward);
+		gebr_comm_port_forward_free(maestro->priv->sftp_forward);
+		maestro->priv->sftp_forward = NULL;
+	}
 
 	maestro->priv->has_connected_daemon = FALSE;
 
@@ -499,6 +502,12 @@ mount_enclosing_ready_cb(GFile *location,
 		g_object_unref(maestro->priv->mount_location);
 		maestro->priv->mount_location = NULL;
 		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_NOK);
+
+		if (maestro->priv->sftp_forward) {
+			gebr_comm_port_forward_close(maestro->priv->sftp_forward);
+			gebr_comm_port_forward_free(maestro->priv->sftp_forward);
+			maestro->priv->sftp_forward = NULL;
+		}
 	}
 	gebr_add_remove_ssh_key(TRUE);
 }
