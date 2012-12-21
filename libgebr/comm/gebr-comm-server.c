@@ -54,6 +54,7 @@ struct _GebrCommServerPriv {
 	gchar *cookie;
 
 	GebrCommPortForward *connection_forward;
+	GebrCommPortForward *x11_forward;
 
 	/* Interactive state variables */
 	InteractiveState istate;
@@ -251,16 +252,10 @@ gebr_comm_server_new(const gchar * _address,
 void
 gebr_comm_server_free(GebrCommServer *server)
 {
-	gebr_comm_server_free_x11_forward(server);
+	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 
 	if (server->priv->qa_cache)
 		g_hash_table_remove_all(server->priv->qa_cache);
-
-	if (server->priv->connection_forward) {
-		gebr_comm_port_forward_close(server->priv->connection_forward);
-		gebr_comm_port_forward_free(server->priv->connection_forward);
-		server->priv->connection_forward = NULL;
-	}
 
 	g_free(server->priv->cookie);
 	g_free(server->priv->gebr_id);
@@ -499,6 +494,8 @@ on_x11_port_defined(GebrCommPortProvider *self,
 		    guint port,
 		    GebrCommServer *server)
 {
+	server->priv->x11_forward = gebr_comm_port_provider_get_forward(self);
+
 	gchar *tmp = g_strdup_printf("%d", port);
 	gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 					      gebr_comm_protocol_defs.dsp_def, 2,
@@ -601,6 +598,22 @@ static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServer
 		server->address->str,
 		gebr_comm_server_state_to_string(server->state),
 		gebr_comm_server_state_to_string(state));
+
+	if (state == SERVER_STATE_DISCONNECTED) {
+		gebr_comm_server_free_x11_forward(server);
+
+		if (server->priv->x11_forward) {
+			gebr_comm_port_forward_close(server->priv->x11_forward);
+			gebr_comm_port_forward_free(server->priv->x11_forward);
+			server->priv->x11_forward = NULL;
+		}
+
+		if (server->priv->connection_forward) {
+			gebr_comm_port_forward_close(server->priv->connection_forward);
+			gebr_comm_port_forward_free(server->priv->connection_forward);
+			server->priv->connection_forward = NULL;
+		}
+	}
 
 	server->state = state;
 	server->ops->state_changed(server, server->user_data);
@@ -772,16 +785,9 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 	server->socket->protocol->logged = FALSE;
 	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 	gebr_comm_protocol_reset(server->socket->protocol);
-	gebr_comm_server_free_x11_forward(server);
 
 	if (server->priv->qa_cache)
 		g_hash_table_remove_all(server->priv->qa_cache);
-
-	if (server->priv->connection_forward) {
-		gebr_comm_port_forward_close(server->priv->connection_forward);
-		gebr_comm_port_forward_free(server->priv->connection_forward);
-		server->priv->connection_forward = NULL;
-	}
 }
 
 static const gchar *state_hash[] = {
