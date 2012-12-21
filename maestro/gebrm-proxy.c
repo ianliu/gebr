@@ -33,6 +33,8 @@ struct _GebrmProxy
 	GebrCommListenSocket *listener;
 	gchar *remote_addr;
 	guint remote_port;
+
+	GebrCommPortForward *sftp_forward;
 };
 
 static void
@@ -42,6 +44,12 @@ gebrm_proxy_quit(GebrmProxy *proxy)
 
 	if (state != SERVER_STATE_DISCONNECTED)
 		gebr_comm_server_disconnect(proxy->maestro);
+
+	if (proxy->sftp_forward) {
+		gebr_comm_port_forward_close(proxy->sftp_forward);
+		gebr_comm_port_forward_free(proxy->sftp_forward);
+		proxy->sftp_forward = NULL;
+	}
 
 	g_main_loop_quit(proxy->loop);
 }
@@ -84,6 +92,8 @@ on_sftp_port_defined(GebrCommPortProvider *self,
 		     guint port,
 		     GebrmProxy *proxy)
 {
+	proxy->sftp_forward = gebr_comm_port_provider_get_forward(self);
+
 	gchar *tmp = g_strdup_printf("%d", port);
 	GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(proxy->client);
 	gebr_comm_protocol_socket_return_message(socket, FALSE,
@@ -279,6 +289,7 @@ gebrm_proxy_new(const gchar *remote_addr,
 	proxy->listener = gebr_comm_listen_socket_new();
 	proxy->remote_addr = g_strdup(remote_addr);
 	proxy->remote_port = remote_port;
+	proxy->sftp_forward = NULL;
 
 	g_signal_connect(proxy->listener, "new-connection",
 			 G_CALLBACK(on_proxy_new_connection), proxy);
