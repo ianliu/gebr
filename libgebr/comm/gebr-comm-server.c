@@ -60,6 +60,7 @@ struct _GebrCommServerPriv {
 	InteractiveState istate;
 
 	gboolean accepts_key;
+	gboolean check_host;
 
 	GHashTable *qa_cache;
 
@@ -123,6 +124,7 @@ gebr_comm_server_init(GebrCommServer *server)
 
 	server->priv->istate = ISTATE_NONE;
 	server->priv->pending_connections = NULL;
+	server->priv->check_host = TRUE;
 }
 
 static void
@@ -423,6 +425,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 		gebr_comm_port_provider_new(port_type, server->address->str);
 
 	gebr_comm_port_provider_set_force_init(port_provider, force_init);
+	gebr_comm_port_provider_set_check_host(port_provider, server->priv->check_host);
 
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
@@ -474,7 +477,7 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	if (gebr_comm_is_local_address(server->address->str))
 		g_string_printf(cmd_line, "bash -c '%s'", kill);
 	else {
-		gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
+		gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key(server->priv->check_host);
 		g_string_printf(cmd_line, "%s -x %s '%s'", ssh_cmd, server->address->str, kill);
 		g_free(ssh_cmd);
 	}
@@ -549,6 +552,7 @@ gebr_comm_server_forward_x11(GebrCommServer *server,
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(GEBR_COMM_PORT_TYPE_X11, server->address->str);
 	gebr_comm_port_provider_set_display(port_provider, display_port, display_host);
+	gebr_comm_port_provider_set_check_host(port_provider, server->priv->check_host);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_port_error), server);
 	g_signal_connect(port_provider, "repass-password", G_CALLBACK(on_comm_port_password), server);
@@ -869,7 +873,7 @@ get_append_key_command(GebrCommServer *server)
 	g_file_get_contents(path, &public_key, NULL, NULL);
 	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
 
-	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
+	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key(server->priv->check_host);
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
 			"'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s (%s)\" >> $HOME/.ssh/authorized_keys'",
@@ -935,7 +939,15 @@ gebr_comm_server_create_port_provider(GebrCommServer *server,
 {
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(type, server->address->str);
+	gebr_comm_port_provider_set_check_host(port_provider, server->priv->check_host);
 	g_signal_connect(port_provider, "repass-password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	return port_provider;
+}
+
+void
+gebr_comm_server_set_check_host(GebrCommServer *server,
+                                gboolean check_host)
+{
+	server->priv->check_host = check_host;
 }

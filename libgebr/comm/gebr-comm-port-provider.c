@@ -65,6 +65,7 @@ struct _GebrCommPortProviderPriv {
 	const gchar *remote_address;
 
 	gboolean force_init;
+	gboolean check_host;
 };
 
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
@@ -268,6 +269,7 @@ gebr_comm_port_provider_init(GebrCommPortProvider *self)
 						 GEBR_COMM_TYPE_PORT_PROVIDER,
 						 GebrCommPortProviderPriv);
 	self->priv->state = STATE_INIT;
+	self->priv->check_host = TRUE;
 }
 /* }}} */
 
@@ -678,7 +680,7 @@ get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 	if (is_maestro && self->priv->force_init)
 		force_init = TRUE;
 
-	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
+	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key(self->priv->check_host);
 
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s%s'\"",
@@ -727,7 +729,7 @@ get_x11_command(GebrCommPortProvider *self)
 	gchar *ssh_cmd;
 	GString *cmd_line;
 
-	ssh_cmd = gebr_comm_get_ssh_command_with_key();
+	ssh_cmd = gebr_comm_get_ssh_command_with_key(self->priv->check_host);
 	cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s -v -x -R 0:127.0.0.1:%d %s -N",
 			ssh_cmd, self->priv->display_port, self->priv->address);
@@ -778,7 +780,7 @@ get_local_forward_command(GebrCommPortProvider *self,
 			  const gchar *addr,
 			  guint remote_port)
 {
-	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
+	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key(self->priv->check_host);
 	GString *string = g_string_new(NULL);
 
 	*port = get_port(self);
@@ -919,4 +921,12 @@ gebr_comm_port_provider_set_sftp_port(GebrCommPortProvider *port_provider,
 {
 	port_provider->priv->remote_port = remote_port;
 }
+
+void
+gebr_comm_port_provider_set_check_host(GebrCommPortProvider *port_provider,
+                                       gboolean check_host)
+{
+	port_provider->priv->check_host = check_host;
+}
+
 /* }}} */

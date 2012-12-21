@@ -206,6 +206,14 @@ void gebr_comm_port_forward_free(GebrCommPortForward *port_forward);
 void gebr_comm_port_provider_set_sftp_port(GebrCommPortProvider *port_provider,
 					   guint remote_port);
 
+/**
+ * gebr_comm_port_provider_set_check_host:
+ *
+ * Sets the option check host to SSH connections.
+ */
+void gebr_comm_port_provider_set_check_host(GebrCommPortProvider *port_provider,
+                                            gboolean check_host);
+
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_COMM_PORT_PROVIDER_H__ */

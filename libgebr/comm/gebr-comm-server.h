@@ -280,6 +280,9 @@ void gebr_comm_server_maestro_connect_on_daemons(GebrCommServer *server);
 GebrCommPortProvider *gebr_comm_server_create_port_provider(GebrCommServer *server,
 							    GebrCommPortType type);
 
+void gebr_comm_server_set_check_host(GebrCommServer *server,
+                                     gboolean check_host);
+
 G_END_DECLS
 
 #endif /* __GEBR_COMM_SERVER_H__ */
