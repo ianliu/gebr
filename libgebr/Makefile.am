@@ -50,6 +50,7 @@ lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = 		\
 	date.c			\
 	gebr-arith-expr.c	\
+	gebr-auth.c		\
 	gebr-expr.c		\
 	gebr-iexpr.c		\
 	gebr-maestro-info.c	\
@@ -68,6 +69,7 @@ libgebrincludedir = $(includedir)/libgebr
 libgebrinclude_HEADERS =	\
 	date.h			\
 	gebr-arith-expr.h	\
+	gebr-auth.h		\
 	gebr-expr.h		\
 	gebr-iexpr.h		\
 	gebr-maestro-info.h	\
