@@ -22,6 +22,7 @@
 #define __GEBRM_PROXY_H__
 
 #include <glib.h>
+#include <libgebr/gebr-auth.h>
 
 G_BEGIN_DECLS
 
@@ -30,7 +31,7 @@ typedef struct _GebrmProxy GebrmProxy;
 GebrmProxy *gebrm_proxy_new(const gchar *remote_addr,
 			    guint remote_port);
 
-void gebrm_proxy_run(GebrmProxy *proxy, gint fd);
+void gebrm_proxy_run(GebrmProxy *proxy, gint fd, GebrAuth *auth);
 
 void gebrm_proxy_free(GebrmProxy *proxy);
 

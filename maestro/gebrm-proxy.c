@@ -28,6 +28,7 @@
 struct _GebrmProxy
 {
 	GMainLoop *loop;
+	GebrAuth *auth;
 	GebrmClient *client;
 	GebrCommServer *maestro;
 	GebrCommListenSocket *listener;
@@ -299,8 +300,9 @@ gebrm_proxy_new(const gchar *remote_addr,
 }
 
 void
-gebrm_proxy_run(GebrmProxy *proxy, int fd)
+gebrm_proxy_run(GebrmProxy *proxy, int fd, GebrAuth *auth)
 {
+	proxy->auth = auth;
 	GebrCommSocketAddress address = gebr_comm_socket_address_ipv4("127.0.0.1", 0);
 	gebr_comm_listen_socket_listen(proxy->listener, &address);
 	address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(proxy->listener));

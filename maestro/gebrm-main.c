@@ -35,6 +35,7 @@
 
 #include <libgebr/gebr-version.h>
 #include <libgebr/gebr-maestro-settings.h>
+#include <libgebr/gebr-auth.h>
 
 #define GETTEXT_PACKAGE "gebrm"
 
@@ -43,6 +44,7 @@ static gboolean show_version;
 static gboolean force_init;
 static gboolean nocookie;
 static int output_fd = STDOUT_FILENO;
+static GebrAuth *auth;
 
 static GOptionEntry entries[] = {
 	{"interactive", 'i', 0, G_OPTION_ARG_NONE, &interactive,
@@ -162,7 +164,7 @@ start_proxy_maestro(const gchar *address,
 	gebr_generate_key();
 	gebrm_app_append_key();
 
-	gebrm_proxy_run(proxy, output_fd);
+	gebrm_proxy_run(proxy, output_fd, auth);
 	gebrm_proxy_free(proxy);
 }
 
@@ -280,6 +282,10 @@ main(int argc, char *argv[])
 		exit(EXIT_SUCCESS);
 	}
 
+	auth = gebr_auth_new();
+	if (!nocookie)
+		gebr_auth_read_cookie(auth);
+
 	GebrMaestroSettings *ms = gebrm_app_create_configuration();
 	const gchar *nfsid = gebrm_app_get_nfsid(ms);
 	const gchar *local_addr = g_get_host_name();
@@ -332,7 +338,7 @@ main(int argc, char *argv[])
 
 	GebrmApp *app = gebrm_app_singleton_get();
 
-	if (!gebrm_app_run(app, output_fd, curr_version))
+	if (!gebrm_app_run(app, output_fd, curr_version, auth))
 		exit(EXIT_FAILURE);
 
 	g_free(curr_version);

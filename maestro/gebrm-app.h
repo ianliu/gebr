@@ -22,6 +22,7 @@
 #define __GEBRM_APP_H__
 
 #include <glib-object.h>
+#include <libgebr/gebr-auth.h>
 #include <libgebr/gebr-maestro-settings.h>
 
 #define GEBRM_TYPE_APP            (gebrm_app_get_type())
@@ -114,7 +115,7 @@ GebrmApp *gebrm_app_new(void);
  *
  * Writes the port in @fd and starts the application main loop.
  */
-gboolean gebrm_app_run(GebrmApp *app, int fd, const gchar *version);
+gboolean gebrm_app_run(GebrmApp *app, int fd, const gchar *version, GebrAuth *auth);
 
 gboolean gebrm_app_create_folder_for_addr(const gchar *addr);
 

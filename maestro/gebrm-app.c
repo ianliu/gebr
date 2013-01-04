@@ -44,6 +44,7 @@ struct _GebrmAppPriv {
 	GMainLoop *main_loop;
 	GebrCommListenSocket *listener;
 	GebrCommSocketAddress address;
+	GebrAuth *auth;
 	GList *connections;
 	GList *daemons;
 	gchar *nfsid;
@@ -2110,13 +2111,14 @@ gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
 }
 
 gboolean
-gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
+gebrm_app_run(GebrmApp *app, int fd, const gchar *version, GebrAuth *auth)
 {
 	GError *error_lock = NULL;
 	GError *error_version = NULL;
 
 	GebrCommSocketAddress address = gebr_comm_socket_address_ipv4("127.0.0.1", 0);
 	app->priv->listener = gebr_comm_listen_socket_new();
+	app->priv->auth = auth;
 
 	g_signal_connect(app->priv->listener, "new-connection",
 			 G_CALLBACK(on_new_connection), app);
