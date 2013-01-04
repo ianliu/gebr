@@ -41,6 +41,7 @@
 static gboolean interactive;
 static gboolean show_version;
 static gboolean force_init;
+static gboolean nocookie;
 static int output_fd = STDOUT_FILENO;
 
 static GOptionEntry entries[] = {
@@ -50,6 +51,8 @@ static GOptionEntry entries[] = {
 		"Show GeBR daemon version", NULL},
 	{"force", 'f', 0, G_OPTION_ARG_NONE, &force_init,
 		"Force to run server, ignoring lock", NULL},
+	{"nocookie", 'n', 0, G_OPTION_ARG_NONE, &nocookie,
+		"Do not ask for authorization cookie when launching", NULL},
 	{NULL}
 };
 
