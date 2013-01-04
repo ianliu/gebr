@@ -23,6 +23,8 @@
 
 #include <glib.h>
 
+#define GEBR_AUTH_COOKIE_LENGTH 64
+
 G_BEGIN_DECLS
 
 typedef struct _GebrAuth GebrAuth;

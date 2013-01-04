@@ -21,8 +21,6 @@
 #include "gebr-auth.h"
 #include <stdio.h>
 
-#define COOKIE_LENGTH 64
-
 struct _GebrAuth {
 	GTree *cookies;
 };
@@ -40,7 +38,7 @@ gebr_auth_new(void)
 void
 gebr_auth_read_cookie(GebrAuth *self)
 {
-	gchar *key = g_new(gchar, COOKIE_LENGTH);
+	gchar *key = g_new(gchar, GEBR_AUTH_COOKIE_LENGTH);
 
 	if (scanf("%64s", key) != 1) {
 		g_warning("Could not retrieve cookie!");
