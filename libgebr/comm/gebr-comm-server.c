@@ -31,7 +31,6 @@
 #include "../libgebr-gettext.h"
 #include <glib/gi18n-lib.h>
 #include <libgebr/utils.h>
-#include <libgebr/gebr-auth.h>
 
 #include "gebr-comm-server.h"
 #include "gebr-comm-listensocket.h"
@@ -127,7 +126,6 @@ gebr_comm_server_init(GebrCommServer *server)
 	server->priv->istate = ISTATE_NONE;
 	server->priv->pending_connections = NULL;
 	server->priv->check_host = TRUE;
-	server->priv->gebr_cookie = gebr_id_random_create(GEBR_AUTH_COOKIE_LENGTH);
 }
 
 static void
@@ -960,4 +958,11 @@ gebr_comm_server_set_check_host(GebrCommServer *server,
                                 gboolean check_host)
 {
 	server->priv->check_host = check_host;
+}
+
+void
+gebr_comm_server_set_cookie(GebrCommServer *server,
+                            const gchar *gebr_cookie)
+{
+	server->priv->gebr_cookie = g_strdup(gebr_cookie);
 }

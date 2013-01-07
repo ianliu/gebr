@@ -25,6 +25,7 @@
 #include "gebrm-task.h"
 
 #include <libgebr/comm/gebr-comm.h>
+#include <libgebr/gebr-auth.h>
 #include "libgebr/geoxml/program.h"
 
 struct _GebrmDaemonPriv {
@@ -497,6 +498,7 @@ gebrm_daemon_set_property(GObject      *object,
 	case PROP_ADDRESS:
 		daemon->priv->server = gebr_comm_server_new(g_value_get_string(value),
 							    NULL, &daemon_ops);
+		gebr_comm_server_set_cookie(daemon->priv->server, gebr_id_random_create(GEBR_AUTH_COOKIE_LENGTH));
 		gebr_comm_server_set_check_host(daemon->priv->server, FALSE);
 		g_signal_connect(daemon->priv->server, "server-password-request",
 				 G_CALLBACK(on_password_request), daemon);

@@ -26,6 +26,7 @@
 #include <libgebr/gui/gui.h>
 #include <libgebr/gebr-maestro-info.h>
 #include <libgebr/gebr-maestro-settings.h>
+#include <libgebr/gebr-auth.h>
 #include <stdlib.h>
 #include <glib/gstdio.h>
 #include <unistd.h>
@@ -1705,6 +1706,7 @@ gebr_maestro_server_connect(GebrMaestroServer *maestro,
 						     gebr_get_session_id(),
 						     &maestro_ops);
 
+	gebr_comm_server_set_cookie(maestro->priv->server, gebr_id_random_create(GEBR_AUTH_COOKIE_LENGTH));
 	g_signal_connect(maestro->priv->server, "server-password-request",
 	                 G_CALLBACK(on_password_request), maestro);
 	g_signal_connect(maestro->priv->server, "question-request",

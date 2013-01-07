@@ -283,6 +283,8 @@ GebrCommPortProvider *gebr_comm_server_create_port_provider(GebrCommServer *serv
 void gebr_comm_server_set_check_host(GebrCommServer *server,
                                      gboolean check_host);
 
+void gebr_comm_server_set_cookie(GebrCommServer *server, const gchar *gebr_cookie);
+
 G_END_DECLS
 
 #endif /* __GEBR_COMM_SERVER_H__ */
