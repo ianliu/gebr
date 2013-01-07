@@ -66,6 +66,8 @@ struct _GebrCommPortProviderPriv {
 
 	gboolean force_init;
 	gboolean check_host;
+
+	gchar *gebr_cookie;
 };
 
 static gchar *get_local_forward_command(GebrCommPortProvider *self,
@@ -927,6 +929,15 @@ gebr_comm_port_provider_set_check_host(GebrCommPortProvider *port_provider,
                                        gboolean check_host)
 {
 	port_provider->priv->check_host = check_host;
+}
+
+void
+gebr_comm_port_provider_set_cookie(GebrCommPortProvider *port_provider,
+				   const gchar *cookie)
+{
+	if (port_provider->priv->gebr_cookie)
+		g_free(port_provider->priv->gebr_cookie);
+	port_provider->priv->gebr_cookie = g_strdup(cookie);
 }
 
 /* }}} */

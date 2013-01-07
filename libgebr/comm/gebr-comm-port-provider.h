@@ -214,6 +214,14 @@ void gebr_comm_port_provider_set_sftp_port(GebrCommPortProvider *port_provider,
 void gebr_comm_port_provider_set_check_host(GebrCommPortProvider *port_provider,
                                             gboolean check_host);
 
+/**
+ * gebr_comm_port_provider_set_cookie:
+ *
+ * Sets the GeBR's authentication cookie.
+ */
+void gebr_comm_port_provider_set_cookie(GebrCommPortProvider *port_provider,
+					const gchar *cookie);
+
 G_END_DECLS
 
 #endif /* end of include guard: __GEBR_COMM_PORT_PROVIDER_H__ */
