@@ -47,6 +47,9 @@ G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
 static void ssh_process_read(GebrCommTerminalProcess *process,
 			     GebrCommSsh *self);
 
+static void ssh_process_write(GebrCommTerminalProcess *process,
+			      GebrCommSsh *self);
+
 static void ssh_process_finished(GebrCommTerminalProcess *process,
 				 GebrCommSsh *self);
 
@@ -59,6 +62,7 @@ enum {
 	SSH_QUESTION,
 	SSH_ERROR,
 	SSH_STDOUT,
+	SSH_STDIN,
 	SSH_KEY,
 	SSH_FINISHED,
 	LAST_SIGNAL
@@ -147,6 +151,15 @@ gebr_comm_ssh_class_init(GebrCommSshClass *klass)
 			     G_TYPE_NONE, 1,
 			     G_TYPE_GSTRING);
 
+	signals[SSH_STDIN] =
+		g_signal_new("ssh-stdin",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommSshClass, ssh_stdin),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
+
 	signals[SSH_KEY] =
 		g_signal_new("ssh-key",
 			     G_OBJECT_CLASS_TYPE(object_class),
@@ -183,6 +196,8 @@ gebr_comm_ssh_init(GebrCommSsh *self)
 
 	g_signal_connect(self->priv->process, "ready-read",
 			 G_CALLBACK(ssh_process_read), self);
+	g_signal_connect(self->priv->process, "ready-write",
+			 G_CALLBACK(ssh_process_write), self);
 	g_signal_connect(self->priv->process, "finished",
 			 G_CALLBACK(ssh_process_finished), self);
 }
@@ -293,6 +308,14 @@ ssh_process_read(GebrCommTerminalProcess *process,
 	output = gebr_comm_terminal_process_read_string_all(process);
 
 	gebr_comm_ssh_parse_output(self, process, output);
+}
+
+static void
+ssh_process_write(GebrCommTerminalProcess *process,
+		  GebrCommSsh *self)
+{
+	if (self->priv->out_state == SSH_OUT_STATE_COMMAND_OUTPUT)
+		g_signal_emit(self, signals[SSH_STDIN], 0);
 }
 
 static void

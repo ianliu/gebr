@@ -85,6 +85,15 @@ struct _GebrCommSshClass {
 	void (*ssh_stdout) (GebrCommSsh *self, const GString *buffer);
 
 	/**
+	 * GebrCommSsh::ssh-stdin:
+	 *
+	 * This signal is emitted when the command executed by ssh requests
+	 * user input. You can give the input by calling
+	 * gebr_comm_ssh_write_chars().
+	 */
+	void (*ssh_stdin) (GebrCommSsh *self);
+
+	/**
 	 * GebrCommSsh::ssh_key:
 	 *
 	 * This signal is emitted when ssh check accepts or no publickey.
