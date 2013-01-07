@@ -276,14 +276,16 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *display_port = g_string_new("");
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
 			GString *version = g_list_nth_data(arguments, 0);
 			GString *hostname = g_list_nth_data(arguments, 1);
+			GString *gebr_cookie = g_list_nth_data(arguments, 2);
 
 			g_debug("Current protocol version is: %s", gebr_comm_protocol_get_version());
 			g_debug("Received protocol version:   %s", version->str);
+			g_debug("Received GeBR cookie: %s", gebr_cookie->str);
 
 			if (strcmp(version->str, gebr_comm_protocol_get_version())) {
 				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
