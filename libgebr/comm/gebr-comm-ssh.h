@@ -128,11 +128,11 @@ void gebr_comm_ssh_password_error(GebrCommSsh *self,
 const gchar *gebr_comm_ssh_get_ssh_output(GebrCommSsh *ssh);
 
 /**
- * gebr_comm_ssh_write_string:
+ * gebr_comm_ssh_write_chars:
  *
  * Writes @data into stdin of @ssh.
  */
-void gebr_comm_ssh_write_string(GebrCommSsh *ssh, const gchar *data);
+void gebr_comm_ssh_write_chars(GebrCommSsh *ssh, const gchar *data);
 
 G_END_DECLS
 

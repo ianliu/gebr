@@ -430,7 +430,7 @@ gebr_comm_ssh_get_ssh_output(GebrCommSsh *ssh)
 }
 
 void
-gebr_comm_ssh_write_string(GebrCommSsh *ssh, const gchar *data)
+gebr_comm_ssh_write_chars(GebrCommSsh *ssh, const gchar *data)
 {
 	GString *tmp = g_string_new(data);
 	gebr_comm_terminal_process_write_string(ssh->priv->process, tmp);
