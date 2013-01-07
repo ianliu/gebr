@@ -213,11 +213,12 @@ on_proxy_client_parse_messages(GebrCommProtocolSocket *socket,
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 7)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
 				goto err;
 
 			GString *cookie  = g_list_nth_data(arguments, 2);
 			GString *gebr_id = g_list_nth_data(arguments, 3);
+			GString *gebr_cookie = g_list_nth_data(arguments, 7);
 
 			gebrm_client_set_id(client, gebr_id->str);
 			gebrm_client_set_magic_cookie(client, cookie->str);
