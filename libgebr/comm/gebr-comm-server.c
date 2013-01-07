@@ -31,6 +31,7 @@
 #include "../libgebr-gettext.h"
 #include <glib/gi18n-lib.h>
 #include <libgebr/utils.h>
+#include <libgebr/gebr-auth.h>
 
 #include "gebr-comm-server.h"
 #include "gebr-comm-listensocket.h"
@@ -52,6 +53,7 @@ struct _GebrCommServerPriv {
 
 	gchar *gebr_id;
 	gchar *cookie;
+	gchar *gebr_cookie;
 
 	GebrCommPortForward *connection_forward;
 	GebrCommPortForward *x11_forward;
@@ -125,6 +127,7 @@ gebr_comm_server_init(GebrCommServer *server)
 	server->priv->istate = ISTATE_NONE;
 	server->priv->pending_connections = NULL;
 	server->priv->check_host = TRUE;
+	server->priv->gebr_cookie = gebr_id_random_create(GEBR_AUTH_COOKIE_LENGTH);
 }
 
 static void
@@ -260,6 +263,7 @@ gebr_comm_server_free(GebrCommServer *server)
 		g_hash_table_remove_all(server->priv->qa_cache);
 
 	g_free(server->priv->cookie);
+	g_free(server->priv->gebr_cookie);
 	g_free(server->priv->gebr_id);
 	g_string_free(server->last_error, TRUE);
 	g_string_free(server->address, TRUE);
