@@ -230,6 +230,7 @@ on_proxy_client_parse_messages(GebrCommProtocolSocket *socket,
 			gebr_comm_server_set_check_host(proxy->maestro, FALSE);
 			gebr_comm_server_set_x11_cookie(proxy->maestro, cookie->str);
 			gebr_comm_server_connect(proxy->maestro, TRUE, FALSE);
+			gebr_comm_server_set_cookie(proxy->maestro, gebr_cookie->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
