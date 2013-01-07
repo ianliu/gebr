@@ -1513,7 +1513,7 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 7)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
 				goto err;
 
 			GString *address = g_list_nth_data(arguments, 0);
@@ -1522,9 +1522,11 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			GString *gebr_id = g_list_nth_data(arguments, 3);
 			GString *gebr_time_iso = g_list_nth_data(arguments, 4);
 			GString *has_maestro = g_list_nth_data(arguments, 5);
+			GString *gebr_cookie = g_list_nth_data(arguments, 7);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 			g_debug("Maestro received GeBR time: %s", gebr_time_iso->str);
+			g_debug("Maestro received GeBR cookie: %s", gebr_cookie->str);
 
 			if (g_strcmp0(version->str, gebr_version()) != 0) {
 				g_debug("Gebr's version mismatch! Got: %s Expected: %s",
