@@ -702,14 +702,15 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		gchar *daemon_location = g_find_program_in_path("gebrd");
 
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-		                                      gebr_comm_protocol_defs.ini_def, 7,
+		                                      gebr_comm_protocol_defs.ini_def, 8,
 		                                      g_get_host_name(),
 		                                      gebr_version(),
 		                                      mcookie_str,
 		                                      server->priv->gebr_id,
 		                                      gebr_time_iso,
 		                                      maestro_location ? "1" : "0",
-                                		      daemon_location ? "1" : "0");
+						      daemon_location ? "1" : "0",
+						      server->priv->gebr_cookie);
 
 		g_free(maestro_location);
 		g_free(daemon_location);
@@ -718,9 +719,10 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		g_free(gebr_time_iso);
 	} else {
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.ini_def, 2,
+						      gebr_comm_protocol_defs.ini_def, 3,
 						      gebr_comm_protocol_get_version(),
-						      hostname);
+						      hostname,
+						      server->priv->gebr_cookie);
 	}
 
 }
