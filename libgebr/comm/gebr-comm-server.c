@@ -430,6 +430,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 
 	gebr_comm_port_provider_set_force_init(port_provider, force_init);
 	gebr_comm_port_provider_set_check_host(port_provider, server->priv->check_host);
+	gebr_comm_port_provider_set_cookie(port_provider, server->priv->gebr_cookie);
 
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
