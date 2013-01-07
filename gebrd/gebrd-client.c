@@ -66,6 +66,7 @@ void client_add(GebrCommProtocolSocket * client)
 	c = g_new(struct client, 1);
 	c->socket = client;
 	c->display = g_string_new(NULL);
+	c->gebr_cookie = NULL;
 
 	gebrd_user_set_connection(gebrd->user, c);
 
@@ -299,6 +300,9 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			client->socket->protocol->logged = TRUE;
 			g_string_assign(client->socket->protocol->hostname, hostname->str);
 			client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
+			if (client->gebr_cookie)
+				g_free(client->gebr_cookie);
+			client->gebr_cookie = g_strdup(gebr_cookie);
 
 			const gchar *server_type;
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
