@@ -55,6 +55,7 @@ struct _GebrCommTerminalProcessClass {
 
 	/* signals */
 	void (*ready_read) (GebrCommTerminalProcess * self);
+	void (*ready_write) (GebrCommTerminalProcess *self);
 	void (*finished) (GebrCommTerminalProcess * self);
 };
 

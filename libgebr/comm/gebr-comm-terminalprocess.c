@@ -42,6 +42,7 @@ static void __gebr_comm_terminal_process_stop_state(GebrCommTerminalProcess * te
 
 enum {
 	READY_READ,
+	READY_WRITE,
 	FINISHED,
 	LAST_SIGNAL
 };
@@ -54,6 +55,15 @@ static void gebr_comm_terminal_process_class_init(GebrCommTerminalProcessClass *
 			     GEBR_COMM_TERMINAL_PROCESS_TYPE,
 			     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 			     G_STRUCT_OFFSET(GebrCommTerminalProcessClass, ready_read),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
+
+	object_signals[READY_WRITE] =
+		g_signal_new("ready-write",
+			     GEBR_COMM_TERMINAL_PROCESS_TYPE,
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommTerminalProcessClass, ready_write),
 			     NULL, NULL,
 			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE, 0);
@@ -112,20 +122,16 @@ static gboolean
 __gebr_comm_terminal_process_read_watch(GIOChannel * source, GIOCondition condition,
 					GebrCommTerminalProcess * terminal_process)
 {
-	if (condition & G_IO_ERR) {
-		/* TODO: */
+	if (condition & G_IO_ERR
+	    || condition & G_IO_HUP
+	    || condition & G_IO_NVAL)
 		return FALSE;
-	}
-	if (condition & G_IO_HUP) {
-		/* using g_child_watch_add */
-		return FALSE;
-	}
-	if (condition & G_IO_NVAL) {
-		/* probably a fd change or end of process */
-		return FALSE;
-	}
 
-	g_signal_emit(terminal_process, object_signals[READY_READ], 0);
+	if (condition & G_IO_IN)
+		g_signal_emit(terminal_process, object_signals[READY_READ], 0);
+
+	if (condition & G_IO_OUT)
+		g_signal_emit(terminal_process, object_signals[READY_WRITE], 0);
 
 	return TRUE;
 }
@@ -242,7 +248,7 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 	terminal_process->ptm_io_channel = g_io_channel_unix_new(ptm_fd);
 	g_io_channel_set_close_on_unref(terminal_process->ptm_io_channel, FALSE);
 	terminal_process->ptm_watch_id = g_io_add_watch(terminal_process->ptm_io_channel,
-							G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+							G_IO_OUT | G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
 							(GIOFunc) __gebr_comm_terminal_process_read_watch,
 							terminal_process);
 	/* nonblock operation */
