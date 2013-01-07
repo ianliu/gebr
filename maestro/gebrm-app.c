@@ -1545,6 +1545,7 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gebrm_client_set_id(client, gebr_id->str);
 			gebrm_client_set_magic_cookie(client, cookie->str);
+			gebrm_client_set_gebr_cookie(client, gebr_cookie->str);
 
 			gchar *nfsid = gebrm_app_get_nfsid(app->priv->settings);
 			if (nfsid) {
