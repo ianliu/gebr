@@ -112,6 +112,7 @@ struct _GebrCommServer {
 		SERVER_ERROR_SERVER,
 		SERVER_ERROR_SSH,
 		SERVER_ERROR_PROTOCOL_VERSION,
+		SERVER_ERROR_COOKIE,
 	} error;
 
 	GString *last_error;

@@ -699,6 +699,11 @@ on_daemon_init(GebrmDaemon *daemon,
 		goto err;
 	}
 
+	if (g_strcmp0(error_type, "cookie") == 0) {
+		error = "error:cookie";
+		goto err;
+	}
+
 	gebr_maestro_settings_add_node(app->priv->settings,
 				       gebrm_daemon_get_address(daemon),
 				       gebrm_daemon_get_tags(daemon),
@@ -1527,6 +1532,20 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 			g_debug("Maestro received GeBR time: %s", gebr_time_iso->str);
 			g_debug("Maestro received GeBR cookie: %s", gebr_cookie->str);
+
+			if (!gebr_auth_accepts(app->priv->auth, gebr_cookie->str)) {
+				g_debug("Gebr's cookie mismatch! The cookie %s was "
+					"not found in the list of authorized cookies",
+				        gebr_cookie->str);
+
+				gebr_comm_protocol_socket_oldmsg_send(socket, TRUE,
+								      gebr_comm_protocol_defs.err_def, 4,
+								      g_get_host_name(),
+								      "maestro",
+								      "error:cookie",
+								      gebr_cookie->str);
+				goto err;
+			}
 
 			if (g_strcmp0(version->str, gebr_version()) != 0) {
 				g_debug("Gebr's version mismatch! Got: %s Expected: %s",
