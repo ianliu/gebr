@@ -673,6 +673,12 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 	create_local_forward(self);
 }
 
+static void
+on_ssh_stdin(GebrCommSsh *ssh, GebrCommPortProvider *self)
+{
+	gebr_comm_ssh_write_chars(ssh, self->priv->gebr_cookie);
+}
+
 static gchar *
 get_launch_command(GebrCommPortProvider *self, gboolean is_maestro)
 {
@@ -705,6 +711,7 @@ remote_get_port(GebrCommPortProvider *self, gboolean is_maestro)
 	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_ssh_question), self);
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_ssh_error), self);
 	g_signal_connect(ssh, "ssh-stdout", G_CALLBACK(on_ssh_stdout), self);
+	g_signal_connect(ssh, "ssh-stdin", G_CALLBACK(on_ssh_stdin), self);
 	g_signal_connect(ssh, "ssh-key", G_CALLBACK(on_ssh_key), self);
 	g_signal_connect(ssh, "ssh-finished", G_CALLBACK(on_ssh_finished), self);
 	gchar *command = get_launch_command(self, is_maestro);
