@@ -23,6 +23,7 @@
 #include <libgebr/log.h>
 #include <libgebr/comm/gebr-comm-server.h>
 #include <libgebr/gebr-validator.h>
+#include <libgebr/gebr-auth.h>
 
 #include "gebrd-mpi-interface.h"
 #include "gebrd-user.h"
@@ -60,6 +61,7 @@ struct _GebrdApp {
 
 	gchar hostname[256];
 	GebrCommSocketAddress socket_address;
+	GebrAuth *auth;
 	/**
 	 * Options passed through command line
 	 */
@@ -125,7 +127,7 @@ GebrCommServerType gebrd_get_server_type(void);
  * Loads gebrd configuration file into gebrd configuration structure.
  * \see gebrd.config
  */
-void gebrd_config_load(void);
+void gebrd_config_load(GebrAuth *auth);
 
 /**
  */

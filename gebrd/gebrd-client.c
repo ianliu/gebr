@@ -288,6 +288,14 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_debug("Received protocol version:   %s", version->str);
 			g_debug("Received GeBR cookie: %s", gebr_cookie->str);
 
+			if (!gebr_auth_accepts(gebrd->auth, gebr_cookie->str)) {
+				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
+								      gebr_comm_protocol_defs.err_def, 2,
+								      "cookie",
+								      gebr_cookie->str);
+				goto err;
+			}
+
 			if (strcmp(version->str, gebr_comm_protocol_get_version())) {
 				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
 								      gebr_comm_protocol_defs.err_def, 2,
@@ -302,7 +310,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
 			if (client->gebr_cookie)
 				g_free(client->gebr_cookie);
-			client->gebr_cookie = g_strdup(gebr_cookie);
+			client->gebr_cookie = g_strdup(gebr_cookie->str);
 
 			const gchar *server_type;
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
