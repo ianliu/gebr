@@ -46,6 +46,8 @@ gebr_auth_read_cookie(GebrAuth *self)
 		return;
 	}
 
+	g_message("Got cookie %s", key);
+
 	g_tree_insert(self->cookies, key, GUINT_TO_POINTER(1));
 }
 

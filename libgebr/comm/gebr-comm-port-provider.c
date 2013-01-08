@@ -431,39 +431,136 @@ get_port(GebrCommPortProvider *self)
 }
 
 /* Local port provider implementation {{{ */
+static GPid
+start_program(GebrCommPortProvider *self,
+	      gboolean maestro,
+	      gint *fdin,
+	      gint *fdout,
+	      GError **error)
+{
+	GPid pid = 0;
+	const gchar *binary = maestro ? "gebrm":"gebrd";
+	const gchar *argv[] = {binary, NULL, NULL};
+	if (self->priv->force_init && maestro)
+		argv[1] = "-f";
+
+	g_spawn_async_with_pipes(g_get_home_dir(),
+				 (gchar**)argv, NULL,
+				 G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+				 NULL, NULL,
+				 &pid,
+				 fdin,
+				 fdout,
+				 NULL,
+				 error);
+	return pid;
+}
+
+static gboolean
+communicate_with_program(GebrCommPortProvider *self,
+			 GPid pid,
+			 gint fdin,
+			 gint fdout,
+			 gint *status,
+			 gchar **output,
+			 GError **error)
+{
+	GString *bufout = g_string_new(NULL);
+	GByteArray *bufin = g_byte_array_new();
+	g_byte_array_append(bufin, (guint8*)self->priv->gebr_cookie,
+			    strlen(self->priv->gebr_cookie));
+	g_byte_array_append(bufin, (guint8*)"\n", 1);
+	while (1) {
+		fd_set readfd, writefd;
+		gint nfds = MAX(fdin, fdout);
+
+		FD_ZERO(&readfd);
+		FD_ZERO(&writefd);
+		FD_SET(fdin, &writefd);
+		FD_SET(fdout, &readfd);
+
+		gint n = select(nfds + 1, &readfd, &writefd, NULL, NULL);
+
+		if (n == -1) {
+			perror("select");
+			g_set_error(error, GEBR_COMM_PORT_PROVIDER_ERROR,
+				    GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
+				    "Error running select function");
+			return FALSE;
+		}
+
+		if (FD_ISSET(fdin, &writefd)) {
+			gssize len = write(fdin, bufin->data, bufin->len);
+			if (len > 0)
+				g_byte_array_remove_range(bufin, 0, len);
+		}
+
+		if (FD_ISSET(fdout, &readfd)) {
+			gchar buf[1024];
+			gssize len = read(fdout, buf, sizeof(buf));
+			if (len > 0)
+				g_string_append_len(bufout, buf, len);
+		}
+
+		if (bufout->len > 0) {
+			pid_t ret = waitpid(pid, status, WNOHANG);
+			if (ret != 0)
+				break;
+		}
+	}
+
+	g_byte_array_unref(bufin);
+
+	if (output)
+		*output = g_string_free(bufout, FALSE);
+
+	return TRUE;
+}
+
 static void
 local_get_port(GebrCommPortProvider *self, gboolean maestro)
 {
-	const gchar *binary = maestro ? "gebrm":"gebrd";
-	gchar *cmd;
-	gchar *output = NULL;
-	gchar *err = NULL;
-	gint status;
+	GPid pid;
+	gint fdin, fdout;
 	GError *error = NULL;
-	GError *local_error = NULL;
+
+	pid = start_program(self, maestro, &fdin, &fdout, &error);
+	if (error) {
+		GError *tmp = NULL;
+		transform_spawn_sync_error(self, error, &tmp);
+		emit_signals(self, 0, tmp);
+		g_clear_error(&error);
+		g_clear_error(&tmp);
+		return;
+	}
+
+	gint status;
+	gchar *output;
+	communicate_with_program(self, pid, fdin, fdout,
+				 &status, &output, &error);
+	if (error) {
+		emit_signals(self, 0, error);
+		g_clear_error(&error);
+		return;
+	}
+
 	guint port;
-
-	if (self->priv->force_init && maestro)
-		cmd = g_strdup_printf("%s -f", binary);
-	else
-		cmd = g_strdup(binary);
-
-	g_spawn_command_line_sync(cmd, &output, &err, &status, &error);
- 	g_free(cmd);
-
-	if (error || (WIFEXITED(status) && WEXITSTATUS(status) != 0)) {
-		transform_spawn_sync_error(self, error, &local_error);
-		if (error)
-			g_clear_error(&error);
+	if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
+		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
+			    GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
+			    "Program exited with error");
 	} else if (output) {
-		get_port_from_command_output(self, output, &port, &local_error);
+		get_port_from_command_output(self, output, &port, &error);
 	} else {
+		g_set_error(&error, GEBR_COMM_PORT_PROVIDER_ERROR,
+			    GEBR_COMM_PORT_PROVIDER_ERROR_SPAWN,
+			    "Unknown error");
 		g_warn_if_reached();
 	}
 
-	emit_signals(self, port, local_error);
-	if (local_error)
-		g_clear_error(&local_error);
+	emit_signals(self, port, error);
+	if (error)
+		g_clear_error(&error);
 	g_free(output);
 }
 
@@ -676,7 +773,9 @@ on_ssh_stdout(GebrCommSsh *_ssh, const GString *buffer, GebrCommPortProvider *se
 static void
 on_ssh_stdin(GebrCommSsh *ssh, GebrCommPortProvider *self)
 {
-	gebr_comm_ssh_write_chars(ssh, self->priv->gebr_cookie);
+	gchar *tmp = g_strconcat(self->priv->gebr_cookie, "\n", NULL);
+	gebr_comm_ssh_write_chars(ssh, tmp);
+	g_free(tmp);
 }
 
 static gchar *
