@@ -1588,8 +1588,10 @@ static const gchar *
 get_lock_dir(void)
 {
 	static gchar *dir = NULL;
-	if (!dir)
+	if (!dir) {
 		dir = g_build_filename(g_get_home_dir(), ".gebr", "locks", NULL);
+		g_mkdir_with_parents(dir, 0700);
+	}
 	return dir;
 }
 
