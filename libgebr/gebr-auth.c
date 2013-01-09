@@ -78,6 +78,10 @@ gebr_auth_accepts(GebrAuth *self, const gchar *key)
 		g_free(line);
 
 	fclose(fp);
+
+	if (ret)
+		gebr_auth_remove_cookie(self, key);
+
 	return ret;
 }
 
