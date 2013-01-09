@@ -20,25 +20,25 @@
 
 #include "gebr-auth.h"
 #include <stdio.h>
+#include "utils.h"
 
 struct _GebrAuth {
-	GTree *cookies;
+	gchar *auth_file;
 };
-
 
 GebrAuth *
 gebr_auth_new(void)
 {
 	GebrAuth *auth = g_new0(GebrAuth, 1);
-	auth->cookies = g_tree_new_full((GCompareDataFunc)g_strcmp0,
-					NULL, g_free, NULL);
+	auth->auth_file = g_build_filename(g_get_home_dir(), ".gebr",
+					   "run", "authorized_cookies", NULL);
 	return auth;
 }
 
 void
 gebr_auth_read_cookie(GebrAuth *self)
 {
-	gchar *key = g_new(gchar, GEBR_AUTH_COOKIE_LENGTH);
+	gchar *key = g_new0(gchar, GEBR_AUTH_COOKIE_LENGTH + 1);
 
 	if (scanf("%64s", key) != 1) {
 		g_warning("Could not retrieve cookie!");
@@ -46,26 +46,75 @@ gebr_auth_read_cookie(GebrAuth *self)
 		return;
 	}
 
-	g_message("Got cookie %s", key);
-
-	g_tree_insert(self->cookies, key, GUINT_TO_POINTER(1));
+	GEBR_LOCK_FILE(self->auth_file);
+	FILE *fp = fopen(self->auth_file, "a");
+	fprintf(fp, "%s\n", key);
+	fclose(fp);
+	GEBR_UNLOCK_FILE(self->auth_file);
 }
 
 gboolean
 gebr_auth_accepts(GebrAuth *self, const gchar *key)
 {
-	return g_tree_lookup_extended(self->cookies, key, NULL, NULL);
+	gboolean ret = FALSE;
+	FILE *fp = fopen(self->auth_file, "r");
+
+	if (!fp)
+		return FALSE;
+
+	gchar *line = NULL;
+	while (getline(&line, NULL, fp) != -1) {
+		gchar *tmp = g_strstrip(line);
+		if (g_strcmp0(key, tmp) == 0) {
+			ret = TRUE;
+			break;
+		}
+	}
+
+	if (line)
+		g_free(line);
+
+	fclose(fp);
+	return ret;
 }
 
 void
 gebr_auth_remove_cookie(GebrAuth *self, const gchar *key)
 {
-	g_tree_remove(self->cookies, key);
+	GList *list = NULL;
+	FILE *fp = fopen(self->auth_file, "r");
+
+	if (!fp)
+		return;
+
+	gchar *line = NULL;
+	while (getline(&line, NULL, fp) != -1) {
+		gchar *tmp = g_strstrip(line);
+		if (g_strcmp0(key, tmp) == 0)
+			continue;
+		list = g_list_prepend(list, g_strdup(line));
+	}
+	fclose(fp);
+
+	if (line)
+		g_free(line);
+
+	list = g_list_reverse(list);
+
+	GEBR_LOCK_FILE(self->auth_file);
+	fp = fopen(self->auth_file, "w");
+	for (GList *i = list; i; i = i->next)
+		fprintf(fp, "%s", (gchar*)i->data);
+	fclose(fp);
+	GEBR_UNLOCK_FILE(self->auth_file);
+
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
 }
 
 void
 gebr_auth_free(GebrAuth *self)
 {
-	g_tree_unref(self->cookies);
+	g_free(self->auth_file);
 	g_free(self);
 }
