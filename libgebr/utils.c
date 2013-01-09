@@ -17,6 +17,7 @@
 
 //remove round warning
 #define _ISOC99_SOURCE
+#define _XOPEN_SOURCE 500
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -1581,4 +1582,45 @@ gebr_paths_get_value_by_key(const gchar ***paths,
 		}
 	}
 	return NULL;
+}
+
+static const gchar *
+get_lock_dir(void)
+{
+	static gchar *dir = NULL;
+	if (!dir)
+		dir = g_build_filename(g_get_home_dir(), ".gebr", "locks", NULL);
+	return dir;
+}
+
+static gchar *
+get_lock_for_file(const gchar *file)
+{
+	const gchar *dir = get_lock_dir();
+	guint lock = g_str_hash(file);
+	gchar *tmp = g_strdup_printf("%d", lock);
+	gchar *ret = g_build_filename(dir, tmp, NULL);
+	g_free(tmp);
+	return ret;
+}
+
+void
+GEBR_LOCK_FILE(const gchar *path)
+{
+	int ret;
+	gchar *lock = get_lock_for_file(path);
+
+	do {
+		ret = symlink(path, lock);
+		usleep(1000);
+	} while (ret != 0);
+
+	g_free(lock);
+}
+
+void
+GEBR_UNLOCK_FILE(const gchar *path)
+{
+	gchar *lock = get_lock_for_file(path);
+	unlink(lock);
 }
