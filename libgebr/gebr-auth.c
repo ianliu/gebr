@@ -21,6 +21,7 @@
 #include "gebr-auth.h"
 #include <stdio.h>
 #include "utils.h"
+#include <sys/stat.h>
 
 struct _GebrAuth {
 	gchar *auth_file;
@@ -48,6 +49,7 @@ gebr_auth_read_cookie(GebrAuth *self)
 
 	GEBR_LOCK_FILE(self->auth_file);
 	FILE *fp = fopen(self->auth_file, "a");
+	chmod(self->auth_file, 0600);
 	fprintf(fp, "%s\n", key);
 	fclose(fp);
 	GEBR_UNLOCK_FILE(self->auth_file);
@@ -105,6 +107,7 @@ gebr_auth_remove_cookie(GebrAuth *self, const gchar *key)
 
 	GEBR_LOCK_FILE(self->auth_file);
 	fp = fopen(self->auth_file, "w");
+	chmod(self->auth_file, 0600);
 	for (GList *i = list; i; i = i->next)
 		fprintf(fp, "%s", (gchar*)i->data);
 	fclose(fp);
