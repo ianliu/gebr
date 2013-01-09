@@ -489,7 +489,7 @@ communicate_with_program(GebrCommPortProvider *self,
 			return FALSE;
 		}
 
-		if (FD_ISSET(fdin, &writefd)) {
+		if (bufin->len && FD_ISSET(fdin, &writefd)) {
 			gssize len = write(fdin, bufin->data, bufin->len);
 			if (len > 0)
 				g_byte_array_remove_range(bufin, 0, len);
