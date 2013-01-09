@@ -62,8 +62,9 @@ gebr_auth_accepts(GebrAuth *self, const gchar *key)
 	if (!fp)
 		return FALSE;
 
+	gsize len = 0;
 	gchar *line = NULL;
-	while (getline(&line, NULL, fp) != -1) {
+	while (getline(&line, &len, fp) != -1) {
 		gchar *tmp = g_strstrip(line);
 		if (g_strcmp0(key, tmp) == 0) {
 			ret = TRUE;
@@ -87,8 +88,9 @@ gebr_auth_remove_cookie(GebrAuth *self, const gchar *key)
 	if (!fp)
 		return;
 
+	gsize len = 0;
 	gchar *line = NULL;
-	while (getline(&line, NULL, fp) != -1) {
+	while (getline(&line, &len, fp) != -1) {
 		gchar *tmp = g_strstrip(line);
 		if (g_strcmp0(key, tmp) == 0)
 			continue;
