@@ -164,7 +164,7 @@ start_proxy_maestro(const gchar *address,
 	gebr_generate_key();
 	gebrm_app_append_key();
 
-	gebrm_proxy_run(proxy, output_fd, auth);
+	gebrm_proxy_run(proxy, output_fd);
 	gebrm_proxy_free(proxy);
 }
 
@@ -282,10 +282,6 @@ main(int argc, char *argv[])
 		exit(EXIT_SUCCESS);
 	}
 
-	auth = gebr_auth_new();
-	if (!nocookie)
-		gebr_auth_read_cookie(auth);
-
 	GebrMaestroSettings *ms = gebrm_app_create_configuration();
 	const gchar *nfsid = gebrm_app_get_nfsid(ms);
 	const gchar *local_addr = g_get_host_name();
@@ -315,6 +311,10 @@ main(int argc, char *argv[])
 		g_free(curr_version);
 		exit(0);
 	}
+
+	auth = gebr_auth_new();
+	if (!nocookie)
+		gebr_auth_read_cookie(auth);
 
 	if (!interactive)
 		fork_and_exit_main();

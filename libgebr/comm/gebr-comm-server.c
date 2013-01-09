@@ -966,5 +966,7 @@ void
 gebr_comm_server_set_cookie(GebrCommServer *server,
                             const gchar *gebr_cookie)
 {
+	if (server->priv->gebr_cookie)
+			g_free(server->priv->gebr_cookie);
 	server->priv->gebr_cookie = g_strdup(gebr_cookie);
 }
