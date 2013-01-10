@@ -1218,12 +1218,10 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 static void
 connect_all_daemons(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *addr)
 {
-	gboolean has_daemons = FALSE;
 	gboolean connect_daemon = FALSE;
 	app->priv->connect_all = TRUE;
 
 	for (GList *i = app->priv->daemons; i; i = i->next) {
-		has_daemons = TRUE;
 		GebrmDaemon *daemon = i->data;
 
 		gebrm_daemon_set_canceled(daemon, FALSE);
