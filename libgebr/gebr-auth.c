@@ -31,8 +31,10 @@ GebrAuth *
 gebr_auth_new(void)
 {
 	GebrAuth *auth = g_new0(GebrAuth, 1);
-	auth->auth_file = g_build_filename(g_get_home_dir(), ".gebr",
-					   "run", "authorized_cookies", NULL);
+	gchar *dir = g_build_filename(g_get_home_dir(), ".gebr", "run", NULL);
+	auth->auth_file = g_build_filename(dir, "authorized_cookies", NULL);
+	g_mkdir_with_parents(dir, 0755);
+	g_free(dir);
 	return auth;
 }
 
