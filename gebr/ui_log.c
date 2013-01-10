@@ -288,6 +288,8 @@ on_state_change(GebrMaestroServer *maestro,
 	const gchar *error_msg;
 	const gchar *error_type;
 	const gchar *nfs_domain = gebr_maestro_server_get_nfs_label(maestro);
+	if (!nfs_domain)
+		nfs_domain = "current domain";
 
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		if (gebr_maestro_server_has_servers(maestro, TRUE)) {
