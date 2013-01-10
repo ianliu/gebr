@@ -58,6 +58,15 @@ static GOptionEntry entries[] = {
 	{NULL}
 };
 
+static const gchar *
+get_version(void)
+{
+	static gchar *version = NULL;
+	if (!version)
+		version = g_strdup_printf("%s (%s)", GEBR_VERSION NANOVERSION, gebr_version());
+	return version;
+}
+
 void
 fork_and_exit_main(void)
 {
@@ -128,20 +137,10 @@ gebrm_remove_lock_and_quit(int sig)
 static gchar *
 get_version_contents_from_file(const gchar *version_file)
 {
-	GError *version_error = NULL;
-	gchar *version_contents;
-
-	g_file_get_contents(version_file, &version_contents, NULL, &version_error);
-	if (version_error) {
-		if (version_error)
-			g_critical("Error reading lock/version: %s", version_error->message);
-		g_error_free(version_error);
-		g_free(version_contents);
+	gchar *contents;
+	if (!g_file_get_contents(version_file, &contents, NULL, NULL))
 		return NULL;
-	}
-	g_free(version_error);
-
-	return version_contents;
+	return g_strstrip(contents);
 }
 
 static gboolean
@@ -152,6 +151,22 @@ need_cleanup(const gchar *v1,
 		return FALSE;
 
 	return TRUE;
+}
+
+static void
+register_local_daemon(void)
+{
+	GebrMaestroSettings *ms = gebrm_app_create_configuration();
+	const gchar *nfsid = gebrm_app_get_nfsid(ms);
+	if (nfsid) {
+		const gchar *gebrd_location = g_find_program_in_path("gebrd");
+		gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), g_get_host_name());
+		gebr_maestro_settings_append_address(ms, nfsid, addr);
+		if (gebrd_location)
+			gebr_maestro_settings_add_node(ms, g_get_host_name(), "", "on");
+		g_free(addr);
+	}
+	gebr_maestro_settings_free(ms);
 }
 
 static void
@@ -168,95 +183,56 @@ start_proxy_maestro(const gchar *address,
 	gebrm_proxy_free(proxy);
 }
 
-static gboolean
-is_current_maestro_valid(const gchar *addr,
-                         gint port,
-                         const gchar *curr_version,
-                         const gchar *version_contents)
+static void
+start_maestro_app(void)
 {
-	if (g_strcmp0(addr, g_get_host_name()) == 0) {
-		if (need_cleanup(curr_version, version_contents)) {
-			gebr_kill_by_port(port);
-			return FALSE;
-		}
+	struct sigaction sa;
+	sa.sa_handler = gebrm_remove_lock_and_quit;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
 
-		g_print("%s%d\n", GEBR_PORT_PREFIX, port);
-	} else {
-		fork_and_exit_main();
-		start_proxy_maestro(addr, port);
-	}
+	if (sigaction(SIGTERM, &sa, NULL)
+	    || sigaction(SIGINT, &sa, NULL)
+	    || sigaction(SIGQUIT, &sa, NULL)
+	    || sigaction(SIGSEGV, &sa, NULL))
+		perror("sigaction");
 
-	return TRUE;
+	register_local_daemon();
+	gebrm_app_create_folder_for_addr(g_get_host_name());
+	const gchar *path = gebrm_app_get_log_file_for_address(g_get_host_name());
+	gebr_log_set_default(path);
+
+	GebrmApp *app = gebrm_app_singleton_get();
+
+	if (!gebrm_app_run(app, output_fd, get_version(), auth))
+		exit(EXIT_FAILURE);
+
+	g_object_unref(app);
 }
 
 static gboolean
-get_singleton_lock_contents(const gchar *lock,
-                            gchar **addr,
-                            gint *port)
+get_current_maestro_info(gchar **addr,
+			 guint *port,
+			 gchar **version)
 {
-	GError *lock_error = NULL;
-	gchar *lock_contents;
+	const gchar *lock = gebrm_app_get_lock_file();
+	const gchar *version_file  = gebrm_app_get_version_file();
+	gchar *contents;
 
-	g_file_get_contents(lock, &lock_contents, NULL, &lock_error);
-	if (lock_error) {
-		g_critical("Error reading lock/version: %s", lock_error->message);
-
-		g_error_free(lock_error);
-		g_free(lock_contents);
-
+	if (!g_file_get_contents(lock, &contents, NULL, NULL))
 		return FALSE;
-	}
 
-	gchar **lock_array = g_strsplit(lock_contents, ":", -1);
+	gchar **parts = g_strsplit(contents, ":", -1);
 
-	if (lock_array) {
-		*port = atoi(lock_array[1]);
-		*addr = g_strdup(lock_array[0]);
-		g_strfreev(lock_array);
-
+	if (parts) {
+		*version = get_version_contents_from_file(version_file);
+		*addr = g_strdup(parts[0]);
+		*port = atoi(parts[1]);
+		g_strfreev(parts);
 		return TRUE;
 	}
 
-	g_critical("Error on singleton lock file");
-	g_free(lock_contents);
-
-	return FALSE;
-}
-
-static gboolean
-verify_singleton_lock(const gchar *curr_version)
-{
-	const gchar *lock;
-	const gchar *version_file;
-
-	lock = gebrm_app_get_lock_file();
-	version_file  = gebrm_app_get_version_file();
-
-	if (g_access(lock, R_OK | W_OK) == 0) { //check lock_file
-		gchar *addr;
-		gint port;
-
-		if (!get_singleton_lock_contents(lock, &addr, &port))
-			exit(1);
-
-		if (g_access(version_file, R_OK | W_OK) == 0) { //It has the version file
-			gchar *version_contents = get_version_contents_from_file(version_file);
-			if (!version_contents)
-				exit(1);
-
-			if (is_current_maestro_valid(addr, port, curr_version, version_contents)) {
-				g_free(version_contents);
-				return TRUE;
-			}
-
-			g_free(version_contents);
-		}
-	}
-	else if (g_access(lock, F_OK) == 0) {
-		g_critical("Cannot read/write into %s", lock);
-		exit(1);
-	}
-
+	g_free(parts);
 	return FALSE;
 }
 
@@ -276,73 +252,51 @@ main(int argc, char *argv[])
 
 	g_type_init();
 	g_thread_init(NULL);
+	gebr_geoxml_init();
 
 	if (show_version) {
-		fprintf(stdout, "%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+		fprintf(stdout, "%s\n", get_version());
 		exit(EXIT_SUCCESS);
 	}
 
-	GebrMaestroSettings *ms = gebrm_app_create_configuration();
-	const gchar *nfsid = gebrm_app_get_nfsid(ms);
-	const gchar *local_addr = g_get_host_name();
+	gboolean has_lock;
+	gboolean cleanup;
+	gboolean is_local;
 
-	gchar *curr_version = NULL;
-	curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+	gchar *addr;
+	gchar *version;
+	guint port;
 
-	gboolean has_lock = FALSE;
-
-	if (!force_init)
-		has_lock = verify_singleton_lock(curr_version);
-
-	const gchar *gebrd_location = g_find_program_in_path("gebrd");
-
-	if (nfsid) {
-		gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), local_addr);
-		gebr_maestro_settings_append_address(ms, nfsid, addr);
-		if (gebrd_location)
-			gebr_maestro_settings_add_node(ms, g_get_host_name(), "", "on");
-		g_free(addr);
-	}
-
-	gebr_maestro_settings_free(ms);
-
-	// Singleton lock is valid and suggest the correct maestro
+	has_lock = get_current_maestro_info(&addr, &port, &version);
 	if (has_lock) {
-		g_free(curr_version);
-		exit(0);
+		is_local = g_strcmp0(addr, g_get_host_name()) == 0;
+		cleanup = need_cleanup(get_version(), version);
 	}
-
 	auth = gebr_auth_new();
+
+	if (force_init)
+		has_lock = FALSE;
+
+	gboolean start_maestro = !has_lock || (has_lock && cleanup);
+	gboolean start_proxy = has_lock && !cleanup && !is_local;
+
+	if (has_lock && cleanup)
+		gebr_kill_by_port(port);
+
 	if (!nocookie)
 		gebr_auth_read_cookie(auth);
 
-	if (!interactive)
+	if (start_maestro) {
+		if (!interactive)
+			fork_and_exit_main();
+		start_maestro_app();
+	} else if (start_proxy) {
 		fork_and_exit_main();
+		start_proxy_maestro(addr, port);
+	} else {
+		g_print("%s%d\n", GEBR_PORT_PREFIX, port);
+	}
 
-	struct sigaction sa;
-	sa.sa_handler = gebrm_remove_lock_and_quit;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-
-	if (sigaction(SIGTERM, &sa, NULL)
-	    || sigaction(SIGINT, &sa, NULL)
-	    || sigaction(SIGQUIT, &sa, NULL)
-	    || sigaction(SIGSEGV, &sa, NULL))
-		perror("sigaction");
-
-	gebr_geoxml_init();
-
-	gebrm_app_create_folder_for_addr(local_addr);
-	const gchar *path = gebrm_app_get_log_file_for_address(local_addr);
-	gebr_log_set_default(path);
-
-	GebrmApp *app = gebrm_app_singleton_get();
-
-	if (!gebrm_app_run(app, output_fd, curr_version, auth))
-		exit(EXIT_FAILURE);
-
-	g_free(curr_version);
-	g_object_unref(app);
 	gebr_geoxml_finalize();
 
 	return EXIT_SUCCESS;
