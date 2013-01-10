@@ -288,6 +288,7 @@ on_state_change(GebrMaestroServer *maestro,
 	const gchar *error_msg;
 	const gchar *error_type;
 	const gchar *nfs_domain = gebr_maestro_server_get_nfs_label(maestro);
+	gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 	if (!nfs_domain)
 		nfs_domain = "current domain";
 
@@ -312,7 +313,6 @@ on_state_change(GebrMaestroServer *maestro,
 
 	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
-	gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 	g_free(text);
 }
 
