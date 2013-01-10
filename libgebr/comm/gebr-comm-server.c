@@ -648,8 +648,6 @@ get_xauth_cookie(GebrCommServer *server, const gchar *display_number)
 
 	g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display_number);
 
-	g_debug("GET XATUH COOKIE WITH COMMAND: %s", cmd_line->str);
-
 	/* WORKAROUND: if xauth is already executing it will lock
 	 * the auth file and it will fail to retrieve the m-cookie.
 	 * So, as a workaround, we try to get the m-cookie many times.
@@ -668,8 +666,6 @@ get_xauth_cookie(GebrCommServer *server, const gchar *display_number)
 
 	if (i == 5)
 		strcpy(mcookie_str, "");
-
-	g_debug("===== COOKIE ARE %s", mcookie_str);
 
 	g_string_free(cmd_line, TRUE);
 
