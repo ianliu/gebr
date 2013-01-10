@@ -55,7 +55,6 @@ struct _GebrCommTerminalProcessClass {
 
 	/* signals */
 	void (*ready_read) (GebrCommTerminalProcess * self);
-	void (*ready_write) (GebrCommTerminalProcess *self);
 	void (*finished) (GebrCommTerminalProcess * self);
 };
 
@@ -90,6 +89,8 @@ GString *gebr_comm_terminal_process_read_string_all(GebrCommTerminalProcess *);
 gsize gebr_comm_terminal_process_write(GebrCommTerminalProcess *, GByteArray *);
 
 gsize gebr_comm_terminal_process_write_string(GebrCommTerminalProcess *, GString *);
+
+GIOChannel *gebr_comm_terminal_process_get_channel(GebrCommTerminalProcess *self);
 
 G_END_DECLS
 #endif				//__GEBR_COMM_TERMINAL_PROCESS_H
