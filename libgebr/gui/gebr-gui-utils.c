@@ -1303,7 +1303,11 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
 
 	const gchar ***tmp = (const gchar ***)paths;
 	gchar *home_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(tmp, "HOME"), paths);
-	gchar *base_dir = gebr_resolve_relative_path(gebr_paths_get_value_by_key(tmp, "BASE"), paths);
+
+	gchar *relative_base = g_strdup(gebr_paths_get_value_by_key(tmp, "BASE"));
+	gchar *base_dir = NULL;
+	if (relative_base)
+		base_dir = gebr_resolve_relative_path(relative_base, paths);
 
 	gchar *aux = gebr_resolve_relative_path(entry_text, paths);	/*Relativize*/
 	gebr_validate_path(aux, paths, error);	/*Sets error messages*/
@@ -1317,6 +1321,7 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
 	if (!gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), path))
 		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), home_dir);
 
+	g_free(relative_base);
 	g_free(aux);
 	g_free(home_dir);
 	g_free(base_dir);
