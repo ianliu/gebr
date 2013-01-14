@@ -290,6 +290,64 @@ void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int 
 	gebr_comm_http_msg_free(msg);
 }
 
+void
+gebr_comm_protocol_socket_resend_message(GebrCommProtocolSocket *self,
+					 gboolean blocking,
+					 struct gebr_comm_message *message)
+{
+	gebr_comm_return_if_not_connected(self);
+
+	struct gebr_comm_message_def *def =
+		g_hash_table_lookup(gebr_comm_protocol_defs.code_hash_table,
+				    GUINT_TO_POINTER(message->hash));
+	GString *message_str = g_string_new(NULL);
+
+	gchar *head;
+	if (message->hash != gebr_comm_protocol_defs.ret_def.code_hash) {
+		head = g_strdup(def->code);
+	} else {
+		struct gebr_comm_message_def *ret_msg =
+			g_hash_table_lookup(gebr_comm_protocol_defs.code_hash_table,
+					    GUINT_TO_POINTER(message->ret_hash));
+		head = g_strdup_printf("%s:%s", def->code,
+				       ret_msg->code);
+	}
+
+	g_string_printf(message_str, "%s %"G_GSIZE_FORMAT" %s\n", head, message->argument_size, message->argument->str);
+
+	/* send it */
+	if (blocking)
+		gebr_comm_socket_write_string_immediately(GEBR_COMM_SOCKET(self->priv->socket), message_str);
+	else 
+		gebr_comm_socket_write_string(GEBR_COMM_SOCKET(self->priv->socket), message_str);
+
+	g_string_free(message_str, TRUE);
+	g_free(head);
+}
+
+void
+gebr_comm_protocol_socket_return_message(GebrCommProtocolSocket * self,
+					 gboolean blocking,
+					 struct gebr_comm_message_def ret_msg,
+					 guint n_params, ...)
+{
+	va_list ap;
+	GString *message;
+
+	gebr_comm_return_if_not_connected(self);
+
+	va_start(ap, n_params);
+	message = gebr_comm_protocol_build_any_messagev(ret_msg, TRUE, n_params, ap);
+
+	/* send it */
+	if (blocking)
+		gebr_comm_socket_write_string_immediately(GEBR_COMM_SOCKET(self->priv->socket), message);
+	else
+		gebr_comm_socket_write_string(GEBR_COMM_SOCKET(self->priv->socket), message);
+
+	g_string_free(message, TRUE);
+}
+
 void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboolean blocking,
 					   struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...)
 {
@@ -300,11 +358,6 @@ void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboole
 
 	va_start(ap, n_params);
 	message = gebr_comm_protocol_build_messagev(gebr_comm_message_def, n_params, ap);
-
-	/* does this message need return? */
-	if (gebr_comm_message_def.returns)
-		g_queue_push_tail(self->protocol->waiting_ret_hashs,
-				  GUINT_TO_POINTER(gebr_comm_message_def.code_hash));
 
 	/* send it */
 	if (blocking)

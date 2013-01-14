@@ -44,6 +44,7 @@ struct _GebrmAppPriv {
 	GMainLoop *main_loop;
 	GebrCommListenSocket *listener;
 	GebrCommSocketAddress address;
+	GebrAuth *auth;
 	GList *connections;
 	GList *daemons;
 	gchar *nfsid;
@@ -688,6 +689,11 @@ on_daemon_init(GebrmDaemon *daemon,
 		goto err;
 	}
 
+	if (g_strcmp0(error_type, "cookie") == 0) {
+		error = "error:cookie";
+		goto err;
+	}
+
 	if (!app->priv->nfsid) {
 		send_nfs = TRUE;
 		app->priv->nfsid = g_strdup(nfsid);
@@ -774,10 +780,10 @@ on_daemon_ret_path(GebrmDaemon *daemon,
 {
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
-		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.ret_def, 2,
-						      daemon_addr,
-						      status_id);
+		gebr_comm_protocol_socket_return_message(socket, FALSE,
+							 gebr_comm_protocol_defs.path_def, 2,
+							 daemon_addr,
+							 status_id);
 	}
 }
 
@@ -1212,12 +1218,10 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 static void
 connect_all_daemons(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *addr)
 {
-	gboolean has_daemons = FALSE;
 	gboolean connect_daemon = FALSE;
 	app->priv->connect_all = TRUE;
 
 	for (GList *i = app->priv->daemons; i; i = i->next) {
-		has_daemons = TRUE;
 		GebrmDaemon *daemon = i->data;
 
 		gebrm_daemon_set_canceled(daemon, FALSE);
@@ -1512,7 +1516,7 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 7)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
 				goto err;
 
 			GString *address = g_list_nth_data(arguments, 0);
@@ -1521,9 +1525,25 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			GString *gebr_id = g_list_nth_data(arguments, 3);
 			GString *gebr_time_iso = g_list_nth_data(arguments, 4);
 			GString *has_maestro = g_list_nth_data(arguments, 5);
+			GString *gebr_cookie = g_list_nth_data(arguments, 7);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 			g_debug("Maestro received GeBR time: %s", gebr_time_iso->str);
+			g_debug("Maestro received GeBR cookie: %s", gebr_cookie->str);
+
+			if (!gebr_auth_accepts(app->priv->auth, gebr_cookie->str)) {
+				g_debug("Gebr's cookie mismatch! The cookie %s was "
+					"not found in the list of authorized cookies",
+				        gebr_cookie->str);
+
+				gebr_comm_protocol_socket_oldmsg_send(socket, TRUE,
+								      gebr_comm_protocol_defs.err_def, 4,
+								      g_get_host_name(),
+								      "maestro",
+								      "error:cookie",
+								      gebr_cookie->str);
+				goto err;
+			}
 
 			if (g_strcmp0(version->str, gebr_version()) != 0) {
 				g_debug("Gebr's version mismatch! Got: %s Expected: %s",
@@ -1542,6 +1562,7 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gebrm_client_set_id(client, gebr_id->str);
 			gebrm_client_set_magic_cookie(client, cookie->str);
+			gebrm_client_set_gebr_cookie(client, gebr_cookie->str);
 
 			gchar *nfsid = gebrm_app_get_nfsid(app->priv->settings);
 			if (nfsid) {
@@ -1562,9 +1583,9 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			gchar *clocks_diff = g_strdup_printf("%d", diff_secs);
 
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 1,
-							      clocks_diff);
+			gebr_comm_protocol_socket_return_message(socket, FALSE,
+								 gebr_comm_protocol_defs.ini_def, 1,
+								 clocks_diff);
 			g_free(clocks_diff);
 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
@@ -1665,6 +1686,9 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.sftp_def.code_hash) {
+			gebr_comm_protocol_socket_return_message(socket, FALSE,
+								 gebr_comm_protocol_defs.sftp_def, 1, "22");
 		}
 
 		gebr_comm_message_free(message);
@@ -2107,13 +2131,14 @@ gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
 }
 
 gboolean
-gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
+gebrm_app_run(GebrmApp *app, int fd, const gchar *version, GebrAuth *auth)
 {
 	GError *error_lock = NULL;
 	GError *error_version = NULL;
 
 	GebrCommSocketAddress address = gebr_comm_socket_address_ipv4("127.0.0.1", 0);
 	app->priv->listener = gebr_comm_listen_socket_new();
+	app->priv->auth = auth;
 
 	g_signal_connect(app->priv->listener, "new-connection",
 			 G_CALLBACK(on_new_connection), app);
@@ -2155,9 +2180,7 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 	else
 		addr = g_strdup(g_get_host_name());
 
-	gchar *port_str = g_strdup_printf("%s%u\n%s%s\n",
-	                                  GEBR_PORT_PREFIX, port,
-	                                  GEBR_ADDR_PREFIX, addr);
+	gchar *port_str = g_strdup_printf("%s%u\n", GEBR_PORT_PREFIX, port);
 	g_free(addr);
 
 	ssize_t s = 0;
@@ -2171,6 +2194,7 @@ gebrm_app_run(GebrmApp *app, int fd, const gchar *version)
 
 	//Generate gebr.key
 	gebr_generate_key();
+	gebrm_app_append_key();
 
 	// Create configuration for NFS
 	app->priv->settings = gebrm_app_create_configuration();
@@ -2267,4 +2291,41 @@ gebrm_app_increment_jobs_counter(GebrmApp *app, const gchar *flow_id)
 	g_hash_table_replace(app->priv->jobs_counter, g_strdup(flow_id), new_counter);
 
 	return *new_counter;
+}
+
+void
+gebrm_app_append_key(void)
+{
+	gchar *path = gebr_key_filename(TRUE);
+	gchar *public_key;
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS))
+		gebr_generate_key();
+
+	// FIXME: please handle GError of the g_file_get_contents
+	if (!g_file_get_contents(path, &public_key, NULL, NULL))
+		g_warn_if_reached();
+
+	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
+
+	gchar *contents = NULL;
+	gchar *authorized_key = g_build_filename(g_get_home_dir(), ".ssh", "authorized_keys", NULL);
+
+	if (g_file_get_contents(authorized_key, &contents, NULL, NULL)) {
+		if (strstr(contents, public_key)) {
+			g_free(contents);
+			g_free(public_key);
+			g_free(authorized_key);
+			g_free(path);
+			return;
+		}
+	}
+
+	FILE *auth = fopen(authorized_key, "a");
+	fprintf(auth, "%s (gebrm)\n", public_key);
+
+	fclose(auth);
+	g_free(path);
+	g_free(public_key);
+	g_free(authorized_key);
 }

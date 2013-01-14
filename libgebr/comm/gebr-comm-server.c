@@ -51,13 +51,17 @@ struct _GebrCommServerPriv {
 	gboolean is_maestro;
 
 	gchar *gebr_id;
+	gchar *cookie;
+	gchar *gebr_cookie;
 
 	GebrCommPortForward *connection_forward;
+	GebrCommPortForward *x11_forward;
 
 	/* Interactive state variables */
 	InteractiveState istate;
 
 	gboolean accepts_key;
+	gboolean check_host;
 
 	GHashTable *qa_cache;
 
@@ -121,6 +125,7 @@ gebr_comm_server_init(GebrCommServer *server)
 
 	server->priv->istate = ISTATE_NONE;
 	server->priv->pending_connections = NULL;
+	server->priv->check_host = TRUE;
 }
 
 static void
@@ -250,17 +255,14 @@ gebr_comm_server_new(const gchar * _address,
 void
 gebr_comm_server_free(GebrCommServer *server)
 {
-	gebr_comm_server_free_x11_forward(server);
+	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 
 	if (server->priv->qa_cache)
 		g_hash_table_remove_all(server->priv->qa_cache);
 
-	if (server->priv->connection_forward) {
-		gebr_comm_port_forward_close(server->priv->connection_forward);
-		gebr_comm_port_forward_free(server->priv->connection_forward);
-		server->priv->connection_forward = NULL;
-	}
-
+	g_free(server->priv->cookie);
+	g_free(server->priv->gebr_cookie);
+	g_free(server->priv->gebr_id);
 	g_string_free(server->last_error, TRUE);
 	g_string_free(server->address, TRUE);
 	g_free(server->password);
@@ -391,6 +393,14 @@ on_comm_port_accepts_key(GebrCommPortProvider *self,
 	server->priv->accepts_key = accepts_key;
 }
 
+void
+gebr_comm_server_set_x11_cookie(GebrCommServer *server, const gchar *cookie)
+{
+	if (server->priv->cookie)
+		g_free(server->priv->cookie);
+	server->priv->cookie = g_strdup(cookie);
+}
+
 void gebr_comm_server_connect(GebrCommServer *server,
 			      gboolean maestro,
 			      gboolean force_init)
@@ -417,6 +427,8 @@ void gebr_comm_server_connect(GebrCommServer *server,
 		gebr_comm_port_provider_new(port_type, server->address->str);
 
 	gebr_comm_port_provider_set_force_init(port_provider, force_init);
+	gebr_comm_port_provider_set_check_host(port_provider, server->priv->check_host);
+	gebr_comm_port_provider_set_cookie(port_provider, server->priv->gebr_cookie);
 
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_comm_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_comm_port_error), server);
@@ -431,6 +443,8 @@ void gebr_comm_server_disconnect(GebrCommServer *server)
 	if (server->state == SERVER_STATE_CONNECT
 	    || server->state == SERVER_STATE_LOGGED)
 		gebr_comm_protocol_socket_disconnect(server->socket);
+	else
+		gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 }
 
 gboolean
@@ -468,7 +482,7 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	if (gebr_comm_is_local_address(server->address->str))
 		g_string_printf(cmd_line, "bash -c '%s'", kill);
 	else {
-		gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
+		gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key(server->priv->check_host);
 		g_string_printf(cmd_line, "%s -x %s '%s'", ssh_cmd, server->address->str, kill);
 		g_free(ssh_cmd);
 	}
@@ -488,6 +502,8 @@ on_x11_port_defined(GebrCommPortProvider *self,
 		    guint port,
 		    GebrCommServer *server)
 {
+	server->priv->x11_forward = gebr_comm_port_provider_get_forward(self);
+
 	gchar *tmp = g_strdup_printf("%d", port);
 	gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 					      gebr_comm_protocol_defs.dsp_def, 2,
@@ -504,9 +520,9 @@ on_x11_port_error(GebrCommPortProvider *self,
 	g_critical("Error when forwarding x11: %s", error->message);
 }
 
-static guint
-get_gebr_display_port(GebrCommServer *server,
-                      gchar **display_host)
+guint
+gebr_comm_server_get_display_port(GebrCommServer *server,
+				  gchar **display_host)
 {
 	gchar *x11_file, *host;
 	guint display_port;
@@ -534,24 +550,19 @@ get_gebr_display_port(GebrCommServer *server,
 }
 
 void
-gebr_comm_server_forward_x11(GebrCommServer *server)
+gebr_comm_server_forward_x11(GebrCommServer *server,
+			     const gchar *display_host,
+			     guint display_port)
 {
-	gchar *host;
-	guint display_port;
-
-	if (server->priv->is_maestro)
-		display_port = get_gebr_display_port(server, &host);
-
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(GEBR_COMM_PORT_TYPE_X11, server->address->str);
-	gebr_comm_port_provider_set_display(port_provider, display_port, host);
+	gebr_comm_port_provider_set_display(port_provider, display_port, display_host);
+	gebr_comm_port_provider_set_check_host(port_provider, server->priv->check_host);
 	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_x11_port_defined), server);
 	g_signal_connect(port_provider, "error", G_CALLBACK(on_x11_port_error), server);
 	g_signal_connect(port_provider, "repass-password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	gebr_comm_port_provider_start(port_provider);
-
-	g_free(host);
 }
 
 /**
@@ -592,13 +603,30 @@ static void gebr_comm_server_disconnected_state(GebrCommServer *server,
 
 static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServerState state)
 {
+	if (state == server->state)
+		return;
+
 	g_debug("State of machine %s changed from %s to %s",
 		server->address->str,
 		gebr_comm_server_state_to_string(server->state),
 		gebr_comm_server_state_to_string(state));
 
-	if (state == SERVER_STATE_DISCONNECTED)
-		g_queue_clear(server->socket->protocol->waiting_ret_hashs);
+	if (state == SERVER_STATE_DISCONNECTED) {
+		gebr_comm_server_free_x11_forward(server);
+
+		if (server->priv->x11_forward) {
+			gebr_comm_port_forward_close(server->priv->x11_forward);
+			gebr_comm_port_forward_free(server->priv->x11_forward);
+			server->priv->x11_forward = NULL;
+		}
+
+		if (server->priv->connection_forward) {
+			gebr_comm_port_forward_close(server->priv->connection_forward);
+			gebr_comm_port_forward_free(server->priv->connection_forward);
+			server->priv->connection_forward = NULL;
+		}
+	}
+
 	server->state = state;
 	server->ops->state_changed(server, server->user_data);
 }
@@ -607,8 +635,11 @@ static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServer
  * get this X session magic cookie
  */
 gchar *
-get_xauth_cookie(const gchar *display_number)
+get_xauth_cookie(GebrCommServer *server, const gchar *display_number)
 {
+	if (server->priv->cookie)
+		return g_strdup(server->priv->cookie);
+
 	if (!display_number)
 		return g_strdup("");
 
@@ -616,8 +647,6 @@ get_xauth_cookie(const gchar *display_number)
 	GString *cmd_line = g_string_new(NULL);
 
 	g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display_number);
-
-	g_debug("GET XATUH COOKIE WITH COMMAND: %s", cmd_line->str);
 
 	/* WORKAROUND: if xauth is already executing it will lock
 	 * the auth file and it will fail to retrieve the m-cookie.
@@ -637,8 +666,6 @@ get_xauth_cookie(const gchar *display_number)
 
 	if (i == 5)
 		strcpy(mcookie_str, "");
-
-	g_debug("===== COOKIE ARE %s", mcookie_str);
 
 	g_string_free(cmd_line, TRUE);
 
@@ -663,7 +690,7 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 	gebr_comm_server_change_state(server, SERVER_STATE_CONNECT);
 
 	if (server->priv->is_maestro) {
-		gchar *mcookie_str = get_xauth_cookie(display_number);
+		gchar *mcookie_str = get_xauth_cookie(server, display_number);
 		GTimeVal gebr_time;
 		g_get_current_time(&gebr_time);
 		gchar *gebr_time_iso = g_time_val_to_iso8601(&gebr_time);
@@ -671,14 +698,15 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		gchar *daemon_location = g_find_program_in_path("gebrd");
 
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-		                                      gebr_comm_protocol_defs.ini_def, 7,
+		                                      gebr_comm_protocol_defs.ini_def, 8,
 		                                      g_get_host_name(),
 		                                      gebr_version(),
 		                                      mcookie_str,
 		                                      server->priv->gebr_id,
 		                                      gebr_time_iso,
 		                                      maestro_location ? "1" : "0",
-                                		      daemon_location ? "1" : "0");
+						      daemon_location ? "1" : "0",
+						      server->priv->gebr_cookie);
 
 		g_free(maestro_location);
 		g_free(daemon_location);
@@ -687,9 +715,10 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		g_free(gebr_time_iso);
 	} else {
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.ini_def, 2,
+						      gebr_comm_protocol_defs.ini_def, 3,
 						      gebr_comm_protocol_get_version(),
-						      hostname);
+						      hostname,
+						      server->priv->gebr_cookie);
 	}
 
 }
@@ -766,16 +795,9 @@ static void gebr_comm_server_free_for_reuse(GebrCommServer *server)
 	server->socket->protocol->logged = FALSE;
 	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 	gebr_comm_protocol_reset(server->socket->protocol);
-	gebr_comm_server_free_x11_forward(server);
 
 	if (server->priv->qa_cache)
 		g_hash_table_remove_all(server->priv->qa_cache);
-
-	if (server->priv->connection_forward) {
-		gebr_comm_port_forward_close(server->priv->connection_forward);
-		gebr_comm_port_forward_free(server->priv->connection_forward);
-		server->priv->connection_forward = NULL;
-	}
 }
 
 static const gchar *state_hash[] = {
@@ -857,7 +879,7 @@ get_append_key_command(GebrCommServer *server)
 	g_file_get_contents(path, &public_key, NULL, NULL);
 	public_key[strlen(public_key) - 1] = '\0'; // Erase new line
 
-	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key();
+	gchar *ssh_cmd = gebr_comm_get_ssh_command_with_key(server->priv->check_host);
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
 			"'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s (%s)\" >> $HOME/.ssh/authorized_keys'",
@@ -923,7 +945,24 @@ gebr_comm_server_create_port_provider(GebrCommServer *server,
 {
 	GebrCommPortProvider *port_provider =
 		gebr_comm_port_provider_new(type, server->address->str);
+	gebr_comm_port_provider_set_check_host(port_provider, server->priv->check_host);
 	g_signal_connect(port_provider, "repass-password", G_CALLBACK(on_comm_port_password), server);
 	g_signal_connect(port_provider, "question", G_CALLBACK(on_comm_port_question), server);
 	return port_provider;
+}
+
+void
+gebr_comm_server_set_check_host(GebrCommServer *server,
+                                gboolean check_host)
+{
+	server->priv->check_host = check_host;
+}
+
+void
+gebr_comm_server_set_cookie(GebrCommServer *server,
+                            const gchar *gebr_cookie)
+{
+	if (server->priv->gebr_cookie)
+			g_free(server->priv->gebr_cookie);
+	server->priv->gebr_cookie = g_strdup(gebr_cookie);
 }

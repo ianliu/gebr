@@ -142,14 +142,6 @@ void gebr_comm_port_provider_set_force_init(GebrCommPortProvider *self,
 const gchar *gebr_comm_port_provider_get_display_host(GebrCommPortProvider *self);
 
 /**
- * gebr_comm_port_provider_set_sftp_address:
- * Sets the address to be used in a remote nfs case.
- */
-void
-gebr_comm_port_provider_set_sftp_address(GebrCommPortProvider *self,
-					 const gchar *address);
-
-/**
  * gebr_comm_port_provider_start:
  *
  * After calling this method, the signal GebrCommPortProvider::port_defined may
@@ -205,6 +197,30 @@ void gebr_comm_port_forward_close(GebrCommPortForward *port_forward);
  * connection, it must be closed with gebr_comm_port_forward_close() first.
  */
 void gebr_comm_port_forward_free(GebrCommPortForward *port_forward);
+
+/**
+ * gebr_comm_port_provider_set_sftp_port:
+ *
+ * Sets the remote sftp port. This port will be used in a 'ssh -L' tunnel.
+ */
+void gebr_comm_port_provider_set_sftp_port(GebrCommPortProvider *port_provider,
+					   guint remote_port);
+
+/**
+ * gebr_comm_port_provider_set_check_host:
+ *
+ * Sets the option check host to SSH connections.
+ */
+void gebr_comm_port_provider_set_check_host(GebrCommPortProvider *port_provider,
+                                            gboolean check_host);
+
+/**
+ * gebr_comm_port_provider_set_cookie:
+ *
+ * Sets the GeBR's authentication cookie.
+ */
+void gebr_comm_port_provider_set_cookie(GebrCommPortProvider *port_provider,
+					const gchar *cookie);
 
 G_END_DECLS
 

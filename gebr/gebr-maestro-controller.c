@@ -2130,6 +2130,9 @@ on_daemon_error(GebrMaestroServer *maestro,
 		show_dialog = TRUE;
 	} else if (g_strcmp0(error_type, "error:protocol") == 0) {
 		message = _("This node is using a different protocol version");
+	} else if (g_strcmp0(error_type, "error:cookie") == 0) {
+		message = _("The authentication cookie of this node was "
+			    "not found in the list of authorized cookies");
 	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
 		message = _("This node is working for another domain");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {

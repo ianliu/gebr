@@ -56,8 +56,11 @@ static const gchar *
 get_version_file(void)
 {
 	static gchar *file = NULL;
-	if (!file)
-		file = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), "version", NULL);
+	if (!file) {
+		gchar *dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), NULL);
+		g_mkdir_with_parents(dir, 0700);
+		file = g_build_filename(dir, "version", NULL);
+	}
 	return file;
 }
 
@@ -67,7 +70,7 @@ get_version_file_content(void)
 	gchar *content;
 	if (!g_file_get_contents(get_version_file(), &content, NULL, NULL))
 		return NULL;
-	return content;
+	return g_strstrip(content);
 }
 
 static const gchar *
@@ -75,7 +78,7 @@ gebrd_get_version(void)
 {
 	static gchar *version = NULL;
 	if (!version)
-		version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+		version = g_strdup_printf("%s (%s)", GEBR_VERSION NANOVERSION, gebr_version());
 	return version;
 }
 
@@ -226,7 +229,12 @@ gboolean server_init(void)
 	gchar *id_path = g_build_filename(gebrd_dir, "id", NULL);
 
 	/* Daemon Version */
-	g_file_set_contents(get_version_file(), gebrd_get_version(), -1, NULL);
+	GError *error = NULL;
+	g_file_set_contents(get_version_file(), gebrd_get_version(), -1, &error);
+	if (error) {
+		g_warning("%s", error->message);
+		exit(1);
+	}
 
 	if (g_access(id_path, R_OK | W_OK) == 0) {
 		if (!g_file_get_contents(id_path, &contents, NULL, NULL)) {

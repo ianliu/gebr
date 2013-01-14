@@ -38,23 +38,18 @@ GType gebr_comm_terminal_process_get_type(void);
 #define GEBR_COMM_IS_TERMINAL_PROCESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_TERMINAL_PROCESS_TYPE))
 #define GEBR_COMM_TERMINAL_PROCESS_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_TERMINAL_PROCESS_TYPE, GebrCommTerminalProcessClass))
 
-enum GebrCommTerminalProcessExitStatus {
-	GEBR_COMM_TERMINAL_PROCESS_NORMAL_EXIT,
-	GEBR_COMM_TERMINAL_PROCESS_CRASH_EXIT
-};
-
 struct _GebrCommTerminalProcess {
 	GObject parent;
 
 	GPid pid;
 	gboolean is_running;
 	gint exit_code;
-	enum GebrCommTerminalProcessExitStatus exit_status;
 
 	GIOChannel *ptm_io_channel;
 	guint ptm_watch_id;
 	guint finish_watch_id;
 };
+
 struct _GebrCommTerminalProcessClass {
 	GObjectClass parent;
 
@@ -94,6 +89,8 @@ GString *gebr_comm_terminal_process_read_string_all(GebrCommTerminalProcess *);
 gsize gebr_comm_terminal_process_write(GebrCommTerminalProcess *, GByteArray *);
 
 gsize gebr_comm_terminal_process_write_string(GebrCommTerminalProcess *, GString *);
+
+GIOChannel *gebr_comm_terminal_process_get_channel(GebrCommTerminalProcess *self);
 
 G_END_DECLS
 #endif				//__GEBR_COMM_TERMINAL_PROCESS_H

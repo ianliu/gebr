@@ -76,6 +76,11 @@ void gebrm_client_set_magic_cookie(GebrmClient *client,
 
 const gchar *gebrm_client_get_magic_cookie(GebrmClient *client);
 
+void gebrm_client_set_gebr_cookie(GebrmClient *client,
+				   const gchar *gebr_cookie);
+
+const gchar *gebrm_client_get_gebr_cookie(GebrmClient *client);
+
 /**
  * gebrm_client_add_forward:
  *

@@ -127,27 +127,23 @@ gebr_comm_gebr_get_dafault_keys(void)
 }
 
 gchar *
-gebr_comm_get_ssh_command_with_key(void)
+gebr_comm_get_ssh_command_with_key(gboolean check_host)
 {
 	const gchar *default_keys = gebr_comm_gebr_get_dafault_keys();
-	gchar *basic_cmd;
+	GString *ssh_cmd = g_string_new("ssh");
+
+	if (!check_host)
+		g_string_append_printf(ssh_cmd, " -o StrictHostKeyChecking=no");
+
 	if (default_keys)
-		basic_cmd = g_strdup_printf("ssh -o NoHostAuthenticationForLocalhost=yes %s", default_keys);
-	else
-		basic_cmd = g_strdup("ssh -o NoHostAuthenticationForLocalhost=yes");
+		g_string_append_printf(ssh_cmd, " %s", default_keys);
 
 	gchar *path = gebr_key_filename(FALSE);
-	gchar *ssh_cmd;
-
 	if (g_file_test(path, G_FILE_TEST_EXISTS))
-		ssh_cmd = g_strconcat(basic_cmd, " -i ", path, NULL);
-	else
-		ssh_cmd = g_strdup(basic_cmd);
-
+		g_string_append_printf(ssh_cmd, " -i %s", path);
 	g_free(path);
-	g_free(basic_cmd);
 
-	return ssh_cmd;
+	return g_string_free(ssh_cmd, FALSE);
 }
 
 guint

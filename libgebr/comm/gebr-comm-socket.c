@@ -228,15 +228,12 @@ void _gebr_comm_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocket
 void _gebr_comm_socket_close(GebrCommSocket * socket)
 {
 	if (socket->io_channel != NULL) {
-		GError *error;
-
 		if (socket->write_watch_id)
 			g_source_remove(socket->write_watch_id);
 
 		if (socket->read_watch_id)
 			g_source_remove(socket->read_watch_id);
 
-		error = NULL;
 		g_io_channel_unref(socket->io_channel);
 		socket->io_channel = NULL;
 		g_byte_array_free(socket->queue_write_bytes, TRUE);

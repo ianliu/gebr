@@ -26,6 +26,7 @@ struct _GebrmClientPriv {
 	GebrCommProtocolSocket *socket;
 	gchar *id;
 	gchar *cookie;
+	gchar *gebr_cookie;
 	GList *forwards;
 	GHashTable *job_ids;
 	guint x11_port;
@@ -202,6 +203,20 @@ const gchar *
 gebrm_client_get_magic_cookie(GebrmClient *client)
 {
 	return client->priv->cookie;
+}
+
+void
+gebrm_client_set_gebr_cookie(GebrmClient *client, const gchar *gebr_cookie)
+{
+	if (client->priv->gebr_cookie)
+		g_free(client->priv->gebr_cookie);
+	client->priv->gebr_cookie = g_strdup(gebr_cookie);
+}
+
+const gchar *
+gebrm_client_get_gebr_cookie(GebrmClient *client)
+{
+	return client->priv->gebr_cookie;
 }
 
 void

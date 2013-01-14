@@ -47,6 +47,10 @@ G_DEFINE_TYPE(GebrCommSsh, gebr_comm_ssh, G_TYPE_OBJECT);
 static void ssh_process_read(GebrCommTerminalProcess *process,
 			     GebrCommSsh *self);
 
+static gboolean ssh_process_write(GIOChannel *channel,
+				  GIOCondition condition,
+				  gpointer data);
+
 static void ssh_process_finished(GebrCommTerminalProcess *process,
 				 GebrCommSsh *self);
 
@@ -59,6 +63,7 @@ enum {
 	SSH_QUESTION,
 	SSH_ERROR,
 	SSH_STDOUT,
+	SSH_STDIN,
 	SSH_KEY,
 	SSH_FINISHED,
 	LAST_SIGNAL
@@ -146,6 +151,15 @@ gebr_comm_ssh_class_init(GebrCommSshClass *klass)
 			     g_cclosure_marshal_VOID__POINTER,
 			     G_TYPE_NONE, 1,
 			     G_TYPE_GSTRING);
+
+	signals[SSH_STDIN] =
+		g_signal_new("ssh-stdin",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommSshClass, ssh_stdin),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 
 	signals[SSH_KEY] =
 		g_signal_new("ssh-key",
@@ -295,6 +309,17 @@ ssh_process_read(GebrCommTerminalProcess *process,
 	gebr_comm_ssh_parse_output(self, process, output);
 }
 
+static gboolean
+ssh_process_write(GIOChannel *channel,
+		  GIOCondition condition,
+		  gpointer data)
+{
+	GebrCommSsh *self = data;
+	if (self->priv->out_state == SSH_OUT_STATE_COMMAND_OUTPUT)
+		g_signal_emit(self, signals[SSH_STDIN], 0);
+	return FALSE;
+}
+
 static void
 ssh_process_finished(GebrCommTerminalProcess *process,
 		     GebrCommSsh *self)
@@ -325,6 +350,13 @@ get_next_line(GebrCommSsh *self)
 	}
 
 	return g_strstrip(line);
+}
+
+static void
+schedule_stdin_signal(GebrCommSsh *self)
+{
+	GIOChannel *channel = gebr_comm_terminal_process_get_channel(self->priv->process);
+	g_io_add_watch(channel, G_IO_OUT, ssh_process_write, self);
 }
 
 static void
@@ -386,6 +418,7 @@ process_ssh_line(GebrCommSsh *self,
 		}
 		else if (strstr(line, SENDING_COMMAND) || strstr(line, REMOTE_FORWARD)) {
 			self->priv->out_state = SSH_OUT_STATE_COMMAND_OUTPUT;
+			schedule_stdin_signal(self);
 		}
 	} else if (self->priv->out_state == SSH_OUT_STATE_COMMAND_OUTPUT) {
 		if (g_str_has_prefix(line, "debug1: ")) {
@@ -427,4 +460,12 @@ const gchar *
 gebr_comm_ssh_get_ssh_output(GebrCommSsh *ssh)
 {
 	return ssh->priv->ssh_output->str;
+}
+
+void
+gebr_comm_ssh_write_chars(GebrCommSsh *ssh, const gchar *data)
+{
+	GString *tmp = g_string_new(data);
+	gebr_comm_terminal_process_write_string(ssh->priv->process, tmp);
+	g_string_free(tmp, TRUE);
 }

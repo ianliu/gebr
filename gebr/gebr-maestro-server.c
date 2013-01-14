@@ -26,6 +26,7 @@
 #include <libgebr/gui/gui.h>
 #include <libgebr/gebr-maestro-info.h>
 #include <libgebr/gebr-maestro-settings.h>
+#include <libgebr/gebr-auth.h>
 #include <stdlib.h>
 #include <glib/gstdio.h>
 #include <unistd.h>
@@ -57,7 +58,7 @@ struct _GebrMaestroServerPriv {
 	/* GVFS */
 	gboolean has_connected_daemon;
 	GFile *mount_location;
-	GebrCommPortForward *forward;
+	GebrCommPortForward *sftp_forward;
 
 	GtkListStore *groups_store;
 	GtkListStore *queues_model;
@@ -139,7 +140,7 @@ on_sftp_port_defined(GebrCommPortProvider *self,
 		     guint port,
 		     GebrMaestroServer *maestro)
 {
-	maestro->priv->forward = gebr_comm_port_provider_get_forward(self);
+	maestro->priv->sftp_forward = gebr_comm_port_provider_get_forward(self);
 
 	gchar *uri;
 	gchar *user = gebr_maestro_server_get_user(maestro);
@@ -189,6 +190,22 @@ on_sftp_port_error(GebrCommPortProvider *self,
 		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 }
 
+static void
+mount_sftp(GebrMaestroServer *maestro, guint remote_port)
+{
+	if (maestro->priv->has_connected_daemon)
+		return;
+
+	maestro->priv->has_connected_daemon = TRUE;
+
+	GebrCommPortProvider *port_provider =
+		gebr_comm_server_create_port_provider(maestro->priv->server, GEBR_COMM_PORT_TYPE_SFTP);
+	gebr_comm_port_provider_set_sftp_port(port_provider, remote_port);
+	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
+	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
+	gebr_comm_port_provider_start(port_provider);
+}
+
 gboolean
 gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro)
 {
@@ -209,20 +226,10 @@ gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro)
 }
 
 void
-gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
+gebr_maestro_server_request_sftp(GebrMaestroServer *maestro)
 {
-	if (maestro->priv->has_connected_daemon)
-		return;
-
-	maestro->priv->has_connected_daemon = TRUE;
-
-	GebrCommPortProvider *port_provider =
-		gebr_comm_server_create_port_provider(maestro->priv->server, GEBR_COMM_PORT_TYPE_SFTP);
-	g_signal_connect(port_provider, "port-defined", G_CALLBACK(on_sftp_port_defined), maestro);
-	g_signal_connect(port_provider, "error", G_CALLBACK(on_sftp_port_error), maestro);
-	g_debug("on %s, address:'%s'", __func__, addr);
-	gebr_comm_port_provider_set_sftp_address(port_provider, addr);
-	gebr_comm_port_provider_start(port_provider);
+	gebr_comm_protocol_socket_oldmsg_send(maestro->priv->server->socket, FALSE,
+	                                      gebr_comm_protocol_defs.sftp_def, 0);
 }
 
 static void
@@ -235,8 +242,11 @@ unmount_gvfs(GebrMaestroServer *maestro,
 		return;
 	}
 
-	if (maestro->priv->forward)
-		gebr_comm_port_forward_close(maestro->priv->forward);
+	if (maestro->priv->sftp_forward) {
+		gebr_comm_port_forward_close(maestro->priv->sftp_forward);
+		gebr_comm_port_forward_free(maestro->priv->sftp_forward);
+		maestro->priv->sftp_forward = NULL;
+	}
 
 	maestro->priv->has_connected_daemon = FALSE;
 
@@ -323,6 +333,13 @@ gebr_maestro_server_set_error(GebrMaestroServer *maestro,
 		gebr_comm_server_set_last_error(maestro->priv->server,
 						SERVER_ERROR_PROTOCOL_VERSION,
 						"Protocol version mismatch");
+	}
+
+	if (maestro->priv->server && g_strcmp0(error_type, "error:cookie") == 0) {
+			gebr_comm_server_set_last_error(maestro->priv->server,
+							SERVER_ERROR_COOKIE,
+							"The received cookie was not found "
+							"in the list of authorized cookies");
 	}
 }
 
@@ -493,6 +510,12 @@ mount_enclosing_ready_cb(GFile *location,
 		g_object_unref(maestro->priv->mount_location);
 		maestro->priv->mount_location = NULL;
 		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_NOK);
+
+		if (maestro->priv->sftp_forward) {
+			gebr_comm_port_forward_close(maestro->priv->sftp_forward);
+			gebr_comm_port_forward_free(maestro->priv->sftp_forward);
+			maestro->priv->sftp_forward = NULL;
+		}
 	}
 	gebr_add_remove_ssh_key(TRUE);
 }
@@ -560,7 +583,7 @@ parse_messages(GebrCommServer *comm_server,
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(comm_server->socket->protocol->waiting_ret_hashs));
+			guint ret_hash = message->ret_hash;
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
@@ -579,7 +602,12 @@ parse_messages(GebrCommServer *comm_server,
 				else
 					gebr_maestro_server_connect_on_daemons(maestro);
 
-				gebr_comm_server_forward_x11(maestro->priv->server);
+				gchar *display_host;
+				guint display_port;
+
+				display_port = gebr_comm_server_get_display_port(comm_server, &display_host);
+				gebr_comm_server_forward_x11(maestro->priv->server, display_host, display_port);
+				g_free(display_host);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
@@ -594,6 +622,20 @@ parse_messages(GebrCommServer *comm_server,
 				gint ret_id = atoi(status_id->str);
 				g_signal_emit(maestro, signals[PATH_ERROR], 0, ret_id);
 
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			} else if (ret_hash == gebr_comm_protocol_defs.sftp_def.code_hash) {
+				GList *arguments;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+					goto err;
+
+				GString *remote_port_str = g_list_nth_data(arguments, 0);
+				guint remote_port = atoi(remote_port_str->str);
+
+				if (remote_port > 0)
+					mount_sftp(maestro, remote_port);
+				else
+					g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_NOK);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
@@ -1074,21 +1116,10 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_maestro_controller_server_list_add(gebr.maestro_controller, g_get_host_name(), TRUE);
 
 			// Mount SFTP if needed
-			if (gebr_maestro_server_need_mount_gvfs (maestro) && !maestro->priv->wizard_setup) {
-				gchar *addr;
-
-				gchar *comma = strstr(hosts->str, ",");
-				if (comma)
-					addr = g_strndup(hosts->str, (comma - hosts->str)/sizeof(gchar));
-				else
-					addr = g_strdup(hosts->str);
-
-				gebr_maestro_server_mount_gvfs(maestro, addr);
-
-				g_free(addr);
-			} else {
+			if (gebr_maestro_server_need_mount_gvfs (maestro) && !maestro->priv->wizard_setup)
+				gebr_maestro_server_request_sftp(maestro);
+			else
 				g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
-			}
 
 			g_free(nfslabel);
 
@@ -1684,6 +1715,7 @@ gebr_maestro_server_connect(GebrMaestroServer *maestro,
 						     gebr_get_session_id(),
 						     &maestro_ops);
 
+	gebr_comm_server_set_cookie(maestro->priv->server, gebr_id_random_create(GEBR_AUTH_COOKIE_LENGTH));
 	g_signal_connect(maestro->priv->server, "server-password-request",
 	                 G_CALLBACK(on_password_request), maestro);
 	g_signal_connect(maestro->priv->server, "question-request",
@@ -2116,6 +2148,8 @@ gebr_maestro_server_translate_error(const gchar *error_type,
 
 	if (g_strcmp0(error_type, "error:protocol") == 0)
 		message = g_strdup_printf(_("Domain protocol version mismatch: %s"), error_msg);
+	else if (g_strcmp0(error_type, "error:cookie") == 0)
+		message = g_strdup_printf(_("The cookie %s was not found in the list of authorized cookies"), error_msg);
 	else if (g_strcmp0(error_type, "error:ssh") == 0)
 		message = g_strdup(error_msg);
 

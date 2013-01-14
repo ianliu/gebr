@@ -112,21 +112,7 @@ static gboolean
 __gebr_comm_terminal_process_read_watch(GIOChannel * source, GIOCondition condition,
 					GebrCommTerminalProcess * terminal_process)
 {
-	if (condition & G_IO_ERR) {
-		/* TODO: */
-		return FALSE;
-	}
-	if (condition & G_IO_HUP) {
-		/* using g_child_watch_add */
-		return FALSE;
-	}
-	if (condition & G_IO_NVAL) {
-		/* probably a fd change or end of process */
-		return FALSE;
-	}
-
 	g_signal_emit(terminal_process, object_signals[READY_READ], 0);
-
 	return TRUE;
 }
 
@@ -234,15 +220,13 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 	terminal_process->pid = pid;
 	terminal_process->is_running = TRUE;
 	/* monitor exit */
-	terminal_process->ptm_io_channel = NULL;
 	terminal_process->finish_watch_id =
 		g_child_watch_add(terminal_process->pid, (GChildWatchFunc) __gebr_comm_terminal_process_finished_watch,
 				  terminal_process);
 	/* ptm */
 	terminal_process->ptm_io_channel = g_io_channel_unix_new(ptm_fd);
 	g_io_channel_set_close_on_unref(terminal_process->ptm_io_channel, FALSE);
-	terminal_process->ptm_watch_id = g_io_add_watch(terminal_process->ptm_io_channel,
-							G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+	terminal_process->ptm_watch_id = g_io_add_watch(terminal_process->ptm_io_channel, G_IO_IN,
 							(GIOFunc) __gebr_comm_terminal_process_read_watch,
 							terminal_process);
 	/* nonblock operation */
@@ -359,4 +343,10 @@ gsize gebr_comm_terminal_process_write_string(GebrCommTerminalProcess * terminal
 	written_bytes = gebr_comm_terminal_process_write(terminal_process, &byte_array);
 
 	return written_bytes;
+}
+
+GIOChannel *
+gebr_comm_terminal_process_get_channel(GebrCommTerminalProcess *self)
+{
+	return self->ptm_io_channel;
 }

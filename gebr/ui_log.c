@@ -305,7 +305,10 @@ on_state_change(GebrMaestroServer *maestro,
 		if (g_strcmp0(error_type, "error:none") != 0) {
 			nfs_domain = gebr_maestro_server_get_address(maestro);
 			icon = GTK_STOCK_DIALOG_WARNING;
-			text = g_markup_printf_escaped(_("Could not connect to domain %s:\n%s"), nfs_domain, error_msg);
+			text = g_markup_printf_escaped(_("Could not connect to domain%s%s:\n%s"),
+						       nfs_domain ? " ":"",
+						       nfs_domain ? nfs_domain : "",
+						       error_msg);
 			show_label = FALSE;
 		} else {
 			icon = GTK_STOCK_DISCONNECT;

@@ -238,8 +238,7 @@ void gebr_maestro_server_append_key_finished(void);
 
 gboolean gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro);
 
-void gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro,
-                                    const gchar *addr);
+void gebr_maestro_server_request_sftp(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_reset_daemons_timeout(GebrMaestroServer *maestro);
 

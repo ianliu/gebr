@@ -48,6 +48,7 @@ typedef enum {
 
 struct gebr_comm_protocol_defs {
 	GHashTable *hash_table;
+	GHashTable *code_hash_table;
 
 	/* messages identifiers hashes */
 	struct gebr_comm_message_def ret_def;
@@ -92,14 +93,13 @@ struct gebr_comm_protocol_defs {
 
 	struct gebr_comm_message_def harakiri_def;// Asks daemon to die Maestro -> Daemon
 	struct gebr_comm_message_def dsp_def;   // Display info         Gebr    -> Maestro & Maestro -> Daemon
+	struct gebr_comm_message_def sftp_def;
 };
 
 struct gebr_comm_message {
-	/* message identifier */
 	guint hash;
-	/* argument size */
+	guint ret_hash;
 	gsize argument_size;
-	/* message argument (can be an empty string) */
 	GString *argument;
 };
 
@@ -109,8 +109,6 @@ struct gebr_comm_protocol {
 	struct gebr_comm_message *message;
 	/* received messages to be parsed */
 	GList *messages;
-	/* waiting for return of message with "hash"; 0 if it is not waiting responses */
-	GQueue *waiting_ret_hashs;
 	/* logged in with INI and RET? */
 	gboolean logged;
 	/* if we are logged, we received a host name from the peer */

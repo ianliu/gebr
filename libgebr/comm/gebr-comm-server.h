@@ -112,6 +112,7 @@ struct _GebrCommServer {
 		SERVER_ERROR_SERVER,
 		SERVER_ERROR_SSH,
 		SERVER_ERROR_PROTOCOL_VERSION,
+		SERVER_ERROR_COOKIE,
 	} error;
 
 	GString *last_error;
@@ -170,6 +171,12 @@ void gebr_comm_server_set_last_error(GebrCommServer *server,
 
 void gebr_comm_server_free(GebrCommServer *gebr_comm_server);
 
+/**
+ * gebr_comm_server_set_x11_cookie:
+ */
+void gebr_comm_server_set_x11_cookie(GebrCommServer *server,
+				     const gchar *cookie);
+
 void gebr_comm_server_connect(GebrCommServer *server,
 			      gboolean maestro,
 			      gboolean force_init);
@@ -189,7 +196,12 @@ void gebr_comm_server_kill(GebrCommServer *gebr_comm_server);
  *
  * Forward @remote_display to the local machine.
  */
-void gebr_comm_server_forward_x11(GebrCommServer *gebr_comm_server);
+void gebr_comm_server_forward_x11(GebrCommServer *gebr_comm_server,
+				  const gchar *display_host,
+				  guint display_port);
+
+guint gebr_comm_server_get_display_port(GebrCommServer *server,
+					gchar **display_host);
 
 const gchar *gebr_comm_server_state_to_string(GebrCommServerState state);
 
@@ -268,6 +280,11 @@ void gebr_comm_server_maestro_connect_on_daemons(GebrCommServer *server);
 
 GebrCommPortProvider *gebr_comm_server_create_port_provider(GebrCommServer *server,
 							    GebrCommPortType type);
+
+void gebr_comm_server_set_check_host(GebrCommServer *server,
+                                     gboolean check_host);
+
+void gebr_comm_server_set_cookie(GebrCommServer *server, const gchar *gebr_cookie);
 
 G_END_DECLS
 

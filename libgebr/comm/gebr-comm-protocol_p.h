@@ -41,6 +41,8 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 
 GString *gebr_comm_protocol_build_messagev(struct gebr_comm_message_def msg_def, guint n_params, va_list ap);
 
+GString *gebr_comm_protocol_build_any_messagev(struct gebr_comm_message_def msg_def, gboolean is_return, guint n_params, va_list ap);
+
 GString *gebr_comm_protocol_build_message(struct gebr_comm_message_def msg_def, guint n_params, ...);
 
 GList *gebr_comm_protocol_split_new(GString * arguments, guint parts);

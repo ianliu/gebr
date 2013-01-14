@@ -66,6 +66,7 @@ void client_add(GebrCommProtocolSocket * client)
 	c = g_new(struct client, 1);
 	c->socket = client;
 	c->display = g_string_new(NULL);
+	c->gebr_cookie = NULL;
 
 	gebrd_user_set_connection(gebrd->user, c);
 
@@ -276,14 +277,24 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *display_port = g_string_new("");
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
 			GString *version = g_list_nth_data(arguments, 0);
 			GString *hostname = g_list_nth_data(arguments, 1);
+			GString *gebr_cookie = g_list_nth_data(arguments, 2);
 
 			g_debug("Current protocol version is: %s", gebr_comm_protocol_get_version());
 			g_debug("Received protocol version:   %s", version->str);
+			g_debug("Received GeBR cookie: %s", gebr_cookie->str);
+
+			if (!gebr_auth_accepts(gebrd->auth, gebr_cookie->str)) {
+				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
+								      gebr_comm_protocol_defs.err_def, 2,
+								      "cookie",
+								      gebr_cookie->str);
+				goto err;
+			}
 
 			if (strcmp(version->str, gebr_comm_protocol_get_version())) {
 				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
@@ -297,6 +308,9 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			client->socket->protocol->logged = TRUE;
 			g_string_assign(client->socket->protocol->hostname, hostname->str);
 			client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
+			if (client->gebr_cookie)
+				g_free(client->gebr_cookie);
+			client->gebr_cookie = g_strdup(gebr_cookie->str);
 
 			const gchar *server_type;
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
@@ -324,20 +338,20 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			const gchar *has_maestro = gebrm_path ? "1" : "0";
 			g_free(gebrm_path);
 
-			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 12,
-							      gebrd->hostname,
-							      server_type,
-							      accounts_list->str,
-							      model_name,
-							      total_memory,
-							      gebrd->fs_lock->str,
-							      ncores,
-							      cpu_clock,
-							      gebrd_user_get_daemon_id(gebrd->user),
-							      g_get_home_dir(),
-							      mpi_flavors->str,
-							      has_maestro);
+			gebr_comm_protocol_socket_return_message(client->socket, FALSE,
+								 gebr_comm_protocol_defs.ini_def, 12,
+								 gebrd->hostname,
+								 server_type,
+								 accounts_list->str,
+								 model_name,
+								 total_memory,
+								 gebrd->fs_lock->str,
+								 ncores,
+								 cpu_clock,
+								 gebrd_user_get_daemon_id(gebrd->user),
+								 g_get_home_dir(),
+								 mpi_flavors->str,
+								 has_maestro);
 			gebrd_cpu_info_free(cpuinfo);
 			gebrd_mem_info_free(meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -563,10 +577,10 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			/* frees */
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 2,
-							      gebrd->hostname,
-							      g_strdup_printf("%d", status_id));
+			gebr_comm_protocol_socket_return_message(socket, FALSE,
+								 gebr_comm_protocol_defs.path_def, 2,
+								 gebrd->hostname,
+								 g_strdup_printf("%d", status_id));
 		} else if (message->hash == gebr_comm_protocol_defs.harakiri_def.code_hash) {
 			/* Maestro wants me killed */
 			g_debug("Harakiri");

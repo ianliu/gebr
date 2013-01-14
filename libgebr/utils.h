@@ -140,12 +140,12 @@ int g_strcmp0(const char * str1, const char * str2);
  * @path1: the first path
  * @path2: the second path
  *
- * Compares if path1 and path2 resolves to the same file.
- * The paths compared for equality by calling g_stat() on both of them
- * and comparing their inode parameters are the same.
+ * Compares if @path1 and @path2 resolves to the same file.  The equality is
+ * decided by calling g_stat() on both of them and comparing their inode ids.
  *
  * Returns: %TRUE if @path1 points to the same file/directory as @path2.
- * %FALSE otherwise, including if one or both of then does not exists in the file system.
+ * %FALSE otherwise, including if one or both of then does not exists in the
+ * file system.
  */
 gboolean gebr_realpath_equal (const gchar *path1, const gchar *path2);
 
@@ -460,6 +460,19 @@ GQueue *gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue, const gchar *da
 const gchar *gebr_paths_get_value_by_key(const gchar ***paths,
                                          const gchar *key);
 
+/**
+ * GEBR_LOCK_FILE:
+ *
+ * Locks the file pointed by @path. You must call GEBR_UNLOCK_FILE() when done.
+ */
+void GEBR_LOCK_FILE(const gchar *path);
+
+/**
+ * GEBR_UNLOCK_FILE:
+ *
+ * Unlocks the file pointed by @path.
+ */
+void GEBR_UNLOCK_FILE(const gchar *path);
 
 G_END_DECLS
 
