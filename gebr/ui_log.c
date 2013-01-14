@@ -70,8 +70,8 @@ on_remote_browse_press_event(GtkWidget      *widget,
 	if (on_maestro_press_event(widget, event))
 		return TRUE;
 
-	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
- 	if (!prefix) {
+	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
+ 	if (!prefix && gebr_maestro_server_need_mount_gvfs (maestro)) {
 		preferences_setup_ui(FALSE, TRUE, FALSE, GVFS_PAGE);
 		g_free(prefix);
  	}
@@ -135,6 +135,10 @@ struct ui_log *log_setup_ui(void)
 	 */
 	GtkWidget *internal_box = gtk_hbox_new(FALSE, 5);
 
+	ui_log->maestro_label = gtk_label_new(NULL);
+	gtk_widget_set_tooltip_text(ui_log->maestro_label, _("Current domain"));
+	gtk_box_pack_start(GTK_BOX(internal_box), ui_log->maestro_label, FALSE, FALSE, 5);
+
 	GtkWidget *event_maestro = gtk_event_box_new();
 	ui_log->maestro_icon = gtk_image_new();
 	gtk_container_add(GTK_CONTAINER(event_maestro), ui_log->maestro_icon);
@@ -152,8 +156,8 @@ struct ui_log *log_setup_ui(void)
 	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_set_tooltip_text(ui_log->maestro_icon, _("Disconnected"));
 
-	gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
-	gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-ok", GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Browsing enabled"));
 	/*
 	 * Pack Maestro / Remote Browse with Log
 	 */
@@ -248,7 +252,9 @@ on_maestro_error(GebrMaestroServer *maestro,
 
 		gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
-		gchar *text = g_strdup_printf(_("Error on %s:\n%s"),addr, g_strstrip(msg));
+		gchar *err = g_strdup_printf("Error on %s", addr);
+		gchar *text = g_strdup_printf(_("%s:\n%s"), err, g_strstrip(msg));
+		gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), err);
 		gtk_widget_set_tooltip_text(ui_log->maestro_icon, text);
 		g_free(text);
 
@@ -266,8 +272,8 @@ on_gvfs_mount(GebrMaestroServer *maestro,
 {
 	if (status == STATUS_MOUNT_OK) {
 		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-ok", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing enabled"));
-	} else if (status == STATUS_MOUNT_NOK) {
+		gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Browsing enabled"));
+	} else if (status == STATUS_MOUNT_NOK && gebr_maestro_server_need_mount_gvfs (maestro)) {
 		gtk_image_set_from_stock(GTK_IMAGE(ui_log->remote_browse), "folder-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		gtk_widget_set_tooltip_text(ui_log->remote_browse, _("Remote browsing disabled"));
 	}
@@ -277,41 +283,48 @@ static void
 on_state_change(GebrMaestroServer *maestro,
                 struct ui_log *ui_log)
 {
-	const gchar *addr = gebr_maestro_server_get_address(maestro);
+	gchar *text = NULL;
+	const gchar *icon;
+	const gchar *error_msg;
+	const gchar *error_type;
+	const gchar *nfs_domain = gebr_maestro_server_get_nfs_label(maestro);
+	gboolean show_label = TRUE;
 
 	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		if (gebr_maestro_server_has_servers(maestro, TRUE)) {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_CONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
-
-			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> connected"), addr);
-			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
-			g_free(text);
+			icon = GTK_STOCK_CONNECT;
+			text = g_markup_printf_escaped(_("Connected to %s"), nfs_domain);
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 		} else {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
-			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> without connected nodes"), addr);
-			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
-			g_free(text);
+			icon = GTK_STOCK_DIALOG_WARNING;
+			text = g_markup_printf_escaped(_("No nodes connected in %s"), nfs_domain);
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 		}
 	} else {
-		const gchar *error_msg;
-		const gchar *error_type;
 		gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
 		if (g_strcmp0(error_type, "error:none") != 0) {
-			gchar *msg = g_strdup(error_msg);
-
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
-			gchar *text = g_markup_printf_escaped(_("Error on <b>%s</b>:\n%s"),addr, g_strstrip(msg));
-			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
-
-			g_free(text);
-			g_free(msg);
+			nfs_domain = gebr_maestro_server_get_address(maestro);
+			icon = GTK_STOCK_DIALOG_WARNING;
+			text = g_markup_printf_escaped(_("Could not connect to domain%s%s:\n%s"),
+						       nfs_domain ? " ":"",
+						       nfs_domain ? nfs_domain : "",
+						       error_msg);
+			show_label = FALSE;
 		} else {
-			gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR);
-			gchar *text = g_markup_printf_escaped(_("Maestro <b>%s</b> disconnected"), addr);
-			gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
-			g_free(text);
+			icon = GTK_STOCK_DISCONNECT;
+			text = g_markup_printf_escaped(_("Not connected"));
+			gtk_label_set_markup(GTK_LABEL(ui_log->maestro_label), nfs_domain);
 		}
 	}
+
+	if (show_label)
+		gtk_widget_show(ui_log->maestro_label);
+	else
+		gtk_widget_hide(ui_log->maestro_label);
+
+	gtk_image_set_from_stock(GTK_IMAGE(ui_log->maestro_icon), icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_widget_set_tooltip_markup(ui_log->maestro_icon, text);
+	g_free(text);
 }
 
 void

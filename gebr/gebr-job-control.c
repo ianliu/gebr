@@ -175,7 +175,7 @@ static void gebr_job_control_include_cmd_line(GebrJobControl *jc,
 
 gboolean static update_user_defined_filters(GebrJobControl *jc);
 
-void gebr_job_control_free_user_defined_filter(GebrJobControl *jc);
+
 /* Private methods {{{1 */
 static void
 gebr_jc_get_jobs_state(GebrJobControl *jc,
@@ -796,6 +796,9 @@ on_cb_changed(GtkComboBox *combo,
 			update_user_defined_filters(jc);
 	}
 
+	gtk_widget_set_tooltip_markup(GTK_WIDGET(jc->priv->flow_combo), gtk_combo_box_get_active_text(jc->priv->flow_combo));
+	gtk_widget_set_tooltip_markup(GTK_WIDGET(jc->priv->server_combo), gtk_combo_box_get_active_text(jc->priv->server_combo));
+
 	on_select_non_single_job(jc, NULL);
 	update_tree_view(jc);
 }
@@ -875,8 +878,16 @@ on_job_status(GebrJob *job,
 {
 	gebr_jc_update_status_and_time(jc, job, new_status);
 
-	if (old_status == JOB_STATUS_QUEUED && new_status == JOB_STATUS_RUNNING)
+	if (old_status == JOB_STATUS_QUEUED && new_status == JOB_STATUS_RUNNING) {
 		job_control_fill_servers_info(jc);
+		on_job_output(job, 0, _("\n --- The execution started. --- \n\n"), jc);
+	} else if (old_status == JOB_STATUS_RUNNING && new_status == JOB_STATUS_FINISHED) {
+		on_job_output(job, 0, _("\n --- The execution finished successfully. --- \n"), jc);
+	} else if (old_status == JOB_STATUS_RUNNING && new_status == JOB_STATUS_CANCELED) {
+		on_job_output(job, 0, _("\n --- The execution has been canceled. --- \n"), jc);
+	} else if (old_status == JOB_STATUS_RUNNING && new_status == JOB_STATUS_FAILED) {
+		on_job_output(job, 0, _("\n --- The execution failed. --- \n"), jc);
+	}
 
 	GtkTreeIter *iter = gebr_job_get_iter(job);
 	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(jc->priv->store), iter);
@@ -1020,9 +1031,9 @@ job_control_fill_servers_info(GebrJobControl *jc)
 			if (g_strcmp0(groups, "") == 0)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to maestro <i>%s</i>, "
+		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to <i>%s</i>, "
 						   "split in %d %s%s\n"),
-						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
+						  gebr_job_get_hostname(job), gebr_job_get_nfs_label(job),
 						  total_procs,
 						  total_procs > 1 ? _("processes") :_("process"),
 						  g_strcmp0(niceness, "0")? _(", using only free resources of processing nodes.") : _(", disputing for resources of the processing nodes."));
@@ -1634,15 +1645,10 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
 	GString *msg_final = g_string_new("");
 
-	const gchar *maddr = gebr_job_get_maestro_address(job);
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
-
-	if (!g_strcmp0(msg, ""))
-		msg = g_strdup_printf("%s", gebr_maestro_server_get_display_address(maestro));
-	if (!g_strcmp0(msg, "127.0.0.1"))
-		msg = g_strdup(maddr); 
-
+	if (!msg || !*msg)
+		msg = g_strdup(gebr_job_get_nfs_label(job));
 	g_string_append(msg_final, msg);
+
 	if(g_utf8_strlen(msg, 16) > 15) {
 		g_string_erase(msg_final, 13, -1);
 		g_string_append(msg_final,"...");
@@ -1678,7 +1684,21 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gebr_job_control_include_cmd_line(jc, job);
 
 	/* output */
+	if (status == JOB_STATUS_QUEUED) {
+		g_string_append(info, _("\n --- The execution is queued. --- \n\n"));
+	} else {
+		g_string_append(info, _("\n --- The execution started. --- \n\n"));
+	}
+
 	g_string_append(info, gebr_job_get_output(job));
+
+	if (status == JOB_STATUS_FINISHED) {
+		g_string_append(info, _("\n --- The execution finished successfully. --- \n"));
+	} else if (status == JOB_STATUS_CANCELED) {
+		g_string_append(info, _("\n --- The execution has been canceled. --- \n"));
+	} else if (status == JOB_STATUS_FAILED) {
+		g_string_append(info, _("\n --- The execution failed. --- \n"));
+	}
 
 	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &end_iter);
 	gtk_text_buffer_insert(jc->priv->text_buffer, &end_iter, info->str, info->len);
@@ -2126,7 +2146,7 @@ on_maestro_server_filter_changed(GtkComboBox *combo,
 			continue;
 
 		if (!*group && type == MAESTRO_SERVER_TYPE_GROUP)
-			display = gebr_maestro_server_get_display_address(maestro);
+			display = g_strdup(gebr_maestro_server_get_nfs_label(maestro));
 		else
 			display = group;
 
@@ -2393,12 +2413,14 @@ gebr_job_control_new(void)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(flow_cb), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(flow_cb), cell, "text", 0);
 	jc->priv->flow_combo = flow_cb;
+	g_object_set(GTK_WIDGET(jc->priv->flow_combo), "width-request", 150, NULL);
 
 	GtkComboBox *server_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-cb"));
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(server_cb), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(server_cb), cell, "text", 0);
 	jc->priv->server_combo = server_cb;
+	g_object_set(GTK_WIDGET(jc->priv->server_combo), "width-request", 150, NULL);
 
 	GtkComboBox *status_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-status-cb"));
 	cell = gtk_cell_renderer_pixbuf_new();
@@ -2408,6 +2430,7 @@ gebr_job_control_new(void)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_cb), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(status_cb), cell, "text", ST_TEXT);
 	jc->priv->status_combo = status_cb;
+	g_object_set(GTK_WIDGET(jc->priv->server_combo), "width-request", 150, NULL);
 
 //	g_signal_connect(gebr.maestro_controller, "maestro-list-changed",
 //			 G_CALLBACK(on_maestro_list_changed), jc);
@@ -3216,4 +3239,10 @@ gebr_job_control_unblock_cursor_changed(GebrJobControl *jc)
 {
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
 	g_signal_handlers_unblock_by_func(selection, job_control_on_cursor_changed, jc);
+}
+
+void
+gebr_job_control_update_servers_model(GebrJobControl *jc)
+{
+	on_maestro_server_filter_changed(jc->priv->server_combo, jc);
 }

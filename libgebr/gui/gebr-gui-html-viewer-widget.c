@@ -42,6 +42,7 @@
 enum {
 	TITLE_READY,
 	PRINT_REQUESTED,
+	NAVIGATION_REQUESTED,
 	LAST_SIGNAL
 };
 
@@ -136,6 +137,19 @@ static void gebr_gui_html_viewer_widget_class_init(GebrGuiHtmlViewerWidgetClass 
 			     GEBR_GUI_TYPE_HTML_VIEWER_WIDGET,
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrGuiHtmlViewerWidgetClass, print_requested),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
+
+	/**
+	 * GebrGuiHtmlViewerWidget::navigation-requested:
+	 * Emitted when the user requests a outer navigation through browser.
+	 */
+	signals[ NAVIGATION_REQUESTED ] =
+		g_signal_new("navigation-requested",
+			     GEBR_GUI_TYPE_HTML_VIEWER_WIDGET,
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrGuiHtmlViewerWidgetClass, navigation_requested),
 			     NULL, NULL,
 			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE, 0);
@@ -480,6 +494,7 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 				g_string_printf(full_uri, "http://%s", uri);
 
 			gebr_gui_show_uri(full_uri->str);
+			g_signal_emit_by_name(self, "navigation-requested");
 
 			g_string_free(full_uri, TRUE);
 

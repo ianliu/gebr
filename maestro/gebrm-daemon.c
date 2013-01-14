@@ -25,6 +25,7 @@
 #include "gebrm-task.h"
 
 #include <libgebr/comm/gebr-comm.h>
+#include <libgebr/gebr-auth.h>
 #include "libgebr/geoxml/program.h"
 
 struct _GebrmDaemonPriv {
@@ -52,6 +53,7 @@ struct _GebrmDaemonPriv {
 
 	gint uncompleted_tasks;
 	gchar *mpi_flavors;
+	gboolean has_gebrm;
 };
 
 enum {
@@ -199,44 +201,14 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 		}
 		daemon->priv->is_initialized = FALSE;
 		daemon->priv->uncompleted_tasks = 0;
-		gebr_remove_temporary_file(server->address->str, FALSE);
 	}
 	else if (server->state == SERVER_STATE_CONNECT) {
 		gebrm_daemon_set_error_type(daemon, NULL);
 		gebrm_daemon_set_error_msg(daemon, NULL);
+		gebr_comm_server_set_last_error(server, SERVER_ERROR_NONE, "");
 	}
 
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
-}
-
-static GString *
-gebrm_server_op_ssh_login(GebrCommServer *server,
-			  const gchar *title,
-			  const gchar *message,
-			  gpointer user_data)
-{
-	GebrmDaemon *daemon = user_data;
-
-	gboolean accepts_key = gebr_check_if_server_accepts_key(server->address->str,
-	                                                        gebr_comm_server_is_maestro(server));
-
-	if (daemon->priv->client)
-		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
-						      gebr_comm_protocol_defs.pss_def, 2,
-						      server->address->str,
-						      accepts_key? "yes" : "no");
-
-	return NULL;
-}
-
-static gboolean
-gebrm_server_op_ssh_question(GebrCommServer *server,
-			     const gchar *title,
-			     const gchar *message,
-			     gpointer user_data)
-{
-	g_debug("[DAEMON] %s: Question %s %s", __func__, title, message);
-	return TRUE;
 }
 
 static void
@@ -292,12 +264,12 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 
 		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(server->socket->protocol->waiting_ret_hashs));
+			guint ret_hash = message->ret_hash;
 
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 11)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 12)) == NULL)
 					goto err;
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
@@ -310,11 +282,10 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *daemon_id    = g_list_nth_data (arguments, 8);
 				GString *home         = g_list_nth_data (arguments, 9);
 				GString *mpi_flavors  = g_list_nth_data (arguments, 10);
+				GString *has_gebrm    = g_list_nth_data (arguments, 11);
 
 				gebr_comm_server_set_logged(server);
-
 				daemon->priv->is_initialized = TRUE;
-
 				server->socket->protocol->hostname = g_string_assign(server->socket->protocol->hostname, hostname->str);
 				gebrm_daemon_set_model_name(daemon, model_name->str);
 				gebrm_daemon_set_memory(daemon, total_memory->str);
@@ -323,37 +294,18 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
 				gebrm_daemon_set_home_dir(daemon, home->str);
-				g_debug("Definindo variavel mpi_flavors para '%s'", mpi_flavors->str);
+				gebrm_daemon_set_has_gebrm(daemon, atoi(has_gebrm->str) ? TRUE : FALSE);
+
 				gebrm_daemon_set_mpi_flavors(daemon, mpi_flavors->str);
 
 				gboolean use_key = gebr_comm_server_get_use_public_key(server);
 				if (use_key) {
 					gebr_comm_server_append_key(server, gebm_daemon_append_key_finished, daemon);
 				}
-				gebr_remove_temporary_file(server->address->str, FALSE);
 
-				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
+				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL, gebrm_daemon_get_has_gebrm(daemon));
 
 				g_strfreev(accounts);
-				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			} else if (ret_hash == gebr_comm_protocol_defs.gid_def.code_hash) {
-				GList *arguments;
-
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-					goto err;
-
-				GString *gid  = g_list_nth_data(arguments, 0);
-				GString *port = g_list_nth_data(arguments, 1);
-
-				gebr_log(GEBR_LOG_INFO, "Got port %s for gid %s", port->str, gid->str);
-
-				if (g_strcmp0(port->str, "0") == 0) {
-					gebrm_daemon_set_error_type(daemon, "error:xauth");
-					gebrm_daemon_set_error_msg(daemon, "");
-				}
-
-				g_signal_emit(daemon, signals[PORT_DEFINE], 0, gid->str, port->str);
-
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
 				GList *arguments;
@@ -385,7 +337,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				if (!daemon->priv->is_initialized)
 					g_signal_emit(daemon, signals[DAEMON_INIT], 0,
-						      error_type->str, error_msg->str);
+						      error_type->str, error_msg->str,
+						      FALSE);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -467,8 +420,6 @@ err:	gebr_comm_message_free(message);
 static struct gebr_comm_server_ops daemon_ops = {
 	.log_message      = gebrm_server_op_log_message,
 	.state_changed    = gebrm_server_op_state_changed,
-	.ssh_login        = gebrm_server_op_ssh_login,
-	.ssh_question     = gebrm_server_op_ssh_question,
 	.process_request  = gebrm_server_op_process_request,
 	.process_response = gebrm_server_op_process_response,
 	.parse_messages   = gebrm_server_op_parse_messages
@@ -508,18 +459,17 @@ gebrm_daemon_get_property(GObject    *object,
 
 static void
 on_password_request(GebrCommServer *server,
-		    const gchar *title,
-		    const gchar *question,
+                    gboolean retry,
 		    GebrmDaemon *daemon)
 {
-	gboolean accepts_key = gebr_check_if_server_accepts_key(server->address->str,
-	                                                        gebr_comm_server_is_maestro(server));
+	gboolean accepts_key = gebr_comm_server_get_accepts_key(server);
 
 	if (daemon->priv->client)
 		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
-						      gebr_comm_protocol_defs.pss_def, 2,
+						      gebr_comm_protocol_defs.pss_def, 3,
 						      server->address->str,
-						      accepts_key? "yes" : "no");
+						      accepts_key? "yes" : "no",
+						      retry? "yes" : "no");
 }
 
 static void
@@ -548,11 +498,12 @@ gebrm_daemon_set_property(GObject      *object,
 	case PROP_ADDRESS:
 		daemon->priv->server = gebr_comm_server_new(g_value_get_string(value),
 							    NULL, &daemon_ops);
-		g_signal_connect(daemon->priv->server, "password-request",
+		gebr_comm_server_set_cookie(daemon->priv->server, gebr_id_random_create(GEBR_AUTH_COOKIE_LENGTH));
+		gebr_comm_server_set_check_host(daemon->priv->server, FALSE);
+		g_signal_connect(daemon->priv->server, "server-password-request",
 				 G_CALLBACK(on_password_request), daemon);
 		g_signal_connect(daemon->priv->server, "question-request",
 				 G_CALLBACK(on_question_request), daemon);
-		gebr_comm_server_set_interactive(daemon->priv->server, TRUE);
 		daemon->priv->server->user_data = daemon;
 		break;
 	default:
@@ -615,8 +566,8 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrmDaemonClass, daemon_init),
 			     NULL, NULL,
-			     gebrm_cclosure_marshal_VOID__STRING_STRING,
-			     G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+			     gebrm_cclosure_marshal_VOID__STRING_STRING_BOOLEAN,
+			     G_TYPE_NONE, 3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	signals[PORT_DEFINE] =
 		g_signal_new("port-define",
@@ -704,6 +655,7 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 	daemon->priv->tasks = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	daemon->priv->mpi_flavors = NULL;
 	daemon->priv->timeout = -1;
+	daemon->priv->has_gebrm = FALSE;
 }
 
 GebrmDaemon *
@@ -793,26 +745,38 @@ gebrm_daemon_has_group(GebrmDaemon *daemon,
 }
 
 void
+gebrm_daemon_invalid_password(GebrmDaemon *daemon)
+{
+	gebr_comm_server_invalid_password(daemon->priv->server);
+
+	gebrm_daemon_set_error_type(daemon, "error:ssh");
+	gebrm_daemon_set_error_msg(daemon, "Please, type the password to connect.");
+
+	gebrm_daemon_set_canceled(daemon, TRUE);
+	gebrm_daemon_disconnect(daemon);
+}
+
+void
+gebrm_daemon_set_password(GebrmDaemon *daemon,
+                          const gchar *pass)
+{
+	if (!pass)
+		return;
+
+	gebr_comm_server_set_password(daemon->priv->server, pass);
+}
+
+void
 gebrm_daemon_connect(GebrmDaemon *daemon,
-		     const gchar *pass,
 		     GebrCommProtocolSocket *client)
 {
-	if (pass && *pass) {
-		gebr_comm_server_set_password(daemon->priv->server, pass);
-
-		// This server is already connected, but its waiting for a
-		// password.
-		if (gebrm_daemon_get_state(daemon) == SERVER_STATE_RUN)
-			return;
-	}
-
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
 
 	if (client)
 		daemon->priv->client = g_object_ref(client);
 
-	gebr_comm_server_connect(daemon->priv->server, FALSE);
+	gebr_comm_server_connect(daemon->priv->server, FALSE, FALSE);
 }
 
 void
@@ -822,6 +786,10 @@ gebrm_daemon_disconnect(GebrmDaemon *daemon)
 	g_free(daemon->priv->id);
 	daemon->priv->nfsid = NULL;
 	daemon->priv->id = NULL;
+
+	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, TRUE,
+					      gebr_comm_protocol_defs.harakiri_def, 0);
+
 	gebr_comm_server_disconnect(daemon->priv->server);
 }
 
@@ -894,17 +862,6 @@ gebrm_daeamon_answer_question(GebrmDaemon *daemon,
 {
 	gboolean response = g_strcmp0(resp, "true") == 0;
 	gebr_comm_server_answer_question(daemon->priv->server, response);
-}
-
-void
-gebrm_daemon_continue_stuck_connection(GebrmDaemon *daemon,
-				       GebrCommProtocolSocket *socket)
-{
-	g_return_if_fail(daemon->priv->client == NULL);
-	g_return_if_fail(gebrm_daemon_get_state(daemon) == SERVER_STATE_RUN);
-
-	daemon->priv->client = g_object_ref(socket);
-	gebr_comm_server_emit_interactive_state_signals(daemon->priv->server);
 }
 
 void
@@ -982,13 +939,17 @@ gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon)
 void
 gebrm_daemon_send_client_info(GebrmDaemon *daemon,
 			      const gchar *id,
-			      const gchar *cookie)
+			      const gchar *cookie,
+			      const gchar *host,
+			      guint display_port)
 {
 	gebr_log(GEBR_LOG_DEBUG, "Sending GID %s to DAEMON %s!!!!!",
 		 id, gebrm_daemon_get_address(daemon));
+	gchar *tmp = g_strdup_printf("%d", display_port);
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
-					      gebr_comm_protocol_defs.gid_def, 2,
-					      id, cookie);
+					      gebr_comm_protocol_defs.gid_def, 4,
+					      id, cookie, host, tmp);
+	g_free(tmp);
 }
 
 const gchar *
@@ -1001,9 +962,6 @@ void
 gebrm_daemon_send_error_message(GebrmDaemon *daemon,
                                 GebrCommProtocolSocket *socket)
 {
-	if (g_strcmp0(daemon->priv->last_error_type, daemon->priv->error_type) == 0)
-		return;
-
 	if (daemon->priv->server->state == SERVER_STATE_DISCONNECTED
 	    && g_strcmp0(daemon->priv->error_type, "error:ssh") == 0)
 		goto send_error;
@@ -1136,4 +1094,17 @@ guint
 gebrm_daemon_get_timeout(GebrmDaemon *daemon)
 {
 	return daemon->priv->timeout;
+}
+
+void
+gebrm_daemon_set_has_gebrm(GebrmDaemon *daemon,
+			   gboolean has_gebrm)
+{
+	daemon->priv->has_gebrm = has_gebrm;
+}
+
+gboolean
+gebrm_daemon_get_has_gebrm(GebrmDaemon *daemon)
+{
+	return daemon->priv->has_gebrm;
 }

@@ -34,6 +34,7 @@
 #include <time.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <libgebr/gebr-version.h>
 
 #include <glib/gstdio.h>
 
@@ -51,35 +52,94 @@
  * Private functions
  */
 
-static gboolean server_run_lock(gboolean *already_running)
+static const gchar *
+get_version_file(void)
 {
-	*already_running = FALSE;
-	/* check if there is another daemon running for this user and hostname */
-	gchar *gebrd_dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), NULL);
-	gchar *lock_file = g_build_filename(gebrd_dir, "lock", NULL);
+	static gchar *file = NULL;
+	if (!file) {
+		gchar *dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), NULL);
+		g_mkdir_with_parents(dir, 0700);
+		file = g_build_filename(dir, "version", NULL);
+	}
+	return file;
+}
 
-	/* init the server socket and listen */
+static gchar *
+get_version_file_content(void)
+{
+	gchar *content;
+	if (!g_file_get_contents(get_version_file(), &content, NULL, NULL))
+		return NULL;
+	return g_strstrip(content);
+}
+
+static const gchar *
+gebrd_get_version(void)
+{
+	static gchar *version = NULL;
+	if (!version)
+		version = g_strdup_printf("%s (%s)", GEBR_VERSION NANOVERSION, gebr_version());
+	return version;
+}
+
+static void
+kill_current_daemon(guint16 port)
+{
+	gebr_kill_by_port(port);
+}
+
+static gboolean
+listen_for_connections(const gchar *lock_file)
+{
 	GebrCommSocketAddress socket_address = gebr_comm_socket_address_ipv4_local(0);
-	GebrCommListenSocket *listen = gebr_comm_listen_socket_new();
+	gebrd->listen_socket = gebr_comm_listen_socket_new();
 
-	if (!gebr_comm_listen_socket_listen(listen, &socket_address)) {
+	if (!gebr_comm_listen_socket_listen(gebrd->listen_socket, &socket_address)) {
 		gebrd_message(GEBR_LOG_ERROR, _("Could not listen for connections.\n"));
-		goto err;
+		return FALSE;
 	}
 
-	GString *port_gstring = g_string_new("");
+	gebrd->socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(gebrd->listen_socket));
+	gchar *str = g_strdup_printf("%d\n", gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
+	gebr_lock_file(lock_file, str);
 
-	socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(listen));
-	g_string_printf(port_gstring, "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
+	g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
 
+	return TRUE;
+}
+
+static gboolean
+version_mismatch()
+{
+	if (g_strcmp0(gebrd_get_version(), get_version_file_content()) != 0)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+static gboolean server_run_lock(gboolean *already_running)
+{
+	gboolean success = TRUE;
+	*already_running = FALSE;
+
+	gchar *gebrd_dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), NULL);
+	gchar *lock_file = g_build_filename(gebrd_dir, "lock", NULL);
 	g_mkdir_with_parents(gebrd_dir, 0700);
-	gchar *lock = gebr_lock_file(lock_file, port_gstring->str, FALSE);
+	gchar *lock = gebr_lock_file(lock_file, NULL);
 
-	if (lock && (g_strcmp0(lock, port_gstring->str) != 0)) {
+	if (!lock) {
+		success = listen_for_connections(lock_file);
+	} else {
 		guint16 port = atoi(lock);
+		if (gebr_comm_listen_socket_is_local_port_available(port)) {
+			success = listen_for_connections(lock_file);
+		} else if (version_mismatch()) {
+			kill_current_daemon(port);
+			success = listen_for_connections(lock_file);
+		} else {
+			success = TRUE;
+			*already_running = TRUE;
 
-		/* is this port really being used (open)?? */
-		if (gebr_comm_listen_socket_is_local_port_available(port) == FALSE) {
 			if (gebrd->options.foreground == TRUE) {
 				gebrd_message(GEBR_LOG_ERROR,
 				              _("Cannot run interactive server, GêBR daemon is already running"));
@@ -90,38 +150,25 @@ static gboolean server_run_lock(gboolean *already_running)
 					g_warning("Failed to write in file with error code %d", errno);
 				g_free(buffer);
 			}
-
-			*already_running = TRUE;
-			gebr_comm_listen_socket_free(listen);
-			goto out;
-		} else {
-			gebrd->socket_address = gebr_comm_socket_address_ipv4_local(port);
-			if (!gebr_comm_listen_socket_listen(listen, &gebrd->socket_address)) {
-				gebrd_message(GEBR_LOG_ERROR, _("Could not listen for connections.\n"));
-				goto err;
-			}
-			gebrd->listen_socket = listen;
-			g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
 		}
-	} else {
-		gebrd->listen_socket = listen;
-		g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
-		gebrd->socket_address = socket_address;
 	}
-out:
-	g_string_free(port_gstring, TRUE);
-	return TRUE;
-err:
-	return FALSE;
+
+	return success;
 }
 
 static gboolean server_fs_lock(void)
 {
 	GString *filename = g_string_new("");
 	g_string_printf(filename, "%s/.gebr/run/gebrd-fslock.run", g_get_home_dir());
-	gchar *lock_hash = gebr_id_random_create(32);
-	gchar *fs_lock = gebr_lock_file(filename->str, lock_hash, FALSE);
-	g_free(lock_hash);
+
+	gchar *fs_lock = gebr_lock_file(filename->str, NULL);
+
+	if (!fs_lock) {
+		gchar *lock_hash = gebr_id_random_create(32);
+		gebr_lock_file(filename->str, lock_hash);
+		fs_lock = lock_hash;
+	}
+
 	g_string_free(filename, TRUE);
 
 	if (fs_lock == NULL) {
@@ -180,6 +227,14 @@ gboolean server_init(void)
 	gchar *contents;
 	gchar *gebrd_dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), NULL);
 	gchar *id_path = g_build_filename(gebrd_dir, "id", NULL);
+
+	/* Daemon Version */
+	GError *error = NULL;
+	g_file_set_contents(get_version_file(), gebrd_get_version(), -1, &error);
+	if (error) {
+		g_warning("%s", error->message);
+		exit(1);
+	}
 
 	if (g_access(id_path, R_OK | W_OK) == 0) {
 		if (!g_file_get_contents(id_path, &contents, NULL, NULL)) {
@@ -264,28 +319,11 @@ void server_new_connection(void)
 	if (!gebrd_user_has_connection(gebrd->user)) {
 		client_add(client);
 		gebrd_message(GEBR_LOG_DEBUG, "client_add");
-	} else if (!job_has_running_jobs()) {
-		gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
-		                                      gebr_comm_protocol_defs.err_def, 2,
-		                                      "connection-stolen",
-		                                      gebrd_user_get_daemon_id(gebrd->user));
-
-		gebrd_message(GEBR_LOG_DEBUG, "client_get_from_another");
-
-		struct client *connection = gebrd_user_get_connection(gebrd->user);
-		client_disconnected(connection->socket, connection);
 	} else {
-		if (job_has_running_jobs())
-			gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
-			                                      gebr_comm_protocol_defs.err_def, 2,
-			                                      "connection-refused-job",
-			                                      gebrd_user_get_daemon_id(gebrd->user));
-		else
-			gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
-			                                      gebr_comm_protocol_defs.err_def, 2,
-			                                      "connection-refused",
-			                                      gebrd_user_get_daemon_id(gebrd->user));
-
+		gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
+						      gebr_comm_protocol_defs.err_def, 2,
+						      "connection-refused",
+						      gebrd_user_get_daemon_id(gebrd->user));
 		g_object_unref(client);
 	}
 

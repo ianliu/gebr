@@ -229,9 +229,10 @@ void test_gebr_geoxml_program_get_and_set_status(void)
 	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
 	GebrGeoXmlProgramStatus status;
 
+	// Check if UNCONFIGURED status is ignored
 	gebr_geoxml_program_set_status(program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 	status = gebr_geoxml_program_get_status(program);
-	g_assert_cmpint(status, ==, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+	g_assert_cmpint(status, ==, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 
 	gebr_geoxml_program_set_status(program, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	status = gebr_geoxml_program_get_status(program);

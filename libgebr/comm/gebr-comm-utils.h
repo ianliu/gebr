@@ -2,7 +2,7 @@
  * gebr-comm-utils.h
  * This file is part of GêBR Project
  *
- * Copyright (C) 2012 - GêBR Core team (www.gebrproject.com)
+ * Copyright (C) 2012 - GêBR Core Team (www.gebrproject.com)
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,41 @@
 #define __GEBR_COMM_UTILS_H__
 
 #include <glib.h>
+
+G_BEGIN_DECLS
+
+/**
+ * gebr_comm_get_display:
+ *
+ * All arguments are return values.
+ *
+ * This method checks the value of $DISPLAY and sets the arguments
+ * appropriately.
+ *
+ * Examples:
+ *    DISPLAY=:0.0          -> x11_file = /tmp/.X11-unix/X0, port = 0,    host = localhost
+ *    DISPLAY=:1.0          -> x11_file = /tmp/.X11-unix/X1, port = 0,    host = localhost
+ *    DISPLAY=localhost:1.0 -> x11_file = NULL,              port = 6001, host = localhost
+ *
+ * You must free the string parameters if they are non-%NULL.
+ */
+void gebr_comm_get_display(gchar **x11_file, guint *port, gchar **host);
+
+gboolean gebr_comm_is_address_equal(const gchar *addr1, const gchar *addr2);
+
+gchar *gebr_comm_get_ssh_command_with_key(gboolean check_host);
+
+/**
+ * gebr_comm_get_available_port:
+ *
+ * Returns an available port starting from @start.
+ */
+guint gebr_comm_get_available_port(guint start);
+
+/**
+ * gebr_comm_is_local_address:
+ */
+gboolean gebr_comm_is_local_address(const gchar *addr);
 
 /**
  * gebr_get_xauth_cookie:
@@ -44,5 +79,7 @@ GByteArray *gebr_convert_xauth_cookie_to_binary(const gchar *xauth_str);
  * Returns: the display number from $DISPLAY environment variable.
  */
 gchar *gebr_get_display(void);
+
+G_END_DECLS
 
 #endif /* end of include guard: __GEBR_COMM_UTILS_H__ */

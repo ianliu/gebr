@@ -32,6 +32,7 @@ struct client {
 	/* x11 redirected display, if server is remote. if local this is the true display */
 	GString *display;
 	guint16 display_port;
+	gchar *gebr_cookie;
 };
 
 void client_add(GebrCommProtocolSocket *client);

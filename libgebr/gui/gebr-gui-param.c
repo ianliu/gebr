@@ -641,6 +641,13 @@ static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 	return FALSE;
 }
 
+void
+on_param_combo_changed(GtkComboBox *widget,
+                       GebrGuiParam *parameter_widget)
+{
+	gtk_widget_set_tooltip_markup(GTK_WIDGET(widget), gtk_combo_box_get_active_text(widget));
+}
+
 /* Widget construction function {{{ */
 
 /*
@@ -814,10 +821,13 @@ gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 						parameter_widget);
 		GebrGeoXmlDocument *line;
 		gebr_validator_get_documents(parameter_widget->validator, NULL, &line, NULL);
-		if (line)
+		if (line) {
 			gebr_gui_file_entry_set_paths_from_line(GEBR_GUI_FILE_ENTRY(file_entry),
 								gebr_maestro_info_get_home_uri(parameter_widget->info),
 								GEBR_GEOXML_LINE(line));
+			gebr_gui_file_entry_set_need_gvfs(GEBR_GUI_FILE_ENTRY(file_entry),
+			                                  gebr_maestro_info_get_need_gvfs(parameter_widget->info));
+		}
 		activatable_entry = GTK_ENTRY (GEBR_GUI_FILE_ENTRY (file_entry)->entry);
 		if (may_complete) {
 			completion_model = generate_completion_model(parameter_widget);
@@ -854,6 +864,7 @@ gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 		GebrGeoXmlSequence *enum_option;
 
 		parameter_widget->value_widget = combo_box = gtk_combo_box_new_text();
+		g_object_set(combo_box, "width-request", 220, NULL);
 		if (!gebr_geoxml_program_parameter_get_required(parameter_widget->program_parameter))
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
 		gebr_geoxml_program_parameter_get_enum_option(parameter_widget->program_parameter,
@@ -866,7 +877,7 @@ gebr_gui_param_configure(GebrGuiParam *parameter_widget)
 				: gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option));
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), text);
 		}
-
+		g_signal_connect(combo_box, "changed", G_CALLBACK(on_param_combo_changed), parameter_widget);
 		break;
 	}
 	case GEBR_GEOXML_PARAMETER_TYPE_FLAG: {
@@ -1843,6 +1854,10 @@ gebr_gui_group_validate(GebrValidator *validator,
 	GebrGeoXmlSequence *instance;
 
 	group = gebr_geoxml_parameter_get_group(parameter);
+
+	if (!group)
+		return;
+
 	gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
 	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 		i = gebr_gui_group_instance_validate(validator, instance, icon);

@@ -31,22 +31,41 @@
 #include <fcntl.h>
 
 #include "gebrm-app.h"
+#include "gebrm-proxy.h"
 
 #include <libgebr/gebr-version.h>
+#include <libgebr/gebr-maestro-settings.h>
+#include <libgebr/gebr-auth.h>
 
 #define GETTEXT_PACKAGE "gebrm"
 
 static gboolean interactive;
 static gboolean show_version;
+static gboolean force_init;
+static gboolean nocookie;
 static int output_fd = STDOUT_FILENO;
+static GebrAuth *auth;
 
 static GOptionEntry entries[] = {
 	{"interactive", 'i', 0, G_OPTION_ARG_NONE, &interactive,
 		"Run server in interactive mode, not as a daemon", NULL},
 	{"version", 'v', 0, G_OPTION_ARG_NONE, &show_version,
 		"Show GeBR daemon version", NULL},
+	{"force", 'f', 0, G_OPTION_ARG_NONE, &force_init,
+		"Force to run server, ignoring lock", NULL},
+	{"nocookie", 'n', 0, G_OPTION_ARG_NONE, &nocookie,
+		"Do not ask for authorization cookie when launching", NULL},
 	{NULL}
 };
+
+static const gchar *
+get_version(void)
+{
+	static gchar *version = NULL;
+	if (!version)
+		version = g_strdup_printf("%s (%s)", GEBR_VERSION NANOVERSION, gebr_version());
+	return version;
+}
 
 void
 fork_and_exit_main(void)
@@ -67,16 +86,17 @@ fork_and_exit_main(void)
 
 	if (pid != 0) {
 		char c;
-		GString *buf = g_string_sized_new(10);
-		while (read(fd[0], &c, 1) > 0) {
-			g_string_append_c(buf, c);
-			if (c == '\n') {
-				g_string_append_c(buf, '\0');
-				break;
-			}
-		}
-		printf("%s", buf->str);
+		int n = 0;
+		GString *buf = g_string_new(NULL);
 
+		while (read(fd[0], &c, 1) != 0) {
+			if (c == '\n')
+				n++;
+			if (n == 1)
+				break;
+			g_string_append_c(buf, c);
+		}
+		puts(buf->str);
 		g_string_free(buf, TRUE);
 		exit(EXIT_SUCCESS);
 	}
@@ -114,6 +134,108 @@ gebrm_remove_lock_and_quit(int sig)
 	exit(0);
 }
 
+static gchar *
+get_version_contents_from_file(const gchar *version_file)
+{
+	gchar *contents;
+	if (!g_file_get_contents(version_file, &contents, NULL, NULL))
+		return NULL;
+	return g_strstrip(contents);
+}
+
+static gboolean
+need_cleanup(const gchar *v1,
+             const gchar *v2)
+{
+	if (g_strcmp0(v1, v2) == 0)
+		return FALSE;
+
+	return TRUE;
+}
+
+static void
+register_local_daemon(void)
+{
+	GebrMaestroSettings *ms = gebrm_app_create_configuration();
+	const gchar *nfsid = gebrm_app_get_nfsid(ms);
+	if (nfsid) {
+		const gchar *gebrd_location = g_find_program_in_path("gebrd");
+		gchar *addr = g_strdup_printf("%s@%s", g_get_user_name(), g_get_host_name());
+		gebr_maestro_settings_append_address(ms, nfsid, addr);
+		if (gebrd_location)
+			gebr_maestro_settings_add_node(ms, g_get_host_name(), "", "on");
+		g_free(addr);
+	}
+	gebr_maestro_settings_free(ms);
+}
+
+static void
+start_proxy_maestro(const gchar *address,
+		    guint port)
+{
+	GebrmProxy *proxy = gebrm_proxy_new(address, port);
+
+	//Generate gebr.key
+	gebr_generate_key();
+	gebrm_app_append_key();
+
+	gebrm_proxy_run(proxy, output_fd);
+	gebrm_proxy_free(proxy);
+}
+
+static void
+start_maestro_app(void)
+{
+	struct sigaction sa;
+	sa.sa_handler = gebrm_remove_lock_and_quit;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	if (sigaction(SIGTERM, &sa, NULL)
+	    || sigaction(SIGINT, &sa, NULL)
+	    || sigaction(SIGQUIT, &sa, NULL)
+	    || sigaction(SIGSEGV, &sa, NULL))
+		perror("sigaction");
+
+	register_local_daemon();
+	gebrm_app_create_folder_for_addr(g_get_host_name());
+	const gchar *path = gebrm_app_get_log_file_for_address(g_get_host_name());
+	gebr_log_set_default(path);
+
+	GebrmApp *app = gebrm_app_singleton_get();
+
+	if (!gebrm_app_run(app, output_fd, get_version(), auth))
+		exit(EXIT_FAILURE);
+
+	g_object_unref(app);
+}
+
+static gboolean
+get_current_maestro_info(gchar **addr,
+			 guint *port,
+			 gchar **version)
+{
+	const gchar *lock = gebrm_app_get_lock_file();
+	const gchar *version_file  = gebrm_app_get_version_file();
+	gchar *contents;
+
+	if (!g_file_get_contents(lock, &contents, NULL, NULL))
+		return FALSE;
+
+	gchar **parts = g_strsplit(contents, ":", -1);
+
+	if (parts) {
+		*version = get_version_contents_from_file(version_file);
+		*addr = g_strdup(parts[0]);
+		*port = atoi(parts[1]);
+		g_strfreev(parts);
+		return TRUE;
+	}
+
+	g_free(parts);
+	return FALSE;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -130,90 +252,51 @@ main(int argc, char *argv[])
 
 	g_type_init();
 	g_thread_init(NULL);
+	gebr_geoxml_init();
 
 	if (show_version) {
-		fprintf(stdout, "%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+		fprintf(stdout, "%s\n", get_version());
 		exit(EXIT_SUCCESS);
 	}
 
-	const gchar *lock = gebrm_app_get_lock_file();
-	const gchar *version_file  = gebrm_app_get_version_file();
-	gchar *lock_contents;
-	GError *lock_error = NULL;
+	gboolean has_lock;
+	gboolean cleanup;
+	gboolean is_local;
 
-	gchar *curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+	gchar *addr;
+	gchar *version;
+	guint port;
 
-	if (g_access(lock, R_OK | W_OK) == 0) { //check lock_file
-		GError *version_error = NULL;
+	has_lock = get_current_maestro_info(&addr, &port, &version);
+	if (has_lock) {
+		is_local = g_strcmp0(addr, g_get_host_name()) == 0;
+		cleanup = need_cleanup(get_version(), version);
+	}
+	auth = gebr_auth_new();
 
-		g_file_get_contents(lock, &lock_contents, NULL, &lock_error);
-		if (lock_error) {
-			if (lock_error)
-				g_critical("Error reading lock/version: %s", lock_error->message);
-			g_free(lock_contents);
-			exit(1);
-		}
-		g_free(lock_error);
+	if (force_init)
+		has_lock = FALSE;
 
-		gint port = atoi(lock_contents);
+	gboolean start_maestro = !has_lock || (has_lock && cleanup);
+	gboolean start_proxy = has_lock && !cleanup && !is_local;
 
-		if (g_access(version_file, R_OK | W_OK) == 0) { //It has the version file
-			gchar *version_contents;
-			g_file_get_contents(version_file, &version_contents, NULL, &version_error);
-			if (version_error) {
-				if (version_error)
-					g_critical("Error reading lock/version: %s", version_error->message);
-				g_free(version_contents);
-				exit(1);
-			}
-			g_free(version_error);
+	if (has_lock && cleanup)
+		gebr_kill_by_port(port);
 
-			if (!gebr_comm_listen_socket_is_local_port_available(port)) {
-				if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
-					g_print(GEBR_PORT_PREFIX "%s\n", lock_contents);
-					exit(0);
-				} else {		//It is running in a different version
-					gebr_kill_by_port(port);
-				}
-			}
-			g_free(version_contents);
-		} else {		//It does not have version file
-			gebr_kill_by_port(port);
-		}
-		g_free(lock_contents);
-	} else if (g_access(lock, F_OK) == 0) {
-		g_critical("Cannot read/write into %s", lock);
-		exit(1);
+	if (!nocookie)
+		gebr_auth_read_cookie(auth);
+
+	if (start_maestro) {
+		if (!interactive)
+			fork_and_exit_main();
+		start_maestro_app();
+	} else if (start_proxy) {
+		fork_and_exit_main();
+		start_proxy_maestro(addr, port);
+	} else {
+		g_print("%s%d\n", GEBR_PORT_PREFIX, port);
 	}
 
-	if (!interactive)
-		fork_and_exit_main();
-
-	struct sigaction sa;
-	sa.sa_handler = gebrm_remove_lock_and_quit;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-
-	if (sigaction(SIGTERM, &sa, NULL)
-	    || sigaction(SIGINT, &sa, NULL)
-	    || sigaction(SIGQUIT, &sa, NULL)
-	    || sigaction(SIGSEGV, &sa, NULL))
-		perror("sigaction");
-
-	gebr_geoxml_init();
-
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebrm",
-				       g_get_host_name(), "log", NULL);
-	gebr_log_set_default(path);
-	g_free(path);
-
-	GebrmApp *app = gebrm_app_singleton_get();
-
-	if (!gebrm_app_run(app, output_fd, curr_version))
-		exit(EXIT_FAILURE);
-
-	g_free(curr_version);
-	g_object_unref(app);
 	gebr_geoxml_finalize();
 
 	return EXIT_SUCCESS;

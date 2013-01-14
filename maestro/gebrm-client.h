@@ -67,15 +67,6 @@ GebrmClient *gebrm_client_new(GebrCommStreamSocket *stream);
  */
 GebrCommProtocolSocket *gebrm_client_get_protocol_socket(GebrmClient *client);
 
-/**
- * gebrm_client_get_display_port:
- *
- * The display is used to redirect X11 through the socket connection.
- *
- * Returns: The display port for this client.
- */
-guint16 gebrm_client_get_display_port(GebrmClient *client);
-
 void gebrm_client_set_id(GebrmClient *client, const gchar *id);
 
 const gchar *gebrm_client_get_id(GebrmClient *client);
@@ -85,14 +76,18 @@ void gebrm_client_set_magic_cookie(GebrmClient *client,
 
 const gchar *gebrm_client_get_magic_cookie(GebrmClient *client);
 
+void gebrm_client_set_gebr_cookie(GebrmClient *client,
+				   const gchar *gebr_cookie);
+
+const gchar *gebrm_client_get_gebr_cookie(GebrmClient *client);
+
 /**
  * gebrm_client_add_forward:
  *
- * Adds a remote forward from @remote_port of @server to this client.
+ * Adds a forward on client.
  */
 void gebrm_client_add_forward(GebrmClient *client,
-			      GebrCommServer *server,
-			      guint16 remote_port);
+                              GebrCommPortForward *forward);
 
 /**
  * gebrm_client_kill_forward_by_address:
@@ -111,6 +106,22 @@ void gebrm_client_add_temp_id(GebrmClient *client,
 const gchar *gebrm_client_get_job_id_from_temp(GebrmClient *client,
 					       const gchar *temp_id);
 
+guint gebrm_client_get_display_port(GebrmClient *self);
+
+const gchar *gebrm_client_get_display_host(GebrmClient *self);
+
+void gebrm_client_set_sent_nfsid(GebrmClient *self, gboolean sent_nfsid);
+
+gboolean gebrm_client_get_sent_nfsid(GebrmClient *self);
+
+/**
+ * gebrm_client_set_display:
+ *
+ * Sets the display for this client.
+ */
+void gebrm_client_set_display(GebrmClient *client,
+                              guint display_port,
+                              const gchar *display_host);
 
 G_END_DECLS
 

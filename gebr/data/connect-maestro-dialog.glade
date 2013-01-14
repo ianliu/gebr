@@ -4,7 +4,7 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="main">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Line's maestro disconnected</property>
+    <property name="title" translatable="yes">The Domain of this Line is disconnected</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
@@ -31,7 +31,7 @@
               <object class="GtkLabel" id="label_header">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label">#&lt;b&gt;&lt;span size="large"&gt;This line is not handled by any maestro&lt;/span&gt;&lt;/b&gt;</property>
+                <property name="label">#&lt;b&gt;&lt;span size="large"&gt;This line does not belong to any domain&lt;/span&gt;&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -70,7 +70,7 @@
                   <object class="GtkLabel" id="label_connect_maestro">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label">#Connect to maestro &lt;b&gt;XXX&lt;/b&gt;</property>
+                    <property name="label">#Connect to domain &lt;b&gt;XXX&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>
@@ -109,7 +109,7 @@
                   <object class="GtkLabel" id="label_change_maestro">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label">#Change to maestro &lt;b&gt;XXX&lt;/b&gt;</property>
+                    <property name="label">#Change to domain &lt;b&gt;XXX&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>

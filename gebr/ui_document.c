@@ -118,6 +118,8 @@ typedef struct {
 	gboolean title_ready;
 	gboolean description_ready;
 	gboolean email_ready;
+	gboolean base_ready;
+	gboolean import_ready;
 } GebrPropertiesData;
 
 enum {
@@ -153,8 +155,12 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 static void on_value_type_editing_canceled(GtkCellRenderer *cell, struct dict_edit_data *data);
 
 static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct dict_edit_data *data);
+
 static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 				     struct dict_edit_data *data);
+
+static void on_dict_edit_keyword_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+                                             struct dict_edit_data *data);
 
 static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter, GebrGeoXmlParameter * parameter);
 
@@ -241,7 +247,7 @@ on_title_entry_changed(GtkEntry *entry,
 		has_error = TRUE;
 	else
 		has_error = FALSE;
-	validate_entry(GTK_ENTRY(entry), has_error, _("Title cannot be empty"), _(""));
+	validate_entry(GTK_ENTRY(entry), has_error, _("Title cannot be empty"), NULL);
 	data->title_ready = !has_error;
 	on_changed_validate(data);
 }
@@ -292,6 +298,55 @@ on_document_help_button_clicked (GtkButton *button,
 	}
 }
 
+void
+on_document_base_import_entry_changed(GebrPropertiesData *data)
+{
+	gtk_widget_set_sensitive(data->ok_button, (data->base_ready && data->import_ready));
+}
+
+void
+on_document_base_entry_changed(GtkEntry *entry,
+                               GebrPropertiesData *data)
+{
+	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+	switch(check_directory_ok(gtk_entry_get_text(entry))){
+	case OK_ENTRY:
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		data->base_ready = TRUE;
+		break;
+	case NOT_ABSOLUTE_ENTRY:
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
+		data->base_ready = FALSE;
+		break;
+	case EMPTY_ENTRY:
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		data->base_ready = FALSE;
+		break;
+	}
+	on_document_base_import_entry_changed(data);
+}
+
+void
+on_document_import_entry_changed(GtkEntry *entry,
+                                  GebrPropertiesData *data)
+{
+	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+	switch(check_directory_ok(gtk_entry_get_text(entry))){
+	case NOT_ABSOLUTE_ENTRY:
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
+		data->import_ready = FALSE;
+		break;
+	default:
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		data->import_ready = TRUE;
+		break;
+	}
+	on_document_base_import_entry_changed(data);
+}
+
 void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
@@ -325,6 +380,8 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	data->title_ready = TRUE;
 	data->description_ready = TRUE;
 	data->email_ready = TRUE;
+	data->base_ready = TRUE;
+	data->import_ready = TRUE;
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		flow_browse_single_selection();
@@ -425,9 +482,9 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		GtkWidget *hierarchy_box = GTK_WIDGET(gtk_builder_get_object(builder, "hierarchy_base"));
 		GObject *label;
 
-		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
-		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of nodes of maestro <b>%s</b>.\n"
-				"This directories structure may not be the same on your local machine.</i>"), maestro_addr);
+		const gchar *nfs_label = gebr_maestro_server_get_nfs_label(maestro);
+		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of <b>%s</b>.\n"
+				"This directories structure may not be the same on your local machine.</i>"), nfs_label);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 		g_free(text_maestro);
@@ -457,28 +514,29 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		g_free(base_path);
 		g_free(base_path2);
 
-		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
+		g_signal_connect(entry_base, "changed", G_CALLBACK(on_document_base_entry_changed), data);
 		g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
 
-		/* Import Path Tab */
-		GtkWidget *import_box = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
-		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), import_box, gtk_label_new(_("IMPORT Path")));
-
-		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
-		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
-
-		gchar *import_path = NULL;
-		for (gint i=0; paths[i] != NULL; i++){
-			if (g_strcmp0(paths[i][1], "IMPORT") == 0){
-				import_path = paths[i][0];
-				g_debug("Configuring <IMPORT> to %s", import_path);
-				break;
-			}
-		}
-		if (import_path) {
-			gtk_entry_set_text(entry_import, import_path);
-			g_free(import_path);
-		}
+//		/* Import Path Tab */
+//		GtkWidget *import_box = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
+//		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), import_box, gtk_label_new(_("IMPORT Path")));
+//
+//		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+//		g_signal_connect(entry_import, "changed", G_CALLBACK(on_document_import_entry_changed), data);
+//		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
+//
+//		gchar *import_path = NULL;
+//		for (gint i=0; paths[i] != NULL; i++){
+//			if (g_strcmp0(paths[i][1], "IMPORT") == 0){
+//				import_path = paths[i][0];
+//				g_debug("Configuring <IMPORT> to %s", import_path);
+//				break;
+//			}
+//		}
+//		if (import_path) {
+//			gtk_entry_set_text(entry_import, import_path);
+//			g_free(import_path);
+//		}
 	}
 
 	gtk_widget_show(window);
@@ -573,8 +631,10 @@ close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *da
 		}
 	}
 
-	if (gebr.flow)
+	if (gebr.flow) {
 		flow_browse_validate_io(gebr.ui_flow_browse);
+		gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
+	}
 
 	for (int i = 0; data->documents[i] != NULL; ++i)
 		document_save(data->documents[i], TRUE, FALSE);
@@ -747,7 +807,7 @@ void document_dict_edit_setup_ui(void)
 	gtk_tree_view_column_pack_start(column, cell_renderer, FALSE);
 	data->cell_renderer_array[DICT_EDIT_KEYWORD] = cell_renderer;
 	g_object_set(cell_renderer, "editable", TRUE, NULL);
-	g_signal_connect(cell_renderer, "edited", G_CALLBACK(on_dict_edit_cell_edited), data);
+	g_signal_connect(cell_renderer, "edited", G_CALLBACK(on_dict_edit_keyword_cell_edited), data);
 	g_signal_connect(cell_renderer, "editing-canceled", G_CALLBACK(on_dict_edit_editing_cell_canceled), data);
 	g_signal_connect(cell_renderer, "editing-started", G_CALLBACK(on_dict_edit_renderer_editing_started), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "markup", DICT_EDIT_KEYWORD);
@@ -1405,6 +1465,22 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 
 }
 
+static void on_dict_edit_keyword_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
+                                             struct dict_edit_data *data)
+{
+	GtkTreeIter iter;
+	gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string);
+
+	GebrGeoXmlProgramParameter *parameter;
+
+	gtk_tree_model_get(data->tree_model, &iter,
+	                   DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
+
+	gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
+
+	on_dict_edit_cell_edited(cell, path_string, new_text, data);
+}
+
 /*
  * dict_edit_load_iter:
  * Load @parameter into @iter
@@ -1776,7 +1852,7 @@ time_out_error(gpointer user_data)
 	gtk_label_set_markup(GTK_LABEL(summary), tmp);
 	g_free(tmp);
 	gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nTry reconnecting your maestro."));
+	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nTry reconnecting your domain."));
 	update_buttons_visibility(data, PROPERTIES_ERROR);
 
 	GebrMaestroServer *maestro =
@@ -1846,6 +1922,8 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 	GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
 
 	GString *_new_base = g_string_new(gtk_entry_get_text(entry_base));
+
+
 	gchar *tmp = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(data->document), "BASE");
 	GString *_old_base = g_string_new(tmp);
 	gebr_path_resolve_home_variable(_new_base);
@@ -1857,12 +1935,11 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 
 	gboolean base_changed = g_strcmp0(new_base, old_base) != 0;
 
-	if (!base_changed) {
+	if (!base_changed && check_directory_ok(new_base) == OK_ENTRY)
 		return FALSE;
-	} else {
-		*option = GEBR_COMM_PROTOCOL_PATH_CREATE;
-		*newmsg = g_strdup(new_base);
-	}
+
+	*option = GEBR_COMM_PROTOCOL_PATH_CREATE;
+	*newmsg = g_strdup(new_base);
 	*oldmsg = g_strdup(old_base);
 
 	g_free(old_base);
@@ -1984,8 +2061,6 @@ on_response_ok(GtkButton *button,
 	gtk_widget_hide(GTK_WIDGET(message));
 	gtk_widget_show(GTK_WIDGET(progress));
 
-	// Set new base for line
-	gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), newmsg);
 	// Send new base to create on maestro
 	gebr_ui_document_send_paths_to_maestro(maestro, option, oldmsg, newmsg);
 
@@ -2223,6 +2298,11 @@ validate_entry(GtkEntry *entry,
 	       const gchar *err_text,
 	       const gchar *clean_text)
 {
+	if (clean_text == NULL)
+		gtk_widget_set_has_tooltip (GTK_WIDGET(entry),FALSE);
+	else
+		gtk_widget_set_has_tooltip (GTK_WIDGET(entry),TRUE);
+
 	if (!error) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
@@ -2252,7 +2332,7 @@ gebr_ui_document_add_iter_and_update_complete(GebrGeoXmlDocument *flow)
 {
 	GebrGeoXmlSequence *parameter;
 
-	gebr_geoxml_flow_insert_iter_dict(flow);
+	gebr_geoxml_flow_insert_iter_dict(GEBR_GEOXML_FLOW(flow));
 	parameter = gebr_geoxml_document_get_dict_parameter(flow);
 	gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 

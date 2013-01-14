@@ -27,11 +27,14 @@ typedef struct _GebrMaestroInfo GebrMaestroInfo;
 struct _GebrMaestroInfo {
 	gchar *(*get_home_uri)(GebrMaestroInfo *self);
 	gchar *(*get_home_mount_point)(GebrMaestroInfo *self);
+	gboolean (*get_need_gvfs)(GebrMaestroInfo *self);
 };
 
 gchar *gebr_maestro_info_get_home_uri(GebrMaestroInfo *self);
 
 gchar *gebr_maestro_info_get_home_mount_point(GebrMaestroInfo *self);
+
+gboolean gebr_maestro_info_get_need_gvfs(GebrMaestroInfo *self);
 
 G_END_DECLS
 

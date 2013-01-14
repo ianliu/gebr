@@ -1,4 +1,5 @@
 Source: gebrproject
+Section: science
 Priority: extra
 Maintainer: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
 Build-Depends: debhelper (>= 7.0.50), gtk-doc-tools, docbook-xsl,
@@ -9,6 +10,7 @@ Package: libgebr0
 Section: libs
 Architecture: any
 Depends: libwebkit-1.0-2 | libwebkit-1.0-1 | libwebkitgtk-1.0-0, libgdome2-0, libtidy-0.99-0, bc, python-gtk2, graphviz
+Conflicts: gebr-menus-shtools (<< 0.3.2), gebr-menus-su (<< 0.7.2)
 Description: GeBR library collection
  GêBR is a simple graphical interface which facilitates geophysical data processing. 
  GêBR is not a package for processing, rather it is designed to integrate a large 

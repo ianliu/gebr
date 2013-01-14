@@ -1,6 +1,6 @@
 include $(top_srcdir)/Makefile.decl
 
-noinst_PROGRAMS = $(TEST_PROGS)
+noinst_PROGRAMS = $(TEST_PROGS) $(INT_TEST_PROGS)
 
 AM_CFLAGS = $(COMMON_CFLAGS)
 
@@ -30,7 +30,7 @@ test_gebr_expr_SOURCES = test-gebr-expr.c
 TEST_PROGS += test-gebr-arith-expr
 test_gebr_arith_expr_SOURCES = test-gebr-arith-expr.c
 
-TEST_PROGS += test-gebr-validator
+INT_TEST_PROGS += test-gebr-validator
 test_gebr_validator_SOURCES = test-gebr-validator.c
 
 EXTRA_DIST = tar-test.tar.gz forloop.mnu

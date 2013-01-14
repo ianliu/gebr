@@ -522,11 +522,13 @@ void gebr_file_chooser_set_current_directory (const gchar *entr,
                                               const gchar *prefix,
                                               gchar ***paths,
                                               GtkWidget *dialog,
+                                              gboolean has_error,
                                               gchar **error);
 
 gint gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
                                              const gchar *entry_text,
                                              gchar *sftp_prefix,
+                                             gboolean need_gvfs,
                                              gchar ***paths,
                                              gboolean insert_bookmarks,
                                              gchar **new_text);

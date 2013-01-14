@@ -94,10 +94,15 @@ gboolean gebr_daemon_server_get_ac(GebrDaemonServer *daemon);
 void gebr_daemon_server_set_ac(GebrDaemonServer *daemon,
                                gboolean ac);
 
-void gebr_daemon_server_set_error(GebrDaemonServer *daemon, 
-		const gchar *error);
+void gebr_daemon_server_set_error_msg(GebrDaemonServer *daemon,
+                                      const gchar *error);
 
-const gchar *gebr_daemon_server_get_error(GebrDaemonServer *daemon);
+void gebr_daemon_server_set_error_type(GebrDaemonServer *daemon,
+                                       const gchar *error);
+
+const gchar *gebr_daemon_server_get_error_msg(GebrDaemonServer *daemon);
+
+const gchar *gebr_daemon_server_get_error_type(GebrDaemonServer *daemon);
 
 void gebr_daemon_server_set_hostname(GebrDaemonServer *daemon, const gchar *hostname);
 

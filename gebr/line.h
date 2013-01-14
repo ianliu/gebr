@@ -27,6 +27,15 @@
 
 #include <libgebr/geoxml/geoxml.h>
 
+/**
+ * Error types for import and base entry
+ */
+typedef enum {
+	OK_ENTRY,
+	EMPTY_ENTRY,
+	NOT_ABSOLUTE_ENTRY
+} GebrErrorEntry;
+
 G_BEGIN_DECLS
 
 /**
@@ -89,15 +98,16 @@ void line_load_flows(void);
  * Move flow top
  */
 void line_move_flow_top(void);
+
 /** 
  * Move flow bottom
  */
 void line_move_flow_bottom(void);
 
 /**
- *
+ * Check if BASE ok
  */
-void on_properties_entry_changed(GtkEntry *entry, GtkWidget *ok_button);
+GebrErrorEntry check_directory_ok(const gchar *text);
 
 G_END_DECLS
 #endif				//__LINE_H

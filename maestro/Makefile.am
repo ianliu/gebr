@@ -62,6 +62,8 @@ libmaestro_la_SOURCES =        \
 	gebrm-job.h	       \
 	gebrm-marshal.c        \
 	gebrm-marshal.h        \
+	gebrm-proxy.c	       \
+	gebrm-proxy.h	       \
 	gebrm-task.c	       \
 	gebrm-task.h	       \
 	$(NULL)

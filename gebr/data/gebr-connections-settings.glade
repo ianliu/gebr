@@ -132,7 +132,7 @@ To establish the connections, SSH may request your login password.
       <object class="GtkLabel" id="maestro_status_label">
         <property name="visible">True</property>
         <property name="sensitive">False</property>
-        <property name="label" translatable="yes">Choose one maestro to proceed</property>
+        <property name="label" translatable="yes">Choose one domain to proceed</property>
       </object>
       <packing>
         <property name="position">2</property>

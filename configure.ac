@@ -25,8 +25,8 @@ AC_PREREQ([2.59])
 # set GEBR_BINARY_AGE and GEBR_INTERFACE_AGE to 0.
 
 m4_define(gebr_major_version,   [0])
-m4_define(gebr_minor_version,  [19])
-m4_define(gebr_micro_version,   [7])
+m4_define(gebr_minor_version,  [21])
+m4_define(gebr_micro_version,   [0])
 m4_define([gebr_interface_age], [0])
 m4_define([gebr_binary_age],
           [m4_eval(100 * gebr_minor_version + gebr_micro_version)])
@@ -85,7 +85,7 @@ DOCUMENT_VERSION=0.3.4
 AC_SUBST(DOCUMENT_VERSION)
 PROJECT_VERSION=0.3.3
 AC_SUBST(PROJECT_VERSION)
-LINE_VERSION=0.3.6
+LINE_VERSION=0.3.7
 AC_SUBST(LINE_VERSION)
 FLOW_VERSION=0.4.0
 AC_SUBST(FLOW_VERSION)

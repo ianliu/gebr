@@ -22,6 +22,8 @@
 #define __GEBRM_APP_H__
 
 #include <glib-object.h>
+#include <libgebr/gebr-auth.h>
+#include <libgebr/gebr-maestro-settings.h>
 
 #define GEBRM_TYPE_APP            (gebrm_app_get_type())
 #define GEBRM_APP(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GEBRM_TYPE_APP, GebrmApp))
@@ -113,15 +115,43 @@ GebrmApp *gebrm_app_new(void);
  *
  * Writes the port in @fd and starts the application main loop.
  */
-gboolean gebrm_app_run(GebrmApp *app, int fd, const gchar *version);
+gboolean gebrm_app_run(GebrmApp *app, int fd, const gchar *version, GebrAuth *auth);
+
+gboolean gebrm_app_create_folder_for_addr(const gchar *addr);
 
 const gchar *gebrm_app_get_lock_file(void);
 
 const gchar * gebrm_app_get_version_file(void);
 
-const gchar *gebrm_app_get_servers_file(void);
+const gchar *gebrm_app_get_log_file_for_address(const gchar *addr);
+
+const gchar *gebrm_app_get_version_file_for_addr(const gchar *addr);
 
 const gchar *gebrm_app_get_admin_servers_file(void);
+
+/*
+ * Configuration Methods
+ */
+GebrMaestroSettings *gebrm_app_create_configuration(void);
+
+gchar *gebrm_app_get_nfsid(GebrMaestroSettings *ms);
+
+/**
+ * gebrm_app_create_possible_daemon_list:
+ *
+ * Create a list with daemons from user/admin file
+ * and automatic found by GêBR
+ */
+void gebrm_app_create_possible_daemon_list(GebrMaestroSettings *ms,
+                                           GebrmApp *app);
+
+/**
+ * gebrm_append_key:
+ *
+ * Append gebr.key on Authorized Keys of maestro or proxy
+ */
+void gebrm_app_append_key(void);
+
 
 /* }}} GebrmApp methods */
 

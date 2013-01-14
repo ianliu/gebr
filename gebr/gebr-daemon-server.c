@@ -29,7 +29,8 @@ struct _GebrDaemonServerPriv {
 	gchar *address;
 	gchar *hostname;
 	gboolean ac;
-	gchar *error;
+	gchar *error_msg;
+	gchar *error_type;
 	GebrCommServerState state;
 	GList *tags;
 	gchar *maestro_addr;
@@ -166,7 +167,7 @@ gebr_daemon_server_class_init(GebrDaemonServerClass *klass)
 							 "State",
 							 "State",
 							 0, 100,
-							 SERVER_STATE_UNKNOWN,
+							 SERVER_STATE_DISCONNECTED,
 							 G_PARAM_READWRITE));
 
 	g_object_class_install_property(object_class,
@@ -211,6 +212,8 @@ gebr_daemon_server_new(GebrConnectable *connectable,
 const gchar *
 gebr_daemon_server_get_address(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
 	return daemon->priv->address;
 }
 
@@ -218,18 +221,24 @@ void
 gebr_daemon_server_set_state(GebrDaemonServer *daemon,
 			     GebrCommServerState state)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	daemon->priv->state = state;
 }
 
 GebrCommServerState
 gebr_daemon_server_get_state(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), SERVER_STATE_DISCONNECTED);
+
 	return daemon->priv->state;
 }
 
 void
 gebr_daemon_server_connect(GebrDaemonServer *daemon)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	gebr_connectable_connect(daemon->priv->connectable,
 				 daemon->priv->address);
 }
@@ -237,6 +246,8 @@ gebr_daemon_server_connect(GebrDaemonServer *daemon)
 void
 gebr_daemon_server_disconnect(GebrDaemonServer *daemon)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	gebr_connectable_disconnect(daemon->priv->connectable,
 				    daemon->priv->address,
 				    "");
@@ -245,6 +256,8 @@ gebr_daemon_server_disconnect(GebrDaemonServer *daemon)
 gboolean
 gebr_daemon_server_is_autochoose(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), FALSE);
+
 	return g_strcmp0(daemon->priv->address, "") == 0;
 }
 
@@ -252,6 +265,8 @@ void
 gebr_daemon_server_set_tags(GebrDaemonServer *daemon,
 			    gchar **tags)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	g_list_foreach(daemon->priv->tags, (GFunc)g_free, NULL);
 	g_list_free(daemon->priv->tags);
 
@@ -264,12 +279,16 @@ gebr_daemon_server_set_tags(GebrDaemonServer *daemon,
 GList *
 gebr_daemon_server_get_tags(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
 	return daemon->priv->tags;
 }
 
 gboolean
 gebr_daemon_server_has_tag(GebrDaemonServer *daemon, const gchar *tag)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), FALSE);
+
 	if (!tag || !*tag)
 		return TRUE;
 
@@ -282,41 +301,74 @@ gebr_daemon_server_has_tag(GebrDaemonServer *daemon, const gchar *tag)
 gboolean
 gebr_daemon_server_get_ac(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), FALSE);
+
 	return daemon->priv->ac;
 }
 
 void
 gebr_daemon_server_set_ac(GebrDaemonServer *daemon, gboolean ac)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	daemon->priv->ac = ac;
 }
+
 void
-gebr_daemon_server_set_error(GebrDaemonServer *daemon, const gchar *error)
+gebr_daemon_server_set_error_msg(GebrDaemonServer *daemon, const gchar *error)
 {
-	if (daemon->priv->error)
-		g_free(daemon->priv->error);
-	daemon->priv->error = g_strdup(error);
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
+	if (daemon->priv->error_msg)
+		g_free(daemon->priv->error_msg);
+	daemon->priv->error_msg = g_strdup(error);
 }
-const gchar *gebr_daemon_server_get_error(GebrDaemonServer *daemon)
+
+const gchar *gebr_daemon_server_get_error_msg(GebrDaemonServer *daemon)
 {
-	return daemon->priv->error;
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
+	return daemon->priv->error_msg;
+}
+
+void
+gebr_daemon_server_set_error_type(GebrDaemonServer *daemon, const gchar *type)
+{
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
+	if (daemon->priv->error_type)
+		g_free(daemon->priv->error_type);
+	daemon->priv->error_type = g_strdup(type);
+}
+
+const gchar *gebr_daemon_server_get_error_type(GebrDaemonServer *daemon)
+{
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
+	return daemon->priv->error_type;
 }
 
 void
 gebr_daemon_server_set_hostname(GebrDaemonServer *daemon, const gchar *hostname)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	daemon->priv->hostname = g_strdup(hostname);
 }
 
 const gchar *
 gebr_daemon_server_get_hostname(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
 	return daemon->priv->hostname;
 }
 
 gboolean
 gebr_daemon_server_set_mpi_flavors(GebrDaemonServer *daemon, const gchar *flavors)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), FALSE);
+
 	if (daemon->priv->mpi_flavors)
 		g_free(daemon->priv->mpi_flavors);
 
@@ -330,6 +382,8 @@ gebr_daemon_server_set_mpi_flavors(GebrDaemonServer *daemon, const gchar *flavor
 const gchar *
 gebr_daemon_server_get_mpi_flavors(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
 	return daemon->priv->mpi_flavors;
 }
 
@@ -337,12 +391,16 @@ void
 gebr_daemon_server_set_ncores(GebrDaemonServer *daemon,
                               gint ncores)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	daemon->priv->ncores = ncores;
 }
 
 gint
 gebr_daemon_server_get_ncores(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), 0);
+
 	return daemon->priv->ncores;
 }
 
@@ -350,6 +408,8 @@ void
 gebr_daemon_server_set_cpu_clock(GebrDaemonServer *daemon,
                                  const gchar *clock)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	if (daemon->priv->clock)
 		g_free(daemon->priv->clock);
 	daemon->priv->clock = g_strdup(clock);
@@ -358,6 +418,8 @@ gebr_daemon_server_set_cpu_clock(GebrDaemonServer *daemon,
 const gchar *
 gebr_daemon_server_get_cpu_clock(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
 	return daemon->priv->clock;
 }
 
@@ -365,6 +427,8 @@ void
 gebr_daemon_server_set_cpu_model(GebrDaemonServer *daemon,
                                  const gchar *model)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	if (daemon->priv->model)
 		g_free(daemon->priv->model);
 	daemon->priv->model = g_strdup(model);
@@ -373,6 +437,8 @@ gebr_daemon_server_set_cpu_model(GebrDaemonServer *daemon,
 const gchar *
 gebr_daemon_server_get_cpu_model(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
 	return daemon->priv->model;
 }
 
@@ -380,6 +446,8 @@ void
 gebr_daemon_server_set_memory(GebrDaemonServer *daemon,
                               const gchar *memory)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	if (daemon->priv->memory)
 		g_free(daemon->priv->memory);
 	daemon->priv->memory = g_strdup(memory);
@@ -388,6 +456,8 @@ gebr_daemon_server_set_memory(GebrDaemonServer *daemon,
 const gchar *
 gebr_daemon_server_get_memory(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
 	return daemon->priv->memory;
 }
 
@@ -395,6 +465,8 @@ gboolean
 gebr_daemon_server_accepts_mpi(GebrDaemonServer *daemon,
 			       const gchar *mpi_flavor)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), FALSE);
+
 	gchar **tmp = g_strsplit(daemon->priv->mpi_flavors, ",", -1);
 	if (!tmp)
 		return FALSE;
@@ -407,6 +479,8 @@ gebr_daemon_server_accepts_mpi(GebrDaemonServer *daemon,
 guint
 gebr_daemon_server_get_timeout(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), 0);
+
 	return daemon->priv->timeout;
 }
 
@@ -414,5 +488,7 @@ void
 gebr_daemon_server_set_timeout(GebrDaemonServer *daemon,
                                guint timeout)
 {
+	g_return_if_fail(GEBR_IS_DAEMON_SERVER(daemon));
+
 	daemon->priv->timeout = timeout;
 }

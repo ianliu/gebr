@@ -96,6 +96,9 @@ void gebr_maestro_controller_stop(GebrMaestroController *self,
 GebrMaestroServer *gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
 								   const gchar *address);
 
+GebrMaestroServer *gebr_maestro_controller_get_maestro_for_nfsid(GebrMaestroController *mc,
+                                                                 const gchar *nfsid);
+
 GebrMaestroServer *gebr_maestro_controller_get_maestro_for_line(GebrMaestroController *mc,
 								GebrGeoXmlLine *line);
 
@@ -103,7 +106,8 @@ void gebr_maestro_controller_set_window(GebrMaestroController *mc,
 					GtkWindow *window);
 
 void gebr_maestro_controller_server_list_add(GebrMaestroController *mc,
-                                             const gchar * address);
+                                             const gchar * address,
+                                             gboolean respect_ac);
 
 void gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_column,
                                                         GtkCellRenderer *cell,
@@ -132,6 +136,57 @@ GtkMenu *gebr_maestro_controller_server_popup_menu(GtkWidget * widget,
 
 void gebr_maestro_controller_update_daemon_model(GebrMaestroServer *maestro,
                                                  GebrMaestroController *mc);
+
+/*
+ * create_maestro_chooser_model
+ *
+ * Read the environment variable GEBR_DEFAULT_MAESTRO
+ * and read its content, according to the following syntax:
+ * maestro1, description1; maestro2, description2
+ *
+ * */
+void gebr_maestro_controller_create_chooser_model (GtkListStore *model,
+                                                   GebrMaestroServer *maestro);
+
+/*
+ * gebr_maestro_controller_update_chooser_model:
+ *
+ * Update maestro chooser model using default model for @combo, or
+ * if pass %NULL in @combo, update use the combo on @mc to update
+ */
+void gebr_maestro_controller_update_chooser_model(GebrMaestroServer *maestro,
+						  GebrMaestroController *mc,
+						  GtkComboBox *combo);
+/*
+ * gebr_maestro_controller_get_possible_maestros:
+ *
+ * Creates a maestros queue, to which gebr must try to connect in the
+ * proper order.
+ */
+GQueue *gebr_maestro_controller_get_possible_maestros(gboolean has_gebr_config,
+						     gboolean has_maestro_config,
+						     gboolean upgrade_gebr);
+
+GQueue *gebr_maestro_controller_get_potential_maestros(GebrMaestroController *mc);
+
+void gebr_maestro_controller_set_potential_maestros(GebrMaestroController *mc,
+                                                    GQueue *queue);
+
+/*
+ * gebr_maestro_controller_try_next_maestro:
+ *
+ * Get first address from the queue of potential maestros and try to connect it
+ * Returns %FALSE if queue are empty and %TRUE otherwise
+ */
+gboolean gebr_maestro_controller_try_next_maestro(GebrMaestroController *mc);
+
+void gebr_maestro_controller_clean_potential_maestros(GebrMaestroController *mc);
+
+void gebr_maestro_controller_on_maestro_combo_changed(GtkComboBox *combo,
+                                                      GebrMaestroController *self);
+
+GebrDaemonServer *gebr_maestro_controller_get_daemon_from_address (GebrMaestroController *self,
+                                                                   const gchar *address);
 
 G_END_DECLS
 

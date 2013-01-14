@@ -1,3 +1,1463 @@
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving behaviour of maestro combo on maestro/servers dialog and
+	avoiding gtk-criticals.
+	* Doing word-wrap of the text of the dictionary's table in report.
+	* Improving behaviour of maestro combo on maestro/servers dialog.
+
+2012-12-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Translating last commit
+	* Fix null on domain disconnected
+
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding sentinel to prevent a execution without flow selected.
+
+2012-12-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Unfill the icon of flow (and of BrokenFlow)
+
+2012-12-18  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix null on nfsid domain: code review
+
+2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Ellipsize queue combo in the middle in detailed execution dialog.
+
+2012-12-17  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix emitting a status change signal on connection
+
+2012-12-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Add the appropriate library of i18n to the libgebr files
+
+2012-12-17  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix warning on edit properties, base, filechooser
+
+2012-12-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.15 for changeset af35f7823571
+	* Release 0.19.15: Code Freeze [Sprint 72]
+
+2012-12-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* gebr: Update xml of lines after maestro send home/nfsid
+
+2012-12-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: clean up system if an inconsistency is found
+
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: improve gebr_lock_file method
+
+2012-12-14  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Open filechooser at DATA when io field is empty.
+
+2012-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Show nfs label in infobar (even) when gebr starts
+
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: allow selection of nonexistent files in input file chooser
+
+2012-12-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix update of Flows interface when maestro change state
+
+2012-12-14  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding tooltip on Domain label in ui_log.
+
+2012-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Change translation of 'alias' (pseudonimo -> apelido)
+	* gui: Green icon is back again
+
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: do not generate local index if remote is present
+	* gebr: fix reading of relative paths in menus indices
+
+2012-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* geoxml-utils: Generate indices with relative paths
+
+2012-12-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use label from maestro besides GeBR label, unless label are empty
+	* i18n: Update pt_BR po files
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change flow-icon to pipe/files version
+
+2012-12-12  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving the import file chooser to uniformize the treatment with
+	the others.
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* gebr: Add vertical spacing in flow line to improve visual
+	* maestro: Fix treatment of NFS id error
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: 'Greenize' the flow icon
+
+2012-12-12  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Avoiding remove/stop/disconnect server when they have running jobs.
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Remove IMPORT references from interface
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix wait pid problem when execute many tasks on same daemon
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Set to local home when mount is not possible
+	* gebr: Change feedback message of job control
+	* gui: Exhibit Domain instead of maestro in the botton infobar
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix critical when close maestro controller dialog, and fix a minor
+	memory leak
+
+2012-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Refactor repetitive codes of ui_log.c
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* daemon: Improve and fix method to get non-scaled CPU clock
+
+2012-12-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix unref of Ssh object in PortProvider
+
+2012-12-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding the IMPORT path from interface.
+
+2012-12-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Always show currently connected maestro
+	* maestro: Preserves errors from previous daemons in GebrmDaemon
+
+2012-12-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: fix invalid memory access when loading projects
+
+2012-12-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix some memory leaks of libgebr-geoxml
+	* Fix relativising path when it's chosen by browser.
+
+2012-12-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: clicking snapshots button no longer opens file chooser
+
+2012-12-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Update home path of the XMLs when gebr receives home_def from
+	maestro
+
+2012-12-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Try to get non-scaled CPU clock of daemon
+	* Treats SFTP forward like local forward to fix mount problem
+
+2012-12-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: do not select current line when changing tabs
+	* Fix compilation warnings
+
+2012-12-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.14 for changeset 27ee629f837a
+	* Release 0.19.14: Upgrade fixes
+
+2012-12-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Fix previous commit
+	* libgebr: Refactor set_current_directory to open the filebrowser in
+	the right place
+
+2012-12-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change order of daemon errors to prioritize NFS error
+	* Stop sending errors to /dev/null on maestro/daemon connection
+	* libgebr: Fix parser of fingerprint on SSH
+	* Fix address get from old maestro disregarding the user
+
+2012-12-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Verify if mounting is necessary on filechooser opening
+
+2012-12-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update interface of lines when gebr receives a NFSid from maestro
+	* Remove need_cleanup flag and add force_init flag to connect on
+	maestro.
+	* Add new argument force_init (-f) on maestro
+
+2012-12-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create treatment to connection refused on GêBR when try to connect
+	on invalid port
+	* maestro: Trust in lock file when starting maestro
+	* maestro: Fix security problem
+
+2012-12-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Change message of execution start
+
+2012-12-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making a smarter validation of Base/Import paths.
+	* Show message in output area to prevent white screen.
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: do not activate flow buttons when navigating with keyboard
+	* gebr: new method gebr_ui_flow_has_snapshots
+
+2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix loose of some execution information after change current maestro
+
+2012-12-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.13 for changeset 3181741b854c
+	* Release 0.19.13: SSH parser fixes
+
+2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix criticals of clocks diff on GêBR after redirect of maestro
+
+2012-12-06  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix: setting ok button insensitive on absolute entries and empty
+	entries
+	* Fix broken link on gnu license
+
+2012-12-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show the correct node that executes a job on details of job.
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: check if there is a loop before defining BC variables
+
+2012-12-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Saving parameters when open dictionary or report.
+
+2012-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to verify change in title and base and save of import
+	path
+
+2012-12-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Maestro disconnects from daemon when it enters in a error
+	state
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: servers change to the new REDIRECT state when redirecting
+	* libgebr: do not unref ssh object inside its own signal
+
+2012-12-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new state to STATE_FORWARD for PortProvider
+	* Fix SSH output buffer
+
+2012-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Avoid multiple sending of nfs_id to the clients
+
+2012-12-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with 0.19.12
+	* gebr: Improve entry of maestro
+	* libgebr: Add on header file public method of PortProvider
+
+2012-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Avoid links of empty emails
+	* gebr: Remove previously included g_debug's
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.12 for changeset 5a23afbcf255
+	* Release 0.19.12: More autopilot fixes
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixes makefile of tests
+
+2012-12-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix kill of old maestro when get remote port
+
+2012-12-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Clear gebrm-daemon error when appropriate
+
+2012-12-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: build local lock file correctly
+
+2012-12-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Check nfs before include gebr-host as a node
+
+2012-12-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show the NFS Label in the line's report.
+	* Add emblem on maestro status icon in Project and Lines tab.
+	* Improving text about to bring the line to current maestro.
+
+2012-12-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Clean alias entry when change maestro on MaestroController
+	* gebr: update domain on log bar
+	* Check if there is lock file before try to kill old maestro
+	* Improve message eht host untrusted and update translate of that
+	messages
+
+2012-12-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove unnecessary debug on PortProvider
+	* Pass parameter need_cleanup to CommServer and PortProvider to kill
+	maestro before connect when needs cleanup
+	* Set flag of maestro needs cleanup if gebr check is on upgrade
+
+2012-12-03  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix validation on properties, import path
+
+2012-11-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.11 for changeset d54b66f48233
+	* Release 0.19.11: Autopilot fixes
+
+2012-11-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing wrong description of maestro state on conections wizard.
+
+2012-11-30  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix validating an invalid BASE path (Fixes issue 1416)
+
+2012-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix warning on group after change another parameter
+
+2012-11-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving message of ssh dialog to add server in known_hosts.
+
+2012-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve SSH question for host authentication
+
+2012-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: protect public GebrDaemonServer's methods from type errors
+
+2012-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix creation of pending connections list on SSH question
+
+2012-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: change GebrMaestroServer::password-request to send a
+	maestro/daemon object
+	* libgebr: remove internal glib includes
+
+2012-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Fix validation of BASE path of Line properties
+
+2012-11-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix flow restore after open gebr and update FlowBrowse when
+	disconnect maestro
+	* Set NFSid when creating a new MaestroServer
+	* gebr: Remove useless commentary
+
+2012-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Use the new method to verify whether the host is local or
+	not
+
+2012-11-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add parameter on validator after edited a keyword, to avoid empty
+	variables error
+
+2012-11-29  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix tooltip of program when text is in portuguese.
+
+2012-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Minor translation of the message inserted in the previous
+	commit
+	* gebr: Set a proper error message when there is no gebrd installed
+	* gebr: Gebr stores the error-type
+	* gebr: Remove remaining word maestro occurences
+
+2012-11-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update parameters review when close dictionary
+
+2012-11-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: regression: maestro warnings were not being shown
+
+2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.10 for changeset 2fe9f6ca7f4f
+	* Release 0.19.10: Autopilot [Sprint 69] [Sprint 70]
+
+2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve method to get_possible_maestros to avoid wrong KeyFile on
+	upgrade GeBR
+	* Remove unused method
+	* Add method to clean old maestros config
+
+2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Tests with fixture_change_iter_value depends upon flow dtd setup
+	hence are integration tests.
+
+2012-11-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Update pot files
+
+2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix list of flow jobs removing strdup from data
+	* Return after quit gebr on unmount_gvfs (fix segfault when quit GeBR)
+	* Add protection on method GebrCommPortForwarrd::get_address
+	* Add forward on client when X11 port is defined and remove old
+	structure to use only GebrCommPortForward in list of forwards
+	* Add attribute address on class GebrCommPortForward, adding a getter
+	for that, and add protection on methods to close and free forward
+	* Improve method to check if address is local adding a new method to
+	get_user_from_address and change another to get_host_from_address
+
+2012-11-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: fix memory leaks and remove public method
+
+2012-11-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using "Domain" instead of "Maestro" on interface, except on wizard
+	and on maestro/nodes dialog.
+
+2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move creation of possible daemons list from new-connection signal to
+	ini_def message
+	* Remove duplicate code to check if client has gebrd, and fix
+	autoconnect of localhost
+	* Fix indentation of method gebr_comm_server_socket_connected
+
+2012-11-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* merge: fix autopilot for maestro
+	* libgebr: do not disconnect GebrCommServer in wrong state
+	* gebr: fix autopilot for maestro on protocol version mismatch
+
+2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method gebrm_config_load_admin_servers to copy and add nodes
+	just one time, and remove unnecessary code on daemon_init
+
+2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Eclipse setup to exclude build directory from source code
+
+2012-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve method gebr_maestro_server_need_mount_gvfs, and change local
+	of GeBR try mount gvfs
+	* Fix bug when open connections wizard the signal "changed" of
+	maestro's combo box emitted
+	* Add method to get NFSid from client (machine running GeBR)
+
+2012-11-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: set server error on protocol version mismatch
+	* gebr: remove unused variables
+	* libgebr: add gebr_comm_server_set_last_error method
+
+2012-11-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Update .po files
+
+2012-11-27  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Add missing translation file, make distcheck sould pass.
+	* Check if the unconfigured program status is ignored as should be
+	now.
+
+2012-11-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Differentiating title of the dialog when trying to stop and connect
+	to the server.
+
+2012-11-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move parameter haskey to /set-password message to fix append key on
+	daemons
+
+2012-11-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bug of wrong error messages
+
+2012-11-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove unused parameter on /server message
+	* Fix SSH questions to treat host verification and use correctly
+	response
+
+2012-11-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix previous commit
+	* libgebr: Make treatment when there is no maestro installed in the
+	local host
+	* libgebr: Make treatment to the connections to hosts in which there
+	is no maestro executable
+
+2012-11-27  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed cleanup ALL and lock file remove
+
+2012-11-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: fix usage of gebr_maestro_settings_set_domain method
+	* maestro: remove duplicate data in servers.conf and maestros.conf
+	* Refactor methods for building maestro settings paths
+
+2012-11-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Remove unused variable in gebrm-app
+	* maestro: Fix creation of groups
+
+2012-11-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix gid_def message, so it doesn't returns
+	* maestro: Fix memory leak on parse messages
+	* Create list to possible daemon when gebr connect on maestro
+
+2012-11-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: fix size of alias entry in Masetro/Nodes dialog
+
+2012-11-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Do not connect on daemons automatically when maestro run
+	* Fix and emit ssh-finished signal on CommSsh class
+	* Connect on maestro's daemons when gebr receives initial message from
+	maestro
+	* Remove tunnel pooling port always local forward has an error
+	* Refactoring /set-password message to use new method of invalid
+	password
+	* Add new method to treats invalid password on daemon
+	* Clean password cache and add new method to treats invalid password
+	on server
+	* Add new method to set ssh password error in one place
+	* Create new message /set-password, removing password from /server
+	message
+	* Refactoring method to connect daemon, creating a new method to set
+	password
+	* Stop tunnel polling port when SSH returns connection error of local
+	forward
+	* Remove unused variable from CommServer
+
+2012-11-26  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixes cleanup.sh to use maetro's singleton_lock
+
+2012-11-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change password signals and improve method on_ssh_password in
+	CommServer
+	* Set config variable use_key_ssh to always use user option
+
+2012-11-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Transfer loading of possible daemons to app_run
+
+2012-11-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: gebr_comm_is_local_address compares hosts only
+
+2012-11-23  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix pot file header on tooltips (Fixes issue 1365)
+
+2012-11-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Avoid fade away the warning when daemon has a different NFS.
+	* Using standard user@host on maestro combo.
+
+2012-11-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: avoid race condition when creating ssh tunnels
+	* ssh: parse local forward error in GebrCommSsh
+
+2012-11-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Change tooltips of the connection and of the browsing
+
+2012-11-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding sentinel to avoid the GêBR Domain to be null.
+
+2012-11-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Improve messages of SSH password request
+
+2012-11-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding bookmarks on navigation when sftp is not necessary.
+
+2012-11-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update label on interface of maestro when changed
+	* Save maestro on Keyfile with username
+
+2012-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: fix connection-refused error
+	* libgebr: reset GebrCommServer only when appropriate
+	* libgebr: refactor transformation of local address
+	* maestro: recover error for duplicate daemon
+	* maestro: transform address before connecting to daemon
+
+2012-11-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Persist choice on "Remember me" checkbox about use of ssh keys.
+
+2012-11-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change signals and messages of password and question request to
+	receive retry variable of connection when type wrong password
+	* Create treatments when cancel dialog of password of daemon
+	* Add treatment to cancel and wrong password of SSH
+	* Change number arguments of message pss_def
+	* Add new type on gebr-marshal list
+
+2012-11-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making the connection daemon respect the choice of autoconnect
+	option.
+
+2012-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: avoid excessive change of states
+	* libgebr: remove Unknown and OpenTunnel state from server
+
+2012-11-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Disable warnings about sftp when servers are in the same nfs than
+	maestro.
+
+2012-11-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Sends to maestro whether the client machine has gebrm
+	installed
+
+2012-11-22  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Translating prjx and lnex on export
+	* Fix exporting prjx and lnex
+	* Fixing flwx export on portuguese version
+
+2012-11-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove description of suggested domain from combo box
+
+2012-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: daemon: fix x11 forward
+	* libgebr: send the correct display host on dsp_def message
+	* libgebr: fix x11 forward command and add method to get the display
+	host
+
+2012-11-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change X11 forward of GeBR and Maestro using port defined by SSH
+	command
+	* Fix critical on maestro settings when doesn't have any nodes
+
+2012-11-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Respect the order of the queue of potential maestros
+	* maestro: Maestro sends to clients whether the daemons has or not
+	gebrm installed
+
+2012-11-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create new message display def to send display from Gebr to maestro
+
+2012-11-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Verifying if it's necessary to mount gvfs when a daemon is
+	connected.
+
+2012-11-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Daemon communicates to its maestro whether it has or not
+	gebrm installed
+	* libgebr: Fix search of daemon binary
+
+2012-11-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change combo box of maestro to have same treatment on Wizard and
+	Maestro/Nodes window and treat NFSid besides address
+	* Fix creation of hash table to avoid free invalid pointers
+	* Add new method to get all NFSids from Keyfile of maestros
+
+2012-11-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update address from maestro structure with the current connected
+	server
+	* Show the NFS Label and address of connected maestro on entry in
+	Maestro/Nodes
+
+2012-11-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Change dialog of password request
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set label empty on gebr_maestro_settings_set_domain and fix method
+	to generate_nfs_label
+
+2012-11-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix gebr_comm_get_display
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Generate NFS label only in GêBR and send back to maestro, moving
+	method to generate default label from libgebr/utils to maestro-
+	settings
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge branch autopilot to default
+
+2012-11-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Change protocol of ini_def to include whether client has
+	gebrm and gebrd
+
+2012-11-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: send kill message to daemon before disconnecting
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Maestro connects at all possible nodes that we find
+	* Fix method to add node on maestro settings
+
+2012-11-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Add daemon address to the list when maestro connects to a
+	daemon
+	* libgebr: Add method to add/get nodes to the maestro keyfile
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add new methods to try_next_maestro when current maestro has error
+	and clean_potential_maestros queue after maestro going to logged
+	state
+	* Change structure of potential maestro from GList to GQueue
+
+2012-11-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: fix removal of X11 forward
+
+2012-11-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update MaestroSettings structure when maestro receives a new
+	connection
+	* Add new method to update KeyFile from MaestroSettings structure
+
+2012-11-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Add variable in MaestroController to represent the potential
+	maestros
+	* libgebr: Change gebr_glist_append_gchar_avoid_duplicates name
+	* gebr: Create a non-duplicated list of address of possible maestros
+	* libgebr: Add method to append a string to a list without duplicates
+
+2012-11-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Use the newly-created method to compose the list of possible
+	maestros
+	* gebr: Create methods to get the list of maestros to which gebr will
+	try to connect
+
+2012-11-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: create display port upon GeBR connection
+	* protocol: change gid_def protocol to send a display port
+	* maestro: add method gebrm_client_get_display_port
+	* libgebr: accept a starting port in gebr_comm_get_available_port
+	* libgebr: move method for checking if a host is local
+
+2012-11-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Removing flwz and flw from the portuguese version (Fixes issue 1401)
+	* Removing flwz references on export
+
+2012-11-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: add method gebr_comm_port_provider_start_with_port
+	* libgebr: add method gebrm_comm_get_available_port
+
+2012-11-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Setting the checkbox as true (default). Changing the encryption key
+	sentence to Remember me (Fixes issue 1384)
+	* Fixing import validation on line setup
+
+2012-11-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: close connection tunnel when disconnecting a server
+
+2012-11-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Auto connect to localhost when there is no .gebr folder
+	* gebr: Add sentinels to gebr-maestro-controller
+
+2012-11-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: add method to free a GebrCommPortForward
+
+2012-11-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Include the proper library to gebr-comm-server (fix some
+	compilation warnings)
+	* gebr: Add sentinel when getting the errors from maestro
+
+2012-11-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change all references for Maestro on interface to NFS label
+	* Move methods get_ssh_command _with_key and get_default_keys to
+	CommUtils to remove duplicated code
+	* Fix redirect address when maestro are local
+	* Refactor and fix logic of maestro to check lock file and suggest
+	another maestro
+	* Fix method to append address on maetro settings
+
+2012-11-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Fix wrong freeing of variable
+
+2012-11-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: fix methods for building maestro paths
+
+2012-11-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Use newly created methods of build of paths
+	* maestro: Refactor methods of build of paths of maestro
+
+2012-11-09  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Refactoring the validation on import and base path
+
+2012-11-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Fix compilation of previous commit
+
+2012-11-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: remove debug in GebrCommSsh
+
+2012-11-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: First refactor of gebrm-main
+	* maestro: Change location of the maestro lock
+
+2012-11-09  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixes warning on base validation (Fixes issue 1391)
+
+2012-11-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: improve GebrCommSsh parser
+	* libgebr: add method for comparing two addresses for equality
+
+2012-11-09  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fixes enter press on program input and program output (Fixes issue
+	1394)
+	* Fixes tooltip on output and logfile (Fixes issue 1395)
+
+2012-11-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix gebr_comm_server_kill and remove deprecated methods
+
+2012-11-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Append username on addr when maestro returns port and address
+
+2012-11-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix a segfault when redirect_addr is NULL
+
+2012-11-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Add sentinel to the freeing of gebr.validator
+
+2012-11-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Do not show maestro from file if it not set yet
+
+2012-11-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: correctly parse maestro/daemon output
+
+2012-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Backed out changeset 029b3b3bc28c
+	* libgebr: when forwarding x11 port, check for available display port
+	* libgebr: add method for getting DISPLAY information
+
+2012-11-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change state of server to disconnect when Port Provider send
+	ERROS_SSH
+	* Use display from environment variable to fix X when GêBR and Maestro
+	are remote
+	* Remove deprecated code on GebrCommServer
+	* Fix segfault when remote maestro connect on any daemons
+	* Remove deprecated errors of Gebrd and their treatments on maestro
+	and gebr
+	* Fix method GebrmClient::kill_forward_by_address removing deprecated
+	code
+	* Back code to set password on server
+	* Remove deprecated method
+	* Remove deprecated methods and add pending connections to set
+	password and answer of questions
+
+2012-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: fix maestro when there is no configuration file
+
+2012-11-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* The trunk should work, at least for local tests.
+
+2012-11-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Refactor gebr_comm_server_append_key to avoid the use of
+	the GebrCommPortProvider api
+
+2012-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: use new MaestroSettings methods to manipulate addresses
+	* libgebr: rename gebr_maestro_settings_add_address_on_domain to
+	append_address
+	* libgebr: fix include path in GebrMaestroSettings
+
+2012-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add a script for updating GPL notice
+
+2012-11-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Accomodate method append_key to use the new infra-structure
+
+2012-11-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix double click on close to quit GeBR
+	* Fix warning compilation
+	* Use new signals to pass if server can use public key besides temp
+	file, and remove some deprecated methods and codes
+	* Create new signal of SSH_KEY and improve parse output of SSH
+
+2012-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: don't poll for port availability on remote forwards
+
+2012-11-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send port and address always when GeBR starts and create better
+	treatment to the address avoiding loop connection on same maestro
+
+2012-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: send display port upon daemons connection
+	* libgebr: use new method for starting sftp forward
+	* libgebr: add gebr_comm_server_create_port_provider method
+	* maestro: don't return display port to GeBR
+
+2012-11-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Removing temporary files about server/maestro log connection.
+
+2012-11-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove foward x11 from ret_ini and move to new message prt_def
+
+2012-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: prevent a segfault when closing the GVFS locally
+	* gebr: assume GVFS is OK when working locally
+	* rename: gebr_maestro_server_get_sftp_prefix ->
+	gebr_maestro_server_get_browse_prefix
+
+2012-11-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* gebr: Fix signals vector of gebr-menu-view
+
+2012-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: remove get_real_addr and improve is_local_address
+	* Merge default into remove-local-ssh
+	* libgebr: fix execution of maestro/daemon on local machine
+	* gebr: check types on GebrMaestroServer's public methods
+
+2012-11-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: use PortProvider for SFTP in GêBR
+	* libgebr: use PortProvider for x11 forward
+
+2012-11-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to update header of any document on upgrade DTD
+
+2012-11-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: set forward structure when running remote commands
+
+2012-11-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Connect on suggested address from some maestro to avoid multiple
+	maestro on same NFS
+
+2012-11-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: remove GebrCommPortForward from ::port-defined signal
+
+2012-11-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update maestro config file when connect or try on new one
+
+2012-11-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge branch remove-local-ssh into default
+
+2012-11-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use new method to check if has maestro on remote address and port
+	* Fix maestro to accepts remote connections
+	* Fix method to check if has someone listen on port in remote address
+	* Remove unused variable to avoid warnings compilation
+
+2012-11-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge release 0.19.8 into development trunk.
+	* Release 0.19.8: Spring cleaning [Sprint 68]
+	* Added tag 0.19.8 for changeset 71dbb8ad9e19
+
+2012-11-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove NFS Label of line and use only label of maestro and of
+	maestro configuration
+
+2012-11-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add GebrCommPortForward in ::port-defined signal
+	* libgebr: add another marshaler for GObject signals
+	* libgebr: add dummy ssh script for unit testing
+
+2012-11-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: add GebrCommPortForward structure
+
+2012-11-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use method to check if remote ports has maestro listen
+	* Create method to check if has some socket listen on port
+
+2012-11-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some warnings compilation
+	* Add new define of prefix to use when send Maestro returns port and
+	address for client (Fix compilation error on previous commit)
+	* Check maestro config file before execute maestro to check if there
+	other maestro on the same NFS
+	* Add methods to get lock/version file for given address and turn
+	public methods to create maestro config and get NFSid of config
+	* Add method to get KeyFile from Maestro Settings structure
+
+2012-11-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix GebrCommSsh signals
+	* libgebr: start the port provider in gebr_comm_server_connect
+	* libgebr: fix signals and properties for GebrCommPortProvider
+	* libgebr: use GebrCommPortProvider when launching maestro/daemon
+	* libgebr: add tunnel port polling in forward commands
+
+2012-11-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create key configuration on maestro and change GeBR to syncronize
+	all informations with the maestro file
+	* Add methods to add more than one address and get all list of
+	addresses, and fix method to add addr on list to avoid duplicates
+
+2012-11-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Create method for remote sftp forward and for remote X11
+	forward
+
+2012-11-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: remove unused enum in GebrCommServer
+
+2012-11-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use new class GebrMaestroSettings on GeBR and Maestro to save on
+	config file NFSid and Label with new format
+	* Implements methods of new class GebrMaestroSettings
+
+2012-11-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: implement remote_get_maestro_port
+
+2012-11-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* libgebr: Add new class GebrMaestroSettings
+
+2012-11-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: parse ssh output and emit ssh-stdout
+	* libgebr: add documentation to GebrCommSsh signals
+
+2012-11-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Add gebr-comm-ssh to POTFILE
+	* libgebr: Versionate gebr-comm-ssh module
+	* ligebr: Add gebr-comm-ssh module to libgebr
+
+2012-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compilation error of previous commit
+	* Improve methods to load maestro config and add method to update
+	variables of NFS
+	* Add method to update NFS label for lines
+
+2012-10-31  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding editable entry to alias of maestro.
+
+2012-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve maestro to send just one time NFS id to client
+	* Improve NFS label visible on line's info
+	* libgebr: Refactor update of DTD header
+
+2012-10-31  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* libgebr: Fix another minor leak of the previous commit
+	* libgebr: Fix minor leak of the previous commit
+	* libgebr: Add methods to launch maestro and daemon
+
+2012-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set NFS label on line and modify interface to use that
+	* Add getter/setter to NFS label
+	* Fix method to get/set maestro of a line and insert NFSid on lines
+	without one
+	* Save maestro config when NFSId is already set
+	* Update line's version on configure
+	* Fix update of line's DTD to change version on header
+
+2012-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: implement local_get_sftp_port
+	* libgebr: implement local_get_x11_port
+	* libgebr: remove port and error arguments from virtual methods
+	* libgebr: use virtual methods when defining ports
+	* libgebr: add virtual method table in GebrCommPortProvider
+
+2012-10-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: creates an error infraestructure for GebrCommPortProvider
+
+2012-10-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Creating new DTD 0.3.7 for line and implements upgrade of this DTD
+
+2012-10-30  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix multiple deletion message (Fixes issue 1388)
+	* Fixed validation on menu's parameters and program's parameters
+	(Fixes issue 1234)
+
+2012-10-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: creates is_local_address method
+	* libgebr: add GebrCommPortProvider:address property
+	* libgebr: create bare class GebrComPortProvider
+
+2012-10-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Save and restore NFSid and NFSlabel on maestros.conf
+	* Add method to generate automatically NFS label
+
+2012-10-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix GebrCommServer to conform with GObject's framework
+
+2012-10-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set NFSid on line besides maestro address and add methods to get
+	maestro for NFSId
+	* Send NFSid when client connect on maestro
+	* Send NFSid from maestro to client
+
+2012-10-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* ui: Show the hotkeys of every iten of context menu
+	* ui: Minor fix on the StartingWizard label
+	* menu: Set Help option of context menu insensitive when appropriate
+
+2012-10-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* libgebr: Fix methods to get input/output real for flow
+
+2012-10-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Little translation improvements.
+
+2012-10-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix lost of info bar with jobs when select multiple programs
+
+2012-10-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Little translation improvements.
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve and enable drop down of suggested maestro to connect on
+	maestro controller dialog
+	* Add cast to avoid warning compilation
+	* Remove unused variable to fix warning compilation
+	* Add method to apply pattern on address, change localhost to hostname
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix little mistake on translation.
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use flow name to set on snapshots on job control (Fixes issue 1371)
+	* Fix some warning compilations
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Removing lost tooltip on line's wizzard and removing unused
+	function. (Fixes issue 1365)
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix warn compilation and stay in snapshot context after revert
+	snapshots (Fixes issue 1373)
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Hiding menu's popup when More Info is clicked.
+
+2012-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Reset user defined filters when execute multiple flows (Fixes issue
+	1374)
+	* Add cast in variable to avoid warning compilation
+	* gebr: Move public method to header file of Job Control
+
+2012-10-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove unused variable in gebr/flow.c
+
+2012-10-25  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving indication about how to add a node at Maestro/Servers
+	dialog.
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Treats unconfigured state like configured state because first are
+	deprecated
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Backout commit 8030 to fix compile
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve CSS to print report with Gebr-fancy-style
+
+2012-10-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix broken link to help of Reports.
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validate I/O after define variable HOME
+
+2012-10-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: comm: add X11 method for authenticating connections
+
+2012-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIx update of flow list after change state of maestro
+	* Improve message of Host key error in connections dialog (Fixes issue
+	1298)
+	* Use new methods do add and remove iter to fix completion model on
+	flow (Fixes issue 1366)
+	* Add methods to add/remove iter and update completion model (Fixes
+	issue 1366)
+	* Add cache Host key questions to avoid questions to tunnels and
+	forwards
+
+2012-10-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix broken link to help of Setup and Run dialog.
+	* Fix broken link to help of snapshots.
+
+2012-10-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: comm: remove duplicate include.
+
+2012-10-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Order correctly the programs's name which were shown in warning of
+	broken flow.
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Reset validated callback to program edit after reset parameters
+
+2012-10-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making parameter's group more visible. (Fixes issue 1270)
+	* Updating links on interface to specific sessions of Help. (Fixes
+	issue 1183)
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improve validation of parameters group and fix segfault when change
+	parameter after reset parameters to default (Fixes issue 1362)
+
+2012-10-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* i18n: Update pt_BR translation
+
+2012-10-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Handling menus without help at infobar of menus list.
+
+2012-10-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gui: Improves phrases from interface
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Correct update of variable flow_main_view when set context
+	considering if flow has snapshots
+	* Add warn_label on project and line tab to multiple selection (Fixes
+	issue 1361)
+	* Improve method hijack_key_press to treat Control+a
+	* Remove unused code on Flow Browse
+
+2012-10-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* doc: Solve minor issues of the images of the English doc (Fixes
+	issue 1186)
+	* Minor fix of label of Maestro/Nodes interface
+
+2012-10-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix memory leaks and critical when change mode of I/O to overwrite
+	or append
+	* Add shortcut "space" on change_status action of programs (Fixes
+	issue 1288)
+	* Adapt CSS and javascript for help in Menu View (Fixes issue 1357)
+	* Fix markup used in header of gui_message_dialog and add break on
+	switch to avoid warning compilation
+
+2012-10-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* utils: kill gebr-comm-socketchannel in cleanup script
+	* Replace project.vimrc by .vimprj
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bold markup of some labels to avoid warnings on CentOS
+	* Improve CSS to modify parameters in group on view
+	* Add new class for parameter in group on parameters table of report
+	* Fix markup on some messages in Flow Execution
+
+2012-10-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* doc: Add different emphasis to the 'menu' tags
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix launcher of GêBR on Portuguese to eclipse
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Check environment variable LANGUAGE to open correct version of help
+	(Fixes issue 1143)
+
+2012-10-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Italicize AddNode label of maestro/nodes interface
+	* doc: Add an introdution of the 'job' concept in the flows tab.
+
+2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Load flows when change maestro of a line
+
+2012-10-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* docs: Update 'images' folder of English documentation
+
+2012-10-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.19.7 for changeset ec9c2321a26f
+	* Release 0.19.7: Feature Freeze [Sprint 67]
+
 2012-10-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Move definition of tree view before creation of popup menu (to fix

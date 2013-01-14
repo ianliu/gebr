@@ -77,7 +77,7 @@ static gboolean __gebr_comm_socket_read(GIOChannel * source, GIOCondition condit
 		return FALSE;
 	}
 	if (condition & G_IO_ERR) {
-		/* TODO: */
+		_gebr_comm_socket_emit_error(socket, GEBR_COMM_SOCKET_ERROR_CONNECTION_REFUSED);
 		return FALSE;
 	}
 	if (condition & G_IO_HUP) {
@@ -228,16 +228,12 @@ void _gebr_comm_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocket
 void _gebr_comm_socket_close(GebrCommSocket * socket)
 {
 	if (socket->io_channel != NULL) {
-		GError *error;
-
 		if (socket->write_watch_id)
 			g_source_remove(socket->write_watch_id);
 
 		if (socket->read_watch_id)
 			g_source_remove(socket->read_watch_id);
 
-		error = NULL;
-		g_io_channel_shutdown(socket->io_channel, FALSE, &error);
 		g_io_channel_unref(socket->io_channel);
 		socket->io_channel = NULL;
 		g_byte_array_free(socket->queue_write_bytes, TRUE);

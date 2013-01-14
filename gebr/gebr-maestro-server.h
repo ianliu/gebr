@@ -65,8 +65,9 @@ struct _GebrMaestroServerClass {
 				      const gchar       *question);
 
 	PasswordKeys * (*password_request) (GebrMaestroServer *maestro,
-					    const gchar       *address,
-					    gboolean	      accepts_key);
+					    GObject	      object,
+					    gboolean	      accepts_key,
+					    gboolean 	      retry);
 
 	void (*daemons_changed) (GebrMaestroServer *maestro);
 
@@ -103,6 +104,13 @@ struct _GebrMaestroServerClass {
 struct _GebrMaestroServer {
 	GObject parent;
 	GebrMaestroServerPriv *priv;
+};
+
+enum {
+	MAESTRO_DEFAULT_LABEL,
+	MAESTRO__DEFAULT_DESCRIPTION,
+	MAESTRO_DEFAULT_ID,
+	MAESTRO_DEFAULT_N_COLUMN
 };
 
 typedef enum {
@@ -145,7 +153,8 @@ GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_disconnect(GebrMaestroServer *maestro, gboolean quit);
 
-void gebr_maestro_server_connect(GebrMaestroServer *maestro);
+void gebr_maestro_server_connect(GebrMaestroServer *maestro,
+                                 gboolean force_init);
 
 void gebr_maestro_server_add_temporary_job(GebrMaestroServer *maestro, GebrJob *job);
 
@@ -175,14 +184,24 @@ GebrCommServerState gebr_maestro_server_get_state(GebrMaestroServer *maestro);
 void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *window);
 
 void gebr_maestro_server_set_error(GebrMaestroServer *maestro,
-                                   const gchar *error_type,
-                                   const gchar *error_msg);
+				   const gchar *error_type,
+				   const gchar *error_msg);
 
 void gebr_maestro_server_get_error(GebrMaestroServer *maestro,
 				   const gchar **error_type,
 				   const gchar **error_msg);
 
-gchar *gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro);
+gchar *gebr_maestro_server_get_browse_prefix(GebrMaestroServer *maestro);
+
+void gebr_maestro_server_set_nfsid(GebrMaestroServer *maestro,
+                                   const gchar *nfsid);
+
+const gchar *gebr_maestro_server_get_nfsid(GebrMaestroServer *maestro);
+
+void gebr_maestro_server_set_nfs_label(GebrMaestroServer *maestro,
+                                       const gchar *nfs_label);
+
+const gchar *gebr_maestro_server_get_nfs_label(GebrMaestroServer *maestro);
 
 const gchar *gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro);
 
@@ -193,6 +212,8 @@ gchar *gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro);
 void gebr_maestro_server_set_clocks_diff(GebrMaestroServer *maestro, gint secs);
 
 gint gebr_maestro_server_get_clocks_diff(GebrMaestroServer *maestro);
+
+gboolean gebr_maestro_server_get_need_gvfs(GebrMaestroInfo *iface);
 
 GebrMaestroInfo *gebr_maestro_server_get_info(GebrMaestroServer *maestro);
 
@@ -206,6 +227,8 @@ gboolean gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
 
 gboolean gebr_maestro_server_has_connected_daemon(GebrMaestroServer *maestro);
 
+gchar *gebr_maestro_server_get_user(GebrMaestroServer *maestro);
+
 void gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
                                           gboolean is_wizard_setup);
 
@@ -213,14 +236,19 @@ void gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_append_key_finished(void);
 
-void gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro,
-                                    const gchar *addr);
+gboolean gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro);
+
+void gebr_maestro_server_request_sftp(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_reset_daemons_timeout(GebrMaestroServer *maestro);
 
 gchar *gebr_maestro_server_translate_error(const gchar *error_type, const gchar *error_msg);
 
 GtkTreeModel *gebr_maestro_server_copy_queues_model(GtkTreeModel *orig_model);
+
+void gebr_maestro_server_send_nfs_label(GebrMaestroServer *maestro,
+                                        const gchar *nfsid,
+                                        const gchar *label);
 
 G_END_DECLS
 

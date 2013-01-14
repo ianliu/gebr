@@ -140,12 +140,12 @@ int g_strcmp0(const char * str1, const char * str2);
  * @path1: the first path
  * @path2: the second path
  *
- * Compares if path1 and path2 resolves to the same file.
- * The paths compared for equality by calling g_stat() on both of them
- * and comparing their inode parameters are the same.
+ * Compares if @path1 and @path2 resolves to the same file.  The equality is
+ * decided by calling g_stat() on both of them and comparing their inode ids.
  *
  * Returns: %TRUE if @path1 points to the same file/directory as @path2.
- * %FALSE otherwise, including if one or both of then does not exists in the file system.
+ * %FALSE otherwise, including if one or both of then does not exists in the
+ * file system.
  */
 gboolean gebr_realpath_equal (const gchar *path1, const gchar *path2);
 
@@ -174,12 +174,13 @@ gchar *gebr_date_get_localized (const gchar *format, const gchar *locale);
  */
 gchar *gebr_id_random_create(gssize bytes);
 
-/*
- * Open a file for writing. If the file already exists, its contents is returned.
- * If not \p new_lock_content is written to the file. 
- * A newly allocated string with the contents of \p pathname is returned.
+/**
+ * gebr_lock_file:
+ *
+ * If @content is %NULL, returns the content of @path. Otherwise, @content is
+ * written in @path in a safe way.
  */
-gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gboolean symlink);
+gchar *gebr_lock_file(const gchar *path, const gchar *content);
 
 /**
  * gebr_str_ascii_word_at:
@@ -375,25 +376,20 @@ gboolean gebr_generate_key();
 gboolean gebr_add_remove_ssh_key(gboolean remove);
 
 /**
- * gebr_check_if_server_accepts_key:
+ * gebr_get_user_from_address:
+ *
+ * Get substring before the first @ from @address.
+ * In case there's no @, get the returns the local user.
  */
-gboolean gebr_check_if_server_accepts_key(const gchar *hostname,
-                                          gboolean is_maestro);
+gchar *gebr_get_user_from_address(const gchar *address);
 
 /**
- * gebr_remove_temporary_file:
- */
-void gebr_remove_temporary_file(const gchar *hostname,
-                                gboolean is_maestro);
-
-/**
- * gebr_get_address_without_user:
+ * gebr_get_host_from_address:
  *
  * Get substring after the first @ and before the first space
  * In case there's no @, get the substring before the first space
- *
  */
-gchar *gebr_get_address_without_user(const gchar *address);
+gchar *gebr_get_host_from_address(const gchar *address);
 
 /*
  *verify_address_without_username
@@ -440,6 +436,43 @@ gboolean gebr_callback_true(void);
  * Equivalent to calling g_string_free(string, TRUE).
  */
 void gebr_string_freeall(GString *string);
+
+/*
+ * gebr_add_pattern_on_address:
+ *
+ * Apply pattern on @addr, converting localhost or
+ * IP 127.0.0.1 to hostname
+ */
+const gchar *gebr_apply_pattern_on_address(const gchar *addr);
+
+/*
+ * gebr_gqueue_push_tail_avoiding_duplicates:
+ *
+ * Push @data on tail of the @queue the in case @data is not in the @queue.
+ */
+GQueue *gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue, const gchar *data);
+
+/*
+ * gebr_paths_get_value_by_key:
+ *
+ * Gets the value of @key in @paths.
+ */
+const gchar *gebr_paths_get_value_by_key(const gchar ***paths,
+                                         const gchar *key);
+
+/**
+ * GEBR_LOCK_FILE:
+ *
+ * Locks the file pointed by @path. You must call GEBR_UNLOCK_FILE() when done.
+ */
+void GEBR_LOCK_FILE(const gchar *path);
+
+/**
+ * GEBR_UNLOCK_FILE:
+ *
+ * Unlocks the file pointed by @path.
+ */
+void GEBR_UNLOCK_FILE(const gchar *path);
 
 G_END_DECLS
 

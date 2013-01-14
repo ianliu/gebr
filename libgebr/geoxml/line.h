@@ -170,17 +170,25 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line);
 
 /**
  * gebr_geoxml_line_set_maestro:
+ *
  * @line:
- * @maestro_group: the Maestro address.
+ * @nfsid: the NFSid where are the nodes of maestro
  */
 void gebr_geoxml_line_set_maestro(GebrGeoXmlLine *line,
-				  const gchar *maestro_addr);
+                                  const gchar *nfsid);
 
 /**
  * gebr_geoxml_line_get_maestro:
  * @maestro_addr: Return location for the maestro server address.
  */
 gchar * gebr_geoxml_line_get_maestro(GebrGeoXmlLine *line);
+
+/**
+ * gebr_geoxml_line_get_maestro_label
+ *
+ * Returns label associates of NFSid
+ */
+gchar *gebr_geoxml_line_get_maestro_label(GebrGeoXmlLine *line);
 
 /**
  * gebr_geoxml_line_get_paths:

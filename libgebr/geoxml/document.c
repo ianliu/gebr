@@ -134,6 +134,17 @@ GdomeDocumentType *gebr_geoxml_document_insert_header(GdomeDOMImplementation *do
                                                       const gchar *name,
                                                       const gchar *version);
 
+/**
+ * \internal
+ *
+ * Update header of @document, with new @name and @version
+ * after call this method, the new root_element will be necessary.
+ */
+void gebr_geoxml_document_update_header(GdomeDOMImplementation *dom_implementation,
+                                        GdomeDocument **document,
+                                        const gchar *name,
+                                        const gchar *version);
+
 static void
 gebr_geoxml_create_xml_error_file(void)
 {
@@ -257,12 +268,13 @@ GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, GdomeDoc
 
 	/* import all elements */
 	GdomeElement *element = __gebr_geoxml_get_first_element(source_root_element, "*");
-	for (; element != NULL; element = __gebr_geoxml_next_element(element)) {
+	GdomeElement *aux;
+	for (; element != NULL; element = __gebr_geoxml_next_element(aux), gdome_el_unref(aux, &exception)) {
 		GdomeNode *new_node = gdome_doc_importNode(document, (GdomeNode*)element, TRUE, &exception);
 		GdomeNode *result = gdome_el_appendChild(root_element, new_node, &exception);
 		gdome_n_unref(new_node, &exception);
 		gdome_n_unref(result, &exception);
-		gdome_el_unref(element, &exception);
+		aux = element;
 	}
 
 	gdome_el_unref(source_root_element, &exception);
@@ -641,13 +653,11 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		} break;
 
 		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:	{
-			GdomeDocument *aux = *document;
-			gdome_doc_ref(aux, &exception);
-			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "project", GEBR_GEOXML_PROJECT_VERSION);
-			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
 
-			gdome_doc_unref(aux, &exception);
+			gdome_el_unref(root_element, &exception);
+			gebr_geoxml_document_update_header(dom_implementation, document, "project", GEBR_GEOXML_PROJECT_VERSION);
 			root_element = gebr_geoxml_document_root_element(*document);
+
 			GHashTable * keys_to_canonized = NULL;
 
 			gebr_geoxml_document_canonize_dict_parameters(
@@ -778,15 +788,10 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.6");
 
-			GdomeDocument *aux = *document;
-			gdome_doc_ref(aux, &exception);
-			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "line", GEBR_GEOXML_LINE_VERSION);
-			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
-
-			gdome_doc_unref(aux, &exception);
-
 			gdome_el_unref(root_element, &exception);
+			gebr_geoxml_document_update_header(dom_implementation, document, "line", GEBR_GEOXML_LINE_VERSION);
 			root_element = gebr_geoxml_document_root_element(*document);
+
 			GdomeElement *first_el = __gebr_geoxml_get_first_element(root_element, "path");
 			gchar *base;
 
@@ -914,6 +919,26 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			gdome_el_unref(io, &exception);
 			gdome_el_unref(server, &exception);
 			gdome_el_unref(servers, &exception);
+		} 
+		else if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+
+			gdome_el_unref(root_element, &exception);
+			gebr_geoxml_document_update_header(dom_implementation, document, "line", GEBR_GEOXML_LINE_VERSION);
+			root_element = gebr_geoxml_document_root_element(*document);
+
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.7");
+
+			GdomeElement *first_el = __gebr_geoxml_get_first_element(root_element, "server-maestro");
+			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*)first_el, &exception), &exception);
+
+			GdomeElement *path_el = __gebr_geoxml_get_first_element(root_element, "path");
+			GdomeElement *new_el = __gebr_geoxml_insert_new_element(root_element, "nfs", path_el);
+
+			__gebr_geoxml_set_attr_value(new_el, "id", "");
+
+			gdome_el_unref(first_el, &exception);
+			gdome_el_unref(new_el, &exception);
+			gdome_el_unref(path_el, &exception);
 		}
 	}
 
@@ -980,15 +1005,10 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	if (strcmp(version, "0.4.0") < 0) {
 		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 
-			GdomeDocument *aux = *document;
-			gdome_doc_ref(aux, &exception);
-			GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, "flow", GEBR_GEOXML_FLOW_VERSION);
-			*document = __gebr_geoxml_document_clone_doc(*document, doctype);
-
-			gdome_doc_unref(aux, &exception);
-
 			gdome_el_unref(root_element, &exception);
+			gebr_geoxml_document_update_header(dom_implementation, document, "flow", GEBR_GEOXML_FLOW_VERSION);
 			root_element = gebr_geoxml_document_root_element(*document);
+
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.4.0");
 
 			GdomeElement *before = __gebr_geoxml_get_first_element(root_element, "date");
@@ -1223,6 +1243,7 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
 
 	str = gdome_str_mkref(name);
 	document = gdome_di_createDocument(dom_implementation, NULL, str, doctype, &exception);
+	gdome_dt_unref(doctype, &exception);
 
 	__gebr_geoxml_document_new_data((GebrGeoXmlDocument *)document, "");
 	gdome_str_unref(str);
@@ -1779,6 +1800,19 @@ static gboolean gebr_geoxml_document_check_version(GebrGeoXmlDocument * document
 	return major2 < major1
 		|| (major2 == major1 && minor2 < minor1)
 		|| (major2 == major1 && minor2 == minor1 && micro2 < micro1) ? FALSE : TRUE;
+}
+
+void
+gebr_geoxml_document_update_header(GdomeDOMImplementation *dom_implementation,
+                                   GdomeDocument **document,
+                                   const gchar *name,
+                                   const gchar *version)
+{
+	GdomeDocumentType *doctype = gebr_geoxml_document_insert_header(dom_implementation, name, version);
+	GdomeDocument *document_clone = __gebr_geoxml_document_clone_doc(*document, doctype);
+	gdome_dt_unref(doctype, &exception);
+	gdome_doc_unref(*document, &exception);
+	*document = document_clone;
 }
 
 GdomeDocumentType *

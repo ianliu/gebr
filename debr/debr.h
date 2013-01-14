@@ -60,6 +60,7 @@ struct debr {
 	GtkWidget *statusbar;
 	struct about about;
 	GtkWidget *invisible;
+	GtkWidget *edit_menu;
 
 	/* Menu parameter validator */
 	GebrValidator *validator;

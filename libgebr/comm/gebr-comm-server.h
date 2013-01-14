@@ -27,6 +27,9 @@
 #include <libgebr/log.h>
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/utils.h>
+#include <libgebr/comm/gebr-comm-port-provider.h>
+#include <libgebr/comm/gebr-comm-ssh.h>
+#include <libgebr/comm/gebr-comm-utils.h>
 
 #include "gebr-comm-protocol-socket.h"
 #include "gebr-comm-terminalprocess.h"
@@ -44,6 +47,7 @@ G_BEGIN_DECLS
 #define GEBR_COMM_SERVER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEBR_COMM_TYPE_SERVER, GebrCommServerClass))
 
 #define GEBR_PORT_PREFIX "gebr-port="
+#define GEBR_ADDR_PREFIX "gebr-addr="
 
 
 typedef enum {
@@ -65,10 +69,9 @@ GebrCommServerType gebr_comm_server_get_id(const gchar * name);
 // If you change these states, don't forget to update
 // the gebr_comm_server_state_to_string() method.
 typedef enum {
-	SERVER_STATE_UNKNOWN,
 	SERVER_STATE_DISCONNECTED,
 	SERVER_STATE_RUN,
-	SERVER_STATE_OPEN_TUNNEL,
+	SERVER_STATE_REDIRECT,
 	SERVER_STATE_CONNECT,
 	SERVER_STATE_LOGGED,
 } GebrCommServerState;
@@ -78,7 +81,7 @@ typedef struct _GebrCommServerPriv GebrCommServerPriv;
 typedef struct _GebrCommServerClass GebrCommServerClass;
 
 struct _GebrCommServer {
-	GObject *parent;
+	GObject parent;
 	GebrCommProtocolSocket *socket;
 
 	GebrCommServerPriv *priv;
@@ -91,7 +94,6 @@ struct _GebrCommServer {
 	/* ssh stuff */
 	gboolean use_public_key;
 	gchar *password;
-	gboolean tried_existant_pass;
 	gint16 tunnel_port;
 	GebrCommTerminalProcess *x11_forward_process;
 	GebrCommProcess *x11_forward_unix;
@@ -109,6 +111,8 @@ struct _GebrCommServer {
 		SERVER_ERROR_CONNECT,
 		SERVER_ERROR_SERVER,
 		SERVER_ERROR_SSH,
+		SERVER_ERROR_PROTOCOL_VERSION,
+		SERVER_ERROR_COOKIE,
 	} error;
 
 	GString *last_error;
@@ -121,16 +125,6 @@ struct _GebrCommServer {
 					      gpointer user_data);
 
 		void     (*state_changed)    (GebrCommServer *server,
-					      gpointer user_data);
-
-		GString *(*ssh_login)        (GebrCommServer *server,
-					      const gchar *title,
-					      const gchar *message,
-					      gpointer user_data);
-
-		gboolean (*ssh_question)     (GebrCommServer *server,
-					      const gchar *title,
-					      const gchar *message,
 					      gpointer user_data);
 
 		void     (*process_request)  (GebrCommServer *server,
@@ -147,27 +141,15 @@ struct _GebrCommServer {
 	} *ops;
 	gpointer user_data;
 
-	/* temporary process */
-	struct gebr_comm_server_process {
-		enum gebr_comm_server_process_use {
-			COMM_SERVER_PROCESS_NONE,
-			COMM_SERVER_PROCESS_TERMINAL,
-			COMM_SERVER_PROCESS_REGULAR,
-		} use;
-		union gebr_comm_server_process_data {
-			GebrCommTerminalProcess *terminal;
-			GebrCommProcess *regular;
-		} data;
-	} process;
-	guint tunnel_pooling_source;
+	GebrCommTerminalProcess *process;
 };
 
 struct _GebrCommServerClass {
 	GObjectClass parent_class;
 
-	void (*password_request) (GebrCommServer *server,
-				  const gchar *title,
-				  const gchar *message);
+	void (*server_password_request) (GebrCommServer *server,
+					 const gchar *title,
+				         const gchar *message);
 
 	void (*question_request) (GebrCommServer *server,
 				  const gchar *title,
@@ -182,10 +164,22 @@ GebrCommServer *gebr_comm_server_new(const gchar *_address,
 
 const gchar *gebr_comm_server_get_last_error(GebrCommServer *server);
 
+void gebr_comm_server_set_last_error(GebrCommServer *server,
+				     enum gebr_comm_server_error error,
+				     const gchar * message,
+				     ...);
+
 void gebr_comm_server_free(GebrCommServer *gebr_comm_server);
 
+/**
+ * gebr_comm_server_set_x11_cookie:
+ */
+void gebr_comm_server_set_x11_cookie(GebrCommServer *server,
+				     const gchar *cookie);
+
 void gebr_comm_server_connect(GebrCommServer *server,
-			      gboolean maestro);
+			      gboolean maestro,
+			      gboolean force_init);
 
 void gebr_comm_server_disconnect(GebrCommServer *gebr_comm_server);
 
@@ -199,14 +193,15 @@ void gebr_comm_server_kill(GebrCommServer *gebr_comm_server);
 
 /**
  * gebr_comm_server_forward_x11:
- * @gebr_comm_server:
- * @port:
  *
- * For the logged _gebr_comm_server_ forward x11 server _port_ to user display
- * Fail if user's display is not set, returning FALSE.
- * If any other x11 redirect was previously made it is unmade
+ * Forward @remote_display to the local machine.
  */
-gboolean gebr_comm_server_forward_x11(GebrCommServer *gebr_comm_server, guint16 port);
+void gebr_comm_server_forward_x11(GebrCommServer *gebr_comm_server,
+				  const gchar *display_host,
+				  guint display_port);
+
+guint gebr_comm_server_get_display_port(GebrCommServer *server,
+					gchar **display_host);
 
 const gchar *gebr_comm_server_state_to_string(GebrCommServerState state);
 
@@ -232,6 +227,14 @@ void gebr_comm_server_set_password(GebrCommServer *server,
 				   const gchar *pass);
 
 /**
+ * gebr_comm_server_invalid_password:
+ *
+ * Set password error for all pending connections,
+ * and clean list after that.
+ */
+void gebr_comm_server_invalid_password(GebrCommServer *server);
+
+/**
  * gebr_comm_server_answer_question:
  *
  * Writes a response into @server.
@@ -244,69 +247,20 @@ void gebr_comm_server_answer_question(GebrCommServer *server,
 				      gboolean response);
 
 /**
- * gebr_comm_server_set_interactive:
- * @server:
- * @setting:
+ * gebr_comm_server_get_accepts_key:
  *
- * Whenever @server requires user interaction for typing password or answering
- * SSH question, @server will call the corresponding function in the operations
- * structure, but only if @setting is %FALSE, which is the default.
- *
- * If @setting is %TRUE, then the corresponding signal will be called, but no
- * answer will be expected; @server will wait until one of these functions is
- * called: gebr_comm_server_set_password(), gebr_comm_server_answer_question().
+ * Return if the server accepts public key
  */
-void gebr_comm_server_set_interactive(GebrCommServer *server,
-				      gboolean setting);
-
-/**
- * gebr_comm_server_emit_interactive_state_signals:
- *
- * If this @server is in interactive mode and it is requesting for user
- * interaction, this method will reemit the user interaction signals, mainly
- * #GebrCommServer::password-request or #GebrCommServer::question-request.
- *
- * Note that it is an error to call this method if @server is not in
- * interactive state.
- *
- * See gebrm_comm_server_set_interactive().
- */
-void gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server);
-
-/**
- * gebr_comm_forward_remote_port:
- * @server: A #GebrCommServer.
- * @remote_port: The remote port in which connections will be made.
- * @local_port: The local port to be listened.
- *
- * Returns: The #GebrCommTerminalProcess of the ssh tunnel. You can call
- * gebr_comm_terminal_process_kill() to close the tunnel.
- */
-GebrCommTerminalProcess *gebr_comm_server_forward_remote_port(GebrCommServer *server,
-							      guint16 remote_port,
-							      guint16 local_port);
-
-/**
- * gebr_comm_forward_local_port:
- * @server: A #GebrCommServer.
- * @remote_port: The remote port in which connections will be listened.
- * @local_port: The local port to be connected.
- *
- * Returns: The #GebrCommTerminalProcess of the ssh tunnel. You can call
- * gebr_comm_terminal_process_kill() to close the tunnel.
- */
-GebrCommTerminalProcess *gebr_comm_server_forward_local_port(GebrCommServer *server,
-							     guint16 remote_port,
-							     guint16 local_port,
-							     const gchar *addr);
+gboolean gebr_comm_server_get_accepts_key(GebrCommServer *server);
 
 /**
  * gebr_comm_server_append_key:
+ *
+ * Append key in the @server
  */
-gboolean gebr_comm_server_append_key(GebrCommServer *server,
-                                     void * finished_callback,
-                                     gpointer user_data);
-
+void gebr_comm_server_append_key(GebrCommServer *server,
+				 void *finished_callback,
+				 gpointer user_data);
 /**
  * gebr_comm_server_set_use_public_key:
  */
@@ -322,9 +276,15 @@ gboolean gebr_comm_server_get_use_public_key(GebrCommServer *server);
  */
 gboolean gebr_comm_server_is_maestro(GebrCommServer *server);
 
-void gebr_comm_server_close_x11_forward(GebrCommServer *server);
-
 void gebr_comm_server_maestro_connect_on_daemons(GebrCommServer *server);
+
+GebrCommPortProvider *gebr_comm_server_create_port_provider(GebrCommServer *server,
+							    GebrCommPortType type);
+
+void gebr_comm_server_set_check_host(GebrCommServer *server,
+                                     gboolean check_host);
+
+void gebr_comm_server_set_cookie(GebrCommServer *server, const gchar *gebr_cookie);
 
 G_END_DECLS
 

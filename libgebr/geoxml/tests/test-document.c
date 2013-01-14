@@ -401,6 +401,8 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 		g_assert_cmpstr(key, ==, canonized[indices[i]]);
 	}
 
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(proj));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(proj2));
 }
 
 void test_gebr_geoxml_document_canonize_program_parameters(void)

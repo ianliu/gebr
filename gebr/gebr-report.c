@@ -23,7 +23,7 @@
 #endif
 
 #include "gebr-report.h"
-
+#include "gebr.h"
 #include "document.h"
 #include "ui_flow_program.h"
 #include <glib/gi18n.h>
@@ -354,10 +354,10 @@ gebr_document_generate_header(GebrGeoXmlDocument * document,
 	/* If Document is line, include Maestro on header */
 	if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		gchar *maestro = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
+		gchar *nfs_label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, maestro, TRUE);
 		g_string_append_printf(dump,
 		                       "<div class=\"maestro\">%s%s</div>\n",
-		                       _("This line belongs to "),
-		                       maestro);
+		                       _("This line belongs to "), nfs_label);
 		g_free(maestro);
 	}
 

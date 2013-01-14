@@ -39,11 +39,14 @@ int main(int argc, char **argv)
 {
 	gboolean show_version = FALSE;
 	gboolean foreground = FALSE;
+	gboolean nocookie = FALSE;
 	const GOptionEntry entries[] = {
 		{"interactive", 'i', 0, G_OPTION_ARG_NONE, &foreground,
 		 N_("Run server in interactive mode, not as a daemon"), NULL},
 		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
 		 N_("Show GeBR daemon version"), NULL},
+		{"nocookie", 'n', 0, G_OPTION_ARG_NONE, &nocookie,
+		 N_("Do not ask for authorization cookie when launching"), NULL},
 		{NULL}
 	};
 	GError *error = NULL;
@@ -75,10 +78,15 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
+	GebrAuth *auth;
+	auth = gebr_auth_new();
+	if (!nocookie)
+		gebr_auth_read_cookie(auth);
+
 	gebrd = gebrd_app_new();
 	gebrd->options.foreground = foreground;
 
-	gebrd_config_load();
+	gebrd_config_load(auth);
 	gebrd_init();
 	gebr_geoxml_finalize();
 

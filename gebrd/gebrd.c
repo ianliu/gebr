@@ -27,6 +27,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
+#include <libgebr/gebr-auth.h>
 #include <libgebr/json/json-glib.h>
 #include <libgebr/comm/gebr-comm-protocol.h>
 
@@ -74,7 +75,7 @@ static void gebrd_app_init(GebrdApp * self)
 	self->nprocs = gebrd_cpu_info_n_procs(cpu);
 	gebrd_cpu_info_free(cpu);
 
-	self->display_ports = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	self->display_ports = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 }
 
 static void gebrd_app_finalize(GObject * object)
@@ -378,7 +379,7 @@ key_file_exception(GError ** error, const gchar * path)
 	return TRUE;
 }
 
-void gebrd_config_load(void)
+void gebrd_config_load(GebrAuth *auth)
 {
 	gchar ** groups;
 	gchar * config_path;
@@ -387,6 +388,7 @@ void gebrd_config_load(void)
 
 	err1 = err2 = NULL;
 	gebrd->mpi_flavors = NULL;
+	gebrd->auth = auth;
 	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd.conf", g_get_home_dir());
 	key_file = g_key_file_new();
 

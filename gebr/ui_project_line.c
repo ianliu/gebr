@@ -91,7 +91,7 @@ static void update_control_sensitive(GebrUiProjectLine *upl);
 static void on_maestro_button_clicked(GtkButton *button,
                                       GebrUiProjectLine *upl);
 
-void save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr);
+void save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid);
 
 void
 gebr_project_line_hide(GebrUiProjectLine *self)
@@ -102,8 +102,7 @@ gebr_project_line_hide(GebrUiProjectLine *self)
 void
 gebr_project_line_show(GebrUiProjectLine *self)
 {
-	project_line_load();
-	return;
+	project_line_info_update();
 }
 
 struct ui_project_line *project_line_setup_ui(void)
@@ -203,8 +202,11 @@ static void
 on_connect_line_maestro(GtkWidget *widget,
 			GtkWidget *dialog)
 {
-	gchar *connect_addr = gebr_geoxml_line_get_maestro(gebr.line);
-	gebr_maestro_controller_connect(gebr.maestro_controller, connect_addr);
+	gchar *connect_nfsid = gebr_geoxml_line_get_maestro(gebr.line);
+	const gchar *addr = gebr_maestro_settings_get_addr_for_domain(gebr.config.maestro_set, connect_nfsid, 0);
+
+	gebr_maestro_controller_connect(gebr.maestro_controller, addr);
+
 	gtk_dialog_response(GTK_DIALOG(dialog), 0);
 }
 
@@ -221,10 +223,10 @@ static void
 on_change_line_maestro(GtkWidget *widget,
 		       GtkWidget *dialog)
 {
-	const gchar *change_addr;
+	const gchar *change_nfsid;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	change_addr = gebr_maestro_server_get_address(maestro);
-	save_maestro_changed(gebr.ui_project_line, change_addr);
+	change_nfsid = gebr_maestro_server_get_nfsid(maestro);
+	save_maestro_changed(gebr.ui_project_line, change_nfsid);
 	gtk_dialog_response(GTK_DIALOG(dialog), 0);
 }
 
@@ -252,41 +254,43 @@ on_maestro_button_clicked(GtkButton *button,
 	GObject *head_label = gtk_builder_get_object(builder, "label_header");
 	GObject *image_change_button = gtk_builder_get_object(builder, "image_change_maestro");
 
-	const gchar *connect_addr = gebr_geoxml_line_get_maestro(gebr.line);
+	const gchar *connect_nfsid = gebr_geoxml_line_get_maestro(gebr.line);
+	const gchar *nfslabel = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, connect_nfsid, TRUE);
 
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_line_maestro), dialog);
 
 	/* Head Label */
 	gchar *new_head;
-	new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line is not handled by any maestro</span></b>"));
+	new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line does not belong to any domain</span></b>"));
 
-	if (g_strcmp0(connect_addr, "") != 0)
-		new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line is handled by maestro %s</span></b>"), connect_addr);
+	if (g_strcmp0(connect_nfsid, "") != 0)
+		new_head = g_markup_printf_escaped(_("<b><span size=\"large\">This line belongs to domain %s</span></b>"), nfslabel);
 
 	gtk_label_set_markup(GTK_LABEL(head_label), new_head);
 
 	/* Change maestro */
-	const gchar *change_addr;
+	const gchar *change_nfslabel;
 	gchar *change_text;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-		change_addr = gebr_maestro_server_get_address(maestro);
-		change_text = g_markup_printf_escaped(_("Move this line to maestro <b>%s</b>"), change_addr);
+		change_nfslabel = gebr_maestro_server_get_nfs_label(maestro);
+		change_text = g_markup_printf_escaped(_("Bring this line to <b>%s</b>"), change_nfslabel);
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
+
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro), dialog);
 	} else {
 		gtk_image_set_from_stock(GTK_IMAGE(image_change_button), "gtk-disconnect", GTK_ICON_SIZE_DND);
-		change_text = g_markup_printf_escaped(_("Connect to another maestro"));
+		change_text = g_markup_printf_escaped(_("Connect to another domain"));
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro_disconnected), dialog);
 	}
 
 	/* Connect maestro */
 	gchar *connect_text;
-	if (g_strcmp0(connect_addr, "") != 0) {
-		connect_text = g_markup_printf_escaped(_("Connect to maestro <b>%s</b>"), connect_addr);
+	if (g_strcmp0(connect_nfsid, "") != 0) {
+		connect_text = g_markup_printf_escaped(_("Connect to <b>%s</b>"), nfslabel);
 	} else {
-		connect_text = g_strdup(_("This Line does not have maestro"));
+		connect_text = g_strdup(_("This Line does not belong to any domain"));
 		gtk_widget_set_sensitive(GTK_WIDGET(connect_button), FALSE);
 	}
 
@@ -339,23 +343,21 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 }
 
 void
-save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
+save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_nfsid)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	const gchar *addr = maestro ? gebr_maestro_server_get_address(maestro) : "";
+	const gchar *label = gebr_maestro_server_get_nfs_label(maestro);
+	const gchar *header = g_markup_printf_escaped(_("Are you sure you want to bring this line to %s?"), label);
 
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 						   NULL,
-						   _("Moving this line to current maestro."),
-						   _("Moving this line to current maestro."),
-						   _("Are you sure you want to move this line to maestro %s?"
-						     "\n\nIf you choose to move this line to current maestro,"
+						   _("Bring this line to current domain?"), header,
+						   _("If you choose to bring this line to current domain,"
 						     " be sure to correct the paths of this line "
-						     "and its respective flows that can be broken."),
-						   addr);
+						     "and its respective flows that can be broken."));
 	if (confirm) {
-		gebr_geoxml_line_set_maestro(gebr.line, change_addr);
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, change_addr);
+		gebr_geoxml_line_set_maestro(gebr.line, change_nfsid);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_nfsid(gebr.maestro_controller, change_nfsid);
 		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", home);
 		gebr_document_send_path_message(gebr.line, GEBR_COMM_PROTOCOL_PATH_CREATE, NULL);
@@ -401,7 +403,6 @@ line_info_update(void)
 
 	GObject *label_home = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_home");
 	GObject *label_base = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_base");
-	GObject *label_import = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_import");
 
 	/* Set title */
 	tmp = g_markup_printf_escaped("<span size='xx-large'>%s</span>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
@@ -409,7 +410,8 @@ line_info_update(void)
 	g_free(tmp);
 
 	/* Set email/Author */
-	gchar *email_text = gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line));
+	gchar *email_tmp = gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line));
+	gchar *email_text = g_strchomp(email_tmp);
 	if (!*email_text){
 		gtk_link_button_set_uri(GTK_LINK_BUTTON(linkbutton_email), "");
 		gtk_widget_set_tooltip_text(GTK_WIDGET(linkbutton_email),NULL);
@@ -465,14 +467,21 @@ line_info_update(void)
 
 	/* Line's Maestro information */
 
-	const gchar *addr;
+	const gchar *nfs_label;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(gebr.line));
-	if (maestro)
-		addr = gebr_maestro_server_get_address(maestro);
-	else
-		addr = gebr_geoxml_line_get_maestro(gebr.line);
+	if (maestro) {
+		nfs_label = gebr_maestro_server_get_nfs_label(maestro);
+	} else {
+		const gchar *nfsline = gebr_geoxml_line_get_maestro(gebr.line);
+		nfs_label = gebr_maestro_settings_get_label_for_domain(gebr.config.maestro_set, nfsline, TRUE);
+	}
 
-	gchar *text = g_markup_printf_escaped(_("On maestro <b>%s</b>"), addr);
+	gchar *text;
+	if (nfs_label && *nfs_label)
+		text = g_markup_printf_escaped(_("On <b>%s</b>"), nfs_label);
+	else
+		text = g_strdup("");
+
 	gtk_label_set_markup(GTK_LABEL(maestro_label), text);
 	g_free(text);
 
@@ -492,7 +501,7 @@ line_info_update(void)
 
 			if (g_strcmp0(type, "error:none") == 0) {
 				stockid = GTK_STOCK_DISCONNECT;
-				tooltip = g_strdup(_("Click here to connect or change maestro for this line"));
+				tooltip = g_strdup(_("Click here to connect or change the domain for this line"));
 			} else {
 				stockid = GTK_STOCK_DIALOG_WARNING;
 				tooltip = gebr_maestro_server_translate_error(type, msg);
@@ -505,43 +514,46 @@ line_info_update(void)
 		}
 		home_path = g_strdup(gebr_maestro_server_get_home_dir(maestro));
 	} else {
-		stockid = GTK_STOCK_DISCONNECT;
-		tooltip = g_strdup(_("Click here to connect or change maestro for this line"));
+		tooltip = g_strdup(_("Click here to connect or change the domain for this line"));
 		home_path = g_strdup("");
+
+		/* Maestro Status Icon */
+		gchar *disconnect_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "48x48", "stock", "gtk-disconnect.png", NULL);
+		GIcon *disconnect_icon = g_icon_new_for_string(disconnect_icon_path, NULL);
+		gchar *status_icon_path = g_build_filename(LIBGEBR_ICONS_DIR, "gebr-theme", "22x22", "stock", "dialog-warning.png", NULL);
+		GIcon *status_icon = g_icon_new_for_string(status_icon_path, NULL);
+		GEmblem *status_emblem = g_emblem_new(status_icon);
+		GIcon *icon = g_emblemed_icon_new(disconnect_icon, status_emblem);
+
 		gtk_widget_show(GTK_WIDGET(maestro_button));
 		gtk_widget_hide(GTK_WIDGET(image_maestro_connect));
-		gtk_image_set_from_stock(GTK_IMAGE(image_maestro), stockid, GTK_ICON_SIZE_DIALOG);
+		gtk_image_set_from_gicon(GTK_IMAGE(image_maestro), icon, GTK_ICON_SIZE_DIALOG);
 		gtk_widget_set_tooltip_text(GTK_WIDGET(maestro_button), tooltip);
 		g_free(tooltip);
+		g_free(status_icon_path);
+		g_free(disconnect_icon_path);
 	}
 
 	/* Line's paths information */
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
 	gchar *base_path = NULL;
-	gchar *import_path = NULL;
 
 	for (gint i = 0; paths[i]; i++) {
-		if (base_path && import_path)
+		if (base_path)
 			break;
 		else if (g_strcmp0(paths[i][1], "BASE") == 0)
 			base_path = g_strdup(paths[i][0]);
-		else if (g_strcmp0(paths[i][1], "IMPORT") == 0)
-			import_path = g_strdup(paths[i][0]);
 	}
 	if (!base_path || !*base_path)
 		base_path = g_strdup(_("None"));
-	if (!import_path || !*import_path)
-		import_path = g_strdup(_("None"));
 	if (!home_path || !*home_path)
 		home_path = g_strdup(_("None"));
 
 	gtk_label_set_text(GTK_LABEL(label_home), home_path);
 	gtk_label_set_text(GTK_LABEL(label_base), base_path);
-	gtk_label_set_text(GTK_LABEL(label_import), import_path);
 
 	gebr_pairstrfreev(paths);
 	g_free(base_path);
-	g_free(import_path);
 	g_free(home_path);
 }
 
@@ -758,8 +770,8 @@ line_import(GtkTreeIter *project_iter, GebrGeoXmlLine ** line, const gchar * lin
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 	if (maestro) {
-		const gchar *addr = gebr_maestro_server_get_address(maestro);
-		gebr_geoxml_line_set_maestro(*line, addr);
+		const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
+		gebr_geoxml_line_set_maestro(*line, nfsid);
 
 		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gchar *mount_point = gebr_maestro_server_get_sftp_root(maestro);
@@ -1195,7 +1207,6 @@ void project_line_import(void)
 {
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *file_filter;
-	gchar *filename;
 
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose a project or line to open"),
 						     GTK_WINDOW(gebr.window),
@@ -1216,15 +1227,22 @@ void project_line_import(void)
 	gtk_file_filter_add_pattern(file_filter, "*.lnex");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
+	gchar *new_text;
+	gboolean mount_gvfs = gebr_maestro_server_need_mount_gvfs (maestro);
+	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
+	gchar ***paths = gebr_generate_paths_with_home(home);
+	gint response = gebr_file_chooser_set_remote_navigation(chooser_dialog, home,
+	                                                        prefix, mount_gvfs, paths, FALSE,
+	                                                        &new_text);
 	/* show file chooser */
-	gtk_widget_show(chooser_dialog);
-	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) == GTK_RESPONSE_YES) {
-		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-		gtk_widget_destroy(chooser_dialog);
-		project_line_import_path(filename);
-		g_free(filename);
-	} else
-		gtk_widget_destroy(chooser_dialog);
+	if (response == GTK_RESPONSE_YES)
+		project_line_import_path(new_text);
+
+	g_free(new_text);
+	g_free(prefix);
+	gebr_pairstrfreev(paths);
 }
 
 static void
@@ -1333,13 +1351,11 @@ void project_line_export(void)
 	
 	file_filter = gtk_file_filter_new();
 	if (projects) {
-		gtk_file_filter_set_name(file_filter, _("Project (prjz, prjx)"));
-		gtk_file_filter_add_pattern(file_filter, "*.prjz");
+		gtk_file_filter_set_name(file_filter, _("Project (*.prjx)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjx");
 		extension = ".prjx";
 	} else {
-		gtk_file_filter_set_name(file_filter, _("Line (lnez, lnex)"));
-		gtk_file_filter_add_pattern(file_filter, "*.lnez");
+		gtk_file_filter_set_name(file_filter, _("Line (*.lnex)"));
 		gtk_file_filter_add_pattern(file_filter, "*.lnex");
 		extension = ".lnex";
 	}
@@ -1494,10 +1510,8 @@ void project_line_delete(void)
 			glong n = gebr_geoxml_line_get_flows_number(GEBR_GEOXML_LINE(document));
 			quantity_selected++;
 
-			if (n > 0){
+			if (n > 0)
 				g_string_printf(tmp, _("including %ld flow(s)"), n);
-				quantity_selected++;
-			}
 
 			GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
 			
@@ -1638,6 +1652,47 @@ void project_line_free(void)
 	project_line_info_update();
 }
 
+void
+update_xml_parameters(GebrMaestroServer *maestro,
+                      GebrUiProjectLine *upl,
+                      gboolean home_def)
+{
+	GebrGeoXmlLine *line;
+	GtkTreeIter parent, iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(upl->store);
+	gboolean logged = gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED;
+
+	gebr_gui_gtk_tree_model_foreach(parent, model) {
+		gboolean valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		while (valid) {
+			gboolean sensitive;
+
+			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
+			const gchar *line_nfsid = gebr_geoxml_line_get_maestro(line);
+			const gchar *new_home = gebr_maestro_server_get_home_dir(maestro);
+			const gchar *new_nfsid = gebr_maestro_server_get_nfsid(maestro);
+
+			if (logged && home_def && new_home) /* Callback of the home_def*/
+				gebr_geoxml_line_set_path_by_name(line, "HOME", new_home);
+			else if (logged && new_nfsid && (!line_nfsid || !*line_nfsid)) /* Callback of the nfsid_def*/
+				gebr_geoxml_line_set_maestro(line, new_nfsid);
+
+			document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, FALSE);
+			GebrMaestroServer *m = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+
+			if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED)
+				sensitive = TRUE;
+			else
+				sensitive = FALSE;
+
+			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
+			valid = gtk_tree_model_iter_next(model, &iter);
+		}
+	}
+
+	update_control_sensitive(upl);
+}
+
 static void
 on_maestro_state_change(GebrMaestroController *mc,
                         GebrMaestroServer *maestro,
@@ -1653,7 +1708,21 @@ on_maestro_state_change(GebrMaestroController *mc,
 			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
 
 			gboolean sensitive;
+			GebrMaestroServer *mg = gebr_maestro_controller_get_maestro(mc);
+
+			const gchar *line_nfsid = gebr_geoxml_line_get_maestro(line);
+			if (!line_nfsid || !*line_nfsid) {
+				if (gebr_maestro_server_get_state(mg) == SERVER_STATE_LOGGED) {
+					const gchar *nfsid = gebr_maestro_server_get_nfsid(maestro);
+					if (nfsid) {
+						gebr_geoxml_line_set_maestro(line, nfsid);
+						document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, FALSE);
+					}
+				}
+			}
+
 			GebrMaestroServer *m = gebr_maestro_controller_get_maestro_for_line(mc, line);
+
 			if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED)
 				sensitive = TRUE;
 			else
@@ -1675,7 +1744,6 @@ on_maestro_state_change(GebrMaestroController *mc,
 			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
 			valid = gtk_tree_model_iter_next(model, &iter);
 
-			GebrMaestroServer *mg = gebr_maestro_controller_get_maestro(mc);
 			if(mg && gebr_maestro_server_get_state(mg) == SERVER_STATE_LOGGED)
 				sensitive = TRUE;
 			else

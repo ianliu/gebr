@@ -407,8 +407,7 @@ void flow_export(void)
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flwx");
 
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flwz, *.flwx)"));
-	gtk_file_filter_add_pattern(file_filter, "*.flwz");
+	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flwx)"));
 	gtk_file_filter_add_pattern(file_filter, "*.flwx");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), box);
@@ -1082,12 +1081,9 @@ void flow_program_remove(void)
 
 			// Remove `iter' variable from dictionary if the Loop is configured
 			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
-			    && gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
-				GebrGeoXmlSequence *param;
-				GError *err = NULL;
-				GList *affected;
+			    && gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 				gebr_ui_document_remove_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
-			}
+
 			valid = gtk_tree_store_remove(gebr.ui_flow_browse->store, &iter);
 		}
 	}
@@ -1237,7 +1233,7 @@ void flow_program_paste(void)
 	}
 
 	if (gebr_geoxml_clipboard_has_forloop() && !flow_has_loop)
-		gebr_ui_document_add_iter_and_update_complete(gebr.flow);
+		gebr_ui_document_add_iter_and_update_complete(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE);
 	flow_browse_program_check_sensitiveness();
@@ -1334,8 +1330,8 @@ gebr_flow_set_toolbar_sensitive(void)
 			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (maestro_disconnected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
-					   _("The maestro of this line is disconnected,\nthen you cannot edit flows.\n"
-					     "Try changing its maestro or connecting it."));
+					   _("The domain of this line is disconnected,\nthen you cannot edit flows.\n"
+					     "Try reconnecting its domain or moving this line to another one."));
 			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (flows_nrows  !=  1) {
 			gchar *label_msg;

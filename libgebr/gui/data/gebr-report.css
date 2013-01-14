@@ -91,6 +91,8 @@ body {
 	padding: 10px 0px 10px 0px;
 }
 .body .variables table {
+	table-layout:fixed;
+	width: 95%;
 	font-size: 14px;
 	text-align: center;
 	border: 1px solid #dddddd; 
@@ -105,6 +107,7 @@ body {
 	font-size: 16px;
 }
 .body .variables td {
+	word-wrap: break-word;
 	padding: 3px;
 	border-top: solid 1px #dddddd;
     border-bottom: solid 1px #dddddd;

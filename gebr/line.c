@@ -37,74 +37,65 @@
 #include "ui_project_line.h"
 #include "ui_document.h"
 
-static void
-on_assistant_base_validate(GtkEntry *entry,
-                           GtkAssistant *assistant)
+enum {
+	WIZARD_LINE_MAIN_PROPERTIES,
+	WIZARD_LINE_PATHS_INFO,
+	WIZARD_LINE_PATHS_BASE,
+	WIZARD_LINE_PATHS_IMPORT,
+	WIZARD_LINE_PATHS_HIERARCHY,
+	WIZARD_LINE_REVIEW,
+	WIZARD_LINE_PROGRESS,
+	WIZARD_LINE_N_PAGES
+};
+
+GebrErrorEntry
+check_directory_ok(const gchar *text)
 {
-	GtkWidget *current_page;
-	gint page_number;
-	const gchar *text;
-
-	page_number = gtk_assistant_get_current_page(assistant);
-	current_page = gtk_assistant_get_nth_page(assistant, page_number);
-	text = gtk_entry_get_text(entry);
-
-	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	if (text && *text) {
-		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME")) {
-			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-		} else {
-			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
-		}
-	} else {
-		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a BASE path."));
-	}
+		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME"))
+			return OK_ENTRY;
+		else
+			return NOT_ABSOLUTE_ENTRY;
+	} else
+		return EMPTY_ENTRY;
+
 }
-
 static void
-on_assistant_import_validate(GtkEntry *entry,
+on_assistant_base_import_validate(GtkEntry *entry,
                            GtkAssistant *assistant)
 {
+
 	GtkWidget *current_page;
 	gint page_number;
-	const gchar *text;
-
 	page_number = gtk_assistant_get_current_page(assistant);
-	current_page = gtk_assistant_get_nth_page(assistant, page_number);
-	text = gtk_entry_get_text(entry);
 
+	if (page_number == WIZARD_LINE_PATHS_INFO)
+		page_number++; // from on_assistant_prepare will validate the next page
+
+	current_page = gtk_assistant_get_nth_page(assistant, page_number);
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
-	if (text && *text) {
-		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME")) {
-			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-		} else {
-			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
-		}
-	} else {
+	switch(check_directory_ok(gtk_entry_get_text(entry))){
+	case OK_ENTRY:
 		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		break;
+	case NOT_ABSOLUTE_ENTRY:
+		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
+		break;
+	case EMPTY_ENTRY:
+		//check if user is setting import or base path
+		if(page_number == WIZARD_LINE_PATHS_IMPORT)
+			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
+		else{
+			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a valid path."));
+			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		}
+		break;
 	}
-}
 
-void
-on_properties_entry_changed(GtkEntry *entry,
-			    GtkWidget *widget)
-{
-	const gchar *text;
-
-	text = gtk_entry_get_text(entry);
-
-	if (text && *text)
-		gtk_widget_set_sensitive(widget, TRUE);
-	else
-		gtk_widget_set_sensitive(widget, FALSE);
 }
 
 static void
@@ -144,20 +135,8 @@ on_assistant_title_changed(GtkEntry *entry,
 		data->title_ready = TRUE;
 	else
 		data->title_ready = FALSE;
-	validate_entry(GTK_ENTRY(entry), !data->title_ready, _("Title cannot be empty"), _(""));
+	validate_entry(GTK_ENTRY(entry), !data->title_ready, _("Title cannot be empty"), NULL);
 	on_assistant_entry_changed(data);
-}
-
-static void
-on_assistant_description_changed(GtkEntry *entry,
-                           WizardData *data)
-{
-	const gchar *text = gtk_entry_get_text(entry);
-
-	if (text && *text )
-		data->description_ready = TRUE;
-	else
-		data->description_ready = FALSE;
 }
 
 static void
@@ -274,7 +253,7 @@ time_out_error(gpointer user_data)
 	gtk_label_set_markup(GTK_LABEL(summary), tmp);
 	g_free(tmp);
 	gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nCheck if your maestro is connected."));
+	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nCheck if your domain is connected."));
 
 	gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 	                            page2, GTK_ASSISTANT_PAGE_CONFIRM);
@@ -295,7 +274,7 @@ on_assistant_close(GtkAssistant *assistant,
 {
 	gint page = gtk_assistant_get_current_page(assistant) + 1;
 
-	if (page == 7) {
+	if (page == WIZARD_LINE_PROGRESS) {
 		GtkTreeIter iter;
 
 		gebr_ui_document_set_properties_from_builder(GEBR_GEOXML_DOCUMENT(gebr.line), data->builder);
@@ -375,23 +354,23 @@ on_assistant_prepare(GtkAssistant *assistant,
 	GObject *entry_base = gtk_builder_get_object(data->builder, "entry_base");
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
+	const gchar *nfs_label = gebr_maestro_server_get_nfs_label(maestro);
 	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 
-	if (page == 1) {
+	if (page == WIZARD_LINE_PATHS_INFO) {
 		GObject *info_label= gtk_builder_get_object(data->builder, "info_label");
 		gchar *info_label_text= g_markup_printf_escaped(_("The <i>line</i> structure in GêBR gathers many "
                                                                   "processing flows.\n\nThe term <i>line</i> comes from "
                                                                   "the notion that the processing of a data "
                                                                   "set, acquired over a seismic line, is performed "
                                                                   "in several steps by the processing flows.\n\n"
-                                                                  "This line will be attached to the current maestro "
+                                                                  "This line will be attached to the current NFS "
                                                                   "(%s), which will be in charge of running its "
-                                                                  "processing flows."), maestro_addr);
+                                                                  "processing flows."), nfs_label);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
 	}
-	else if (page == 3) {
+	else if (page == WIZARD_LINE_PATHS_BASE) {
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
 		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
 		gchar *path = g_build_filename("<HOME>", "GeBR", line_key, NULL);
@@ -399,19 +378,19 @@ on_assistant_prepare(GtkAssistant *assistant,
 		const gchar *entr_text = gtk_entry_get_text(GTK_ENTRY(entry_base));
 		if (!entr_text || !entr_text[0])
 			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
-
+		on_assistant_base_import_validate(GTK_ENTRY(entry_base), assistant);
 		GtkWidget *paths_help_button = GTK_WIDGET(gtk_builder_get_object(data->builder, "paths_help_button"));
 		g_signal_connect(GTK_BUTTON(paths_help_button), "clicked", G_CALLBACK(on_paths_button_clicked), NULL);
 
 		g_free(line_key);
 		g_free(path);
 	}
-	else if (page == 5) {
+	else if (page == WIZARD_LINE_PATHS_HIERARCHY) {
 		const gchar *base = gtk_entry_get_text(GTK_ENTRY(entry_base));
 
 		GObject *label;
 		gchar *text_maestro = g_markup_printf_escaped(_("Below is the hierarchy of directories GêBR is about to create.\n\n"
-								"These directories will be created on the nodes of maestro <b>%s</b>."), maestro_addr);
+								"These directories will be created on <b>%s</b>."), nfs_label);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
@@ -425,7 +404,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_free(text_base);
 		g_free(used_base);
 	}
-	else if (page == 6) {
+	else if (page == WIZARD_LINE_REVIEW) {
 		GHashTable *labels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 		GHashTable *entries = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL) ;
 
@@ -435,7 +414,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 			"author",
 			"email",
 			"base",
-			"import",
 			"maestro",
 			NULL};
 
@@ -445,7 +423,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		for (gint i = 0; keys[i]; i++) {
 			gchar *value;
 			if (!g_strcmp0(keys[i], "maestro"))
-				value = g_strdup(maestro_addr);
+				value = g_strdup(nfs_label);
 			else if (!g_strcmp0(keys[i], "base")) {
 				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
 				value = resolve_home_variable_to_base(aux, home);
@@ -471,7 +449,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_hash_table_destroy(labels);
 		g_hash_table_destroy(entries);
 	}
-	else if (page == 7) {
+	else if (page == WIZARD_LINE_PROGRESS) {
 		GObject *container_progress = gtk_builder_get_object(data->builder, "container_progressbar");
 		GObject *container_message = gtk_builder_get_object(data->builder, "container_message");
 		GObject *label_summary = gtk_builder_get_object(data->builder, "label_summary");
@@ -512,7 +490,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
 	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "paths_info"));
 	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_base"));
-	GtkWidget *page4 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
+//	GtkWidget *page4 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
 	GtkWidget *page5 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_hierarchy"));
 	GtkWidget *page6 = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_review"));
 	GtkWidget *page7 = GTK_WIDGET(gtk_builder_get_object(builder, "main_progress"));
@@ -527,7 +505,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	data->assistant = assistant;
 	data->builder = builder;
 	data->title_ready = TRUE;
-	data->description_ready = TRUE;
 	data->email_ready = TRUE;
 	g_signal_connect(assistant, "destroy", G_CALLBACK(on_assistant_destroy), data);
 	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
@@ -550,10 +527,11 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page3, GTK_ASSISTANT_PAGE_CONTENT);
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page3, _("BASE Path"));
 
-	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page4);
-	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page4, TRUE);
-	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page4, GTK_ASSISTANT_PAGE_CONTENT);
-	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page4, _("IMPORT Path"));
+//	IMPORT
+//	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page4);
+//	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page4, TRUE);
+//	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page4, GTK_ASSISTANT_PAGE_CONTENT);
+//	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page4, _("IMPORT Path"));
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page5);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page5, TRUE);
@@ -570,7 +548,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page7, _("Creating directories..."));
 
 	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
-	GObject *entry_description = gtk_builder_get_object(builder, "entry_description");
 	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
 	GObject *entry_import = gtk_builder_get_object(builder, "entry_import");
 	GObject *entry_author = gtk_builder_get_object(builder, "entry_author");
@@ -588,14 +565,12 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	on_assistant_entry_changed(data);
 	on_assistant_title_changed(GTK_ENTRY(entry_title), data);
-	on_assistant_description_changed(GTK_ENTRY(entry_description), data);
 	on_assistant_email_changed(GTK_ENTRY(entry_email), data);
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_title_changed), data);
-	g_signal_connect(entry_description, "changed", G_CALLBACK(on_assistant_description_changed), data);
 	g_signal_connect(entry_email, "changed", G_CALLBACK(on_assistant_email_changed), data);
-	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
+	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_import_validate), assistant);
 	g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
-	g_signal_connect(entry_import, "changed", G_CALLBACK(on_assistant_import_validate), assistant);
+	g_signal_connect(entry_import, "changed", G_CALLBACK(on_assistant_base_import_validate), assistant);
 
 	gtk_widget_show(assistant);
 }
@@ -634,14 +609,19 @@ create_base_import_file_chooser(gchar *title,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 
-	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gchar *prefix = gebr_maestro_server_get_browse_prefix(maestro);
 	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
-	gchar ***paths = gebr_generate_paths_with_home(home);
+	gchar ***paths = NULL;
+	paths = gebr_geoxml_line_get_paths(gebr.line);
+
+	if (!paths)
+		paths = gebr_generate_paths_with_home(home);
 
 	gchar *new_text;
 	const gchar *entry_text = gtk_entry_get_text(entry);
+	gboolean mount_gvfs = gebr_maestro_server_need_mount_gvfs (maestro);
 	gint response = gebr_file_chooser_set_remote_navigation(file_chooser,
-	                                                        entry_text, prefix, paths, FALSE,
+	                                                        entry_text, prefix, mount_gvfs, paths, FALSE,
 	                                                        &new_text);
 	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 
@@ -705,7 +685,7 @@ void line_new(void)
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(line), gebr.config.email->str);
 
 	if (maestro)
-		gebr_geoxml_line_set_maestro(line, gebr_maestro_server_get_address(maestro));
+		gebr_geoxml_line_set_maestro(line, gebr_maestro_server_get_nfsid(maestro));
 
 	iter = project_append_line_iter(&parent, line);
 	gebr_geoxml_project_append_line(gebr.project, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)));

@@ -33,7 +33,7 @@ libgebr_geoxmldata_DATA= \
 	flow-0.3.7.dtd line-0.3.4.dtd project-0.3.3.dtd \
 	flow-0.3.8.dtd line-0.3.5.dtd line-0.3.6.dtd \
 	flow-0.3.9.dtd \
-	flow-0.4.0.dtd \
+	flow-0.4.0.dtd line-0.3.7.dtd \
 	help-template.html \
 	$(NULL)
 EXTRA_DIST = $(libgebr_geoxmldata_DATA)

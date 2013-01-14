@@ -26,6 +26,8 @@
 #include <gtk/gtk.h>
 #include <libgebr/gui/gebr-gui-html-viewer-widget.h>
 
+#include "gebr-maestro-server.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -85,6 +87,13 @@ struct ui_project_line *project_line_setup_ui(void);
  * Creates a project or line based on the current selection.
  */
 void project_line_new(void);
+
+/**
+ * Update NFSid from logged maestro on line without previously NFS tag
+ */
+void update_xml_parameters(GebrMaestroServer *maestro,
+                           GebrUiProjectLine *upl,
+                           gboolean home_def);
 
 /**
  * Update information shown about the selected project or line.

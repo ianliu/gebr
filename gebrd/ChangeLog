@@ -1,3 +1,91 @@
+2012-12-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.15: Code Freeze [Sprint 72]
+
+2012-12-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: clean up system if an inconsistency is found
+
+2012-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: improve gebr_lock_file method
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix wait pid problem when execute many tasks on same daemon
+
+2012-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* daemon: Improve and fix method to get non-scaled CPU clock
+
+2012-12-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Try to get non-scaled CPU clock of daemon
+
+2012-12-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.14: Upgrade fixes
+
+2012-12-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.13: SSH parser fixes
+
+2012-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: check if there is a loop before defining BC variables
+
+2012-12-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.12: More autopilot fixes
+
+2012-11-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.11: Autopilot fixes
+
+2012-11-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.10: Autopilot [Sprint 69] [Sprint 70]
+
+2012-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebrd: fix connection-refused error
+	* maestro: daemon: fix x11 forward
+
+2012-11-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change X11 forward of GeBR and Maestro using port defined by SSH
+	command
+
+2012-11-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* maestro: Daemon communicates to its maestro whether it has or not
+	gebrm installed
+
+2012-11-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: send kill message to daemon before disconnecting
+
+2012-11-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* protocol: change gid_def protocol to send a display port
+
+2012-11-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove deprecated errors of Gebrd and their treatments on maestro
+	and gebr
+
+2012-11-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.8: Spring cleaning [Sprint 68]
+
+2012-10-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Little translation improvements.
+
+2012-10-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.19.7: Feature Freeze [Sprint 67]
+
 2012-10-18  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* i18n: Review update of libgebr translation

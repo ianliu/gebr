@@ -23,12 +23,15 @@
 G_DEFINE_TYPE(GebrmClient, gebrm_client, G_TYPE_OBJECT);
 
 struct _GebrmClientPriv {
-	guint16 display_port;
 	GebrCommProtocolSocket *socket;
 	gchar *id;
 	gchar *cookie;
+	gchar *gebr_cookie;
 	GList *forwards;
 	GHashTable *job_ids;
+	guint x11_port;
+	gchar *x11_host;
+	gboolean sent_nfsid;
 };
 
 enum {
@@ -77,14 +80,6 @@ gebrm_client_class_init(GebrmClientClass *klass)
 							    GEBR_COMM_PROTOCOL_SOCKET_TYPE,
 							    G_PARAM_READABLE));
 
-	g_object_class_install_property(gobject_class,
-					PROP_DISPLAY_PORT,
-					g_param_spec_int("display-port",
-							 "Display port",
-							 "Port that will be used to forward X11 display",
-							 0, G_MAXUINT16, 0,
-							 G_PARAM_READABLE));
-
 	g_type_class_add_private(klass, sizeof(GebrmClientPriv));
 }
 
@@ -95,7 +90,16 @@ gebrm_client_init(GebrmClient *client)
 						   GEBRM_TYPE_CLIENT,
 						   GebrmClientPriv);
 
-	client->priv->job_ids = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	client->priv->job_ids = g_hash_table_new_full(g_str_hash, g_str_equal,
+						      g_free, g_free);
+	client->priv->sent_nfsid = FALSE;
+}
+
+static void
+close_and_free_client_forward(GebrCommPortForward *forward)
+{
+	gebr_comm_port_forward_close(forward);
+	gebr_comm_port_forward_free(forward);
 }
 
 static void
@@ -104,10 +108,11 @@ gebrm_client_finalize(GObject *object)
 	GebrmClient *client = GEBRM_CLIENT(object);
 	
 	g_list_foreach(client->priv->forwards,
-		       (GFunc)gebr_comm_terminal_process_free, NULL);
+		       (GFunc)close_and_free_client_forward, NULL);
 	g_list_free(client->priv->forwards);
 	g_object_unref(client->priv->socket);
 	g_free(client->priv->id);
+	g_free(client->priv->x11_host);
 	g_hash_table_destroy(client->priv->job_ids);
 
 	G_OBJECT_CLASS(gebrm_client_parent_class)->finalize(object);
@@ -142,9 +147,6 @@ gebrm_client_get_property(GObject    *object,
 
 	switch (prop_id)
 	{
-	case PROP_DISPLAY_PORT:
-		g_value_set_int(value, gebrm_client_get_display_port(client));
-		break;
 	case PROP_PROTOCOL_SOCKET:
 		g_value_set_object(value, gebrm_client_get_protocol_socket(client));
 		break;
@@ -173,19 +175,6 @@ GebrCommProtocolSocket *
 gebrm_client_get_protocol_socket(GebrmClient *client)
 {
 	return client->priv->socket;
-}
-
-guint16
-gebrm_client_get_display_port(GebrmClient *client)
-{
-	if (client->priv->display_port == 0) {
-		static guint16 p = 3000;
-		while (!gebr_comm_listen_socket_is_local_port_available(p))
-			p++;
-		client->priv->display_port = p;
-	}
-
-	return client->priv->display_port;
 }
 
 void
@@ -217,18 +206,24 @@ gebrm_client_get_magic_cookie(GebrmClient *client)
 }
 
 void
-gebrm_client_add_forward(GebrmClient *client,
-			 GebrCommServer *server,
-			 guint16 remote_port)
+gebrm_client_set_gebr_cookie(GebrmClient *client, const gchar *gebr_cookie)
 {
-	GebrCommTerminalProcess *proc;
-	guint16 cp = gebrm_client_get_display_port(client);
-	proc = gebr_comm_server_forward_remote_port(server, remote_port, cp);
-	client->priv->forwards = g_list_prepend(client->priv->forwards, proc);
+	if (client->priv->gebr_cookie)
+		g_free(client->priv->gebr_cookie);
+	client->priv->gebr_cookie = g_strdup(gebr_cookie);
+}
 
-	gchar *address = g_strdup(server->address->str);
-	g_object_weak_ref(G_OBJECT(proc), (GWeakNotify)g_free, address);
-	g_object_set_data(G_OBJECT(proc), "address", address);
+const gchar *
+gebrm_client_get_gebr_cookie(GebrmClient *client)
+{
+	return client->priv->gebr_cookie;
+}
+
+void
+gebrm_client_add_forward(GebrmClient *client,
+			 GebrCommPortForward *forward)
+{
+	client->priv->forwards = g_list_prepend(client->priv->forwards, forward);
 }
 
 void
@@ -236,11 +231,11 @@ gebrm_client_kill_forward_by_address(GebrmClient *client,
 				     const gchar *addr)
 {
 	for (GList *i = client->priv->forwards; i; i = i->next) {
-		GebrCommTerminalProcess *proc = GEBR_COMM_TERMINAL_PROCESS(i->data);
-		const gchar *address = g_object_get_data(G_OBJECT(proc), "address");
-		if (g_strcmp0(address, addr) == 0) {
-			gebr_comm_terminal_process_free(i->data);
+		GebrCommPortForward *forward = i->data;
+		if (g_strcmp0(addr, gebr_comm_port_forward_get_address(forward)) == 0) {
+			close_and_free_client_forward(forward);
 			client->priv->forwards = g_list_delete_link(client->priv->forwards, i);
+			return;
 		}
 	}
 }
@@ -251,7 +246,7 @@ gebrm_client_remove_forwards(GebrmClient *client)
 	g_debug("Removing client %s forwards...", client->priv->id);
 
 	g_list_foreach(client->priv->forwards,
-		       (GFunc)gebr_comm_terminal_process_free, NULL);
+		       (GFunc)close_and_free_client_forward, NULL);
 	g_list_free(client->priv->forwards);
 	client->priv->forwards = NULL;
 }
@@ -271,4 +266,36 @@ gebrm_client_get_job_id_from_temp(GebrmClient *client,
 				  const gchar *temp_id)
 {
 	return g_hash_table_lookup(client->priv->job_ids, temp_id);
+}
+
+guint
+gebrm_client_get_display_port(GebrmClient *self)
+{
+	return self->priv->x11_port;
+}
+
+const gchar *
+gebrm_client_get_display_host(GebrmClient *self)
+{
+	return self->priv->x11_host;
+}
+
+void
+gebrm_client_set_display(GebrmClient *client,
+                         guint display_port,
+                         const gchar *display_host)
+{
+	client->priv->x11_port = display_port;
+	client->priv->x11_host = g_strdup(display_host);
+
+}
+
+void gebrm_client_set_sent_nfsid(GebrmClient *self, gboolean sent_nfsid)
+{
+	self->priv->sent_nfsid = sent_nfsid;
+}
+
+gboolean gebrm_client_get_sent_nfsid(GebrmClient *self)
+{
+	return self->priv->sent_nfsid;
 }

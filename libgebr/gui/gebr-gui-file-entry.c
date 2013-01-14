@@ -121,6 +121,7 @@ static void gebr_gui_file_entry_init(GebrGuiFileEntry * file_entry)
 	file_entry->do_overwrite_confirmation = TRUE;
 	file_entry->prefix = NULL;
 	file_entry->line = NULL;
+	file_entry->need_gvfs = FALSE;
 }
 
 G_DEFINE_TYPE(GebrGuiFileEntry, gebr_gui_file_entry, GTK_TYPE_HBOX);
@@ -163,6 +164,7 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 	gint response = gebr_file_chooser_set_remote_navigation(chooser_dialog,
 	                                                        entry_text,
 	                                                        file_entry->prefix,
+	                                                        file_entry->need_gvfs,
 	                                                        paths, TRUE,
 	                                                        &new_text);
 
@@ -261,4 +263,11 @@ gebr_gui_file_entry_set_paths_from_line(GebrGuiFileEntry *self,
 {
 	self->line = line;
 	self->prefix = g_strdup(prefix);
+}
+
+void
+gebr_gui_file_entry_set_need_gvfs(GebrGuiFileEntry *self,
+                                  gboolean need_gvfs)
+{
+	self->need_gvfs = need_gvfs;
 }

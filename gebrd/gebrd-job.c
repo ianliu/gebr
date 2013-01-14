@@ -561,30 +561,21 @@ void job_run_flow(GebrdJob *job)
 	/* command-line */
 	gsize bytes_written;
 	gchar *localized_cmd_line = g_filename_from_utf8(job->parent.cmd_line->str, -1, NULL, &bytes_written, NULL);
-	guint16 display_port = GPOINTER_TO_UINT(g_hash_table_lookup(gebrd->display_ports, job->gid->str));
-	g_debug("Looking for display port for gid %s: %d", job->gid->str, display_port);
-	if (display_port != 0) {
+	gchar *display = g_hash_table_lookup(gebrd->display_ports, job->gid->str);
+	g_debug("Looking for display port for gid %s: %s", job->gid->str, display);
+	if (display) {
 		GString *to_quote;
 		gchar *xauth_file = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", gebrd->hostname, "Xauthority", NULL);
 
 		to_quote = g_string_new(NULL);
-		if (job->parent.server_location == GEBR_COMM_SERVER_LOCATION_LOCAL) {
-			g_string_printf(to_quote, "export DISPLAY=:%d; export XAUTHORITY=%s; %s",
-					display_port, xauth_file, localized_cmd_line);
-			g_debug("I will run a flow on DISPLAY=:%d", display_port);
-			gchar * quoted = g_shell_quote(to_quote->str);
-			g_string_printf(cmd_line, "bash -l -c %s", quoted);
-			g_free(quoted);
-		} else {
-			g_string_printf(to_quote, "export DISPLAY=127.0.0.1:%d; export XAUTHORITY=%s; ",
-					display_port, xauth_file);
-			g_debug("Environment variables: %s", to_quote->str);
+		g_string_printf(to_quote, "export DISPLAY=%s; export XAUTHORITY=%s; ",
+				display, xauth_file);
+		g_debug("Environment variables: %s", to_quote->str);
 
-			g_string_append(to_quote, localized_cmd_line);
-			gchar * quoted = g_shell_quote(to_quote->str);
-			g_string_printf(cmd_line, "bash -l -c %s", quoted);
-			g_free(quoted);
-		}
+		g_string_append(to_quote, localized_cmd_line);
+		gchar * quoted = g_shell_quote(to_quote->str);
+		g_string_printf(cmd_line, "bash -l -c %s", quoted);
+		g_free(quoted);
 
 		g_string_free(to_quote, TRUE);
 		g_free(xauth_file);
@@ -1093,30 +1084,35 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 	GError *err = NULL;
 
 	program = gebr_geoxml_flow_get_control_program(job->flow);
-	status = gebr_geoxml_program_get_status(program);
-	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
-	    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-	{
-		gchar *iter_expr;
-		gchar *ini, *step;
-		GebrGeoXmlProgramParameter *pparam;
-		n = gebr_geoxml_program_control_get_n(program, &step, &ini);
-		gebr_validator_evaluate(gebrd_get_validator(gebrd), n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, &err);
-		if (err) {
-			*issue_number += 1;
-			job_issue(job, _("%u) %s '%s'.\n"),
-			          *issue_number, err->message,
-			          gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
-			g_clear_error(&err);
+	if (program) {
+		status = gebr_geoxml_program_get_status(program);
+		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
+		    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+		{
+			gchar *iter_expr;
+			gchar *ini, *step;
+			GebrGeoXmlProgramParameter *pparam;
+			n = gebr_geoxml_program_control_get_n(program, &step, &ini);
+			gebr_validator_evaluate(gebrd_get_validator(gebrd), n,
+						GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						GEBR_GEOXML_DOCUMENT_TYPE_LINE,
+						&result, &err);
+			if (err) {
+				*issue_number += 1;
+				job_issue(job, _("%u) %s '%s'.\n"),
+					  *issue_number, err->message,
+					  gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+				g_clear_error(&err);
+			}
+			result = g_strdup_printf("%d", atoi(result));
+			iter_expr = g_strdup_printf("(%s) + (%s) * '\"$counter\"'", ini, step);
+			pparam = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(gebrd->flow));
+			gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, iter_expr);
+			g_free(iter_expr);
+			g_free(ini);
+			g_free(step);
+			g_free(n);
 		}
-		result = g_strdup_printf("%d", atoi(result));
-		iter_expr = g_strdup_printf("(%s) + (%s) * '\"$counter\"'", ini, step);
-		pparam = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(gebrd->flow));
-		gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, iter_expr);
-		g_free(iter_expr);
-		g_free(ini);
-		g_free(step);
-		g_free(n);
 	}
 
 	GebrGeoXmlDocument *docs[3] = {
@@ -1518,12 +1514,11 @@ static void job_assembly_cmdline(GebrdJob *job)
 						 "exec=\"nice -n $NICE\"\n"
 						 "for (( _outter=0; _outter < %s; _outter+=$PROC ))\n"
 						 "do\n"
-						 "  unset PIDS\n"
-						 "  for (( counter=$_outter; counter < $_outter+$PROC && counter < %s; counter++ ))\n"
+						 "  (for (( counter=$_outter; counter < $_outter+$PROC && counter < %s; counter++ ))\n"
 						 "  do\n"
 						 "    %s\n%s \n%s\n",
 						 fcomm,nprocs, ffcomm,nice, n, n, expr_buf->str, str_buf->str,scomm);
-			g_string_append(job->parent.cmd_line, " ) &\nPIDS=\"$! $PIDS\"");
+			g_string_append(job->parent.cmd_line, " ) &\n");
 			g_string_prepend_c(job->parent.cmd_line, '(');
 			g_free(fcomm);
 			g_free(scomm);
@@ -1555,7 +1550,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (job->is_parallelizable)
 			g_string_append_printf(job->parent.cmd_line, "\n"
 					       "  done\n"
-					       "  wait $PIDS\n");
+					       "  wait)\n");
 		g_string_append(job->parent.cmd_line, "\ndone");
 		g_free(prefix);
 		g_free(n);

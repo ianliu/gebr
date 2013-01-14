@@ -16,7 +16,8 @@
  */
 
 #include <stdio.h>
-#include <glib/gi18n.h>
+#include "libgebr-gettext.h"
+#include <glib/gi18n-lib.h>
 
 #include "libgebr.h"
 #include "../comm/gebr-comm-channelsocket.h"

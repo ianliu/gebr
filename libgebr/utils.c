@@ -17,6 +17,7 @@
 
 //remove round warning
 #define _ISOC99_SOURCE
+#define _XOPEN_SOURCE 500
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -35,7 +36,8 @@
 #include <locale.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <glib/gi18n.h>
+#include "libgebr-gettext.h"
+#include <glib/gi18n-lib.h>
 
 #include "utils.h"
 
@@ -664,13 +666,14 @@ gchar *gebr_id_random_create(gssize bytes)
 	return id;
 }
 
-gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gboolean symlink)
+gchar * gebr_lock_file(const gchar *path, const gchar *content)
 {
-	/* TODO */
-	if (symlink)
-		return NULL;
-
-	gchar *contents = NULL;
+	if (!content) {
+		gchar *str;
+		if (!g_file_get_contents(path, &str, NULL, NULL))
+			return NULL;
+		return g_strstrip(str);
+	}
 
 	struct flock fl;
 	fl.l_type = F_WRLCK;
@@ -679,33 +682,25 @@ gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gbo
 	fl.l_len = 0;
 	fl.l_pid = getpid();
 
-	int fd = open(pathname, O_CREAT | O_WRONLY, gebr_home_mode());
-	fcntl(fd, F_SETLKW, &fl);
+	int fd = open(path, O_CREAT | O_WRONLY, gebr_home_mode());
 
-	GError *error = NULL;
-	gsize length = 0;
-	if (g_file_test(pathname, G_FILE_TEST_IS_REGULAR) &&
-	    g_file_get_contents(pathname, &contents, &length, &error) &&
-	    length > 0) {
-		/* file exists and could be read, make it a null-terminated string */
-		gchar * tmp = g_new(gchar, length+1);
-		strncpy(tmp, contents, length);
-		tmp[length] = '\0';
-		g_free(contents);
-		contents = tmp;
-	} else {
-		length = strlen(new_lock_content);
-		if (write(fd, new_lock_content, length) > 0)
-			contents = g_strdup(new_lock_content);
-		else
-			contents = NULL;
+	if (fd == -1) {
+		perror("open");
+		return NULL;
 	}
 
-	close(fd);
+	fcntl(fd, F_SETLKW, &fl);
+
+	if (!g_file_set_contents(path, content, -1, NULL)) {
+		close(fd);
+		return NULL;
+	}
+
 	fl.l_type = F_UNLCK;
 	fcntl(fd, F_SETLK, &fl);
+	close(fd);
 
-	return contents;
+	return NULL;
 }
 
 gchar *gebr_str_word_before_pos(const gchar *str, gint *pos)
@@ -1396,70 +1391,30 @@ gebr_add_remove_ssh_key(gboolean remove)
 	return TRUE;
 }
 
-gboolean
-gebr_check_if_server_accepts_key(const gchar *hostname,
-                                 gboolean is_maestro)
+gchar *
+gebr_get_user_from_address(const gchar *address)
 {
-	gboolean accepts_key = FALSE;
+	if (!address || !*address)
+		return NULL;
 
-	gchar *filename = g_strdup_printf("%s-%s.tmp", hostname, is_maestro? "maestro" : "server");
-	gchar *path = g_build_filename(g_get_home_dir(),".gebr", filename, NULL);
+	gchar **at_split = g_strsplit(address, "@", 2);
+	gchar *user;
 
-	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-		g_free(path);
-		g_free(filename);
-		return FALSE;
-	}
+	if (g_strv_length(at_split) == 2)
+		user = g_strdup(at_split[0]);
+	else
+		user = g_strdup(g_get_user_name());
 
-	gchar *content;
-	if (!g_file_get_contents(path, &content, NULL, NULL)) {
-		g_free(path);
-		g_free(filename);
-		g_free(content);
-		return FALSE;
-	}
+	g_strfreev(at_split);
 
-	GString *output = g_string_new(content);
-	gchar *point = g_strrstr(output->str, "Authentications that can continue:");
-	if (point) {
-		gchar *last_point = g_strstr_len(point, strlen(point), "\n");
-		if (last_point) {
-			gchar *key_point = g_strstr_len(point, (last_point - point), "publickey");
-			if (key_point)
-				accepts_key = TRUE;
-		}
-	}
-
-	g_string_free(output, TRUE);
-	g_free(content);
-	g_free(filename);
-	g_free(path);
-
-	return accepts_key;
-}
-
-void
-gebr_remove_temporary_file(const gchar *hostname,
-                           gboolean is_maestro)
-{
-	gchar *filename = g_strdup_printf("%s-%s.tmp", hostname, is_maestro? "maestro" : "server");
-	gchar *path = g_build_filename(g_get_home_dir(),".gebr", filename, NULL);
-
-	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-		g_free(path);
-		g_free(filename);
-		return;
-	}
-
-	g_unlink(path);
+	return user;
 }
 
 gchar *
-gebr_get_address_without_user(const gchar *address)
+gebr_get_host_from_address(const gchar *address)
 {
-	if (!address || !*address || address[0] == '@') {
+	if (!address || !*address)
 		return NULL;
-	}
 
 	gchar **at_split = g_strsplit(address, "@", -1);
 	gchar **space_split;
@@ -1482,7 +1437,7 @@ gebr_get_address_without_user(const gchar *address)
 gboolean
 gebr_verify_address_without_username(const gchar *address)
 {
-	gchar *new_addr = gebr_get_address_without_user (address);
+	gchar *new_addr = gebr_get_host_from_address(address);
 	gboolean ret;
 	if (g_strcmp0(address, new_addr) != 0) {
 		ret = FALSE;
@@ -1593,4 +1548,82 @@ void
 gebr_string_freeall(GString *string)
 {
 	g_string_free(string, TRUE);
+}
+
+const gchar *
+gebr_apply_pattern_on_address(const gchar *addr)
+{
+	const gchar *address;
+	if (g_strcmp0(addr, "127.0.0.1") == 0 ||
+	    g_strcmp0(addr, "localhost") == 0)
+		address = g_get_host_name();
+	else
+		address = addr;
+
+	return address;
+}
+
+GQueue *
+gebr_gqueue_push_tail_avoiding_duplicates(GQueue *queue,
+                                          const gchar *data)
+{
+	if (!g_queue_find_custom(queue, data, (GCompareFunc) g_strcmp0) && *data)
+		g_queue_push_tail(queue, g_strdup(data));
+
+	return queue;
+}
+
+const gchar*
+gebr_paths_get_value_by_key(const gchar ***paths,
+                            const gchar *key)
+{
+	for (gint i = 0; paths && paths[i]; i++) {
+		if (g_strcmp0(paths[i][1], key) == 0) {
+			return paths[i][0];
+		}
+	}
+	return NULL;
+}
+
+static const gchar *
+get_lock_dir(void)
+{
+	static gchar *dir = NULL;
+	if (!dir) {
+		dir = g_build_filename(g_get_home_dir(), ".gebr", "locks", NULL);
+		g_mkdir_with_parents(dir, 0700);
+	}
+	return dir;
+}
+
+static gchar *
+get_lock_for_file(const gchar *file)
+{
+	const gchar *dir = get_lock_dir();
+	guint lock = g_str_hash(file);
+	gchar *tmp = g_strdup_printf("%d", lock);
+	gchar *ret = g_build_filename(dir, tmp, NULL);
+	g_free(tmp);
+	return ret;
+}
+
+void
+GEBR_LOCK_FILE(const gchar *path)
+{
+	int ret;
+	gchar *lock = get_lock_for_file(path);
+
+	do {
+		ret = symlink(path, lock);
+		usleep(1000);
+	} while (ret != 0);
+
+	g_free(lock);
+}
+
+void
+GEBR_UNLOCK_FILE(const gchar *path)
+{
+	gchar *lock = get_lock_for_file(path);
+	unlink(lock);
 }

@@ -55,7 +55,8 @@ struct _GebrmDaemonClass {
 
 	void (*daemon_init) (GebrmDaemon *daemon,
 			     const gchar *error_type,
-			     const gchar *error_msg);
+			     const gchar *error_msg,
+			     gboolean has_gebrm);
 
 	void (*port_define) (GebrmDaemon *daemon,
 			     const gchar *gid,
@@ -113,17 +114,31 @@ gboolean gebrm_daemon_has_group(GebrmDaemon *daemon,
  * @pass:   The password to connecto to @daemon.
  * @client: The client that made this requisition.
  *
- * Connects to this @daemon sending @pass as password. If @pass is %NULL and
- * @daemon needs a password, then @client will be asked for a password.
- * Otherwise @client and @pass are not used.
- *
- * If @pass and @client are %NULL and @daemon needs a password, then @daemon
- * will wait for future user interaction, provided by
- * gebrm_daemon_continue_stuck_connection().
+ * Connects to this @daemon.
+ * If @daemon needs a password, then @client will be asked for a password.
+ * Otherwise @client are not used.
  */
 void gebrm_daemon_connect(GebrmDaemon            *daemon,
-			  const gchar            *pass,
 			  GebrCommProtocolSocket *client);
+
+/**
+ * gebrm_daemon_set_password:
+ * @daemon: The daemon to connect.
+ * @pass:   The password to connecto to @daemon.
+ *
+ * Sets @pass on @daemon.
+ */
+void gebrm_daemon_set_password(GebrmDaemon *daemon,
+                               const gchar *pass);
+
+/**
+ * gebrm_daemon_invalid_password:
+ * @daemon: The daemon to connect.
+ *
+ * When @daemon doesn't have password, setting errors and
+ * clean all pending connections.
+ */
+void gebrm_daemon_invalid_password(GebrmDaemon *daemon);
 
 void gebrm_daemon_disconnect(GebrmDaemon *daemon);
 
@@ -166,8 +181,6 @@ void gebrm_daeamon_answer_question(GebrmDaemon *daemon,
  * @SERVER_STATE_RUN state. All these requirements are achieved by calling
  * gebrm_daemon_connect() with the parameter client equal to %NULL.
  */
-void gebrm_daemon_continue_stuck_connection(GebrmDaemon *daemon,
-					    GebrCommProtocolSocket *socket);
 
 void gebrm_daemon_set_id(GebrmDaemon *daemon,
 			 const gchar *id);
@@ -190,7 +203,9 @@ GList *gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon);
 
 void gebrm_daemon_send_client_info(GebrmDaemon *daemon,
 				   const gchar *id,
-				   const gchar *cookie);
+				   const gchar *cookie,
+				   const gchar *host,
+				   guint display_port);
 
 const gchar *gebrm_daemon_get_hostname(GebrmDaemon *daemon);
 
@@ -227,6 +242,10 @@ void gebrm_daemon_set_timeout(GebrmDaemon *daemon,
                               guint timeout);
 
 guint gebrm_daemon_get_timeout(GebrmDaemon *daemon);
+
+void gebrm_daemon_set_has_gebrm(GebrmDaemon *daemon, gboolean has_gebrm);
+
+gboolean gebrm_daemon_get_has_gebrm(GebrmDaemon *daemon);
 
 G_END_DECLS
 
