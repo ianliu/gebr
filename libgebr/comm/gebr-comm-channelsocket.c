@@ -32,13 +32,21 @@ struct _GebrCommChannelSocketPriv
 	GByteArray *auth_buffer;
 };
 
+typedef struct {
+	gboolean is_authenticated;
+	GebrCommChannelSocket *self;
+	GebrCommStreamSocket *forward_socket;
+	GebrCommStreamSocket *source_socket;
+} ReadAuthData;
+
 /*
  * prototypes
  */
 
 static void __g_channel_socket_new_connection(GebrCommChannelSocket * channel_socket);
 
-static void __g_channel_socket_source_read(GebrCommStreamSocket * source_socket, GebrCommStreamSocket * forward_socket);
+static void __g_channel_socket_source_read(GebrCommStreamSocket *source_socket,
+					   ReadAuthData *auth_data);
 
 static int x11_open_helper(GByteArray *b);
 
@@ -77,69 +85,79 @@ G_DEFINE_TYPE(GebrCommChannelSocket, gebr_comm_channel_socket, GEBR_COMM_SOCKET_
 /*
  * internal functions
  */
-static void __g_channel_socket_source_disconnected(GebrCommStreamSocket * source_socket, GebrCommStreamSocket * forward_socket)
+static void
+__g_channel_socket_source_disconnected(GebrCommStreamSocket *source_socket,
+				       ReadAuthData *auth_data)
 {
 	gebr_comm_socket_close(GEBR_COMM_SOCKET(source_socket));
-	gebr_comm_socket_close(GEBR_COMM_SOCKET(forward_socket));
+	gebr_comm_socket_close(GEBR_COMM_SOCKET(auth_data->forward_socket));
+	g_free(auth_data);
 }
 
 static void
-__g_channel_socket_source_read_auth(GebrCommStreamSocket *source_socket,
-				    GebrCommChannelSocket *self)
+__g_channel_socket_source_read(GebrCommStreamSocket *source_socket,
+			       ReadAuthData *auth_data)
 {
 	GByteArray *data;
+	GebrCommChannelSocket *self = auth_data->self;
 
 	data = gebr_comm_socket_read_all(GEBR_COMM_SOCKET(source_socket));
-	g_byte_array_append(self->priv->auth_buffer, data->data, data->len);
 
-	switch (x11_open_helper(self->priv->auth_buffer)) {
-	case 1:
-		g_signal_handlers_disconnect_by_func(
-				source_socket, G_CALLBACK(__g_channel_socket_source_read_auth), self);
-		g_signal_connect(source_socket, "ready-read",
-				 G_CALLBACK(__g_channel_socket_source_read), self);
-		gebr_comm_socket_write(GEBR_COMM_SOCKET(&self->forward_address), data);
-		break;
-	case -1:
-		gebr_comm_socket_close(&self->parent);
-		break;
-	case 0:
-		break;
+	if (auth_data->is_authenticated) {
+		gebr_comm_socket_write(GEBR_COMM_SOCKET(auth_data->forward_socket), data);
+	} else {
+		g_byte_array_append(self->priv->auth_buffer, data->data, data->len);
+
+		switch (x11_open_helper(self->priv->auth_buffer)) {
+		case 1:
+			gebr_comm_socket_write(GEBR_COMM_SOCKET(auth_data->forward_socket),
+					       self->priv->auth_buffer);
+			auth_data->is_authenticated = TRUE;
+			g_byte_array_free(self->priv->auth_buffer, TRUE);
+			self->priv->auth_buffer = NULL;
+			break;
+		case -1:
+			gebr_comm_socket_close(GEBR_COMM_SOCKET(auth_data->source_socket));
+			gebr_comm_socket_close(GEBR_COMM_SOCKET(auth_data->forward_socket));
+			break;
+		case 0:
+			break;
+		}
 	}
-}
 
-static void __g_channel_socket_source_read(GebrCommStreamSocket * source_socket, GebrCommStreamSocket * forward_socket)
-{
-	GByteArray *byte_array;
-
-	byte_array = gebr_comm_socket_read_all(GEBR_COMM_SOCKET(source_socket));
-	gebr_comm_socket_write(GEBR_COMM_SOCKET(forward_socket), byte_array);
-
-	g_byte_array_free(byte_array, TRUE);
+	g_byte_array_free(data, TRUE);
 }
 
 static void
-__g_channel_socket_source_error(GebrCommStreamSocket * source_socket, enum GebrCommSocketError error,
-				GebrCommStreamSocket * forward_socket)
+__g_channel_socket_source_error(GebrCommStreamSocket * source_socket,
+				enum GebrCommSocketError error,
+				ReadAuthData *auth_data)
 {
-	__g_channel_socket_source_disconnected(source_socket, forward_socket);
-}
-
-static void __g_channel_socket_forward_disconnected(GebrCommStreamSocket * forward_socket, GebrCommStreamSocket * source_socket)
-{
-	__g_channel_socket_source_disconnected(source_socket, forward_socket);
-}
-
-static void __g_channel_socket_forward_read(GebrCommStreamSocket * forward_socket, GebrCommStreamSocket * source_socket)
-{
-	__g_channel_socket_source_read(forward_socket, source_socket);
+	__g_channel_socket_source_disconnected(source_socket, auth_data);
 }
 
 static void
-__g_channel_socket_forward_error(GebrCommStreamSocket * forward_socket, enum GebrCommSocketError error,
-				 GebrCommStreamSocket * source_socket)
+__g_channel_socket_forward_disconnected(GebrCommStreamSocket *forward_socket,
+					ReadAuthData *auth_data)
 {
-	__g_channel_socket_source_error(source_socket, error, forward_socket);
+	__g_channel_socket_source_disconnected(auth_data->source_socket, auth_data);
+}
+
+static void
+__g_channel_socket_forward_read(GebrCommStreamSocket *forward_socket,
+				ReadAuthData *auth_data)
+{
+	GByteArray *data;
+	data = gebr_comm_socket_read_all(GEBR_COMM_SOCKET(forward_socket));
+	gebr_comm_socket_write(GEBR_COMM_SOCKET(auth_data->source_socket), data);
+}
+
+static void
+__g_channel_socket_forward_error(GebrCommStreamSocket * forward_socket,
+				 enum GebrCommSocketError error,
+				 ReadAuthData *auth_data)
+{
+	__g_channel_socket_source_error(auth_data->source_socket, error, auth_data);
 }
 
 static void
@@ -167,19 +185,25 @@ static void __g_channel_socket_new_connection(GebrCommChannelSocket * channel_so
 		gebr_comm_stream_socket_connect(forward_socket, &channel_socket->forward_address, FALSE);
 
 		setup_auth_buffer(channel_socket);
+		ReadAuthData* auth_data = g_new(ReadAuthData, 1);
+		auth_data->forward_socket = forward_socket;
+		auth_data->source_socket = source_socket;
+		auth_data->self = channel_socket;
+		auth_data->is_authenticated = FALSE;
+
 		g_signal_connect(source_socket, "disconnected",
-				 G_CALLBACK(__g_channel_socket_source_disconnected), forward_socket);
+				 G_CALLBACK(__g_channel_socket_source_disconnected), auth_data);
 		g_signal_connect(source_socket, "ready-read",
-				 G_CALLBACK(__g_channel_socket_source_read_auth), channel_socket);
+				 G_CALLBACK(__g_channel_socket_source_read), auth_data);
 		g_signal_connect(source_socket, "error",
-				 G_CALLBACK(__g_channel_socket_source_error), forward_socket);
+				 G_CALLBACK(__g_channel_socket_source_error), auth_data);
 
 		g_signal_connect(forward_socket, "disconnected",
-				 G_CALLBACK(__g_channel_socket_forward_disconnected), source_socket);
+				 G_CALLBACK(__g_channel_socket_forward_disconnected), auth_data);
 		g_signal_connect(forward_socket, "ready-read",
-				 G_CALLBACK(__g_channel_socket_forward_read), source_socket);
+				 G_CALLBACK(__g_channel_socket_forward_read), auth_data);
 		g_signal_connect(forward_socket, "error",
-				 G_CALLBACK(__g_channel_socket_forward_error), source_socket);
+				 G_CALLBACK(__g_channel_socket_forward_error), auth_data);
 	}
 }
 
