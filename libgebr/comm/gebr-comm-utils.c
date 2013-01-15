@@ -230,7 +230,7 @@ gebr_convert_xauth_cookie_to_binary(const gchar *xauth_str)
 		}
 		g_byte_array_append(ba, (guint8*)&value, 1);
 	}
-	return NULL;
+	return ba;
 }
 
 gchar *
