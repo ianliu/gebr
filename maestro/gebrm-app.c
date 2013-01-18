@@ -1700,7 +1700,7 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 err:
 	gebr_comm_message_free(message);
 	socket->protocol->messages = g_list_delete_link(socket->protocol->messages, link);
-	g_object_unref(client);
+	gebr_comm_protocol_socket_disconnect(socket);
 }
 
 static GKeyFile *
