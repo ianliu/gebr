@@ -647,19 +647,28 @@ gchar *gebr_date_get_localized (const gchar *format, const gchar *locale)
 
 gchar *gebr_id_random_create(gssize bytes)
 {
-	gchar * id = g_new(gchar, bytes+1);
+	guint32 seed1;
+	guint32 seed2;
 
+	int fd = open("/dev/urandom", O_RDONLY);
+	if (!fd) {
+		seed1 = 1234;
+	} else {
+		read(fd, &seed1, sizeof(seed1));
+		close(fd);
+	}
+
+	GTimeVal current_time;
+	g_get_current_time(&current_time);
+	seed2 = 0xffffffff & current_time.tv_usec;
+
+	g_random_set_seed(seed1 ^ seed2);
+
+	gchar *id = g_new(gchar, bytes + 1);
 	for (gint i = 0; i < bytes; ++i) {
-		GTimeVal current_time;
-		g_get_current_time(&current_time);
-		g_random_set_seed(current_time.tv_usec);
-	
-		//take care not to use separators as space, comma and others!
-		gchar c;
-		do
-			c = (gchar)g_random_int_range(48, 90);
-		while (c >= 58 && c <= 64); //rejected range
-		id[i] = c;
+		int n = g_random_int_range(0, 36);
+		n += n > 9 ? 48 : 55;
+		id[i] = (gchar)n;
 	}
 	id[bytes] = '\0';
 
