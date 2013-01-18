@@ -667,7 +667,7 @@ gchar *gebr_id_random_create(gssize bytes)
 	gchar *id = g_new(gchar, bytes + 1);
 	for (gint i = 0; i < bytes; ++i) {
 		int n = g_random_int_range(0, 36);
-		n += n > 9 ? 48 : 55;
+		n += n > 9 ? 55 : 48;
 		id[i] = (gchar)n;
 	}
 	id[bytes] = '\0';
