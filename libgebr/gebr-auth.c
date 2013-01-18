@@ -91,6 +91,8 @@ void
 gebr_auth_remove_cookie(GebrAuth *self, const gchar *key)
 {
 	GList *list = NULL;
+
+	GEBR_LOCK_FILE(self->auth_file);
 	FILE *fp = fopen(self->auth_file, "r");
 
 	if (!fp)
@@ -111,11 +113,10 @@ gebr_auth_remove_cookie(GebrAuth *self, const gchar *key)
 
 	list = g_list_reverse(list);
 
-	GEBR_LOCK_FILE(self->auth_file);
 	fp = fopen(self->auth_file, "w");
 	chmod(self->auth_file, 0600);
 	for (GList *i = list; i; i = i->next)
-		fprintf(fp, "%s", (gchar*)i->data);
+		fprintf(fp, "%s\n", (gchar*)i->data);
 	fclose(fp);
 	GEBR_UNLOCK_FILE(self->auth_file);
 
