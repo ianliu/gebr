@@ -461,6 +461,13 @@ const gchar *gebr_paths_get_value_by_key(const gchar ***paths,
                                          const gchar *key);
 
 /**
+ * gebr_get_nfsid:
+ *
+ * Returns: the NFSID of the calling process domain.
+ */
+const gchar *gebr_get_nfsid(void);
+
+/**
  * GEBR_LOCK_FILE:
  *
  * Locks the file pointed by @path. You must call GEBR_UNLOCK_FILE() when done.

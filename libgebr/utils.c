@@ -1616,6 +1616,25 @@ get_lock_for_file(const gchar *file)
 	return ret;
 }
 
+const gchar *
+gebr_get_nfsid(void)
+{
+	static gchar *nfsid = NULL;
+
+	if (!nfsid) {
+		gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", "run",
+						   "gebrd-fslock.run", NULL);
+		// g_file_get_contents sets nfsid to NULL in case of error
+		g_file_get_contents(filename, &nfsid, NULL, NULL);
+		g_free(filename);
+
+		if (nfsid)
+			g_strstrip(nfsid);
+	}
+
+	return nfsid;
+}
+
 void
 GEBR_LOCK_FILE(const gchar *path)
 {
