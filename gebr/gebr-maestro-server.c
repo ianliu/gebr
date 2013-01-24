@@ -581,7 +581,6 @@ static void
 gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestro)
 {
 	g_hash_table_foreach(maestro->priv->jobs, (GHFunc)add_nfs_label, maestro);
-	gebr_job_control_update_servers_model(gebr.job_control);
 }
 
 static gboolean
