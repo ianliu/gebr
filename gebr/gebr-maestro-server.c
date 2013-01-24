@@ -416,9 +416,6 @@ state_changed(GebrCommServer *comm_server,
 	if (state == SERVER_STATE_DISCONNECTED) {
 		gtk_list_store_clear(maestro->priv->groups_store);
 
-		if (!gebr.quit)
-			gebr_project_line_show(gebr.ui_project_line);
-
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
                 if (err && *err) {
                 	if (comm_server->error == SERVER_ERROR_CONNECT)

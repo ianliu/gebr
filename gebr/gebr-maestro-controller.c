@@ -2285,6 +2285,9 @@ on_state_change(GebrMaestroServer *maestro,
 {
 	GebrCommServerState state = gebr_maestro_server_get_state(maestro);
 	if (state == SERVER_STATE_DISCONNECTED) {
+		if (!gebr.quit)
+			gebr_project_line_show(gebr.ui_project_line);
+
 		gebr_maestro_controller_try_next_maestro(self);
 
 		const gchar *type;
