@@ -1898,8 +1898,6 @@ on_password_request(GebrMaestroServer *maestro,
 		    GebrMaestroController *self)
 {
 	GtkWidget *dialog;
-	const gchar *address;
-	gchar *addr = NULL;
 
 	gdk_threads_enter();
 	dialog = gtk_dialog_new_with_buttons(_("Enter password"),
@@ -1972,8 +1970,6 @@ on_password_request(GebrMaestroServer *maestro,
 	gtk_widget_destroy(dialog);
 	gdk_threads_leave();
 
-	//g_free(message);
-	g_free(title);
 	g_free(password);
 
 	return pk;
