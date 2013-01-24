@@ -136,6 +136,70 @@ G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
 					      gebr_maestro_server_connectable_init));
 
 static void
+on_sftp_aborted(GMountOperation *op, GebrMaestroServer *maestro)
+{
+	g_object_unref(op);
+}
+
+static void
+on_sftp_ask_password(GMountOperation  *op,
+		     gchar            *message,
+		     gchar            *default_user,
+		     gchar            *default_domain,
+		     GAskPasswordFlags flags,
+		     GebrMaestroServer *maestro)
+{
+	PasswordKeys *pk;
+	gchar *title, *description;
+	gchar *addr;
+	const gchar *address = gebr_maestro_server_get_address(maestro);
+	const gchar *user = gebr_maestro_server_get_user(maestro);
+
+	if (!g_strrstr(address, "@"))
+		addr = g_strdup_printf("%s@%s", user, address);
+	else
+		addr = g_strdup(address);
+
+	title = g_strdup_printf(_("Connecting to %s"), addr);
+	description = g_strdup_printf("<b>%s</b> is asking for your login\n"
+				      "password for remote browsing.", addr);
+
+	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
+		      title, description, FALSE, FALSE, &pk);
+
+	if (pk) {
+		g_mount_operation_set_password(op, pk->password);
+		g_mount_operation_reply(op, G_MOUNT_OPERATION_HANDLED);
+	} else {
+		g_mount_operation_reply(op, G_MOUNT_OPERATION_ABORTED);
+		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_NOK);
+	}
+
+	g_free(addr);
+	g_free(title);
+	g_free(description);
+}
+
+static void
+on_sftp_ask_question(GMountOperation *op,
+		     gchar           *message,
+		     GStrv           *choices,
+		     GebrMaestroServer *maestro)
+{
+	g_mount_operation_reply(op, G_MOUNT_OPERATION_ABORTED);
+}
+
+static void
+on_sftp_show_process(GMountOperation *op,
+		     gchar           *message,
+		     GArray          *processes,
+		     GStrv           *choices,
+		     gpointer         user_data)
+{
+	g_mount_operation_reply(op, G_MOUNT_OPERATION_ABORTED);
+}
+
+static void
 on_sftp_port_defined(GebrCommPortProvider *self,
 		     guint port,
 		     GebrMaestroServer *maestro)
@@ -156,29 +220,16 @@ on_sftp_port_defined(GebrCommPortProvider *self,
 
 	gebr_add_remove_ssh_key(FALSE);
 
-	GtkWindow *window = NULL;
-	GList *windows = gtk_window_list_toplevels();
-	for (GList *i = windows; i; i = i->next) {
-		GtkWindow *win = i->data;
-		if (gtk_window_is_active(win)) {
-			window = win;
-			g_object_ref(window);
-			break;
-		}
-	}
-
-	if (!window)
-		window = GTK_WINDOW(gebr.window);
-
-	GMountOperation *op = gtk_mount_operation_new(window);
+	GMountOperation *op = g_mount_operation_new();
+	g_signal_connect(op, "aborted", G_CALLBACK(on_sftp_aborted), maestro);
+	g_signal_connect(op, "ask-password", G_CALLBACK(on_sftp_ask_password), maestro);
+	g_signal_connect(op, "ask-question", G_CALLBACK(on_sftp_ask_question), maestro);
+	g_signal_connect(op, "show-process", G_CALLBACK(on_sftp_show_process), maestro);
 	g_file_mount_enclosing_volume(maestro->priv->mount_location, 0, op, NULL,
 				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
 				      maestro);
 
 	g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_PROGRESS);
-
-	g_object_unref(window);
-	g_list_free(windows);
 }
 
 static void
