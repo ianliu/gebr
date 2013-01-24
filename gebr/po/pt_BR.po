@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-24 16:42-0200\n"
+"POT-Creation-Date: 2013-01-24 17:04-0200\n"
 "PO-Revision-Date: 2012-12-13 10:20-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -450,11 +450,17 @@ msgstr "Em qual grupos de nós esta tarefa deve ser executada?"
 msgid "One after another"
 msgstr "Um após o outro"
 
-#: ../data/gebr-execution-details.glade.h:8
+#: ../data/gebr-execution-details.glade.h:8 ../interface.c:120
+#: ../interface.c:121 ../ui_flow_browse.c:3516 ../ui_flow_browse.c:3518
+#: ../ui_flow_execution.c:1157
+msgid "Run"
+msgstr "Executar"
+
+#: ../data/gebr-execution-details.glade.h:9
 msgid "Simultaneously"
 msgstr "Simultaneamente"
 
-#: ../data/gebr-execution-details.glade.h:9
+#: ../data/gebr-execution-details.glade.h:10
 msgid ""
 "The execution of some flows of this batch can be split to speed\n"
 "them up. In how many tasks should they be split?"
@@ -462,7 +468,7 @@ msgstr ""
 "A execução de alguns fluxos pode ser acelerada dividindo-os em partes.\\n\n"
 "Em quantas partes cada um desses fluxos deve ser dividido?"
 
-#: ../data/gebr-execution-details.glade.h:11
+#: ../data/gebr-execution-details.glade.h:12
 msgid "Wait for free resources"
 msgstr "Esperar por recursos disponíveis"
 
@@ -1455,6 +1461,15 @@ msgstr "Conectado com êxito a %s"
 msgid "Connecting to %s"
 msgstr "Conectando-se a %s"
 
+#: ../gebr-maestro-server.c:165
+#, c-format
+msgid ""
+"<b>%s</b> is asking for your login\n"
+"password for remote browsing."
+msgstr ""
+"<b>%s</b> está requisitando senha\n"
+"de login para habilitar a navegação remota."
+
 #: ../gebr-maestro-server.c:605
 #, c-format
 msgid "Stopping %s"
@@ -1786,11 +1801,6 @@ msgstr "Importar fluxos"
 #: ../interface.c:119
 msgid "Export selected flows"
 msgstr "Exportar fluxos selecionados"
-
-#: ../interface.c:120 ../interface.c:121 ../ui_flow_browse.c:3516
-#: ../ui_flow_browse.c:3518 ../ui_flow_execution.c:1157
-msgid "Run"
-msgstr "Executar"
 
 #: ../interface.c:123 ../ui_flow_browse.c:3519
 msgid "Setup & Run"

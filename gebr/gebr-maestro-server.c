@@ -162,8 +162,8 @@ on_sftp_ask_password(GMountOperation  *op,
 		addr = g_strdup(address);
 
 	title = g_strdup_printf(_("Connecting to %s"), addr);
-	description = g_strdup_printf("<b>%s</b> is asking for your login\n"
-				      "password for remote browsing.", addr);
+	description = g_strdup_printf(_("<b>%s</b> is asking for your login\n"
+				      "password for remote browsing."), addr);
 
 	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
 		      title, description, FALSE, FALSE, &pk);
