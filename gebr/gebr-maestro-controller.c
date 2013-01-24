@@ -32,6 +32,7 @@
 #include "ui_project_line.h"
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
+#include "project.h"
 
 #define GEBR_DEFAULT_MAESTRO "GEBR_DEFAULT_MAESTRO"
 
@@ -2293,6 +2294,20 @@ on_state_change(GebrMaestroServer *maestro,
 		if (g_strcmp0(type, "error:none") != 0)
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, msg);
 	} else if (state == SERVER_STATE_LOGGED) {
+		gebr_maestro_controller_clean_potential_maestros(self);
+
+		gebr_project_line_show(gebr.ui_project_line);
+
+		if (!gebr.populate_list) {
+			gebr.populate_list = TRUE;
+			project_list_populate();
+		}
+
+		if (!gebr.restore_selection) {
+			gebr.restore_selection = TRUE;
+			restore_project_line_flow_selection();
+		}
+
 		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Succesfully connected to host %s"),
 			     gebr_maestro_server_get_address(maestro));
 		on_get_alias_maestro_clicked(self);

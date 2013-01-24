@@ -32,7 +32,6 @@
 #include <unistd.h>
 
 #include "gebr.h" // for gebr_get_session_id()
-#include "project.h" // for populate project/lines
 
 struct MaestroInfoIface {
 	GebrMaestroInfo iface;
@@ -437,19 +436,6 @@ state_changed(GebrCommServer *comm_server,
 	}
 	else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
-		gebr_maestro_controller_clean_potential_maestros(gebr.maestro_controller);
-
-		gebr_project_line_show(gebr.ui_project_line);
-
-		if (!gebr.populate_list) {
-			gebr.populate_list = TRUE;
-			project_list_populate();
-		}
-
-		if (!gebr.restore_selection) {
-			gebr.restore_selection = TRUE;
-			restore_project_line_flow_selection();
-		}
 	}
 
 	const gchar *error_type = maestro->priv->error_type;
