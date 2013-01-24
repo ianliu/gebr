@@ -122,6 +122,8 @@ static gchar *gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface);
 
 static void gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestro);
 
+static void gebr_maestro_server_append_key_finished(GebrMaestroServer *maestro);
+
 static const struct gebr_comm_server_ops maestro_ops = {
 	.log_message      = log_message,
 	.state_changed    = state_changed,
@@ -643,7 +645,7 @@ parse_messages(GebrCommServer *comm_server,
 
 				gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
 				if (use_key)
-					gebr_comm_server_append_key(comm_server, gebr_maestro_server_append_key_finished, NULL);
+					gebr_comm_server_append_key(comm_server, G_CALLBACK(gebr_maestro_server_append_key_finished), maestro);
 				else
 					gebr_maestro_server_connect_on_daemons(maestro);
 
@@ -2159,10 +2161,9 @@ gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
 	g_free(addr_without_user);
 }
 
-void
-gebr_maestro_server_append_key_finished()
+static void
+gebr_maestro_server_append_key_finished(GebrMaestroServer *maestro)
 {
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro->priv->wizard_setup)
 		return;
 	gebr_maestro_server_connect_on_daemons(maestro);

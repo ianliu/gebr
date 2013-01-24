@@ -855,7 +855,7 @@ get_append_key_command(GebrCommServer *server)
 
 void
 gebr_comm_server_append_key(GebrCommServer *server,
-			    void *finished_callback,
+			    GCallback finished_callback,
 			    gpointer user_data)
 {
 	gchar *command;
@@ -865,7 +865,7 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	g_signal_connect(ssh, "ssh-password", G_CALLBACK(on_comm_ssh_password), server);
 	g_signal_connect(ssh, "ssh-question", G_CALLBACK(on_comm_ssh_question), server);
 	g_signal_connect(ssh, "ssh-error", G_CALLBACK(on_comm_ssh_error), server);
-	g_signal_connect(ssh, "ssh-finished", G_CALLBACK(finished_callback), user_data);
+	g_signal_connect_swapped(ssh, "ssh-finished", G_CALLBACK(finished_callback), user_data);
 
 	gebr_comm_ssh_set_command(ssh, command);
 	gebr_comm_ssh_run(ssh);

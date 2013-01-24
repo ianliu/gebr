@@ -230,8 +230,7 @@ const gchar *gebrm_daemon_get_mpi_flavors(GebrmDaemon *daemon);
 gboolean gebrm_daemon_accepts_mpi(GebrmDaemon *daemon,
                                   const gchar *flavor);
 
-void gebm_daemon_append_key_finished(GebrCommTerminalProcess *proc,
-                                     gpointer user_data);
+void gebm_daemon_append_key_finished(GebrmDaemon *daemon);
 
 void gebrm_daemon_set_canceled(GebrmDaemon *daemon,
                                gboolean is_canceled);

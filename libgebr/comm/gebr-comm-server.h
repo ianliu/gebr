@@ -259,7 +259,7 @@ gboolean gebr_comm_server_get_accepts_key(GebrCommServer *server);
  * Append key in the @server
  */
 void gebr_comm_server_append_key(GebrCommServer *server,
-				 void *finished_callback,
+				 GCallback finished_callback,
 				 gpointer user_data);
 /**
  * gebr_comm_server_set_use_public_key:

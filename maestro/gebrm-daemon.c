@@ -300,7 +300,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				gboolean use_key = gebr_comm_server_get_use_public_key(server);
 				if (use_key) {
-					gebr_comm_server_append_key(server, gebm_daemon_append_key_finished, daemon);
+					gebr_comm_server_append_key(server, G_CALLBACK(gebm_daemon_append_key_finished), daemon);
 				}
 
 				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL, gebrm_daemon_get_has_gebrm(daemon));
@@ -1063,10 +1063,8 @@ gebrm_daemon_accepts_mpi(GebrmDaemon *daemon,
 }
 
 void
-gebm_daemon_append_key_finished(GebrCommTerminalProcess *proc,
-                                gpointer user_data)
+gebm_daemon_append_key_finished(GebrmDaemon *daemon)
 {
-	GebrmDaemon *daemon = user_data;
 	g_signal_emit(daemon, signals[APPEND_KEY], 0);
 }
 
