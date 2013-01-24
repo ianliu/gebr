@@ -571,6 +571,39 @@ check_client_is_in_the_same_nfs_as_daemons(GString *nfsid)
 	return same_nfs;
 }
 
+static PasswordKeys *
+send_daemon_password_request(GebrMaestroServer *maestro, GebrDaemonServer *daemon,
+			     gboolean accepts_key, gboolean retry_pass)
+{
+	PasswordKeys *pk;
+	gchar *addr;
+	gchar *title, *description;
+	const gchar *address = gebr_daemon_server_get_address(daemon);
+	const gchar *user = gebr_maestro_server_get_user(maestro);
+
+	if (!g_strrstr(address, "@"))
+		addr = g_strdup_printf("%s@%s", user, address);
+	else
+		addr = g_strdup(address);
+
+	const gchar *error_type = gebr_daemon_server_get_error_type(daemon);
+	if (g_strcmp0(error_type, "error:stop") == 0)
+		title = g_strdup_printf(_("Stopping %s"), addr);
+	else
+		title = g_strdup_printf(_("Connecting to %s"), addr);
+	description = g_markup_printf_escaped(_("<b>%s</b> is asking for your login\n"
+						"password."), addr);
+
+	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
+		      title, description, accepts_key, retry_pass, &pk);
+
+	g_free(title);
+	g_free(description);
+	g_free(addr);
+
+	return pk;
+}
+
 void
 parse_messages(GebrCommServer *comm_server,
 	       gpointer user_data)
@@ -966,7 +999,7 @@ parse_messages(GebrCommServer *comm_server,
 			gboolean retry_pass = g_strcmp0(retry->str, "yes") == 0;
 
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, NULL);
-			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, daemon, accepts_key, retry_pass, &pk);
+			pk = send_daemon_password_request(maestro, daemon, accepts_key, retry_pass);
 
 			if (pk) {
 				GebrCommUri *uri = gebr_comm_uri_new();
@@ -1263,9 +1296,10 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrMaestroServerClass, password_request),
 			     NULL, NULL,
-			     gebr_cclosure_marshal_POINTER__OBJECT_BOOL_BOOL,
-			     G_TYPE_POINTER, 3,
-			     G_TYPE_OBJECT,
+			     gebr_cclosure_marshal_POINTER__STRING_STRING_BOOL_BOOL,
+			     G_TYPE_POINTER, 4,
+			     G_TYPE_STRING,
+			     G_TYPE_STRING,
 			     G_TYPE_BOOLEAN,
 			     G_TYPE_BOOLEAN);
 
@@ -1675,12 +1709,29 @@ on_password_request(GebrCommServer *server,
 {
 	PasswordKeys *pk;
 	GebrMaestroServer *maestro = user_data;
+	gchar *addr, *title, *description;
+	const gchar *address = gebr_maestro_server_get_address(maestro);
+	const gchar *user = gebr_maestro_server_get_user(maestro);
+
+	if (!g_strrstr(address, "@"))
+		addr = g_strdup_printf("%s@%s", user, address);
+	else
+		addr = g_strdup(address);
+
+	title = g_strdup_printf(_("Connecting to %s"), addr);
+	description = g_markup_printf_escaped(_("Maestro <b>%s</b> is asking for your login\n"
+						"password."), addr);
 
 	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
-		      maestro,
+		      title,
+		      description,
 		      gebr_comm_server_get_accepts_key(server),
 		      retry,
 		      &pk);
+
+	g_free(title);
+	g_free(description);
+	g_free(addr);
 
 	if (!pk)
 		return;

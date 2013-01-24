@@ -1891,20 +1891,15 @@ on_password_dialog_response(GtkDialog *dialog, gint response, gpointer pointer)
 }
 static PasswordKeys *
 on_password_request(GebrMaestroServer *maestro,
-		    GObject *object,
+		    const gchar *title,
+		    const gchar *description,
 		    gboolean acceps_key,
 		    gboolean retry,
 		    GebrMaestroController *self)
 {
-	if (!GEBR_IS_MAESTRO_SERVER(object) && !GEBR_IS_DAEMON_SERVER(object))
-		g_return_val_if_reached(NULL);
-
-	gchar *title;
-	gchar *ssh_info;
 	GtkWidget *dialog;
 	const gchar *address;
 	gchar *addr = NULL;
-	gchar *user = NULL;
 
 	gdk_threads_enter();
 	dialog = gtk_dialog_new_with_buttons(_("Enter password"),
@@ -1916,34 +1911,10 @@ on_password_request(GebrMaestroServer *maestro,
 					     NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
-	if (GEBR_IS_MAESTRO_SERVER(object)) {
-		address = gebr_maestro_server_get_address(GEBR_MAESTRO_SERVER(object));
-		user = gebr_maestro_server_get_user(GEBR_MAESTRO_SERVER(object));
-		if (!g_strrstr(address, "@"))
-			addr = g_strdup_printf("%s@%s", user, address);
-		title = g_strdup_printf(_("Connecting to %s"), addr);
-		ssh_info = g_markup_printf_escaped(_("Maestro <b>%s</b> is asking for your login\n"
-						     "password."), address);
-	} else {
-		address = gebr_daemon_server_get_address(GEBR_DAEMON_SERVER(object));
-		user = gebr_maestro_server_get_user(maestro);
-		if (!g_strrstr(address, "@"))
-			addr = g_strdup_printf("%s@%s", user, address);
-		const gchar *error_type = gebr_daemon_server_get_error_type(GEBR_DAEMON_SERVER(object));
-		if (g_strcmp0(error_type, "error:stop") == 0)
-			title = g_strdup_printf(_("Stopping %s"), addr);
-		else
-			title = g_strdup_printf(_("Connecting to %s"), addr);
-		ssh_info = g_markup_printf_escaped(_("<b>%s</b> is asking for your login\n"
-						     "password."), address);
-	}
-
-	g_free(user);
-
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 
 	GtkWidget *ssh_info_label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(ssh_info_label), ssh_info);
+	gtk_label_set_markup(GTK_LABEL(ssh_info_label), description);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ssh_info_label, FALSE, TRUE, 5);
 
 	if (retry) {
