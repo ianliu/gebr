@@ -1130,7 +1130,6 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("HOME: %s", home->str);
 
 			gebr_maestro_server_set_home_dir(maestro, home->str);
-			flow_browse_validate_io(gebr.ui_flow_browse);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -1170,7 +1169,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_maestro_server_set_nfs_label(maestro, nfslabel);
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
-
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
 
 
@@ -2191,7 +2189,6 @@ gebr_maestro_server_append_key_finished()
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro->priv->wizard_setup)
 		return;
-
 	gebr_maestro_server_connect_on_daemons(maestro);
 }
 

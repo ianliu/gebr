@@ -2267,6 +2267,7 @@ on_prop_home_notify(GebrMaestroServer *maestro,
 {
 	update_xml_parameters(maestro, gebr.ui_project_line, TRUE);
 	gebr_maestro_controller_maestro_state_changed_real(self, maestro);
+	flow_browse_validate_io(gebr.ui_flow_browse);
 }
 
 static void
