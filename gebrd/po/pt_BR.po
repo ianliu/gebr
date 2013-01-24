@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.13.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-26 11:46-0200\n"
+"POT-Creation-Date: 2013-01-24 16:43-0200\n"
 "PO-Revision-Date: 2011-09-08 11:03-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -40,44 +40,44 @@ msgstr "Job no Moab retornou o código de estado %d para alocação no nó '%s'.
 msgid "Process exited with status code %d.\n"
 msgstr "Processo terminado com o código de estado %d.\n"
 
-#: ../gebrd-job.c:600
+#: ../gebrd-job.c:591
 msgid "Cannot submit job to MOAB server (msub command is not available).\n"
 msgstr ""
 "Não foi possível submeter a tarefa ao servidor MOAB (comando msub não "
 "disponível).\n"
 
-#: ../gebrd-job.c:617
+#: ../gebrd-job.c:608
 msgid "Cannot submit job to MOAB server.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB.\n"
 
-#: ../gebrd-job.c:623
+#: ../gebrd-job.c:614
 #, c-format
 msgid "Cannot submit job to MOAB server: %s.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB: %s.\n"
 
-#: ../gebrd-job.c:635
+#: ../gebrd-job.c:626
 msgid "Cannot get MOAB job id.\n"
 msgstr "Não foi possível obter a identificação da tarefa no MOAB.\n"
 
-#: ../gebrd-job.c:764 ../gebrd-job.c:768
+#: ../gebrd-job.c:755 ../gebrd-job.c:759
 msgid "Cannot cancel job at MOAB server.\n"
 msgstr "Não foi possível cancelar a tarefa no servidor MOAB.\n"
 
-#: ../gebrd-job.c:851 ../gebrd-job.c:918 ../gebrd-job.c:1002
+#: ../gebrd-job.c:842 ../gebrd-job.c:909 ../gebrd-job.c:993
 #, c-format
 msgid "Required parameter '%s' of program '%s' not provided.\n"
 msgstr "O parâmetro '%s' do programa '%s' não foi fornecido.\n"
 
-#: ../gebrd-job.c:1020
+#: ../gebrd-job.c:1011
 msgid "Unknown parameter type.\n"
 msgstr "Tipo de parâmetro desconhecido.\n"
 
-#: ../gebrd-job.c:1107
+#: ../gebrd-job.c:1102
 #, c-format
 msgid "%u) %s '%s'.\n"
 msgstr "%u) %s '%s'.\n"
 
-#: ../gebrd-job.c:1203
+#: ../gebrd-job.c:1199
 msgid ""
 "\n"
 "# Dictionary\n"
@@ -85,65 +85,65 @@ msgstr ""
 "\n"
 "# Dicionário\n"
 
-#: ../gebrd-job.c:1239
+#: ../gebrd-job.c:1235
 msgid "Empty flow.\n"
 msgstr "Fluxo vazio.\n"
 
-#: ../gebrd-job.c:1247 ../gebrd-job.c:1264 ../gebrd-job.c:1395
+#: ../gebrd-job.c:1243 ../gebrd-job.c:1260 ../gebrd-job.c:1391
 #, c-format
 msgid "%u) Skipping disabled/not configured program '%s'.\n"
 msgstr "%u) Desconsiderando programa '%s' desabilitado/não configurado.\n"
 
-#: ../gebrd-job.c:1254 ../gebrd-job.c:1271
+#: ../gebrd-job.c:1250 ../gebrd-job.c:1267
 msgid "No configured programs.\n"
 msgstr "Sem programas configurados.\n"
 
-#: ../gebrd-job.c:1291
+#: ../gebrd-job.c:1287
 #, c-format
 msgid "Requested MPI (%s) is not supported by this server.\n"
 msgstr "MPI (%s) solicitado não é suportado pelo servidor.\n"
 
-#: ../gebrd-job.c:1318
+#: ../gebrd-job.c:1314
 msgid "No input file selected.\n"
 msgstr "Sem arquivo de entrada selecionado.\n"
 
-#: ../gebrd-job.c:1338
+#: ../gebrd-job.c:1334
 msgid "Syntax error in input file expression"
 msgstr "Erro de sintaxe na expressão do arquivo de entrada"
 
-#: ../gebrd-job.c:1341
+#: ../gebrd-job.c:1337
 msgid "Undefined variable in input file expression"
 msgstr "Variável indefinida na expressão do arquivo de entrada"
 
-#: ../gebrd-job.c:1376
+#: ../gebrd-job.c:1372
 msgid "Syntax error in error file expression"
 msgstr "Erro de sintaxe na expressão do arquivo de log"
 
-#: ../gebrd-job.c:1379
+#: ../gebrd-job.c:1375
 msgid "Undefined variable in error file expression"
 msgstr "Variável indefinida na expressão do arquivo de log"
 
 #. Previous does not write to stdin but current expect something
-#: ../gebrd-job.c:1427
+#: ../gebrd-job.c:1423
 #, c-format
 msgid "Broken flow before %s (no input).\n"
 msgstr "Fluxo interrompido depois de %s (sem entrada).\n"
 
 #. Previous does write to stdin but current does not carry about
-#: ../gebrd-job.c:1431
+#: ../gebrd-job.c:1427
 #, c-format
 msgid "Broken flow before %s (unexpected output).\n"
 msgstr "Fluxo interrompido antes de %s (saída inesperada).\n"
 
-#: ../gebrd-job.c:1488
+#: ../gebrd-job.c:1484
 msgid "Syntax error in output file expression"
 msgstr "Erro de sintaxe na expressão do arquivo de saída"
 
-#: ../gebrd-job.c:1491
+#: ../gebrd-job.c:1487
 msgid "Undefined variable in output file expression"
 msgstr "Variável indefinida na expressão do arquivo de saída"
 
-#: ../gebrd-job.c:1511 ../gebrd-job.c:1533
+#: ../gebrd-job.c:1507 ../gebrd-job.c:1528
 #, c-format
 msgid ""
 "\n"
@@ -152,12 +152,12 @@ msgstr ""
 "\n"
 "# Configurando o número de núcleos \n"
 
-#: ../gebrd-job.c:1512
+#: ../gebrd-job.c:1508
 #, c-format
 msgid "# Command Line"
 msgstr "# Linha de Comando"
 
-#: ../gebrd-job.c:1513 ../gebrd-job.c:1564
+#: ../gebrd-job.c:1509 ../gebrd-job.c:1559
 #, c-format
 msgid ""
 "\n"
@@ -166,33 +166,37 @@ msgstr ""
 "\n"
 "# Configurando a prioridade do processo \n"
 
-#: ../gebrd-job.c:1565
+#: ../gebrd-job.c:1560
 #, c-format
 msgid "# Command Line \n"
 msgstr "# Linha de Comando \n"
 
 #. Creating Line paths
-#: ../gebrd-job.c:1578
+#: ../gebrd-job.c:1573
 msgid "# Creating directories \n"
 msgstr "# Criando diretórios \n"
 
-#: ../gebrd-main.c:44
+#: ../gebrd-main.c:45
 msgid "Run server in interactive mode, not as a daemon"
 msgstr "Executando servidor em modo iterativo e não como serviço"
 
-#: ../gebrd-main.c:46
+#: ../gebrd-main.c:47
 msgid "Show GeBR daemon version"
 msgstr "Exibe a versão do servidor"
 
-#: ../gebrd-main.c:57
+#: ../gebrd-main.c:49
+msgid "Do not ask for authorization cookie when launching"
+msgstr "Não pedir cookie de autorização quando iniciar."
+
+#: ../gebrd-main.c:60
 msgid "GeBR daemon"
 msgstr "Servidor GêBR"
 
-#: ../gebrd-main.c:59
+#: ../gebrd-main.c:62
 msgid "Run flows and manage jobs of GeBR."
 msgstr "Executa Fluxos e gerencia processos da GêBR."
 
-#: ../gebrd-main.c:61
+#: ../gebrd-main.c:64
 msgid ""
 "Debug-compiled environment variables:\n"
 "  GEBRD_RUN_DELAY_SEC   Delay in seconds to wait before sending response of "
@@ -206,52 +210,52 @@ msgstr ""
 "  GEBRD_LOG_LEVEL       Se 'verbose', imprime informações adicionais na "
 "saida padrão"
 
-#: ../gebrd-main.c:68
+#: ../gebrd-main.c:71
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
-#: ../gebrd-main.c:69
+#: ../gebrd-main.c:72
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
 
-#: ../gebrd-server.c:66 ../gebrd-server.c:100
+#: ../gebrd-server.c:98
 msgid "Could not listen for connections.\n"
 msgstr "Não foi possível escutar por conexões.\n"
 
-#: ../gebrd-server.c:85
+#: ../gebrd-server.c:145
 msgid "Cannot run interactive server, GêBR daemon is already running"
 msgstr ""
 "Não é possível executar o servidor iterativamente. Servidor GêBR já está em "
 "execução"
 
-#: ../gebrd-server.c:128
+#: ../gebrd-server.c:175
 #, c-format
 msgid "%s:%d: Could not acquire FS lock.\n"
 msgstr "%s:%d: Não foi possível reservar arquivo de grupo de servidores.\n"
 
-#: ../gebrd-server.c:136
+#: ../gebrd-server.c:183
 #, c-format
 msgid "FS of %s"
 msgstr "Arquivos em %s"
 
-#: ../gebrd-server.c:162
+#: ../gebrd-server.c:209
 #, c-format
 msgid "%s:%d: Could not access GêBR configuration directories.\n"
 msgstr ""
 "%s:%d: Não foi possível acessar os diretórios de configuração da GêBR.\n"
 
 #. success, send port
-#: ../gebrd-server.c:218
+#: ../gebrd-server.c:273
 #, c-format
 msgid "Server started at %u port"
 msgstr "Servidor inicializado na porta %u"
 
-#: ../gebrd-server.c:230
+#: ../gebrd-server.c:285
 msgid "Could not init server. Quiting..."
 msgstr "Não foi possível inicializar o servidor. Abortando..."
 
-#: ../gebrd.c:239
+#: ../gebrd.c:240
 msgid "Server quit."
 msgstr "Servidor finalizado."

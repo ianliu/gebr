@@ -6,12 +6,12 @@
 #
 # Ricardo Biloti <biloti@gebrproject.com>, 2009-2010.
 # Bráulio Barros de Oliveira <brauliobo@gebrproject.com>, 2009.
-#: ../geoxml-utils/upgrade.c:43
+#: ../geoxml-utils/upgrade.c:44
 msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-13 10:05-0200\n"
+"POT-Creation-Date: 2013-01-24 16:43-0200\n"
 "PO-Revision-Date: 2012-12-13 10:10-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -21,49 +21,49 @@ msgstr ""
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../comm/gebr-comm-port-provider.c:384 ../comm/gebr-comm-port-provider.c:590
+#: ../comm/gebr-comm-port-provider.c:387 ../comm/gebr-comm-port-provider.c:690
 #, c-format
 msgid "%s not found at %s"
 msgstr "%s não encontrado em %s"
 
-#: ../comm/gebr-comm-port-provider.c:596
+#: ../comm/gebr-comm-port-provider.c:696
 #, c-format
 msgid "Unexpected output from %s at %s: %s"
 msgstr "Saída não esperado de %s em %s: %s"
 
-#: ../comm/gebr-comm-server.c:364
+#: ../comm/gebr-comm-server.c:367
 msgid "Do you trust this host?"
 msgstr "Esta máquina é confiável?"
 
-#: ../comm/gebr-comm-server.c:404
+#: ../comm/gebr-comm-server.c:415
 #, c-format
 msgid "%p: Launching machine at '%s'."
 msgstr "%p: Iniciando máquina em '%s'."
 
-#: ../comm/gebr-comm-server.c:456
+#: ../comm/gebr-comm-server.c:471
 #, c-format
 msgid "Stopping machine at '%s'."
 msgstr "Parando máquina '%s'."
 
-#: ../comm/gebr-comm-server.c:707
+#: ../comm/gebr-comm-server.c:695
 msgid "Connection refused"
 msgstr "Conexão recusada"
 
-#: ../comm/gebr-comm-server.c:720
+#: ../comm/gebr-comm-server.c:708
 #, c-format
 msgid "Machine '%s' disconnected"
 msgstr "Máquina '%s' desconectada"
 
-#: ../comm/gebr-comm-ssh.c:349
+#: ../comm/gebr-comm-ssh.c:381
 #, c-format
 msgid "This host has never been authenticated and has the fingerprint %s.\n"
 msgstr "Esta máquina nunca foi autenticada e sua identificação é %s.\n"
 
-#: ../comm/gebr-comm-ssh.c:357
+#: ../comm/gebr-comm-ssh.c:389
 msgid "Host key verification failed."
 msgstr "Verificação da chave sem sucesso."
 
-#: ../comm/gebr-comm-ssh.c:365
+#: ../comm/gebr-comm-ssh.c:397
 msgid ""
 "The known_hosts file is probably corrupted. Contact your system "
 "administrator for help."
@@ -71,23 +71,23 @@ msgstr ""
 "O arquivo known_hosts está provavelmente corrompido. Contacte oadministrador "
 "de sistemas."
 
-#: ../comm/socketchannel/socketchannel.c:28 ../geoxml-utils/upgrade.c:48
-#: ../geoxml-utils/validate.c:54
+#: ../comm/socketchannel/socketchannel.c:29 ../geoxml-utils/upgrade.c:49
+#: ../geoxml-utils/validate.c:55
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
-#: ../comm/socketchannel/socketchannel.c:29 ../geoxml-utils/upgrade.c:49
-#: ../geoxml-utils/upgrade.c:58 ../geoxml-utils/validate.c:55
+#: ../comm/socketchannel/socketchannel.c:30 ../geoxml-utils/upgrade.c:50
+#: ../geoxml-utils/upgrade.c:59 ../geoxml-utils/validate.c:56
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
 
-#: ../comm/socketchannel/socketchannel.c:47
+#: ../comm/socketchannel/socketchannel.c:48
 msgid "LibGebrComm socket channelling"
 msgstr "LibGebrComm canais para socket"
 
-#: ../comm/socketchannel/socketchannel.c:48
+#: ../comm/socketchannel/socketchannel.c:49
 msgid ""
 "You can use this to do socket channelling, e.g., from a tcp host-port to "
 "another tcp host-port or an unix socket"
@@ -95,17 +95,17 @@ msgstr ""
 "Você pode usá-lo para fazer um canal para socket, e.g., à partir de uma "
 "porta hospedeira tcp para outra porta hospedeira tcp ou um socket unix"
 
-#: ../comm/socketchannel/socketchannel.c:80
+#: ../comm/socketchannel/socketchannel.c:81
 #, c-format
 msgid "Unknown source address\n"
 msgstr "Endereço origem desconhecido\n"
 
-#: ../comm/socketchannel/socketchannel.c:86
+#: ../comm/socketchannel/socketchannel.c:87
 #, c-format
 msgid "Unknown destination address\n"
 msgstr "Endereço destino desconhecido\n"
 
-#: ../comm/socketchannel/socketchannel.c:92
+#: ../comm/socketchannel/socketchannel.c:93
 #, c-format
 msgid "Channel created successful. Forwarding connections...\n"
 msgstr "Canal criado com sucesso. Encaminhando conexões...\n"
@@ -221,7 +221,7 @@ msgid "Expression result is too big"
 msgstr "Resultado da expressão é muito grande"
 
 #: ../gebr-validator.c:574 ../gebr-validator.c:909 ../gebr-validator.c:1042
-#: ../gui/gebr-gui-param.c:1741
+#: ../gui/gebr-gui-param.c:1749
 #, c-format
 msgid "This parameter is required"
 msgstr "Parâmetro obrigatório"
@@ -253,58 +253,58 @@ msgstr "Aceita apenas valores positivos"
 msgid "%s on \"%s\""
 msgstr "%s on \"%s\""
 
-#: ../gebr-maestro-settings.c:99
+#: ../gebr-maestro-settings.c:100
 msgid "Could not save configuration."
 msgstr "Não foi possível salvar o arquivo de configuração."
 
-#: ../geoxml-utils/upgrade.c:29 ../geoxml-utils/validate.c:34
+#: ../geoxml-utils/upgrade.c:30 ../geoxml-utils/validate.c:35
 msgid "file1.flw file2.mnu file3.prj file4.lne ..."
 msgstr "arquivo1.flw arquivo2.flw arquivo3.prj arquivo4.lne ..."
 
-#: ../geoxml-utils/upgrade.c:42 ../geoxml-utils/validate.c:47
+#: ../geoxml-utils/upgrade.c:43 ../geoxml-utils/validate.c:48
 msgid "LibGebrGeoXml XML validator"
 msgstr "Validador XML da LibGebrGeoXml"
 
-#: ../geoxml-utils/upgrade.c:68
+#: ../geoxml-utils/upgrade.c:69
 #, c-format
 msgid "Could not load file %s.\n"
 msgstr "Não foi possível carregar o arquivo %s.\n"
 
-#: ../geoxml-utils/upgrade.c:73
+#: ../geoxml-utils/upgrade.c:74
 #, c-format
 msgid "Could not save file %s.\n"
 msgstr "Não foi possível salvar o arquivo %s.\n"
 
-#: ../geoxml-utils/upgrade.c:77
+#: ../geoxml-utils/upgrade.c:78
 #, c-format
 msgid "Upgraded file %s to version %s!\n"
 msgstr "Atualizando arquivo %s para a versão %s!\n"
 
-#: ../geoxml-utils/validate.c:62
+#: ../geoxml-utils/validate.c:63
 #, c-format
 msgid "Error! No input files specified.\n"
 msgstr "Erro! Nenhum arquivo de entrada especificado.\n"
 
-#: ../geoxml-utils/validate.c:63
+#: ../geoxml-utils/validate.c:64
 #, c-format
 msgid "Try: %s --help\n"
 msgstr "Tente %s --help\n"
 
-#: ../geoxml-utils/validate.c:70
+#: ../geoxml-utils/validate.c:71
 #, c-format
 msgid "%s INVALID: %s"
 msgstr "%s INVÁLIDO: %s"
 
-#: ../geoxml-utils/validate.c:75
+#: ../geoxml-utils/validate.c:76
 #, c-format
 msgid "%s valid!\n"
 msgstr "%s válido!\n"
 
-#: ../geoxml/document.c:975 ../geoxml/program.c:632
+#: ../geoxml/document.c:973 ../geoxml/program.c:632
 msgid "MPI Parameters"
 msgstr "Parâmetros do MPI"
 
-#: ../geoxml/document.c:981 ../geoxml/program.c:638
+#: ../geoxml/document.c:979 ../geoxml/program.c:638
 msgid "Number of process to start"
 msgstr "Número de processos a começar"
 
@@ -863,20 +863,20 @@ msgstr ""
 msgid "All"
 msgstr "Todos"
 
-#: ../gui/gebr-gui-param.c:917
+#: ../gui/gebr-gui-param.c:925
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../gui/gebr-gui-param.c:1064
+#: ../gui/gebr-gui-param.c:1072
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-param.c:1805
+#: ../gui/gebr-gui-param.c:1813
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-param.c:1807
+#: ../gui/gebr-gui-param.c:1815
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
@@ -916,130 +916,130 @@ msgstr ""
 "Os arquivos apresentados são de sua <b>máquina local</b> e podem não "
 "representar os arquivos nas <b>máquinas de processamento</b>."
 
-#: ../gui/gebr-gui-utils.c:1431
+#: ../gui/gebr-gui-utils.c:1447
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a Ajuda. Certifique-se de que ele está instalado."
 
-#: ../utils.c:812
+#: ../utils.c:816
 msgid "Moments ago"
 msgstr "Momentos atrás"
 
-#: ../utils.c:814
+#: ../utils.c:818
 msgid "Hours ago"
 msgstr "Horas atrás"
 
-#: ../utils.c:816
+#: ../utils.c:820
 msgid "Days ago"
 msgstr "Dias atrás"
 
-#: ../utils.c:818
+#: ../utils.c:822
 msgid "Weeks ago"
 msgstr "Semanas atrás"
 
-#: ../utils.c:820
+#: ../utils.c:824
 msgid "Months ago"
 msgstr "Meses atrás"
 
-#: ../utils.c:822
+#: ../utils.c:826
 msgid "Years ago"
 msgstr "Anos atrás"
 
-#: ../utils.c:872
+#: ../utils.c:876
 msgid "1 hour, 1 minute and 1 second"
 msgstr "1 hora, 1 minuto e 1 segundo"
 
-#: ../utils.c:874
+#: ../utils.c:878
 #, c-format
 msgid "1 hour, 1 minute and %ld seconds"
 msgstr "1 hora, 1 minuto e %ld segundos"
 
-#: ../utils.c:876
+#: ../utils.c:880
 #, c-format
 msgid "1 hour, %ld minute and 1 second"
 msgstr "1 hora, %ld minutos e 1 segundo"
 
-#: ../utils.c:878
+#: ../utils.c:882
 #, c-format
 msgid "1 hour, %ld minutes and %ld seconds"
 msgstr "1 hora, %ld minutos e %ld segundos"
 
-#: ../utils.c:880
+#: ../utils.c:884
 #, c-format
 msgid "%ld hours, %ld minutes and %ld seconds"
 msgstr "%ld horas, %ld minutos e %ld segundos"
 
-#: ../utils.c:882
+#: ../utils.c:886
 #, c-format
 msgid "%ld hours and %ld minutes"
 msgstr "%ld horas e %ld minutos"
 
-#: ../utils.c:884
+#: ../utils.c:888
 msgid "1 minute and 1 second"
 msgstr "1 minuto e 1 segundo"
 
-#: ../utils.c:886
+#: ../utils.c:890
 #, c-format
 msgid "1 minute and %ld seconds"
 msgstr "1 minuto e %ld segundos"
 
-#: ../utils.c:888
+#: ../utils.c:892
 #, c-format
 msgid "%ld minutes and 1 second"
 msgstr "%ld minutos e 1 segundo"
 
-#: ../utils.c:890
+#: ../utils.c:894
 #, c-format
 msgid "%ld minutes and %ld seconds"
 msgstr "%ld minutos e %ld segundos"
 
-#: ../utils.c:892
+#: ../utils.c:896
 #, c-format
 msgid "1 hour and %ld seconds"
 msgstr "1 hora e %ld segundos"
 
-#: ../utils.c:894
+#: ../utils.c:898
 #, c-format
 msgid "%ld hours and %ld seconds"
 msgstr "%ld horas e %ld segundos"
 
-#: ../utils.c:896
+#: ../utils.c:900
 #, c-format
 msgid "%ld hours"
 msgstr "%ld horas"
 
-#: ../utils.c:898
+#: ../utils.c:902
 msgid "1 minute"
 msgstr "1 minuto"
 
-#: ../utils.c:900
+#: ../utils.c:904
 #, c-format
 msgid "%ld minutes"
 msgstr "%ld minutos"
 
-#: ../utils.c:902
+#: ../utils.c:906
 #, c-format
 msgid "%ld seconds"
 msgstr "%ld segundos"
 
-#: ../utils.c:904
+#: ../utils.c:908
 msgid "1 second"
 msgstr "1 segundo"
 
-#: ../utils.c:906
+#: ../utils.c:910
 msgid "1 milisecond"
 msgstr "1 milissegundo"
 
-#: ../utils.c:908
+#: ../utils.c:912
 #, c-format
 msgid "%ld miliseconds"
 msgstr "%ld milessegundos"
 
-#: ../utils.c:1287
+#: ../utils.c:1291
 msgid "The specified line path does not exist"
 msgstr "O caminho de linha específico não existe"
 
-#: ../utils.c:1289
+#: ../utils.c:1293
 msgid "The path must either start with < or /"
 msgstr "O caminho deve começar com < ou /"
 

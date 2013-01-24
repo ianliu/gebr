@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: debr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-26 11:46-0200\n"
+"POT-Creation-Date: 2013-01-24 16:35-0200\n"
 "PO-Revision-Date: 2011-09-08 03:57-0300\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -126,9 +126,20 @@ msgstr ""
 "Não é permitido incluir categorias vazias (cuidado com o caracter '|' "
 "separador de hierarquia)."
 
-#: ../debr-categoryedit.c:596
+#: ../debr-categoryedit.c:599
+msgid "<b>Category already exists</b>"
+msgstr "<b>Categoria já existente</b>"
+
+#: ../debr-categoryedit.c:601
 msgid "Category already exists"
 msgstr "Categoria já existente"
+
+#: ../debr-categoryedit.c:602
+#, c-format
+msgid ""
+"The category <i>%s</i> already exists in the list, the operation will be "
+"cancelled."
+msgstr "A categoria <i>%s</i> já existe na lista, a operação será cancelada."
 
 #: ../debr-help.c:71
 msgid "_Jump To"
@@ -1252,9 +1263,3 @@ msgstr ""
 #: ../menu-dialog-save-ui.glade.h:4
 msgid "Select the menus you want to save:"
 msgstr "Selecione os menus que você deseja salvar:"
-
-#~ msgid ""
-#~ "The category <i>%s</i> already exists in the list, the operation will be "
-#~ "cancelled."
-#~ msgstr ""
-#~ "A categoria <i>%s</i> já existe na lista, a operação será cancelada."

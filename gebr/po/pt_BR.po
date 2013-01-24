@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-18 12:36-0200\n"
+"POT-Creation-Date: 2013-01-24 16:42-0200\n"
 "PO-Revision-Date: 2012-12-13 10:20-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -850,8 +850,8 @@ msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
 #: ../flow.c:1329 ../ui_flow_browse.c:1431
-msgid "No line is selected\n"
-msgstr "Nenhuma linha foi selecionada\n"
+msgid "Select one line to edit or execute its flows.\n"
+msgstr "Selecione uma linha para alterar ou executar um fluxo.\n"
 
 #: ../flow.c:1333 ../ui_flow_browse.c:1433
 msgid ""
@@ -917,7 +917,7 @@ msgstr "Selecione uma tarefa da lista."
 msgid "Multiple jobs selected."
 msgstr "Múltiplos tarefas selecionados."
 
-#: ../gebr-job-control.c:880 ../gebr-job-control.c:1687
+#: ../gebr-job-control.c:883 ../gebr-job-control.c:1690
 msgid ""
 "\n"
 " --- The execution started. --- \n"
@@ -927,7 +927,7 @@ msgstr ""
 " --- A execução iniciou. --- \n"
 "\n"
 
-#: ../gebr-job-control.c:882 ../gebr-job-control.c:1693
+#: ../gebr-job-control.c:885 ../gebr-job-control.c:1696
 msgid ""
 "\n"
 " --- The execution finished successfully. --- \n"
@@ -935,7 +935,7 @@ msgstr ""
 "\n"
 " --- A execução terminou com sucesso. --- \n"
 
-#: ../gebr-job-control.c:884 ../gebr-job-control.c:1695
+#: ../gebr-job-control.c:887 ../gebr-job-control.c:1698
 msgid ""
 "\n"
 " --- The execution has been canceled. --- \n"
@@ -943,7 +943,7 @@ msgstr ""
 "\n"
 " --- A execução foi cancelada. --- \n"
 
-#: ../gebr-job-control.c:886 ../gebr-job-control.c:1697
+#: ../gebr-job-control.c:889 ../gebr-job-control.c:1700
 msgid ""
 "\n"
 " --- The execution failed. --- \n"
@@ -951,7 +951,7 @@ msgstr ""
 "\n"
 " --- A execução falhou. --- \n"
 
-#: ../gebr-job-control.c:952
+#: ../gebr-job-control.c:955
 #, c-format
 msgid ""
 "%s\n"
@@ -960,12 +960,12 @@ msgstr ""
 "%s\n"
 "%.1lf%% do total"
 
-#: ../gebr-job-control.c:997
+#: ../gebr-job-control.c:1000
 #, c-format
 msgid "<span size=\"x-large\">%s</span>"
 msgstr "<span size='x-large'>%s</span>"
 
-#: ../gebr-job-control.c:1016
+#: ../gebr-job-control.c:1019
 #, c-format
 msgid ""
 "This flow is queued and \n"
@@ -974,111 +974,111 @@ msgstr ""
 "Este fluxo está enfileirado e \n"
 "não foi executado."
 
-#: ../gebr-job-control.c:1023
+#: ../gebr-job-control.c:1026
 #, c-format
 msgid "<b>Process distribution among %d processing %s</b>"
 msgstr "<b>Distribuição dos processos entre %d %s de processamento</b>"
 
-#: ../gebr-job-control.c:1024
+#: ../gebr-job-control.c:1027
 msgid "nodes"
 msgstr "nós"
 
-#: ../gebr-job-control.c:1024
+#: ../gebr-job-control.c:1027
 msgid "node"
 msgstr "nó"
 
-#: ../gebr-job-control.c:1029
+#: ../gebr-job-control.c:1032
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: ../gebr-job-control.c:1031
+#: ../gebr-job-control.c:1034
 #, c-format
 msgid "Job submitted by <i>%s</i> to <i>%s</i>, split in %d %s%s\n"
 msgstr "Tarefa submetida por <i>%s</i> a <i>%s</i>, dividida em %d %s%s\n"
 
-#: ../gebr-job-control.c:1035
+#: ../gebr-job-control.c:1038
 msgid "processes"
 msgstr "processos"
 
-#: ../gebr-job-control.c:1035
+#: ../gebr-job-control.c:1038
 msgid "process"
 msgstr "processo"
 
-#: ../gebr-job-control.c:1036
+#: ../gebr-job-control.c:1039
 msgid ", using only free resources of processing nodes."
 msgstr ", utilizando apenas os recursos disponíveis dos nós de processamento."
 
-#: ../gebr-job-control.c:1036
+#: ../gebr-job-control.c:1039
 msgid ", disputing for resources of the processing nodes."
 msgstr ", disputando pelos recursos dos nós de processamento."
 
-#: ../gebr-job-control.c:1042
+#: ../gebr-job-control.c:1045
 #, c-format
 msgid "This MPI job (<b>%s</b>) was dispatched by <b>%s</b>.\n"
 msgstr "Esta tarefa MPI (<b>%s</b>) foi submetida por <b>%s</b>.\n"
 
-#: ../gebr-job-control.c:1381
+#: ../gebr-job-control.c:1384
 #, c-format
 msgid "Started on %s"
 msgstr "Iniciado em %s"
 
-#: ../gebr-job-control.c:1388
+#: ../gebr-job-control.c:1391
 #, c-format
 msgid "Finished on %s"
 msgstr "finalizado em %s"
 
-#: ../gebr-job-control.c:1390
+#: ../gebr-job-control.c:1393
 #, c-format
 msgid "Canceled on %s"
 msgstr "Cancelado em %s"
 
-#: ../gebr-job-control.c:1392
+#: ../gebr-job-control.c:1395
 #, c-format
 msgid "Failed on %s"
 msgstr "Falhou em %s"
 
-#: ../gebr-job-control.c:1397 ../gebr-job-control.c:1406
-#: ../gebr-job-control.c:1416 ../gebr-job-control.c:1425
+#: ../gebr-job-control.c:1400 ../gebr-job-control.c:1409
+#: ../gebr-job-control.c:1419 ../gebr-job-control.c:1428
 #, c-format
 msgid "Elapsed time: %s"
 msgstr "Tempo decorrido: %s"
 
-#: ../gebr-job-control.c:1433
+#: ../gebr-job-control.c:1436
 msgid "Waiting for job"
 msgstr "Esperando pela tarefa"
 
-#: ../gebr-job-control.c:1441
+#: ../gebr-job-control.c:1444
 msgid "Waiting for nodes"
 msgstr "Esperando pelos nós de processamento"
 
-#: ../gebr-job-control.c:1543
+#: ../gebr-job-control.c:1546
 #, c-format
 msgid "Command line for task %d of %d (node: %s)"
 msgstr "Linha de comando para tarefa %d de %d (nó: %s)"
 
-#: ../gebr-job-control.c:1609
+#: ../gebr-job-control.c:1612
 #, c-format
 msgid "<b>Input file</b>: %s"
 msgstr "<b>Arquivo de entrada</b>: %s"
 
-#: ../gebr-job-control.c:1609 ../gebr-job-control.c:1620
-#: ../gebr-job-control.c:1631 ../ui_flow_browse.c:1313
+#: ../gebr-job-control.c:1612 ../gebr-job-control.c:1623
+#: ../gebr-job-control.c:1634 ../ui_flow_browse.c:1313
 #: ../ui_project_line.c:548 ../ui_project_line.c:550
 msgid "None"
 msgstr "Nenhum"
 
-#: ../gebr-job-control.c:1620
+#: ../gebr-job-control.c:1623
 #, c-format
 msgid "<b>Output file</b>: %s"
 msgstr "<b>Arquivo de saída</b>: %s"
 
-#: ../gebr-job-control.c:1631
+#: ../gebr-job-control.c:1634
 #, c-format
 msgid "<b>Log File</b>: %s"
 msgstr "<b>Arquivo de log</b>: %s"
 
-#: ../gebr-job-control.c:1685
+#: ../gebr-job-control.c:1688
 msgid ""
 "\n"
 " --- The execution is queued. --- \n"
@@ -1088,53 +1088,53 @@ msgstr ""
 " --- A execução está em espera. --- \n"
 "\n"
 
-#: ../gebr-job-control.c:1796 ../gebr-job-control.c:2024
-#: ../gebr-job-control.c:2112
+#: ../gebr-job-control.c:1799 ../gebr-job-control.c:2027
+#: ../gebr-job-control.c:2115
 msgid "Any"
 msgstr "Qualquer"
 
-#: ../gebr-job-control.c:1803
+#: ../gebr-job-control.c:1806
 msgid "Finished"
 msgstr "Finalizado"
 
-#: ../gebr-job-control.c:1810
+#: ../gebr-job-control.c:1813
 msgid "Canceled/Failed"
 msgstr "Cancelado/Falhado"
 
-#: ../gebr-job-control.c:1817
+#: ../gebr-job-control.c:1820
 msgid "Running"
 msgstr "Executando"
 
-#: ../gebr-job-control.c:1824
+#: ../gebr-job-control.c:1827
 msgid "Queued"
 msgstr "Em fila"
 
-#: ../gebr-job-control.c:1873
+#: ../gebr-job-control.c:1876
 msgid "Word-wrap"
 msgstr "Quebra de linha automática"
 
-#: ../gebr-job-control.c:1879
+#: ../gebr-job-control.c:1882
 msgid "Auto-scroll"
 msgstr "Auto-rolagem"
 
-#: ../gebr-job-control.c:2309
+#: ../gebr-job-control.c:2312
 msgid "Jobs filtered by:"
 msgstr "Tarefas filtradas por:"
 
 #. run file chooser
-#: ../gebr-job-control.c:2633 ../ui_project_line.c:1367
+#: ../gebr-job-control.c:2639 ../ui_project_line.c:1367
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
-#: ../gebr-job-control.c:2637
+#: ../gebr-job-control.c:2643
 msgid "Text (*.txt)"
 msgstr "Texto (*.txt)"
 
-#: ../gebr-job-control.c:2649
+#: ../gebr-job-control.c:2655
 msgid "Could not write file."
 msgstr "Não foi possível escrever o arquivo."
 
-#: ../gebr-job-control.c:2679
+#: ../gebr-job-control.c:2685
 #, c-format
 msgid ""
 "\n"
@@ -1145,11 +1145,11 @@ msgstr ""
 "Data de início: %s\n"
 "Data de término: %s\n"
 
-#: ../gebr-job-control.c:2679 ../gebr-job-control.c:2680
+#: ../gebr-job-control.c:2685 ../gebr-job-control.c:2686
 msgid "(None)"
 msgstr "(Nenhum)"
 
-#: ../gebr-job-control.c:2687
+#: ../gebr-job-control.c:2693
 #, c-format
 msgid ""
 "\n"
@@ -1160,11 +1160,11 @@ msgstr ""
 "Questões:\n"
 "%s"
 
-#: ../gebr-job-control.c:2687
+#: ../gebr-job-control.c:2693
 msgid "(None)\n"
 msgstr "(Nenhum)\n"
 
-#: ../gebr-job-control.c:2695
+#: ../gebr-job-control.c:2701
 #, c-format
 msgid ""
 "\n"
@@ -1177,7 +1177,7 @@ msgstr ""
 "Arquivo de saída: %s\n"
 "Arquivo de log: %s\n"
 
-#: ../gebr-job-control.c:2714
+#: ../gebr-job-control.c:2720
 #, c-format
 msgid ""
 "Output:\n"
@@ -1188,44 +1188,44 @@ msgstr ""
 "%s\n"
 "\n"
 
-#: ../gebr-job-control.c:2719
+#: ../gebr-job-control.c:2725
 #, c-format
 msgid "Saved job information at \"%s\"."
 msgstr "Informação da tarefa salvada em \"%s\"."
 
-#: ../gebr-job-control.c:2757
+#: ../gebr-job-control.c:2763
 msgid "Cancel job"
 msgstr "Cancelar tarefa"
 
-#: ../gebr-job-control.c:2761
+#: ../gebr-job-control.c:2767
 #, c-format
 msgid "Are you sure you want to cancel the job \"%s\"?"
 msgstr "Tem certeza que deseja cancelar a tarefa \"%s\"?"
 
-#: ../gebr-job-control.c:2767
+#: ../gebr-job-control.c:2773
 msgid "Are you sure you want to cancel the selected jobs?"
 msgstr "Tem certeza que quer cancelar as tarefas selecionadas?"
 
-#: ../gebr-job-control.c:2775
+#: ../gebr-job-control.c:2781
 msgid "Asking node to cancel job."
 msgstr "Requisitando cancelamento da tarefa ao nó de processamento."
 
-#: ../gebr-job-control.c:2776
+#: ../gebr-job-control.c:2782
 #, c-format
 msgid "Asking node \"%s\" to cancel job \"%s\"."
 msgstr ""
 "Requisitando ao nó de processamento \"%s\" o cancelamento da tarefa \"%s\"."
 
-#: ../gebr-job-control.c:2799
+#: ../gebr-job-control.c:2805
 msgid "Clear job"
 msgstr "Limpar tarefa"
 
-#: ../gebr-job-control.c:2813
+#: ../gebr-job-control.c:2819
 #, c-format
 msgid "Are you sure you want to clear job \"%s\"?"
 msgstr "Tem certeza que deseja limpar a tarefa \"%s\"?"
 
-#: ../gebr-job-control.c:2818
+#: ../gebr-job-control.c:2824
 msgid "Are you sure you want to clear the selected jobs?"
 msgstr "Tem certeza que quer limpar as tarefas selecionadas?"
 
@@ -1234,63 +1234,63 @@ msgstr "Tem certeza que quer limpar as tarefas selecionadas?"
 msgid "Command line (node %s):\n"
 msgstr "Linha de comando (nó %s):\n"
 
-#: ../gebr-maestro-controller.c:147
+#: ../gebr-maestro-controller.c:148
 msgid "Click here to add a node"
 msgstr "Clique aqui para adicionar um nó"
 
-#: ../gebr-maestro-controller.c:183
+#: ../gebr-maestro-controller.c:184
 msgid "The group name already exists"
 msgstr "O nome do grupo já existe"
 
-#: ../gebr-maestro-controller.c:183
+#: ../gebr-maestro-controller.c:184
 msgid "The group name must be alphanumeric"
 msgstr "O nome do grupo deve ser alfanumérico"
 
-#: ../gebr-maestro-controller.c:275
+#: ../gebr-maestro-controller.c:276
 msgid "Choose the group name and press ENTER"
 msgstr "Escolha o nome do grupo e pressione ENTER."
 
-#: ../gebr-maestro-controller.c:438
+#: ../gebr-maestro-controller.c:439
 msgid "Drop nodes here to increment this group!"
 msgstr "Arraste nós de processamento para cá para incrementar este grupo!"
 
-#: ../gebr-maestro-controller.c:502
+#: ../gebr-maestro-controller.c:503
 msgid "_Remove from group"
 msgstr "Remover do grupo"
 
-#: ../gebr-maestro-controller.c:579 ../gebr-maestro-controller.c:1754
+#: ../gebr-maestro-controller.c:580 ../gebr-maestro-controller.c:1755
 msgid "Address"
 msgstr "Endereço"
 
-#: ../gebr-maestro-controller.c:896
+#: ../gebr-maestro-controller.c:897
 msgid "_Connect"
 msgstr "Conectar"
 
-#: ../gebr-maestro-controller.c:900
+#: ../gebr-maestro-controller.c:901
 msgid "_Disconnect"
 msgstr "Desconectar"
 
-#: ../gebr-maestro-controller.c:905
+#: ../gebr-maestro-controller.c:906
 msgid "_Remove"
 msgstr "Remover"
 
 # t I/O labels
-#: ../gebr-maestro-controller.c:909
+#: ../gebr-maestro-controller.c:910
 msgid "Stop Server"
 msgstr "Parar"
 
-#: ../gebr-maestro-controller.c:978
+#: ../gebr-maestro-controller.c:979
 #, c-format
 msgid "nodes of maestro %s"
 msgstr "nós de processamento associadas ao maestro %s"
 
 #. FIXME: Do we need to use threads_enter here???
 #. I don t know why markup does not work here
-#: ../gebr-maestro-controller.c:1325
+#: ../gebr-maestro-controller.c:1326
 msgid "Invalid input"
 msgstr "Entrada inválida"
 
-#: ../gebr-maestro-controller.c:1328
+#: ../gebr-maestro-controller.c:1329
 #, c-format
 msgid ""
 "GêBR supports the formats hostname or ip address.\n"
@@ -1302,39 +1302,39 @@ msgstr ""
 "\n"
 "A entrada %s será automaticamente removida."
 
-#: ../gebr-maestro-controller.c:1423
+#: ../gebr-maestro-controller.c:1424
 msgid "Connect to this node when GêBR starts"
 msgstr "Conectar-se a este nó ao iniciar a GêBR"
 
-#: ../gebr-maestro-controller.c:1425
+#: ../gebr-maestro-controller.c:1426
 msgid "Do not connect to this node when GêBR starts"
 msgstr "Não conectar-se a este nó de processamento ao iniciar a GêBR"
 
-#: ../gebr-maestro-controller.c:1703
+#: ../gebr-maestro-controller.c:1704
 msgid "Set an alias for this domain."
 msgstr "Definir um pseudônimo a este domínio."
 
-#: ../gebr-maestro-controller.c:1728
+#: ../gebr-maestro-controller.c:1729
 msgid "AC"
 msgstr "AC"
 
-#: ../gebr-maestro-controller.c:1783
+#: ../gebr-maestro-controller.c:1784
 msgid "CPU Clock"
 msgstr "Clock da CPU"
 
-#: ../gebr-maestro-controller.c:1795
+#: ../gebr-maestro-controller.c:1796
 msgid "Memory"
 msgstr "Memória"
 
-#: ../gebr-maestro-controller.c:1811
+#: ../gebr-maestro-controller.c:1812
 msgid "GêBR - Maestro / Nodes"
 msgstr "GêBR - Maestro / Nós de processamento"
 
-#: ../gebr-maestro-controller.c:1813
+#: ../gebr-maestro-controller.c:1814
 msgid "Help"
 msgstr "Ajuda"
 
-#: ../gebr-maestro-controller.c:1865
+#: ../gebr-maestro-controller.c:1866
 #, c-format
 msgid ""
 "<span size='large'>%s</span>\n"
@@ -1343,54 +1343,26 @@ msgstr ""
 "<span size='large'>%s</span>\n"
 "%s"
 
-#: ../gebr-maestro-controller.c:1868
+#: ../gebr-maestro-controller.c:1869
 #, c-format
 msgid "SSH question from %s"
 msgstr "Pergunta do SSH de %s"
 
-#: ../gebr-maestro-controller.c:1908
+#: ../gebr-maestro-controller.c:1904
 msgid "Enter password"
 msgstr "Entre com a senha"
 
-#: ../gebr-maestro-controller.c:1919 ../gebr-maestro-controller.c:1928
-#, c-format
-msgid "Connecting to %s"
-msgstr "Conectando-se a %s"
-
 #: ../gebr-maestro-controller.c:1920
-#, c-format
-msgid ""
-"Maestro <b>%s</b> is asking for your login\n"
-"password."
-msgstr ""
-"Maestro <b>%s</b> está requisitando sua senha\n"
-"de login."
-
-#: ../gebr-maestro-controller.c:1926
-#, c-format
-msgid "Stopping %s"
-msgstr "Interrompendo %s"
-
-#: ../gebr-maestro-controller.c:1929
-#, c-format
-msgid ""
-"<b>%s</b> is asking for your login\n"
-"password."
-msgstr ""
-"<b>%s</b> está requisitando senha\n"
-"de login."
-
-#: ../gebr-maestro-controller.c:1940
 #, c-format
 msgid "<i>Wrong password. Please, try again.</i>"
 msgstr "<i>Senha incorreta. Por favor, tente novamente.</i>"
 
-#: ../gebr-maestro-controller.c:1952
+#: ../gebr-maestro-controller.c:1932
 #, c-format
 msgid "Remember me"
 msgstr "Lembrar senha"
 
-#: ../gebr-maestro-controller.c:2018
+#: ../gebr-maestro-controller.c:1996
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1399,7 +1371,7 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente desconectá-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:2021
+#: ../gebr-maestro-controller.c:1999
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1408,7 +1380,7 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:2024
+#: ../gebr-maestro-controller.c:2002
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
@@ -1417,27 +1389,27 @@ msgstr ""
 "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:2063 ../ui_log.c:157
+#: ../gebr-maestro-controller.c:2041 ../ui_log.c:157
 msgid "Disconnected"
 msgstr "Desconectado"
 
-#: ../gebr-maestro-controller.c:2071
+#: ../gebr-maestro-controller.c:2049
 msgid "Connected"
 msgstr "Conectado"
 
-#: ../gebr-maestro-controller.c:2092
+#: ../gebr-maestro-controller.c:2070
 msgid "Connecting"
 msgstr "Conectando"
 
-#: ../gebr-maestro-controller.c:2114
+#: ../gebr-maestro-controller.c:2092
 msgid "This node has a different NFS"
 msgstr "Este nó de processamento tem um sistema de arquivos diferente"
 
-#: ../gebr-maestro-controller.c:2116
+#: ../gebr-maestro-controller.c:2094
 msgid "Node already added"
 msgstr "Nó de processamento já adicionado"
 
-#: ../gebr-maestro-controller.c:2117
+#: ../gebr-maestro-controller.c:2095
 #, c-format
 msgid ""
 "The node %s was already added in this domain. It will be automatically "
@@ -1446,42 +1418,84 @@ msgstr ""
 "O nó de processamento %s já foi adicionado a este domínio. Ele será "
 "automaticamente removido."
 
-#: ../gebr-maestro-controller.c:2122
+#: ../gebr-maestro-controller.c:2100
 msgid "This node is using a different protocol version"
 msgstr "Este nó de processamento usa uma versão de protocolo diferente"
 
-#: ../gebr-maestro-controller.c:2124
+#: ../gebr-maestro-controller.c:2102
+msgid ""
+"The authentication cookie of this node was not found in the list of "
+"authorized cookies"
+msgstr ""
+"O cookie de autenticação deste nó não foi encontrado na lista decookies "
+"autorizados."
+
+#: ../gebr-maestro-controller.c:2105
 msgid "This node is working for another domain"
 msgstr "Este nó de processamento já está registrado a um outro domínio"
 
-#: ../gebr-maestro-controller.c:2128
+#: ../gebr-maestro-controller.c:2109
 msgid "This node cannot connect to display. Try reconnect it"
 msgstr ""
 "Não foi possível conectar-se ao ambiente gráfico do nó de processamento. "
 "Tente reconectá-lo."
 
-#: ../gebr-maestro-controller.c:2130
+#: ../gebr-maestro-controller.c:2111
 msgid "This node has stopped."
 msgstr "Este nó foi interrompido."
 
-#: ../gebr-maestro-controller.c:2316
+#: ../gebr-maestro-controller.c:2338
 #, c-format
 msgid "Succesfully connected to host %s"
 msgstr "Conectado com êxito a %s"
 
-#: ../gebr-maestro-server.c:1584
+#: ../gebr-maestro-server.c:164 ../gebr-maestro-server.c:607
+#: ../gebr-maestro-server.c:1726
+#, c-format
+msgid "Connecting to %s"
+msgstr "Conectando-se a %s"
+
+#: ../gebr-maestro-server.c:605
+#, c-format
+msgid "Stopping %s"
+msgstr "Interrompendo %s"
+
+#: ../gebr-maestro-server.c:608
+#, c-format
+msgid ""
+"<b>%s</b> is asking for your login\n"
+"password."
+msgstr ""
+"<b>%s</b> está requisitando senha\n"
+"de login."
+
+#: ../gebr-maestro-server.c:1654
 msgid "Local domain"
 msgstr "Domínio local"
 
-#: ../gebr-maestro-server.c:1586
+#: ../gebr-maestro-server.c:1656
 #, c-format
 msgid "Maestro %s"
 msgstr "Maestro %s"
 
-#: ../gebr-maestro-server.c:2118
+#: ../gebr-maestro-server.c:1727
+#, c-format
+msgid ""
+"Maestro <b>%s</b> is asking for your login\n"
+"password."
+msgstr ""
+"Maestro <b>%s</b> está requisitando sua senha\n"
+"de login."
+
+#: ../gebr-maestro-server.c:2204
 #, c-format
 msgid "Domain protocol version mismatch: %s"
 msgstr "Versão de protocolo do domínio incompatível: %s"
+
+#: ../gebr-maestro-server.c:2206
+#, c-format
+msgid "The cookie %s was not found in the list of authorized cookies"
+msgstr "O cookie %s não foi encontrado na lista de cookies autorizados."
 
 #: ../gebr-menu-view.c:190
 msgid "Close this help and back to menus list"
@@ -1910,16 +1924,16 @@ msgstr "Escolha um caminho válido"
 msgid "Title cannot be empty"
 msgstr "Título não pode estar vazio"
 
-#: ../line.c:148 ../ui_document.c:2290 ../ui_preferences.c:494
+#: ../line.c:148 ../ui_document.c:2290 ../ui_preferences.c:528
 msgid "Invalid email"
 msgstr "Email inválido"
 
-#: ../line.c:148 ../ui_document.c:2290 ../ui_preferences.c:494
-#: ../ui_preferences.c:854
+#: ../line.c:148 ../ui_document.c:2290 ../ui_preferences.c:528
+#: ../ui_preferences.c:888
 msgid "Your email address"
 msgstr "Seu endereço de e-mail"
 
-#: ../line.c:185 ../ui_preferences.c:190
+#: ../line.c:185 ../ui_preferences.c:208
 msgid "Success!"
 msgstr "Sucesso!"
 
@@ -2160,8 +2174,8 @@ msgstr "Remover parâmetros atuais."
 msgid "%s '%s' - Properties"
 msgstr "%s '%s' - Propriedades"
 
-#: ../ui_document.c:449 ../ui_preferences.c:1085 ../ui_preferences.c:1162
-#: ../ui_preferences.c:1171
+#: ../ui_document.c:449 ../ui_preferences.c:1119 ../ui_preferences.c:1196
+#: ../ui_preferences.c:1205
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -2730,13 +2744,15 @@ msgid "No nodes connected in %s"
 msgstr "Nenhum nó conectado em %s"
 
 #: ../ui_log.c:308
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"Could not connect to domain %s:\n"
+"Could not connect to domain%s%s:\n"
 "%s"
-msgstr "Não foi possível conectar ao domínio %s"
+msgstr ""
+"Não foi possível conectar ao domínio %s%s:\n"
+"%s"
 
-#: ../ui_log.c:312
+#: ../ui_log.c:315
 #, c-format
 msgid "Not connected"
 msgstr "Desconectado"
@@ -2777,37 +2793,37 @@ msgstr ""
 msgid "Type hostname[.domain] or address"
 msgstr "Digite nome_da_maquina[.dominio] ou endereço"
 
-#: ../ui_preferences.c:194
+#: ../ui_preferences.c:212
 #, c-format
 msgid "<span size='large'>Successfully connected to domain <b>%s</b>!</span>"
 msgstr "<span size='large'>Conectado com êxito ao domínio <b>%s</b>!</span>"
 
-#: ../ui_preferences.c:221 ../ui_preferences.c:535
+#: ../ui_preferences.c:231 ../ui_preferences.c:569
 msgid "Connecting..."
 msgstr "Conectando..."
 
-#: ../ui_preferences.c:225
+#: ../ui_preferences.c:235
 #, c-format
 msgid "<span size='large'>Connecting to domain <b>%s</b>!</span>"
 msgstr "<span size='large'>Conectando ao domínio <b>%s</b>!</span>"
 
-#: ../ui_preferences.c:231
+#: ../ui_preferences.c:241
 #, c-format
 msgid "<span size='large'>Domain <b>%s</b> disconnected!</span>!"
 msgstr "<span size='large'>Desconectado do domínio <b>%s</b>!</span>"
 
-#: ../ui_preferences.c:236
+#: ../ui_preferences.c:246
 #, c-format
 msgid "Stopped!"
 msgstr "Parado!"
 
-#: ../ui_preferences.c:243
+#: ../ui_preferences.c:253
 #, c-format
 msgid "<span size='large'>Could not connect to domain <b>%s</b></span>!"
 msgstr ""
 "<span size='large'>Não foi possível conectar ao domínio <b>%s</b></span>!"
 
-#: ../ui_preferences.c:256
+#: ../ui_preferences.c:266
 #, c-format
 msgid ""
 "The connection reported the following error:\n"
@@ -2816,65 +2832,65 @@ msgstr ""
 "A conexão reportou o seguinte erro:\n"
 "<i>%s</i>"
 
-#: ../ui_preferences.c:513
+#: ../ui_preferences.c:547
 msgid "Remote browsing is enabled!"
 msgstr "A navegação remota está habilitada!"
 
-#: ../ui_preferences.c:521
+#: ../ui_preferences.c:555
 msgid "Remote browsing is disabled!"
 msgstr "A navegação remota está desabilitada!"
 
-#: ../ui_preferences.c:525
+#: ../ui_preferences.c:559
 msgid "Failed to enable remote browsing!"
 msgstr "Falha ao ativar a navegação remota"
 
-#: ../ui_preferences.c:630
+#: ../ui_preferences.c:664
 #, c-format
 msgid "<i><b>%d</b> connected.</i>"
 msgstr "<i><b>%d</b> conectado.</i>"
 
-#: ../ui_preferences.c:634 ../ui_preferences.c:665 ../ui_preferences.c:1013
+#: ../ui_preferences.c:668 ../ui_preferences.c:699 ../ui_preferences.c:1047
 msgid "<i>None connected.</i>"
 msgstr "<i>Nenhum conectado.</i>"
 
-#: ../ui_preferences.c:637 ../ui_preferences.c:663
+#: ../ui_preferences.c:671 ../ui_preferences.c:697
 msgid "<i>Connected.</i>"
 msgstr "<i>Conectado.</i>"
 
-#: ../ui_preferences.c:639
+#: ../ui_preferences.c:673
 msgid "GêBR is ready."
 msgstr "GêBR está pronta."
 
-#: ../ui_preferences.c:640 ../ui_preferences.c:656 ../ui_preferences.c:661
-#: ../ui_preferences.c:1008
+#: ../ui_preferences.c:674 ../ui_preferences.c:690 ../ui_preferences.c:695
+#: ../ui_preferences.c:1042
 msgid "<i>Done.</i>"
 msgstr "<i>Concluído.</i>"
 
-#: ../ui_preferences.c:646 ../ui_preferences.c:1015
+#: ../ui_preferences.c:680 ../ui_preferences.c:1049
 msgid "<i>Disabled.</i>"
 msgstr "<i>Desativada.</i>"
 
-#: ../ui_preferences.c:649
+#: ../ui_preferences.c:683
 msgid "<i>Enabled.</i>"
 msgstr "<i>Ativada.</i>"
 
-#: ../ui_preferences.c:653 ../ui_preferences.c:1006
+#: ../ui_preferences.c:687 ../ui_preferences.c:1040
 msgid "GêBR is unable to proceed without this configuration."
 msgstr "GêBR não consegue avançar sem esta configuração"
 
-#: ../ui_preferences.c:659 ../ui_preferences.c:1011
+#: ../ui_preferences.c:693 ../ui_preferences.c:1045
 msgid "<i>Not connected.</i>"
 msgstr "<i>Desconectado.</i>"
 
-#: ../ui_preferences.c:668
+#: ../ui_preferences.c:702
 msgid "<i>Not configured</i>"
 msgstr "<i>Não configurado</i>"
 
-#: ../ui_preferences.c:717 ../ui_preferences.c:1103 ../ui_preferences.c:1109
+#: ../ui_preferences.c:751 ../ui_preferences.c:1137 ../ui_preferences.c:1143
 msgid "Maestro"
 msgstr "Maestro"
 
-#: ../ui_preferences.c:732
+#: ../ui_preferences.c:766
 #, c-format
 msgid ""
 "The domain <b>%s</b> needs at least one <i>connected node</i> to run "
@@ -2885,44 +2901,44 @@ msgstr ""
 "os fluxos de processamento. Você deve adicionar uma nova máquina de "
 "processamento ou conectar-se às máquinas registradas abaixo.\n"
 
-#: ../ui_preferences.c:841
+#: ../ui_preferences.c:875
 msgid "You should know your name"
 msgstr "Você deveria saber seu nome"
 
-#: ../ui_preferences.c:866
+#: ../ui_preferences.c:900
 msgid "User's menu directory"
 msgstr "Diretório de menus do usuário"
 
-#: ../ui_preferences.c:868
+#: ../ui_preferences.c:902
 msgid "Path to look for user's private menus"
 msgstr "Caminho para procurar menus particulares do usuário"
 
-#: ../ui_preferences.c:929
+#: ../ui_preferences.c:963
 msgid "GêBR supports the formats hostname or ip address."
 msgstr "GêBR suporta o formato <i>hostname</i> ou <i>endereços IP</i>."
 
-#: ../ui_preferences.c:1069
+#: ../ui_preferences.c:1103
 msgid "Configuring GêBR"
 msgstr "Configurando GêBR"
 
-#: ../ui_preferences.c:1079
+#: ../ui_preferences.c:1113
 msgid "Status"
 msgstr "Estado"
 
-#: ../ui_preferences.c:1092
+#: ../ui_preferences.c:1126
 msgid "Welcome"
 msgstr "Bem-vindo"
 
-#: ../ui_preferences.c:1094
+#: ../ui_preferences.c:1128
 #, c-format
 msgid "It's the first time you use GêBR %s."
 msgstr "É a primeira vez que você usa GêBR %s."
 
-#: ../ui_preferences.c:1115 ../ui_preferences.c:1121
+#: ../ui_preferences.c:1149 ../ui_preferences.c:1155
 msgid "Nodes"
 msgstr "Nós"
 
-#: ../ui_preferences.c:1127
+#: ../ui_preferences.c:1161
 msgid "Remote Browsing"
 msgstr "Navegação remota"
 

@@ -1428,7 +1428,7 @@ flow_browse_setup_ui()
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED && !gebr.line) {
-		ui_flow_browse->warn_window = gtk_label_new(_("No line is selected\n"));
+		ui_flow_browse->warn_window = gtk_label_new(_("Select one line to edit or execute its flows.\n"));
 	} else
 		ui_flow_browse->warn_window = gtk_label_new(_("The domain of this line is disconnected,\nthen you cannot edit flows.\n"
 							      "Try reconnecting its domain or moving this line to another one."));

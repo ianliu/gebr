@@ -1326,7 +1326,7 @@ gebr_flow_set_toolbar_sensitive(void)
 		gtk_widget_show(gebr.ui_flow_browse->left_panel);
 	} else {
 		if (!line_selected) {
-			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("No line is selected\n"));
+			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window), _("Select one line to edit or execute its flows.\n"));
 			gtk_widget_hide(gebr.ui_flow_browse->left_panel);
 		} else if (maestro_disconnected) {
 			gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->warn_window),
