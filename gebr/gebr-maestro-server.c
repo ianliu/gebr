@@ -262,7 +262,7 @@ gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro)
 	if (maestro->priv->has_connected_daemon)
 		return FALSE;
 
-	const gchar *client_nfsid = gebr_get_client_nfsid();
+	const gchar *client_nfsid = gebr_get_nfsid();
 
 	if (!client_nfsid)
 		return TRUE;
@@ -590,22 +590,18 @@ gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestro)
 static gboolean
 check_client_is_in_the_same_nfs_as_daemons(GString *nfsid)
 {
-	gboolean same_nfs = FALSE;
-	gchar *gebrd_lock_filename = g_strdup_printf("%s/.gebr/run/gebrd-fslock.run", g_get_home_dir());
-	gchar *gebrd_nfsid = NULL;
+	const gchar *gebrd_nfsid = gebr_get_nfsid();
 
-	gchar *gebrd_bin_path = g_find_program_in_path("gebrd");
-	gboolean lock_exists = g_access(gebrd_lock_filename, R_OK) == 0;
-	gboolean read_ok = g_file_get_contents(gebrd_lock_filename, &gebrd_nfsid, NULL, NULL);
-	gboolean has_gebrd = gebrd_bin_path ? TRUE : FALSE;
+	if (g_strcmp0(gebrd_nfsid, nfsid->str) != 0)
+		return FALSE;
 
-	if (has_gebrd && lock_exists && read_ok && g_strcmp0(gebrd_nfsid, nfsid->str) == 0)
-		same_nfs = TRUE;
+	gchar *gebrd_path = g_find_program_in_path("gebrd");
 
-	g_free(gebrd_bin_path);
-	g_free(gebrd_nfsid);
+	if (!gebrd_path)
+		return FALSE;
 
-	return same_nfs;
+	g_free(gebrd_path);
+	return TRUE;
 }
 
 static PasswordKeys *

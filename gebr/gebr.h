@@ -229,8 +229,6 @@ void gebr_config_set_current_nfs_info(const gchar *nfsid,
                                       const gchar *hosts,
                                       const gchar *label);
 
-const gchar *gebr_get_client_nfsid(void);
-
 void restore_project_line_flow_selection(void);
 
 gchar *gebr_get_maestros_conf_path(void);

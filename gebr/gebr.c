@@ -803,33 +803,6 @@ gebr_config_set_current_nfs_info(const gchar *nfsid,
 	gebr_maestro_settings_set_domain(gebr.config.maestro_set, nfsid, label, "");
 }
 
-const gchar *
-gebr_get_client_nfsid(void)
-{
-	static gchar *nfsid = NULL;
-
-	if (!nfsid) {
-		gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", "run", "gebrd-fslock.run", NULL);
-
-		if (g_access(filename, R_OK) == 0) {
-			gchar *contents;
-
-			if (!g_file_get_contents(filename, &contents, NULL, NULL)) {
-				g_free(filename);
-				return NULL;
-			}
-
-			if (contents && *contents)
-				nfsid = g_strdup(contents);
-
-			g_free(contents);
-		}
-		g_free(filename);
-	}
-
-	return nfsid;
-}
-
 gchar *
 gebr_get_maestros_conf_path(void)
 {
