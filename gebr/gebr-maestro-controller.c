@@ -2260,6 +2260,23 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 	project_line_info_update();
 }
 
+static gboolean
+check_client_is_in_the_same_nfs_as_daemons(const gchar *nfsid)
+{
+	const gchar *gebrd_nfsid = gebr_get_nfsid();
+
+	if (g_strcmp0(gebrd_nfsid, nfsid) != 0)
+		return FALSE;
+
+	gchar *gebrd_path = g_find_program_in_path("gebrd");
+
+	if (!gebrd_path)
+		return FALSE;
+
+	g_free(gebrd_path);
+	return TRUE;
+}
+
 static void
 on_prop_home_notify(GebrMaestroServer *maestro,
                     GParamSpec *pspec,
@@ -2279,6 +2296,11 @@ on_prop_nfsid_notify(GebrMaestroServer *maestro,
 	update_xml_parameters(maestro, gebr.ui_project_line, FALSE);
 	gebr_log_update_maestro_info(gebr.ui_log, maestro);
 	gebr_maestro_controller_maestro_state_changed_real(self, maestro);
+
+	if (check_client_is_in_the_same_nfs_as_daemons(gebr_maestro_server_get_nfsid(maestro)))
+		gebr_maestro_controller_server_list_add(self, g_get_host_name(), TRUE);
+
+	gebr_config_maestro_save();
 }
 
 static void 

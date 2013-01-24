@@ -583,23 +583,6 @@ gebr_maestro_server_set_nfs_label_for_jobs(GebrMaestroServer *maestro)
 	g_hash_table_foreach(maestro->priv->jobs, (GHFunc)add_nfs_label, maestro);
 }
 
-static gboolean
-check_client_is_in_the_same_nfs_as_daemons(GString *nfsid)
-{
-	const gchar *gebrd_nfsid = gebr_get_nfsid();
-
-	if (g_strcmp0(gebrd_nfsid, nfsid->str) != 0)
-		return FALSE;
-
-	gchar *gebrd_path = g_find_program_in_path("gebrd");
-
-	if (!gebrd_path)
-		return FALSE;
-
-	g_free(gebrd_path);
-	return TRUE;
-}
-
 static PasswordKeys *
 send_daemon_password_request(GebrMaestroServer *maestro, GebrDaemonServer *daemon,
 			     gboolean accepts_key, gboolean retry_pass)
@@ -1171,10 +1154,6 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_maestro_server_set_nfs_label_for_jobs(maestro);
 			gebr_maestro_server_set_nfsid(maestro, nfsid->str);
 
-
-			if (check_client_is_in_the_same_nfs_as_daemons(nfsid))
-				gebr_maestro_controller_server_list_add(gebr.maestro_controller, g_get_host_name(), TRUE);
-
 			// Mount SFTP if needed
 			if (gebr_maestro_server_need_mount_gvfs (maestro) && !maestro->priv->wizard_setup)
 				gebr_maestro_server_request_sftp(maestro);
@@ -1273,9 +1252,6 @@ static void
 gebr_maestro_server_state_change_real(GebrMaestroServer *maestro)
 {
 	update_groups_store(maestro);
-
-	if (maestro->priv->nfsid)
-		gebr_config_maestro_save();
 }
 
 static void
