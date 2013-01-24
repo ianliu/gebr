@@ -223,7 +223,7 @@ on_sftp_port_defined(GebrCommPortProvider *self,
 	g_signal_connect(op, "aborted", G_CALLBACK(on_sftp_aborted), maestro);
 	g_signal_connect(op, "ask-password", G_CALLBACK(on_sftp_ask_password), maestro);
 	g_signal_connect(op, "ask-question", G_CALLBACK(on_sftp_ask_question), maestro);
-	g_signal_connect(op, "show-process", G_CALLBACK(on_sftp_show_process), maestro);
+	g_signal_connect(op, "show-processes", G_CALLBACK(on_sftp_show_process), maestro);
 	g_file_mount_enclosing_volume(maestro->priv->mount_location, 0, op, NULL,
 				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
 				      maestro);
