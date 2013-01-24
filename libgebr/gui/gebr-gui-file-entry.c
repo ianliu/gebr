@@ -165,7 +165,7 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 	                                                        entry_text,
 	                                                        file_entry->prefix,
 	                                                        file_entry->need_gvfs,
-	                                                        paths, TRUE,
+	                                                        paths, TRUE, TRUE,
 	                                                        &new_text);
 
 	if (response == GTK_RESPONSE_OK) {

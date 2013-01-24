@@ -1234,7 +1234,7 @@ void project_line_import(void)
 	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 	gchar ***paths = gebr_generate_paths_with_home(home);
 	gint response = gebr_file_chooser_set_remote_navigation(chooser_dialog, home,
-	                                                        prefix, mount_gvfs, paths, FALSE,
+	                                                        prefix, mount_gvfs, paths, FALSE, FALSE,
 	                                                        &new_text);
 	/* show file chooser */
 	if (response == GTK_RESPONSE_YES)

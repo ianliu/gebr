@@ -3209,7 +3209,7 @@ flow_browse_open_activated(GebrUiFlowBrowse *fb,
 	gchar *new_text;
 	gboolean mount_gvfs = gebr_maestro_server_need_mount_gvfs (maestro);
 	gint response = gebr_file_chooser_set_remote_navigation(dialog, entry_text,
-	                                                        prefix, mount_gvfs, paths, TRUE,
+	                                                        prefix, mount_gvfs, paths, TRUE, TRUE,
 	                                                        &new_text);
 	if (response == GTK_RESPONSE_YES) {
 		g_object_set(fb->text_renderer, "text", new_text, NULL);

@@ -1294,6 +1294,7 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
                                         gchar ***paths,
                                         GtkWidget *dialog,
                                         gboolean has_error,
+                                        gboolean set_file,
                                         gchar **error)
 {
 	if (has_error) {
@@ -1305,7 +1306,9 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
 	const gchar *home_by_key = gebr_paths_get_value_by_key(tmp, "HOME");
 	const gchar *base_by_key = gebr_paths_get_value_by_key(tmp, "BASE");
 	gchar *home_dir = gebr_resolve_relative_path(home_by_key, paths);
-	gchar *base_dir = gebr_resolve_relative_path(base_by_key, paths);
+	gchar *base_dir = NULL;
+	if (base_by_key)
+		base_dir = gebr_resolve_relative_path(base_by_key, paths);
 
 	gchar *aux = gebr_resolve_relative_path(entry_text, paths);	/*Relativize*/
 	gebr_validate_path(aux, paths, error);	/*Sets error messages*/
@@ -1322,10 +1325,12 @@ gebr_file_chooser_set_current_directory(const gchar *entry_text,
 		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), home_dir);
 	}
 
-	gchar *filename = g_strrstr(entry_name, "/");
-	filename = filename + 1;
-	if (filename)
-		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
+	if (set_file) {
+		gchar *filename = g_strrstr(entry_name, "/");
+		filename = filename + 1;
+		if (filename)
+			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), filename);
+	}
 
 	g_free(aux);
 	g_free(home_dir);
@@ -1357,6 +1362,7 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 					gboolean need_gvfs,
                                         gchar ***paths,
                                         gboolean insert_bookmarks,
+                                        gboolean set_file,
                                         gchar **new_text)
 {
 	g_return_val_if_fail(new_text != NULL, GTK_RESPONSE_CANCEL);
@@ -1369,7 +1375,7 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 	gboolean has_error = need_gvfs && !sftp_pref;
 	gebr_gtk_bookmarks_add_paths(filename, sftp_prefix, paths);
 	gebr_file_chooser_set_current_directory(entry_text, sftp_prefix, paths,
-	                                        dialog, has_error, &err_filechooser);
+	                                        dialog, has_error, set_file, &err_filechooser);
 
 	if (has_error)
 		gebr_file_chooser_set_warning_widget(paths, filename, dialog);

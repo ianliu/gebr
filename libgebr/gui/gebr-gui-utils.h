@@ -523,6 +523,7 @@ void gebr_file_chooser_set_current_directory (const gchar *entr,
                                               gchar ***paths,
                                               GtkWidget *dialog,
                                               gboolean has_error,
+                                              gboolean set_file,
                                               gchar **error);
 
 gint gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
@@ -531,6 +532,7 @@ gint gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
                                              gboolean need_gvfs,
                                              gchar ***paths,
                                              gboolean insert_bookmarks,
+                                             gboolean set_file,
                                              gchar **new_text);
 
 void gebr_gui_help_button_clicked(const gchar *section, gchar **error);
