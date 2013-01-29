@@ -1057,17 +1057,16 @@ static gboolean update_progress(gpointer user_data)
 			gtk_text_buffer_insert_at_cursor (text_buffer, paths->str, paths->len);
 
 			gchar *text = g_strdup_printf("%s\n\n%s",
-			                              _("<span size='large' weight='bold'>Create directories?</span>"),
+			                              _("<span size='large' weight='bold'>Creating directories of this line</span>"),
 			                              _("There are some line's paths located on your home directory that\n"
-			                        	" do not exist. Do you want to create the following folders?"));
+			                        	" need to be created. The following folders will be created:"));
 
 
 			gtk_label_set_markup(data->label, text);
 			g_free(text);
 
 			gtk_dialog_add_buttons(data->dialog,
-			                       GTK_STOCK_NO, GTK_RESPONSE_NO,
-			                       GTK_STOCK_YES, GTK_RESPONSE_YES,
+			                       GTK_STOCK_OK, GTK_RESPONSE_YES,
 			                       NULL);
 			gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(data->dialog)), scrolled_window, TRUE, TRUE, 0);
 
@@ -1104,6 +1103,7 @@ on_path_error(GebrMaestroServer *maestro,
 				"You do not have the permissions necessary to create the directories."));
 	} else if (error_id == GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS) {
 		escaped = g_markup_printf_escaped(_("The directories already exists."));
+		return;
 	} else {
 		g_warn_if_reached();
 		escaped = g_strdup("");
