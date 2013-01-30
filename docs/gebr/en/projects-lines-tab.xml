@@ -252,46 +252,47 @@
   </section>
 
   <section xml:id="projects_lines_change_the_maestro_of_a_line">
-    <title>Changing the maestro of a line</title>
+    <title>Changing the domain of a line</title>
 
     <para>GêBR supports only one connected
       maestro<indexterm><primary>Maestro</primary></indexterm> at
-      time. However, there may be several maestros at disposal, one for the
-      University A and another for University B, for example.</para>
+      time. However, there may be several maestros at disposal, one for 
+      the domain <indexterm><primary>Domain</primary></indexterm>
+      at University A and another for the University B, for example.</para>
 
-    <para>Whenever a maestro is connected, all lines associates to other
-      maestros will be unavailable for edition. However, a line can be migrated
-      from its original maestro to the connected one. To do so, the line must
-      be selected. In the right-hand side panel, an icon in the upper left
-      corner indicates whether the maestro defined for the line is connected or
-      not. In case the original maestro is not the connected one, by clicking
-      over that icon, GêBR will offer two options:</para>
+    <para>Whenever a domain has a maestro connected, all lines owned by other
+      domain won't be available for edition. However, a line can be migrated
+      from its original domain to the domain of the connected maestro. To do so, 
+      the line must be selected. In the right-hand side panel, an icon in the upper left
+      corner indicates whether the maestro who conducts the domain defined for the line 
+      is connected or not. In case the maestro of original domain is not connected, 
+      by clicking over that icon, GêBR will offer two options:</para>
 
     <itemizedlist>
       <listitem>
-        <para>disconnect from the current maestro and connect
-          to the maestro associated to the line; or</para>
+        <para>disconnect from current maestro and connect
+          to maestro who conducts the domain associated to the line; or</para>
       </listitem>
       <listitem>
-        <para>dissociate the line from its original maestro and
-          associate it to the connected maestro.</para>
+        <para>dissociate the line from its original domain and
+          associate it to domain of the connected maestro.</para>
       </listitem>
     </itemizedlist>
 
     <important>
-      <para>Whenever a line is migrated from one maestro to another, all data
+      <para>Whenever a line is migrated from one domain to another, all data
         in the BASE<indexterm><primary>BASE</primary></indexterm> directory and
         in its children will remain in the nodes of the original
-        maestro.</para>
+        domain.</para>
     </important>
 
     <figure>
-      <title>Dialog for lines from disconnected maestros</title>
+      <title>Dialog for lines from domain with disconnected maestro</title>
       <mediaobject>
         <caption>Options available when it's desired to edit/run a line
-          associated to a disconnected maestro.</caption>
+          associated to a domain with a disconnected maestro.</caption>
         <imageobject><imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png"
-						contentwidth="427px"
+						contentwidth="489px"
 						contentdepth="293px"
 						/></imageobject></mediaobject></figure>
   </section>

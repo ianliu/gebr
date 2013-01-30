@@ -19,6 +19,14 @@
 				<glossseealso otherterm="Variable">Variable</glossseealso>
 			</glossdef>
 		</glossentry>
+		<glossentry id="Domain">
+			<glossterm>Domain</glossterm>
+			<glossdef>
+				<para>Set of processing nodes conducted by maestro including itself.</para>
+				<glossseealso otherterm="Maestro">Maestro</glossseealso>
+				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
+			</glossdef>
+		</glossentry>
 	</glossdiv>
 	<glossdiv>
 		<title>F</title>

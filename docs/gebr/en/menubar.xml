@@ -127,6 +127,11 @@
               </imageobject>
 	    </inlinemediaobject>)</para></listitem>
       </itemizedlist>
+      <tip><para>It's possible to give an alias for domain
+      <indexterm><primary>Domain</primary></indexterm> conducted 
+      by maestro through the <emphasis>Alias</emphasis> field and clicking
+       <emphasis>Apply</emphasis> to save the alias. 
+      </para></tip>
     </section>
     
     <section>

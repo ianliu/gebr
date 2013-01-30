@@ -249,6 +249,7 @@
     The provided information are:
     <itemizedlist>
       <listitem> <para>Maestro</para></listitem>
+      <listitem> <para>Domain</para></listitem>
       <listitem> <para>GêBR (client)</para></listitem>
       <listitem> <para>Total number of processors used in the execution</para></listitem>
       <listitem> <para>Distribution of the jobs to
