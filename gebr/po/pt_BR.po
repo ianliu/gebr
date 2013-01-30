@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-24 17:04-0200\n"
+"POT-Creation-Date: 2013-01-30 11:45-0200\n"
 "PO-Revision-Date: 2012-12-13 10:20-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -3092,22 +3092,23 @@ msgid "Failed to import."
 msgstr "Falha ao importar."
 
 #: ../ui_project_line.c:1060
-msgid "<span size='large' weight='bold'>Create directories?</span>"
-msgstr "<span size='large' weight='bold'>Criar diretórios?</span>"
+msgid ""
+"<span size='large' weight='bold'>Creating directories of this line</span>"
+msgstr "<span size='large' weight='bold'>Criando diretórios desta linha</span>"
 
 #: ../ui_project_line.c:1061
 msgid ""
 "There are some line's paths located on your home directory that\n"
-" do not exist. Do you want to create the following folders?"
+" need to be created. The following folders will be created:"
 msgstr ""
 "Existem caminhos preferenciais de linha no seu diretório pessoal que\n"
-"não existem. Gostaria de criar as seguintes pastas?"
+"precisam ser criado. As seguintes pastas serão criadas:"
 
-#: ../ui_project_line.c:1099
+#: ../ui_project_line.c:1098
 msgid "Could not create the directories"
 msgstr "Não foi possível criar o diretório."
 
-#: ../ui_project_line.c:1103
+#: ../ui_project_line.c:1102
 #, c-format
 msgid ""
 "The directories could not be created. You do not have the permissions "
@@ -3116,7 +3117,7 @@ msgstr ""
 "Os diretórios não puderam ser criados. Você não tem as permissões "
 "necessárias para criar os diretórios."
 
-#: ../ui_project_line.c:1106
+#: ../ui_project_line.c:1105
 #, c-format
 msgid "The directories already exists."
 msgstr "Os diretórios já existem."
