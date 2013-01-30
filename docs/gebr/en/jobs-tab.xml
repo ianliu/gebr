@@ -185,7 +185,7 @@
       <mediaobject>
         <imageobject>
 					<imagedata fileref="../images/GeBR_jc_left_pane.png"
-						contentwidth="287px" contentdepth="213px" />
+						contentwidth="244px" contentdepth="237px" />
         </imageobject>
       </mediaobject>
     </figure>
@@ -240,7 +240,7 @@
       <mediaobject>
         <imageobject>
 					<imagedata fileref="../images/GeBR_jobs_details.png"
-						contentwidth="416px" contentdepth="298px" />
+						contentwidth="416px" contentdepth="294px" />
         </imageobject>
       </mediaobject>
       <caption> Job information. The user can consult detailed information
@@ -260,7 +260,7 @@
     <mediaobject>
       <imageobject>
 				<imagedata fileref="../images/GeBR_jobs_output.png"
-					contentwidth="666px" contentdepth="473px" />
+					contentwidth="591px" contentdepth="494px" />
       </imageobject>
     </mediaobject>
     <caption>Screenshot of the outputs of a job.</caption>
