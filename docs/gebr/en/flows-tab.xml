@@ -630,7 +630,8 @@
 					<step>
 						Where jobs must be dispatched. Nodes or set of nodes can be choosen to
 						process the jobs. A special option is the Choose automatically. It
-						allows the maestro to search for the least overloaded nodes or set of nodes.
+						allows the maestro to search for the least overloaded nodes or set of nodes
+						 into a domain<indexterm><primary>Domain</primary></indexterm>.
 						If the use changes this parameter,
 						GêBR shows the number of cores of the choosen group.
 					</step>

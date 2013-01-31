@@ -59,8 +59,9 @@
     <title>Connection assistant</title>
     <para>This option helps the user to configure all the necessary 
     connections to work properly GêBR.</para>
-    <para>The connection assistant explains the user to connect to a maestro, 
-    its servers and enable remote browsing 
+    <para>The connection assistant explains how to connect to a maestro, 
+    its servers and enable remote browsing into a domain
+    <indexterm><primary>Domain</primary></indexterm>
     (for more information, see <xref linkend="additional_features_maestro_servers_configuration" /> 
     and <xref linkend="technical_aspects_remote_browsing" />).</para>
   </section>
@@ -103,7 +104,7 @@
       <title>Maestro</title>
 
       <para>In the upper part of the
-				<indexterm><primary>Maestro</primary></indexterm>/Nodes
+		Maestro<indexterm><primary>Maestro</primary></indexterm>/Nodes
         Interface (see <xref linkend="maestro_server_dialog" />),
         there is an entry in which the user can put the desired
         machine to use as maestro. A requirement is that the maestro
@@ -137,12 +138,12 @@
     <section>
       <title>Nodes</title>
       <para>Once the maestro has been selected and the connection has
-        been successfully established, the user can associate nodes 
+        been successfully established, the user can associate nodes
         <indexterm><primary>Node
-        </primary></indexterm> to that maestro.</para>
+        </primary></indexterm> to domain conducted by that maestro.</para>
 
-      <para>Each line of the nodes window represents each machine associated to the
-        maestro. The lines have some columns:</para>
+      <para>Each line of the nodes window represents each machine into maestro's 
+      domain. The lines have some columns:</para>
       <itemizedlist>
 	<listitem>
 	  <para><guilabel>AC</guilabel>: checkbox to activate or not
@@ -167,16 +168,16 @@
       </itemizedlist>
 
 
-      <para>The user can add a new machine by clicking
-        over <guilabel>New</guilabel> and entering the hostname or
+      <para>To add a new machine, click
+        over <guilabel>New</guilabel> and enter the hostname or
         IP address of the machine.</para>
       
     </section>
 
     <section>
       <title>Groups</title>
-      <para>It's possible to employ a subset of the machines associated to
-        the maestro<indexterm><primary>Processing
+      <para>It's possible to employ a subset of the machines into
+        the maestro's domain<indexterm><primary>Processing
         nodes</primary><secondary>group
         of</secondary></indexterm>. This can be done through the
         creation of groups of machines.</para>

@@ -242,7 +242,7 @@
       <para>To be able to browse files in these directory, the
         <emphasis>remote browse</emphasis><indexterm><primary>Remote
         browsing</primary></indexterm> feature must be enabled in the
-        maestro<indexterm><primary>Maestro</primary></indexterm> of
+        domain<indexterm><primary>Domain</primary></indexterm> of
         the line (see
         <xref linkend="technical_aspects_remote_browsing"/>).</para>
     </important>
@@ -514,7 +514,7 @@
       <note>
         <para>The option to include report of flows' snapshots are
           available on line's and flow's <guilabel>View Report</guilabel>. More
-          information about snapshots can be found on section
+          information about snapshots can be found on 
           <xref linkend="flows_snapshots" />
       	</para>
       </note>
