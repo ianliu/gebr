@@ -74,9 +74,10 @@
 		<glossentry id="Maestro">
 			<glossterm>Maestro</glossterm>
 			<glossdef>
-				<para>Resources manager of the pool of processing nodes.
+				<para>Resources manager of the pool of processing nodes into a domain.
 				</para>
 				<glossseealso otherterm="Client">Client</glossseealso>
+				<glossseealso otherterm="Domain">Processing nodes</glossseealso>
 				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
 			</glossdef>
 		</glossentry>

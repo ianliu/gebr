@@ -177,7 +177,8 @@
 
     <para>The user may have access to many machines, which is an usual
     scenario for users of a computational laboratory. Through GêBR, it
-    is possible to take advantage of this set of machines to run
+    is possible to take advantage of this machines inserted into a domain
+    <indexterm><primary>Domain</primary></indexterm> to run
     flows. Those machines, or <emphasis>processing nodes</emphasis>,
     are simply referenced in the GêBR as <emphasis
     role="bold">nodes</emphasis>. They may be
@@ -187,18 +188,25 @@
     they are equally treated by GêBR, which means that the user does
     not have to care about that.</para>
 
-    <para>However, GêBR does not talk directly to the nodes.  This
-    communication is stablished with the intervenience of another
+    <para>However, GêBR does not talk directly to the nodes. This
+    communication is established with the intervenience of another
     player, the <emphasis
-    role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>. When
-    the user decides to execute a flow, GêBR sends the request to the
+    role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>. 
+    When the user decides to execute a flow, GêBR sends the request to the
     maestro, giving rise to a <emphasis
     role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>.
-    The maestro acts as a coordinator of the nodes, collecting
-    information and ranking them according to their capabilities and
-    available resources. Therefore, the maestro can take smart
-    decisions about which machines are best suited to run a
-    job.</para>
+    The maestro acts as a coordinator of the nodes into a domain, 
+    <indexterm><primary>Domain</primary></indexterm> collecting information 
+    and ranking them according to their capabilities and available resources. 
+    Therefore, the maestro can take smart decisions about which machines are 
+    best suited to run a job.</para>
+
+    <note>
+      <para>Only one maestro can be active per domain, but GêBR can alternate 
+      between several domains and is possible to change the domain of a line. 
+      See more at <xref linkend="projects_lines_change_the_maestro_of_a_line"/>.
+      </para>
+    </note>
 
     <figure xml:id="communication_diagram">
       <title>Communication layout between GêBR players</title>
