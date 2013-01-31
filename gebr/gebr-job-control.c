@@ -1022,18 +1022,17 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		const gchar *groups = gebr_job_get_server_group(job);
 		GebrMaestroServerGroupType type = gebr_maestro_server_group_str_to_enum(type_str);
 
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
 		g_string_printf(bold_resources, _("<b>Process distribution among %d processing %s</b>"), n_servers,
 				n_servers > 1 ? _("nodes") : _("node"));
 		gchar *markup;
 
 		if (type == MAESTRO_SERVER_TYPE_GROUP)
 			if (g_strcmp0(groups, "") == 0)
-				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
+				groups = gebr_job_get_nfs_label(job);
 
 		markup = g_markup_printf_escaped(_("Job submitted by <i>%s</i> to <i>%s</i>, "
 						   "split in %d %s%s\n"),
-						  gebr_job_get_hostname(job), gebr_job_get_nfs_label(job),
+						  gebr_job_get_hostname(job), groups,
 						  total_procs,
 						  total_procs > 1 ? _("processes") :_("process"),
 						  g_strcmp0(niceness, "0")? _(", using only free resources of processing nodes.") : _(", disputing for resources of the processing nodes."));
