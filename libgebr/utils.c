@@ -1290,7 +1290,7 @@ gebr_validate_path(const gchar *path,
 			if (*path == '<')
 				*err_msg = g_markup_escape_text(_("The specified line path does not exist"), -1);
 			else
-				*err_msg = g_markup_escape_text(_("The path must either start with < or /"), -1);
+				*err_msg = g_markup_printf_escaped(_("The path must either start with < or /"));
 		}
 		return FALSE;
 	}
