@@ -2567,7 +2567,8 @@ static void flow_browse_load(void)
 				"A snapshot stores the settings of "
 				"your flow so you can restore it at any "
 				"moment. To take a snapshot, just click "
-				"on the camera icon and give a non-empty "
+				"on \"Take a snapshot\" in More menu "
+				"or use Ctrl+S and give a non-empty "
 				"description.");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->revpage_warn_label),
 		                   no_snapshots_msg);
