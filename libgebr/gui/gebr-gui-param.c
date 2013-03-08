@@ -1190,7 +1190,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 				end = i - 1;
 				break;
 			}
-			if (c_curr == ']') {
+			if (c_curr == ']' || c_curr == '/') {
 				end = i;
 				break;
 			}
@@ -1203,13 +1203,20 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 
 	if (ini <= end) {
 		gint special_char = 0, count = ini;
+		gboolean empty_brackets = FALSE;
 		while (count >= 0){
 			gunichar c_curr = g_utf8_get_char(g_utf8_offset_to_pointer(text, count));
+			gunichar c_next = g_utf8_get_char(g_utf8_offset_to_pointer(text, (count+1)));
+			gunichar c_pos_next = g_utf8_get_char(g_utf8_offset_to_pointer(text, (count+2)));
+			if (c_curr == '<' && c_next == '>' && c_pos_next != '/')
+				empty_brackets = TRUE;
 			if (!(g_unichar_isalnum(c_curr) || g_unichar_isspace(c_curr) || g_unichar_ispunct(c_curr)))
 				special_char++;
 			count--;
 		}
-		if (special_char > 1)
+		if (empty_brackets) {
+			gtk_editable_delete_text(GTK_EDITABLE(entry), ini, end);
+		} else if (special_char > 1)
 			gtk_editable_delete_text(GTK_EDITABLE(entry), (ini-1), end+1);
 		else
 			gtk_editable_delete_text(GTK_EDITABLE(entry), ini, end+1);
