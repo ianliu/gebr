@@ -452,7 +452,7 @@ on_connect_maestro_clicked(GtkButton *button,
 	gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_PROGRESS);
 
 	if (up->maestro_addr)
-		g_free(up->maestro_addr);
+		up->maestro_addr = g_strdup("");
 
 	const gchar *entry_text = gtk_entry_get_text(up->maestro_entry);
 	if (g_strrstr(entry_text, "("))
