@@ -233,7 +233,7 @@ gchar *gebr_maestro_server_get_user(GebrMaestroServer *maestro);
 void gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
                                           gboolean is_wizard_setup);
 
-void gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro);
+void gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro, gboolean respect_ac);
 
 gboolean gebr_maestro_server_need_mount_gvfs (GebrMaestroServer *maestro);
 

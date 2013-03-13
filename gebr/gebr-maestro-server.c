@@ -647,7 +647,7 @@ parse_messages(GebrCommServer *comm_server,
 				if (use_key)
 					gebr_comm_server_append_key(comm_server, G_CALLBACK(gebr_maestro_server_append_key_finished), maestro);
 				else
-					gebr_maestro_server_connect_on_daemons(maestro);
+					gebr_maestro_server_connect_on_daemons(maestro, TRUE);
 
 				gchar *display_host;
 				guint display_port;
@@ -2137,7 +2137,7 @@ gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
 }
 
 void
-gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
+gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro, gboolean respect_ac)
 {
 	g_return_if_fail(GEBR_IS_MAESTRO_SERVER(maestro));
 
@@ -2152,6 +2152,12 @@ gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
 	gchar *addr_without_user = gebr_get_host_from_address(server->address->str);
 
 	gebr_comm_uri_add_param(uri, "address", addr_without_user);
+
+	if (respect_ac)
+		gebr_comm_uri_add_param(uri, "respect-ac", "1");
+	else
+		gebr_comm_uri_add_param(uri, "respect-ac", "0");
+
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 
@@ -2166,7 +2172,7 @@ gebr_maestro_server_append_key_finished(GebrMaestroServer *maestro)
 {
 	if (maestro->priv->wizard_setup)
 		return;
-	gebr_maestro_server_connect_on_daemons(maestro);
+	gebr_maestro_server_connect_on_daemons(maestro, TRUE);
 }
 
 void

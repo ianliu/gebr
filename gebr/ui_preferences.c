@@ -308,7 +308,7 @@ on_connect_all_server_clicked(GtkButton *button,
                               struct ui_preferences *up)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	gebr_maestro_server_connect_on_daemons(maestro);
+	gebr_maestro_server_connect_on_daemons(maestro, FALSE);
 }
 
 static void
