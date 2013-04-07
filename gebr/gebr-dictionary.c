@@ -209,16 +209,33 @@ static gboolean visible_func(GtkTreeModel *model,
 			     gpointer      user_data)
 {
 	struct FilterData *data = user_data;
+	gchar *keyword, *dict_var;
 
 	GebrGuiCompleteVariablesType complete_type;
 	GebrGeoXmlParameterType param_type;
-	GebrGeoXmlDocumentType doc_type;
+	GebrGeoXmlDocumentType doc_type, doc_type_var;
 
 	gtk_tree_model_get(model, iter,
+	           GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, &keyword,
 			   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, &complete_type,
 			   GEBR_GUI_COMPLETE_VARIABLES_VARIABLE_TYPE, &param_type,
 			   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, &doc_type,
 			   -1);
+
+	GtkTreeIter iter2;
+	gboolean valid = gtk_tree_model_get_iter_first(model, &iter2);
+	while (valid) {
+
+		gtk_tree_model_get(model, &iter2,
+		                   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, &dict_var,
+				   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, &doc_type_var,
+				   -1);
+		if (!g_strcmp0(dict_var, keyword)){
+			if (doc_type > doc_type_var)
+				return FALSE;
+		}
+		valid = gtk_tree_model_iter_next(model, &iter2);
+	}
 
 	if (complete_type == GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH)
 		return data->type == GEBR_GEOXML_PARAMETER_TYPE_FILE;
