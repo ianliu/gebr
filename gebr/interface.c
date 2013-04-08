@@ -135,6 +135,8 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("Edit comments"), G_CALLBACK(on_flow_browse_edit_help)},
 	{"flow_find", NULL, NULL,
 		"<control>F", NULL, G_CALLBACK(on_flow_browse_show_search_bar)},
+	{"flow_help", GTK_STOCK_HELP, NULL,
+		"<Control><Shift>h", N_("Show program's help"), G_CALLBACK(on_flow_component_help_activate)},
 };
 
 static const GtkActionEntry actions_entries_flow_edition[] = {
