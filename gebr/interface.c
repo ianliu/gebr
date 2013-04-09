@@ -234,12 +234,6 @@ add_more_project_line_options(GtkWidget *widget)
 
 	menu = gtk_menu_new();
 
-	GtkWidget *dictionary = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"));
-	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(dictionary), TRUE);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), dictionary);
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-
 	GtkWidget *view_report = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"));
 	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(view_report), TRUE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), view_report);
@@ -277,10 +271,6 @@ add_more_flows_options(GtkWidget *widget)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), paste);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-
-	GtkWidget *dictionary = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"));
-	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(dictionary), TRUE);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), dictionary);
 
 	GtkWidget *snapshot = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_flow, "flow_change_revision"));
 	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(snapshot), TRUE);
@@ -440,6 +430,12 @@ void gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
 
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"))), -1);
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
+
 	gebr.ui_project_line = project_line_setup_ui();
 	insert_more_button (GTK_TOOLBAR(toolbar), FALSE);
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -488,6 +484,10 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui();
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+	                   GTK_TOOL_ITEM(gtk_action_create_tool_item
+	                                 (gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"))), -1);
 
 	insert_popup_menulist (GTK_TOOLBAR(toolbar));
 
