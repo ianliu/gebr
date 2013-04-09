@@ -2,39 +2,21 @@
 
 RC:
 +	Mudar nome da libgebr_misc para libcommon
-+	Reiniciar ou avisar o usuário de daemons antigos ao instalar o gebrd
 +	"Enter" adiciona em GebrGuiSequenceEdit
-+	Copy/paste de projetos, linhas, fluxos, componentes de fluxos (*****)
 
 =====================
 
 1.x:
 
 +	Opção de customização do CSS para relatórios
-+	Execução de fluxo e gerência de jobs no cluster (pensar)
 ++	Execução programada de um fluxo (**)
 
-++      Impressão de relatórios, listas de projetos, linhas ou fluxos,
-        propriedades de projetos linhas ou fluxos, relatório de execução, log
-
-++	Ordenação de fluxos em ordem alfabética, por data de criação, atualização ou execução
 ++	Servidor preservando dados em disco
-++	Suporte a programas com MPI
-
 ++	Cliente texto para GeBR
 
-+++	Segurança (1)
 +++	Cliente web usando XUL
-+++	Editor/visualizador de HTML embutido (ver thunderbird, evolution e outros em gtk)
 +++	Fluxos não sequenciais (pensar: só input/output para cada programa?)
 
 Questões:
 Tudo foi pensado para a execução de programas texto. Há algo de
 especial na execução de programas gráficos?
-
-(1) Um usuário malicioso poderia alterar o XML de um fluxo, inserindo
-comando maldosos, que seria executados sem pestanejar pelo
-servidor. Será que há como acrescentar uma assinatura gpg a um fluxo
-para garantir a sua autoria? Será que tem como validar um fluxo,
-assegurando que foi construído apenas com componentes certificados?
-
