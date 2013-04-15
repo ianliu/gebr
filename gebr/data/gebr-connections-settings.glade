@@ -13,11 +13,9 @@
         <child>
           <object class="GtkLabel" id="pwd_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">GêBR needs to establish a connection to a maestro to send jobs and receive outputs.
+            <property name="label" translatable="yes">In the box below, choose one processing node to submit processing jobs.
 
-All data exchange between maestro and the processing nodes is performed through &lt;i&gt;encrypted channels&lt;/i&gt;. Such channels are established using SSH protocol, which is a standard way to access remote machines with reasonable level of security.
-
-To establish the connections, SSH may request your login password.
+All data exchange is performed through &lt;i&gt;encrypted channels&lt;/i&gt;. To establish the connections your login password may be asked.
 
 &lt;small&gt;&lt;i&gt;This connection process can be extremely simplified using an alternative authetication method based on public keys. The adoption of this method may be done at any time, through a checkbox, whenever your password is requested.&lt;/i&gt;&lt;/small&gt;</property>
             <property name="use_markup">True</property>
@@ -75,7 +73,7 @@ To establish the connections, SSH may request your login password.
         <child>
           <object class="GtkLabel" id="status_title">
             <property name="visible">True</property>
-            <property name="label">&lt;span size='large'&gt;#Connecting to maestro...&lt;/span&gt;</property>
+            <property name="label">&lt;span size='large'&gt;#Connecting...&lt;/span&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -235,7 +233,7 @@ To establish the connections, SSH may request your login password.
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label">#maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one &lt;i&gt;connected processing nodes&lt;/i&gt; to run processing flows. You must either connect to new processing node or connect to all of them alredy registred below.</property>
+        <property name="label">#maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one &lt;i&gt;connected processing nodes&lt;/i&gt; to run processing flows. You must either connect to new processing node or connect to all of them already registred below.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -372,9 +370,10 @@ To establish the connections, SSH may request your login password.
         <child>
           <object class="GtkLabel" id="maestro_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is in between the GêBR and the processing nodes. It receives all requests for flow execution and dispatches them to groups of nodes.
-
-Without interference, maestro collects information about the state of each node and ranks them according to their capabilities and available resources at time. Therefore, maestro can take smart decisions about which nodes are best suited to run a processing flow.</property>
+            <property name="label" translatable="yes">The GêBR needs to establish a connection with at least one machine, known as &lt;b&gt;processing node&lt;/b&gt;, to submit processing jobs for execution.
+	    
+GêBR can be connect to many processing nodes at once, as long as they share the same file system, i.e., they all have access to the same files in disk. The set of processing nodes is known as &lt;b&gt;domain&lt;/b&gt;.
+</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -870,9 +869,7 @@ To enable this feature your login password may be asked.</property>
       <object class="GtkLabel" id="server_info_second_label">
         <property name="visible">True</property>
         <property name="xpad">10</property>
-        <property name="label" translatable="yes">&lt;i&gt;A maestro without processing nodes is like a general without soldiers.&lt;/i&gt;
-
-The &lt;i&gt;processing nodes&lt;/i&gt; are the ones who actually execute the processing flows. They put their computational power at disposal of the maestro, which coordinates them to cooperate to conclude processing jobs faster.</property>
+        <property name="label" translatable="yes">The &lt;i&gt;processing nodes&lt;/i&gt; are the ones who actually execute the processing flows. They put their computational power at disposal of the maestro, which coordinates them to cooperate to conclude processing jobs faster.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>

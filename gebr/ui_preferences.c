@@ -748,7 +748,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		}
 
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Maestro"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Domain"));
 	}
 	else if (page == SERVERS_PAGE) {
 		GtkTreeView *view = create_view_for_servers(up);
@@ -763,9 +763,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("The domain <b>%s</b> needs at least one <i>connected node</i> "
-                                                                             "to run processing flows. You must either connect to a new "
-                                                                             "one or connect your already registered nodes.\n"),
+			gchar *main_servers_text = g_markup_printf_escaped(_("The domain <b>%s</b> needs at least one <i>connected processing node</i> "
+                                                           "to run processing flows. However, many more can be added.\n\n Below, you can "
+                                                           "add new processing nodes or try to connect those who are disconnected."),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
@@ -1134,13 +1134,13 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_minfo);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_minfo, TRUE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_minfo, _("Maestro"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_minfo, _("Connection layout"));
 
 		// MAESTRO_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_maestro);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_maestro, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Maestro"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Domain"));
 
 		// SERVERS_INFO_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), servers_info);
