@@ -633,7 +633,10 @@ close_and_destroy_dictionary_dialog(GtkWidget *dialog, struct dict_edit_data *da
 
 	if (gebr.flow) {
 		flow_browse_validate_io(gebr.ui_flow_browse);
-		gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
+		if (gtk_widget_get_visible(gebr.ui_flow_browse->context[CONTEXT_PARAMETERS]))
+			flow_edition_component_activated();
+		else
+			gebr_flow_browse_load_parameters_review(gebr.flow, gebr.ui_flow_browse, TRUE);
 	}
 
 	for (int i = 0; data->documents[i] != NULL; ++i)
