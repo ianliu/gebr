@@ -637,11 +637,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 		GtkImage *review_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_img"));
 
 		GtkLabel *review_pref_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_pref_label"));
-		GtkLabel *review_maestro_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_maestro_label"));
 		GtkLabel *review_servers_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_servers_label"));
 		GtkLabel *review_gvfs_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_gvfs_label"));
 		GtkImage *review_pref_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_pref_img"));
-		GtkImage *review_maestro_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_maestro_img"));
 		GtkImage *review_servers_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_servers_img"));
 		GtkImage *review_gvfs_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_gvfs_img"));
 
@@ -668,12 +666,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 				gtk_label_set_markup(review_servers_label, _("<i>None connected.</i>"));
 			}
 
-			gtk_label_set_markup(review_maestro_label, _("<i>Connected.</i>"));
-
 			gtk_label_set_markup(review_orientations_label, _("GêBR is ready."));
 			gtk_label_set_markup(review_pref_label, _("<i>Done.</i>"));
 			gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-			gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
 			if (wizard_status == WIZARD_STATUS_WITHOUT_GVFS && gebr_maestro_server_need_mount_gvfs (maestro)) {
@@ -689,13 +684,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 			if (wizard_status == WIZARD_STATUS_WITHOUT_MAESTRO) {
 				gtk_label_set_markup(review_pref_label, _("<i>Done.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-				gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
-				gtk_label_set_markup(review_maestro_label, _("<i>Not connected.</i>"));
 			} else if (wizard_status == WIZARD_STATUS_WITHOUT_DAEMON){
 				gtk_label_set_markup(review_pref_label, _("<i>Done.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-				gtk_label_set_markup(review_maestro_label, _("<i>Connected.</i>"));
-				gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 				gtk_label_set_markup(review_servers_label, _("<i>None connected.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
 			} else if (wizard_status == WIZARD_STATUS_WITHOUT_PREFERENCES){
@@ -718,7 +709,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 		GtkWidget *connections_info = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_connection"));
 		GtkWidget *main_status = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_status"));
 		GtkWidget *status_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "maestro_status_label"));
-
 		GtkWidget *connect_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "connect_button"));
 
 		g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_maestro_clicked), up);
@@ -1032,8 +1022,6 @@ assistant_set_initial_labels(GtkBuilder *builder)
 	GtkImage *review_pref_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_pref_img"));
 	GtkImage *review_servers_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_servers_img"));
 	GtkLabel *review_servers_label = GTK_LABEL(gtk_builder_get_object(builder, "review_servers_label"));
-	GtkLabel *review_maestro_label = GTK_LABEL(gtk_builder_get_object(builder, "review_maestro_label"));
-	GtkImage *review_maestro_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_maestro_img"));
 	GtkImage *review_gvfs_img = GTK_IMAGE(gtk_builder_get_object(builder, "review_gvfs_img"));
 	GtkLabel *review_gvfs_label = GTK_LABEL(gtk_builder_get_object(builder, "review_gvfs_label"));
 
@@ -1041,8 +1029,6 @@ assistant_set_initial_labels(GtkBuilder *builder)
 	gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
 	gtk_label_set_markup(review_pref_label, _("<i>Done.</i>"));
 	gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-	gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
-	gtk_label_set_markup(review_maestro_label, _("<i>Not connected.</i>"));
 	gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
 	gtk_label_set_markup(review_servers_label, _("<i>None connected.</i>"));
 	gtk_image_set_from_stock(GTK_IMAGE(review_gvfs_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
@@ -1088,7 +1074,6 @@ preferences_setup_ui(gboolean first_run,
 	GtkWidget *page_minfo = GTK_WIDGET(gtk_builder_get_object(builder, "maestro_info"));
 	GtkWidget *main_maestro = GTK_WIDGET(gtk_builder_get_object(builder, "maestro_chooser"));
 	GtkWidget *page_review = GTK_WIDGET(gtk_builder_get_object(builder, "review"));
-	GtkWidget *servers_info = GTK_WIDGET(gtk_builder_get_object(builder, "servers_info"));
 	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(builder, "main_servers"));
 	GtkWidget *mount_gvfs = GTK_WIDGET(gtk_builder_get_object(builder, "mount_gvfs"));
 
@@ -1141,12 +1126,6 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_maestro, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Domain"));
-
-		// SERVERS_INFO_PAGE
-		gtk_assistant_append_page(GTK_ASSISTANT(assistant), servers_info);
-		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), servers_info, TRUE);
-		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), servers_info, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Nodes"));
 
 		// SERVERS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_servers);

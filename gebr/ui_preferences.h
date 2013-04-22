@@ -56,7 +56,6 @@ typedef enum {
 	INITIAL_PAGE,
 	MAESTRO_INFO_PAGE,
 	MAESTRO_PAGE,
-	SERVERS_INFO_PAGE,
 	SERVERS_PAGE,
 	GVFS_PAGE,
 } GebrUiPreferencesPage;
