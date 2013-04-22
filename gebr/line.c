@@ -104,7 +104,7 @@ on_assistant_cancel(GtkWidget *widget)
 	gtk_widget_destroy(widget);
 	GtkTreeIter iter;
 	if (project_line_get_selected(&iter, DontWarnUnselection))
-		line_delete(&iter, FALSE);
+		line_delete(&iter, FALSE, FALSE);
 }
 
 typedef struct {
@@ -699,7 +699,7 @@ void line_new(void)
 	//document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.line), on_properties_response, TRUE);
 }
 
-gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
+gboolean line_delete(GtkTreeIter * iter, gboolean warn_user, gboolean remove_files)
 {
 	GebrGeoXmlLine * line;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), iter,
@@ -746,6 +746,15 @@ gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting line '%s' from project '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(project)));
+	}
+
+	if (remove_files) {
+		gchar *base_path = gebr_geoxml_line_get_path_by_name(line, "BASE");
+		gchar ***paths = gebr_geoxml_line_get_paths(line);
+		GString *base_complete = g_string_new(gebr_resolve_relative_path(base_path, paths));
+		gebr_pairstrfreev(paths);
+		gebr_temp_directory_destroy(base_complete);
+		g_free(base_path);
 	}
 
 	return TRUE;

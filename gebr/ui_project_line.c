@@ -1463,7 +1463,12 @@ void project_line_delete(void)
 	gint quantity_selected = 0;
 	GtkWidget *text_view;
 	GtkWidget *dialog;
+	GtkWidget *checkbox;
+	gchar *remove_files;
+	gboolean remove;
 	gint ret;
+	gboolean only_lines_selected = TRUE;
+	gboolean only_projects_selected = TRUE;
 
 	text_buffer = gtk_text_buffer_new(NULL);
 	text_view = gtk_text_view_new_with_buffer(text_buffer);
@@ -1505,6 +1510,8 @@ void project_line_delete(void)
 
 			g_string_append_printf(delete_list, _("Project '%s'.\n"),
 					       gebr_geoxml_document_get_title(document));
+
+			only_lines_selected = FALSE;
 		} else {
 			GString *tmp = g_string_new(_("empty"));
 			glong n = gebr_geoxml_line_get_flows_number(GEBR_GEOXML_LINE(document));
@@ -1521,6 +1528,8 @@ void project_line_delete(void)
 			g_string_append_printf(delete_list, _("Line '%s' (%s).\n"),
 					       gebr_geoxml_document_get_title(document), tmp->str);
 			g_string_free(tmp, TRUE);
+
+			only_projects_selected = FALSE;
 		}
 	}
 	gtk_text_buffer_insert_at_cursor(text_buffer, delete_list->str, delete_list->len);
@@ -1528,6 +1537,7 @@ void project_line_delete(void)
 	/* now asks the user for confirmation */
 	if (!can_delete)
 		goto out;
+
 	if (quantity_selected > 1){
 		GtkWidget *table = gtk_table_new(3, 2, FALSE);
 		GtkWidget * image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
@@ -1564,11 +1574,28 @@ void project_line_delete(void)
 				 (GtkAttachOptions)GTK_EXPAND
 				 , 3, 3), row++;
 
+		if (only_lines_selected)
+			remove_files = g_markup_printf_escaped(_("Also delete the files of these lines."));
+		else
+			remove_files = g_markup_printf_escaped(_("Also delete the files of these documents."));
+
+		checkbox = gtk_check_button_new_with_label(remove_files);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), FALSE);
+
+		if (only_projects_selected)
+			gtk_widget_set_sensitive(checkbox, FALSE);
+		else
+			gtk_widget_set_sensitive(checkbox, TRUE);
+
+		gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), checkbox, TRUE, TRUE, 5);
+
 		gtk_widget_show_all(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
 		ret = gtk_dialog_run(GTK_DIALOG(dialog));
 		can_delete = (ret == GTK_RESPONSE_YES) ? TRUE : FALSE;
+		remove = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox));
 
 		gtk_widget_destroy(dialog);
+		g_free(remove_files);
 
 	} else {
 		GtkWidget *table = gtk_table_new(3, 2, FALSE);
@@ -1599,11 +1626,29 @@ void project_line_delete(void)
 
 		gtk_table_attach(GTK_TABLE(table), text_view, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
 				 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+		if (only_lines_selected)
+			remove_files = g_markup_printf_escaped(_("Also delete the files of this line."));
+		else
+			remove_files = g_markup_printf_escaped(_("Also delete the files of this project."));
+
+		checkbox = gtk_check_button_new_with_label(remove_files);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), FALSE);
+
+		if (only_projects_selected)
+			gtk_widget_set_sensitive(checkbox, FALSE);
+		else
+			gtk_widget_set_sensitive(checkbox, TRUE);
+
+		gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), checkbox, TRUE, TRUE, 5);
+
 		gtk_widget_show_all(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
 		ret = gtk_dialog_run(GTK_DIALOG(dialog));
 		can_delete = (ret == GTK_RESPONSE_YES) ? TRUE : FALSE;
+		remove = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox));
 
 		gtk_widget_destroy(dialog);
+		g_free(remove_files);
 	}
 	if (!can_delete)
 		goto out;
@@ -1615,7 +1660,7 @@ void project_line_delete(void)
 		gboolean is_line = gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, iter);
 
 		if (is_line) {
-			line_delete(iter, TRUE);
+			line_delete(iter, TRUE, remove);
 
 			GList *tmp = i;
 			i = g_list_next(i);
