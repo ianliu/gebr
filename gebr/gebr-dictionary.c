@@ -142,9 +142,9 @@ gebr_dict_complete_update_model(GebrDictComplete *self)
 	gtk_list_store_clear(self->priv->store);
 
 	GebrGeoXmlDocument *docs[] = {
-		self->priv->proj,
-		self->priv->line,
-		self->priv->flow,
+		self->priv->flow, // The order of the documents in this vector is important, because it
+		self->priv->line, // affects the visible_func function, since projects variables should
+		self->priv->proj, // be hidden if an equally named variable exists in a line, for eg.
 		NULL
 	};
 
@@ -211,7 +211,7 @@ static gboolean visible_func(GtkTreeModel *model,
 	struct FilterData *data = user_data;
 	gchar *keyword, *dict_var;
 
-	GebrGuiCompleteVariablesType complete_type;
+	GebrGuiCompleteVariablesType complete_type, icomplete_type;
 	GebrGeoXmlParameterType param_type;
 	GebrGeoXmlDocumentType doc_type, doc_type_var;
 
@@ -222,26 +222,30 @@ static gboolean visible_func(GtkTreeModel *model,
 			   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, &doc_type,
 			   -1);
 
-	GtkTreeIter iter2;
-	gboolean valid = gtk_tree_model_get_iter_first(model, &iter2);
-	while (valid) {
-
-		gtk_tree_model_get(model, &iter2,
-		                   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, &dict_var,
-				   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, &doc_type_var,
-				   -1);
-		if (!g_strcmp0(dict_var, keyword)){
-			if (doc_type > doc_type_var)
-				return FALSE;
-		}
-		valid = gtk_tree_model_iter_next(model, &iter2);
-	}
-
 	if (complete_type == GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH)
 		return data->type == GEBR_GEOXML_PARAMETER_TYPE_FILE;
 
 	if (!gebr_geoxml_document_type_contains(doc_type, data->doc_type))
 		return FALSE;
+
+	if (!keyword)
+		return FALSE;
+
+	GtkTreeIter iter2;
+	gboolean valid = gtk_tree_model_get_iter_first(model, &iter2);
+	for (; valid; valid = gtk_tree_model_iter_next(model, &iter2)) {
+		gtk_tree_model_get(model, &iter2,
+		                   GEBR_GUI_COMPLETE_VARIABLES_KEYWORD, &dict_var,
+				   GEBR_GUI_COMPLETE_VARIABLES_COMPLETE_TYPE, &icomplete_type,
+				   GEBR_GUI_COMPLETE_VARIABLES_DOCUMENT_TYPE, &doc_type_var,
+				   -1);
+
+		if (!dict_var || icomplete_type == GEBR_GUI_COMPLETE_VARIABLES_TYPE_PATH)
+			continue;
+
+		if (!g_strcmp0(dict_var, keyword) && doc_type > doc_type_var)
+			return FALSE;
+	}
 
 	return gebr_geoxml_parameter_type_is_compatible(data->type, param_type);
 }
