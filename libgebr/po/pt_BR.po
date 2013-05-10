@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-30 11:48-0200\n"
+"POT-Creation-Date: 2013-05-10 11:19-0300\n"
 "PO-Revision-Date: 2012-12-13 10:10-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -221,7 +221,7 @@ msgid "Expression result is too big"
 msgstr "Resultado da expressão é muito grande"
 
 #: ../gebr-validator.c:574 ../gebr-validator.c:909 ../gebr-validator.c:1042
-#: ../gui/gebr-gui-param.c:1749
+#: ../gui/gebr-gui-param.c:1756
 #, c-format
 msgid "This parameter is required"
 msgstr "Parâmetro obrigatório"
@@ -734,7 +734,7 @@ msgstr "GêBR Core Team"
 
 #: ../gui/gebr-gui-about.c:96
 msgid ""
-"Copyright (C) 2007-2012 GêBR core team ( http://www.gebrproject.com/ )\n"
+"Copyright (C) 2007-2013 GêBR core team ( http://www.gebrproject.com/ )\n"
 "\n"
 "This program is free software: you can redistribute it and/or modify it "
 "under the terms of the GNU General Public License as published by the Free "
@@ -754,7 +754,7 @@ msgid ""
 "#9610, Feb 19, 1998, and is registered in Instituto Nacional da Propriedade "
 "Industrial (INPI) under number 70156."
 msgstr ""
-"Copyright (C) 2007-2012 GêBR core team (http://www.gebrproject.com/)\n"
+"Copyright (C) 2007-2013 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
 "Este programa é um software livre: você pode distribuí-lo e/ou modifica-lo "
 "de acordo com os termos da GNU General Public Licence como publicado pela "
@@ -871,12 +871,12 @@ msgstr "Editar lista"
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-param.c:1813
+#: ../gui/gebr-gui-param.c:1820
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-param.c:1815
+#: ../gui/gebr-gui-param.c:1822
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
@@ -1267,6 +1267,3 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
-
-#~ msgid "There is no %s installed in this host."
-#~ msgstr "Não há %s instalado nesta máquina."

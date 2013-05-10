@@ -93,7 +93,7 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about.dialog), _("GêBR Core Team"));
 
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about.dialog),
-				     _("Copyright (C) 2007-2012 GêBR core team ( http://www.gebrproject.com/ )\n" "\n"
+				     _("Copyright (C) 2007-2013 GêBR core team ( http://www.gebrproject.com/ )\n" "\n"
 				       "This program is free software: you can redistribute it and/or modify "
 				       "it under the terms of the GNU General Public License as published by "
 				       "the Free Software Foundation, either version 3 of the License, or "
