@@ -672,28 +672,28 @@ void test_gebr_geoxml_flow_divide_flows (Fixture *fixture, gconstpointer data)
 
 	gchar *n1 = gebr_geoxml_program_control_get_n(control1, &step, &ini);
 	g_assert_cmpstr(n1, ==, "40");
-	g_assert_cmpstr(ini, ==, "1");
+	g_assert_cmpstr(ini, ==, "1.000000");
 	g_assert_cmpstr(step, ==, "1");
 	g_free(ini);
 	g_free(step);
 
 	gchar *n2 = gebr_geoxml_program_control_get_n(control2, &step, &ini);
 	g_assert_cmpstr(n2, ==, "30");
-	g_assert_cmpstr(ini, ==, "41");
+	g_assert_cmpstr(ini, ==, "41.000000");
 	g_assert_cmpstr(step, ==, "1");
 	g_free(ini);
 	g_free(step);
 
 	gchar *n3 = gebr_geoxml_program_control_get_n(control3, &step, &ini);
 	g_assert_cmpstr(n3, ==, "20");
-	g_assert_cmpstr(ini, ==, "71");
+	g_assert_cmpstr(ini, ==, "71.000000");
 	g_assert_cmpstr(step, ==, "1");
 	g_free(ini);
 	g_free(step);
 
 	gchar *n4 = gebr_geoxml_program_control_get_n(control4, &step, &ini);
 	g_assert_cmpstr(n4, ==, "11");
-	g_assert_cmpstr(ini, ==, "91");
+	g_assert_cmpstr(ini, ==, "91.000000");
 	g_assert_cmpstr(step, ==, "1");
 	g_free(ini);
 	g_free(step);
