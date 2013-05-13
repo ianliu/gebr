@@ -1,3 +1,29 @@
+2013-03-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* The button Connect All in wizard now really connects all the
+	servers.
+
+2013-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: gebr_comm_server_append_key now receives a callback and
+	connects swapped
+
+2013-01-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* maestro: fix crash upon version or cookie error
+
+2013-01-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* merge: proxy-maestro into default
+
+2012-12-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* maestro: rollback nfs:error priority
+
+2012-12-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.20.0: Farewell wizard, welcome autopilot
+
 2012-12-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.19.15: Code Freeze [Sprint 72]

@@ -1,3 +1,83 @@
+2013-05-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Minor updates of translation.
+	* Updating unitary test because the ini variable of loop now is float.
+
+2013-03-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using float to initial value of loop instead of integer. (Fixes
+	issue 1477)
+
+2013-03-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Escape the tooltip of wrong path when gebr validates it.
+
+2013-03-08  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix behaviour of autocomplete.
+
+2013-03-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show correctly angle bracket in I/O warning tooltip in Flows tab.
+
+2013-01-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updates of translation.
+
+2013-01-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updates of translation.
+	* Improving label in the right side of the flows tab and updates of
+	translation.
+
+2013-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: gebr_comm_server_append_key now receives a callback and
+	connects swapped
+
+2013-01-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix Gtk-Critical when import is used.
+
+2013-01-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: add method gebr_get_nfsid
+
+2013-01-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: insert new-line character when rebuilding auth cookies
+	* libgebr: fix typo in gebr_id_random_create
+	* libgebr: use /dev/urandom in gebr_id_random_create
+
+2013-01-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* merge: introduce X11 auth again, now working
+	* socketchannel: check X11 cookie before starting forward
+	* libgebr: return the correct value in hash converter
+
+2013-01-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: revert changes in channelsocket to fix X11
+	* merge: default into issue-1341-fix-x11-auth
+	* merge: proxy-maestro into default
+
+2012-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* geoxml: fix some invalid memory access
+
+2012-12-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using scrolledwindow at categories list of DeBR's menu properties.
+	* Using fixed size to ComboBox in parameters of a program.
+
+2012-12-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Sets the filechooser's entry to the value provided by the user
+
+2012-12-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.20.0: Farewell wizard, welcome autopilot
+
 2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Doing word-wrap of the text of the dictionary's table in report.

@@ -1,3 +1,130 @@
+2013-05-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Minor updates of translation.
+
+2013-05-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Update dict complete model in correct order to set properly the
+	visibility of variables. (Fixes issue 1472)
+
+2013-04-22  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Removing unnecessary informations from wizard.
+	* When a line is deleted, also remove its files. (Fixes issue 1469)
+
+2013-04-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Keep the parameters view opened when dict widget is closed. (Fixes
+	issue 1471)
+	* Scrolling the flow view until until before the name of the selected
+	flow. (Fixes issue 1450)
+
+2013-04-15  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Simplifies the messages in the connection wizard
+
+2013-04-09  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Moves dictionary button back to toolbar (Fixes issue 1467)
+
+2013-04-08  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using hotkey Ctrl+Shift+h to open menu's help. (Fixes issue 1389)
+
+2013-04-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show only the variable of the minor scope in autocomplete. (Fixes
+	issue 1472)
+
+2013-03-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Brings the Autoconnect back to work.
+
+2013-03-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* The button Connect All in wizard now really connects all the
+	servers.
+
+2013-03-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Remove double free of maestro_addr when connection button in the
+	wizard was clicked.
+
+2013-03-06  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Minor improvement of snapshot's label when there are no snapshots.
+
+2013-01-31  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show correctly the informations about the group which a job was
+	executed.
+
+2013-01-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updates of translation.
+
+2013-01-29  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving the dialog of directories creation
+
+2013-01-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updates of translation.
+	* Improving label in the right side of the flows tab and updates of
+	translation.
+
+2013-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: gebr_comm_server_append_key now receives a callback and
+	connects swapped
+	* gebr: add current machine as a Daemon in MaestroController, no in
+	MaestroServer
+	* gebr: validate flow's io in MaestroController, not in MaestroServer
+	* gebr: update job control in MaestroController, not in MaestroServer
+	* gebr: move code to show project and line from MaestroServer to
+	Maestro
+
+2013-01-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix signal connection on SFTP mount operation.
+
+2013-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: remove gebr_get_client_nfsid method
+	* gebr: remove "project.h" dependency from GebrMaestroServer module
+
+2013-01-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fix Gtk-Critical when import is used.
+
+2013-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: use GeBR's password dialog for SFTP
+	* gebr: fix invalid g_free's
+	* gebr: change GebrMaestroServer::password-request to include title
+	and description
+
+2013-01-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* merge: proxy-maestro into default
+
+2012-12-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using fixed size to flow and server filters ComboBox.
+
+2012-12-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* gebr: Show the login user in the password dialog
+
+2012-12-19  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix focus in on connection assistant entry
+	* Fix wrong label on conection wizard
+
+2012-12-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.20.0: Farewell wizard, welcome autopilot
+
 2012-12-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Improving behaviour of maestro combo on maestro/servers dialog and

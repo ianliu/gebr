@@ -1,3 +1,22 @@
+2013-05-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Minor updates of translation.
+
+2013-01-24  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving label in the right side of the flows tab and updates of
+	translation.
+
+2012-12-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using scrolledwindow at categories list of DeBR's menu properties.
+	* Become the message dialog of "category already exists" in DeBR to be
+	modal.
+
+2012-12-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.20.0: Farewell wizard, welcome autopilot
+
 2012-12-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.19.15: Code Freeze [Sprint 72]
