@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-10 11:05-0300\n"
+"POT-Creation-Date: 2013-05-17 19:00-0300\n"
 "PO-Revision-Date: 2012-12-13 10:20-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid ""
 "\n"
 "A connected domain is required to accomplish this task.\n"
-msgstr ""
-"\n"
+msgstr "\n"
 "É necessário ter um domínio conectado para realizar esta operação.\n"
 
-#: ../callbacks.c:250 ../callbacks.c:280
+#: ../callbacks.c:250
+#: ../callbacks.c:280
 msgid "Domain disconnected"
 msgstr "Domínio desconectado"
 
@@ -36,8 +36,7 @@ msgid ""
 "<span size='large'><b>The domain of this line is disconnected.</b></span>\n"
 "\n"
 "Connect to domain <b>%s</b> to execute this line."
-msgstr ""
-"<span size='large'><b>O domain desta linha está desconectado.</b></span>\n"
+msgstr "<span size='large'><b>O domain desta linha está desconectado.</b></span>\n"
 "\n"
 "Conecte-se ao domínio <b>%s</b> para executar esta linha."
 
@@ -55,8 +54,7 @@ msgstr "Erro na montagem do fluxo"
 
 #: ../callbacks.c:572
 msgid "Could not load help. Certify it was installed correctly."
-msgstr ""
-"Não foi possível carregar a Ajuda. Certifique-se que ela foi instalada "
+msgstr "Não foi possível carregar a Ajuda. Certifique-se que ela foi instalada "
 "corretamente."
 
 #: ../data/connect-maestro-dialog.glade.h:1
@@ -91,7 +89,8 @@ msgstr "<b>E-mail:</b>"
 msgid "<b>Title:</b>"
 msgstr "<b>Título:</b>"
 
-#: ../data/document-properties.glade.h:8 ../data/line-properties.glade.h:4
+#: ../data/document-properties.glade.h:8
+#: ../data/line-properties.glade.h:4
 msgid "<i>&lt;BASE&gt;</i>"
 msgstr "<i>&lt;BASE&gt;</i>"
 
@@ -139,8 +138,7 @@ msgstr "<i>&lt;TMP&gt;</i>"
 msgid ""
 "<i>BASE</i> is the top directory where most files referred in this line "
 "should be."
-msgstr ""
-"<b>BASE</b> é o diretório raiz onde a maioria dos arquivos vinculados a esta "
+msgstr "<b>BASE</b> é o diretório raiz onde a maioria dos arquivos vinculados a esta "
 "linha devem estar."
 
 #: ../data/document-properties.glade.h:20
@@ -150,8 +148,7 @@ msgid ""
 "\n"
 "To be able to browse files in these directory, the <i>remote browsing</i> "
 "feature must be enable in the domain.</small>"
-msgstr ""
-"<small>Lembre-se de que o processamento ocorre nos nós de processamento. "
+msgstr "<small>Lembre-se de que o processamento ocorre nos nós de processamento. "
 "Então, a estrutura definida será criada lá.\n"
 "\n"
 "Para poder navegar no arquivos destes diretórios, a funcionalidade de "
@@ -197,8 +194,7 @@ msgstr "Caminhos para armazenar:"
 msgid ""
 "The <b>IMPORT</b> directory is used to find files outside your <b>BASE</b> "
 "directory."
-msgstr ""
-"O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu diretório "
+msgstr "O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu diretório "
 "<b>BASE</b>."
 
 #: ../data/document-properties.glade.h:33
@@ -215,8 +211,7 @@ msgid ""
 "\n"
 "Although it is not mandatory to adhere to this structure, it is highly "
 "recommended to do so."
-msgstr ""
-"Para gerenciar melhor os arquivos lidos ou criados durante o "
+msgstr "Para gerenciar melhor os arquivos lidos ou criados durante o "
 "processamentodos dados, a GêBR define uma estrutura de diretórios para "
 "armazená-los.\n"
 "\n"
@@ -278,7 +273,8 @@ msgstr "Conectar Todos"
 msgid "Email"
 msgstr "Email"
 
-#: ../data/gebr-connections-settings.glade.h:9 ../interface.c:166
+#: ../data/gebr-connections-settings.glade.h:9
+#: ../interface.c:166
 #: ../ui_flow_program.c:174
 msgid "Enable"
 msgstr "Ativar"
@@ -290,8 +286,7 @@ msgid ""
 "generated on the nodes.\n"
 "\n"
 "To enable this feature your login password may be asked."
-msgstr ""
-"Cada fluxo de processamento na GêBR é executado pelos nós de processamento. "
+msgstr "Cada fluxo de processamento na GêBR é executado pelos nós de processamento. "
 "A <i>navegação remota</i> é uma funcionalidade que permite ao usuário ver os "
 "arquivos gerados nas máquinas de processamento.\n"
 "\n"
@@ -308,8 +303,7 @@ msgid ""
 "alternative authetication method based on public keys. The adoption of this "
 "method may be done at any time, through a checkbox, whenever your password "
 "is requested.</i></small>"
-msgstr ""
-"Na caixa de seleção abaixo, escolha um nó de processamento para submeter "
+msgstr "Na caixa de seleção abaixo, escolha um nó de processamento para submeter "
 "suas tarefas.\n"
 "\n"
 "Todos os dados são enviados através de <i>canais criptografados</i>. Para "
@@ -330,8 +324,7 @@ msgid ""
 "\n"
 "To take advantage of those features, some set up must be done. This "
 "assistant will guide you through this process.\n"
-msgstr ""
-"Nesta versão, GêBR introduz novas funcionalidades que vão acelerar os seus "
+msgstr "Nesta versão, GêBR introduz novas funcionalidades que vão acelerar os seus "
 "fluxos de processamento, como seleção automática dos nós disponíveismais "
 "rápidos e divisão do processamento entre os nós.\n"
 "\n"
@@ -352,8 +345,7 @@ msgid ""
 "GêBR can be connect to many processing nodes at once, as long as they share "
 "the same file system, i.e., they all have access to the same files in disk. "
 "The set of processing nodes is known as <b>domain</b>.\n"
-msgstr ""
-"A GêBR precisa estabelecar uma conexão com ao menos uma máquina, conhecida "
+msgstr "A GêBR precisa estabelecar uma conexão com ao menos uma máquina, conhecida "
 "como<b>nó de processamento</b>, para submeter tarefas para serem "
 "executadas.\n"
 "\t   \n"
@@ -370,8 +362,7 @@ msgid ""
 "alternative authetication method based on public keys. The adoption of this "
 "method may be done at any time, through a checkbox, whenever your password "
 "is requested.</i></small>"
-msgstr ""
-"Para estabelecer cada conexão, suas informações de login podem ser "
+msgstr "Para estabelecer cada conexão, suas informações de login podem ser "
 "solicitadas.\n"
 "\n"
 "<small><i>Este processo de conexão pode ser extremamente simplificado usando "
@@ -397,15 +388,13 @@ msgstr "Disputar por recursos"
 
 #: ../data/gebr-execution-details.glade.h:3
 msgid "Execute these flows <i>simultaneously</i> or <i>one after another</i>?"
-msgstr ""
-"Executar estes fluxos <i>simultaneamente</i> ou <i>um após o outro</i>?"
+msgstr "Executar estes fluxos <i>simultaneamente</i> ou <i>um após o outro</i>?"
 
 #: ../data/gebr-execution-details.glade.h:4
 msgid ""
 "Execute this batch of flows <i>immediatelly</i> or <i>after the conclusion "
 "of some job</i>?"
-msgstr ""
-"Executar este lote de fluxos <i>imediatamente</i> ou <i>após a conclusão de "
+msgstr "Executar este lote de fluxos <i>imediatamente</i> ou <i>após a conclusão de "
 "alguma tarefa</i>?"
 
 #: ../data/gebr-execution-details.glade.h:5
@@ -420,8 +409,11 @@ msgstr "Em qual grupos de nós esta tarefa deve ser executada?"
 msgid "One after another"
 msgstr "Um após o outro"
 
-#: ../data/gebr-execution-details.glade.h:8 ../interface.c:120
-#: ../interface.c:121 ../ui_flow_browse.c:3517 ../ui_flow_browse.c:3519
+#: ../data/gebr-execution-details.glade.h:8
+#: ../interface.c:120
+#: ../interface.c:121
+#: ../ui_flow_browse.c:3517
+#: ../ui_flow_browse.c:3519
 #: ../ui_flow_execution.c:1157
 msgid "Run"
 msgstr "Executar"
@@ -434,8 +426,7 @@ msgstr "Simultaneamente"
 msgid ""
 "The execution of some flows of this batch can be split to speed\n"
 "them up. In how many tasks should they be split?"
-msgstr ""
-"A execução de alguns fluxos pode ser acelerada dividindo-os em partes.\\n\n"
+msgstr "A execução de alguns fluxos pode ser acelerada dividindo-os em partes.\\n\n"
 "Em quantas partes cada um desses fluxos deve ser dividido?"
 
 #: ../data/gebr-execution-details.glade.h:12
@@ -474,7 +465,8 @@ msgstr "Linha de comando"
 msgid "Details"
 msgstr "Detalhes"
 
-#: ../data/gebr-job-control.glade.h:9 ../gebr-report.c:1152
+#: ../data/gebr-job-control.glade.h:9
+#: ../gebr-report.c:1152
 msgid "Output"
 msgstr "Saída"
 
@@ -506,18 +498,20 @@ msgstr "Tirar uma foto\tCtrl+S"
 msgid "Revert"
 msgstr "Reverter"
 
-#: ../data/gebr-xdot-graph.py:160 ../document.c:347 ../interface.c:109
+#: ../data/gebr-xdot-graph.py:160
+#: ../document.c:347
+#: ../interface.c:109
 #: ../interface.c:149
 msgid "Delete"
 msgstr "Apagar"
 
-#. Sequentially
 #: ../data/gebr-xdot-graph.py:173
+#. Sequentially
 msgid "Run sequentially \t\tCtrl+R"
 msgstr "Executar sequencialmente\t\tCtrl+R"
 
-#. Parallel
 #: ../data/gebr-xdot-graph.py:178
+#. Parallel
 msgid "Run simultaneously \tCtrl+Shift+R"
 msgstr "Executar simultaneamente \tCtrl+Shift+R"
 
@@ -537,7 +531,8 @@ msgstr "GêBR"
 msgid "Seismic processing environment"
 msgstr "Ambiente de processamento sísmico"
 
-#: ../data/line-properties.glade.h:1 ../data/project-properties.glade.h:1
+#: ../data/line-properties.glade.h:1
+#: ../data/project-properties.glade.h:1
 msgid "<b>Created:</b>"
 msgstr "<b>Criado:</b>"
 
@@ -545,7 +540,8 @@ msgstr "<b>Criado:</b>"
 msgid "<b>Line Paths:</b>"
 msgstr "<b>Caminhos da linha</b>"
 
-#: ../data/line-properties.glade.h:3 ../data/project-properties.glade.h:2
+#: ../data/line-properties.glade.h:3
+#: ../data/project-properties.glade.h:2
 msgid "<b>Modified:</b>"
 msgstr "<b>Alterado:</b>"
 
@@ -569,8 +565,7 @@ msgstr "Ajuda dos parâmetros MPI"
 msgid ""
 "The number of processes parameter specify how many instances of this MPI "
 "program will be executed. This value comes from the speed slider."
-msgstr ""
-"O número de parâmetros de processo espcifica quantas instâncias deste "
+msgstr "O número de parâmetros de processo espcifica quantas instâncias deste "
 "programa MPI será executada. Este valor vem da barra de velocidade."
 
 #: ../data/mpi-parameters-help.glade.h:5
@@ -578,8 +573,7 @@ msgid ""
 "These parameters are used to execute MPI programs. Depending on the program, "
 "a different MPI implementation might be used. For now, GêBR supports Open "
 "MPI and MPICH 2."
-msgstr ""
-"Esses parâmetros são usados para executar programas MPI. Dependendo do "
+msgstr "Esses parâmetros são usados para executar programas MPI. Dependendo do "
 "programa, uma implementação de MPI diferente pode ser usada. Atualmente, "
 "GêBR suporta Open MPI e MPICH 2."
 
@@ -587,8 +581,7 @@ msgstr ""
 msgid ""
 "<span size=\"large\">This flow has modifications.\n"
 "</span>"
-msgstr ""
-"<span size=\"large\">Este fluxo tem modificações.\n"
+msgstr "<span size=\"large\">Este fluxo tem modificações.\n"
 "</span>"
 
 #: ../data/snapshot-revert.glade.h:3
@@ -599,27 +592,37 @@ msgstr "Revertendo a modificação do Fluxo"
 msgid "Take a snapshot and proceed"
 msgstr "Tirar uma foto e prosseguir"
 
-#: ../document.c:223 ../document.c:229
+#: ../document.c:223
+#: ../document.c:229
 msgid "document"
 msgstr "documento"
 
-#: ../document.c:226 ../gebr-report.c:902 ../ui_document.c:1714
-#: ../ui_help.c:200 ../ui_help.c:287
+#: ../document.c:226
+#: ../gebr-report.c:902
+#: ../ui_document.c:1715
+#: ../ui_help.c:200
+#: ../ui_help.c:287
 msgid "project"
 msgstr "projeto"
 
-#: ../document.c:227 ../gebr-report.c:880 ../ui_document.c:1716
-#: ../ui_help.c:197 ../ui_help.c:291
+#: ../document.c:227
+#: ../gebr-report.c:880
+#: ../ui_document.c:1717
+#: ../ui_help.c:197
+#: ../ui_help.c:291
 msgid "line"
 msgstr "linha"
 
-#: ../document.c:228 ../gebr-report.c:889 ../ui_document.c:1718
-#: ../ui_help.c:194 ../ui_help.c:295
+#: ../document.c:228
+#: ../gebr-report.c:889
+#: ../ui_document.c:1719
+#: ../ui_help.c:194
+#: ../ui_help.c:295
 msgid "flow"
 msgstr "fluxo"
 
-#. the final point already comes with gebr_geoxml_error_string
 #: ../document.c:274
+#. the final point already comes with gebr_geoxml_error_string
 #, c-format
 msgid "Cannot load the file at %s: %s"
 msgstr "Não foi possível carregar o arquivo em %s: %s"
@@ -629,8 +632,7 @@ msgstr "Não foi possível carregar o arquivo em %s: %s"
 msgid ""
 "Cannot load menu '%s' at %s:\n"
 "%s"
-msgstr ""
-"Não foi possível carregar o menu '%s' em %s:\n"
+msgstr "Não foi possível carregar o menu '%s' em %s:\n"
 "%s"
 
 #: ../document.c:292
@@ -638,8 +640,7 @@ msgstr ""
 msgid ""
 "Cannot load the Menu at %s:\n"
 "%s"
-msgstr ""
-"Não foi possível carregar o menu em %s:\n"
+msgstr "Não foi possível carregar o menu em %s:\n"
 "%s"
 
 #: ../document.c:322
@@ -647,8 +648,7 @@ msgstr ""
 msgid ""
 "The file %s could not be loaded.\n"
 "%s"
-msgstr ""
-"O arquivo %s não pôde ser carregado.\n"
+msgstr "O arquivo %s não pôde ser carregado.\n"
 "%s"
 
 #: ../document.c:329
@@ -656,15 +656,16 @@ msgstr ""
 msgid ""
 "The file %s from %s%s (file %s) could not be loaded.\n"
 "%s"
-msgstr ""
-"O arquivo %s de %s%s (arquivo %s) não pôde ser carregado.\n"
+msgstr "O arquivo %s de %s%s (arquivo %s) não pôde ser carregado.\n"
 "%s"
 
 #: ../document.c:344
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../document.c:345 ../interface.c:92 ../interface.c:118
+#: ../document.c:345
+#: ../interface.c:92
+#: ../interface.c:118
 msgid "Export"
 msgstr "Exportar"
 
@@ -677,15 +678,15 @@ msgstr "Escolha o nome do arquivo para exportar"
 msgid ""
 "Failed to export the file '%s':\n"
 "%s."
-msgstr ""
-"Falha ao exportar o arquivo '%s':\n"
+msgstr "Falha ao exportar o arquivo '%s':\n"
 "%s."
 
 #: ../document.c:395
 msgid "Orphan lines"
 msgstr "Linhas órfãs"
 
-#: ../document.c:413 ../document.c:427
+#: ../document.c:413
+#: ../document.c:427
 msgid "Orphan Flows"
 msgstr "Fluxos órfãos"
 
@@ -694,10 +695,10 @@ msgstr "Fluxos órfãos"
 msgid "Failed to save the document '%s' at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
 
-#.
+#: ../flow.c:80
+#: ../interface.c:104
+#: ../interface.c:105
 #. * Flow
-#.
-#: ../flow.c:80 ../interface.c:104 ../interface.c:105
 msgid "New flow"
 msgstr "Novo fluxo"
 
@@ -710,8 +711,7 @@ msgstr "Novo fluxo adicionado à linha '%s'."
 msgid ""
 "Are you sure you want to delete the selected flow(s) and\n"
 "the associated snapshots?"
-msgstr ""
-"Tem certeza que deseja apagar o(s) fluxo(s) selecionado(s) e\n"
+msgstr "Tem certeza que deseja apagar o(s) fluxo(s) selecionado(s) e\n"
 "as fotos associadas?"
 
 #: ../flow.c:190
@@ -737,7 +737,8 @@ msgstr "Apagando  fluxo '%s' da linha '%s'."
 msgid "Flow '%s' imported into line '%s' from the file '%s'."
 msgstr "Fluxo '%s' importado para a linha '%s' a partir do arquivo '%s'."
 
-#: ../flow.c:274 ../ui_project_line.c:951
+#: ../flow.c:274
+#: ../ui_project_line.c:951
 #, c-format
 msgid "%s (Imported)"
 msgstr "%s (Importado)"
@@ -750,7 +751,8 @@ msgstr "Escolha um fluxo para importar"
 msgid "Flow file types (*.flw, *.flwz, *.flwx)"
 msgstr "Tipos de Arquivos de Fluxo (*.flw, *flwz)"
 
-#: ../flow.c:334 ../flow.c:340
+#: ../flow.c:334
+#: ../flow.c:340
 #, c-format
 msgid "Could not import flow from the file %s"
 msgstr "Não foi possível importar o fluxo do arquivo %s"
@@ -778,8 +780,7 @@ msgstr "Não foi possível clonar o fluxo %s"
 msgid ""
 "Exported selected flow(s) into %s with error. See log file for more "
 "information."
-msgstr ""
-"Fluxo(s) selecionado(s) exportado(s) para '%s' com erro. Veja o arquivo de "
+msgstr "Fluxo(s) selecionado(s) exportado(s) para '%s' com erro. Veja o arquivo de "
 "log para mais informações."
 
 #: ../flow.c:477
@@ -789,8 +790,7 @@ msgstr "Fluxos selecionados exportados para %s."
 
 #: ../flow.c:481
 msgid "Could not export flow(s). See log file for more information."
-msgstr ""
-"Não foi possível exportar o(s) fluxo(s). Veja o arquivo de log para mais "
+msgstr "Não foi possível exportar o(s) fluxo(s). Veja o arquivo de log para mais "
 "informações."
 
 #: ../flow.c:722
@@ -829,17 +829,18 @@ msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../flow.c:1329 ../ui_flow_browse.c:1431
+#: ../flow.c:1329
+#: ../ui_flow_browse.c:1431
 msgid "Select one line to edit or execute its flows.\n"
 msgstr "Selecione uma linha para alterar ou executar um fluxo.\n"
 
-#: ../flow.c:1333 ../ui_flow_browse.c:1433
+#: ../flow.c:1333
+#: ../ui_flow_browse.c:1433
 msgid ""
 "The domain of this line is disconnected,\n"
 "then you cannot edit flows.\n"
 "Try reconnecting its domain or moving this line to another one."
-msgstr ""
-"O domínio desta linha está desconectado,\n"
+msgstr "O domínio desta linha está desconectado,\n"
 "portanto, você não pode editar os fluxos.\n"
 "Tente alterar seu domínio ou reconectar-se a ele."
 
@@ -851,8 +852,7 @@ msgid ""
 "GêBR can execute them\n"
 "- <i>sequentially</i> (Ctrl+R) or\n"
 "- <i>simultaneously</i> (Ctrl+Shift+R)"
-msgstr ""
-"%d Fluxos selecionados.\n"
+msgstr "%d Fluxos selecionados.\n"
 "\n"
 "GêBR pode executá-los\n"
 "- <i>sequencialmente</i> (Ctrl+R) ou\n"
@@ -871,8 +871,7 @@ msgid ""
 "Two options are avaiable:\n"
 "- Click on <i>New Fow</i> to create a flow or\n"
 "- Import a flow through the <i>Import</i> on More options."
-msgstr ""
-"Esta linha não tem fluxos.\n"
+msgstr "Esta linha não tem fluxos.\n"
 "\n"
 "Duas opções estão disponíveis:\n"
 "- Clicar em <i>Novo Fluxo</i> para criar um Fluxo ou\n"
@@ -880,8 +879,7 @@ msgstr ""
 
 #: ../gebr-job-control.c:278
 msgid "No jobs! Try out one of our demos (go to Help->Samples)."
-msgstr ""
-"Você não tem tarefas! Teste um de nossos programas\n"
+msgstr "Você não tem tarefas! Teste um de nossos programas\n"
 "demonstrativos (vá em Ajuda > Exemplos)."
 
 #: ../gebr-job-control.c:280
@@ -897,38 +895,38 @@ msgstr "Selecione uma tarefa da lista."
 msgid "Multiple jobs selected."
 msgstr "Múltiplos tarefas selecionados."
 
-#: ../gebr-job-control.c:883 ../gebr-job-control.c:1689
+#: ../gebr-job-control.c:883
+#: ../gebr-job-control.c:1689
 msgid ""
 "\n"
 " --- The execution started. --- \n"
 "\n"
-msgstr ""
-"\n"
+msgstr "\n"
 " --- A execução iniciou. --- \n"
 "\n"
 
-#: ../gebr-job-control.c:885 ../gebr-job-control.c:1695
+#: ../gebr-job-control.c:885
+#: ../gebr-job-control.c:1695
 msgid ""
 "\n"
 " --- The execution finished successfully. --- \n"
-msgstr ""
-"\n"
+msgstr "\n"
 " --- A execução terminou com sucesso. --- \n"
 
-#: ../gebr-job-control.c:887 ../gebr-job-control.c:1697
+#: ../gebr-job-control.c:887
+#: ../gebr-job-control.c:1697
 msgid ""
 "\n"
 " --- The execution has been canceled. --- \n"
-msgstr ""
-"\n"
+msgstr "\n"
 " --- A execução foi cancelada. --- \n"
 
-#: ../gebr-job-control.c:889 ../gebr-job-control.c:1699
+#: ../gebr-job-control.c:889
+#: ../gebr-job-control.c:1699
 msgid ""
 "\n"
 " --- The execution failed. --- \n"
-msgstr ""
-"\n"
+msgstr "\n"
 " --- A execução falhou. --- \n"
 
 #: ../gebr-job-control.c:955
@@ -936,8 +934,7 @@ msgstr ""
 msgid ""
 "%s\n"
 "%.1lf%% of total"
-msgstr ""
-"%s\n"
+msgstr "%s\n"
 "%.1lf%% do total"
 
 #: ../gebr-job-control.c:1000
@@ -950,8 +947,7 @@ msgstr "<span size='x-large'>%s</span>"
 msgid ""
 "This flow is queued and \n"
 "has not been executed."
-msgstr ""
-"Este fluxo está enfileirado e \n"
+msgstr "Este fluxo está enfileirado e \n"
 "não foi executado."
 
 #: ../gebr-job-control.c:1025
@@ -1013,8 +1009,10 @@ msgstr "Cancelado em %s"
 msgid "Failed on %s"
 msgstr "Falhou em %s"
 
-#: ../gebr-job-control.c:1399 ../gebr-job-control.c:1408
-#: ../gebr-job-control.c:1418 ../gebr-job-control.c:1427
+#: ../gebr-job-control.c:1399
+#: ../gebr-job-control.c:1408
+#: ../gebr-job-control.c:1418
+#: ../gebr-job-control.c:1427
 #, c-format
 msgid "Elapsed time: %s"
 msgstr "Tempo decorrido: %s"
@@ -1037,9 +1035,12 @@ msgstr "Linha de comando para tarefa %d de %d (nó: %s)"
 msgid "<b>Input file</b>: %s"
 msgstr "<b>Arquivo de entrada</b>: %s"
 
-#: ../gebr-job-control.c:1611 ../gebr-job-control.c:1622
-#: ../gebr-job-control.c:1633 ../ui_flow_browse.c:1313
-#: ../ui_project_line.c:548 ../ui_project_line.c:550
+#: ../gebr-job-control.c:1611
+#: ../gebr-job-control.c:1622
+#: ../gebr-job-control.c:1633
+#: ../ui_flow_browse.c:1313
+#: ../ui_project_line.c:548
+#: ../ui_project_line.c:550
 msgid "None"
 msgstr "Nenhum"
 
@@ -1058,12 +1059,12 @@ msgid ""
 "\n"
 " --- The execution is queued. --- \n"
 "\n"
-msgstr ""
-"\n"
+msgstr "\n"
 " --- A execução está em espera. --- \n"
 "\n"
 
-#: ../gebr-job-control.c:1798 ../gebr-job-control.c:2026
+#: ../gebr-job-control.c:1798
+#: ../gebr-job-control.c:2026
 #: ../gebr-job-control.c:2114
 msgid "Any"
 msgstr "Qualquer"
@@ -1096,8 +1097,9 @@ msgstr "Auto-rolagem"
 msgid "Jobs filtered by:"
 msgstr "Tarefas filtradas por:"
 
+#: ../gebr-job-control.c:2638
+#: ../ui_project_line.c:1367
 #. run file chooser
-#: ../gebr-job-control.c:2638 ../ui_project_line.c:1367
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
@@ -1115,12 +1117,12 @@ msgid ""
 "\n"
 "Start date: %s\n"
 "Finish date: %s\n"
-msgstr ""
-"\n"
+msgstr "\n"
 "Data de início: %s\n"
 "Data de término: %s\n"
 
-#: ../gebr-job-control.c:2684 ../gebr-job-control.c:2685
+#: ../gebr-job-control.c:2684
+#: ../gebr-job-control.c:2685
 msgid "(None)"
 msgstr "(Nenhum)"
 
@@ -1130,8 +1132,7 @@ msgid ""
 "\n"
 "Issues:\n"
 "%s"
-msgstr ""
-"\n"
+msgstr "\n"
 "Questões:\n"
 "%s"
 
@@ -1146,8 +1147,7 @@ msgid ""
 "Input File: %s\n"
 "Output File: %s\n"
 "Log File: %s\n"
-msgstr ""
-"\n"
+msgstr "\n"
 "Arquivo de entrada: %s\n"
 "Arquivo de saída: %s\n"
 "Arquivo de log: %s\n"
@@ -1158,8 +1158,7 @@ msgid ""
 "Output:\n"
 "%s\n"
 "\n"
-msgstr ""
-"Saída:\n"
+msgstr "Saída:\n"
 "%s\n"
 "\n"
 
@@ -1188,8 +1187,7 @@ msgstr "Requisitando cancelamento da tarefa ao nó de processamento."
 #: ../gebr-job-control.c:2781
 #, c-format
 msgid "Asking node \"%s\" to cancel job \"%s\"."
-msgstr ""
-"Requisitando ao nó de processamento \"%s\" o cancelamento da tarefa \"%s\"."
+msgstr "Requisitando ao nó de processamento \"%s\" o cancelamento da tarefa \"%s\"."
 
 #: ../gebr-job-control.c:2804
 msgid "Clear job"
@@ -1233,7 +1231,8 @@ msgstr "Arraste nós de processamento para cá para incrementar este grupo!"
 msgid "_Remove from group"
 msgstr "Remover do grupo"
 
-#: ../gebr-maestro-controller.c:580 ../gebr-maestro-controller.c:1755
+#: ../gebr-maestro-controller.c:580
+#: ../gebr-maestro-controller.c:1755
 msgid "Address"
 msgstr "Endereço"
 
@@ -1249,8 +1248,8 @@ msgstr "Desconectar"
 msgid "_Remove"
 msgstr "Remover"
 
-# t I/O labels
 #: ../gebr-maestro-controller.c:910
+# t I/O labels
 msgid "Stop Server"
 msgstr "Parar"
 
@@ -1259,9 +1258,9 @@ msgstr "Parar"
 msgid "nodes of maestro %s"
 msgstr "nós de processamento associadas ao maestro %s"
 
+#: ../gebr-maestro-controller.c:1326
 #. FIXME: Do we need to use threads_enter here???
 #. I don t know why markup does not work here
-#: ../gebr-maestro-controller.c:1326
 msgid "Invalid input"
 msgstr "Entrada inválida"
 
@@ -1271,8 +1270,7 @@ msgid ""
 "GêBR supports the formats hostname or ip address.\n"
 "\n"
 "The entry %s will be automatically removed"
-msgstr ""
-"GêBR suporta os formatos nome da máquina de processamento ou endereço de "
+msgstr "GêBR suporta os formatos nome da máquina de processamento ou endereço de "
 "ip.\n"
 "\n"
 "A entrada %s será automaticamente removida."
@@ -1314,8 +1312,7 @@ msgstr "Ajuda"
 msgid ""
 "<span size='large'>%s</span>\n"
 "%s"
-msgstr ""
-"<span size='large'>%s</span>\n"
+msgstr "<span size='large'>%s</span>\n"
 "%s"
 
 #: ../gebr-maestro-controller.c:1869
@@ -1342,8 +1339,7 @@ msgstr "Lembrar senha"
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
 "You need to cancel these jobs to disconnect this server.</span>"
-msgstr ""
-"<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
+msgstr "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente desconectá-lo e cancelar essas tarefas?</span>"
 
 #: ../gebr-maestro-controller.c:1999
@@ -1351,8 +1347,7 @@ msgstr ""
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
 "You need to cancel these jobs to remove this server.</span>"
-msgstr ""
-"<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
+msgstr "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar essas tarefas?</span>"
 
 #: ../gebr-maestro-controller.c:2002
@@ -1360,11 +1355,11 @@ msgstr ""
 msgid ""
 "<span size='large' weight='bold'>The node %s is executing jobs.\n"
 "You need to cancel these jobs to stop this server.</span>"
-msgstr ""
-"<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
+msgstr "<span size='large' weight='bold'>O nó %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar essas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:2041 ../ui_log.c:157
+#: ../gebr-maestro-controller.c:2041
+#: ../ui_log.c:157
 msgid "Disconnected"
 msgstr "Desconectado"
 
@@ -1389,8 +1384,7 @@ msgstr "Nó de processamento já adicionado"
 msgid ""
 "The node %s was already added in this domain. It will be automatically "
 "removed."
-msgstr ""
-"O nó de processamento %s já foi adicionado a este domínio. Ele será "
+msgstr "O nó de processamento %s já foi adicionado a este domínio. Ele será "
 "automaticamente removido."
 
 #: ../gebr-maestro-controller.c:2100
@@ -1401,8 +1395,7 @@ msgstr "Este nó de processamento usa uma versão de protocolo diferente"
 msgid ""
 "The authentication cookie of this node was not found in the list of "
 "authorized cookies"
-msgstr ""
-"O cookie de autenticação deste nó não foi encontrado na lista decookies "
+msgstr "O cookie de autenticação deste nó não foi encontrado na lista decookies "
 "autorizados."
 
 #: ../gebr-maestro-controller.c:2105
@@ -1411,8 +1404,7 @@ msgstr "Este nó de processamento já está registrado a um outro domínio"
 
 #: ../gebr-maestro-controller.c:2109
 msgid "This node cannot connect to display. Try reconnect it"
-msgstr ""
-"Não foi possível conectar-se ao ambiente gráfico do nó de processamento. "
+msgstr "Não foi possível conectar-se ao ambiente gráfico do nó de processamento. "
 "Tente reconectá-lo."
 
 #: ../gebr-maestro-controller.c:2111
@@ -1424,7 +1416,8 @@ msgstr "Este nó foi interrompido."
 msgid "Succesfully connected to host %s"
 msgstr "Conectado com êxito a %s"
 
-#: ../gebr-maestro-server.c:164 ../gebr-maestro-server.c:607
+#: ../gebr-maestro-server.c:164
+#: ../gebr-maestro-server.c:607
 #: ../gebr-maestro-server.c:1726
 #, c-format
 msgid "Connecting to %s"
@@ -1435,8 +1428,7 @@ msgstr "Conectando-se a %s"
 msgid ""
 "<b>%s</b> is asking for your login\n"
 "password for remote browsing."
-msgstr ""
-"<b>%s</b> está requisitando senha\n"
+msgstr "<b>%s</b> está requisitando senha\n"
 "de login para habilitar a navegação remota."
 
 #: ../gebr-maestro-server.c:605
@@ -1449,8 +1441,7 @@ msgstr "Interrompendo %s"
 msgid ""
 "<b>%s</b> is asking for your login\n"
 "password."
-msgstr ""
-"<b>%s</b> está requisitando senha\n"
+msgstr "<b>%s</b> está requisitando senha\n"
 "de login."
 
 #: ../gebr-maestro-server.c:1654
@@ -1467,8 +1458,7 @@ msgstr "Maestro %s"
 msgid ""
 "Maestro <b>%s</b> is asking for your login\n"
 "password."
-msgstr ""
-"Maestro <b>%s</b> está requisitando sua senha\n"
+msgstr "Maestro <b>%s</b> está requisitando sua senha\n"
 "de login."
 
 #: ../gebr-maestro-server.c:2210
@@ -1489,20 +1479,26 @@ msgstr "Fechar esta ajuda e voltar para a lista de menus"
 msgid "Add this menu to flow"
 msgstr "Adicionar este menu ao fluxo"
 
-#: ../gebr-menu-view.c:196 ../gebr-menu-view.c:589
+#: ../gebr-menu-view.c:196
+#: ../gebr-menu-view.c:589
 msgid "See the selected menu's help"
 msgstr "Ver a ajuda do menu selecionado"
 
-#: ../gebr-menu-view.c:197 ../gebr-menu-view.c:602
+#: ../gebr-menu-view.c:197
+#: ../gebr-menu-view.c:602
 msgid "Add the selected menu to flow"
 msgstr "Adicionar o menu selecionado ao fluxo"
 
-#: ../gebr-menu-view.c:278 ../gebr-menu-view.c:304 ../ui_project_line.c:1989
+#: ../gebr-menu-view.c:278
+#: ../gebr-menu-view.c:304
+#: ../ui_project_line.c:1989
 #: ../ui_project_line.c:2028
 msgid "Collapse all"
 msgstr "Contrair todos"
 
-#: ../gebr-menu-view.c:281 ../gebr-menu-view.c:307 ../ui_project_line.c:1993
+#: ../gebr-menu-view.c:281
+#: ../gebr-menu-view.c:307
+#: ../ui_project_line.c:1993
 #: ../ui_project_line.c:2032
 msgid "Expand all"
 msgstr "Expandir todos"
@@ -1511,7 +1507,8 @@ msgstr "Expandir todos"
 msgid "Select a menu to view help."
 msgstr "Selecione um menu para ver a ajuda."
 
-#: ../gebr-menu-view.c:820 ../gebr-menu-view.c:824
+#: ../gebr-menu-view.c:820
+#: ../gebr-menu-view.c:824
 msgid "This item does not have help."
 msgstr "Este item não tem ajuda."
 
@@ -1535,8 +1532,7 @@ msgstr "Selecione um fluxo para adicionar um menu."
 msgid ""
 "Only one program loop can be inserted into \n"
 "a flow and this flow already contains a loop."
-msgstr ""
-"Apenas um programa loop pode ser inserido \n"
+msgstr "Apenas um programa loop pode ser inserido \n"
 "em um fluxo e este fluxo já tem um loop."
 
 #: ../gebr-report.c:259
@@ -1555,18 +1551,23 @@ msgstr "Esta linha pertence a "
 msgid "Line paths"
 msgstr "Caminhos da Linha:"
 
+#: ../gebr-report.c:669
+#: ../gebr-report.c:679
+#: ../gebr-report.c:692
+#: ../ui_document.c:1715
 #. Variables table
-#: ../gebr-report.c:669 ../gebr-report.c:679 ../gebr-report.c:692
-#: ../ui_document.c:1714
 msgid "Project"
 msgstr "Projeto"
 
-#: ../gebr-report.c:682 ../gebr-report.c:696 ../line.c:517
-#: ../ui_document.c:1716
+#: ../gebr-report.c:682
+#: ../gebr-report.c:696
+#: ../line.c:517
+#: ../ui_document.c:1717
 msgid "Line"
 msgstr "Linha"
 
-#: ../gebr-report.c:698 ../ui_document.c:1718
+#: ../gebr-report.c:698
+#: ../ui_document.c:1719
 msgid "Flow"
 msgstr "Fluxo"
 
@@ -1586,11 +1587,14 @@ msgstr "Linha composta pelo(s) fluxo(s):"
 msgid "Variables"
 msgstr "Variáveis"
 
-#: ../gebr-report.c:986 ../ui_document.c:808
+#: ../gebr-report.c:986
+#: ../ui_document.c:809
 msgid "Keyword"
 msgstr "Palavra-chave"
 
-#: ../gebr-report.c:986 ../gebr-report.c:1428 ../ui_document.c:831
+#: ../gebr-report.c:986
+#: ../gebr-report.c:1428
+#: ../ui_document.c:832
 msgid "Value"
 msgstr "Valor"
 
@@ -1598,7 +1602,8 @@ msgstr "Valor"
 msgid "Result"
 msgstr "Resultado"
 
-#: ../gebr-report.c:986 ../ui_document.c:869
+#: ../gebr-report.c:986
+#: ../ui_document.c:870
 msgid "Comment"
 msgstr "Comentário"
 
@@ -1614,7 +1619,9 @@ msgstr "Tabela de entrada/saída"
 msgid "Input"
 msgstr "Entrada"
 
-#: ../gebr-report.c:1151 ../gebr-report.c:1152 ../gebr-report.c:1153
+#: ../gebr-report.c:1151
+#: ../gebr-report.c:1152
+#: ../gebr-report.c:1153
 msgid "(none)"
 msgstr "(nenhum)"
 
@@ -1652,8 +1659,7 @@ msgid ""
 "Unable to create GêBR configuration files.\n"
 "You might not have write permission in your own\n"
 "home directory or there is not enough space left on the device.\n"
-msgstr ""
-"Não foi possível de criar os arquivos de configuração da GêBR.\n"
+msgstr "Não foi possível de criar os arquivos de configuração da GêBR.\n"
 "Talvez você não tenha permissão de escrita no seu\n"
 "próprio diretório ou não haja espaço no dispositivo.\n"
 
@@ -1678,16 +1684,14 @@ msgstr "A configuração foi salva."
 msgid ""
 "GêBR now stores data files on its own directory. You may now delete GêBR's "
 "files at %s."
-msgstr ""
-"A GêBR armazena arquivos de dados em um diretório próprio. Você pode agora\n"
+msgstr "A GêBR armazena arquivos de dados em um diretório próprio. Você pode agora\n"
 "apagar os arquivos da GêBR em %s."
 
 #: ../gebr.c:780
 msgid ""
 "Cannot copy data files to GêBR's directory. Please check your write "
 "permissions in your home directory."
-msgstr ""
-"Não foi possível copiar os arquivos de dados para o diretório da GêBR. Por "
+msgstr "Não foi possível copiar os arquivos de dados para o diretório da GêBR. Por "
 "favor\n"
 "verifique as permissões de escrita para o seu diretório pessoal."
 
@@ -1703,14 +1707,16 @@ msgstr "_Maestro / Nós de processamento"
 msgid "Samples"
 msgstr "Exemplos"
 
-#.
+#: ../interface.c:80
+#: ../interface.c:81
+#: ../project.c:56
 #. * Project/line
-#.
-#: ../interface.c:80 ../interface.c:81 ../project.c:56
 msgid "New project"
 msgstr "Novo projeto"
 
-#: ../interface.c:82 ../interface.c:83 ../line.c:683
+#: ../interface.c:82
+#: ../interface.c:83
+#: ../line.c:683
 msgid "New line"
 msgstr "Nova linha"
 
@@ -1718,12 +1724,17 @@ msgstr "Nova linha"
 msgid "Delete selected projects and lines"
 msgstr "Apagar projetos e linhas selecionados"
 
-#: ../interface.c:86 ../interface.c:87 ../interface.c:110 ../interface.c:111
-#: ../interface.c:150 ../interface.c:151
+#: ../interface.c:86
+#: ../interface.c:87
+#: ../interface.c:110
+#: ../interface.c:111
+#: ../interface.c:150
+#: ../interface.c:151
 msgid "Edit"
 msgstr "Editar"
 
-#: ../interface.c:88 ../interface.c:112
+#: ../interface.c:88
+#: ../interface.c:112
 msgid "Dictionary of variables"
 msgstr "Dicionário de variáveis"
 
@@ -1731,7 +1742,8 @@ msgstr "Dicionário de variáveis"
 msgid "Edit dictionary"
 msgstr "Editar dicionário de variáveis"
 
-#: ../interface.c:90 ../interface.c:116
+#: ../interface.c:90
+#: ../interface.c:116
 msgid "Import"
 msgstr "Importar"
 
@@ -1743,11 +1755,15 @@ msgstr "Importar projetos ou linhas"
 msgid "Export selected projects and lines"
 msgstr "Exportar projetos e linhas selecionados"
 
-#: ../interface.c:94 ../interface.c:95 ../interface.c:132 ../interface.c:133
+#: ../interface.c:94
+#: ../interface.c:95
+#: ../interface.c:132
+#: ../interface.c:133
 msgid "View report"
 msgstr "Visualizar Relatório"
 
-#: ../interface.c:96 ../interface.c:97
+#: ../interface.c:96
+#: ../interface.c:97
 msgid "Edit Comments"
 msgstr "Editar Comentários"
 
@@ -1759,7 +1775,8 @@ msgstr "Exibe a lista de menus"
 msgid "Edit dictionary of variables"
 msgstr "Editar o dicionário de variáveis"
 
-#: ../interface.c:114 ../interface.c:115
+#: ../interface.c:114
+#: ../interface.c:115
 msgid "Take a snapshot"
 msgstr "Tirar uma foto"
 
@@ -1771,39 +1788,48 @@ msgstr "Importar fluxos"
 msgid "Export selected flows"
 msgstr "Exportar fluxos selecionados"
 
-#: ../interface.c:123 ../ui_flow_browse.c:3520
+#: ../interface.c:123
+#: ../ui_flow_browse.c:3520
 msgid "Setup & Run"
 msgstr "Configurar e executar"
 
-#: ../interface.c:124 ../interface.c:125
+#: ../interface.c:124
+#: ../interface.c:125
 msgid "Run sequentially"
 msgstr "Executar sequencialmente"
 
-#: ../interface.c:126 ../interface.c:127
+#: ../interface.c:126
+#: ../interface.c:127
 msgid "Run simultaneously"
 msgstr "Executar simultaneamente"
 
-#: ../interface.c:128 ../interface.c:154
+#: ../interface.c:128
+#: ../interface.c:154
 msgid "Copy"
 msgstr "Copiar"
 
-#: ../interface.c:129 ../interface.c:155
+#: ../interface.c:129
+#: ../interface.c:155
 msgid "Copy to clipboard"
 msgstr "Copiar Fluxos selecionados para a área de transferência"
 
-#: ../interface.c:130 ../interface.c:156
+#: ../interface.c:130
+#: ../interface.c:156
 msgid "Paste"
 msgstr "Colar"
 
-#: ../interface.c:131 ../interface.c:157
+#: ../interface.c:131
+#: ../interface.c:157
 msgid "Paste from clipboard"
 msgstr "Colar Fluxos da área de transferência"
 
-#: ../interface.c:134 ../interface.c:135
+#: ../interface.c:134
+#: ../interface.c:135
 msgid "Edit comments"
 msgstr "Editar Comentários"
 
-#: ../interface.c:139 ../interface.c:147
+#: ../interface.c:139
+#: ../interface.c:147
 msgid "Show program's help"
 msgstr "Exibe a ajuda do programa"
 
@@ -1867,8 +1893,7 @@ msgstr "Mais"
 msgid ""
 "A plug-and-play environment for\n"
 "seismic processing tools"
-msgstr ""
-"Um ambiente plug-and-play para\n"
+msgstr "Um ambiente plug-and-play para\n"
 "ferramentas de processamento sísmico"
 
 #: ../interface.c:444
@@ -1887,32 +1912,44 @@ msgstr "Tarefas"
 msgid "_Actions"
 msgstr "_Ações"
 
-#: ../interface.c:581 ../ui_help.c:83 ../ui_help.c:93 ../ui_parameters.c:125
+#: ../interface.c:581
+#: ../ui_help.c:83
+#: ../ui_help.c:93
+#: ../ui_parameters.c:125
 msgid "_Help"
 msgstr "A_juda"
 
-#: ../line.c:85 ../ui_document.c:319 ../ui_document.c:339
+#: ../line.c:85
+#: ../ui_document.c:319
+#: ../ui_document.c:339
 msgid "You need to use an absolute path."
 msgstr "É necessário utilizar o caminho completo."
 
-#: ../line.c:93 ../ui_document.c:323
+#: ../line.c:93
+#: ../ui_document.c:323
 msgid "Choose a valid path."
 msgstr "Escolha um caminho válido"
 
-#: ../line.c:138 ../ui_document.c:250
+#: ../line.c:138
+#: ../ui_document.c:250
 msgid "Title cannot be empty"
 msgstr "Título não pode estar vazio"
 
-#: ../line.c:148 ../ui_document.c:2293 ../ui_preferences.c:528
+#: ../line.c:148
+#: ../ui_document.c:2294
+#: ../ui_preferences.c:528
 msgid "Invalid email"
 msgstr "Email inválido"
 
-#: ../line.c:148 ../ui_document.c:2293 ../ui_preferences.c:528
+#: ../line.c:148
+#: ../ui_document.c:2294
+#: ../ui_preferences.c:528
 #: ../ui_preferences.c:878
 msgid "Your email address"
 msgstr "Seu endereço de e-mail"
 
-#: ../line.c:185 ../ui_preferences.c:208
+#: ../line.c:185
+#: ../ui_preferences.c:208
 msgid "Success!"
 msgstr "Sucesso!"
 
@@ -1928,15 +1965,16 @@ msgstr "Os diretórios foram criados com sucesso!"
 msgid ""
 "Press the back button to change the BASE directory\n"
 "or the line title."
-msgstr ""
-"Pressione o botão Voltar para mudar o diretório BASE\n"
+msgstr "Pressione o botão Voltar para mudar o diretório BASE\n"
 " ou o título desta linha."
 
-#: ../line.c:201 ../line.c:261
+#: ../line.c:201
+#: ../line.c:261
 msgid "Error!"
 msgstr "Erro!"
 
-#: ../line.c:204 ../ui_document.c:1812
+#: ../line.c:204
+#: ../ui_document.c:1813
 msgid "The directory could not be created!"
 msgstr "O diretório não pode ser criado!"
 
@@ -1944,19 +1982,20 @@ msgstr "O diretório não pode ser criado!"
 msgid ""
 "You can change the BASE directory by pressing the\n"
 "back button or use this folder anyway."
-msgstr ""
-"Você pode mudar o diretório BASE pressionando o\n"
+msgstr "Você pode mudar o diretório BASE pressionando o\n"
 "botão voltar ou usar esta pasta assim mesmo."
 
 #: ../line.c:213
 msgid "Warning!"
 msgstr "Aviso!"
 
-#: ../line.c:216 ../ui_document.c:1820
+#: ../line.c:216
+#: ../ui_document.c:1821
 msgid "The directory already exists!"
 msgstr "O diretório já existe!"
 
-#: ../line.c:252 ../ui_document.c:1854
+#: ../line.c:252
+#: ../ui_document.c:1855
 msgid "Timed Out!"
 msgstr "Limite de tempo excedido!"
 
@@ -1964,8 +2003,7 @@ msgstr "Limite de tempo excedido!"
 msgid ""
 "Could not create directory.\n"
 "Check if your domain is connected."
-msgstr ""
-"Não foi possível criar o diretório.\n"
+msgstr "Não foi possível criar o diretório.\n"
 "Verifique se seu domínio está conectado."
 
 #: ../line.c:362
@@ -1979,8 +2017,7 @@ msgid ""
 "\n"
 "This line will be attached to the current NFS (%s), which will be in charge "
 "of running its processing flows."
-msgstr ""
-"A estrutura <i>linha</i> na GÊBR reúne fluxos de processamento.\n"
+msgstr "A estrutura <i>linha</i> na GÊBR reúne fluxos de processamento.\n"
 "\n"
 "O termo <i>linha</i> vem da noção de que o processamento de um conjunto de "
 "dadosadquirido ao longo de uma linha sísmica, é realizado em vários passos "
@@ -1995,8 +2032,7 @@ msgid ""
 "Below is the hierarchy of directories GêBR is about to create.\n"
 "\n"
 "These directories will be created on <b>%s</b>."
-msgstr ""
-"Abaixo está a hierarquia de diretórios que a GêBR criará.\n"
+msgstr "Abaixo está a hierarquia de diretórios que a GêBR criará.\n"
 "\n"
 "Estes diretórios serão criados nos nós de processamento conectadas a <b>%s</"
 "b>."
@@ -2006,11 +2042,14 @@ msgstr ""
 msgid "<i>&lt;BASE&gt;: <b>%s</b></i>"
 msgstr "<i>&lt;BASE&gt;: <b>%s</b></i>"
 
-#: ../line.c:434 ../line.c:441
+#: ../line.c:434
+#: ../line.c:441
 msgid "<i>not defined</i>"
 msgstr "<i>Não definido</i>"
 
-#: ../line.c:456 ../line.c:548 ../ui_document.c:2060
+#: ../line.c:456
+#: ../line.c:548
+#: ../ui_document.c:2061
 msgid "Creating directories..."
 msgstr "Criando diretórios..."
 
@@ -2022,7 +2061,8 @@ msgstr "Criando uma nova linha"
 msgid "Line Paths"
 msgstr "Caminhos de linha"
 
-#: ../line.c:528 ../ui_document.c:492
+#: ../line.c:528
+#: ../ui_document.c:493
 msgid "BASE Path"
 msgstr "Caminho BASE"
 
@@ -2034,8 +2074,8 @@ msgstr "Hierarquia de Diretórios"
 msgid "Summary"
 msgstr "Sumário"
 
-#. log action
 #: ../line.c:730
+#. log action
 #, c-format
 msgid "Deleting child Flow '%s'."
 msgstr "Apagando o Fluxo filho '%s'."
@@ -2071,8 +2111,7 @@ msgid ""
 "GeBR is a free-software which provides an environment to process seismic\n"
 "data, designed to easily assemble and run processing\n"
 "flows, as well as manage jobs."
-msgstr ""
-"A GêBR é um ambiente livre de processamento de dados sísmicos,\n"
+msgstr "A GêBR é um ambiente livre de processamento de dados sísmicos,\n"
 "projetado para criar e executar fluxos de processamento facilmente,\n"
 "bem como para gerir tarefas."
 
@@ -2093,16 +2132,15 @@ msgstr "Tente %s --help\n"
 #: ../main.c:92
 #, c-format
 msgid "ERROR: Could not find GeBR configuration file at %s.\n"
-msgstr ""
-"ERRO: Não foi possível encontrar o arquivo de configuração da GeBR em %s.\n"
+msgstr "ERRO: Não foi possível encontrar o arquivo de configuração da GeBR em %s.\n"
 
 #: ../main.c:98
 #, c-format
 msgid "ERROR: Local menu directory is not defined in GeBR's settings.\n"
-msgstr ""
-"ERRO: Diretório de menus local não definido nas configurações da GêBR.\n"
+msgstr "ERRO: Diretório de menus local não definido nas configurações da GêBR.\n"
 
-#: ../menu.c:413 ../menu.c:427
+#: ../menu.c:413
+#: ../menu.c:427
 msgid "Unable to write Menus' index."
 msgstr "Não foi possível escrever o índice de Menus."
 
@@ -2114,8 +2152,7 @@ msgstr "vazio"
 msgid ""
 "Install Seismic Unix package.\n"
 "Click here to get the script of Seismic Unix on GêBR Project website."
-msgstr ""
-"Instale o pacote do Seismic Unix.\n"
+msgstr "Instale o pacote do Seismic Unix.\n"
 "Clique aqui para baixar o script do Seismic Unix no site da GêBR Project."
 
 #: ../project.c:41
@@ -2131,8 +2168,7 @@ msgid ""
 "The project has lines.\n"
 "These Lines should also be selected so as to be deleted along with the "
 "project."
-msgstr ""
-"O projeto selecionado possui linhas.\n"
+msgstr "O projeto selecionado possui linhas.\n"
 "Elas também devem ser selecionadas para serem apagadas junto com o projeto."
 
 #: ../project.c:94
@@ -2153,121 +2189,116 @@ msgstr "Remover parâmetros atuais."
 msgid "%s '%s' - Properties"
 msgstr "%s '%s' - Propriedades"
 
-#: ../ui_document.c:449 ../ui_preferences.c:1104 ../ui_preferences.c:1175
-#: ../ui_preferences.c:1184
-msgid "Preferences"
-msgstr "Preferências"
+#: ../ui_document.c:449
+msgid "Properties"
+msgstr "Propriedades"
 
-#: ../ui_document.c:486
+#: ../ui_document.c:487
 #, c-format
 msgid ""
 "<i>You will browse on files and folders of <b>%s</b>.\n"
 "This directories structure may not be the same on your local machine.</i>"
-msgstr ""
-"<i>Você navegará nos arquivos e pastas do <b>%s</b>.\n"
+msgstr "<i>Você navegará nos arquivos e pastas do <b>%s</b>.\n"
 "Esta estrutura de diretórios pode não ser a mesma na sua máquina local.</i>"
 
-#: ../ui_document.c:755
+#: ../ui_document.c:756
 #, c-format
 msgid "Dictionary of variables for %s \"%s\""
 msgstr "Dicionário de variáveis para %s \"%s\""
 
-#: ../ui_document.c:846 ../ui_document.c:1192
+#: ../ui_document.c:847
+#: ../ui_document.c:1193
 msgid "Number"
 msgstr "Número"
 
-#: ../ui_document.c:848 ../ui_document.c:1190
+#: ../ui_document.c:849
+#: ../ui_document.c:1191
 msgid "String"
 msgstr "Texto"
 
-#: ../ui_document.c:953
+#: ../ui_document.c:954
 msgid "Click 'New' to create a variable."
 msgstr "Clique em 'Nova' para criar uma variável."
 
-#: ../ui_document.c:963
+#: ../ui_document.c:964
 msgid "Please enter a unique variable name."
 msgstr "Por favor, digite um nome de variável único."
 
-#: ../ui_document.c:971
+#: ../ui_document.c:972
 msgid "Please enter a number or expression."
 msgstr "Por favor, digite um número ou expressão."
 
-#: ../ui_document.c:975
+#: ../ui_document.c:976
 msgid "Please enter a text."
 msgstr "Por favor, insira um texto."
 
-#: ../ui_document.c:983
+#: ../ui_document.c:984
 msgid "Please enter a comment."
 msgstr "Por favor, digite um comentário."
 
-#: ../ui_document.c:1172
+#: ../ui_document.c:1173
 msgid "Click to select type for a new parameter"
 msgstr "Clique para escolher o tipo de um novo parâmetro"
 
-#: ../ui_document.c:1245
+#: ../ui_document.c:1246
 msgid "Cannot use reserved keyword 'iter'."
 msgstr "A palavra-chave 'iter' não pode ser usada."
 
-#: ../ui_document.c:1250
+#: ../ui_document.c:1251
 msgid "This keyword is reserved."
 msgstr "Esta palavra-chave é reservada."
 
-#: ../ui_document.c:1255
+#: ../ui_document.c:1256
 msgid ""
 "Valid keywords are lower case characters from 'a' to 'z', numbers or "
 "underscore."
-msgstr ""
-"Palavras-chaves válidas são compostas por letras minúsculas, números e "
+msgstr "Palavras-chaves válidas são compostas por letras minúsculas, números e "
 "sublinhado '_'."
 
-#: ../ui_document.c:1599
+#: ../ui_document.c:1600
 msgid ""
 "There is a parameter which already uses this keyword. Please choose another."
-msgstr ""
-"Outro parâmetro já utiliza esta palavra-chave. Por favor escolha outra."
+msgstr "Outro parâmetro já utiliza esta palavra-chave. Por favor escolha outra."
 
-#: ../ui_document.c:1639
+#: ../ui_document.c:1640
 msgid "<i>New</i>"
 msgstr "<i>Nova</i>"
 
-#: ../ui_document.c:1720
+#: ../ui_document.c:1721
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: ../ui_document.c:1720
+#: ../ui_document.c:1721
 msgid "unknown"
 msgstr "desconhecido"
 
-#: ../ui_document.c:1801
+#: ../ui_document.c:1802
 msgid "Sucess!"
 msgstr "Sucesso!"
 
-#: ../ui_document.c:1803
+#: ../ui_document.c:1804
 msgid "The directory were successfully created!"
 msgstr "Os diretórios foram criados com sucesso!"
 
-#: ../ui_document.c:1809
+#: ../ui_document.c:1810
 msgid ""
 "Press the back buttom to change the BASE directory\n"
 "or the line title."
-msgstr ""
-"Pressione o botão voltar para mudar o diretório BASE\n"
+msgstr "Pressione o botão voltar para mudar o diretório BASE\n"
 " ou o título desta linha."
 
-#: ../ui_document.c:1817
+#: ../ui_document.c:1818
 msgid ""
 "You can change the BASE directory by pressing the\n"
 "back buttom or use this folder anyway."
-msgstr ""
-"Você pode mudar o diretório BASE pressionando o\n"
+msgstr "Você pode mudar o diretório BASE pressionando o\n"
 "botão voltar ou usar esta pasta assim mesmo."
 
-#: ../ui_document.c:1858
+#: ../ui_document.c:1859
 msgid ""
 "Could not create directory.\n"
 "Try reconnecting your domain."
-msgstr ""
-"Não foi possível criar o diretório.\n"
+msgstr "Não foi possível criar o diretório.\n"
 "Tente reconectar seu domain."
 
 #: ../ui_flow_browse.c:186
@@ -2282,16 +2313,14 @@ msgstr "Remover esta foto permanentemente?"
 msgid ""
 "If you choose to remove this snapshot you will not be able to recover it "
 "later."
-msgstr ""
-"Se você optar por remover esta foto, você não conseguirá recuperá-la mais "
+msgstr "Se você optar por remover esta foto, você não conseguirá recuperá-la mais "
 "tarde."
 
 #: ../ui_flow_browse.c:1547
 msgid ""
 "If you choose to remove these snapshots you will not be able to recover them "
 "later."
-msgstr ""
-"Se você optar por remover estas fotos, você não conseguirá recuperá-las mais "
+msgstr "Se você optar por remover estas fotos, você não conseguirá recuperá-las mais "
 "tarde."
 
 #: ../ui_flow_browse.c:1726
@@ -2332,12 +2361,13 @@ msgstr "submetido"
 msgid "This job doesn't have output yet"
 msgstr "Esta tarefa ainda não tem saídas"
 
-#. Update snapshots context
 #: ../ui_flow_browse.c:1974
+#. Update snapshots context
 msgid "No Flow selected."
 msgstr "Nenhum Fluxo selecionado"
 
-#: ../ui_flow_browse.c:1985 ../ui_project_line.c:438
+#: ../ui_flow_browse.c:1985
+#: ../ui_project_line.c:438
 #, c-format
 msgid "<span size='x-large'>No description available</span>"
 msgstr "<span size='x-large'>Nenhuma descrição disponível</span>"
@@ -2370,8 +2400,7 @@ msgid ""
 "each of the selected Flows.\n"
 "To do it, just click on the\n"
 "camera icon."
-msgstr ""
-"%d Fluxos selecionados.\n"
+msgstr "%d Fluxos selecionados.\n"
 "\n"
 "A GêBR pode tirar uma foto\n"
 "do estado atual de \n"
@@ -2386,8 +2415,7 @@ msgid ""
 "A snapshot stores the settings of your flow so you can restore it at any "
 "moment. To take a snapshot, just click on \"Take a snapshot\" in More menu "
 "or use Ctrl+S and give a non-empty description."
-msgstr ""
-"Você não tem fotos.\n"
+msgstr "Você não tem fotos.\n"
 "\n"
 "Uma foto salva as configurações do seu Fluxo de modo que você possa restaurá-"
 "las a qualquer momento. Para tirar uma foto, clique em \"Tirar uma foto\" no "
@@ -2436,16 +2464,14 @@ msgstr "Selecione a linha deste projeto para executar um fluxo."
 msgid ""
 "The domain of this line is disconnected.\n"
 "Connecting to it to execute a flow."
-msgstr ""
-"O domínio desta linha está desconectado.\n"
+msgstr "O domínio desta linha está desconectado.\n"
 "Conecte-se ao domínio <b>%s</b> para executar esta linha"
 
 #: ../ui_flow_browse.c:3515
 msgid ""
 "This line does not contain flows\n"
 "Create a flow to use this line"
-msgstr ""
-"Esta linha não contém fluxos\n"
+msgstr "Esta linha não contém fluxos\n"
 "Crie um fluxo para executar esta linha"
 
 #: ../ui_flow_browse.c:3623
@@ -2459,8 +2485,7 @@ msgid ""
 "<span size='large'><b>Execution error</b></span>\n"
 "\n"
 "There are no connected nodes on group <b>%s</b>."
-msgstr ""
-"<span size='large' weight='bold'>Erro de execução</span>\n"
+msgstr "<span size='large' weight='bold'>Erro de execução</span>\n"
 "\n"
 "Não existem nós de processamento conectados ao grupo <b>%s</b>."
 
@@ -2470,8 +2495,7 @@ msgid ""
 "<span size='large'><b>Execution error</b></span>\n"
 "\n"
 "The selected node (<b>%s</b>) is not connected."
-msgstr ""
-"<span size='large' weight='bold'>Erro de execução</span>\n"
+msgstr "<span size='large' weight='bold'>Erro de execução</span>\n"
 "\n"
 "O nó selecionado (<b>%s</b>) não está conectado."
 
@@ -2504,8 +2528,7 @@ msgstr "<small>A capacidade nominal deste conjunto de nós é %d cores.</small>"
 #: ../ui_flow_execution.c:1096
 #, c-format
 msgid "Execute this flow <i>immediately</i> or <i>after another job</i>?"
-msgstr ""
-"Executar esta tarefa <i>imediatamente</i> ou <i>depois de outra tarefa</i>?"
+msgstr "Executar esta tarefa <i>imediatamente</i> ou <i>depois de outra tarefa</i>?"
 
 #: ../ui_flow_execution.c:1098
 #, c-format
@@ -2517,8 +2540,7 @@ msgstr "Em qual conjunto de nós este fluxo deve ser executado?"
 msgid ""
 "The execution of this flow can be split to speed it up.\n"
 "Up to how many processes should it be split?"
-msgstr ""
-"Esta tarefa pode ser dividida para acelerar sua execução\n"
+msgstr "Esta tarefa pode ser dividida para acelerar sua execução\n"
 "Em quantas partes ela deve ser dividida?"
 
 #: ../ui_flow_execution.c:1103
@@ -2526,8 +2548,7 @@ msgstr ""
 msgid ""
 "How should the execution of this flow compete with\n"
 "other processes?"
-msgstr ""
-"Como a execução deste fluxo deve competir com\n"
+msgstr "Como a execução deste fluxo deve competir com\n"
 "outros processos?"
 
 #: ../ui_flow_program.c:115
@@ -2572,11 +2593,13 @@ msgstr "Arquivo de entrada \"%s\""
 msgid "%s output file \"%s\""
 msgstr "%s arquivo de saída \"%s\""
 
-#: ../ui_flows_io.c:243 ../ui_flows_io.c:247
+#: ../ui_flows_io.c:243
+#: ../ui_flows_io.c:247
 msgid "Append to"
 msgstr "Acrescentar a"
 
-#: ../ui_flows_io.c:243 ../ui_flows_io.c:247
+#: ../ui_flows_io.c:243
+#: ../ui_flows_io.c:247
 msgid "Overwrite"
 msgstr "Sobrescrever"
 
@@ -2613,7 +2636,8 @@ msgstr "Inserir Variáveis"
 msgid "Save the current document"
 msgstr "Salvar o documento atual"
 
-#: ../ui_help.c:85 ../ui_help.c:95
+#: ../ui_help.c:85
+#: ../ui_help.c:95
 msgid "GêBR Guide"
 msgstr "Guia da GêBR"
 
@@ -2662,7 +2686,8 @@ msgstr "Todos parâmetros"
 msgid "Comments of the %s \"%s\""
 msgstr "Comentários do(a) %s \"%s\""
 
-#: ../ui_help.c:211 ../ui_help.c:313
+#: ../ui_help.c:211
+#: ../ui_help.c:313
 #, c-format
 msgid "Report of the %s"
 msgstr "Relatório de %s"
@@ -2676,7 +2701,8 @@ msgstr "programa"
 msgid "Report of the %s \"%s\""
 msgstr "Relatório de %s \"%s\""
 
-#: ../ui_help.c:672 ../ui_help.c:692
+#: ../ui_help.c:672
+#: ../ui_help.c:692
 msgid "Unable to create temporary file."
 msgstr "Impossível criar arquivo temporário."
 
@@ -2696,7 +2722,8 @@ msgstr "Mensagem"
 msgid "Current domain"
 msgstr "Domínio atual"
 
-#: ../ui_log.c:160 ../ui_log.c:275
+#: ../ui_log.c:160
+#: ../ui_log.c:275
 msgid "Browsing enabled"
 msgstr "Navegação habilitada"
 
@@ -2705,11 +2732,11 @@ msgstr "Navegação habilitada"
 msgid ""
 "%s:\n"
 "%s"
-msgstr ""
-"%s:\n"
+msgstr "%s:\n"
 "%s"
 
-#: ../ui_log.c:262 ../ui_log.c:278
+#: ../ui_log.c:262
+#: ../ui_log.c:278
 msgid "Remote browsing disabled"
 msgstr "A navegação remota está desabilitada"
 
@@ -2728,8 +2755,7 @@ msgstr "Nenhum nó conectado em %s"
 msgid ""
 "Could not connect to domain%s%s:\n"
 "%s"
-msgstr ""
-"Não foi possível conectar ao domínio %s%s:\n"
+msgstr "Não foi possível conectar ao domínio %s%s:\n"
 "%s"
 
 #: ../ui_log.c:315
@@ -2766,8 +2792,7 @@ msgstr "O caminho <i>%s</i> já existe na lista, a operação será cancelada."
 msgid ""
 "The path <i>%s</i> already exists in the list as %s, the operation will be "
 "cancelled."
-msgstr ""
-"O caminho <i>%s</i> já existe na lista como %s, a operação será cancelada."
+msgstr "O caminho <i>%s</i> já existe na lista como %s, a operação será cancelada."
 
 #: ../ui_preferences.c:45
 msgid "Type hostname[.domain] or address"
@@ -2778,7 +2803,8 @@ msgstr "Digite nome_da_maquina[.dominio] ou endereço"
 msgid "<span size='large'>Successfully connected to domain <b>%s</b>!</span>"
 msgstr "<span size='large'>Conectado com êxito ao domínio <b>%s</b>!</span>"
 
-#: ../ui_preferences.c:231 ../ui_preferences.c:569
+#: ../ui_preferences.c:231
+#: ../ui_preferences.c:569
 msgid "Connecting..."
 msgstr "Conectando..."
 
@@ -2800,16 +2826,14 @@ msgstr "Parado!"
 #: ../ui_preferences.c:253
 #, c-format
 msgid "<span size='large'>Could not connect to domain <b>%s</b></span>!"
-msgstr ""
-"<span size='large'>Não foi possível conectar ao domínio <b>%s</b></span>!"
+msgstr "<span size='large'>Não foi possível conectar ao domínio <b>%s</b></span>!"
 
 #: ../ui_preferences.c:266
 #, c-format
 msgid ""
 "The connection reported the following error:\n"
 "<i>%s</i>"
-msgstr ""
-"A conexão reportou o seguinte erro:\n"
+msgstr "A conexão reportou o seguinte erro:\n"
 "<i>%s</i>"
 
 #: ../ui_preferences.c:547
@@ -2829,7 +2853,9 @@ msgstr "Falha ao ativar a navegação remota"
 msgid "<i><b>%d</b> connected.</i>"
 msgstr "<i><b>%d</b> conectado.</i>"
 
-#: ../ui_preferences.c:666 ../ui_preferences.c:690 ../ui_preferences.c:1033
+#: ../ui_preferences.c:666
+#: ../ui_preferences.c:690
+#: ../ui_preferences.c:1033
 msgid "<i>None connected.</i>"
 msgstr "<i>Nenhum conectado.</i>"
 
@@ -2837,12 +2863,15 @@ msgstr "<i>Nenhum conectado.</i>"
 msgid "GêBR is ready."
 msgstr "GêBR está pronta."
 
-#: ../ui_preferences.c:670 ../ui_preferences.c:685 ../ui_preferences.c:688
+#: ../ui_preferences.c:670
+#: ../ui_preferences.c:685
+#: ../ui_preferences.c:688
 #: ../ui_preferences.c:1030
 msgid "<i>Done.</i>"
 msgstr "<i>Concluído.</i>"
 
-#: ../ui_preferences.c:675 ../ui_preferences.c:1035
+#: ../ui_preferences.c:675
+#: ../ui_preferences.c:1035
 msgid "<i>Disabled.</i>"
 msgstr "<i>Desativada.</i>"
 
@@ -2850,7 +2879,8 @@ msgstr "<i>Desativada.</i>"
 msgid "<i>Enabled.</i>"
 msgstr "<i>Ativada.</i>"
 
-#: ../ui_preferences.c:682 ../ui_preferences.c:1028
+#: ../ui_preferences.c:682
+#: ../ui_preferences.c:1028
 msgid "GêBR is unable to proceed without this configuration."
 msgstr "GêBR não consegue avançar sem esta configuração"
 
@@ -2858,7 +2888,8 @@ msgstr "GêBR não consegue avançar sem esta configuração"
 msgid "<i>Not configured</i>"
 msgstr "<i>Não configurado</i>"
 
-#: ../ui_preferences.c:741 ../ui_preferences.c:1128
+#: ../ui_preferences.c:741
+#: ../ui_preferences.c:1128
 msgid "Domain"
 msgstr "Domínio"
 
@@ -2870,8 +2901,7 @@ msgid ""
 "\n"
 " Below, you can add new processing nodes or try to connect those who are "
 "disconnected."
-msgstr ""
-"O domínio <b>%s</b> precisa de ao menos um <i>nó conectado</i> para executar "
+msgstr "O domínio <b>%s</b> precisa de ao menos um <i>nó conectado</i> para executar "
 "os fluxos de processamento. Mas voĉe pode adicionar muito mais nós.\n"
 "\n"
 "Você deve adicionar uma nova máquina de processamento ou conectar-se às "
@@ -2900,6 +2930,12 @@ msgstr "Configurando GêBR"
 #: ../ui_preferences.c:1098
 msgid "Status"
 msgstr "Estado"
+
+#: ../ui_preferences.c:1104
+#: ../ui_preferences.c:1175
+#: ../ui_preferences.c:1184
+msgid "Preferences"
+msgstr "Preferências"
 
 #: ../ui_preferences.c:1111
 msgid "Welcome"
@@ -2930,15 +2966,13 @@ msgstr "Índice"
 #, c-format
 msgid ""
 "<b><span size=\"large\">This line does not belong to any domain</span></b>"
-msgstr ""
-"<b><span size=\"large\">Esta linha não está vinculada a nenhum domínio</"
+msgstr "<b><span size=\"large\">Esta linha não está vinculada a nenhum domínio</"
 "span></b>"
 
 #: ../ui_project_line.c:267
 #, c-format
 msgid "<b><span size=\"large\">This line belongs to domain %s</span></b>"
-msgstr ""
-"<b><span size=\"large\">Esta linha está vinculada ao domínio %s</span></b>"
+msgstr "<b><span size=\"large\">Esta linha está vinculada ao domínio %s</span></b>"
 
 #: ../ui_project_line.c:277
 #, c-format
@@ -2972,8 +3006,7 @@ msgstr "Trazer esta linha para o domínio atual?"
 msgid ""
 "If you choose to bring this line to current domain, be sure to correct the "
 "paths of this line and its respective flows that can be broken."
-msgstr ""
-"Se você optar por mover esta linha ao domínio atual, certifique-se de "
+msgstr "Se você optar por mover esta linha ao domínio atual, certifique-se de "
 "corrigir os caminhos desta linha e seus respectivos fluxos, que podem estar "
 "quebrados."
 
@@ -2995,7 +3028,8 @@ msgstr "Esta linha tem %d fluxos."
 msgid "On <b>%s</b>"
 msgstr "Em <b>%s</b>"
 
-#: ../ui_project_line.c:504 ../ui_project_line.c:517
+#: ../ui_project_line.c:504
+#: ../ui_project_line.c:517
 msgid "Click here to connect or change the domain for this line"
 msgstr "Clique aqui para conectar ou mudar o domínio desta linha"
 
@@ -3040,7 +3074,8 @@ msgstr "Por favor, selecione uma linha."
 msgid "Please select a project."
 msgstr "Por favor, selecione um projeto."
 
-#: ../ui_project_line.c:718 ../ui_project_line.c:1307
+#: ../ui_project_line.c:718
+#: ../ui_project_line.c:1307
 msgid "Please select a project or a line."
 msgstr "Por favor, selecione um projeto ou uma linha."
 
@@ -3070,8 +3105,7 @@ msgstr "<span size='large' weight='bold'>Criando diretórios desta linha</span>"
 msgid ""
 "There are some line's paths located on your home directory that\n"
 " need to be created. The following folders will be created:"
-msgstr ""
-"Existem caminhos preferenciais de linha no seu diretório pessoal que\n"
+msgstr "Existem caminhos preferenciais de linha no seu diretório pessoal que\n"
 "precisam ser criado. As seguintes pastas serão criadas:"
 
 #: ../ui_project_line.c:1098
@@ -3083,8 +3117,7 @@ msgstr "Não foi possível criar o diretório."
 msgid ""
 "The directories could not be created. You do not have the permissions "
 "necessary to create the directories."
-msgstr ""
-"Os diretórios não puderam ser criados. Você não tem as permissões "
+msgstr "Os diretórios não puderam ser criados. Você não tem as permissões "
 "necessárias para criar os diretórios."
 
 #: ../ui_project_line.c:1105
@@ -3095,8 +3128,7 @@ msgstr "Os diretórios já existem."
 #: ../ui_project_line.c:1184
 msgid ""
 "<span size='large' weight='bold'>Importing documents, please wait...</span>"
-msgstr ""
-"<span size='large' weight='bold'>Importando documentos, aguarde por favor..."
+msgstr "<span size='large' weight='bold'>Importando documentos, aguarde por favor..."
 "</span>"
 
 #: ../ui_project_line.c:1211
@@ -3146,11 +3178,11 @@ msgstr "Linha '%s' (%s).\n"
 msgid ""
 "The following documents are about to be deleted.\n"
 "This operation can't be undone! Are you sure?\n"
-msgstr ""
-"Os seguintes documentos serão apagados.\n"
+msgstr "Os seguintes documentos serão apagados.\n"
 "Essa operação não pode ser desfeita! Confirmar mesmo assim?\n"
 
-#: ../ui_project_line.c:1547 ../ui_project_line.c:1554
+#: ../ui_project_line.c:1547
+#: ../ui_project_line.c:1554
 msgid "Confirm multiple deletion"
 msgstr "Confirmar remoção multipla"
 
@@ -3168,11 +3200,11 @@ msgstr "Também deletar os arquivos destes documentos."
 msgid ""
 "The following document is about to be deleted.\n"
 "This operation can't be undone! Are you sure?\n"
-msgstr ""
-"O seguinte documento será apagado.\n"
+msgstr "O seguinte documento será apagado.\n"
 "Essa operação não poderá ser desfeita! Confirmar mesmo assim?\n"
 
-#: ../ui_project_line.c:1606 ../ui_project_line.c:1608
+#: ../ui_project_line.c:1606
+#: ../ui_project_line.c:1608
 msgid "Confirm deletion"
 msgstr "Confirme a remoção"
 
@@ -3185,3 +3217,4 @@ msgstr "Também deletar os arquivos desta linha."
 #, c-format
 msgid "Also delete the files of this project."
 msgstr "Também deletar os arquivos deste projeto."
+

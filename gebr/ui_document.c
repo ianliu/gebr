@@ -446,7 +446,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 	update_buttons_visibility(data, PROPERTIES_EDIT);
 
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), main_props, gtk_label_new(_("Preferences")));
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), main_props, gtk_label_new(_("Properties")));
 
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
@@ -455,6 +455,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
 	g_signal_connect(title, "changed", G_CALLBACK(on_title_entry_changed), data);
 	gtk_entry_set_text(title, gebr_geoxml_document_get_title(document));
+	gtk_widget_grab_focus(GTK_WIDGET(title));
 
 	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
 	gtk_entry_set_text(description, gebr_geoxml_document_get_description(document));
