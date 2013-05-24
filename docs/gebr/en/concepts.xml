@@ -160,53 +160,55 @@
   <section xml:id="concepts_connections">
     <title>GêBR players</title>
 
-    <para>The GêBR set of tools is composed by three main player
+    <para>The GêBR set of tools is composed by two main player
     categories: <emphasis
     role="bold">GêBR</emphasis><indexterm><primary>GêBR</primary><secondary>the
-    interface</secondary></indexterm> (the interface itself),
+    interface</secondary></indexterm> (the interface itself) and
     <emphasis
-    role="bold">maestros</emphasis><indexterm><primary>Maestro</primary></indexterm>,
-    and <emphasis
-    role="bold">nodes</emphasis><indexterm><primary>Node</primary></indexterm>.
-    But who are those guys?</para>
+    role="bold">nodes</emphasis><indexterm><primary>Node</primary></indexterm>.</para>
 
     <para>The GêBR interface, sometimes referred as GêBR only, is the graphical
-      interface with whom the user interacts with to build flows,
+      interface with whom the user interacts to build flows,
       execute them, inspect results, etc. Usually, this interface is installed
       and is running in the machine the user has physical contact with.</para>
 
     <para>The user may have access to many machines, which is an usual
     scenario for users of a computational laboratory. Through GêBR, it
-    is possible to take advantage of this machines inserted into a domain
-    <indexterm><primary>Domain</primary></indexterm> to run
-    flows. Those machines, or <emphasis>processing nodes</emphasis>,
-    are simply referenced in the GêBR as <emphasis
-    role="bold">nodes</emphasis>. They may be
+    is possible to take advantage of these machines. A machine used to
+    run processing flows is called a <emphasis role="bold">processing
+    node</emphasis><indexterm><primary>Processing
+    node</primary><see>Node</see></indexterm>, or just <emphasis
+    role="bold">node</emphasis>, for short. They may be
     <emphasis>local</emphasis>, meaning the user is physically using
     them, or <emphasis>remote</emphasis>, meaning the user has access
     to them through the network. No matter where the machines are,
     they are equally treated by GêBR, which means that the user does
     not have to care about that.</para>
 
-    <para>However, GêBR does not talk directly to the nodes. This
-    communication is established with the intervenience of another
-    player, the <emphasis
-    role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>. 
-    When the user decides to execute a flow, GêBR sends the request to the
-    maestro, giving rise to a <emphasis
-    role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>.
-    The maestro acts as a coordinator of the nodes into a domain, 
-    <indexterm><primary>Domain</primary></indexterm> collecting information 
-    and ranking them according to their capabilities and available resources. 
-    Therefore, the maestro can take smart decisions about which machines are 
-    best suited to run a job.</para>
+    <para>Whenever machines can cooperate to run processing flows,
+    they are grouped into <emphasis
+    role="bold">domains</emphasis><indexterm><primary>Domain</primary></indexterm>. Basically
+    a domain is a set of processing nodes that have access to the same
+    files in disk, and therefore can operate on the same data
+    sets.</para>
 
-    <note>
-      <para>Only one maestro can be active per domain, but GêBR can alternate 
-      between several domains and is possible to change the domain of a line. 
-      See more at <xref linkend="projects_lines_change_the_maestro_of_a_line"/>.
-      </para>
-    </note>
+    <para>GêBR does not talk directly to each node of a
+    domain. Instead, it elects one processing node of the domain to be
+    responsible to receive all requests from the interface and
+    redistribute them to the processing nodes. This special node is
+    called <emphasis
+    role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>.
+    In case the machine acting as the maestro fails, another
+    processing node assumes this function.</para>
+
+    <para>When the user decides to execute a flow, GêBR sends the
+    request to the maestro, giving rise to a <emphasis
+    role="bold">job</emphasis><indexterm><primary>Job</primary></indexterm>.
+    The maestro acts as a coordinator of the nodes into the domain,
+    collecting information and ranking them according to their
+    capabilities and available resources. Therefore, the maestro can
+    take smart decisions about which machines are best suited to run a
+    job.</para>
 
     <figure xml:id="communication_diagram">
       <title>Communication layout between GêBR players</title>
@@ -219,18 +221,18 @@
         by the maestro.</caption>
     </figure>
   
-    <para>The nodes put their computational power at disposal of the maestro.
-      Under maestro's coordination the nodes can even cooperate to conclude
-      processing jobs fasters.</para>
+    <para>The nodes put their computational power at disposal of the
+    maestro. Under maestro's coordination the nodes can even
+    cooperate to conclude processing jobs fasters.</para>
  
-   <para>The maestro receives the job submission and dispatches the
-   job to some of the nodes under its control. All the information
-   generated by the job is collected and sent back to GêBR, where they
-   are presented to the user.</para>
+    <para>The maestro receives the job submission and dispatches the
+    job to some of the nodes under its control. All the information
+    generated by the job is collected and sent back to GêBR, where
+    they are presented to the user.</para>
 
-   <para>This communication process, despite complex, is completely transparent
-     to the user, which can concentrate on processing seismic data, leaving all
-     technical details to GêBR.</para>
+    <para>This communication process, despite complex, is completely
+    transparent to the user, which can concentrate on processing
+    seismic data, leaving all technical details to GêBR.</para>
   </section>
     
   <section xml:id="concepts_gebr_gui_layout">
