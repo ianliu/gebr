@@ -6,7 +6,7 @@
 		<glossentry id="Client">
 			<glossterm>Client</glossterm>
 			<glossdef>
-				<para>Host machine of GêBR.</para>
+				<para>Host machine of GêBR user interface.</para>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -22,8 +22,8 @@
 		<glossentry id="Domain">
 			<glossterm>Domain</glossterm>
 			<glossdef>
-				<para>Set of processing nodes conducted by maestro including itself.</para>
-				<glossseealso otherterm="Maestro">Maestro</glossseealso>
+				<para>Set of processing nodes, sharing the same file system, which can
+				cooperate to run processing flows.</para>
 				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
 			</glossdef>
 		</glossentry>
@@ -33,9 +33,11 @@
 		<glossentry id="Flow">
 			<glossterm>Flow</glossterm>
 			<glossdef>
-				<para>Sequence of operations over over an input data.
-				</para>
+				<para>Sequence of operations over an
+				input data, accomplished by programs chained.</para>
+				<!--
 				<glossseealso otherterm="Program">Program</glossseealso>
+				-->
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -44,8 +46,8 @@
 		<glossentry id="Groups">
 			<glossterm>Groups</glossterm>
 			<glossdef>
-				<para>Subset of processing nodes of the maestro.</para>
-				<glossseealso otherterm="Maestro">Maestro</glossseealso>
+				<para>Subset of processing nodes of a domain.</para>
+				<glossseealso otherterm="Domain">Domain</glossseealso>
 				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
 			</glossdef>
 		</glossentry>
@@ -64,7 +66,7 @@
 		<glossentry id="Line">
 			<glossterm>Line</glossterm>
 			<glossdef>
-				<para>Seismic data composed of processing flows.</para>
+				<para>Set of processing flows designed to operate on a seismic data.</para>
 				<glossseealso otherterm="Flow">Flow</glossseealso>
 			</glossdef>
 		</glossentry>
@@ -74,10 +76,10 @@
 		<glossentry id="Maestro">
 			<glossterm>Maestro</glossterm>
 			<glossdef>
-				<para>Resources manager of the pool of processing nodes into a domain.
-				</para>
-				<glossseealso otherterm="Client">Client</glossseealso>
-				<glossseealso otherterm="Domain">Processing nodes</glossseealso>
+				<para>A processing node in charge of intermediating the communication
+				between the GêBR interface and the processing nodes of a
+				domain.</para>
+				<glossseealso otherterm="Domain">Domain</glossseealso>
 				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
 			</glossdef>
 		</glossentry>
@@ -86,7 +88,9 @@
 			<glossdef>
 				<para>Representation of a single program or a set of programs.
 				</para>
+				<!--
 				<glossseealso otherterm="Program">Program</glossseealso>
+				-->
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -95,28 +99,30 @@
 		<glossentry id="Parameter">
 			<glossterm>Parameter</glossterm>
 			<glossdef>
-				<para>Configuration of a program.</para>
+				<para>A configuration option controling the behavior of a program.</para>
 				<glossseealso otherterm="Program">Program</glossseealso>
 			</glossdef>
 		</glossentry>
 		<glossentry id="ProcessingNodes">
 			<glossterm>Processing nodes</glossterm>
 			<glossdef>
-				<para>Processing units used coordenated by the maestro.</para>
-				<glossseealso otherterm="Maestro">Maestro</glossseealso>
-				<glossseealso otherterm="Task">Task</glossseealso>
+				<para>A machine that the user has
+				access, physically or through a
+				network, and that could be used to
+				run processing flows.</para>
+				<glossseealso otherterm="Domain">Domain</glossseealso>
 			</glossdef>
 		</glossentry>
 		
-		
+		<!-- Commented out until a meaningful definition be found 
 		<glossentry id="Program">
 			<glossterm>Program</glossterm>
 			<glossdef>
-				<para>Operation ported from a menu.
-				</para>
+				<para>Operation ported from a menu.</para>
 				<glossseealso otherterm="Parameter">Parameter</glossseealso>
 			</glossdef>
 		</glossentry>
+		-->
 		<glossentry id="Project">
 			<glossterm>Project</glossterm>
 			<glossdef>
@@ -130,8 +136,7 @@
 		<glossentry id="Snapshot">
 			<glossterm>Snapshot</glossterm>
 			<glossdef>
-				<para>Record of the settings of a flow.
-				</para>
+				<para>Record of the settings of a flow at a specific time.</para>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -151,10 +156,10 @@
 			<glossterm>Variable</glossterm>
 			<glossdef>
 				<para>Value or information stored for
-					posterior use.
-				</para>
-				<glossseealso otherterm="Dictionary">Dictionary of variables
-				</glossseealso>
+					posterior use.</para>
+				<glossseealso
+				otherterm="Dictionary">Dictionary of
+				variables</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
