@@ -192,14 +192,34 @@
     files in disk, and therefore can operate on the same data
     sets.</para>
 
-    <para>GêBR does not talk directly to each node of a
-    domain. Instead, it elects one processing node of the domain to be
-    responsible to receive all requests from the interface and
-    redistribute them to the processing nodes. This special node is
-    called <emphasis
-    role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>.
-    In case the machine acting as the maestro fails, another
-    processing node assumes this function.</para>
+    <para>GêBR does not talk directly to each node of a domain. Instead, it elects one processing node of
+    the domain to be responsible to receive all requests from the interface and redistribute them to the
+    processing nodes. This special node is called <emphasis
+    role="bold">maestro</emphasis><indexterm><primary>Maestro</primary></indexterm>. Any node can assume
+    this function.</para>
+
+    <figure xml:id="communication_diagram">
+      <title>Communication layout between GêBR players</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="../images/gebr-connections.png" contentwidth="600px" contentdepth="330px" />
+        </imageobject>
+      </mediaobject>
+      <caption>All communitation between GêBR and the nodes are intermediated
+        by the maestro.</caption>
+    </figure>
+  
+    <para>In case the machine acting as the maestro fails or is no longer accessible to the GêBR
+    interface, another processing node assumes this function.</para>
+
+    <figure xml:id="communication_diagram2">
+      <title>Another node assumes the maestro position whenever necessary</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="../images/gebr-connections2.png" contentwidth="600px" contentdepth="330px" />
+        </imageobject>
+      </mediaobject>
+    </figure>
 
     <para>When the user decides to execute a flow, GêBR sends the
     request to the maestro, giving rise to a <emphasis
@@ -210,17 +230,6 @@
     take smart decisions about which machines are best suited to run a
     job.</para>
 
-    <figure xml:id="communication_diagram">
-      <title>Communication layout between GêBR players</title>
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="../images/gebr-connections.png" contentwidth="669px" contentdepth="272px" />
-        </imageobject>
-      </mediaobject>
-      <caption>All communitation between GêBR and the nodes are intermediated
-        by the maestro.</caption>
-    </figure>
-  
     <para>The nodes put their computational power at disposal of the
     maestro. Under maestro's coordination the nodes can even
     cooperate to conclude processing jobs fasters.</para>
