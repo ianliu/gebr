@@ -24,7 +24,8 @@
 			<glossdef>
 				<para>Set of processing nodes, sharing the same file system, which can
 				cooperate to run processing flows.</para>
-				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
+				<glossseealso otherterm="Maestro">Maestro</glossseealso>
+				<glossseealso otherterm="ProcessingNode">Processing node</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -43,12 +44,12 @@
 	</glossdiv>
 	<glossdiv>
 		<title>G</title>
-		<glossentry id="Groups">
-			<glossterm>Groups</glossterm>
+		<glossentry id="Group">
+			<glossterm>Group</glossterm>
 			<glossdef>
 				<para>Subset of processing nodes of a domain.</para>
 				<glossseealso otherterm="Domain">Domain</glossseealso>
-				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
+				<glossseealso otherterm="ProcessingNode">Processing node</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -68,6 +69,7 @@
 			<glossdef>
 				<para>Set of processing flows designed to operate on a seismic data.</para>
 				<glossseealso otherterm="Flow">Flow</glossseealso>
+				<glossseealso otherterm="Project">Project</glossseealso>
 			</glossdef>
 		</glossentry>
 	</glossdiv>
@@ -80,7 +82,7 @@
 				between the GêBR interface and the processing nodes of a
 				domain.</para>
 				<glossseealso otherterm="Domain">Domain</glossseealso>
-				<glossseealso otherterm="ProcessingNodes">Processing nodes</glossseealso>
+				<glossseealso otherterm="ProcessingNode">Processing node</glossseealso>
 			</glossdef>
 		</glossentry>
 		<glossentry id="Menu">
@@ -100,11 +102,13 @@
 			<glossterm>Parameter</glossterm>
 			<glossdef>
 				<para>A configuration option controling the behavior of a program.</para>
+				<!--
 				<glossseealso otherterm="Program">Program</glossseealso>
+				-->
 			</glossdef>
 		</glossentry>
-		<glossentry id="ProcessingNodes">
-			<glossterm>Processing nodes</glossterm>
+		<glossentry id="ProcessingNode">
+			<glossterm>Processing node</glossterm>
 			<glossdef>
 				<para>A machine that the user has
 				access, physically or through a
