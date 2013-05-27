@@ -10,24 +10,20 @@
 
   <title>The <guilabel>Projects and Lines</guilabel> tab</title>
 
-	<para>
-		Projects and lines are the organizer entities and are managed in
-		the <guilabel>Projects and Lines</guilabel> tab. Seismic processing
-		lines can be created and manipulated here. Lines can be grouped in
-		projects, for sake of organization. The information presented in the 
-		<guilabel>Flows</guilabel> tab depends on the line selected here.
-	</para>
+  <para>Projects and lines are the organizer entities (see <xref linkend="concepts_elements">Projects,
+  lines and flows</xref>). They are created and managed in the <guilabel>Projects and Lines</guilabel>
+  tab. Lines are grouped in projects, for sake of organization. The information presented in the
+  <guilabel>Flows</guilabel> tab depends on the line selected at the moment.
+  </para>
 
   <figure id="sample_project_line_tab">
     <title>Projects and Lines tab</title>
     <mediaobject>
-      <caption>Screenshot of the <guilabel>Projects and
-          Lines</guilabel> tab.
-				The right-hand side of the screen shows the
-				details of the selected item, like its name, description and creation
-				date.</caption>
+      <caption>Screenshot of the <guilabel>Projects and Lines</guilabel> tab.  The right-hand side of the
+      screen shows the details of the selected item, like its name, description and creation
+      date.</caption>
       <imageobject>
-				<imagedata fileref="../images/GeBR_projects_lines_tab.png"  contentwidth="729px" contentdepth="509px" />
+	<imagedata fileref="../images/GeBR_projects_lines_tab.png"  contentwidth="729px" contentdepth="509px" />
       </imageobject>
     </mediaobject>
   </figure>
@@ -44,15 +40,13 @@
   <section xml:id="projects_lines_create_projects_and_lines">
     <title>Creating projects and lines</title>
 
-    <para>The
-       button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"
-       /></imageobject></inlinemediaobject></guiicon> creates a
-       project. The title and description of the project, besides
-       user's email are requested in the creation. Such basic
-       information can be further edited through the edit
-       button <guiicon><inlinemediaobject><imageobject>
-       <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
-       /></imageobject></inlinemediaobject></guiicon>.</para>
+    <para>The button <guiicon><inlinemediaobject><imageobject><imagedata
+    fileref="../../common-images/botao_criar_projeto.png" /></imageobject></inlinemediaobject></guiicon>
+    creates a project. The title and description of the project, besides user's email are asked during
+    this action. This basic information can be further edited through the edit button
+    <guiicon><inlinemediaobject><imageobject> <imagedata
+    fileref="../../common-images/botao_editar_propriedades_projeto.png"
+    /></imageobject></inlinemediaobject></guiicon>.</para>
 
     <para>The project will appear on the left side of the window
       (see <xref linkend="sample_project_line_tab">Figure</xref>). Information
@@ -69,12 +63,11 @@
             </imageobject>
           </inlinemediaobject>
         </guiicon>
-        creates a line. The information belew will be requested to complete the
-        operation:</para>
+        creates a line. The information below will be requested to complete this operation:</para>
 
     <itemizedlist>
       <listitem>
-        <para><emphasis>Basic properties</emphasis> of the line, like
+        <para><emphasis>Basic properties</emphasis> of the line:
           <emphasis>title</emphasis>, <emphasis>description</emphasis>,
           <emphasis>author</emphasis>, and <emphasis>e-mail</emphasis>
           address (they can be further edited through the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
@@ -83,42 +76,43 @@
 
       <listitem>
         <para>The <emphasis>BASE</emphasis><indexterm><primary>BASE</primary></indexterm>
-          path is a directory where most of the files referred in the
-          line's flows should be placed (see
+          path: a directory where most of the files referred in the
+          line's flows are placed (see
           <xref linkend="projects_lines_line_paths" />);</para>
       </listitem>
 
+      <!-- Not implemented yet
       <listitem>
         <para>The <emphasis>IMPORT</emphasis><indexterm><primary>IMPORT</primary></indexterm>
           path is a directory used to easily find files outside the BASE
           directory.</para>
       </listitem>
+      -->
     </itemizedlist>
 
-    <para>This information is aided by an assistant dialog. When the
-	assistant is completed, the line will be created and shown as
-	part of the selected project. Like the project's settings, the
-	line's settings are exhibited on the right side of GêBR's
-	window.</para>
+    <para>An assistant dialog will guide the user through the setup of a line. When the assistant is
+    completed, the line will be created and shown as part of the selected project. Like the project's
+    settings, the line's settings are exhibited on the right side of GêBR's window.</para>
 
-    <para>To create lines, GêBR must be connected to a maestro (see
-      <xref linkend="additional_features_maestro_servers_configuration"/>). Otherwise,
-      GêBR will not be able to submit flows for running, since this is
-      done through the maestro intervenience.</para>
+    <para>To create lines, GêBR must be connected to a domain (see <xref
+    linkend="concepts_connections"/>). This is mandatory since the all paths created at that moment should
+    be in the file system of the processing nodes of a connected domain.</para>
 
   </section>
 
   <section xml:id="projects_lines_delete">
-    <title>Deleting projects or lines</title>
+    <title>Deleting projects and lines</title>
 
     <para>To delete a line, select it and then left-click on
-			<guiicon><inlinemediaobject><imageobject>
-						<imagedata fileref="../../common-images/botao_apagar_projeto.png" />
-		</imageobject></inlinemediaobject></guiicon>.</para>
+    <guiicon><inlinemediaobject><imageobject><imagedata
+    fileref="../../common-images/botao_apagar_projeto.png" />
+    </imageobject></inlinemediaobject></guiicon>. A dialog will pop up to confirm this operation. A
+    checkbox in that dialog allows the user to instruct the GêBR to delete all files in the BASE path of
+    the line.</para>
 
     <warning>
-      <para>When a line is deleted all its flows are also deleted. This
-        operation cannot be reverted.</para>
+      <para>When a line is deleted all its flows are also deleted. This operation cannot be
+      undone.</para>
     </warning>
 
     <para>To delete a project, it must not contain lines, so it is
@@ -169,33 +163,19 @@
       </tbody>
     </informaltable>
 
-		<para>Other important folders are the HOME and IMPORT. HOME is 
-			automatically set to the path of the user area. The IMPORT, unlike
-			the previous
-			mentioned folders, is not associated to the BASE path
-			and can be independently set.
-		</para>
+    <para>Other important folder is the HOME, which is is automatically set to the path of the
+    user's home directory.</para>
 
-		<para>For instance, suppose we are going to set the important
-			folders of a line. The IMPORT is totally independent and
-			can be set anywhere, e.g., <emphasis>/tmp/data</emphasis>.
-			If the home folder is <emphasis>/home/john/</emphasis>,
-			the BASE path must be set inside /home/john/.
-			Taking this into consideration, and setting the BASE path to
-			<emphasis>/home/john/GeBR/MyFirstLine/</emphasis>, this is
-			going to be the directories structure associated
-			to the current line:
-			</para>
+    <para>For instance, suppose we are going to set the important folders of a line. If the user's home
+    folder is <emphasis>/home/john/</emphasis>, the BASE path must be set inside /home/john/.  Taking this
+    into consideration, and setting the BASE path to <emphasis>/home/john/GeBR/MyFirstLine/</emphasis>,
+    this is going to be the directory structure associated to the line:</para>
 
     <informaltable>
       <tbody>
         <tr>
           <td>HOME:<indexterm><primary>HOME</primary></indexterm> </td>
           <td>/home/john/</td>
-        </tr>
-        <tr>
-          <td>IMPORT: </td>
-					<td>/tmp/data/</td>
         </tr>
         <tr>
           <td>BASE: </td>
@@ -224,73 +204,62 @@
       </tbody>
     </informaltable>
 
-    <para>
-      This standard directory structure eases the task of managing the
-      data related to lines. In the input/ouput/log fields, this
-      feature can be used by embracing them in angle bracktes (for
-      instance, &lt;BASE&gt;). For more information, consult
-      <xref linkend="flows_edit_input_output"/>.
-    </para>
+    <para>This standard directory structure eases the task of managing data related to lines (see <xref
+    linkend="flows_edit_input_output"/>).</para>
 
     <important>
-      <para>Remember that the processing takes place at the 
-        processing node<indexterm><primary>Processing nodes</primary></indexterm>.
-        The directory structure described above will be created there. This
-        means that these directories will not be present on the local machine
-        <emphasis>if</emphasis> the node is a remote machine.</para>
+      <para>Remember that the processing takes place at the processing node<indexterm><primary>Processing
+      nodes</primary></indexterm>.  The directory structure described above will be created there. This
+      means that these directories will not be present on the local machine <emphasis>if</emphasis> the
+      processing nodes and the client machine (where GêBR interface is running) do not pertain to the same
+      domain.</para>
 
-      <para>To be able to browse files in these directory, the
-        <emphasis>remote browse</emphasis><indexterm><primary>Remote
-        browsing</primary></indexterm> feature must be enabled in the
-        domain<indexterm><primary>Domain</primary></indexterm> of
-        the line (see
-        <xref linkend="technical_aspects_remote_browsing"/>).</para>
+      <para>To be able to browse files in these directories, the <emphasis>remote
+      browse</emphasis><indexterm><primary>Remote browsing</primary></indexterm> feature must be enabled
+      in the domain<indexterm><primary>Domain</primary></indexterm> of the line (see <xref
+      linkend="technical_aspects_remote_browsing"/>).</para>
     </important>
 
-    <note><para>Although it is not mandatory to adhere to this
-        structure, it is highly recommended to do so.</para></note>
+    <note><para>Although it is not mandatory to adhere to this structure, it is highly recommended to do
+    so. That is, it is advantageous to place input and output files of flows in the paths described
+    above.</para></note>
+
   </section>
 
   <section xml:id="projects_lines_change_the_maestro_of_a_line">
     <title>Changing the domain of a line</title>
 
-    <para>GêBR supports only one connected
-      maestro<indexterm><primary>Maestro</primary></indexterm> at
-      time. However, there may be several maestros at disposal, one for 
-      the domain <indexterm><primary>Domain</primary></indexterm>
-      at University A and another for the University B, for example.</para>
+    <para>GêBR supports only one connected domain<indexterm><primary>Domain</primary></indexterm> at
+    once. However, there may be several domains available, one domain for Lab A and another for Lab B, for
+    example.</para>
 
-    <para>Whenever a domain has a maestro connected, all lines owned by other
-      domain won't be available for edition. However, a line can be migrated
-      from its original domain to the domain of the connected maestro. To do so, 
-      the line must be selected. In the right-hand side panel, an icon in the upper left
-      corner indicates whether the maestro who conducts the domain defined for the line 
-      is connected or not. In case the maestro of original domain is not connected, 
-      by clicking over that icon, GêBR will offer two options:</para>
+    <para>Whenever GêBR is connected to one specific domain, all lines belonging to other domains won't be
+    available for edition. However, a line can be migrated from its original domain to the connected
+    domain. To do so, the line must be selected. In the right-hand side panel, an icon in the upper left
+    corner indicates whether the domain of the line is connected or not. In case the original domain is
+    not connected, by clicking over that icon, GêBR will offer two options:</para>
 
     <itemizedlist>
       <listitem>
-        <para>disconnect from current maestro and connect
-          to maestro who conducts the domain associated to the line; or</para>
+        <para>disconnect from current domain and connect to the domain associated to the line; or</para>
       </listitem>
       <listitem>
-        <para>dissociate the line from its original domain and
-          associate it to domain of the connected maestro.</para>
+        <para>dissociate the line from its original domain and associate it to connected domain.</para>
       </listitem>
     </itemizedlist>
 
     <important>
-      <para>Whenever a line is migrated from one domain to another, all data
-        in the BASE<indexterm><primary>BASE</primary></indexterm> directory and
-        in its children will remain in the nodes of the original
-        domain.</para>
+      <para>Whenever a line is migrated from one domain to another, all data in the
+      BASE<indexterm><primary>BASE</primary></indexterm> directory and in its children will remain in the
+      nodes of the original domain. That is, the data inside BASE path of the line is not automatically
+      migrated.</para>
     </important>
 
     <figure>
-      <title>Dialog for lines from domain with disconnected maestro</title>
+      <title>Dialog for lines from domain with disconnected domain</title>
       <mediaobject>
-        <caption>Options available when it's desired to edit/run a line
-          associated to a domain with a disconnected maestro.</caption>
+        <caption>Options available when it is desired to edit/run a line associated to a disconnected
+        domain.</caption>
         <imageobject><imagedata fileref="../images/GeBR_projects_lines_change_of_maestro2.png"
 						contentwidth="489px"
 						contentdepth="293px"
@@ -362,7 +331,7 @@
     <note>
       <para>In GêBR, lines may only exist inside a project
 	(see <xref linkend="concepts_elements"/>). Therefore to import
-	a line first select an existing project, or create a new one.
+	a line one has to first select an existing project, or create a new one.
       </para>
     </note>
   </section>
