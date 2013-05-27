@@ -10,26 +10,17 @@
 
 	<title>The <guilabel>Flows</guilabel> tab: basic aspects</title>
 
-	<para>
-		In the <guilabel>Flows</guilabel> tab, processing flows
-		can be created, edited and submitted for execution. After
-		creating a flow, the desired programs can be added to it and
-		the I/O files and parameters can be configured. Once
-		properly configured (GêBR warns if not ), the flow can be
-		submitted for execution. Prior to the submission, execution
-		details can be set,
-	</para>
-	<para>
-		The <guilabel>Flows</guilabel> tab is used to manage the flows of a
-		particular line. Notice the similarity of this tab with the
-		<guilabel>Projects and Lines</guilabel> tab.
-	</para>
+	<para>In the <guilabel>Flows</guilabel> tab, processing flows are created, edited and submitted
+	for execution. After creating an empty flow, the desired programs can be added to it and the I/O
+	files and parameters can be configured. Once properly configured (GêBR warns if not), the flow can
+	be submitted for execution. Prior to the submission, execution details can be set.</para>
 
 	<figure>
 		<title>Flows tab</title>
 		<mediaobject>
-			<caption>Flows tab. The interface is split in two
-				parts: left and right panels.</caption>
+			<caption>Flows tab. The interface is split in two parts: left (with the list of
+			flows) and right panels (with pertinent details depending on the
+			context).</caption>
 			<imageobject>
 				<imagedata fileref="../images/GeBR_flows_tab.png"
 					contentwidth="820px" contentdepth="566px"/>
@@ -37,68 +28,52 @@
 		</mediaobject>
 	</figure>
 
-	<para>
-		The left panel contains the list of flows that composes the selected line
-		in the previous tab, presenting the information if the flow has or not snapshots,
-		while the right panel exhibits information of the currently selected flow, divided in two parts:
-		<itemizedlist>
-			<listitem>
-				On the top basic information such as flow title, last modification date
-				and last execution date can be quickly consulted;
-			</listitem>
-			<listitem>
-				On the bottom there is a summary of the flow, which presents the input/output/error
-		files, the programs that compose the flow and the parameters altered by the user (different 
-		from the provided values). Text searches can be done by pressing
-		<keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo>.
-		Additionally, problems in the flow assembly are
-		warned in this window. To go to the summary view, select (single
-		click on) a flow.
-			</listitem>
-		</itemizedlist>
+	<para>The left panel contains the list of flows of the selected line in the previous tab. The
+	right panel exhibits information of the currently selected flow, divided in two parts:
+	<itemizedlist>
+	  <listitem>On the top basic information such as flow title, last modification date and last
+	  execution date can be quickly consulted;</listitem>
+
+	  <listitem>On the bottom there is a summary of the flow, with the input/output/error files, the
+	  programs that compose the flow and the non default parameters. Text searches can be done by
+	  pressing <keycombo><keycap>Ctrl</keycap><keycap>F</keycap></keycombo>.  Additionally, problems
+	  in the flow assembly are warned in this window. To go to the summary view, select (single click
+	  on) a flow.</listitem>
+	</itemizedlist>
 	</para>
 	
-		<para> The right panel can present the snapshots view, whether the user clicks on the snapshots icon.
-		Thus the summary of the flow will be replaced by the snapshots view (check <xref linkend="flows_snapshots" />) 
-		</para>
-
 	<section xml:id="flows_menus_list">
 		<title>The menus list</title>
 
-		<para>In <xref linkend="concepts_programs_and_menus" /> a menu was defined
-			as a set of one or more programs that can process data. These menus are
-			accessible in the <emphasis>Flows</emphasis> tab, trough the button menu
-			list
-			<guiicon><inlinemediaobject><imageobject>
-						<imagedata fileref="../../common-images/menu-list-icon.png"/>
-			</imageobject></inlinemediaobject></guiicon>
-			presented in the toolbar.</para>
+		<para>In <xref linkend="concepts_programs_and_menus" /> a menu was defined as a set of one
+		or more programs that can process data. These menus are accessible in the
+		<emphasis>Flows</emphasis> tab, trough the button menu list
+		<guiicon><inlinemediaobject><imageobject><imagedata
+		fileref="../../common-images/menu-list-icon.png"/>
+		</imageobject></inlinemediaobject></guiicon> presented in the toolbar.</para>
 
-		<para>After clicking the menu list button, a pop-up window is shown with a
-			list of categories. All menus registered inside GêBR are divided into
-			these categories, which can be expanded by clicking the
-			<guiicon><inlinemediaobject><imageobject>
-						<imagedata fileref="../../common-images/icone_colapsado.png"/>
-			</imageobject></inlinemediaobject></guiicon>
-			icon on the left.</para>
+		<para>After clicking the menu list button, a pop-up window is shown with a list of
+		categories. All menus registered inside GêBR are classified into these categories, which
+		can be expanded by clicking the <guiicon><inlinemediaobject><imageobject><imagedata
+		fileref="../../common-images/icone_colapsado.png"/>
+		</imageobject></inlinemediaobject></guiicon> icon on the left.</para>
 
 		<note>
 			<para>A menu can appear more than once in the unfiltered list, since it
-				can pertain to any number of categories.</para>
+			can pertain to any number of categories.</para>
 		</note>
 
-		<para>By typing parts of the menu title or description in the text box on
-			the top, it is possible to filter the menus list. This eases the task of
-			finding or discovering a menu when its domain is known. For example, it
-			is possible to search for menus related to <emphasis>migration</emphasis>
-			(see <xref linkend="flows_menus_list_filter" />).</para>
+		<para>By typing parts of the menu title or description in the text box on the top, it is
+		possible to filter the menus list. This eases the task of finding or discovering a menu
+		when its purpose is known. For example, it is possible to search for menus related to
+		<emphasis>migration</emphasis> (see <xref linkend="flows_menus_list_filter" />).</para>
 
 		<figure xml:id="flows_menus_list_filter">
 			<title>Filtering the menus list</title>
 			<mediaobject>
 				<caption>The image shows the menus list being filtered by
-					<emphasis>migration</emphasis>. All menus that have the word
-					migration in its title or description are shown.</caption>
+				<emphasis>migration</emphasis>. All menus that have the word migration in
+				its title or description are shown.</caption>
 				<imageobject>
 					<imagedata fileref="../images/flows_menus_list_filter.png"
 						contentwidth="531px" contentdepth="257px"/>
@@ -112,73 +87,69 @@
 	  <title>Creating flows</title>
 	  
 	  <para>In the <guilabel>Flows</guilabel> tab, the button
-	    <guiicon><inlinemediaobject><imageobject>
-		  <imagedata fileref="../../common-images/botao_criar_fluxo.png" />
-	    </imageobject></inlinemediaobject></guiicon> creates a
-	    flow.  Title, description and flow's author should be
-	    provided in the creation, and can be further edited
-	    through the
-	    button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
-	    /></imageobject></inlinemediaobject></guiicon>.</para>
+	  <guiicon><inlinemediaobject><imageobject><imagedata
+	  fileref="../../common-images/botao_criar_fluxo.png" />
+	  </imageobject></inlinemediaobject></guiicon> creates a flow.  Title, description and flow's
+	  author should be provided in the creation, and can be further edited through the button
+	  <guiicon><inlinemediaobject><imageobject><imagedata
+	  fileref="../../common-images/botao_editar_propriedades_projeto.png"
+	  /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
-		<para>After following these steps, the flow will be appear on the left side of the
-			main window. The right side will show information about this flow, like
-			its title, description and modified date.
-		</para>
+	  <para>After following these steps, the flow will appear on the left side of the main window. The
+	  right side will show information about the flow.</para>
 
-		<tip>
-			<para>It's possible to alter the position of the flow in the list by
-				dragging the flow with the mouse to the desired position.</para>
-		</tip>
+	  <tip>
+	    <para>It's possible to alter the position of the flow in the list by dragging the flow
+	    with the mouse to the desired position.</para>
+	  </tip>
+	  
+	  <para>A processing <emphasis>flow</emphasis> is a sequence of operations defined by the
+	  user. These operations, also called
+	  <emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>, are organized
+	  into the following <emphasis>categories</emphasis> according to their purpose:</para>
 
-		<para>A processing <emphasis>flow</emphasis> is a sequence
-			of operations defined by the user. These operations, also
-			called
-			<emphasis>programs</emphasis><indexterm><primary>Program</primary></indexterm>,
-			are organized into the following <emphasis>categories</emphasis>
-			according to their purpose:</para>
-		<itemizedlist>
-			<listitem>
-				<para>Data Compression</para>
-			</listitem>
-			<listitem>
-				<para>Editing, Sorting and Manipulation</para>
-			</listitem>
-			<listitem>
-				<para>File tools</para>
-			</listitem>
-			<listitem>
-				<para>Filtering, Transforms and Attributes</para>
-			</listitem>
-			<listitem>
-				<para>Gain, NMO, Stack and Standard Processes</para>
-			</listitem>
-			<listitem>
-				<para>Graphics</para>
-			</listitem>
-			<listitem>
-				<para>Import/Export</para>
-			</listitem>
-			<listitem>
-				<para>Migration and Dip Moveout</para>
-			</listitem>
-			<listitem>
-				<para>Multiple Supression</para>
-			</listitem>
-			<listitem>
-				<para>Seismic Unix</para>
-			</listitem>
-			<listitem>
-				<para>Simulation and Model Building</para>
-			</listitem>
-			<listitem>
-				<para>Utilities</para>
-			</listitem>
-		</itemizedlist>
+	  <itemizedlist>
+	    <listitem>
+	      <para>Data Compression</para>
+	    </listitem>
+	    <listitem>
+	      <para>Editing, Sorting and Manipulation</para>
+	    </listitem>
+	    <listitem>
+	      <para>File tools</para>
+	    </listitem>
+	    <listitem>
+	      <para>Filtering, Transforms and Attributes</para>
+	    </listitem>
+	    <listitem>
+	      <para>Gain, NMO, Stack and Standard Processes</para>
+	    </listitem>
+	    <listitem>
+	      <para>Graphics</para>
+	    </listitem>
+	    <listitem>
+	      <para>Import/Export</para>
+	    </listitem>
+	    <listitem>
+	      <para>Migration and Dip Moveout</para>
+	    </listitem>
+	    <listitem>
+	      <para>Multiple Supression</para>
+	    </listitem>
+	    <listitem>
+	      <para>Seismic Unix</para>
+	    </listitem>
+	    <listitem>
+	      <para>Simulation and Model Building</para>
+	    </listitem>
+	    <listitem>
+	      <para>Utilities</para>
+	    </listitem>
+	  </itemizedlist>
 
-		<para>After the flow is created, a pop-up appears with the available menus and
-			is possible assemble the flow:</para>
+	  <para>After the flow is created, a pop-up appears with the available menus and is possible
+	  assemble the flow:</para>
 
 		<procedure>
 			<step>
@@ -236,13 +207,13 @@
 			</guiicon>
 			to do it (for more information, consult <xref
 				linkend="flows_execute_flow"/>).</para>
-		<para>After the flow has been assembled, it will be visible on the left
-			side of the main window when the <guilabel>Flows</guilabel> tab
-			is selected. The <guilabel>Details</guilabel> box, found on the
-			upper right side of the main window, shows information about the selected
-			flow. The <guilabel>Flow Review</guilabel> box shows a brief of the flow and 
-			contains information like input,output and log file, flow's programs 
-			and some of its parameters. </para>
+
+		<para>After the flow has been assembled, it will be visible on the left side of the main
+		window when the <guilabel>Flows</guilabel> tab is selected. The
+		<guilabel>Details</guilabel> box, found on the upper right side of the main window, shows
+		information about the selected flow. The <guilabel>Flow Review</guilabel> box shows a
+		brief of the flow and contains information like input, output and log file, flow's programs
+		and some of its parameters.</para>
 	</section>
 
 	<section xml:id="flows_change_program_state">

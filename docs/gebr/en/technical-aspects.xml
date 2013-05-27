@@ -23,23 +23,19 @@
         interface</secondary></indexterm>, from where the user sends
         requests.
       </listitem>
-      <listitem>An intermediate layer (the
-        maestro)<indexterm><primary>Maestro</primary></indexterm>,
-        where all the jobs are coordinated.
+      <listitem>An intermediate layer (the maestro)<indexterm><primary>Maestro</primary></indexterm>,
+      where all the jobs are coordinated.
       </listitem>
-      <listitem>Executors (the nodes
-        <indexterm><primary>Node </primary></indexterm>
-        or <emphasis>processing nodes</emphasis>), where the jobs are executed.
+      <listitem>Executors (the nodes <indexterm><primary>Node </primary></indexterm> or
+      <emphasis>processing nodes</emphasis>), where the jobs are executed.
       </listitem>
     </itemizedlist>
 
     <note>
-      <para>GêBR can be connected to only one maestro at once. Each
-				maestro, in turn, can be connected to many nodes.
-				However, those processing nodes must share the file system
-        containing the user's home directory. This is usually provided
-        by Network File System (NFS) infrastructure.
-      </para>
+      <para>GêBR can be connected to only one domain at once. The domain, in turn, can be composed by many
+      processing nodes. However, to be part of the same domain, those processing nodes must share the file
+      system containing the user's home directory. This is usually provided by Network File System (NFS)
+      infrastructure.</para>
     </note>
 
     <para>GêBR model comprises communications between processing nodes (see
@@ -47,8 +43,8 @@
     </para>
 
     <itemizedlist>
-      <listitem>Between client and maestro.</listitem>
-      <listitem>Between maestro and the nodes.</listitem>
+      <listitem>Between client and maestro (the domain representative).</listitem>
+      <listitem>Between maestro and other nodes.</listitem>
     </itemizedlist>
 
     <para>All connections are performed using Secure Shell (SSH)
@@ -81,9 +77,9 @@
       <title>GêBR public-key authentication</title>
       <mediaobject>
         <caption>Suppose a client wants to establish a connection
-          with a maestro. The client is requested for login
+          with a domain. The client is requested for login
           credential, but instead it provides the key associated to
-          the maestro. The maestro try to match the client key with
+          the domain. The maestro try to match the client key with
           one of his own public keys. In positive case, the client
           is allowed to communicate to that maestro. Otherwise, it
           requests for the user's password.</caption>
