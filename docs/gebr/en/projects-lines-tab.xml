@@ -237,7 +237,7 @@
     available for edition. However, a line can be migrated from its original domain to the connected
     domain. To do so, the line must be selected. In the right-hand side panel, an icon in the upper left
     corner indicates whether the domain of the line is connected or not. In case the original domain is
-    not connected, by clicking over that icon, GêBR will offer two options:</para>
+    not connected, by clicking on that icon, GêBR will offer two options:</para>
 
     <itemizedlist>
       <listitem>
@@ -312,11 +312,10 @@
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png" /></imageobject></inlinemediaobject></guiicon>;</para>
       </step>
       <step>
-        <para>Select the desired project or line to import in the dialog that
-          appeared.  Only files with extension
-          <filename class="extension">prjz</filename>, <filename class="extension">prjx</filename>,
-          <filename class="extension">lnez</filename> or 
-          <filename class="extension">lnex</filename> will be shown;</para>
+        <para>Select the desired project or line file to import.  Only files with extension <filename
+        class="extension">prjz</filename> or <filename class="extension">prjx</filename> (for projects),
+        and <filename class="extension">lnez</filename> or <filename class="extension">lnex</filename>
+        (for lines) are allowed;</para>
       </step>
       <step>
         <para>Click on the <guibutton>Open</guibutton> button.</para>
@@ -339,11 +338,14 @@
   <section xml:id="projects_lines_report">
     <title>Report of a project or a line</title>
 
-    <para>
-      Projects and lines can be commented and have an automatic report
-      <indexterm><primary>Report</primary><secondary>of a project</secondary></indexterm>
-      <indexterm><primary>Report</primary><secondary>of a line</secondary></indexterm>
-      generation. To edit their commentaries, follow the steps:</para>
+    <para>Projects and lines can be commented. The commentaries are free formatted text.  While for
+    projects the report <indexterm><primary>Report</primary><secondary>of a
+    project</secondary></indexterm> is entirely composed only byt the user's commentaries, for lines, the
+    report<indexterm><primary>Report</primary><secondary>of a line</secondary></indexterm> is created
+    automatically, including not only the user's commentaries, but also information about its
+    flows.</para>
+
+    <para>To edit the commentaries of the project or line, follow the steps:</para>
 
     <procedure>
       <step>
@@ -356,7 +358,7 @@
         <para>Choose <guilabel>Edit Comments</guilabel>;</para>
       </step>
       <step>
-        <para>Fill in some comment in the text editor that is presented;</para>
+        <para>Write the commentaries as free formatted text through the built-in text editor;</para>
       </step>
       <step>
         <para>When finished, save and close the editor.</para>
@@ -373,38 +375,35 @@
     </tip>
 
     <figure>
-      <title>Built-in comment editor</title>
+      <title>Built-in commentary editor</title>
       <mediaobject>
         <caption>The comment editor window.</caption>
-        <imageobject>
-					<imagedata fileref="../images/GeBR_line_comments.png"
-						contentwidth="556px" contentdepth="336px" />
-        </imageobject>
+        <imageobject><imagedata fileref="../images/GeBR_line_comments.png"
+	contentwidth="556px" contentdepth="336px" /></imageobject>
       </mediaobject>
     </figure>
     
 
-		<para>The report can be visualized by clicking over
-          <menuchoice>
-            <guimenu>More</guimenu>
-            <guisubmenu>View Report</guisubmenu>
-          </menuchoice>.</para>
+    <para>The report can be visualized by clicking on
+    <menuchoice>
+      <guimenu>More</guimenu>
+      <guisubmenu>View Report</guisubmenu>
+    </menuchoice>.</para>
 
     <figure>
       <title>View Report</title>
       <mediaobject>
-				<caption>The line <guilabel>report</guilabel> contains information
-					concerning the associated flows and their programs, 
-					important folders and variables.</caption>
-        <imageobject>
-					<imagedata fileref="../images/GeBR_line_report.png"
-						contentwidth="779px" contentdepth="591px" />
+	<caption>The line <guilabel>report</guilabel> contains information
+	concerning the associated flows and their programs, 
+	important folders and variables.</caption>
+        <imageobject><imagedata fileref="../images/GeBR_line_report.png"
+	contentwidth="779px" contentdepth="591px" />
         </imageobject>
       </mediaobject>
     </figure>
-    <para>After clicking on <guilabel>View Report</guilabel>, a window will
-      appear showing the generated report for that project or line. This window
-      has some functionalities that are mentioned below:</para>
+
+    <para>After clicking on <guilabel>View Report</guilabel>, a window will appear showing the report for
+    the project or line. In the case of line's report, some customization options are available:</para>
 
     <variablelist>
       <varlistentry>
@@ -473,9 +472,8 @@
       <title>Report menu</title>
       <mediaobject>
         <caption>GêBR enables the report customization.</caption>
-        <imageobject>
-					<imagedata fileref="../images/GeBR_line_report_options.png"
-						contentwidth="418px" contentdepth="236px" />
+        <imageobject><imagedata fileref="../images/GeBR_line_report_options.png"
+	contentwidth="418px" contentdepth="236px" />
         </imageobject>
       </mediaobject>
     </figure>
