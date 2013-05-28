@@ -683,24 +683,19 @@
 
 		<para>Each job execution is represented in the bar as a button, composed by:
 			<itemizedlist>
-				<listitem>
-					an icon, that represents the status of the execution; and
-				</listitem>
-				<listitem>
-					an identifier, which is associated to the number of executions
-					of that flow.
-				</listitem>
+				<listitem>an icon representing the status of the execution, and</listitem>
+				<listitem>an integer number, which is associated to the number of
+				executions of that flow.</listitem>
 			</itemizedlist>
 		</para>
 
 		<para>Differently from the <guilabel>Jobs</guilabel> tab, in the
-		<guilabel>Flows</guilabel> tab it is presented just a quick view of the job. Indeed, the
-		aim of this features is not to present a full view of the job, but to avoid the switching
-		of tabs to follow jobs. The arrow takes to the <guilabel>Jobs</guilabel> tab, where a
-		complete view of the flow execution can be consulted.</para>
+		<guilabel>Flows</guilabel> tab it is presented just a quick view of the job. However, the
+		arrow button takes the view to the <guilabel>Jobs</guilabel> tab, where full information
+		about the job is available.</para>
 
 		<para>When multiple flows are dispatched for execution, instead of staying in the same
 		window, GêBR automatically switches to the <guilabel>Jobs</guilabel> tab, where all the
-		executions can be seen all together.</para>
+		executions can be seen together.</para>
 	</section>
 </chapter>
