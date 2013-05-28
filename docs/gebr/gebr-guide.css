@@ -59,3 +59,5 @@ a:hover   { color: #000;
 	    text-decoration: underline; 
 	    background-color: #fcfdd3
 	  }
+
+li.step {margin-bottom: 1em;}
