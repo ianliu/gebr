@@ -494,69 +494,64 @@
 				</listitem>
 			</itemizedlist>
 		</para>
-			<para>More than one flow can be selected together and executed. To make a
-				multiple selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use
-				the arrow keys while <keycap>Shift</keycap> is pressed.
-			</para>
-		<para>
-			After being triggered, the execution can be followed in the same
-			window or, for more detailed information, in the <guilabel>Jobs</guilabel>
-			tab (see <xref linkend="flows_execution_infobar"/> and
-			<xref linkend="jobs_tab"/>).
-		</para>
+
+		<para>More than one flow can be submitted for execution at once. To make a multiple
+		selection, click over the flows, while <keycap>Ctrl</keycap> is pressed or use the arrow
+		keys while <keycap>Shift</keycap> is pressed.</para>
+
+		<para>After being triggered, the execution can be followed in the same
+		window or, for more detailed information, in the <guilabel>Jobs</guilabel>
+		tab (see <xref linkend="flows_execution_infobar"/> and
+		<xref linkend="jobs_tab"/>).</para>
+
 		<section xml:id="flows_quick_execution">
 			<title>Run</title>
 
-			<para>
-				By clicking on
-				<guiicon><inlinemediaobject><imageobject>
-							<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-		</imageobject></inlinemediaobject></guiicon>,
-				the job will be triggered with the following settings:
+			<para>By clicking on <guiicon><inlinemediaobject><imageobject><imagedata
+			fileref="../../common-images/botao_executar_fluxo.png" />
+			</imageobject></inlinemediaobject></guiicon>, the flow will be immediately
+			submitted with following default settings:
 
-				<procedure>
-					<step>
-						In case of multiple flows, the default is executing one after another.
-					</step>
-					<step>
-						The flow (or flows) selected is (are) going to be executed immediately.
-					</step>
-					<step>
-						If the flow is parallelizable, the job will be dispatched on all group's nodes. If not parallelizable, it's necessary to choose the best node.
-					</step>
-					<step>
-						Parallelizable flows are going to be splitted by nominal capacity 
-						(total number of cores). If not parallelizable, the flow will not be splitted.
-						(For more information, see <xref linkend="technical_aspects_multicores"/>).
-					</step>
-					<step>
-						The flow execution is going to compete for resources with other processes. 
-						(For more information, see <xref linkend="technical_aspects_priority_execution"/>).
-					</step>
-				</procedure>
+			<procedure>
+			  <step>In case of multiple flows, the default is to execute them
+			  sequencially (one after another).</step>
 
-				<para>
-					It is a fast way to execute, skipping the configurations of the Run and Setup.
-					Useful keybinds are available here: <keycap>Ctrl+R</keycap> runs the selected flows
-					one after another; <keycap>Ctrl+Shift+R</keycap> runs the
-					selected flows parallely (keybind activated just if multiple flows are selected).
-				</para>
+			  <step>The execution starts immediately.</step>
+
+			  <step>Some flows give rise to jobs, that can be splitted in smaller parts,
+			  called
+			  <emphasis>tasks</emphasis><indexterm><primary>Task</primary></indexterm>. In
+			  this case, these tasks are distributed among available processing nodes,
+			  according their nominal capacity (total number of cores). If the job cannot be
+			  splitted it will be sent to the best available processing node at time. (For
+			  more information, see <xref linkend="technical_aspects_multicores"/>.)</step>
+
+			  <step>The job execution will compete for resources with other processes.  (For
+			  more information, see <xref
+			  linkend="technical_aspects_priority_execution"/>).</step>
+			</procedure>
 			</para>
 
+			<para>This is the fastest way to execute, skipping the configurations of the
+			<emphasis>Run and Setup</emphasis>. Useful keybinds are available here:
+			<keycap>Ctrl+R</keycap> runs the selected flows one after another;
+			<keycap>Ctrl+Shift+R</keycap> runs the selected flows parallely (keybind activated
+			just if multiple flows are selected).</para>
+
 			<note>
-				<para>Some execution configuration (like group's nodes, number
-					of tasks splitted and priority) can be saved using Setup and Run. That configuration
-					is going to be a new default for basic Run.
-					(For more information, see <xref linkend="flows_detailed_execution" />)</para>
+				<para>Some execution configuration (like group's nodes, number of tasks
+				splitted and priority) can be saved using Setup and Run. That
+				configuration is going to be a new default for basic Run.  (For more
+				information, see <xref linkend="flows_detailed_execution" />.)</para>
 			</note>
 
 		</section>
 
 		<section xml:id="flows_detailed_execution">
 			<title>Setup and run</title>
-			<para>
-				Many execution details can be set before triggering a job. After setting, click on Run to execute the job. 
-			</para>
+			<para>Many execution details can be set before triggering a job. After setting,
+			click on Run to execute the job.</para>
+
 			<figure>
 				<title>Run and Setup</title>
 				<mediaobject>
@@ -568,73 +563,67 @@
 					</imageobject>
 				</mediaobject>
 			</figure>
-			<para>
-				By clicking the button 
-				<guiicon><inlinemediaobject><imageobject>
-							<imagedata fileref="../../common-images/detailed_execution.png" />
-				</imageobject></inlinemediaobject></guiicon>,
-				the following options can be set:
 
-				<procedure>
-					<step>
-						How jobs are going to be executed. 
-						<emphasis role="bold">This option just appear if multiple 
-							jobs are selected for running (multiple execution).</emphasis>
-						<substeps>
-							<step><guilabel>One after another:</guilabel>
-								flows can be executed one after another, in
-								the order they are on the flows list.
-								Each flow awaits for the end of the previous job to be
-								executed.
-							</step> 
-							<step><guilabel>Simultaneously:</guilabel>
-								flows are executed parallely, all of them 
-								at the same time. It is just possible if
-								there is no dependency between flows.
-							</step> 
-						</substeps>
-					</step>
-					<step>
-						Whether jobs must wait for some task or not. Jobs can be triggered  after
-						the ending of another task or immediately by clicking the execution button.
-					</step>
-					<step>
-						Where jobs must be dispatched. Nodes or set of nodes can be choosen to
-						process the jobs. A special option is the Choose automatically. It
-						allows the maestro to search for the least overloaded nodes or set of nodes
-						 into a domain<indexterm><primary>Domain</primary></indexterm>.
-						If the use changes this parameter,
-						GêBR shows the number of cores of the choosen group.
-					</step>
-					<step>
-						The number of tasks settled to split the jobs. This parameter is valid only when
-						there is a parallelizable job among the selected jobs. The nominal capacity is given by
-						the number of cores, according to the choice of the group's nodes. For
-						non-parallelizable jobs, this parameter is automatically set to 1. For more
-						information, consult <xref linkend="technical_aspects_multicores"/>.
-					</step>
-					<step>
-						How a job must compete with other processes on the system. In overloaded nodes,
-						this option can make all the difference because jobs will have less priority than 
-						other processes running on the system. For more
-						information, consult <xref linkend="technical_aspects_priority_execution"/>.
-					</step>
-				</procedure>
+			<para>By clicking the button <guiicon><inlinemediaobject><imageobject><imagedata
+			fileref="../../common-images/detailed_execution.png"
+			/></imageobject></inlinemediaobject></guiicon>, the following options can be tunned:
+
+			<procedure>
+			  <step>When will the jobs be executed? <emphasis>This option just
+			  appear if multiple jobs are selected for running (multiple
+			  execution).</emphasis>
+			  <substeps>
+			    <step><guilabel>One after another:</guilabel> Jobs are executed one after
+			    another, according  the order of the flows in the flows' list. Each job is
+			    triggered only when the previous job has been concluded.</step>
+
+			    <step><guilabel>Simultaneously:</guilabel> All jobs are dispatched
+			    simultaneously. Note that this option is not feasible if there is dependency
+			    between flows.</step>
+			  </substeps>
+			  </step>
+			
+			  <step>The beginning of the execution process can be delayed to wait the
+			  conclusion of some running job or it can be triggered immediately
+			  (default).</step>
+			  
+			  <step>Where should the jobs be dispatched? Nodes or set of nodes can be
+			  specifically choosen to process the jobs. A special option is <guilabel>Choose
+			  automatically</guilabel>. It instructs the maestro to submit each job for the
+			  node or set of nodes less overloaded of the
+			  domain<indexterm><primary>Domain</primary></indexterm>.</step>
+
+			  <step>The number of tasks settled to split the jobs. This parameter is valid
+			  only when there is a parallelizable job among the selected jobs. The nominal
+			  capacity is given by the number of cores of the group of nodes that are in
+			  charge of the execution of the jobs. For non-parallelizable jobs, this parameter
+			  is automatically set to 1. For more information, consult <xref
+			  linkend="technical_aspects_multicores"/>.</step>
+
+			  <step>How does the job compete for resources with other processes of the system?
+			  Choosing <guilabel>Dispute resources</guilabel>, each job will be dispatched
+			  with default priority. Hence, they will compete equally for system resources
+			  with all other running processes. This could overload a processing node with too
+			  many running processes. By the other hand, choosing <guilabel>Wait for free
+			  resources</guilabel>, the execution of each job will delayed whenever the
+			  processing node has other process to operate on. This is particularly
+			  interesting we running jobs on desktop machines. In that scenario the user
+			  experience will not be degradated by the job execution. For more information,
+			  consult <xref linkend="technical_aspects_priority_execution"/>.</step>
+			</procedure>
 			</para>
+
 			<note>
-				<para>
-					Itens 3, 4 and 5 can be saved for future executions by checking <guilabel>Save Preferences</guilabel>.
-				</para>
+				<para>Decisions made about itens 3, 4 and 5 above can be saved for future
+				executions by checking <guilabel>Save preferences</guilabel>.</para>
 			</note>
 		</section>
 
 		<example>
-			<title>
-				<emphasis role="bold">Parallel execution</emphasis>
-			</title>
+			<title>Parallel execution</title>
 
 			<para>On a multi-core system, create a flow according to the following
-				steps:</para>
+			steps:</para>
 
 			<procedure>
 				<step>
@@ -643,7 +632,7 @@
 					for
 					further details about loop).
 				</step>
-				.
+				
 				<step>Insert a sleep program with parameter set of one second.</step>
 				<step>
 					Open the
@@ -653,11 +642,10 @@
 				</step>
 				<step>Execute step three again, but now with the maximum number of
 					cores (nominal capacity).</step>
-				.
+				
 			</procedure>
 
-			<para>
-				It can be seen that:
+			<para>It can be seen that:
 				<itemizedlist>
 					<listitem>For the minimum number of cores, the flow lasts thirty
 						seconds to be executed.
@@ -675,33 +663,25 @@
 				</itemizedlist>
 			</para>
 
-			<para>This flow is parallelizable only because one step of the loop is
-				totally independent of another,
-				so, in a system with multiple machines
-				and multiple cores, this flow can be divided
-				to execute all their tasks on the same time, making the execution
-				faster.
-				Therefore, all flows with the same characteristic can take advantage of it.
-			</para>
+			<para>This flow is parallelizable only because one step of the loop is totally
+			independent of another, so, in a system with multiple machines and multiple cores,
+			this flow can be divided to execute all their tasks on the same time, making the
+			execution faster.  Therefore, all flows with the same characteristic can take
+			advantage of it.</para>
 		</example>
 
 	</section>
 
 	<section xml:id="flows_execution_infobar">
 	  <title>Following the execution of a flow</title>
-		<para>Flows submitted for execution generate jobs
-			(see <xref linkend="concepts_connections"/>). The
-	    status and output of the yielded job can be
-	    followed in the same window, still in the
-	    <guilabel>Flows</guilabel> tab. A bar in the botton of the
-	    window will appear to keep the history of the last jobs
-	    dispatched for execution. Through buttons in that bar it
-	    is possible to switch among the results of the many jobs.</para>
 
+	  <para>Flows submitted for execution generate jobs (see <xref
+	  linkend="concepts_connections"/>). The status and output of the yielded job can be followed in
+	  the same window, still in the <guilabel>Flows</guilabel> tab. A bar in the botton of the window
+	  will appear to keep the history of the last jobs dispatched for execution. Through buttons in
+	  that bar it is possible to switch among the results of the many jobs.</para>
 
-		<para>
-			Each job execution is represented in the bar as a button,
-			composed by:
+		<para>Each job execution is represented in the bar as a button, composed by:
 			<itemizedlist>
 				<listitem>
 					an icon, that represents the status of the execution; and
@@ -713,23 +693,14 @@
 			</itemizedlist>
 		</para>
 
-		<para>
-			Different from the <guilabel>Jobs</guilabel> tab, in the
-			<guilabel>Flows</guilabel> tab it is presented just a
-			quick view of the job. Indeed, the aim of this features is
-			not to present a full view of the job, but to avoid
-			the switching of tabs to follow jobs. The arrow takes to the 
-			<guilabel>Jobs</guilabel> tab, where a complete view of the
-			flow execution can be consulted.
-		</para>
+		<para>Differently from the <guilabel>Jobs</guilabel> tab, in the
+		<guilabel>Flows</guilabel> tab it is presented just a quick view of the job. Indeed, the
+		aim of this features is not to present a full view of the job, but to avoid the switching
+		of tabs to follow jobs. The arrow takes to the <guilabel>Jobs</guilabel> tab, where a
+		complete view of the flow execution can be consulted.</para>
 
-		<para>
-			When multiple flows are dispatched for execution,
-			instead of staying in the same window, GêBR automatically
-			switches to the <guilabel>Jobs</guilabel> tab, where 
-			all the executions can be seen all together.
-		</para>
+		<para>When multiple flows are dispatched for execution, instead of staying in the same
+		window, GêBR automatically switches to the <guilabel>Jobs</guilabel> tab, where all the
+		executions can be seen all together.</para>
 	</section>
-
-
 </chapter>
