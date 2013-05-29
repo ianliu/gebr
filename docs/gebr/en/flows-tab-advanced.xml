@@ -33,48 +33,44 @@
 
   </section>
 
-  <section
-     xml:id="flows_dictionary_variables">
+  <section xml:id="flows_dictionary_variables">
     <title>Using variables</title>
     
-    <para>It is usual in the course of processing a data that many
-      flows depend on some fundamental quantities, like acquisition
-      parameters, for example. Those quantities may be provided
-      explicitly to each flow. Consider however a scenario where one
-      or some of those quantities have to be redefined. The user would
-      have to go through all flows which depend on them making the
-      necessary updates. Despite possible, this procedure is error-prone
-      and time consuming. A better approach would be centralize
-      the definition of those common quantities, in such a way that a
-      change on them would be automatically propagated to all flows
-      where they are employed. This central place for definition of
-      these "quantities" is the <emphasis role="bold">Dictionary of
-	variables</emphasis><indexterm><primary>Dictionary of
-	  variables</primary></indexterm>.</para>
+    <para>It is usual in the course of processing data that many flows may depend on some fundamental
+    quantities, like acquisition parameters, for example. Those quantities may be provided explicitly to
+    each flow. Consider however a scenario where one or some of those quantities have to be redefined. The
+    user would have to go through all flows which depend on them making the necessary updates. Despite
+    possible, this procedure is error-prone and time consuming. A better approach would be centralize the
+    definition of those common quantities, in such a way that a change on them would be automatically
+    propagated to all flows where they are employed. This central place for definition of these
+    <emphasis>quantities</emphasis> is the <emphasis role="bold">Dictionary of
+    variables</emphasis><indexterm><primary>Dictionary of variables</primary></indexterm>.</para>
 
     <section xml:id="technical_aspects_variables">
       <title>Variables</title>
 
-      <para>The <guilabel>Dictionary of variables</guilabel> is an
-	interface to handle all the variables. It is accessed through
-	the icon
-	<guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/botao_dicionario_projeto.png"
-			 /></imageobject></inlinemediaobject></guiicon>, in the
-        <guilabel>More</guilabel> menu of toolbars of the
-	<guilabel>Projects and Lines</guilabel> and <guilabel>Flows
-	</guilabel> tabs.</para>
+      <para><emphasis role="bold">Variables</emphasis><indexterm><primary>Variable</primary></indexterm>
+      are ways to hold numbers or text strings. Numerical variables are defined by arithmetic expressions
+      involving constants and/or other numerical variables. Text string variables are defined by
+      concatenating constant text strings with other numerical or text string variables.</para>
 
-      <para>GêBR has three levels of organization (see
-        <xref linkend="concepts_elements"/>).  The variables, thus,
-        have three levels of visibility:</para>
+      <para>Variables may be used to define programs' parameters directly or by means of inline
+      expressions, i.e. expressions written directly on the parameter's entry box.</para>
+      
+      <para>The <guilabel>Dictionary of variables</guilabel> is to interface to handle all the
+      variables. It is accessed through the icon <guiicon><inlinemediaobject><imageobject><imagedata
+      fileref="../../common-images/botao_dicionario_projeto.png"
+      /></imageobject></inlinemediaobject></guiicon>, in the
+      <menuchoice>><guimenu>More</guimenu></menuchoice> menu of toolbars of the <guilabel>Projects and
+      Lines</guilabel> and <guilabel>Flows </guilabel> tabs.</para>
+
+      <para>GêBR has three levels of organization (see <xref linkend="concepts_elements"/>).  The
+      variables, thus, have three levels of visibility:</para>
       <itemizedlist>
-        <listitem>Project's variables are visible to all flows
-          associated to lines of the project;</listitem>
+        <listitem>Project's variables are visible to all flows associated to lines of the
+        project;</listitem>
         <listitem>Line's variables are visible to all its flows;</listitem>
-        <listitem>Flow's variables are just visible to itself.</listitem>
+        <listitem>Flow's variables are just visible to the flow itself.</listitem>
       </itemizedlist>
       
       <para>
@@ -100,28 +96,23 @@
         </figure>
       </para>
 
-      <para>The dictionary validates the variables dynamically,
-        revalidating them as soon as anything is changed in
-        dictionary. Programs with errors are automatically revalidated
-        too (see <xref linkend="flows_change_program_state" />).
+      <para>The dictionary validates the variables dynamically, revalidating and recalculating them as
+      soon as anything is changed in dictionary. Programs with errors are automatically revalidated too
+      (see <xref linkend="flows_change_program_state" />).
       </para>
 
-      <para>Positioning the pointer on the icon of the
-        variable type, the user can check the solved
-        expression. If the <guilabel>Dictionary of variables</guilabel> finds
-        an error among the variables, it is going to exhibit the icon
-        <guiicon><inlinemediaobject><imageobject>
+      <para>Positioning the pointer over the icon of the variable's type, the user can check the solved
+      expression and see the actual value of the variable. If the <guilabel>Dictionary of
+      variables</guilabel> finds an error among the variables, it is going to exhibit the icon
+      <guiicon><inlinemediaobject><imageobject>
 	      <imagedata fileref="../../common-images/icone_nao_configurado.png" />
-	</imageobject></inlinemediaobject></guiicon>
-	and an explanation of the error.
-	Reordering the variables of the dictionary can be done by drag and drop.
-        Since a variable can just use another variable above it,
-        this feature turns the declaration of variables more flexible
-        and dynamic.</para>
+	</imageobject></inlinemediaobject></guiicon> and an explanation of the error.  Reordering the
+	variables of the dictionary can be done by drag and drop.  Since a variable can just use another
+	variable above it, this feature turns the declaration of variables more flexible and
+	dynamic.</para>
 
 
-      <para>Besides variables and expressions, some
-        predefined functions can be used:
+      <para>Besides variables and expressions, some predefined functions can be used:
       </para>
 
       <table>
@@ -165,10 +156,9 @@
           </tbody>
         </tgroup>
       </table>
-      <para>
-        The character <emphasis role="bold">[</emphasis>' (open brackets) 
-        is used to see all the available variables for auto-completion.
-      </para>
+
+      <para>The character <emphasis role="bold">[</emphasis> (open bracket) is used to see all the
+      available variables for auto-completion while writing an expression.</para>
 
       <para>Navigate over the fields can be done by using the keys 
         <keycap>Enter</keycap>, 
@@ -177,27 +167,19 @@
       </para>
 
       <tip>
-	<para>
-	  To use the variables in fields like
-	  <guimenuitem>Text</guimenuitem>,
-	  the variable
-	  name need to be embraced by square brackets
-	  <emphasis role="bold">[</emphasis>
-	  name-of-the-variable
-	  <emphasis role="bold">]</emphasis>.
-	</para>
+	<para>To use the variables in text entries, the variable name need to be embraced by square
+	brackets: <emphasis role="bold">[</emphasis> name-of-the-variable <emphasis
+	role="bold">]</emphasis>.</para>
+
+	<para>To insert a literal square bracket in a text entry, double it, that is, <emphasis
+	role="bold">[[</emphasis> yields is a literal [.</para>
       </tip>
 
       <example>
-	<title>
-	  <emphasis role="bold">Using the dictionary</emphasis>
-	</title>
-	<para>
-	  Dictionary is a very useful feature for using a same value
-	  multiple
-	  times.
-	  It is also useful for naming variables, making a flow's
-	  parameters more	intuitive. For example:
+	<title>Using the dictionary</title>
+
+	<para>Dictionary is a very useful feature for using a same value multiple times.  It is also
+	useful for naming variables, making a flow's parameters more intuitive. For example:
 	  <procedure>
 	    <step> Import a demo named Making Data.</step>
 	    <step> Check the line named Shot Gathers.</step>
@@ -208,8 +190,8 @@
 	    </step>
 	  </procedure>
 	</para>
-	<para>
-	  It can be seen that:
+
+	<para>It can be seen that:
 	  <itemizedlist>
 	    <listitem>Some of the variables are line's variables (width,
 	      height...). Changing width and weight, all images generated by X
@@ -237,42 +219,6 @@
 	  </itemizedlist>
 	</para>
       </example>
-    </section>
-
-    <section xml:id="technical_aspects_iter">
-      <title>The variable iter</title>
-      <para> GêBR allows the execution of repetitive procedures by 
-        creating flows with <guilabel>Loops</guilabel> (see 
-        <xref linkend="flows_loop" />). With <guilabel>Loops</guilabel>,
-        the user has access to a special variable
-        called <emphasis role="bold">iter</emphasis>.
-      </para>
-
-      <para>Upon execution, the user might want to identify what is the current
-        step of the Loop. The iter variable is devised with this aim.
-      </para>
-
-      <para>
-        For instance, the output of each step of the Loop can be defined 
-        to a file with a name identified by the step, 
-        output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see 
-        <xref linkend="fig_flow_editor_loop_output"/>).</para>
-
-      <figure xml:id="fig_flow_editor_loop_output">
-        <title>Usage of iter variable</title>
-        <mediaobject>
-          <imageobject>
-	    <imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
-		       contentwidth="281px" contentdepth="150px" />
-          </imageobject>
-        </mediaobject>
-        <caption>This flow with a Loop program and number of loops
-          equal to 3, is going to throw the results to three
-          different files, identified by the step of the loop
-          (output-1, output-2 and output-3).
-        </caption>
-      </figure>
-
     </section>
   </section>
 
@@ -502,32 +448,19 @@
   <section xml:id="flows_loop">
     <title>Flows with loops</title>
 
-    <para>
-      The notion of a loop refers to a series of
-      commands that continues to repeat over and over again,
-      possibly changing a little, untill a condition is met.
-      For example, suppose the user needs
-      to generate one plot for each of a set of functions.
-      One option is to create many flows,
-      each one based in a function, that generates the plots.
-      Another simpler option would be to create a single flow
-      that, for each function, generates a plot.
-      The loop program allows it in GêBR.
-    </para>
+    <para>The notion of a loop refers to a series of commands that continues to repeat over and over
+    again, possibly changing a little, until a condition is met.  For example, suppose the user needs to
+    extract many common-offset sections of a data. Instead of writing a flow to extract each common-offset
+    section individually, or refurbish a base flow, changing manually its target offset, a loop over the
+    offset could be used to sequentially extract all common-offset sections.</para>
 
-    <para>The 
-      <emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm>
-      is a program from the category
-      <emphasis role="bold">Loops</emphasis> that has a totally
-      different usage compared to the remaining programs of GêBR.
-      Here these differences are presented.</para>
+    <para>The <emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm> is a special menu
+    from the category <emphasis role="bold">Loops</emphasis> that has a totally different usage compared
+    to the remaining menus of GêBR. Here these differences are presented.</para>
 
-    <para>Whenever the program Loop is added, it appears
-      on the top of the flow. That happens to indicate that the flow
-      is going to be executed more than once, according to the
-      parameters set for the program. (see
-      <xref linkend="flows_editing_parameters" /> for
-      further details).</para>
+    <para>Whenever the Loop is added, it appears on the top of the flow. That happens to indicate that the
+    flow is going to be executed more than once, according to the parameters set for loop. (see
+    <xref linkend="flows_editing_parameters" /> for further details).</para>
 
     <figure>
       <title>Loop program</title>
@@ -541,13 +474,10 @@
       </mediaobject>
     </figure>
 
-    <para>After the <emphasis>Loop</emphasis> is added, 
-      a new variable,
-      the <emphasis role="bold">iter</emphasis>, is available (see
-      <xref linkend="flows_dictionary_variables" />).
-      The value of this special variable is modified
-      on each iteration (increasing or decrementing),
-      according to the parameters set.</para>
+    <para>After the <emphasis>Loop</emphasis> is added, a new variable, the <emphasis
+    role="bold">iter</emphasis>, is available (see <xref linkend="flows_dictionary_variables" />).  The
+    value of this special variable is modified on each iteration (increasing or decreasing), according to
+    the parameters set.</para>
 
     <figure>
       <title>Loop parameters</title>
@@ -561,8 +491,28 @@
 	</imageobject>
       </mediaobject>
     </figure>
-  </section>
 
+    <para>For instance, the output of each step of the Loop can be defined to a file with a name
+    identified by the step, output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see <xref
+    linkend="fig_flow_editor_loop_output"/>).</para>
+
+    <figure xml:id="fig_flow_editor_loop_output">
+      <title>Usage of iter variable</title>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
+		     contentwidth="281px" contentdepth="150px" />
+	</imageobject>
+      </mediaobject>
+      <caption>This flow, with a Loop with 3 steps, is going to throw the results to three different
+      files, identified by the step of the loop (output-1, output-2 and output-3).  Note that, since the
+      output file expects a text string, the iter variable is embraced by square brackets and the output
+      filename is the concatenation of a constant text string, <emphasis>/tmp/output-</emphasis>, and the
+      value of the numerical variable iter.</caption>
+    </figure>
+    
+  </section>
+  
   <section xml:id="flows_edit_comments_flow">
     <title>Report</title>
     <para> The option
