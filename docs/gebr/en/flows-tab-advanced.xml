@@ -11,42 +11,26 @@
 
   <section xml:id="flows_import_flow">
     <title>Importing and exporting flows</title>
-    <para>Although GêBR maintains all the data, sometimes it's necessary to copy 
-      the flow to files for sharing.</para>
 
-    <para>In the window <guilabel>Save flow</guilabel>, navigate
-      to a desired directory and type a name for the file
-      (GêBR will automatically determine the extension
-      <filename class="exension">flw</filename>). To do so:</para>
-    <procedure>
-      <step>
-	<para> In case of Import, the user must first 
-	  <emphasis role="bold">select a flow</emphasis> (or see
-	  <xref linkend="projects_lines_create_projects_and_lines" />, if one does not exist).</para>
-      </step>
-      <step>
-	<para>Select the tab 
-	  <guilabel>Flows</guilabel> and left-click on 
-	  <guiicon><inlinemediaobject><imageobject>
-		<imagedata fileref="../../common-images/botao_importar_projeto.png" />
-	  </imageobject></inlinemediaobject></guiicon> to import or on 
-	  <guiicon>
-	    <inlinemediaobject><imageobject>
-		<imagedata fileref="../../common-images/botao_exportar_projeto.png" />
-	  </imageobject></inlinemediaobject></guiicon> to export.
-	</para>
-      </step>
-      <step>
-	<para>Navigate through the files and
-	  select the flow that is desired to be
-	  imported/export.</para>
-      </step>
-    </procedure>
-    <para>In case of Import, the imported flow will be
-      listed along with any other flows of the
-      selected line. Otherwise, in case of Export,
-      the file containing the exported flow will be
-      created.</para>
+    <para>Although GêBR continuously saves all modifications made to flows as well as to projects and
+    lines, sometimes it is useful to dump flows to file. This can be used to share flows among users, for
+    instance, or to generate backups.</para>
+
+    <para>Import and Export actions are accessible through the
+    <menuchoice><guimenu>More</guimenu><guisubmenu>Import</guisubmenu></menuchoice> and
+    <menuchoice><guimenu>More</guimenu><guisubmenu>Export</guisubmenu></menuchoice> on toolbar.</para>
+
+    <para>To export flows, select as many flows as you want with help of the mouse and keys
+    <keycap>Ctrl</keycap> (for single selection) or <keycap>Shift</keycap> (for multiple selection), then
+    activate the export option at <menuchoice><guimenu>More</guimenu></menuchoice> menu. A dialog box
+    <guilabel>Save flow</guilabel> will pop up, allowing the user to browse for the target directory and
+    chose the filename (GêBR will automatically determine the extension <filename
+    class="exension">flwx</filename>).</para>
+
+    <para>In case of importing flows from a file, the imported flows will be listed along with the other
+    flows of the active line, at the bottom of the list and with the suffix
+    <emphasis>(Imported)</emphasis> added.</para>
+
   </section>
 
   <section
