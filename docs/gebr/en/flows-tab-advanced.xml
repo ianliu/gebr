@@ -292,57 +292,35 @@
 
   <section xml:id="flows_snapshots">
     <title>Snapshot of a flow</title>
-    <indexterm><primary>Snapshot</primary><secondary>of a flow</secondary></indexterm>
-    <para>There are situations when working with GêBR it will be
-      useful to use an existing flow as a basis to create new
-      flows. For example, to experiment with flows that
-      are only slightly different from one another, however without
-      having to discard or modify the original flow.
-    </para>
-    <para>A way to do this is to copy and paste the flow (see the
-      section <xref linkend="flows_copy_paste_del_flows" />.
-      Another way is to take a snapshot of the original flow, through a snapshot, 
-      GêBR stores the settings of a flow so it's easy come back to it later.</para>
+
+    <para>Tune all program's parameters of a flow can be time consuming. Usually the best setup of
+    parameters is only found by trial and error. It could be distressful have to change a good flow's
+    setup to try a different one, in aim of found something better. To alleviate this stress, GêBR offers
+    the <emphasis role="bold">snapshot</emphasis><indexterm><primary>Snapshot</primary><secondary>of a
+    flow</secondary></indexterm> feature. A snapshot is a record of the complete flow's state at the time,
+    including all programs that build the flow, all program parameter values, the state of the dictionary
+    of variables, and input and output files. After take a snapshot, the user can change anything in the
+    flow's setup without the fear to corrupt the flow, because it is always possible to revert the flow to
+    the state it was when the snapshot was taken.</para>
+
+    <para>Snapshot can also be used to keep equally important different states of a flow. For instance,
+    consider a flow to extract a common-offset sections from a data set. One valuable setup is the one that
+    extract the common-offset section for the smallest offset, while other important setup is the one to
+    extract the common-offset section for the biggest offset. Both states can be saved by means of
+    snapshots. Furthermore, both snapshots can be executed at once.</para>
+
+    <para>An alternative to snapshots would be is to save many different flows, one for each version, but
+    with the drawback of having a crowded flow's list.</para>
 
     <section xml:id="flows_taking_snapshots">
-      <title>Taking a snapshot</title>
+      <title>Taking snapshots</title>
       <indexterm><primary>Snapshot</primary><secondary>taking snapshot</secondary></indexterm>
-      <para>All snapshots of the flow are presented in the flows tab. 
-	To <emphasis role="bold">take a snapshot</emphasis> of a flow:</para>
-      <procedure>
-	<step>
-	  <para>Select the flow and left-click on <guilabel>More</guilabel> button on Toolbar.</para>
-	</step>
-	<step>
-	  <para>Then click on 
-	    <guiicon>
-	      <inlinemediaobject>
-		<imageobject>
-		  <imagedata fileref="../../common-images/botao_salvar_estado.png" />
-		</imageobject>
-	      </inlinemediaobject>
-	    </guiicon> (or press <keycap>Ctrl+S</keycap>) to take a snapshot </para>
-	</step>
-	<step>
-	  <para>It's really necessary to write a description of the 
-	    snapshot in the dialog box to
-	    identify this saved state later on.</para>
-	  <figure>
-	    <title>Save the snapshot description</title>
-	    <mediaobject>
-	      <caption>Save the snapshot description</caption>
-	      <imageobject>
-		<imagedata fileref="../images/GeBR_snapshot_description_dialog.png"  contentwidth="419px" contentdepth="167px"/>
-	      </imageobject>
-	    </mediaobject>
-	  </figure>
-	</step>
-	<step>
-	  <para>Left-click on 
-	    <guibutton>OK</guibutton> to save your snapshot</para>
-	</step>
-      </procedure>
 
+      <para>To take snapshots of a flow, on the toolbar of <guilabel>Flows</guilabel> tab, use the option
+      <menuchoice><guimenu>More</guimenu><guisubmenu>Take a snapshot</guisubmenu></menuchoice> or press
+      <keycap>Ctrl+S</keycap>. A dialog box will appear requesting an one-sentence description of the
+      snapshot. That description is further used to identify it as long as the timestamp of the
+      snapshot.</para>
 
       <para>To see the saved snapshots, just left-click on 
 	<guiicon>
@@ -351,7 +329,7 @@
 	      <imagedata fileref="../../common-images/photos.png" />
 	    </imageobject>
 	  </inlinemediaobject>
-	</guiicon> in the details of a flow.
+	</guiicon> by the title of the flow in the flow's list.
       </para>
     </section>
 
@@ -359,11 +337,9 @@
       <title>Snapshot actions</title>
       <indexterm><primary>Snapshot</primary><secondary>actions</secondary></indexterm>
 
-      <para>A user that uses different versions of the same flow may also be benefited 
-	by the use of snapshots. An option would be to save many different flows, one for 
-	each version, which drawback is the pollution of the flows tab.
-	Another option, using the feature above, is taking
-	a snapshot of each version of the flow.</para>
+      <para>The graph below indicates from which version each snapshot was derived from. The start of
+      arrow indicates the origin and the end indicates the derived version. The special mark
+      <emphasis>Now</emphasis> highlights from which snapshot the actual state of the flow derives.</para>
 
       <figure>
 	<title>Snapshots on GêBR</title>
@@ -377,44 +353,22 @@
 	</mediaobject>
       </figure>
 
-      <para>The graph indicates from which version each snapshot was derived from. 
-	The start of arrow indicates the origin and the end indicates the modified
-	version.
-      </para>
+      <para>In this view, it is possible select as many snapshots as necessary by just clicking over each
+      snapshots. To deselect a snapshot click again over it. To clear the entire selection click on the
+      white area in this view.</para>
 
-      <caution>
-	<para>GêBR always preserves the setup of the flow. Even if
-	  the computer was turned off, this list will be recovered when GêBR 
-	  is opened again. However, if the <emphasis role="bold">flow was 
-	    deleted</emphasis> all the saved states
-	  will <emphasis role="bold">immediately disappear
-	    forever</emphasis>.</para>
-      </caution>
-
-      <para>Through a right-click over the target snapshot, the user has the option to 
-	<emphasis role="bold">Revert</emphasis>, <emphasis role="bold">Delete</emphasis> 
-	or <emphasis role="bold">Run</emphasis> it. The right-click over the current 
-	stage (Now) allows the user to <emphasis role="bold">Run</emphasis> the current
-	flow or to take a snapshot thereof.
-      </para>
-
-      <para>In this view, also is possible use multiple selection just click over several snapshots 
-	and the actions are disposable through the right-click over a snapshot. After to choose 
-	several snapshots and the action, this action will be applied in all selected snapshots. 
-      </para>
-      <para>To deselect a snapshot is as easy as select one, the user just need to click over the 
-	undesired snapshot. Also is possible deselect all the selected snapshots by clicking 
-	on the white area in this view. 
-      </para>
+      <para>Any action taken will affect all selected snapshots. Possible actions
+      are <emphasis role="bold">Revert</emphasis>, <emphasis role="bold">Delete</emphasis> and <emphasis
+      role="bold">Run</emphasis>.</para>
 
       <itemizedlist>
 	<listitem>
 	  <emphasis role="bold">Revert</emphasis>
 
-	  <para>If a snapshot of a flow was taken and for some reason undesired modifications 
-	    were made to it, is possible to revert to another one through 
-	    double-click on that. Whenever a snapshot is
-	    reverted, the dialog <emphasis>Reverting modified flow</emphasis> will appear.</para>
+	  <para><emphasis>Revert</emphasis> means that the flow will be restored to how it was at the
+	  moment the snapshot was taken. If the actual state of flow is unsaved by means of a snapshot,
+	  prior the revert action the user is inquired about taking a snapshot of the actual state of the
+	  flow or discarding this unsaved state and then proceed.</para>
 
 	  <figure>
 	    <title>Dialog of Reverting modified flow</title>
@@ -427,49 +381,28 @@
 	    </mediaobject>
 	  </figure>
 
-	  <itemizedlist>
-	    <listitem>
-	      <guibutton>Take a snapshot</guibutton>: a dialog to input a description
-	      will appear, where is possible save this new snapshot.
-	    </listitem>
-	    <listitem>
-	      <guibutton>Proceed discarding changes</guibutton>: GêBR will
-	      simply revert to the chosen snapshot without saving the current
-	      state. 
-	    </listitem>
-	  </itemizedlist>
-
-	  <tip>
-	    <para>If the current state was previously saved, GêBR
-	      recommends that the user click on <guibutton>Proceed discarding changes</guibutton>, in the
-	      dialog box <emphasis>Backup Current State</emphasis>, as to avoid a bloated snapshot view.</para>
-	  </tip>
 	</listitem>
 
 	<listitem>
 	  <emphasis role="bold">Delete</emphasis>
 
-	  <para>The delete of a snapshot is a permanently action. After do that, 
-	    this snapshot will disappear and cannot be recovered.</para>
+	  <para>Delete a snapshot is a permanent action, that cannot be undone. Whenever a snapshot is
+	  deleted its descendents are linked to the predecessor of the deleted snapshot to keep the idea
+	  of ascendence.</para>
 
-	  <para>GêBR deals with the idea of origin of the snapshot. In the graph of the figure, 
-	    'B1' and 'B2' come from 'B' which, by its turn, comes from 'A'. If the user deletes 'B', 
-	    GêBR will consider 'B1'and 'B2' as originated from 'A'. 
-	  </para>
+	  <para>The <keycap>Delete</keycap> key can be used instead the context menu option.</para>
+
 	</listitem>
 
 	<listitem>
 	  <emphasis role="bold">Run</emphasis>
 
 	  <para>Running a snapshot is like running a flow (see <xref linkend="flows_execute_flow" />).
-	    The advantage of doing this is the possibility of executing
-	    a snapshot without having to revert to it. Thus, saved flows can be tested 
-	    without changing the current one. As with flows,
-	    <keycap>Ctrl+R</keycap> runs the selected snapshots
-	    one after another; <keycap>Ctrl+Shift+R</keycap> runs the
-	    selected snapshots parallely (keybind activated just if multiple snapshots are selected);
-	    the <keycap>Delete</keycap> key deletes the selected snapshots; 
-	  </para>
+	  The advantage of doing this is the possibility of executing a snapshot without having to revert
+	  to it. Thus, saved flows can be tested without changing the current one. As with flows,
+	  <keycap>Ctrl+R</keycap> runs the selected snapshots one after another;
+	  <keycap>Ctrl+Shift+R</keycap> runs the selected snapshots parallely (keybind activated just if
+	  multiple snapshots are selected).</para>
 
 	</listitem>
       </itemizedlist>
@@ -477,19 +410,15 @@
     </section>
 
     <example>
-      <title>
-	<emphasis role="bold">Using snapshots</emphasis>
-      </title>
-      <para>Take the program SU Plane for that example. That program
-	create common offset with up to 3 planes, and there are two possible
-	output options for that flow: image plot, using program X Image
-	or postscript image, using PS Image.
-      </para>
-      <para>To solve this issue (two possible outputs for a flow)
-	without the need to create two separate flows with small differences,
-	it is possible to take two snapshots: one for image
-	plot, and the other for postscript.
-      </para>
+      <title>Using snapshots</title>
+
+      <para>Take the program SU Plane for that example. That program create common offset with up to 3
+      planes, and there are two possible output options for that flow: image plot, using program X Image
+      or postscript image, using PS Image.</para>
+
+      <para>To solve this issue (two possible outputs for a flow) without the need to create two separate
+      flows with small differences, it is possible to take two snapshots: one for image plot, and the
+      other for postscript.</para>
 
       <para>
 	To do that, following the steps below:
@@ -515,23 +444,14 @@
   
   <section xml:id="flows_edit_comments_flow">
     <title>Report</title>
-    <para> The option
-      <menuchoice>
-	<guimenu>More</guimenu>
-	<guisubmenu>Include user's commentary</guisubmenu>
-      </menuchoice>
-      allows the user to add comments
-      <indexterm><primary>Report</primary><secondary>of a flow</secondary></indexterm>
-      about the selected flow, just like the option presented
-      in the <guilabel>Projects and Lines</guilabel> tab.
-      Analogously, the option
-      <menuchoice>
-	<guimenu>More</guimenu>
-	<guisubmenu>View Report</guisubmenu>
-      </menuchoice> allows the user to
-      visualize the report of the current flow
-      The difference is that the line's report can include the
-      flow's report.  Consult 
-      <xref linkend="projects_lines_report" />.</para>
+
+    <para>The option <menuchoice><guimenu>More</guimenu><guisubmenu>Include user's
+    commentary</guisubmenu></menuchoice> allows the user to add comments
+    <indexterm><primary>Report</primary><secondary>of a flow</secondary></indexterm> about the selected
+    flow, just like the option presented in the <guilabel>Projects and Lines</guilabel> tab.  Analogously,
+    the option <menuchoice><guimenu>More</guimenu><guisubmenu>View Report</guisubmenu></menuchoice> allows
+    the user to visualize the report of the current flow. The difference is that the line's report can
+    include the flow's report.  Consult <xref linkend="projects_lines_report" />.</para>
+
   </section>
 </chapter>

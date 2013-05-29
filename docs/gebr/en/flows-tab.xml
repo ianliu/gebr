@@ -464,6 +464,12 @@
 			<para>GêBR does <emphasis role="bold">not</emphasis> ask for
 				confirmation before deleting programs from a flow.</para>
 		</caution>
+
+		<caution>
+		  <para>Deleting a flow implies that all snapshots of the flow will be equally deleted
+		  (see <xref linkend="flows_snapshots"/>).</para>
+		</caution>
+
 	</section>
 
 	<section xml:id="flows_execute_flow">
