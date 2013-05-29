@@ -222,6 +222,74 @@
     </section>
   </section>
 
+
+  <section xml:id="flows_loop">
+    <title>Flows with loops</title>
+
+    <para>The notion of a loop refers to a series of commands that continues to repeat over and over
+    again, possibly changing a little, until a condition is met.  For example, suppose the user needs to
+    extract many common-offset sections of a data. Instead of writing a flow to extract each common-offset
+    section individually, or refurbish a base flow, changing manually its target offset, a loop over the
+    offset could be used to sequentially extract all common-offset sections.</para>
+
+    <para>The <emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm> is a special menu
+    from the category <emphasis role="bold">Loops</emphasis> that has a totally different usage compared
+    to the remaining menus of GêBR. Here these differences are presented.</para>
+
+    <para>Whenever the Loop is added, it appears on the top of the flow. That happens to indicate that the
+    flow is going to be executed more than once, according to the parameters set for loop. (see
+    <xref linkend="flows_editing_parameters" /> for further details).</para>
+
+    <figure>
+      <title>Loop program</title>
+      <mediaobject>
+	<caption>Screenshot of program <emphasis>Loop</emphasis>, added
+	  to a flow and properly configured.</caption>
+	<imageobject>
+	  <imagedata fileref="../images/GeBR_flow_editor_loop.png" 
+		     contentwidth="284px" contentdepth="147px" />
+	</imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>After the <emphasis>Loop</emphasis> is added, a new variable, the <emphasis
+    role="bold">iter</emphasis>, is available (see <xref linkend="flows_dictionary_variables" />).  The
+    value of this special variable is modified on each iteration (increasing or decreasing), according to
+    the parameters set.</para>
+
+    <figure>
+      <title>Loop parameters</title>
+      <mediaobject>
+	<caption>Screenshot of the edition from parameters
+	  of <emphasis>Loop</emphasis> program, with a simple example of
+	  parameters setting.</caption>
+	<imageobject>
+	  <imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png" 
+		     contentwidth="460px" contentdepth="280px" />
+	</imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>For instance, the output of each step of the Loop can be defined to a file with a name
+    identified by the step, output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see <xref
+    linkend="fig_flow_editor_loop_output"/>).</para>
+
+    <figure xml:id="fig_flow_editor_loop_output">
+      <title>Usage of iter variable</title>
+      <mediaobject>
+	<imageobject>
+	  <imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
+		     contentwidth="281px" contentdepth="150px" />
+	</imageobject>
+      </mediaobject>
+      <caption>This flow, with a Loop with 3 steps, is going to throw the results to three different
+      files, identified by the step of the loop (output-1, output-2 and output-3).  Note that, since the
+      output file expects a text string, the iter variable is embraced by square brackets and the output
+      filename is the concatenation of a constant text string, <emphasis>/tmp/output-</emphasis>, and the
+      value of the numerical variable iter.</caption>
+    </figure>
+  </section>
+
   <section xml:id="flows_snapshots">
     <title>Snapshot of a flow</title>
     <indexterm><primary>Snapshot</primary><secondary>of a flow</secondary></indexterm>
@@ -443,74 +511,6 @@
 	for the data generated from SU Plane.
       </para>
     </example>
-  </section>
-
-  <section xml:id="flows_loop">
-    <title>Flows with loops</title>
-
-    <para>The notion of a loop refers to a series of commands that continues to repeat over and over
-    again, possibly changing a little, until a condition is met.  For example, suppose the user needs to
-    extract many common-offset sections of a data. Instead of writing a flow to extract each common-offset
-    section individually, or refurbish a base flow, changing manually its target offset, a loop over the
-    offset could be used to sequentially extract all common-offset sections.</para>
-
-    <para>The <emphasis>Loop</emphasis><indexterm><primary>Loop</primary></indexterm> is a special menu
-    from the category <emphasis role="bold">Loops</emphasis> that has a totally different usage compared
-    to the remaining menus of GêBR. Here these differences are presented.</para>
-
-    <para>Whenever the Loop is added, it appears on the top of the flow. That happens to indicate that the
-    flow is going to be executed more than once, according to the parameters set for loop. (see
-    <xref linkend="flows_editing_parameters" /> for further details).</para>
-
-    <figure>
-      <title>Loop program</title>
-      <mediaobject>
-	<caption>Screenshot of program <emphasis>Loop</emphasis>, added
-	  to a flow and properly configured.</caption>
-	<imageobject>
-	  <imagedata fileref="../images/GeBR_flow_editor_loop.png" 
-		     contentwidth="284px" contentdepth="147px" />
-	</imageobject>
-      </mediaobject>
-    </figure>
-
-    <para>After the <emphasis>Loop</emphasis> is added, a new variable, the <emphasis
-    role="bold">iter</emphasis>, is available (see <xref linkend="flows_dictionary_variables" />).  The
-    value of this special variable is modified on each iteration (increasing or decreasing), according to
-    the parameters set.</para>
-
-    <figure>
-      <title>Loop parameters</title>
-      <mediaobject>
-	<caption>Screenshot of the edition from parameters
-	  of <emphasis>Loop</emphasis> program, with a simple example of
-	  parameters setting.</caption>
-	<imageobject>
-	  <imagedata fileref="../images/GeBR_flow_editor_loop_parameters.png" 
-		     contentwidth="460px" contentdepth="280px" />
-	</imageobject>
-      </mediaobject>
-    </figure>
-
-    <para>For instance, the output of each step of the Loop can be defined to a file with a name
-    identified by the step, output-<emphasis>&lt;number-of-steps&gt;</emphasis> (see <xref
-    linkend="fig_flow_editor_loop_output"/>).</para>
-
-    <figure xml:id="fig_flow_editor_loop_output">
-      <title>Usage of iter variable</title>
-      <mediaobject>
-	<imageobject>
-	  <imagedata fileref="../images/GeBR_flow_editor_loop_output.png"
-		     contentwidth="281px" contentdepth="150px" />
-	</imageobject>
-      </mediaobject>
-      <caption>This flow, with a Loop with 3 steps, is going to throw the results to three different
-      files, identified by the step of the loop (output-1, output-2 and output-3).  Note that, since the
-      output file expects a text string, the iter variable is embraced by square brackets and the output
-      filename is the concatenation of a constant text string, <emphasis>/tmp/output-</emphasis>, and the
-      value of the numerical variable iter.</caption>
-    </figure>
-    
   </section>
   
   <section xml:id="flows_edit_comments_flow">
