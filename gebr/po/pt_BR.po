@@ -1054,6 +1054,11 @@ msgstr "<b>Arquivo de saída</b>: %s"
 msgid "<b>Log File</b>: %s"
 msgstr "<b>Arquivo de log</b>: %s"
 
+#: ../gebr-job-control.c:1674
+#, c-format
+msgid "<span size=\"x-large\">No description available</span>"
+msgstr "<span size='x-large'>Nenhuma descrição disponível</span>"
+
 #: ../gebr-job-control.c:1687
 msgid ""
 "\n"
@@ -1903,6 +1908,10 @@ msgstr "Projetos e linhas"
 #: ../interface.c:501
 msgid "Flows"
 msgstr "Fluxos"
+
+#: ../interface.c:525
+msgid "Filter jobs by group, nodes or status"
+msgstr "Filtrar fluxos por grupos, nós de processamento e estado"
 
 #: ../interface.c:538
 msgid "Jobs"

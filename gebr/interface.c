@@ -522,7 +522,7 @@ void gebr_setup_ui(void)
 	GtkWidget *tool_button = gebr_gui_tool_button_new();
 	GtkWidget *filter_button = gtk_image_new_from_stock("filter", GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_container_add(GTK_CONTAINER(tool_button), filter_button);
-	gtk_widget_set_tooltip_text( filter_button, "Filter jobs by group, nodes or status");
+	gtk_widget_set_tooltip_text( filter_button, _("Filter jobs by group, nodes or status"));
 
 	gtk_button_set_relief(GTK_BUTTON(tool_button), GTK_RELIEF_NONE);
 	gebr_job_control_setup_filter_button(gebr.job_control, GEBR_GUI_TOOL_BUTTON(tool_button));
