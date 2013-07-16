@@ -12,7 +12,7 @@ Packager: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
 Source: %{name}-%{version}.tar.gz
 BuildRequires: glib2-devel >= 2.22.0
 BuildRequires: gdome2-devel >= 0.8.0
-BuildRequires: WebKit-gtk-devel >= 1.0.1
+BuildRequires: webkitgtk-devel >= 1.0.1
 BuildRequires: libtidy-devel intltool docbook-xsl libxslt gtk-doc
 BuildRequires: pygtk2 graphviz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
@@ -24,8 +24,8 @@ This package provides several tools for working with seismic data.
 #### Libgebr Package
 ################################################################################
 %package -n libgebr
-Requires: gdome2 WebKit-gtk pygtk2 graphviz
-Conflicts: WebKit-gtk = 1.2.6
+Requires: gdome2 webkitgtk pygtk2 graphviz
+Conflicts: webkitgtk = 1.2.6
 Group: System Environment/Libraries
 Summary: GeBR library collection
 
@@ -50,7 +50,7 @@ libgebr is the collection of libraries of GeBR:
 #### Libgebr Package
 ################################################################################
 %package -n libgebr-devel
-Requires: gdome2-devel WebKit-gtk-devel
+Requires: gdome2-devel webkitgtk-devel
 Group: Development/Libraries
 Summary: GeBR library collection
 
