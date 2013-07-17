@@ -84,8 +84,8 @@ print_usage()
 
 GEBR_REPO=http://gebr.googlecode.com/files/
 MENU_REPO=http://gebr-menus.googlecode.com/files/
-GEBR_VERSION=${GEBR_VERSION-0.18.1}
-GEBR_MENUS="gebr-menus-su-0.6.2 gebr-menus-shtools-0.2.2"
+GEBR_VERSION=${GEBR_VERSION-0.21.1}
+#GEBR_MENUS="gebr-menus-su-0.6.2 gebr-menus-shtools-0.2.2"
 
 SCRIPT_NAME=`basename $0`
 MANTAINER='GeBR Team <gebr-devel@googlegroups.com>'
