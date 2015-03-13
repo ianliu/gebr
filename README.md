@@ -1,4 +1,4 @@
-# README #
+# Welcome #
 
 **GêBR** is a simple graphical interface which facilitates geophysical data processing. **GêBR** is not a *package for processing*. Instead it is designed to integrate a large variety of free processing packages, such as Seismic Un*x and Madagascar, and your own softwares.
 
@@ -7,3 +7,5 @@
 Being a free software, anyone can use and customize **GêBR** for free, according to the terms of the GNU Public License. That makes this software very attractive for teaching and academic research.
 
 Facing problems? Consult the [GêBR Project site](http://www.gebrproject.com).
+
+![logo2.png](https://bitbucket.org/repo/9jE6dK/images/761145759-logo2.png)
