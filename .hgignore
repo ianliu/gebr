@@ -1,5 +1,6 @@
 syntax: glob
 
+_inst_
 *.Plo
 *.Po
 *.Tpo
@@ -133,3 +134,4 @@ rpm/gebrproject.*.spec
 stamp-*
 tags
 *.idx2
+compile

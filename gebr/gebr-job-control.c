@@ -2153,7 +2153,8 @@ on_maestro_server_filter_changed(GtkComboBox *combo,
 		gtk_list_store_set(jc->priv->server_filter, &iter,
 		                   0, display,
 		                   1, type,
-		                   2, group);
+		                   2, group,
+				   -1);
 
 		if (type == MAESTRO_SERVER_TYPE_GROUP) {
 			gint n;
@@ -2168,7 +2169,8 @@ on_maestro_server_filter_changed(GtkComboBox *combo,
 				gtk_list_store_set(jc->priv->server_filter, &iter,
 				                   0, servers[i],
 				                   1, MAESTRO_SERVER_TYPE_DAEMON,
-				                   2, servers[i]);
+				                   2, servers[i],
+						   -1);
 			}
 		}
 	}
