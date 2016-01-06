@@ -72,3 +72,5 @@ EXTRA_DIST = $(srcdir)/*.xml
 CLEANFILES = html-ok html/index.html
 
 .PHONY: html
+
+-include $(top_srcdir)/git.mk

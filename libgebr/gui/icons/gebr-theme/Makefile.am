@@ -350,3 +350,5 @@ EXTRA_DIST = 					\
 	${libgebr_gui_icons22x22stock_DATA}	\
 	${libgebr_gui_icons48x48stock_DATA}	\
 	${libgebr_gui_iconsscalablestock_DATA}
+
+-include $(top_srcdir)/git.mk

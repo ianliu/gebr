@@ -26,3 +26,5 @@ test_js_SOURCES = test-js.c
 
 TEST_PROGS += test-utils
 test_utils_SOURCES = test-utils.c
+
+-include $(top_srcdir)/git.mk

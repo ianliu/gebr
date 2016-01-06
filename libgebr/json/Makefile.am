@@ -96,3 +96,5 @@ jsoninclude_HEADERS = \
 	$(NULL)
 
 EXTRA_DIST += json-glib.h
+
+-include $(top_srcdir)/git.mk

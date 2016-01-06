@@ -23,3 +23,5 @@ AM_LDFLAGS =			\
 	$(GEBR_GUI_LIBS)	\
 	../libdebr.a	\
 	$(NULL)
+
+-include $(top_srcdir)/git.mk

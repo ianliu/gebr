@@ -66,3 +66,5 @@ test_program_parameter_SOURCES = test-program-parameter.c
 
 INT_TEST_PROGS += test-geoxml-leaks
 test_geoxml_leaks_SOURCES = test-geoxml-leaks.c
+
+-include $(top_srcdir)/git.mk

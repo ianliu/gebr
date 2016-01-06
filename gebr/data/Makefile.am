@@ -55,3 +55,5 @@ all:
 EXTRA_DIST = gebr.desktop.in grace.mnu sleep.mnu forloop.mnu $(glade_DATA) $(python_DATA)
 CLEANFILES = gebr.desktop menus.idx2 categories.idx2
 
+
+-include $(top_srcdir)/git.mk

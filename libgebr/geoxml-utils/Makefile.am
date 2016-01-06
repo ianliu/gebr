@@ -57,3 +57,5 @@ gebr_geoxml_upgrade_LDADD    = $(utils_ldadd)
 gebr_geoxml_validate_LDADD   = $(utils_ldadd)
 gebr_geoxml_menu_indices_LDADD   = $(utils_ldadd)
 
+
+-include $(top_srcdir)/git.mk

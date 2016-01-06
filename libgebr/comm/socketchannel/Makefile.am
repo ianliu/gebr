@@ -35,3 +35,5 @@ gebr_comm_socketchannel_LDADD =	\
 	$(NULL)
 
 gebr_comm_socketchannel_SOURCES = socketchannel.c
+
+-include $(top_srcdir)/git.mk

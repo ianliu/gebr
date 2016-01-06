@@ -18,3 +18,5 @@ include $(top_srcdir)/Makefile.decl
 gebrd_datadir=$(datadir)/doc/gebrd/examples
 gebrd_data_DATA= gebrd.conf mpi-hello.c mpihello.mnu
 EXTRA_DIST = $(gebrd_data_DATA)
+
+-include $(top_srcdir)/git.mk

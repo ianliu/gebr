@@ -31,3 +31,5 @@ test_socket_SOURCES = test-socket.c
 
 TEST_PROGS += test-uri
 test_uri_SOURCES = test-uri.c
+
+-include $(top_srcdir)/git.mk

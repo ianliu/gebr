@@ -113,3 +113,5 @@ libgebr_comm_la_LIBADD =		\
 	$(NULL)
 
 libgebr_comm_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
+
+-include $(top_srcdir)/git.mk

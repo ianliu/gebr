@@ -103,3 +103,5 @@ libgebr_geoxml_la_LIBADD =	\
 
 AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
 libgebr_geoxml_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
+
+-include $(top_srcdir)/git.mk

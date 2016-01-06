@@ -87,3 +87,5 @@ glib_marshal_prefix = gebrm_cclosure_marshal
 include $(top_srcdir)/Makefile.am.marshal
 
 EXTRA_DIST += gebrm-marshal.list
+
+-include $(top_srcdir)/git.mk

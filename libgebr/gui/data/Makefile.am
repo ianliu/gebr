@@ -23,3 +23,5 @@ gebrstylesdir = $(datadir)/libgebr/styles
 gebrstyles_DATA = gebr-report.css gebr-report-fancy.css
 
 EXTRA_DIST = $(libgebrdata_DATA) $(gebrstyles_DATA)
+
+-include $(top_srcdir)/git.mk

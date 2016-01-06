@@ -30,3 +30,5 @@ test_sysinfo_SOURCES = test-sysinfo.c
 test_sysinfo_LDADD = ../libgebrd.la
 
 EXTRA_DIST = cpuinfo meminfo
+
+-include $(top_srcdir)/git.mk

@@ -65,3 +65,5 @@ common_images_DATA =				\
 	$(NULL)
 
 EXTRA_DIST = $(common_images_DATA)
+
+-include $(top_srcdir)/git.mk

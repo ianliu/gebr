@@ -27,3 +27,5 @@ dist-hook:
 
 uninstall-hook:
 	( cd $(DESTDIR)$(datadir)/libgebr && rm -r ckeditor )
+
+-include $(top_srcdir)/git.mk

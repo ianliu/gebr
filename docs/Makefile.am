@@ -17,3 +17,5 @@
 include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = gebr reference
+
+-include $(top_srcdir)/git.mk

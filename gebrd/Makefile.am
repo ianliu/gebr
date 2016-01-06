@@ -77,3 +77,5 @@ gebrd_LDADD =			\
 	$(GEBR_COMM_LIBS)	\
 	$(builddir)/libgebrd.la	\
 	$(NULL)
+
+-include $(top_srcdir)/git.mk

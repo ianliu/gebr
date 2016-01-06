@@ -105,3 +105,5 @@ EXTRA_DIST +=			\
 distcheck-hook: all
 
 .PHONY: touch
+
+-include $(top_srcdir)/git.mk

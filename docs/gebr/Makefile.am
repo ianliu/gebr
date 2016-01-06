@@ -21,3 +21,5 @@ docdir = $(datadir)/doc/gebr/
 doc_DATA = gebr-guide.css
 
 EXTRA_DIST=gebr-guide.xsl $(doc_DATA)
+
+-include $(top_srcdir)/git.mk

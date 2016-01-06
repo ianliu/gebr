@@ -85,3 +85,5 @@ debr_LDADD =			\
 	libdebr.la		\
 	$(NULL)
 	
+
+-include $(top_srcdir)/git.mk

@@ -22,3 +22,5 @@ libgebr_guipixmaps_DATA = \
 	gebr-logo.png flows-review-bg.png
 
 EXTRA_DIST = $(libgebr_guipixmaps_DATA)
+
+-include $(top_srcdir)/git.mk

@@ -37,3 +37,5 @@ libgebr_geoxmldata_DATA= \
 	help-template.html \
 	$(NULL)
 EXTRA_DIST = $(libgebr_geoxmldata_DATA)
+
+-include $(top_srcdir)/git.mk

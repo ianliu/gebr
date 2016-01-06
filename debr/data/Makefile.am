@@ -23,3 +23,5 @@ debr.desktop:debr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 
 EXTRA_DIST = debr.desktop.in
 CLEANFILES = $(desktop_DATA)
+
+-include $(top_srcdir)/git.mk

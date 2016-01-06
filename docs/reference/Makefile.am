@@ -16,3 +16,5 @@
 include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = libgebr
+
+-include $(top_srcdir)/git.mk

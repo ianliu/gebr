@@ -149,3 +149,5 @@ gebr_LDADD =			\
 EXTRA_DIST += gebr-marshal.list
 
 .PHONY: touch
+
+-include $(top_srcdir)/git.mk

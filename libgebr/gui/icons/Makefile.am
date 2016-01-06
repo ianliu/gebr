@@ -145,3 +145,5 @@ icons48_DATA = \
 	$(srcdir)/48x48/gebr-stdout.png
 
 EXTRA_DIST = 16x16 22x22 48x48
+
+-include $(top_srcdir)/git.mk

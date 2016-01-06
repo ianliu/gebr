@@ -50,3 +50,5 @@ EXTRA_DIST =		\
 	value.c		\
 	value.h		\
 	$(NULL)
+
+-include $(top_srcdir)/git.mk
