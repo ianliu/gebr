@@ -1202,7 +1202,7 @@ void gebr_validator_free(GebrValidator *self)
 static void
 clean_string(gchar **str)
 {
-	int i, b = 0;
+	gsize i, b = 0;
 	if (!str || !*str) {
 		return;
 	}

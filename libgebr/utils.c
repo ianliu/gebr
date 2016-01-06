@@ -487,7 +487,7 @@ const gchar *gebr_validate_int(const gchar * text_value, const gchar * min, cons
 		return "";
 
 	value = g_ascii_strtod(text_value, &endptr);
-	if (endptr - text_value	!= len)
+	if (text_value + len != endptr)
 		return "";
 
 	g_ascii_dtostr(number, 30, round(value));
@@ -518,7 +518,7 @@ const gchar *gebr_validate_float(const gchar * text_value, const gchar * min, co
 	value_str = g_string_new(NULL);
 	value = g_ascii_strtod(text_value, &last);
 
-	if (last - text_value != len)
+	if (text_value + len != last)
 		return "";
 
 	g_string_assign(value_str, text_value);
@@ -743,18 +743,17 @@ gchar *gebr_str_word_before_pos(const gchar *str, gint *pos)
 gchar *
 gebr_str_remove_trailing_zeros(gchar *str)
 {
-	gsize i;
+	gsize i, len = strlen(str);
 
-	i = strlen(str);
-	while (i--)
-		if (str[i] == '.' || str[i] != '0')
+	for (i = 0; i < len; i++)
+		if (str[len - i - 1] != '0')
 			break;
 
-	if (i != -1) {
-		if (str[i] == '.')
-			str[i] = '\0';
+	if (i != len) {
+		if (str[len - i - 1] == '.')
+			str[len - i - 1] = '\0';
 		else
-			str[i+1] = '\0';
+			str[len - i] = '\0';
 	}
 
 	return str;
@@ -1508,7 +1507,7 @@ gebr_gzfile_get_contents(const gchar *filename,
 		return FALSE;
 	}
 
-	guint length = 4096;
+	gint length = 4096;
 
 	gchar buffer[length];
 	gint bytes;

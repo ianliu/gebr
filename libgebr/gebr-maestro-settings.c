@@ -229,7 +229,7 @@ gebr_maestro_settings_get_addr_for_domain(GebrMaestroSettings *ms,
 					  const gchar *domain,
 					  gint index)
 {
-	gchar *maestro;
+	gchar *maestro = NULL;
 	GString *maestros;
 
 	maestros = gebr_g_key_file_load_string_key(ms->priv->maestro_key, domain, "maestro", "");
@@ -361,7 +361,7 @@ gebr_maestro_settings_generate_nfs_label(GebrMaestroSettings *ms,
 	nfss = g_key_file_get_groups(ms->priv->maestro_key, &length);
 
 	if (nfss && nfsid && *nfsid) {
-		for (gint i = 0; i < length; i++) {
+		for (gsize i = 0; i < length; i++) {
 			pos += 1;
 			if (g_strcmp0(nfss[i], nfsid) == 0)
 				break;
