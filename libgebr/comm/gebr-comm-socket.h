@@ -62,14 +62,15 @@ struct _GebrCommSocket {
 	GObject parent;
 
 	GIOChannel *io_channel;
-	guint write_watch_id;
-	guint read_watch_id;
+	GList *write_watch_ids;
+	GList *read_watch_ids;
 	GByteArray *queue_write_bytes;
 
 	enum GebrCommSocketAddressType address_type;
 	enum GebrCommSocketState state;
 	enum GebrCommSocketError last_error;
 };
+
 struct _GebrCommSocketClass {
 	GObjectClass parent;
 

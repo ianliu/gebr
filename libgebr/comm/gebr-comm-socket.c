@@ -63,6 +63,8 @@ static void gebr_comm_socket_class_init(GebrCommSocketClass * class)
 static void gebr_comm_socket_init(GebrCommSocket * socket)
 {
 	socket->io_channel = NULL;
+	socket->write_watch_ids = NULL;
+	socket->read_watch_ids = NULL;
 }
 
 G_DEFINE_TYPE(GebrCommSocket, gebr_comm_socket, G_TYPE_OBJECT)
@@ -70,8 +72,16 @@ G_DEFINE_TYPE(GebrCommSocket, gebr_comm_socket, G_TYPE_OBJECT)
 /*
  * internal functions
  */
-static gboolean __gebr_comm_socket_read(GIOChannel * source, GIOCondition condition, GebrCommSocket * socket)
+struct WatchData
 {
+	GebrCommSocket *socket;
+	guint source_id;
+};
+
+static gboolean __gebr_comm_socket_read(GIOChannel * source, GIOCondition condition, struct WatchData *data)
+{
+	GebrCommSocket *socket = data->socket;
+
 	if (condition & G_IO_NVAL) {
 		/* probably a fd change */
 		return FALSE;
@@ -145,8 +155,10 @@ void __gebr_comm_socket_write_queue(GebrCommSocket * socket)
 	}
 }
 
-static gboolean __gebr_comm_socket_write(GIOChannel * source, GIOCondition condition, GebrCommSocket * socket)
+static gboolean __gebr_comm_socket_write(GIOChannel * source, GIOCondition condition, struct WatchData *data)
 {
+	GebrCommSocket *socket = data->socket;
+
 	if (condition & G_IO_NVAL) {
 		/* probably a fd change */
 		goto out;
@@ -197,7 +209,8 @@ static gboolean __gebr_comm_socket_write(GIOChannel * source, GIOCondition condi
 
 	__gebr_comm_socket_write_queue(socket);
 
- out:	return FALSE;
+out:
+	return FALSE;
 }
 
 /*
@@ -212,8 +225,6 @@ void _gebr_comm_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocket
 	_gebr_comm_socket_close(socket);
 
 	error = NULL;
-	socket->write_watch_id = 0;
-	socket->read_watch_id = 0;
 	socket->address_type = address_type;
 	socket->state = GEBR_COMM_SOCKET_STATE_NONE;
 	socket->last_error = GEBR_COMM_SOCKET_ERROR_NONE;
@@ -228,14 +239,14 @@ void _gebr_comm_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocket
 void _gebr_comm_socket_close(GebrCommSocket * socket)
 {
 	if (socket->io_channel != NULL) {
-		if (socket->write_watch_id)
-			g_source_remove(socket->write_watch_id);
-
-		if (socket->read_watch_id)
-			g_source_remove(socket->read_watch_id);
-
 		g_io_channel_unref(socket->io_channel);
 		socket->io_channel = NULL;
+		GList *ww = g_list_copy(socket->write_watch_ids);
+		GList *rw = g_list_copy(socket->read_watch_ids);
+		g_list_foreach(ww, (GFunc)g_source_remove, NULL);
+		g_list_foreach(rw, (GFunc)g_source_remove, NULL);
+		g_list_free(ww);
+		g_list_free(rw);
 		g_byte_array_free(socket->queue_write_bytes, TRUE);
 	}
 }
@@ -245,16 +256,46 @@ int _gebr_comm_socket_get_fd(GebrCommSocket * socket)
 	return g_io_channel_unix_get_fd(socket->io_channel);
 }
 
+static void write_watch_destroy(gpointer user_data)
+{
+	struct WatchData *data = user_data;
+	guint id = data->source_id;
+	GebrCommSocket *socket = data->socket;
+	socket->write_watch_ids = g_list_remove(socket->write_watch_ids, GUINT_TO_POINTER(id));
+}
+
+static void read_watch_destroy(gpointer user_data)
+{
+	struct WatchData *data = user_data;
+	guint id = data->source_id;
+	GebrCommSocket *socket = data->socket;
+	socket->read_watch_ids = g_list_remove(socket->read_watch_ids, GUINT_TO_POINTER(id));
+}
+
 void _gebr_comm_socket_enable_read_watch(GebrCommSocket * socket)
 {
-	socket->read_watch_id = g_io_add_watch(socket->io_channel, G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
-					       (GIOFunc) __gebr_comm_socket_read, socket);
+	struct WatchData *data = g_new(struct WatchData, 1);
+	data->socket = socket;
+	data->source_id = g_io_add_watch_full(socket->io_channel,
+			G_PRIORITY_DEFAULT,
+			G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+			(GIOFunc) __gebr_comm_socket_read,
+			data, read_watch_destroy);
+	socket->read_watch_ids = g_list_prepend(socket->read_watch_ids,
+			GUINT_TO_POINTER(data->source_id));
 }
 
 void _gebr_comm_socket_enable_write_watch(GebrCommSocket * socket)
 {
-	socket->write_watch_id = g_io_add_watch(socket->io_channel, G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
-						(GIOFunc) __gebr_comm_socket_write, socket);
+	struct WatchData *data = g_new(struct WatchData, 1);
+	data->socket = socket;
+	data->source_id = g_io_add_watch_full(socket->io_channel,
+			G_PRIORITY_DEFAULT,
+			G_IO_OUT | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+			(GIOFunc) __gebr_comm_socket_write,
+			data, write_watch_destroy);
+	socket->write_watch_ids = g_list_prepend(socket->write_watch_ids,
+			GUINT_TO_POINTER(data->source_id));
 }
 
 void _gebr_comm_socket_emit_error(GebrCommSocket * socket, enum GebrCommSocketError error)
