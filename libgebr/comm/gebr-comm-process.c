@@ -18,6 +18,7 @@
  */
 
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -87,6 +88,8 @@ static void gebr_comm_process_class_init(GebrCommProcessClass * class)
 static void gebr_comm_process_init(GebrCommProcess * process)
 {
 	__gebr_comm_process_stop_state(process);
+	process->stdout_watch_id = 0;
+	process->stderr_watch_id = 0;
 	process->stdin_io_channel = NULL;
 	process->stdout_io_channel = NULL;
 	process->stderr_io_channel = NULL;
@@ -145,21 +148,23 @@ __gebr_comm_process_read_stdout_watch(GIOChannel * source, GIOCondition conditio
 	if (gebr_comm_process_stdout_bytes_available(process) && (condition & G_IO_HUP))
 		g_signal_emit(process, object_signals[READY_READ_STDOUT], 0);
 
-	if (condition & G_IO_NVAL) {
-		/* probably a fd change */
-		return FALSE;
-	}
-	if (condition & G_IO_ERR) {
-		/* TODO: */
-		return FALSE;
-	}
-	if (condition & G_IO_HUP) {
-		return FALSE;
-	}
+	/* probably a fd change */
+	if (condition & G_IO_NVAL)
+		goto fail;
+
+	/* TODO: */
+	if (condition & G_IO_ERR)
+		goto fail;
+
+	if (condition & G_IO_HUP)
+		goto fail;
 
 	g_signal_emit(process, object_signals[READY_READ_STDOUT], 0);
-
 	return TRUE;
+
+fail:
+	process->stdout_watch_id = 0;
+	return FALSE;
 }
 
 static gboolean
@@ -168,21 +173,24 @@ __gebr_comm_process_read_stderr_watch(GIOChannel * source, GIOCondition conditio
 	if (gebr_comm_process_stderr_bytes_available(process) && (condition & G_IO_HUP))
 		g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
 
-	if (condition & G_IO_NVAL) {
-		/* probably a fd change */
-		return FALSE;
-	}
-	if (condition & G_IO_ERR) {
-		/* TODO: */
-		return FALSE;
-	}
-	if (condition & G_IO_HUP) {
-		return FALSE;
-	}
+	/* probably a fd change */
+	if (condition & G_IO_NVAL)
+		goto fail;
+
+	/* TODO: */
+	if (condition & G_IO_ERR)
+		goto fail;
+
+	if (condition & G_IO_HUP)
+		goto fail;
 
 	g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
 
 	return TRUE;
+
+fail:
+	process->stderr_watch_id = 0;
+	return FALSE;
 }
 
 static void __gebr_comm_process_finished_watch(GPid pid, gint status, GebrCommProcess * process)
